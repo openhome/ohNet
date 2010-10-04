@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+    
+    <actionList>
+    
+        <action>
+            <name>Type</name>
+            <argumentList>
+                <argument>
+                    <name>aType</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>ProductType</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+        <action>
+            <name>Model</name>
+            <argumentList>
+                <argument>
+                    <name>aModel</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>ProductModel</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+        <action>
+            <name>Name</name>
+            <argumentList>
+                <argument>
+                    <name>aName</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>ProductName</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+        <action>
+            <name>SetName</name>
+            <argumentList>
+                <argument>
+                    <name>aName</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>ProductName</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+        <action>
+            <name>Room</name>
+            <argumentList>
+                <argument>
+                    <name>aRoom</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>ProductRoom</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+        <action>
+            <name>SetRoom</name>
+            <argumentList>
+                <argument>
+                    <name>aRoom</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>ProductRoom</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+        <action>
+            <name>Standby</name>
+            <argumentList>
+                <argument>
+                    <name>aStandby</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>ProductStandby</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+        <action>
+            <name>SetStandby</name>
+            <argumentList>
+                <argument>
+                    <name>aStandby</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>ProductStandby</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+        <action>
+            <name>SourceCount</name>
+            <argumentList>
+                <argument>
+                    <name>aSourceCount</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>ProductSourceIndex</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+        <action>
+            <name>SourceIndex</name>
+            <argumentList>
+                <argument>
+                    <name>aSourceIndex</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>ProductSourceIndex</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+        <action>
+            <name>SetSourceIndex</name>
+            <argumentList>
+                <argument>
+                    <name>aSourceIndex</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>ProductSourceIndex</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+        <action>
+            <name>SourceType</name>
+            <argumentList>
+                <argument>
+                    <name>aSourceIndex</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>ProductSourceIndex</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aSourceType</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>ProductSourceType</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+    </actionList>
+    
+    <serviceStateTable>
+    
+        <stateVariable sendEvents="no">
+            <name>ProductType</name>
+            <dataType>string</dataType>
+        </stateVariable>
+        
+        <stateVariable sendEvents="no">
+            <name>ProductModel</name>
+            <dataType>string</dataType>
+        </stateVariable>
+        
+        <stateVariable sendEvents="yes">
+            <name>ProductName</name>
+            <dataType>string</dataType>
+        </stateVariable>
+        
+        <stateVariable sendEvents="yes">
+            <name>ProductRoom</name>
+            <dataType>string</dataType>
+        </stateVariable>
+        
+        <stateVariable sendEvents="yes">
+            <name>ProductStandby</name>
+            <dataType>boolean</dataType>
+        </stateVariable>
+        
+        <stateVariable sendEvents="yes">
+            <name>ProductSourceIndex</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+        
+        <stateVariable sendEvents="no">
+            <name>ProductSourceType</name>
+            <dataType>string</dataType>
+        </stateVariable>
+        
+    </serviceStateTable>
+    
+</scpd>

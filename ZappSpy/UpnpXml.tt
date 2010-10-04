@@ -1,0 +1,89 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#
+Func<string,string> InitialCapital = StringTools.InitialCapital;
+#>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Xml.Linq;
+
+namespace ZappSpy
+{
+    internal static class UpnpDeviceXml
+    {
+        public static XNamespace Namespace = "urn:schemas-upnp-org:device-1-0";
+		<# foreach (string elementName in new string[] {
+		    "deviceType",
+            "friendlyName",
+            "manufacturer",
+            "manufacturerURL",
+            "modelDescription",
+            "modelName",
+            "modelNumber",
+            "modelURL",
+            "serialNumber",
+            "UDN",
+            "UPC",
+            "serviceType",
+            "serviceId",
+            "SCPDURL",
+            "controlURL",
+            "eventSubURL",
+			"action",
+            "actionList",
+            "specVersion",
+            "major",
+            "minor",
+            "name",
+			"device",
+			"service",
+			"deviceList",
+			"serviceList",
+			"iconList", }) {
+		#>public static XName <#=InitialCapital(elementName)#>Element = Namespace + "<#=elementName#>";
+        <# } #>
+
+	}
+
+	internal static class UpnpServiceXml
+    {
+        public static XNamespace Namespace = "urn:schemas-upnp-org:service-1-0";
+		<# foreach (string elementName in new string[] {
+            "specVersion",
+            "major",
+            "minor",
+			"actionList",
+			"action",
+            "name",
+            "argumentList",
+            "argument",
+            "direction",
+            "relatedStateVariable",
+            "retval",
+            "serviceStateTable",
+            "stateVariable",
+			"sendEvents",
+			"multicast",
+            "dataType",
+            "defaultValue",
+            "allowedValueRange",
+            "minimum",
+            "maximum",
+            "step" }) {
+		#>public static XName <#=InitialCapital(elementName)#>Element = Namespace + "<#=elementName#>";
+        <# } #>
+
+	}
+}
+
+<#+
+public static class StringTools
+{
+    public static string InitialCapital(string aInString)
+	{
+		return aInString.Substring(0,1).ToUpperInvariant() + aInString.Substring(1);
+	}
+}
+#>

@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{42701C32-E2F7-4FCE-AF13-0325B4464E05}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Zapp</RootNamespace>
+    <AssemblyName>ZappControl</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <LinnConfiguration>debug</LinnConfiguration>
+    <IntermediateOutputPath>..\..\build\Pc\$(LinnConfiguration)\$(AssemblyName)</IntermediateOutputPath>
+    <OutputPath>..\..\install\Pc\debug\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Trace|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <LinnConfiguration>trace</LinnConfiguration>
+    <IntermediateOutputPath>..\..\build\Pc\$(LinnConfiguration)\$(AssemblyName)</IntermediateOutputPath>
+    <OutputPath>..\..\install\Pc\trace\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <LinnConfiguration>release</LinnConfiguration>
+    <IntermediateOutputPath>..\..\build\Pc\$(LinnConfiguration)\$(AssemblyName)</IntermediateOutputPath>
+    <OutputPath>..\..\install\Pc\release\bin\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent>call "$(DevEnvDir)..\..\VC\vcvarsall.bat"
+cd "$(SolutionDir)..\Upnp"
+nmake.exe -s -f Zapp.mak ZappUpnpDll
+copy /B Build\Obj\Windows\ZappUpnp.dll $(TargetDir)</PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Upnp\Public\Cs\CpDevice.cs">
+      <Link>CpDevice.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\Public\Cs\CpDeviceUpnp.cs">
+      <Link>CpDeviceUpnp.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\Public\Cs\CpProxy.cs">
+      <Link>CpProxy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\Public\Cs\Zapp.cs">
+      <Link>Zapp.cs</Link>
+    </Compile>
+  </ItemGroup>
+</Project>

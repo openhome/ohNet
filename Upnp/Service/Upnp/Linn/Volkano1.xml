@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+    <actionList>
+        
+        <action>
+            <name>Reboot</name>
+        </action>
+
+        <action>
+            <name>BootMode</name>
+            <argumentList>
+                <argument>
+                    <name>aMode</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_BootMode</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>SetBootMode</name>
+            <argumentList>
+                <argument>
+                    <name>aMode</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_RebootMode</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action> 
+            <name>BspType</name> 
+                <argumentList> 
+                    <argument> 
+                        <name>aBspType</name> 
+                        <direction>out</direction> 
+                        <relatedStateVariable>A_ARG_TYPE_String</relatedStateVariable> 
+                    </argument> 
+                </argumentList> 
+        </action>
+
+        <action>
+            <name>UglyName</name>
+            <argumentList>
+                <argument>
+                    <name>aUglyName</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_String</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+        <action>
+            <name>MacAddress</name>
+            <argumentList>
+                <argument>
+                    <name>aMacAddress</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_String</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+        <action>
+            <name>ProductId</name>
+            <argumentList>
+                <argument>
+                    <name>aProductNumber</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_String</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+        <action>
+            <name>BoardId</name>
+            <argumentList>
+                <argument>
+                    <name>aIndex</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_TUint</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aBoardNumber</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_String</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+        <action>
+            <name>BoardType</name>
+            <argumentList>
+                <argument>
+                    <name>aIndex</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_TUint</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aBoardNumber</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_String</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+        <action>
+            <name>MaxBoards</name>
+            <argumentList>
+                <argument>
+                    <name>aMaxBoards</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_TUint</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>SoftwareVersion</name>
+            <argumentList>
+                <argument>
+                    <name>aSoftwareVersion</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_String</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+    </actionList>
+
+    <serviceStateTable>
+
+        <stateVariable sendEvents="no">
+            <name>A_ARG_TYPE_BootMode</name>
+            <dataType>string</dataType>
+            <allowedValueList>
+                <allowedValue>Main</allowedValue>
+                <allowedValue>Fallback</allowedValue>
+                <allowedValue>Ram</allowedValue>
+            </allowedValueList>
+        </stateVariable>
+
+        <stateVariable sendEvents="no">
+            <name>A_ARG_TYPE_RebootMode</name>
+            <dataType>string</dataType>
+            <allowedValueList>
+                <allowedValue>Main</allowedValue>
+                <allowedValue>Fallback</allowedValue>
+            </allowedValueList>
+        </stateVariable>
+        
+        <stateVariable sendEvents="no">
+            <name>A_ARG_TYPE_String</name>
+            <dataType>string</dataType>
+        </stateVariable>
+        
+        <stateVariable sendEvents="no">
+            <name>A_ARG_TYPE_TUint</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+
+    </serviceStateTable>
+</scpd>
+
+

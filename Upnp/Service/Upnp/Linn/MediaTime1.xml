@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+
+    <actionList>
+        <action>
+            <name>Seconds</name>
+            <argumentList>
+                <argument>
+                    <name>aSeconds</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Seconds</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+    </actionList>
+
+    <serviceStateTable>
+        <stateVariable sendEvents="yes">
+            <name>Seconds</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+    </serviceStateTable>
+</scpd>
+

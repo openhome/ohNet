@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<scpd xmlns="urn:schemas-upnp-org:service-1-0"> 
+    <specVersion> 
+        <major>1</major> 
+        <minor>0</minor> 
+    </specVersion> 
+  
+    <actionList> 
+        <action> 
+            <name>ResetDeinterlacer</name> 
+        </action> 
+        <action> 
+            <name>SetDeinterlacerInputSyncs</name> 
+            <argumentList> 
+                <argument> 
+                    <name>aInputSync</name> 
+                    <direction>in</direction> 
+                    <relatedStateVariable>A_ARG_TYPE_DeinterlacerInputSyncs</relatedStateVariable> 
+                </argument> 
+            </argumentList> 
+        </action> 
+        <action> 
+            <name>SetDeinterlacerInputResolution</name> 
+            <argumentList> 
+                <argument> 
+                    <name>aResolution</name> 
+                    <direction>in</direction> 
+                    <relatedStateVariable>A_ARG_TYPE_Resolution</relatedStateVariable> 
+                </argument> 
+            </argumentList> 
+        </action> 
+        <action> 
+            <name>SetDeinterlacerPassThrough</name> 
+            <argumentList> 
+                <argument> 
+                    <name>aPassThrough</name> 
+                    <direction>in</direction> 
+                    <relatedStateVariable>A_ARG_TYPE_DeinterlacerPassThrough</relatedStateVariable> 
+                </argument> 
+            </argumentList> 
+        </action> 
+        <action> 
+            <name>ResetScaler</name> 
+        </action> 
+        <action> 
+            <name>SetScalerPassThrough</name> 
+            <argumentList> 
+                <argument> 
+                    <name>aPassThrough</name> 
+                    <direction>in</direction> 
+                    <relatedStateVariable>A_ARG_TYPE_ScalerPassThrough</relatedStateVariable> 
+                </argument> 
+            </argumentList> 
+        </action> 
+        <action> 
+            <name>SetScalerInputResolution</name> 
+            <argumentList> 
+                <argument> 
+                    <name>aResolution</name> 
+                    <direction>in</direction> 
+                    <relatedStateVariable>A_ARG_TYPE_Resolution</relatedStateVariable> 
+                </argument> 
+            </argumentList> 
+        </action> 
+        <action> 
+            <name>SetScalerOutputResolution</name> 
+            <argumentList> 
+                <argument> 
+                    <name>aResolution</name> 
+                    <direction>in</direction> 
+                    <relatedStateVariable>A_ARG_TYPE_Resolution</relatedStateVariable> 
+                </argument> 
+            </argumentList> 
+        </action> 
+        <action> 
+            <name>SetScalerOutputColourSpace</name> 
+            <argumentList> 
+                <argument> 
+                    <name>aColourSpace</name> 
+                    <direction>in</direction> 
+                    <relatedStateVariable>A_ARG_TYPE_ColourSpace</relatedStateVariable> 
+                </argument> 
+            </argumentList> 
+        </action> 
+        <action> 
+            <name>SetScalerAspectRatio</name> 
+            <argumentList> 
+                <argument> 
+                    <name>aAspectRatio</name> 
+                    <direction>in</direction> 
+                    <relatedStateVariable>A_ARG_TYPE_AspectRatio</relatedStateVariable> 
+                </argument> 
+            </argumentList> 
+        </action> 
+
+    </actionList> 
+  
+  
+  
+    <serviceStateTable> 
+  
+  
+       <stateVariable sendEvents="no"> 
+          <name>A_ARG_TYPE_DeinterlacerInputSyncs</name> 
+          <dataType>string</dataType> 
+          <allowedValueList> 
+             <allowedValue>SyncEmbedded</allowedValue> 
+             <allowedValue>SyncSeparate</allowedValue> 
+          </allowedValueList> 
+       </stateVariable> 
+  
+       <stateVariable sendEvents="no"> 
+          <name>A_ARG_TYPE_Resolution</name> 
+          <dataType>string</dataType> 
+          <allowedValueList> 
+             <allowedValue>ResolutionVga</allowedValue> 
+             <allowedValue>Resolution480i</allowedValue> 
+             <allowedValue>Resolution576i</allowedValue> 
+             <allowedValue>Resolution480p</allowedValue> 
+             <allowedValue>Resolution576p</allowedValue> 
+             <allowedValue>Resolution720p</allowedValue> 
+             <allowedValue>Resolution1080i</allowedValue> 
+             <allowedValue>Resolution1080p</allowedValue> 
+          </allowedValueList> 
+       </stateVariable> 
+  
+       <stateVariable sendEvents="no"> 
+          <name>A_ARG_TYPE_DeinterlacerPassThrough</name> 
+          <dataType>boolean</dataType> 
+       </stateVariable>   
+  
+       <stateVariable sendEvents="no"> 
+          <name>A_ARG_TYPE_ScalerPassThrough</name> 
+          <dataType>boolean</dataType> 
+       </stateVariable>   
+
+       <stateVariable sendEvents="no"> 
+          <name>A_ARG_TYPE_ColourSpace</name> 
+          <dataType>string</dataType> 
+          <allowedValueList> 
+             <allowedValue>ColourSpaceYCbCr422</allowedValue> 
+             <allowedValue>ColourSpaceYCbCr444</allowedValue> 
+             <allowedValue>ColourSpaceRgb</allowedValue> 
+          </allowedValueList> 
+       </stateVariable> 
+  
+       <stateVariable sendEvents="no"> 
+          <name>A_ARG_TYPE_AspectRatio</name> 
+          <dataType>string</dataType> 
+          <allowedValueList> 
+             <allowedValue>AspectRatio4By3</allowedValue> 
+             <allowedValue>AspectRatio16By9</allowedValue> 
+             <allowedValue>LetterBox</allowedValue> 
+          </allowedValueList> 
+       </stateVariable> 
+  
+    </serviceStateTable> 
+ 
+</scpd> 
+

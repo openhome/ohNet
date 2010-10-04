@@ -1,0 +1,1135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+   <specVersion>
+      <major>1</major>
+      <minor>0</minor>
+   </specVersion>
+   
+   <actionList>
+   
+      <action>
+         <name>Open</name>
+      </action>
+      <action>
+         <name>Close</name>
+      </action>
+      <action>
+         <name>Play</name>
+      </action>
+      <action>
+         <name>Stop</name>
+      </action>
+      <action>
+         <name>Pause</name>
+      </action>
+      <action>
+         <name>Resume</name>
+      </action>
+      <action>
+         <name>Search</name>
+         <argumentList>
+                <argument>
+                    <name>aSearchType</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>SearchType</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aSearchSpeed</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>SearchSpeed</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetTrack</name>
+         <argumentList>
+                <argument>
+                    <name>aTrack</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Track</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aTitle</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Title</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetTime</name>
+         <argumentList>
+                <argument>
+                    <name>aTime</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Time</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aTitle</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Title</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetProgramOff</name>
+      </action>
+      <action>
+         <name>SetProgramInclude</name>
+         <argumentList>
+                <argument>
+                    <name>aIncludeList</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>ProgramList</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetProgramExclude</name>
+         <argumentList>
+                <argument>
+                    <name>aExcludeList</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>ProgramList</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetProgramRandom</name>
+      </action>
+      <action>
+         <name>SetProgramShuffle</name>
+      </action>
+      <action>
+         <name>SetRepeatOff</name>
+      </action>
+      <action>
+         <name>SetRepeatAll</name>
+      </action>
+      <action>
+         <name>SetRepeatTrack</name>
+      </action>
+      <action>
+         <name>SetRepeatAb</name>
+         <argumentList>
+                <argument>
+                    <name>aStartTime</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Time</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aEndTime</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Time</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetIntroMode</name>
+         <argumentList>
+                <argument>
+                    <name>aIntroMode</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>IntroMode</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aOffset</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Seconds</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aSeconds</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Seconds</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetNext</name>
+         <argumentList>
+                <argument>
+                    <name>aSkip</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>SkipType</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetPrev</name>
+         <argumentList>
+                <argument>
+                    <name>aSkip</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>SkipType</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>RootMenu</name>
+      </action>
+      <action>
+         <name>TitleMenu</name>
+      </action>
+      <action>
+         <name>SetSetupMode</name>
+         <argumentList>
+                <argument>
+                    <name>aSetupMode</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>SetupMode</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetAngle</name>
+         <argumentList>
+                <argument>
+                    <name>aSelect</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>SelectionType</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aIndex</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Index</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetAudioTrack</name>
+         <argumentList>
+                <argument>
+                    <name>aSelect</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>SelectionType</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aIndex</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Index</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetSubtitle</name>
+         <argumentList>
+                <argument>
+                    <name>aSelect</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>SelectionType</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aIndex</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Index</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetZoom</name>
+         <argumentList>
+                <argument>
+                    <name>aSelect</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>SelectionType</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aIndex</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Index</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetSacdLayer</name>
+         <argumentList>
+                <argument>
+                    <name>aSacdLayer</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>SacdState</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>Navigate</name>
+         <argumentList>
+                <argument>
+                    <name>aNavigation</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>NavigationType</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aIndex</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Index</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetSlideshow</name>
+         <argumentList>
+                <argument>
+                    <name>aSlideshow</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Slideshow</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetPassword</name>
+         <argumentList>
+                <argument>
+                    <name>aPassword</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Password</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>      
+      
+      <action>
+         <name>DiscType</name>
+         <argumentList>
+                <argument>
+                    <name>aDiscType</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>DiscType</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>Title</name>
+         <argumentList>
+                <argument>
+                    <name>aTitle</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Title</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>TrayState</name>
+         <argumentList>
+                <argument>
+                    <name>aTrayState</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>TrayState</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>DiscState</name>
+         <argumentList>
+                <argument>
+                    <name>aDiscState</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>DiscState</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>PlayState</name>
+         <argumentList>
+                <argument>
+                    <name>aPlayState</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>PlayState</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>SearchType</name>
+         <argumentList>
+                <argument>
+                    <name>aSearchType</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>SearchType</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>SearchSpeed</name>
+         <argumentList>
+                <argument>
+                    <name>aSearchSpeed</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>SearchSpeed</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>Track</name>
+         <argumentList>
+                <argument>
+                    <name>aTrack</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Track</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>TrackElapsedTime</name>
+         <argumentList>
+                <argument>
+                    <name>aTrackElapsedTime</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>TrackElapsedTime</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>TrackRemainingTime</name>
+         <argumentList>
+                <argument>
+                    <name>aTrackRemainingTime</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>TrackRemainingTime</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>DiscElapsedTime</name>
+         <argumentList>
+                <argument>
+                    <name>aDiscElapsedTime</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>DiscElapsedTime</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>DiscRemainingTime</name>
+         <argumentList>
+                <argument>
+                    <name>aDiscRemainingTime</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>DiscRemainingTime</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>RepeatMode</name>
+         <argumentList>
+                <argument>
+                    <name>aRepeatMode</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>RepeatMode</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>IntroMode</name>
+         <argumentList>
+                <argument>
+                    <name>aIntroMode</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>IntroMode</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>ProgramMode</name>
+         <argumentList>
+                <argument>
+                    <name>aProgramMode</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>ProgramMode</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>Domain</name>
+         <argumentList>
+                <argument>
+                    <name>aDomain</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Domain</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>Angle</name>
+         <argumentList>
+                <argument>
+                    <name>aAngle</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Angle</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>TotalAngles</name>
+         <argumentList>
+                <argument>
+                    <name>aTotalAngles</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>TotalAngles</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>Subtitle</name>
+         <argumentList>
+                <argument>
+                    <name>aSubtitle</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Subtitle</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>AudioTrack</name>
+         <argumentList>
+                <argument>
+                    <name>aAudioTrack</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>AudioTrack</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>ZoomLevel</name>
+         <argumentList>
+                <argument>
+                    <name>aZoomLevel</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>ZoomLevel</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>SetupMode</name>
+         <argumentList>
+                <argument>
+                    <name>aSetupMode</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>SetupMode</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>SacdState</name>
+         <argumentList>
+                <argument>
+                    <name>aSacdState</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>SacdState</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>Slideshow</name>
+         <argumentList>
+                <argument>
+                    <name>aSlideshow</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Slideshow</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>Error</name>
+         <argumentList>
+                <argument>
+                    <name>aError</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Error</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>Orientation</name>
+         <argumentList>
+                <argument>
+                    <name>aOrientation</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Orientation</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      
+      <action>
+         <name>DiscLength</name>
+         <argumentList>
+                <argument>
+                    <name>aDiscLength</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>DiscLength</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>TrackLength</name>
+         <argumentList>
+                <argument>
+                    <name>aTrackLength</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>TrackLength</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>TotalTracks</name>
+         <argumentList>
+                <argument>
+                    <name>aTotalTracks</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>TotalTracks</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>TotalTitles</name>
+         <argumentList>
+                <argument>
+                    <name>aTotalTitles</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>TotalTitles</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>Genre</name>
+         <argumentList>
+                <argument>
+                    <name>aGenre</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Genre</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>Encoding</name>
+         <argumentList>
+                <argument>
+                    <name>aEncoding</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Encoding</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>FileSize</name>
+         <argumentList>
+                <argument>
+                    <name>aFileSize</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>FileSize</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>DiscId</name>
+         <argumentList>
+                <argument>
+                    <name>aDiscId</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>DiscId</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>Year</name>
+         <argumentList>
+                <argument>
+                    <name>aYear</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Year</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>TrackName</name>
+         <argumentList>
+                <argument>
+                    <name>aTrackName</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>TrackName</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>ArtistName</name>
+         <argumentList>
+                <argument>
+                    <name>aArtistName</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>ArtistName</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>AlbumName</name>
+         <argumentList>
+                <argument>
+                    <name>aAlbumName</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>AlbumName</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>Comment</name>
+         <argumentList>
+                <argument>
+                    <name>aComment</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Comment</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>FileName</name>
+         <argumentList>
+                <argument>
+                    <name>aIndex</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Index</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aFileName</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>FileNameString</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>SystemCapabilities</name>
+         <argumentList>
+                <argument>
+                    <name>aSystemCapabilities</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>SystemCapabilities</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>DiscCapabilities</name>
+         <argumentList>
+                <argument>
+                    <name>aDiscCapabilities</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>DiscCapabilities</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>ZoomLevelInfo</name>
+         <argumentList>
+                <argument>
+                    <name>aZoomLevelInfo</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>ZoomLevelInfo</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>SubtitleInfo</name>
+         <argumentList>
+                <argument>
+                    <name>aSubtitleInfo</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>SubtitleInfo</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>AudioTrackInfo</name>
+         <argumentList>
+                <argument>
+                    <name>aAudioTrackInfo</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>AudioTrackInfo</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>TableOfContents</name>
+         <argumentList>
+                <argument>
+                    <name>aTableOfContents</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>TableOfContents</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      <action>
+         <name>DirectoryStructure</name>
+         <argumentList>
+                <argument>
+                    <name>aDirectoryStructure</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>DirectoryStructure</relatedStateVariable>
+                </argument>
+            </argumentList>
+      </action>
+      
+   </actionList>
+   
+   <serviceStateTable>
+      
+      <stateVariable sendEvents="yes">
+         <name>DiscType</name>
+         <dataType>string</dataType>
+         <allowedValueList>
+            <allowedValue>Unsupported</allowedValue>
+            <allowedValue>No Disc</allowedValue>
+            <allowedValue>CDDA</allowedValue>
+            <allowedValue>VCD</allowedValue>
+            <allowedValue>SVCD</allowedValue>
+            <allowedValue>SACD</allowedValue>
+            <allowedValue>DVD</allowedValue>
+            <allowedValue>DVD-Audio</allowedValue>
+            <allowedValue>Data</allowedValue>
+            <allowedValue>Unknown</allowedValue>
+         </allowedValueList>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>Title</name>
+         <dataType>i2</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>TrayState</name>
+         <dataType>string</dataType>
+         <allowedValueList>
+            <allowedValue>Opened</allowedValue>
+            <allowedValue>Closed</allowedValue>
+            <allowedValue>Opening</allowedValue>
+            <allowedValue>Closing</allowedValue>
+            <allowedValue>Unknown</allowedValue>
+         </allowedValueList>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>DiscState</name>
+         <dataType>string</dataType>
+         <allowedValueList>
+            <allowedValue>Loading</allowedValue>
+            <allowedValue>Loaded</allowedValue>
+            <allowedValue>Unknown</allowedValue>
+         </allowedValueList>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>PlayState</name>
+         <dataType>string</dataType>
+         <allowedValueList>
+            <allowedValue>Playing</allowedValue>
+            <allowedValue>Stopped</allowedValue>
+            <allowedValue>Paused</allowedValue>
+            <allowedValue>Suspended</allowedValue>
+            <allowedValue>Unknown</allowedValue>
+         </allowedValueList>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>SearchType</name>
+         <dataType>string</dataType>
+         <allowedValueList>
+            <allowedValue>None</allowedValue>
+            <allowedValue>Fast Forward</allowedValue>
+            <allowedValue>Fast Reverse</allowedValue>
+            <allowedValue>Slow Forward</allowedValue>
+            <allowedValue>Slow Reverse</allowedValue>
+         </allowedValueList>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>SearchSpeed</name>
+         <dataType>i2</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>Track</name>
+         <dataType>i2</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>TrackElapsedTime</name>
+         <dataType>string</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>TrackRemainingTime</name>
+         <dataType>string</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>DiscElapsedTime</name>
+         <dataType>string</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>DiscRemainingTime</name>
+         <dataType>string</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>RepeatMode</name>
+         <dataType>string</dataType>
+         <allowedValueList>
+            <allowedValue>Off</allowedValue>
+            <allowedValue>All</allowedValue>
+            <allowedValue>Track</allowedValue>
+            <allowedValue>A-B</allowedValue>
+         </allowedValueList>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>IntroMode</name>
+         <dataType>boolean</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>ProgramMode</name>
+         <dataType>string</dataType>
+         <allowedValueList>
+            <allowedValue>Off</allowedValue>
+            <allowedValue>Random</allowedValue>
+            <allowedValue>Shuffle</allowedValue>
+            <allowedValue>Stored</allowedValue>
+         </allowedValueList>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>Domain</name>
+         <dataType>string</dataType>
+         <allowedValueList>
+            <allowedValue>None</allowedValue>
+            <allowedValue>Root Menu</allowedValue>
+            <allowedValue>Title Menu</allowedValue>
+            <allowedValue>Copyright</allowedValue>
+            <allowedValue>Password</allowedValue>
+         </allowedValueList>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>Angle</name>
+         <dataType>i2</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>TotalAngles</name>
+         <dataType>i2</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>Subtitle</name>
+         <dataType>i2</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>AudioTrack</name>
+         <dataType>i2</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>ZoomLevel</name>
+         <dataType>string</dataType>
+         <allowedValueList>
+            <allowedValue>25</allowedValue>
+            <allowedValue>50</allowedValue>
+            <allowedValue>100</allowedValue>
+            <allowedValue>150</allowedValue>
+            <allowedValue>200</allowedValue>
+            <allowedValue>300</allowedValue>
+         </allowedValueList>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>SetupMode</name>
+         <dataType>boolean</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>SacdState</name>
+         <dataType>string</dataType>
+         <allowedValueList>
+            <allowedValue>Unknown</allowedValue>
+            <allowedValue>DSD Multi Channel</allowedValue>
+            <allowedValue>DSD Stereo</allowedValue>
+            <allowedValue>CDDA Stereo</allowedValue>
+            <allowedValue>Selecting</allowedValue>
+         </allowedValueList>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>Slideshow</name>
+         <dataType>string</dataType>
+         <allowedValueList>
+            <allowedValue>Off</allowedValue>
+            <allowedValue>Slide Show</allowedValue>
+            <allowedValue>Slide Show (Photo Per Track)</allowedValue>
+            <allowedValue>New Wipe Mode</allowedValue>
+            <allowedValue>Thumbnails</allowedValue>
+         </allowedValueList>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>Error</name>
+         <dataType>string</dataType>
+         <allowedValueList>
+            <allowedValue>None</allowedValue>
+            <allowedValue>Track out of Range</allowedValue>
+            <allowedValue>Title out of Range</allowedValue>
+            <allowedValue>Time out of Range</allowedValue>
+            <allowedValue>Resume Not Available</allowedValue>
+            <allowedValue>Program Size Invalid</allowedValue>
+            <allowedValue>Domain Not Available</allowedValue>
+            <allowedValue>Search Type Not Available</allowedValue>
+            <allowedValue>Program Type Not Available</allowedValue>
+            <allowedValue>Repeat Type Not Available</allowedValue>
+            <allowedValue>Intro Mode Not Available</allowedValue>
+            <allowedValue>Skip Type Not Available</allowedValue>
+            <allowedValue>Setup Mode Not Available</allowedValue>
+            <allowedValue>Angle Not Available</allowedValue>
+            <allowedValue>Subtitle Not Available</allowedValue>
+            <allowedValue>Zoom Level Not Available</allowedValue>
+            <allowedValue>Audio Track Not Available</allowedValue>
+            <allowedValue>Sacd Layer Not Available</allowedValue>
+            <allowedValue>Invalid Navigation Request</allowedValue>
+            <allowedValue>Slide Show Type Not Available</allowedValue>
+            <allowedValue>Request Not Supported</allowedValue>
+            <allowedValue>Table Of Contents Missing</allowedValue>
+            <allowedValue>Invalid Password</allowedValue>
+         </allowedValueList>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>Orientation</name>
+         <dataType>string</dataType>
+         <allowedValueList>
+            <allowedValue>Unknown</allowedValue>
+            <allowedValue>0 Degrees</allowedValue>
+            <allowedValue>0 Degrees (Y Mirror)</allowedValue>
+            <allowedValue>90 Degrees</allowedValue>
+            <allowedValue>90 Degrees (Y Mirror)</allowedValue>
+            <allowedValue>180 Degrees</allowedValue>
+            <allowedValue>180 Degrees (Y Mirror)</allowedValue>
+            <allowedValue>270 Degrees</allowedValue>
+            <allowedValue>270 Degrees (Y Mirror)</allowedValue>
+        </allowedValueList>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>TotalTracks</name>
+         <dataType>i2</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>TotalTitles</name>
+         <dataType>i2</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>Encoding</name>
+         <dataType>ui2</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>FileSize</name>
+         <dataType>ui4</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>DiscId</name>
+         <dataType>ui4</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>DiscLength</name>
+         <dataType>string</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>TrackLength</name>
+         <dataType>string</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>Genre</name>
+         <dataType>string</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>Year</name>
+         <dataType>string</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>TrackName</name>
+         <dataType>string</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>ArtistName</name>
+         <dataType>string</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>AlbumName</name>
+         <dataType>string</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>Comment</name>
+         <dataType>string</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>FileName</name>
+         <dataType>bin.base64</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>SystemCapabilities</name>
+         <dataType>bin.base64</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>DiscCapabilities</name>
+         <dataType>bin.base64</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>ZoomLevelInfo</name>
+         <dataType>bin.base64</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>SubtitleInfo</name>
+         <dataType>bin.base64</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>AudioTrackInfo</name>
+         <dataType>bin.base64</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>TableOfContents</name>
+         <dataType>bin.base64</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>DirectoryStructure</name>
+         <dataType>bin.base64</dataType>
+      </stateVariable>
+     
+      <stateVariable sendEvents="no">
+         <name>Time</name>
+         <dataType>string</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="no">
+         <name>Seconds</name>
+         <dataType>i2</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="no">
+         <name>ProgramList</name>
+         <dataType>bin.base64</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="no">
+         <name>SkipType</name>
+         <dataType>string</dataType>
+         <allowedValueList>
+            <allowedValue>SkipTrack</allowedValue>
+            <allowedValue>SkipFrame</allowedValue>
+            <allowedValue>SkipSearchSpeed</allowedValue>
+            <allowedValue>SkipFile</allowedValue>
+            <allowedValue>SkipDisc</allowedValue>
+            <allowedValue>SkipSacdLayer</allowedValue>
+         </allowedValueList>
+      </stateVariable>
+      <stateVariable sendEvents="no">
+         <name>SelectionType</name>
+         <dataType>string</dataType>
+         <allowedValueList>
+            <allowedValue>SelectDefault</allowedValue>
+            <allowedValue>SelectNext</allowedValue>
+            <allowedValue>SelectPrev</allowedValue>
+            <allowedValue>SelectIndex</allowedValue>
+         </allowedValueList>
+      </stateVariable>
+      <stateVariable sendEvents="no">
+         <name>Index</name>
+         <dataType>i2</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="no">
+         <name>NavigationType</name>
+         <dataType>string</dataType>
+         <allowedValueList>
+            <allowedValue>Up</allowedValue>
+            <allowedValue>Down</allowedValue>
+            <allowedValue>Left</allowedValue>
+            <allowedValue>Right</allowedValue>
+            <allowedValue>Select</allowedValue>
+            <allowedValue>Return</allowedValue>
+         </allowedValueList>
+      </stateVariable>
+      <stateVariable sendEvents="no">
+         <name>FileNameString</name>
+         <dataType>string</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="no">
+         <name>Password</name>
+         <dataType>string</dataType>
+      </stateVariable>
+      
+   </serviceStateTable>
+
+</scpd>
+

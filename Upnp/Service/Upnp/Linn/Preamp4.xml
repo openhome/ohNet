@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+   <specVersion>
+      <major>1</major>
+      <minor>0</minor>
+   </specVersion>
+
+   <actionList>
+      <action>
+         <name>VolumeInc</name>
+      </action>
+      <action>
+         <name>VolumeDec</name>
+      </action>
+      <action>
+         <name>SetVolume</name>
+         <argumentList>
+                <argument>
+                    <name>aVolume</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>typeUi4</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>Volume</name>
+         <argumentList>
+                <argument>
+                    <name>aVolume</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>typeUi4</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetMute</name>
+         <argumentList>
+                <argument>
+                    <name>aMute</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>typeBool</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>Mute</name>
+         <argumentList>
+                <argument>
+                    <name>aMute</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>typeBool</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetBalance</name>
+         <argumentList>
+                <argument>
+                    <name>aBalance</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>typeI4</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>Balance</name>
+         <argumentList>
+                <argument>
+                    <name>aBalance</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>typeI4</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetVolumeLimit</name>
+         <argumentList>
+                <argument>
+                    <name>aVolumeLimit</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>typeUi4</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>VolumeLimit</name>
+         <argumentList>
+                <argument>
+                    <name>aVolumeLimit</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>typeUi4</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetStartupVolume</name>
+         <argumentList>
+                <argument>
+                    <name>aStartupVolume</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>typeUi4</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>StartupVolume</name>
+         <argumentList>
+                <argument>
+                    <name>aStartupVolume</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>typeUi4</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetStartupVolumeEnabled</name>
+         <argumentList>
+                <argument>
+                    <name>aStartupVolumeEnabled</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>typeBool</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>StartupVolumeEnabled</name>
+         <argumentList>
+                <argument>
+                    <name>aStartupVolumeEnabled</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>typeBool</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+
+   </actionList>
+
+
+   <serviceStateTable>
+
+      <stateVariable sendEvents="yes">
+         <name>Volume</name>
+         <dataType>ui4</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>Mute</name>
+         <dataType>boolean</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>Balance</name>
+         <dataType>i4</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>VolumeLimit</name>
+         <dataType>ui4</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>StartupVolume</name>
+         <dataType>ui4</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>StartupVolumeEnabled</name>
+         <dataType>boolean</dataType>
+      </stateVariable>
+
+
+      <stateVariable sendEvents="no">
+         <name>typeString</name>
+         <dataType>string</dataType>
+      </stateVariable>
+
+      <stateVariable sendEvents="no">
+         <name>typeBool</name>
+         <dataType>boolean</dataType>
+      </stateVariable>
+
+      <stateVariable sendEvents="no">
+         <name>typeI4</name>
+         <dataType>i4</dataType>
+      </stateVariable>
+
+      <stateVariable sendEvents="no">
+         <name>typeUi4</name>
+         <dataType>ui4</dataType>
+      </stateVariable>
+
+
+   </serviceStateTable>
+</scpd>
+

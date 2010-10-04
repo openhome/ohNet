@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+   <specVersion>
+      <major>1</major>
+      <minor>0</minor>
+   </specVersion>
+   
+   <actionList>
+       
+       <action>
+         <name>SetBand</name>
+         <argumentList>
+                <argument>
+                    <name>aBand</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Band</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetNextStation</name>
+      </action>
+      <action>
+         <name>SetPrevStation</name>
+      </action>
+      <action>
+         <name>CurrentStation</name>
+         <argumentList>
+                <argument>
+                    <name>aStationName</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>StationName</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aBand</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Band</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+       
+      <action>
+         <name>PresetCount</name>
+         <argumentList>
+                <argument>
+                    <name>aPresetCount</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>PresetCount</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetCurrentPreset</name>
+         <argumentList>
+                <argument>
+                    <name>aName</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>String</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>PresetStationName</name>
+         <argumentList>
+                <argument>
+                    <name>aIndex</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Uint</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aStationName</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>String</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action> 
+      <action>
+         <name>PresetStationBand</name>
+         <argumentList>
+                <argument>
+                    <name>aIndex</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Uint</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aBand</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Band</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>StorePresetFromCurrentStation</name>
+      </action>
+      <action>
+         <name>DeletePreset</name>
+         <argumentList>
+                <argument>
+                    <name>aName</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>String</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>DeleteAllPresets</name>
+      </action>
+       
+   </actionList>
+   
+   <serviceStateTable>
+       
+       <stateVariable sendEvents="no">
+         <name>Uint</name>
+         <dataType>ui4</dataType>
+       </stateVariable>
+       <stateVariable sendEvents="no">
+         <name>String</name>
+         <dataType>string</dataType>
+       </stateVariable>
+       
+       <stateVariable sendEvents="yes">
+         <name>Band</name>
+         <dataType>string</dataType>
+         <allowedValueList>
+            <allowedValue>FM</allowedValue>
+            <allowedValue>AM</allowedValue>
+            <allowedValue>LW</allowedValue>
+            <allowedValue>DAB</allowedValue>
+         </allowedValueList>
+       </stateVariable>
+       <stateVariable sendEvents="yes">
+         <name>StationName</name>
+         <dataType>string</dataType>
+       </stateVariable>
+       <stateVariable sendEvents="yes">
+         <name>PresetCount</name>
+         <dataType>ui4</dataType>
+       </stateVariable>
+       
+   </serviceStateTable>
+
+</scpd>

@@ -1,0 +1,479 @@
+<#@ assembly name="Build/Tools/UpnpServiceXml.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Linn.Xml.UpnpServiceXml" #>
+<#@ template language="C#" #>
+<#
+    string domain = TemplateArgument("domain");
+    string type = TemplateArgument("type");
+
+    uint version = 1;
+
+    try
+    {
+	   version = Convert.ToUInt32(TemplateArgument("version"));
+	}
+	catch (FormatException)
+	{
+        throw (new ArgumentException("Invalid version number specified"));
+	}
+    catch (OverflowException)
+    {
+        throw (new ArgumentException("Invalid version number specified"));
+    }
+
+    string upnpdomain = domain.Replace(".", "-");
+
+    if (upnpdomain.StartsWith("upnp-"))
+    {
+        upnpdomain = "schemas-" + upnpdomain;
+    }
+
+    string fileName = "";
+    char[] charSeparators = new char[] {'.'};
+    string[] res = domain.Split(charSeparators, StringSplitOptions.None);
+    foreach (string str in res)
+    {
+        fileName += str.Substring(0, 1).ToUpper();
+        if (str.Length > 1)
+        {
+            fileName += str.Substring(1, str.Length-1);
+        }
+    }
+    fileName += type;
+    fileName += version;
+    string className = "CpProxy" + fileName;
+
+    Initialise();
+
+    Document u = new Document(TemplateArgument("xml"));
+#>
+#include <C/Cp<#=fileName#>.h>
+#include <Core/Cp<#=fileName#>.h>
+#include <Core/CpDevice.h>
+#include <C/CpProxyCPrivate.h>
+#include <FunctorAsync.h>
+
+using namespace Zapp;
+
+class <#=className#>C : public CpProxyC
+{
+public:
+    <#=className#>C(CpDeviceC aDevice);
+    <#=className#>* Proxy() { return static_cast<<#=className#>*>(iProxy); }
+};
+
+<#=className#>C::<#=className#>C(CpDeviceC aDevice)
+    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice))
+{
+    iProxy = new <#=className#>(*iDevice);
+}
+
+
+THandle <#=className#>Create(CpDeviceC aDevice)
+{
+    return (THandle)new <#=className#>C(aDevice);
+}
+
+void <#=className#>Destroy(THandle aHandle)
+{
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    delete proxyC;
+}
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+void <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>)
+{
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    ASSERT(proxyC != NULL);
+<#  foreach (Argument i in a.inargs) #>
+<#  { #>
+<#      if (i.variable.type == "string" || i.variable.type == "uri") #>
+<#      { #>
+    Brh buf_a<#=i.name#>(a<#=i.name#>);
+<#      } #>
+<#      else if (i.variable.type == "bin.base64") #>
+<#      { #>
+    Brh buf_a<#=i.name#>;
+    buf_a<#=i.name#>.Set((const TByte*)a<#=i.name#>, a<#=i.name#>Len);
+<#      } #>
+<#  } #>
+<#  foreach (Argument o in a.outargs) #>
+<#  { #>
+<#      if (o.variable.type == "string" || o.variable.type == "uri" || o.variable.type == "bin.base64") #>
+<#      { #>
+    Brh buf_a<#=o.name#>;
+<#      } #>
+<#      else if (o.variable.type == "boolean") #>
+<#      { #>
+    *a<#=o.name#> = 0;
+<#      } #>
+<#  } #>
+<#  if (a.outargs.Count == 0) #>
+<#  { #>
+    proxyC->Proxy()->Sync<#=a.name#>(<#=InNames(a)#>);
+<#  } #>
+<#  else #>
+<#  { #>
+    proxyC->Proxy()->Sync<#=a.name#>(<#=InNamesTrailingComma(a)#><#=OutArgNames(a)#>);
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+<#          if (o.variable.type == "string" || o.variable.type == "uri" || o.variable.type == "bin.base64") #>
+<#          { #>
+<#              if (o.variable.type == "bin.base64") #>
+<#              { #>
+    *a<#=o.name#>Len = buf_a<#=o.name#>.Bytes();
+<#              } #>
+    *a<#=o.name#> = buf_a<#=o.name#>.Extract();
+<#          } #>
+<#      } #>
+<#  } #>
+}
+
+void <#=className#>Begin<#=a.name#>(THandle aHandle, <#=InTypesAndNamesTrailingComma(a)#>ZappCallbackAsync aCallback, void* aPtr)
+{
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    ASSERT(proxyC != NULL);
+<#  foreach (Argument i in a.inargs) #>
+<#  { #>
+<#      if (i.variable.type == "string" || i.variable.type == "uri") #>
+<#      { #>
+    Brh buf_a<#=i.name#>(a<#=i.name#>);
+<#      } #>
+<#      else if (i.variable.type == "bin.base64") #>
+<#      { #>
+    Brh buf_a<#=i.name#>;
+    buf_a<#=i.name#>.Set((const TByte*)a<#=i.name#>, a<#=i.name#>Len);
+<#      } #>
+<#  } #>
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    proxyC->Proxy()->Begin<#=a.name#>(<#=InNamesTrailingComma(a)#>functor);
+}
+
+int32_t <#=className#>End<#=a.name#>(THandle aHandle, <#=PrefixedOutArgTypesAndNames("ZappHandleAsync aAsync", a)#>)
+{
+    int32_t err = 0;
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    ASSERT(async != NULL);
+<#  foreach (Argument o in a.outargs) #>
+<#  { #>
+<#      if (o.variable.type == "string" || o.variable.type == "uri" || o.variable.type == "bin.base64") #>
+<#      { #>
+    Brh buf_a<#=o.name#>;
+    *a<#=o.name#> = NULL;
+<#          if (o.variable.type == "bin.base64") #>
+<#          { #>
+    *a<#=o.name#>Len = 0;
+<#          } #>
+<#      } #>
+<#      else if (o.variable.type == "boolean") #>
+<#      { #>
+    *a<#=o.name#> = 0;
+<#      } #>
+<#  } #>
+    try {
+        proxyC->Proxy()->End<#=a.name#>(<#=PrefixedOutputArgNames("*async", a)#>);
+<#  foreach (Argument o in a.outargs) #>
+<#  { #>
+<#      if (o.variable.type == "string" || o.variable.type == "uri" || o.variable.type == "bin.base64") #>
+<#      { #>
+<#          if (o.variable.type == "bin.base64") #>
+<#          { #>
+        *a<#=o.name#>Len = buf_a<#=o.name#>.Bytes();
+<#          } #>
+        *a<#=o.name#> = buf_a<#=o.name#>.Extract();
+<#      } #>
+<#  } #>
+    }
+    catch(...) {
+        err = -1;
+    }
+    return err;
+}
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+void <#=className#>SetProperty<#=s.name#>Changed(THandle aHandle, ZappCallback aCallback, void* aPtr)
+{
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    Functor functor = MakeFunctor(aPtr, aCallback);
+    proxyC->Proxy()->SetProperty<#=s.name#>Changed(functor);
+}
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+<#      if (s.type == "string" || s.type == "uri") #>
+<#      { #>
+void <#=className#>Property<#=s.name#>(THandle aHandle, char** a<#=s.name#>)
+{
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    Brhz buf_a<#=s.name#>;
+    proxyC->Proxy()->Property<#=s.name#>(buf_a<#=s.name#>);
+    *a<#=s.name#> = buf_a<#=s.name#>.Transfer();
+}
+<#      } #>
+<#      else if (s.type=="bin.base64") #>
+<#      { #>
+void <#=className#>Property<#=s.name#>(THandle aHandle, char** a<#=s.name#>, uint32_t* aLen)
+{
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    Brh buf_a<#=s.name#>;
+    proxyC->Proxy()->Property<#=s.name#>(buf_a<#=s.name#>);
+    *aLen = buf_a<#=s.name#>.Bytes();
+    *a<#=s.name#> = buf_a<#=s.name#>.Extract();
+}
+<#      } #>
+<#      else if (s.type=="boolean") #>
+<#      { #>
+void <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>)
+{
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    *a<#=s.name#> = false;
+    proxyC->Proxy()->Property<#=s.name#>(*(TBool*)a<#=s.name#>);
+}
+<#      } #>
+<#      else #>
+<#      { #>
+void <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>)
+{
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    proxyC->Proxy()->Property<#=s.name#>(*a<#=s.name#>);
+}
+<#      } #>
+<#  } #>
+
+<#+
+Dictionary<string,string> inargtype = new Dictionary<string,string>();
+Dictionary<string,string> outargtype = new Dictionary<string,string>();
+
+void Initialise()
+{
+    inargtype.Add("string", "const char*");
+    inargtype.Add("ui1", "uint32_t");
+    inargtype.Add("ui2", "uint32_t");
+    inargtype.Add("ui4", "uint32_t");
+    inargtype.Add("boolean", "uint32_t");
+    inargtype.Add("i1", "int32_t");
+    inargtype.Add("i2", "int32_t");
+    inargtype.Add("i4", "int32_t");
+    inargtype.Add("bin.base64", "const char*");
+    inargtype.Add("uri", "const char*");
+
+    outargtype.Add("string", "char**");
+    outargtype.Add("ui1", "uint32_t*");
+    outargtype.Add("ui2", "uint32_t*");
+    outargtype.Add("ui4", "uint32_t*");
+    outargtype.Add("boolean", "uint32_t*");
+    outargtype.Add("i1", "int32_t*");
+    outargtype.Add("i2", "int32_t*");
+    outargtype.Add("i4", "int32_t*");
+    outargtype.Add("bin.base64", "char**");
+    outargtype.Add("uri", "char**");
+}
+
+string InString(Method a)
+{
+    string result = "";
+
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+
+        result += inargtype[i.variable.type];
+        result += " ";
+        result += "a"+i.name;
+        if (i.variable.type == "bin.base64")
+        {
+            result += ", uint32_t a" + i.name + "Len";
+        }
+    }
+
+    return(result);
+}
+
+string InNames(Method a)
+{
+    string result = "";
+
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+
+        if (i.variable.type == "boolean")
+        {
+            result += "(a"+i.name+"==0? false : true)";
+        }
+        else
+        {
+            if (i.variable.type == "string" || i.variable.type == "uri" || i.variable.type == "bin.base64")
+            {
+                result += "buf_";
+            }
+            result += "a"+i.name;
+        }
+    }
+
+    return(result);
+}
+
+string OutArgTypesAndNames(Method a)
+{
+    string result = "";
+
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+
+        result += outargtype[o.variable.type];
+        result += " ";
+        result += "a"+o.name;
+        if (o.variable.type == "bin.base64")
+        {
+            result += ", uint32_t* a" + o.name + "Len";
+        }
+    }
+
+    return(result);
+}
+
+string OutArgNames(Method a)
+{
+    string result = "";
+
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+
+        if (o.variable.type == "boolean")
+        {
+            result += "*(TBool*)";
+        }
+        else if (o.variable.type == "string" || o.variable.type == "uri" || o.variable.type == "bin.base64")
+        {
+            result += "buf_";
+        }
+        else
+        {
+            result += "*";
+        }
+        result += "a" + o.name;
+    }
+
+    return(result);
+}
+
+string PrefixedOutputArgNames(string prefix, Method a)
+{
+    string args = OutArgNames(a);
+    string result = prefix;
+    if (args.Length > 0)
+    {
+        result += ", ";
+        result += args;
+    }
+    return(result);
+}
+
+string PrefixedOutArgTypesAndNames(string prefix, Method a)
+{
+    string result = prefix;
+    string outargs = OutArgTypesAndNames(a);
+    if (prefix.Length > 0 && outargs.Length > 0)
+    {
+        result += ", ";
+    }
+    result += outargs;
+    return(result);
+}
+
+string InTypesAndNamesTrailingComma(Method a)
+{
+    string result = InString(a);
+    if (result.Length > 0)
+    {
+        result += ", ";
+    }
+    return(result);
+}
+
+string InNamesTrailingComma(Method a)
+{
+    string result = InNames(a);
+    if (result.Length > 0)
+    {
+        result += ", ";
+    }
+    return(result);
+}
+
+string ArgString(Method a)
+{
+    string result = InString(a);
+    string outargs = OutArgTypesAndNames(a);
+    if (result.Length > 0 && outargs.Length > 0)
+    {
+        result += ", ";
+    }
+    result += outargs;;
+    if (result.Length > 0)
+    {
+        result = ", " + result;
+    }
+    return(result);
+}
+
+string TemplateArgument(string aName)
+{
+	string[] args =  System.Environment.GetCommandLineArgs();
+		
+	bool isarg = false;
+	
+	foreach (string arg in args)
+	{
+		if (isarg)
+		{
+			string[] parts = arg.Split(new char[] {':'});
+			
+			if (parts.Length == 2)
+			{
+				if (parts[0] == aName)
+				{
+					return (parts[1]);
+				}
+			}
+			
+			isarg = false;
+			continue;
+		}
+		
+		if (arg == "-a")
+		{
+			isarg = true;
+		}
+	}
+	
+	throw (new ArgumentException(aName + " not specified"));
+}
+#>

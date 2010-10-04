@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+
+    <actionList>
+        <action>
+            <name>Counters</name>
+            <argumentList>
+                <argument>
+                    <name>aTrackCount</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>TrackCount</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aDetailsCount</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>DetailsCount</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aMetatextCount</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>MetatextCount</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>Track</name>
+            <argumentList>
+                <argument>
+                    <name>aUri</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Uri</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aMetadata</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Metadata</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>Details</name>
+            <argumentList>
+                <argument>
+                    <name>aDuration</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Duration</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aBitRate</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>BitRate</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aBitDepth</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>BitDepth</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aSampleRate</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>SampleRate</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aLossless</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Lossless</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aCodecName</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>CodecName</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>Metatext</name>
+            <argumentList>
+                <argument>
+                    <name>aMetatext</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Metatext</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+    </actionList>
+
+    <serviceStateTable>
+        <stateVariable sendEvents="yes">
+            <name>TrackCount</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="yes">
+            <name>DetailsCount</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="yes">
+            <name>MetatextCount</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="yes">
+          <name>Uri</name>
+          <dataType>string</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="yes">
+          <name>Metadata</name>
+          <dataType>string</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="yes">
+            <name>Duration</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="yes">
+            <name>BitRate</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="yes">
+            <name>BitDepth</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="yes">
+            <name>SampleRate</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="yes">
+            <name>Lossless</name>
+            <dataType>boolean</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="yes">
+            <name>CodecName</name>
+            <dataType>string</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="yes">
+          <name>Metatext</name>
+          <dataType>string</dataType>
+        </stateVariable>
+   </serviceStateTable>
+</scpd>
+

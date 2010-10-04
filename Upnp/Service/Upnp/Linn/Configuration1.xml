@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+    
+    <actionList>
+    
+        <action>
+            <name>ConfigurationXml</name>
+            <argumentList>
+                <argument>
+                    <name>aConfigurationXml</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>ConfigurationXml</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+        <action>
+            <name>ParameterXml</name>
+            <argumentList>
+                <argument>
+                    <name>aParameterXml</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>ParameterXml</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+        <action>
+            <name>SetParameter</name>
+            <argumentList>
+                <argument>
+                    <name>aTarget</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Target</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aName</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Name</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aValue</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Value</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+    </actionList>
+    
+    <serviceStateTable>
+    
+        <stateVariable sendEvents="yes">
+            <name>ConfigurationXml</name>
+            <dataType>string</dataType>
+        </stateVariable>
+
+        <stateVariable sendEvents="yes">
+            <name>ParameterXml</name>
+            <dataType>string</dataType>
+        </stateVariable>
+
+        <stateVariable sendEvents="no">
+            <name>Target</name>
+            <dataType>string</dataType>
+        </stateVariable>
+
+        <stateVariable sendEvents="no">
+            <name>Name</name>
+            <dataType>string</dataType>
+        </stateVariable>
+        
+        <stateVariable sendEvents="no">
+            <name>Value</name>
+            <dataType>string</dataType>
+        </stateVariable>
+        
+    </serviceStateTable>
+    
+</scpd>
+
+

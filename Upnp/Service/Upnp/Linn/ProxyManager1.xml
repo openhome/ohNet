@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+   <specVersion>
+      <major>1</major>
+      <minor>0</minor>
+   </specVersion>
+    
+   <actionList>
+   
+      <action>
+         <name>KontrolProductConnected</name>
+         <argumentList>
+                <argument>
+                    <name>aConnected</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>KontrolProductConnected</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetKontrolProductConnected</name>
+         <argumentList>
+                <argument>
+                    <name>aConnected</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>KontrolProductConnected</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>KontrolProductComPort</name>
+         <argumentList>
+                <argument>
+                    <name>aPort</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>KontrolProductComPort</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetKontrolProductComPort</name>
+         <argumentList>
+                <argument>
+                    <name>aConnected</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>KontrolProductComPort</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>DiscPlayerConnected</name>
+         <argumentList>
+                <argument>
+                    <name>aConnected</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>DiscPlayerConnected</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetDiscPlayerConnected</name>
+         <argumentList>
+                <argument>
+                    <name>aConnected</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>DiscPlayerConnected</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>DiscPlayerComPort</name>
+         <argumentList>
+                <argument>
+                    <name>aPort</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>DiscPlayerComPort</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetDiscPlayerComPort</name>
+         <argumentList>
+                <argument>
+                    <name>aConnected</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>DiscPlayerComPort</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <!-- <action>
+         <name>TunerConnected</name>
+         <argumentList>
+                <argument>
+                    <name>aConnected</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>TunerConnected</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetTunerConnected</name>
+         <argumentList>
+                <argument>
+                    <name>aConnected</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>TunerConnected</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>TunerComPort</name>
+         <argumentList>
+                <argument>
+                    <name>aPort</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>TunerComPort</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetTunerComPort</name>
+         <argumentList>
+                <argument>
+                    <name>aConnected</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>TunerComPort</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action> -->
+      <action>
+         <name>TestKontrolProductConnection</name>
+         <argumentList>
+                <argument>
+                    <name>aResult</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Bool</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>TestDiscPlayerConnection</name>
+         <argumentList>
+                <argument>
+                    <name>aResult</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Bool</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <!-- <action>
+         <name>TestTunerConnection</name>
+         <argumentList>
+                <argument>
+                    <name>aResult</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Bool</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action> -->
+      
+   </actionList>
+   
+   <serviceStateTable>
+      
+      <stateVariable sendEvents="yes">
+         <name>KontrolProductConnected</name>
+         <dataType>string</dataType>
+         <allowedValueList>
+            <allowedValue>None</allowedValue>
+            <allowedValue>Klimax Kontrol</allowedValue>
+            <allowedValue>Akurate Kontrol</allowedValue>
+            <allowedValue>Kisto</allowedValue>
+            <allowedValue>Kinos</allowedValue>
+			<allowedValue>Majik Kontrol</allowedValue>
+            <allowedValue>Majik-I</allowedValue>
+            <allowedValue>Unidisk SC</allowedValue>
+            <allowedValue>Classik Movie</allowedValue>
+            <allowedValue>Classik Music</allowedValue>	
+            <allowedValue>Roomamp 2</allowedValue>
+         </allowedValueList>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>KontrolProductComPort</name>
+         <dataType>ui2</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>DiscPlayerConnected</name>
+         <dataType>string</dataType>
+         <allowedValueList>
+            <allowedValue>None</allowedValue>
+            <allowedValue>CD12</allowedValue>
+            <allowedValue>Akurate CD</allowedValue>
+            <allowedValue>Unidisk 1.1</allowedValue>
+            <allowedValue>Unidisk 2.1</allowedValue>
+            <allowedValue>Majik CD</allowedValue>
+            <allowedValue>Unidisk SC</allowedValue>
+            <allowedValue>Classik Movie</allowedValue>
+            <allowedValue>Classik Music</allowedValue>
+         </allowedValueList>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>DiscPlayerComPort</name>
+         <dataType>ui2</dataType>
+      </stateVariable>
+      <!-- <stateVariable sendEvents="yes">
+         <name>TunerConnected</name>
+         <dataType>string</dataType>
+         <allowedValueList>
+            <allowedValue>None</allowedValue>
+            <allowedValue>Classik Movie</allowedValue>
+            <allowedValue>Classik Music</allowedValue>
+            <allowedValue>Akurate Tuner</allowedValue>
+         </allowedValueList>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>TunerComPort</name>
+         <dataType>ui2</dataType>
+      </stateVariable> -->
+       
+      <stateVariable sendEvents="no">
+         <name>Bool</name>
+         <dataType>boolean</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="no">
+         <name>ComPort</name>
+         <dataType>ui2</dataType>
+      </stateVariable>
+      
+   </serviceStateTable>
+
+</scpd>
+

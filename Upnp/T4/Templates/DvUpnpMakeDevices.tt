@@ -1,0 +1,103 @@
+<#@ assembly name="Build/Tools/UpnpServiceMake.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Linn.Xml.UpnpServiceXml" #>
+<#@ template language="C#" #>
+<#
+	Document u = new Document(TemplateArgument("xml"));
+#>
+# Auto-generated file.  DO NOT EDIT DIRECTLY
+# Update CpUpnpMakeProxies.tt and run
+#    [n]make -s -f T4[Linux|Windows].mak UpnpServiceMakeGen
+# to apply any updates
+
+objects_devices = \
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+                  $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) \
+                  $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) \
+                  $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) \
+<#  } #>
+
+# Devices have well controlled dependencies so we can document a more limited set of headers
+headers_device = $(inc_build)/Cpp/ZappTypes.h \
+                $(inc_build)/DviService.h \
+                $(inc_build)/Cpp/Functor.h \
+                $(inc_build)/Service.h \
+                $(inc_build)/FunctorDvInvocation.h
+
+devices : upnp_core $(objects_devices)
+	$(ar)ZappDevices.$(libext) $(objects_devices)
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+$(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) : $(deviceSrcCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp $(headers_device)
+	$(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) -c $(cflags) $(includes) $(deviceSrcCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp
+$(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) : $(deviceSrcCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp $(headers_device)
+	$(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) -c $(cflags) $(includes) $(deviceSrcCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp
+$(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) : $(deviceSrcC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp $(headers_device) $(inc_build)/C/Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
+	$(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) -c $(cflags) $(includes) $(deviceSrcC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp
+<#  } #>
+
+device_dlls = \
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+             Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Dll \
+<#  } #>
+
+DvDeviceDlls: $(device_dlls)
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Dll: ZappUpnpDll $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext)
+	$(linker_dll_service)$(dllprefix)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(dllext) $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext)
+<#  } #>
+
+<#+
+string FilePrefix(Service s)
+{
+    string prefix = "";
+    char[] charSeparators = new char[] {'.'};
+    string[] res = s.iDomain.Split(charSeparators, StringSplitOptions.None);
+    foreach (string str in res)
+    {
+        prefix += str.Substring(0, 1).ToUpper();
+        if (str.Length > 1)
+        {
+            prefix += str.Substring(1, str.Length-1);
+        }
+    }
+    return prefix;
+}
+
+string TemplateArgument(string aName)
+{
+	string[] args =  System.Environment.GetCommandLineArgs();
+		
+	bool isarg = false;
+	
+	foreach (string arg in args)
+	{
+		if (isarg)
+		{
+			string[] parts = arg.Split(new char[] {':'});
+			
+			if (parts.Length == 2)
+			{
+				if (parts[0] == aName)
+				{
+					return (parts[1]);
+				}
+			}
+			
+			isarg = false;
+			continue;
+		}
+		
+		if (arg == "-a")
+		{
+			isarg = true;
+		}
+	}
+	
+	throw (new ArgumentException(aName + " not specified"));
+}
+#>

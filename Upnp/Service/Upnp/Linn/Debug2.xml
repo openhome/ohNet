@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+    
+    <actionList>
+        
+        <action>
+            <name>SetDebugLevel</name>
+            <argumentList>
+                <argument>
+                    <name>aDebugLevel</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_TUint</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+        <action>
+            <name>DebugLevel</name>
+            <argumentList>
+                <argument>
+                    <name>aDebugLevel</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_TUint</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>MemWrite</name>
+            <argumentList>
+                <argument>
+                    <name>aMemAddress</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Address</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aMemData</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Data</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+    </actionList>
+
+    <serviceStateTable>
+
+        <stateVariable sendEvents="no">
+            <name>A_ARG_TYPE_TUint</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+
+        <stateVariable sendEvents="no">
+            <name>A_ARG_TYPE_Address</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+
+        <stateVariable sendEvents="no">
+            <name>A_ARG_TYPE_Data</name>
+            <dataType>bin.base64</dataType>
+        </stateVariable>
+
+    </serviceStateTable>
+    
+</scpd>
+
+

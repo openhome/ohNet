@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5ED29186-FC66-485E-8C6E-137507DD6C79}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ZappSpy</RootNamespace>
+    <AssemblyName>ZappSpy</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <LinnConfiguration>debug</LinnConfiguration>
+    <IntermediateOutputPath>..\..\build\Pc\$(LinnConfiguration)\$(AssemblyName)</IntermediateOutputPath>
+    <OutputPath>..\..\install\Pc\debug\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Trace|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <LinnConfiguration>trace</LinnConfiguration>
+    <IntermediateOutputPath>..\..\build\Pc\$(LinnConfiguration)\$(AssemblyName)</IntermediateOutputPath>
+    <OutputPath>..\..\install\Pc\trace\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <LinnConfiguration>release</LinnConfiguration>
+    <IntermediateOutputPath>..\..\build\Pc\$(LinnConfiguration)\$(AssemblyName)</IntermediateOutputPath>
+    <OutputPath>..\..\install\Pc\release\bin\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\ZappSpy\HttpFetcher.cs" />
+    <Compile Include="..\..\ZappSpy\IPropertyBag.cs" />
+    <Compile Include="..\..\ZappSpy\UpnpServiceDescriptionInfo.cs" />
+    <Compile Include="..\..\ZappSpy\UpnpXml.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UpnpXml.tt</DependentUpon>
+    </Compile>
+    <Compile Include="..\..\ZappSpy\Version.cs" />
+    <Compile Include="..\..\ZappSpy\ZappLibraryWrapper.cs" />
+    <Compile Include="..\..\ZappSpy\UpnpDeviceFinder.cs" />
+    <Compile Include="..\..\ZappSpy\UpnpDeviceInfo.cs" />
+    <Compile Include="..\..\ZappSpy\Program.cs" />
+    <Compile Include="..\..\ZappSpy\Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\ZappSpy\UpnpServiceInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ZappControl\ZappControl.csproj">
+      <Project>{42701C32-E2F7-4FCE-AF13-0325B4464E05}</Project>
+      <Name>ZappControl</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\ZappSpy\UpnpXml.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>UpnpXml.cs</LastGenOutput>
+    </None>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\..\ZappSpy\todo.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>call "$(DevEnvDir)..\..\VC\vcvarsall.bat"
+cd "$(SolutionDir)..\Upnp"
+nmake.exe -s -f Zapp.mak ZappUpnpDll
+copy /B Build\Obj\Windows\ZappUpnp.dll $(TargetDir)</PreBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

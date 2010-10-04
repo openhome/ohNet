@@ -1,0 +1,438 @@
+Import('env')
+
+import platform
+########################################################################
+# All headers
+
+headers = Split("""
+    Thread/Thread.h
+    Device/DviStack.h
+    Device/DviSubscription.h
+    Device/DviService.h
+    Device/DviDevice.h
+    Device/FunctorDvInvocation.h
+    TestFramework/OptionParser.h
+    TestFramework/TestFramework.h
+    Api/OsTypes.h
+    Service/Service.h
+    Ssdp/Ssdp.h
+    Ssdp/Discovery.h
+    Timer/Timer.h
+    Os/Os.h
+    Os/Os.inl
+    Network/Network.h
+    Network/Http.h
+    Network/NetworkInterfaceList.h
+    Network/Subscription.h
+    Arch/Arch.h
+    ControlPoint/AsyncPrivate.h
+    ControlPoint/CpiService.h
+    ControlPoint/CpiStack.h
+    ControlPoint/FunctorCpiDevice.h
+    ControlPoint/CpiDevice.h
+    ControlPoint/CpiSubscription.h
+    Utils/Parser.h
+    Utils/Fifo.h
+    Utils/XmlParser.h
+    Utils/Printer.h
+    Utils/Maths.h
+    Utils/Queue.h
+    Utils/Converter.h
+    Utils/Stream.h
+    Utils/Error.h
+    Utils/Uri.h
+    Utils/Ascii.h
+    Utils/Debug.h
+    Stack.h
+    Standard.h
+    """)
+
+headersC = Split("""
+    Api/C/Async.h
+    Api/C/Zapp.h
+    Api/C/CpDevice.h
+    Api/C/CpDeviceUpnp.h
+    Api/C/CpProxy.h
+    Os/C/Os.h
+    Public/C/CpProxyCPrivate.h
+	""")
+
+headersCpp = Split("""
+    Api/Cpp/Functor.h
+    Api/Cpp/Exception.h
+    Api/Cpp/ZappTypes.h
+    Api/Cpp/FunctorMsg.h
+    Api/Cpp/Zapp.h
+    Api/Cpp/Buffer.h
+    Api/Cpp/Buffer.inl
+    Api/Cpp/FunctorAsync.h
+    Api/Cpp/CpProxy.h
+    Api/Cpp/DvResourceWriter.h
+	""")
+
+headersUpnp = Split("""
+    Device/Upnp/DviDeviceUpnp.h
+    Device/Upnp/DviServerUpnp.h
+    ControlPoint/Upnp/XmlFetcher.h
+    ControlPoint/Upnp/CpiDeviceUpnp.h
+    ControlPoint/Upnp/ProtocolUpnp.h
+    ControlPoint/Upnp/DeviceXml.h
+    ControlPoint/Upnp/EventUpnp.h
+    """)
+
+headersCppCore = Split("""
+    Api/Cpp/Core/CpDevice.h
+    Api/Cpp/Core/CpDeviceUpnp.h
+    Api/Cpp/Core/FunctorCpDevice.h
+    Api/Cpp/Core/DvDevice.h
+	""")
+
+headersCppStd = Split("""
+    Api/Cpp/Std/CpDevice.h
+    Api/Cpp/Std/CpDeviceUpnp.h
+    Api/Cpp/Std/FunctorCpDevice.h
+	""")
+
+headersTopology = Split("""
+    ControlPoint/Topology/CpTopology3.h
+    ControlPoint/Topology/CpTopology2.h
+    ControlPoint/Topology/CpTopology1.h
+    """)
+
+#Headers for proxy services
+proxyHeadersC = Split("""
+    Api/C/CpUpnpOrgAVTransport1.h
+    Api/C/CpUpnpOrgAVTransport2.h
+    Api/C/CpUpnpOrgConnectionManager1.h
+    Api/C/CpUpnpOrgConnectionManager2.h
+    Api/C/CpUpnpOrgContentDirectory1.h
+    Api/C/CpUpnpOrgContentDirectory2.h
+    Api/C/CpUpnpOrgContentDirectory3.h
+    Api/C/CpUpnpOrgRenderingControl1.h
+    Api/C/CpUpnpOrgRenderingControl2.h
+    Api/C/CpUpnpOrgScheduledRecording1.h
+    Api/C/CpUpnpOrgScheduledRecording2.h
+    Api/C/CpUpnpOrgSwitchPower1.h
+    Api/C/CpUpnpOrgDimming1.h
+    Api/C/CpLinnCoUkComponent1.h
+    Api/C/CpLinnCoUkConfiguration1.h
+    Api/C/CpLinnCoUkDebug2.h
+    Api/C/CpLinnCoUkDelay1.h
+    Api/C/CpLinnCoUkDiagnostics1.h
+    Api/C/CpLinnCoUkDs1.h
+    Api/C/CpLinnCoUkInfo1.h
+    Api/C/CpLinnCoUkJukebox1.h
+    Api/C/CpLinnCoUkMediaTime1.h
+    Api/C/CpLinnCoUkPlaylist1.h
+    Api/C/CpLinnCoUkPreamp4.h
+    Api/C/CpLinnCoUkProduct1.h
+    Api/C/CpLinnCoUkProduct2.h
+    Api/C/CpLinnCoUkProduct3.h
+    Api/C/CpLinnCoUkProxyManager1.h
+    Api/C/CpLinnCoUkPtest1.h
+    Api/C/CpLinnCoUkRadio1.h
+    Api/C/CpLinnCoUkTime1.h
+    Api/C/CpLinnCoUkUi2.h 
+    Api/C/CpLinnCoUkVolkano1.h  
+    Api/C/DvDevice.h
+    """)
+
+proxyHeadersCppStd = Split("""
+
+    Api/Cpp/Std/CpUpnpOrgAVTransport1.h
+    Api/Cpp/Std/CpUpnpOrgAVTransport2.h
+    Api/Cpp/Std/CpUpnpOrgConnectionManager1.h
+    Api/Cpp/Std/CpUpnpOrgConnectionManager2.h
+    Api/Cpp/Std/CpUpnpOrgContentDirectory1.h
+    Api/Cpp/Std/CpUpnpOrgContentDirectory2.h
+    Api/Cpp/Std/CpUpnpOrgContentDirectory3.h
+    Api/Cpp/Std/CpUpnpOrgRenderingControl1.h
+    Api/Cpp/Std/CpUpnpOrgRenderingControl2.h
+    Api/Cpp/Std/CpUpnpOrgScheduledRecording1.h
+    Api/Cpp/Std/CpUpnpOrgScheduledRecording2.h
+    Api/Cpp/Std/CpUpnpOrgSwitchPower1.h
+    Api/Cpp/Std/CpUpnpOrgDimming1.h
+    Api/Cpp/Std/CpLinnCoUkComponent1.h
+    Api/Cpp/Std/CpLinnCoUkConfiguration1.h
+    Api/Cpp/Std/CpLinnCoUkDebug2.h
+    Api/Cpp/Std/CpLinnCoUkDelay1.h
+    Api/Cpp/Std/CpLinnCoUkDiagnostics1.h
+    Api/Cpp/Std/CpLinnCoUkDs1.h
+    Api/Cpp/Std/CpLinnCoUkInfo1.h
+    Api/Cpp/Std/CpLinnCoUkJukebox1.h
+    Api/Cpp/Std/CpLinnCoUkMediaTime1.h
+    Api/Cpp/Std/CpLinnCoUkPlaylist1.h
+    Api/Cpp/Std/CpLinnCoUkPreamp4.h
+    Api/Cpp/Std/CpLinnCoUkProduct1.h
+    Api/Cpp/Std/CpLinnCoUkProduct2.h
+    Api/Cpp/Std/CpLinnCoUkProduct3.h
+    Api/Cpp/Std/CpLinnCoUkProxyManager1.h
+    Api/Cpp/Std/CpLinnCoUkPtest1.h
+    Api/Cpp/Std/CpLinnCoUkRadio1.h
+    Api/Cpp/Std/CpLinnCoUkTime1.h
+    Api/Cpp/Std/CpLinnCoUkUi2.h 
+    Api/Cpp/Std/CpLinnCoUkVolkano1.h 
+    """)
+	
+proxyHeadersCppCore = Split("""
+    Api/Cpp/Core/CpUpnpOrgAVTransport1.h
+    Api/Cpp/Core/CpUpnpOrgAVTransport2.h
+    Api/Cpp/Core/CpUpnpOrgConnectionManager2.h
+    Api/Cpp/Core/CpUpnpOrgConnectionManager1.h
+    Api/Cpp/Core/CpUpnpOrgContentDirectory1.h
+    Api/Cpp/Core/CpUpnpOrgContentDirectory2.h
+    Api/Cpp/Core/CpUpnpOrgContentDirectory3.h
+    Api/Cpp/Core/CpUpnpOrgRenderingControl1.h
+    Api/Cpp/Core/CpUpnpOrgRenderingControl2.h
+    Api/Cpp/Core/CpUpnpOrgScheduledRecording1.h
+    Api/Cpp/Core/CpUpnpOrgScheduledRecording2.h
+    Api/Cpp/Core/CpUpnpOrgSwitchPower1.h
+    Api/Cpp/Core/CpUpnpOrgDimming1.h
+    Api/Cpp/Core/CpLinnCoUkComponent1.h
+    Api/Cpp/Core/CpLinnCoUkConfiguration1.h
+    Api/Cpp/Core/CpLinnCoUkDebug2.h
+    Api/Cpp/Core/CpLinnCoUkDelay1.h
+    Api/Cpp/Core/CpLinnCoUkDiagnostics1.h
+    Api/Cpp/Core/CpLinnCoUkDs1.h
+    Api/Cpp/Core/CpLinnCoUkInfo1.h
+    Api/Cpp/Core/CpLinnCoUkJukebox1.h
+    Api/Cpp/Core/CpLinnCoUkMediaTime1.h
+    Api/Cpp/Core/CpLinnCoUkPlaylist1.h
+    Api/Cpp/Core/CpLinnCoUkPreamp4.h
+    Api/Cpp/Core/CpLinnCoUkProduct1.h
+    Api/Cpp/Core/CpLinnCoUkProduct2.h
+    Api/Cpp/Core/CpLinnCoUkProduct3.h
+    Api/Cpp/Core/CpLinnCoUkProxyManager1.h
+    Api/Cpp/Core/CpLinnCoUkPtest1.h
+    Api/Cpp/Core/CpLinnCoUkRadio1.h
+    Api/Cpp/Core/CpLinnCoUkTime1.h
+    Api/Cpp/Core/CpLinnCoUkUi2.h
+    Api/Cpp/Core/CpLinnCoUkVolkano1.h
+    """)
+
+headersInstall  = env.Install('$include/',			headers)
+headersInstall += env.Install('$include/',			headersUpnp)
+headersInstall += env.Install('$include/C',			headersC)
+headersInstall += env.Install('$include/Cpp',		headersCpp)
+headersInstall += env.Install('$include/Cpp/Core',	headersCppCore)
+headersInstall += env.Install('$include/Cpp/Std',	headersCppStd)
+
+if env['hardware'] == 'Windows':
+    headersInstall += env.Install("$include/", 'Arch/I386/ArchSpecific.h')
+elif env['hardware'] == 'PowerPc':
+    headersInstall += env.Install("$include/", 'Arch/PowerPc/ArchSpecific.h')
+elif env['hardware'] == 'Arm':
+    headersInstall += env.Install("$include/", 'Arch/Arm/ArchSpecific.h')
+
+proxyHeadersInstall  = env.Install('$include/C',    proxyHeadersC)
+proxyHeadersInstall += env.Install('$include/Core', proxyHeadersCppCore)
+proxyHeadersInstall += env.Install('$include/Std',  proxyHeadersCppStd)
+
+Alias('ZappUpnp', headersInstall)
+Alias('ZappUpnpStatic', headersInstall)
+Alias('Zapp', proxyHeadersInstall)
+Alias('Zapp', headersInstall)
+Alias('CpProxyDlls', proxyHeadersInstall)
+
+########################################################################
+# source for upnp core library
+
+upnpCoreSrc = Split("""
+	Utils/Ascii.cpp
+	Public/C/AsyncC.cpp
+	ControlPoint/AsyncPrivate.cpp
+	Buffer/Buffer.cpp
+	Utils/Converter.cpp
+	Ssdp/Discovery.cpp
+	Utils/Debug.cpp
+	Public/Cpp/Core/CpDeviceCore.cpp
+	Public/C/CpDeviceC.cpp
+	Public/Cpp/Std/CpDeviceStd.cpp
+	Public/Cpp/Core/CpDeviceUpnpCore.cpp
+	Public/C/CpDeviceUpnpC.cpp
+	Public/Cpp/Std/CpDeviceUpnpStd.cpp
+        ControlPoint/CpiDevice.cpp
+	ControlPoint/Upnp/CpiDeviceUpnp.cpp
+	ControlPoint/CpiService.cpp
+	ControlPoint/CpiStack.cpp
+	Public/Cpp/CpProxy.cpp
+	Public/C/CpProxyC.cpp
+        Device/DviDevice.cpp
+        Device/Upnp/DviDeviceUpnp.cpp
+        Device/Upnp/DviServerUpnp.cpp
+        Device/DviSubscription.cpp
+        Device/DviService.cpp
+        Device/DviStack.cpp
+        ControlPoint/Upnp/DeviceXml.cpp
+	Utils/Error.cpp
+	ControlPoint/Upnp/EventUpnp.cpp
+	Exception/Exception.cpp
+	Utils/Fifo.cpp
+	Network/Http.cpp
+	Utils/Maths.cpp
+	Network/NetworkInterfaceList.cpp
+	Network/NetworkSockets.cpp
+	Utils/Parser.cpp
+	Utils/Printer.cpp
+	ControlPoint/Upnp/ProtocolUpnp.cpp
+	Utils/Queue.cpp
+        Service/Service.cpp
+	Ssdp/Ssdp.cpp
+        Ssdp/SsdpDv.cpp
+	Stack.cpp
+	Utils/Stream.cpp
+	Network/Subscription.cpp
+	ControlPoint/CpiSubscription.cpp
+	Thread/Thread.cpp
+	Timer/Timer.cpp
+	Utils/Uri.cpp
+	Utils/XmlParser.cpp
+	ControlPoint/Upnp/XmlFetcher.cpp
+	Public/Cpp/Zapp.cpp
+        Public/Cpp/ZappCp.cpp
+        Public/Cpp/ZappDv.cpp
+        Public/Cpp/ZappCombined.cpp
+	Public/C/ZappC.cpp
+        Public/C/ZappCCp.cpp
+        Public/C/ZappCDv.cpp
+        Public/C/ZappCCombined.cpp
+	Os/OsWrapper.cpp
+        Os/Windows/Os.c
+    """)
+
+#Source for proxy services
+upnpProxySrc = Split("""
+    ControlPoint/Services/Cpp/Core/CpUpnpOrgAVTransport1.cpp
+    ControlPoint/Services/C/CpUpnpOrgAVTransport1C.cpp
+    ControlPoint/Services/Cpp/Std/CpUpnpOrgAVTransport1Std.cpp
+    ControlPoint/Services/Cpp/Core/CpUpnpOrgAVTransport2.cpp
+    ControlPoint/Services/C/CpUpnpOrgAVTransport2C.cpp
+    ControlPoint/Services/Cpp/Std/CpUpnpOrgAVTransport2Std.cpp
+    ControlPoint/Services/Cpp/Core/CpUpnpOrgConnectionManager1.cpp
+    ControlPoint/Services/C/CpUpnpOrgConnectionManager1C.cpp
+    ControlPoint/Services/Cpp/Std/CpUpnpOrgConnectionManager1Std.cpp
+    ControlPoint/Services/Cpp/Core/CpUpnpOrgConnectionManager2.cpp
+    ControlPoint/Services/C/CpUpnpOrgConnectionManager2C.cpp
+    ControlPoint/Services/Cpp/Std/CpUpnpOrgConnectionManager2Std.cpp
+    ControlPoint/Services/Cpp/Core/CpUpnpOrgContentDirectory1.cpp
+    ControlPoint/Services/C/CpUpnpOrgContentDirectory1C.cpp
+    ControlPoint/Services/Cpp/Std/CpUpnpOrgContentDirectory1Std.cpp
+    ControlPoint/Services/Cpp/Core/CpUpnpOrgContentDirectory2.cpp
+    ControlPoint/Services/C/CpUpnpOrgContentDirectory2C.cpp
+    ControlPoint/Services/Cpp/Std/CpUpnpOrgContentDirectory2Std.cpp
+    ControlPoint/Services/Cpp/Core/CpUpnpOrgContentDirectory3.cpp
+    ControlPoint/Services/C/CpUpnpOrgContentDirectory3C.cpp
+    ControlPoint/Services/Cpp/Std/CpUpnpOrgContentDirectory3Std.cpp
+    ControlPoint/Services/Cpp/Core/CpUpnpOrgRenderingControl1.cpp
+    ControlPoint/Services/C/CpUpnpOrgRenderingControl1C.cpp
+    ControlPoint/Services/Cpp/Std/CpUpnpOrgRenderingControl1Std.cpp
+    ControlPoint/Services/Cpp/Core/CpUpnpOrgRenderingControl2.cpp
+    ControlPoint/Services/C/CpUpnpOrgRenderingControl2C.cpp
+    ControlPoint/Services/Cpp/Std/CpUpnpOrgRenderingControl2Std.cpp
+    ControlPoint/Services/Cpp/Core/CpUpnpOrgScheduledRecording1.cpp
+    ControlPoint/Services/C/CpUpnpOrgScheduledRecording1C.cpp
+    ControlPoint/Services/Cpp/Std/CpUpnpOrgScheduledRecording1Std.cpp
+    ControlPoint/Services/Cpp/Core/CpUpnpOrgScheduledRecording2.cpp
+    ControlPoint/Services/C/CpUpnpOrgScheduledRecording2C.cpp
+    ControlPoint/Services/Cpp/Std/CpUpnpOrgScheduledRecording2Std.cpp
+    ControlPoint/Services/Cpp/Core/CpUpnpOrgSwitchPower1.cpp
+    ControlPoint/Services/C/CpUpnpOrgSwitchPower1C.cpp
+    ControlPoint/Services/Cpp/Std/CpUpnpOrgSwitchPower1Std.cpp
+    ControlPoint/Services/Cpp/Core/CpUpnpOrgDimming1.cpp
+    ControlPoint/Services/C/CpUpnpOrgDimming1C.cpp
+    ControlPoint/Services/Cpp/Std/CpUpnpOrgDimming1Std.cpp
+    ControlPoint/Services/Cpp/Core/CpLinnCoUkComponent1.cpp
+    ControlPoint/Services/C/CpLinnCoUkComponent1C.cpp
+    ControlPoint/Services/Cpp/Std/CpLinnCoUkComponent1Std.cpp
+    ControlPoint/Services/Cpp/Core/CpLinnCoUkConfiguration1.cpp
+    ControlPoint/Services/C/CpLinnCoUkConfiguration1C.cpp
+    ControlPoint/Services/Cpp/Std/CpLinnCoUkConfiguration1Std.cpp
+    ControlPoint/Services/Cpp/Core/CpLinnCoUkDebug2.cpp
+    ControlPoint/Services/C/CpLinnCoUkDebug2C.cpp
+    ControlPoint/Services/Cpp/Std/CpLinnCoUkDebug2Std.cpp
+    ControlPoint/Services/Cpp/Core/CpLinnCoUkDelay1.cpp
+    ControlPoint/Services/C/CpLinnCoUkDelay1C.cpp
+    ControlPoint/Services/Cpp/Std/CpLinnCoUkDelay1Std.cpp
+    ControlPoint/Services/Cpp/Core/CpLinnCoUkDiagnostics1.cpp
+    ControlPoint/Services/C/CpLinnCoUkDiagnostics1C.cpp
+    ControlPoint/Services/Cpp/Std/CpLinnCoUkDiagnostics1Std.cpp
+    ControlPoint/Services/Cpp/Core/CpLinnCoUkDs1.cpp
+    ControlPoint/Services/C/CpLinnCoUkDs1C.cpp
+    ControlPoint/Services/Cpp/Std/CpLinnCoUkDs1Std.cpp
+    ControlPoint/Services/Cpp/Core/CpLinnCoUkInfo1.cpp
+    ControlPoint/Services/C/CpLinnCoUkInfo1C.cpp
+    ControlPoint/Services/Cpp/Std/CpLinnCoUkInfo1Std.cpp
+    ControlPoint/Services/Cpp/Core/CpLinnCoUkJukebox1.cpp
+    ControlPoint/Services/C/CpLinnCoUkJukebox1C.cpp
+    ControlPoint/Services/Cpp/Std/CpLinnCoUkJukebox1Std.cpp
+    ControlPoint/Services/Cpp/Core/CpLinnCoUkMediaTime1.cpp
+    ControlPoint/Services/C/CpLinnCoUkMediaTime1C.cpp
+    ControlPoint/Services/Cpp/Std/CpLinnCoUkMediaTime1Std.cpp
+    ControlPoint/Services/Cpp/Core/CpLinnCoUkPlaylist1.cpp
+    ControlPoint/Services/C/CpLinnCoUkPlaylist1C.cpp
+    ControlPoint/Services/Cpp/Std/CpLinnCoUkPlaylist1Std.cpp
+    ControlPoint/Services/Cpp/Core/CpLinnCoUkPreamp4.cpp
+    ControlPoint/Services/C/CpLinnCoUkPreamp4C.cpp
+    ControlPoint/Services/Cpp/Std/CpLinnCoUkPreamp4Std.cpp
+    ControlPoint/Services/Cpp/Core/CpLinnCoUkProduct1.cpp
+    ControlPoint/Services/C/CpLinnCoUkProduct1C.cpp
+    ControlPoint/Services/Cpp/Std/CpLinnCoUkProduct1Std.cpp
+    ControlPoint/Services/Cpp/Core/CpLinnCoUkProduct2.cpp
+    ControlPoint/Services/C/CpLinnCoUkProduct2C.cpp
+    ControlPoint/Services/Cpp/Std/CpLinnCoUkProduct2Std.cpp
+    ControlPoint/Services/Cpp/Core/CpLinnCoUkProduct3.cpp
+    ControlPoint/Services/C/CpLinnCoUkProduct3C.cpp
+    ControlPoint/Services/Cpp/Std/CpLinnCoUkProduct3Std.cpp
+    ControlPoint/Services/Cpp/Core/CpLinnCoUkProxyManager1.cpp
+    ControlPoint/Services/C/CpLinnCoUkProxyManager1C.cpp
+    ControlPoint/Services/Cpp/Std/CpLinnCoUkProxyManager1Std.cpp
+    ControlPoint/Services/Cpp/Core/CpLinnCoUkPtest1.cpp
+    ControlPoint/Services/C/CpLinnCoUkPtest1C.cpp
+    ControlPoint/Services/Cpp/Std/CpLinnCoUkPtest1Std.cpp
+    ControlPoint/Services/Cpp/Core/CpLinnCoUkRadio1.cpp
+    ControlPoint/Services/C/CpLinnCoUkRadio1C.cpp
+    ControlPoint/Services/Cpp/Std/CpLinnCoUkRadio1Std.cpp
+    ControlPoint/Services/Cpp/Core/CpLinnCoUkTime1.cpp
+    ControlPoint/Services/C/CpLinnCoUkTime1C.cpp
+    ControlPoint/Services/Cpp/Std/CpLinnCoUkTime1Std.cpp
+    ControlPoint/Services/Cpp/Core/CpLinnCoUkUi2.cpp
+    ControlPoint/Services/C/CpLinnCoUkUi2C.cpp
+    ControlPoint/Services/Cpp/Std/CpLinnCoUkUi2Std.cpp
+    ControlPoint/Services/Cpp/Core/CpLinnCoUkVolkano1.cpp
+    ControlPoint/Services/C/CpLinnCoUkVolkano1C.cpp
+    ControlPoint/Services/Cpp/Std/CpLinnCoUkVolkano1Std.cpp
+    """)
+
+#Both the StaticLibarary() and SharedLibrary() builders produce .lib files
+#therefore what is essentially the same library must have different names for
+#the shared and static versions so they don't overwrite each other's .lib file.
+upnpCoreObj = env.SharedObject(upnpCoreSrc)
+upnpProxyObj = env.SharedObject(upnpProxySrc)
+zappUpnpStatic = env.StaticLibrary('ZappUpnpStatic', upnpCoreObj)
+zappUpnpStaticInstall = env.Install('$lib', [zappUpnpStatic])
+zappUpnp = env.SharedLibrary('ZappUpnp', upnpCoreObj)
+zappUpnpInstall = env.Install('$lib', zappUpnp)
+zappLib = env.StaticLibrary('Zapp', [upnpProxyObj, upnpCoreObj])
+zappLibInstall = env.Install('$lib', [zappLib])
+
+Alias('ZappUpnpStatic', zappUpnpStaticInstall)
+Alias('ZappUpnp', zappUpnpInstall)
+Alias('Zapp', zappLibInstall)
+#Technically, the CpProxyDlls target doesn't depend on ZappUpnp
+#(as shown in Proxies.mak), but since all of the Dlls built 
+#by the target do, this was assumed acceptable as it is more readable.
+Alias('CpProxyDlls', 'ZappUpnp')
+
+#This loop just builds all the CpProxy Dlls.
+i = 0
+while i < len(upnpProxySrc):
+    index = upnpProxySrc[i].rfind('/')+1
+    serviceName = upnpProxySrc[i][index:]
+    dllName = serviceName[:len(serviceName)-4]
+    proxyObj = env.SharedObject([upnpProxySrc[i], upnpProxySrc[i+1]])
+    proxyLib = env.SharedLibrary(dllName, proxyObj, LIBS=['Ws2_32.lib', 'Iphlpapi.lib', 'zappUpnp'], LIBPATH='$lib')
+    proxyLibInstall = env.Install('$lib', [proxyLib])
+    Alias('CpProxyDlls', proxyLibInstall)
+    i += 3
+
+Default('CpProxyDlls')

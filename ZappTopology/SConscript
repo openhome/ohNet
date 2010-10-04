@@ -1,0 +1,17 @@
+Import('_default_env')
+
+libs = Split("""
+    System.Core
+    WindowsBase
+    ZappControl
+    """)
+
+src = Split("""
+    DeviceListUpnp.cs
+    SubnetList.cs
+    """)
+
+zappTopologyShared = _default_env.CliLibrary('ZappTopology', src, CLILIBS=libs) 
+zappTopologySharedInstall = _default_env.Install('$install_dir/lib', zappTopologyShared)
+Alias('ZappTopology', zappTopologySharedInstall)
+Default('ZappTopology')

@@ -1,0 +1,514 @@
+<#@ assembly name="Build/Tools/UpnpServiceXml.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Linn.Xml.UpnpServiceXml" #>
+<#@ template language="C#" #>
+<#
+    string domain = TemplateArgument("domain");
+    string type = TemplateArgument("type");
+
+    uint version = 1;
+
+    try
+    {
+	   version = Convert.ToUInt32(TemplateArgument("version"));
+	}
+	catch (FormatException)
+	{
+        throw (new ArgumentException("Invalid version number specified"));
+	}
+    catch (OverflowException)
+    {
+        throw (new ArgumentException("Invalid version number specified"));
+    }
+
+    string upnpdomain = domain.Replace(".", "-");
+
+    if (upnpdomain.StartsWith("upnp-"))
+    {
+        upnpdomain = "schemas-" + upnpdomain;
+    }
+
+    string fileName = "";
+    char[] charSeparators = new char[] {'.'};
+    string[] res = domain.Split(charSeparators, StringSplitOptions.None);
+    foreach (string str in res)
+    {
+        fileName += str.Substring(0, 1).ToUpper();
+        if (str.Length > 1)
+        {
+            fileName += str.Substring(1, str.Length-1);
+        }
+    }
+    fileName += type;
+    fileName += version;
+    string className = "DvService" + fileName;
+    string dllName = "Dv" + fileName;
+
+    Initialise();
+
+	Document u = new Document(TemplateArgument("xml"));
+#>
+using System;
+using System.Runtime.InteropServices;
+using System.Text;
+using Zapp;
+
+namespace Zapp
+{
+    public class <#=className#> : IDisposable
+    {
+        [DllImport("<#=dllName#>")]
+        static extern uint <#=className#>Create(uint aDeviceHandle);
+        [DllImport("<#=dllName#>")]
+        static extern void <#=className#>Destroy(uint aHandle);
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+<#      if (s.type == "bin.base64") #>
+<#      { #>
+        [DllImport("<#=dllName#>")]
+        static extern unsafe int <#=className#>SetProperty<#=s.name#>(uint aHandle, <#=inargctype[s.type]#> aValue, int aValueLen);
+        [DllImport("<#=dllName#>")]
+        static extern unsafe void <#=className#>GetProperty<#=s.name#>(uint aHandle, <#=outargctype[s.type]#> aValue, int* aValueLen);
+<#      } #>
+<#      else #>
+<#      { #>
+        [DllImport("<#=dllName#>")]
+        static extern unsafe int <#=className#>SetProperty<#=s.name#>(uint aHandle, <#=inargctype[s.type]#> aValue);
+        [DllImport("<#=dllName#>")]
+        static extern unsafe void <#=className#>GetProperty<#=s.name#>(uint aHandle, <#=outargctype[s.type]#> aValue);
+<#      } #>
+<#  } #>
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+        [DllImport("<#=dllName#>")]
+        static extern void <#=className#>EnableAction<#=a.name#>(uint aHandle, Callback<#=a.name#> aCallback, IntPtr aPtr);
+<#  } #>
+        [DllImport("ZappUpnp")]
+        static extern unsafe void ZappFree(void* aPtr);
+
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+        private unsafe delegate int Callback<#=a.name#>(IntPtr aPtr, uint aVersion<#=ArgsCFull(a)#>);
+<#  } #>
+
+        private uint iHandle;
+        private GCHandle iGch;
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+        private Callback<#=a.name#> iCallback<#=a.name#>;
+<#  } #>
+
+        public <#=className#>(DvDevice aDevice)
+        {
+            iHandle = <#=className#>Create(aDevice.Handle()); 
+            iGch = GCHandle.Alloc(this);
+        }
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+        public unsafe void SetProperty<#=s.name#>(<#=argtype[s.type]#> aValue)
+        {
+<#      if (s.type == "boolean") #>
+<#      { #>
+            int value = (aValue ? 1 : 0);
+            if (0 != <#=className#>SetProperty<#=s.name#>(iHandle, value))
+<#      } #>
+<#      else if (s.type == "string" || s.type == "uri") #>
+<#      { #>
+            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
+            int err = <#=className#>SetProperty<#=s.name#>(iHandle, value);
+            Marshal.FreeHGlobal((IntPtr)value);
+            if (err != 0)
+<#      } #>
+<#      else if (s.type == "bin.base64") #>
+<#      { #>
+            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
+            int valueLen = aValue.Length;
+            int err = <#=className#>SetProperty<#=s.name#>(iHandle, value, valueLen);
+            Marshal.FreeHGlobal((IntPtr)value);
+            if (err != 0)
+<#      } #>
+<#      else #>
+<#      { #>
+            if (0 != <#=className#>SetProperty<#=s.name#>(iHandle, aValue))
+<#      } #>
+            {
+                throw(new PropertyUpdateError());
+            }
+        }
+
+        public unsafe void GetProperty<#=s.name#>(out <#=argtype[s.type]#> aValue)
+        {
+<#      if (s.type == "boolean") #>
+<#      { #>
+            int value;
+            <#=className#>GetProperty<#=s.name#>(iHandle, &value);
+            aValue = (value != 0);
+<#      } #>
+<#      else if (s.type == "string" || s.type == "uri") #>
+<#      { #>
+            char* value;
+            <#=className#>GetProperty<#=s.name#>(iHandle, &value);
+            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
+            ZappFree(value);
+<#      } #>
+<#      else if (s.type == "bin.base64") #>
+<#      { #>
+            char* value;
+            int valueLen;
+             <#=className#>GetProperty<#=s.name#>(iHandle, &value, &valueLen);
+            aValue = Marshal.PtrToStringAnsi((IntPtr)value, valueLen);
+            ZappFree(value);
+<#      } #>
+<#      else #>
+<#      { #>
+            fixed (<#=argtype[s.type]#>* value = &aValue)
+			{
+                <#=className#>GetProperty<#=s.name#>(iHandle, value);
+            }
+<#      } #>
+        }
+<#  } #>
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+        protected unsafe void EnableAction<#=a.name#>()
+        {
+            iCallback<#=a.name#> = new Callback<#=a.name#>(Do<#=a.name#>);
+            IntPtr ptr = GCHandle.ToIntPtr(iGch);
+            <#=className#>EnableAction<#=a.name#>(iHandle, iCallback<#=a.name#>, ptr);
+        }
+<#  } #>
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+        protected virtual void <#=a.name#>(uint aVersion<#=ArgsFull(a)#>)
+        {
+            throw (new ActionDisabledError());
+        }
+<#  } #>
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+        private static unsafe int Do<#=a.name#>(IntPtr aPtr, uint aVersion<#=ArgsCFull(a)#>)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            <#=className#> self = (<#=className#>)gch.Target;
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+<#          if (i.variable.type == "boolean") #>
+<#          { #>
+            bool <#=ArgNameLocal(i.name)#> = (a<#=i.name#> != 0);
+<#          } #>
+<#          else if (i.variable.type == "string" || i.variable.type == "uri") #>
+<#          { #>
+            string <#=ArgNameLocal(i.name)#> = Marshal.PtrToStringAnsi((IntPtr)a<#=i.name#>);
+<#          } #>
+<#          else if (i.variable.type == "bin.base64") #>
+<#          { #>
+            string <#=ArgNameLocal(i.name)#> = Marshal.PtrToStringAnsi((IntPtr)a<#=i.name#>, a<#=i.name#>Len);
+<#          } #>
+<#      } #>
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+            <#=argtype[o.variable.type]#> <#=ArgNameLocal(o.name)#>;
+<#      } #>
+            self.<#=a.name#>(aVersion<#=ArgNames(a)#>);
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+<#          if (o.variable.type == "boolean") #>
+<#          { #>
+            *a<#=o.name#> = (<#=ArgNameLocal(o.name)#> ? 1 : 0);
+<#          } #>
+<#          else if (o.variable.type == "string" || o.variable.type == "uri") #>
+<#          { #>
+            *a<#=o.name#> = (char*)Marshal.StringToHGlobalAnsi(<#=ArgNameLocal(o.name)#>).ToPointer();
+<#          } #>
+<#          else if (o.variable.type == "bin.base64") #>
+<#          { #>
+            *a<#=o.name#> = (char*)Marshal.StringToHGlobalAnsi(<#=ArgNameLocal(o.name)#>).ToPointer();
+            *a<#=o.name#>Len = <#=ArgNameLocal(o.name)#>.Length;
+<#          } #>
+<#          else #>
+<#          { #>
+            *a<#=o.name#> = <#=ArgNameLocal(o.name)#>;
+<#          } #>
+<#      } #>
+            return 0;
+        }
+<#  } #>
+
+
+        public void Dispose()
+        {
+            DoDispose();
+            GC.SuppressFinalize(this);
+        }
+
+        ~<#=className#>()
+        {
+            DoDispose();
+        }
+
+        private void DoDispose()
+        {
+            uint handle;
+            lock (this)
+            {
+                if (iHandle == 0)
+                {
+                    return;
+                }
+                handle = iHandle;
+                iHandle = 0;
+            }
+            <#=className#>Destroy(handle);
+            if (iGch.IsAllocated)
+            {
+                iGch.Free();
+            }
+        }
+    }
+}
+
+<#+
+Dictionary<string,string> argtype = new Dictionary<string,string>();
+Dictionary<string,string> inargctype = new Dictionary<string,string>();
+Dictionary<string,string> outargctype = new Dictionary<string,string>();
+
+void Initialise()
+{
+    argtype.Add("ui1", "uint");
+    argtype.Add("ui2", "uint");
+    argtype.Add("ui4", "uint");
+    argtype.Add("boolean", "bool");
+    argtype.Add("i1", "int");
+    argtype.Add("i2", "int");
+    argtype.Add("i4", "int");
+    argtype.Add("string", "string");
+    argtype.Add("bin.base64", "string");
+    argtype.Add("uri", "string");
+
+    inargctype.Add("ui1", "uint");
+    inargctype.Add("ui2", "uint");
+    inargctype.Add("ui4", "uint");
+    inargctype.Add("boolean", "int");
+    inargctype.Add("i1", "int");
+    inargctype.Add("i2", "int");
+    inargctype.Add("i4", "int");
+    inargctype.Add("string", "char*");
+    inargctype.Add("bin.base64", "char*");
+    inargctype.Add("uri", "char*");
+
+    outargctype.Add("ui1", "uint*");
+    outargctype.Add("ui2", "uint*");
+    outargctype.Add("ui4", "uint*");
+    outargctype.Add("boolean", "int*");
+    outargctype.Add("i1", "int*");
+    outargctype.Add("i2", "int*");
+    outargctype.Add("i4", "int*");
+    outargctype.Add("string", "char**");
+    outargctype.Add("bin.base64", "char**");
+    outargctype.Add("uri", "char**");
+}
+
+string InArgsCFull(Method a)
+{
+    string result = "";
+    
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        
+        result += inargctype[i.variable.type];
+        result += " ";
+        result += "a" + i.name;
+		if (i.variable.type == "bin.base64")
+		{
+			result += ", int a" + i.name + "Len";
+		}
+    }
+    
+    return result;
+}
+
+string OutArgsCFull(Method a)
+{
+    string result = "";
+    
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        
+        result += outargctype[o.variable.type];
+        result += " ";
+        result += "a" + o.name;
+		if (o.variable.type == "bin.base64")
+		{
+			result += ", int* a" + o.name + "Len";
+		}
+    }
+    
+    return result;
+}
+
+string ArgsCFull(Method a)
+{
+	string result = InArgsCFull(a);
+	string outArgs = OutArgsCFull(a);
+	if (outArgs.Length > 0)
+	{
+		if (result.Length > 0)
+		{
+			result += ", ";
+		}
+		result += outArgs;
+	}
+	if (result.Length > 0)
+	{
+		result = ", " + result;
+	}
+	return result;
+}
+
+string InArgsFull(Method a)
+{
+    string result = "";
+    
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        
+        result += argtype[i.variable.type];
+        result += " ";
+        result += "a" + i.name;
+    }
+    
+    return result;
+} 
+
+string OutArgsFull(Method a)
+{
+    string result = "";
+    
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        
+        result += "out ";
+        result += argtype[o.variable.type];
+        result += " ";
+        result += "a" + o.name;
+    }
+    
+    return result;
+}
+
+string ArgsFull(Method a)
+{
+	string result = InArgsFull(a);
+	string outArgs = OutArgsFull(a);
+	if (outArgs.Length > 0)
+	{
+		if (result.Length > 0)
+		{
+			result += ", ";
+		}
+		result += outArgs;
+	}
+	if (result.Length > 0)
+	{
+		result = ", " + result;
+	}
+	return result;
+}
+
+string ArgNameLocal(string aName)
+{
+	string name = aName.Substring(0, 1).ToLower();
+	if (aName.Length > 1)
+	{
+		name += aName.Substring(1, aName.Length-1);
+	}
+	return name;
+}
+
+string ArgNames(Method a)
+{
+    string result = "";
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+		if (i.variable.type == "boolean" || i.variable.type == "string" || i.variable.type == "bin.base64" || i.variable.type == "uri")
+		{
+			result += ArgNameLocal(i.name);
+		}
+		else
+		{
+	        result += "a" + i.name;
+		}
+    }
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+		result += "out " + ArgNameLocal(o.name);
+    }
+	if (result.Length > 0)
+	{
+		result = ", " + result;
+	}
+	return result;
+}
+
+string TemplateArgument(string aName)
+{
+	string[] args =  System.Environment.GetCommandLineArgs();
+		
+	bool isarg = false;
+	
+	foreach (string arg in args)
+	{
+		if (isarg)
+		{
+			string[] parts = arg.Split(new char[] {':'});
+			
+			if (parts.Length == 2)
+			{
+				if (parts[0] == aName)
+				{
+					return (parts[1]);
+				}
+			}
+			
+			isarg = false;
+			continue;
+		}
+		
+		if (arg == "-a")
+		{
+			isarg = true;
+		}
+	}
+	
+	throw (new ArgumentException(aName + " not specified"));
+}
+#>

@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+    <actionList>
+        <action>
+            <name>Read</name>
+            <argumentList>
+                <argument>
+                    <name>aId</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_FlashId</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aAddress</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Address</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aLength</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Bytes</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aBuffer</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Data</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>Write</name>
+            <argumentList>
+                <argument>
+                    <name>aId</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_FlashId</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aAddress</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Address</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aSource</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Data</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>Erase</name>
+            <argumentList>
+                <argument>
+                    <name>aId</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_FlashId</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aAddress</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Address</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>EraseSector</name>
+            <argumentList>
+                <argument>
+                    <name>aId</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_FlashId</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aSector</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Index</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>EraseSectors</name>
+            <argumentList>
+                <argument>
+                    <name>aId</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_FlashId</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aFirstSector</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Index</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aLastSector</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Index</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>EraseChip</name>
+            <argumentList>
+                <argument>
+                    <name>aId</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_FlashId</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>Sectors</name>
+            <argumentList>
+                <argument>
+                    <name>aId</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_FlashId</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aSectors</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Count</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+
+        <action>
+            <name>SectorBytes</name>
+            <argumentList>
+                <argument>
+                    <name>aId</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_FlashId</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aBytes</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Count</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>RomDirInfo</name>
+            <argumentList>
+                <argument>
+                    <name>aFlashIdMain</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_FlashId</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aOffsetMain</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Address</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aBytesMain</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Count</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aFlashIdFallback</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_FlashId</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aOffsetFallback</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Address</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aBytesFallback</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Count</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+    </actionList>
+
+    <serviceStateTable>
+        <stateVariable sendEvents="no">
+            <name>A_ARG_TYPE_FlashId</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+
+        <stateVariable sendEvents="no">
+            <name>A_ARG_TYPE_Address</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+
+        <stateVariable sendEvents="no">
+            <name>A_ARG_TYPE_Index</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+
+        <stateVariable sendEvents="no">
+            <name>A_ARG_TYPE_Count</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+
+        <stateVariable sendEvents="no">
+            <name>A_ARG_TYPE_Bytes</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+        
+        <stateVariable sendEvents="no">
+            <name>A_ARG_TYPE_Data</name>
+            <dataType>bin.base64</dataType>
+        </stateVariable>
+    </serviceStateTable>
+</scpd>
+
+

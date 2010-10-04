@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Zapp</RootNamespace>
+    <AssemblyName>ZappServices</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <LinnConfiguration>debug</LinnConfiguration>
+    <IntermediateOutputPath>..\..\build\Pc\$(LinnConfiguration)\$(AssemblyName)</IntermediateOutputPath>
+    <OutputPath>..\..\install\Pc\debug\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Trace|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <LinnConfiguration>trace</LinnConfiguration>
+    <IntermediateOutputPath>..\..\build\Pc\$(LinnConfiguration)\$(AssemblyName)</IntermediateOutputPath>
+    <OutputPath>..\..\install\Pc\trace\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <LinnConfiguration>release</LinnConfiguration>
+    <IntermediateOutputPath>..\..\build\Pc\$(LinnConfiguration)\$(AssemblyName)</IntermediateOutputPath>
+    <OutputPath>..\..\install\Pc\release\bin\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent>call "$(DevEnvDir)..\..\VC\vcvarsall.bat"
+cd "$(SolutionDir)..\Upnp"
+nmake.exe -s -f Zapp.mak CpProxyDlls
+copy /B Build\Obj\Windows\CpLinnCoUk*.dll "$(TargetDir)"
+copy /B Build\Obj\Windows\CpUpnpOrg*.dll "$(TargetDir)"</PreBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpLinnCoUkComponent1.cs">
+      <Link>CpLinnCoUkComponent1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpLinnCoUkConfiguration1.cs">
+      <Link>CpLinnCoUkConfiguration1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpLinnCoUkDebug2.cs">
+      <Link>CpLinnCoUkDebug2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpLinnCoUkDelay1.cs">
+      <Link>CpLinnCoUkDelay1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpLinnCoUkDiagnostics1.cs">
+      <Link>CpLinnCoUkDiagnostics1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpLinnCoUkDs1.cs">
+      <Link>CpLinnCoUkDs1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpLinnCoUkInfo1.cs">
+      <Link>CpLinnCoUkInfo1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpLinnCoUkJukebox1.cs">
+      <Link>CpLinnCoUkJukebox1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpLinnCoUkMediaTime1.cs">
+      <Link>CpLinnCoUkMediaTime1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpLinnCoUkPlaylist1.cs">
+      <Link>CpLinnCoUkPlaylist1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpLinnCoUkPreamp4.cs">
+      <Link>CpLinnCoUkPreamp4.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpLinnCoUkProduct1.cs">
+      <Link>CpLinnCoUkProduct1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpLinnCoUkProduct2.cs">
+      <Link>CpLinnCoUkProduct2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpLinnCoUkProduct3.cs">
+      <Link>CpLinnCoUkProduct3.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpLinnCoUkProxyManager1.cs">
+      <Link>CpLinnCoUkProxyManager1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpLinnCoUkPtest1.cs">
+      <Link>CpLinnCoUkPtest1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpLinnCoUkRadio1.cs">
+      <Link>CpLinnCoUkRadio1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpLinnCoUkTime1.cs">
+      <Link>CpLinnCoUkTime1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpLinnCoUkUi2.cs">
+      <Link>CpLinnCoUkUi2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpLinnCoUkVolkano1.cs">
+      <Link>CpLinnCoUkVolkano1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpUpnpOrgAVTransport1.cs">
+      <Link>CpUpnpOrgAVTransport1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpUpnpOrgConnectionManager1.cs">
+      <Link>CpUpnpOrgConnectionManager1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpUpnpOrgContentDirectory1.cs">
+      <Link>CpUpnpOrgContentDirectory1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpUpnpOrgRenderingControl1.cs">
+      <Link>CpUpnpOrgRenderingControl1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\ControlPoint\Services\Cs\CpUpnpOrgRenderingControl2.cs">
+      <Link>CpUpnpOrgRenderingControl2.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ZappControl\ZappControl.csproj">
+      <Project>{42701C32-E2F7-4FCE-AF13-0325B4464E05}</Project>
+      <Name>ZappControl</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

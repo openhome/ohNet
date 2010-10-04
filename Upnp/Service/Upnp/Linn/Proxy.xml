@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+   <specVersion>
+      <major>1</major>
+      <minor>0</minor>
+   </specVersion>
+
+   <actionList>
+
+      <action>
+         <name>SoftwareVersion</name>
+         <argumentList>
+                <argument>
+                    <name>aSoftwareVersion</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>typeString</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>HardwareVersion</name>
+         <argumentList>
+                <argument>
+                    <name>aHardwareVersion</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>typeString</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+
+   </actionList>
+
+   <serviceStateTable>
+
+      <stateVariable sendEvents="no">
+         <name>typeString</name>
+         <dataType>string</dataType>
+      </stateVariable>
+
+   </serviceStateTable>
+
+</scpd>
+

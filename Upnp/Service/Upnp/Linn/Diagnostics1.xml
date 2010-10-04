@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+    <actionList>
+        
+        <action>
+            <name>Echo</name>
+            <argumentList>
+                <argument>
+                    <name>aIn</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_String</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aOut</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_String</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>ElfFile</name>
+            <argumentList>
+                <argument>
+                    <name>aElfFile</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_String</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>ElfFingerprint</name>
+            <argumentList>
+                <argument>
+                    <name>aElfFileFingerprint</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_String</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+        <action>
+            <name>CrashDataStatus</name>
+            <argumentList>
+                <argument>
+                    <name>aCrashDataStatus</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_String</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>CrashDataFetch</name>
+            <argumentList>
+                <argument>
+                    <name>aCrashData</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Data</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>CrashDataClear</name>
+        </action>
+
+        <action>
+            <name>SysLog</name>
+            <argumentList>
+                <argument>
+                    <name>aSysLog</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_Data</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>Diagnostic</name>
+            <argumentList>
+                <argument>
+                    <name>aDiagnosticType</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_String</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aDiagnosticInfo</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_String</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>StateVariable</name>
+            <argumentList>
+                <argument>
+                    <name>aStateVariable</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>aStateVariable</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>SetStateVariable</name>
+            <argumentList>
+                <argument>
+                    <name>aStateVariable</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>aStateVariable</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>StateVariablePeriod</name>
+            <argumentList>
+                <argument>
+                    <name>aPeriod</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_TUint</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>SetStateVariablePeriod</name>
+            <argumentList>
+                <argument>
+                    <name>aPeriod</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_TUint</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>Reboot</name>
+            <argumentList>
+                <argument>
+                    <name>aDelay</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_TUint</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+    </actionList>
+
+    <serviceStateTable>
+
+        <stateVariable sendEvents="yes">
+            <name>aStateVariable</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+
+        <stateVariable sendEvents="no">
+            <name>A_ARG_TYPE_Data</name>
+            <dataType>bin.base64</dataType>
+        </stateVariable>
+
+        <stateVariable sendEvents="no">
+            <name>A_ARG_TYPE_String</name>
+            <dataType>string</dataType>
+        </stateVariable>
+        
+        <stateVariable sendEvents="no">
+            <name>A_ARG_TYPE_Bool</name>
+            <dataType>boolean</dataType>
+        </stateVariable>
+
+        <stateVariable sendEvents="no">
+            <name>A_ARG_TYPE_TUint</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+
+    </serviceStateTable>
+</scpd>
+
+

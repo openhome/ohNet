@@ -1,0 +1,131 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZappServices", "ZappServices\ZappServices.csproj", "{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZappControl", "ZappControl\ZappControl.csproj", "{42701C32-E2F7-4FCE-AF13-0325B4464E05}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZappSpy", "ZappSpy\ZappSpy.csproj", "{5ED29186-FC66-485E-8C6E-137507DD6C79}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZappSpyGui", "ZappSpyGui\ZappSpyGui.csproj", "{C41C3A7D-5934-40B1-88DC-B36F3A427422}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Linux Debug|Any CPU = Linux Debug|Any CPU
+		Linux Release|Any CPU = Linux Release|Any CPU
+		Linux Trace|Any CPU = Linux Trace|Any CPU
+		MacOsX Debug|Any CPU = MacOsX Debug|Any CPU
+		MacOsX Release|Any CPU = MacOsX Release|Any CPU
+		MacOsX Trace|Any CPU = MacOsX Trace|Any CPU
+		Release|Any CPU = Release|Any CPU
+		Trace|Any CPU = Trace|Any CPU
+		Windows Debug|Any CPU = Windows Debug|Any CPU
+		Windows Release|Any CPU = Windows Release|Any CPU
+		Windows Trace|Any CPU = Windows Trace|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.Linux Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.Linux Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.Linux Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.Linux Release|Any CPU.Build.0 = Release|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.Linux Trace|Any CPU.ActiveCfg = Trace|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.Linux Trace|Any CPU.Build.0 = Trace|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.MacOsX Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.MacOsX Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.MacOsX Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.MacOsX Release|Any CPU.Build.0 = Release|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.MacOsX Trace|Any CPU.ActiveCfg = Trace|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.MacOsX Trace|Any CPU.Build.0 = Trace|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.Trace|Any CPU.ActiveCfg = Trace|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.Trace|Any CPU.Build.0 = Trace|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.Windows Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.Windows Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.Windows Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.Windows Release|Any CPU.Build.0 = Release|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.Windows Trace|Any CPU.ActiveCfg = Trace|Any CPU
+		{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}.Windows Trace|Any CPU.Build.0 = Trace|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.Linux Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.Linux Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.Linux Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.Linux Release|Any CPU.Build.0 = Release|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.Linux Trace|Any CPU.ActiveCfg = Trace|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.Linux Trace|Any CPU.Build.0 = Trace|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.MacOsX Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.MacOsX Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.MacOsX Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.MacOsX Release|Any CPU.Build.0 = Release|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.MacOsX Trace|Any CPU.ActiveCfg = Trace|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.MacOsX Trace|Any CPU.Build.0 = Trace|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.Trace|Any CPU.ActiveCfg = Trace|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.Trace|Any CPU.Build.0 = Trace|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.Windows Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.Windows Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.Windows Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.Windows Release|Any CPU.Build.0 = Release|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.Windows Trace|Any CPU.ActiveCfg = Trace|Any CPU
+		{42701C32-E2F7-4FCE-AF13-0325B4464E05}.Windows Trace|Any CPU.Build.0 = Trace|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.Linux Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.Linux Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.Linux Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.Linux Release|Any CPU.Build.0 = Release|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.Linux Trace|Any CPU.ActiveCfg = Trace|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.Linux Trace|Any CPU.Build.0 = Trace|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.MacOsX Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.MacOsX Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.MacOsX Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.MacOsX Release|Any CPU.Build.0 = Release|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.MacOsX Trace|Any CPU.ActiveCfg = Trace|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.MacOsX Trace|Any CPU.Build.0 = Trace|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.Trace|Any CPU.ActiveCfg = Trace|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.Trace|Any CPU.Build.0 = Trace|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.Windows Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.Windows Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.Windows Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.Windows Release|Any CPU.Build.0 = Release|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.Windows Trace|Any CPU.ActiveCfg = Trace|Any CPU
+		{5ED29186-FC66-485E-8C6E-137507DD6C79}.Windows Trace|Any CPU.Build.0 = Trace|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.Linux Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.Linux Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.Linux Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.Linux Release|Any CPU.Build.0 = Release|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.Linux Trace|Any CPU.ActiveCfg = Trace|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.Linux Trace|Any CPU.Build.0 = Trace|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.MacOsX Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.MacOsX Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.MacOsX Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.MacOsX Release|Any CPU.Build.0 = Release|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.MacOsX Trace|Any CPU.ActiveCfg = Trace|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.MacOsX Trace|Any CPU.Build.0 = Trace|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.Trace|Any CPU.ActiveCfg = Trace|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.Trace|Any CPU.Build.0 = Trace|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.Windows Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.Windows Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.Windows Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.Windows Release|Any CPU.Build.0 = Release|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.Windows Trace|Any CPU.ActiveCfg = Trace|Any CPU
+		{C41C3A7D-5934-40B1-88DC-B36F3A427422}.Windows Trace|Any CPU.Build.0 = Trace|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = ZappSpyGui\ZappSpyGui.csproj
+	EndGlobalSection
+EndGlobal

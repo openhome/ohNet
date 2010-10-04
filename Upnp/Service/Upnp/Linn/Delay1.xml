@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+    
+    <actionList>
+    
+        <action>
+            <name>PresetXml</name>
+            <argumentList>
+                <argument>
+                    <name>aPresetXml</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>PresetXml</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>PresetIndex</name>
+            <argumentList>
+                <argument>
+                    <name>aIndex</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>PresetIndex</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>SetPresetIndex</name>
+            <argumentList>
+                <argument>
+                    <name>aIndex</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>PresetIndex</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        
+        <action>
+            <name>SetPresetDelay</name>
+            <argumentList>
+                <argument>
+                    <name>aIndex</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Index</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aDelay</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Delay</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>SetPresetVisible</name>
+            <argumentList>
+                <argument>
+                    <name>aIndex</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Index</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aVisible</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Visible</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>SetPresetName</name>
+            <argumentList>
+                <argument>
+                    <name>aIndex</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Index</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aName</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>Name</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>DelayMinimum</name>
+            <argumentList>
+                <argument>
+                    <name>aDelay</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Uint4</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>DelayMaximum</name>
+            <argumentList>
+                <argument>
+                    <name>aDelay</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Uint4</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+        <action>
+            <name>PresetCount</name>
+            <argumentList>
+                <argument>
+                    <name>aCount</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Uint4</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+
+
+
+    </actionList>
+    
+    <serviceStateTable>
+    
+        <stateVariable sendEvents="yes">
+            <name>PresetXml</name>
+            <dataType>string</dataType>
+        </stateVariable>
+
+        <stateVariable sendEvents="yes">
+            <name>PresetIndex</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+
+        <stateVariable sendEvents="no">
+            <name>Visible</name>
+            <dataType>boolean</dataType>
+        </stateVariable>
+
+        <stateVariable sendEvents="no">
+            <name>Name</name>
+            <dataType>string</dataType>
+        </stateVariable>
+        
+        <stateVariable sendEvents="no">
+            <name>Delay</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+
+        <stateVariable sendEvents="no">
+            <name>Index</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+
+        <stateVariable sendEvents="no">
+            <name>Uint4</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+       
+    </serviceStateTable>
+    
+</scpd>
+
+

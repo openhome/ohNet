@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+    <specVersion>
+        <major>1</major>
+        <minor>0</minor>
+    </specVersion>
+
+    <actionList>
+        <action>
+            <name>SetPresetPrefix</name>
+            <argumentList>
+                <argument>
+                    <name>aUri</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>PresetPrefix</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>PresetPrefix</name>
+            <argumentList>
+                <argument>
+                    <name>aUri</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>PresetPrefix</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>SetAlbumArtFileName</name>
+            <argumentList>
+                <argument>
+                    <name>aName</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>AlbumArtFileName</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>AlbumArtFileName</name>
+            <argumentList>
+                <argument>
+                    <name>aName</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>AlbumArtFileName</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>SetCurrentPreset</name>
+            <argumentList>
+                <argument>
+                    <name>aPreset</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>CurrentPreset</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>CurrentPreset</name>
+            <argumentList>
+                <argument>
+                    <name>aPreset</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>CurrentPreset</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>PresetMetaData</name>
+            <argumentList>
+                <argument>
+                    <name>aPreset</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>CurrentPreset</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aMetaData</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>MetaData</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>LoadManifest</name>
+            <argumentList>
+                <argument>
+                    <name>aTotalPresets</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>CurrentPreset</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+    </actionList>
+
+    <serviceStateTable>
+        <stateVariable sendEvents="no">
+            <name>MetaData</name>
+            <dataType>string</dataType>
+        </stateVariable>
+        
+        <stateVariable sendEvents="yes">
+            <name>CurrentPreset</name>
+            <dataType>ui4</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="yes">
+            <name>PresetPrefix</name>
+            <dataType>string</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="yes">
+            <name>AlbumArtFileName</name>
+            <dataType>string</dataType>
+        </stateVariable>
+    </serviceStateTable>
+</scpd>
+

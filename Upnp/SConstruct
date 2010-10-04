@@ -1,0 +1,45 @@
+import os
+
+opts = Variables('./config.py')
+possibleTargets = [x for x in os.listdir('../BuildSystem/Hardware') if x not in ['Bsp', '.svn']]
+opts.Add(EnumVariable('variant', '<HELP variant>', 'debug', allowed_values = ('debug', 'trace', 'release')))
+opts.Add(EnumVariable('host', '<HELP host>', 'Windows', allowed_values = ('Windows', 'Linux')))
+opts.Add(EnumVariable('hardware', '<HELP hardware>', 'Windows', allowed_values = ('Windows', 'Arm', 'PowerPc')))
+env = Environment(options = opts)
+Export('env')
+
+env.Append(build_dir    = os.getcwd()+ "/../build/" + env['hardware'] + '/' + env['variant'])
+env.Append(install_dir  = os.getcwd()+ "/../install/" + env['hardware'] + '/' + env['variant'])
+env.Append(include      = '$build_dir/include')
+env.Append(lib          = '$install_dir/lib')
+env.Append(CPPPATH      = ['$include', '$include/Cpp'])
+
+#In order for this script to run on 64-bit versions of windows, you must run this command in the windows command prompt before running scons.
+#set PROCESSOR_ARCHITECTURE=x86
+#This command ensures a 32-bit compiler is used by scons to compile the c++ code in the zapp library.
+#Unfortunately, putting it in an Execute statement to be run inside this SConstruct is no good as scons parses the windows environment
+#variables before running this SConstruct.
+if env['host'] == 'Windows':
+    env.Append(LIBS = ['Ws2_32.lib', 'Iphlpapi.lib'])
+    env.Append(CCFLAGS = '/MD /W4 /WX /EHsc /RTC1 /Gz -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS /Od -DDllImport=__declspec(dllimport) -DDllExport=__declspec(dllexport)')
+elif env['host'] == 'Linux':
+    env.Append(LIBS = ['pthread'])
+    env.Append(CCFLAGS = [
+        '-fexceptions',
+        '-Wall',
+        '-pipe',
+        '-g3',
+        '-O0',
+        '-Wno-psabi',
+        '-fvisibility=hidden'
+        ])
+    env.Append(CPPDEFINES = [
+        '_GNU_SOURCE',
+        '_REENTRANT',
+        'DEFINE_LITTLE_ENDIAN',
+        'DEFINE_TRACE',
+        ('DllImport', '''__attribute__ ((visibility(\\"default\\")))'''),
+        ('DllExport', '''__attribute__ ((visibility(\\"default\\")))''')
+        ])
+
+SConscript('SConscript', variant_dir='Build_Scons', duplicate=0)

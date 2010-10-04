@@ -1,0 +1,221 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Windows Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{DDD50783-4131-4138-85E6-72377C232B1C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Linn.Topology</RootNamespace>
+    <AssemblyName>OssTopology</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Windows Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <IntermediateOutputPath>..\..\build\Windows\debug\$(AssemblyName)</IntermediateOutputPath>
+    <OutputPath>..\..\install\Windows\debug\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Windows Trace|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <IntermediateOutputPath>..\..\build\Windows\trace\$(AssemblyName)</IntermediateOutputPath>
+    <OutputPath>..\..\install\Windows\trace\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Windows Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <IntermediateOutputPath>..\..\build\Windows\release\$(AssemblyName)</IntermediateOutputPath>
+    <OutputPath>..\..\install\Windows\release\bin\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Linux Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <IntermediateOutputPath>..\..\build\Linux\debug\$(AssemblyName)</IntermediateOutputPath>
+    <OutputPath>..\..\install\Linux\debug\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Linux Trace|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <IntermediateOutputPath>..\..\build\Linux\trace\$(AssemblyName)</IntermediateOutputPath>
+    <OutputPath>..\..\install\Linux\trace\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Linux Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <IntermediateOutputPath>..\..\build\Linux\release\$(AssemblyName)</IntermediateOutputPath>
+    <OutputPath>..\..\install\Linux\release\bin\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'MacOsX Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <IntermediateOutputPath>..\..\build\MacOsX\debug\$(AssemblyName)</IntermediateOutputPath>
+    <OutputPath>..\..\install\MacOsX\debug\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'MacOsX Trace|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <IntermediateOutputPath>..\..\build\MacOsX\trace\$(AssemblyName)</IntermediateOutputPath>
+    <OutputPath>..\..\install\MacOsX\trace\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'MacOsX Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <IntermediateOutputPath>..\..\build\MacOsX\release\$(AssemblyName)</IntermediateOutputPath>
+    <OutputPath>..\..\install\MacOsX\release\bin\</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\LibUpnpCil\Topology\Linn\Topology\Boxes.cs">
+      <Link>Linn\Topology\Boxes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Linn\Topology\DeviceFinder.cs">
+      <Link>Linn\Topology\DeviceFinder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Linn\Topology\House0.cs">
+      <Link>Linn\Topology\House0.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Linn\Topology\House1.cs">
+      <Link>Linn\Topology\House1.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Linn\Topology\House2.cs">
+      <Link>Linn\Topology\House2.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Linn\Topology\Library.cs">
+      <Link>Linn\Topology\Library.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Linn\Topology\ModelIdArray.cs">
+      <Link>Linn\Topology\ModelIdArray.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Linn\Topology\ModelLibrary.cs">
+      <Link>Linn\Topology\ModelLibrary.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Linn\Topology\ModelMediaServer.cs">
+      <Link>Linn\Topology\ModelMediaServer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Linn\Topology\ModelSource.cs">
+      <Link>Linn\Topology\ModelSource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Linn\Topology\ModelSourceAuxiliary.cs">
+      <Link>Linn\Topology\ModelSourceAuxiliary.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Linn\Topology\ModelSourceDiscPlayer.cs">
+      <Link>Linn\Topology\ModelSourceDiscPlayer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Linn\Topology\ModelSourceDiscPlayerSdp.cs">
+      <Link>Linn\Topology\ModelSourceDiscPlayerSdp.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Linn\Topology\ModelSourceMediaRenderer.cs">
+      <Link>Linn\Topology\ModelSourceMediaRenderer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Linn\Topology\ModelSourceMediaRendererDs.cs">
+      <Link>Linn\Topology\ModelSourceMediaRendererDs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Linn\Topology\ModelSourceMediaRendererUpnpAv.cs">
+      <Link>Linn\Topology\ModelSourceMediaRendererUpnpAv.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Linn\Topology\ModelSourceRadio.cs">
+      <Link>Linn\Topology\ModelSourceRadio.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Linn\Topology\ModelVolumeControl.cs">
+      <Link>Linn\Topology\ModelVolumeControl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Linn\Topology\ModelVolumeControlPreamp.cs">
+      <Link>Linn\Topology\ModelVolumeControlPreamp.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Linn\Topology\ModelVolumeControlUpnpAv.cs">
+      <Link>Linn\Topology\ModelVolumeControlUpnpAv.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Linn\Topology\Tree.cs">
+      <Link>Linn\Topology\Tree.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\LibUpnpCil\Topology\Properties\Resources.Designer.cs">
+      <Link>Properties\Resources.Designer.cs</Link>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OssControl\OssControl.csproj">
+      <Project>{1D1891B8-F223-4493-8E1C-D095FBDB540C}</Project>
+      <Name>OssControl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OssCore\OssCore.csproj">
+      <Project>{ED80C071-32F7-4B26-B271-52A163AFB43D}</Project>
+      <Name>OssCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OssDidlLite\OssDidlLite.csproj">
+      <Project>{D07487C1-8D3F-43C8-BE1B-C1BFB5B2C562}</Project>
+      <Name>OssDidlLite</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OssServices\OssServices.csproj">
+      <Project>{084A5442-3B6C-458D-BE7E-F48FBD74AB0A}</Project>
+      <Name>OssServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OssSysLib\OssSysLib.csproj">
+      <Project>{755ACE40-6CE2-4386-BF88-E63BCDFED1EB}</Project>
+      <Name>OssSysLib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\LibUpnpCil\Topology\Properties\Resources.resx">
+      <Link>Properties\Resources.resx</Link>
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <LogicalName>Linn.Topology.Properties.Resources.resources</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

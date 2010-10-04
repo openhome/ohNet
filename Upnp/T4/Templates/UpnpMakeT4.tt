@@ -1,0 +1,169 @@
+<#@ assembly name="Build/Tools/UpnpServiceMake.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Linn.Xml.UpnpServiceXml" #>
+<#@ template language="C#" #>
+<#
+	Document u = new Document(TemplateArgument("xml"));
+#>
+# Auto-generated file.  DO NOT EDIT DIRECTLY
+# Update CpUpnpMakeT4.tt and run 
+#    [n]make -s -f T4[Linux|Windows].mak UpnpServiceMakeGen
+# to apply any updates
+
+GenAll: AllCp AllDv
+
+AllCp: CpApiCppCore CpSrcCppCore CpApiCppStd CpSrcCppStd CpApiC CpSrcC CpCs
+
+AllDv: DvApiCppCore DvSrcCppCore DvApiCppStd DvSrcCppStd DvApiC DvSrcC DvCs
+
+
+CpApiCppCore: tt
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+	$(t4) -o $(proxyApiCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h T4/Templates/CpUpnpCppHeader.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#> -a buffer:1
+<#  } #>
+
+CpSrcCppCore: tt
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+	$(t4) -o $(proxySrcCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp T4/Templates/CpUpnpCppBufferSource.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+<#  } #>
+
+CpApiCppStd: tt
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+	$(t4) -o $(proxyApiCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h T4/Templates/CpUpnpCppHeader.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#> -a buffer:0
+<#  } #>
+
+CpSrcCppStd: tt
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+	$(t4) -o $(proxySrcCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp T4/Templates/CpUpnpCppStringSource.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+<#  } #>
+
+CpApiC: tt
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+	$(t4) -o $(proxyApiC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h T4/Templates/CpUpnpCHeader.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+<#  } #>
+
+CpSrcC: tt
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+	$(t4) -o $(proxySrcC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp T4/Templates/CpUpnpCSource.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+<#  } #>
+
+CpCs: tt
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+	$(t4) -o $(proxyCs)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs T4/Templates/CpUpnpCs.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+<#  } #>
+
+DvApiCppCore : tt
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+	$(t4) -o $(deviceApiCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h T4/Templates/DvUpnpCppCoreHeader.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+<#  } #>
+
+DvSrcCppCore : tt
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+	$(t4) -o $(deviceSrcCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp T4/Templates/DvUpnpCppCoreSource.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+<#  } #>
+
+DvApiCppStd : tt
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+	$(t4) -o $(deviceApiCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h T4/Templates/DvUpnpCppStdHeader.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+<#  } #>
+
+DvSrcCppStd : tt
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+	$(t4) -o $(deviceSrcCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp T4/Templates/DvUpnpCppStdSource.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+<#  } #>
+
+DvApiC : tt
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+	$(t4) -o $(deviceApiC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h T4/Templates/DvUpnpCHeader.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+<#  } #>
+
+DvSrcC : tt
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+	$(t4) -o $(deviceSrcC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp T4/Templates/DvUpnpCSource.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+<#  } #>
+
+DvCs: tt
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+	$(t4) -o $(deviceCs)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs T4/Templates/DvUpnpCs.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+<#  } #>
+
+UpnpServiceMakeGen : UpnpServiceMake.dll tt
+	$(t4) -o T4.mak T4/Templates/UpnpMakeT4.tt -a xml:Service/Services.xml
+	$(t4) -o Proxies.mak T4/Templates/CpUpnpMakeProxies.tt -a xml:Service/Services.xml
+	$(t4) -o Devices.mak T4/Templates/DvUpnpMakeDevices.tt -a xml:Service/Services.xml
+
+<#+
+string FilePrefix(Service s)
+{
+    string prefix = "";
+    char[] charSeparators = new char[] {'.'};
+    string[] res = s.iDomain.Split(charSeparators, StringSplitOptions.None);
+    foreach (string str in res)
+    {
+        prefix += str.Substring(0, 1).ToUpper();
+        if (str.Length > 1)
+        {
+            prefix += str.Substring(1, str.Length-1);
+        }
+    }
+    return prefix;
+}
+
+string DcpDir(Service s)
+{
+    string dir = "";
+    if (s.iDcpDir.Length > 0)
+    {
+        dir = s.iDcpDir + "/";
+    }
+    return dir;
+}
+
+string TemplateArgument(string aName)
+{
+	string[] args =  System.Environment.GetCommandLineArgs();
+		
+	bool isarg = false;
+	
+	foreach (string arg in args)
+	{
+		if (isarg)
+		{
+			string[] parts = arg.Split(new char[] {':'});
+			
+			if (parts.Length == 2)
+			{
+				if (parts[0] == aName)
+				{
+					return (parts[1]);
+				}
+			}
+			
+			isarg = false;
+			continue;
+		}
+		
+		if (arg == "-a")
+		{
+			isarg = true;
+		}
+	}
+	
+	throw (new ArgumentException(aName + " not specified"));
+}
+#>

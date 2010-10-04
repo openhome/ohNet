@@ -1,0 +1,31 @@
+<scpd>
+    <serviceStateTable>
+        <stateVariable>
+            <name>A_ARG_Level</name>
+            <sendEventsAttribute>yes</sendEventsAttribute>
+            <dataType>ui4</dataType>
+        </stateVariable>
+    </serviceStateTable>
+    <actionList>
+        <action>
+            <name>GetLevel</name>
+            <argumentList>
+                <argument>
+                    <name>Level</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_Level</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>SetLevel</name>
+            <argumentList>
+                <argument>
+                    <name>Level</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_Level</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+    </actionList>
+</scpd>

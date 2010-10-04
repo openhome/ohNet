@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+   <specVersion>
+      <major>1</major>
+      <minor>0</minor>
+   </specVersion>
+   
+   <actionList>
+       
+      <action>
+         <name>AmplifierEnabled</name>
+         <argumentList>
+                <argument>
+                    <name>aEnabled</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>AmplifierEnabled</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetAmplifierEnabled</name>
+         <argumentList>
+                <argument>
+                    <name>aEnabled</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>AmplifierEnabled</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>AmplifierAttenuation</name>
+         <argumentList>
+                <argument>
+                    <name>aAttenuation</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>AmplifierAttenuation</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetAmplifierAttenuation</name>
+         <argumentList>
+                <argument>
+                    <name>aAttenuation</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>AmplifierAttenuation</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetVolumeControlEnabled</name>
+         <argumentList>
+                <argument>
+                    <name>aEnabled</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>VolumeControlEnabled</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>VolumeControlEnabled</name>
+         <argumentList>
+                <argument>
+                    <name>aEnabled</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>VolumeControlEnabled</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>SetDigitalAudioOutputRaw</name>
+         <argumentList>
+                <argument>
+                    <name>aRaw</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>DigitalAudioOutputRaw</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>DigitalAudioOutputRaw</name>
+         <argumentList>
+                <argument>
+                    <name>aRaw</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>DigitalAudioOutputRaw</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>AmplifierOverTemperature</name>
+         <argumentList>
+                <argument>
+                    <name>aOverTemperature</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Bool</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>EthernetLinkConnected</name>
+         <argumentList>
+                <argument>
+                    <name>aLinkConnected</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Bool</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>Locate</name>
+      </action>
+      
+   </actionList>
+   
+   <serviceStateTable>
+      
+      <stateVariable sendEvents="yes">
+         <name>AmplifierEnabled</name>
+         <dataType>boolean</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>AmplifierAttenuation</name>
+         <dataType>string</dataType>
+         <allowedValueList>
+            <allowedValue>-12dB</allowedValue>
+            <allowedValue>-9dB</allowedValue>
+            <allowedValue>-6dB</allowedValue>
+            <allowedValue>0dB</allowedValue>
+         </allowedValueList>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>VolumeControlEnabled</name>
+         <dataType>boolean</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="yes">
+         <name>DigitalAudioOutputRaw</name>
+         <dataType>boolean</dataType>
+      </stateVariable>
+       
+      <stateVariable sendEvents="no">
+         <name>Bool</name>
+         <dataType>boolean</dataType>
+      </stateVariable>
+      
+   </serviceStateTable>
+
+</scpd>

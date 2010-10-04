@@ -1,0 +1,409 @@
+<#@ assembly name="Build/Tools/UpnpServiceXml.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Linn.Xml.UpnpServiceXml" #>
+<#@ template language="C#" #>
+<#
+    string domain = TemplateArgument("domain");
+    string type = TemplateArgument("type");
+
+    uint version = 1;
+
+    try
+    {
+	   version = Convert.ToUInt32(TemplateArgument("version"));
+	}
+	catch (FormatException)
+	{
+        throw (new ArgumentException("Invalid version number specified"));
+	}
+    catch (OverflowException)
+    {
+        throw (new ArgumentException("Invalid version number specified"));
+    }
+
+    string fileName = "";
+    char[] charSeparators = new char[] {'.'};
+    string[] res = domain.Split(charSeparators, StringSplitOptions.None);
+    foreach (string str in res)
+    {
+        fileName += str.Substring(0, 1).ToUpper();
+        if (str.Length > 1)
+        {
+            fileName += str.Substring(1, str.Length-1);
+        }
+    }
+    fileName += type;
+    fileName += version;
+    string className = "DvService" + fileName;
+    string callbackPrefix = "Callback" + type + version;
+
+    Initialise();
+
+    Document u = new Document(TemplateArgument("xml"));
+#>
+#include <C/Dv<#=fileName#>.h>
+#include <Core/Dv<#=fileName#>.h>
+#include <ZappTypes.h>
+#include <Buffer.h>
+#include <C/DviDeviceC.h>
+#include <C/Zapp.h>
+
+using namespace Zapp;
+
+class <#=className#>C : public <#=className#>
+{
+public:
+    <#=className#>C(DvDevice& aDevice);
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+    void EnableAction<#=a.name#>(<#=callbackPrefix#><#=a.name#> aCallback, void* aPtr);
+<#  } #>
+private:
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+    void <#=a.name#>(IInvocationResponse& aResponse, TUint aVersion<#=ActionArgs(a)#>);
+<#  } #>
+private:
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+    <#=callbackPrefix#><#=a.name#> iCallback<#=a.name#>;
+    void* iPtr<#=a.name#>;
+<#  } #>
+};
+
+<#=className#>C::<#=className#>C(DvDevice& aDevice)
+    : <#=className#>(aDevice)
+{
+}
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+void <#=className#>C::EnableAction<#=a.name#>(<#=callbackPrefix#><#=a.name#> aCallback, void* aPtr)
+{
+    iCallback<#=a.name#> = aCallback;
+    iPtr<#=a.name#> = aPtr;
+    <#=className#>::EnableAction<#=a.name#>();
+}
+<#  } #>
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+void <#=className#>C::<#=a.name#>(IInvocationResponse& aResponse, TUint aVersion<#=ActionArgs(a)#>)
+{
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+<#          if (o.variable.type=="bin.base64") #>
+<#          { #>
+    char* <#=o.name#>;
+    uint32_t <#=o.name#>Len;
+<#          } #>
+<#          else if (o.variable.type=="string" || o.variable.type=="uri") #>
+<#          { #>
+    char* <#=o.name#>;
+<#          } #>
+<#          else if (o.variable.type=="boolean") #>
+<#          { #>
+    uint32_t <#=o.name#>;
+<#          } #>
+<#          else #>
+<#          { #>
+    <#=outArgType[o.variable.type]#> <#=o.name#>;
+<#          } #>
+<#      } #>
+    ASSERT(iCallback<#=a.name#> != NULL);
+    if (0 != iCallback<#=a.name#>(iPtr<#=a.name#>, aVersion<#=CallbackArgs(a)#>)) {
+        aResponse.Error(502, Brn("Action failed"));
+        return;
+    }
+    aResponse.Start();
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+<#          if (o.variable.type=="bin.base64") #>
+<#          { #>
+    Brh buf<#=o.name#>;
+    buf<#=o.name#>.Set((const TByte*)<#=o.name#>, <#=o.name#>Len);
+    ZappFreeExternal(<#=o.name#>);
+    a<#=o.name#>.Write(buf<#=o.name#>);
+    a<#=o.name#>.WriteFlush();
+<#          } #>
+<#          else if (o.variable.type=="string" || o.variable.type=="uri") #>
+<#          { #>
+    Brhz buf<#=o.name#>((const TChar*)<#=o.name#>);
+    ZappFreeExternal(<#=o.name#>);
+    a<#=o.name#>.Write(buf<#=o.name#>);
+    a<#=o.name#>.WriteFlush();
+<#          } #>
+<#          else if (o.variable.type=="boolean") #>
+<#          { #>
+    a<#=o.name#>.Write((<#=o.name#>!=0));
+<#          } #>
+<#          else #>
+<#          { #>
+    a<#=o.name#>.Write(<#=o.name#>);
+<#          } #>
+<#      } #>
+    aResponse.End();
+}
+<#  } #>
+
+
+
+THandle <#=className#>Create(DvDeviceC aDevice)
+{
+    return (THandle)new <#=className#>C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+}
+
+void <#=className#>Destroy(THandle aService)
+{
+    delete reinterpret_cast<<#=className#>C*>(aService);
+}
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+void <#=className#>EnableAction<#=a.name#>(THandle aService, <#=callbackPrefix#><#=a.name#> aCallback, void* aPtr)
+{
+    reinterpret_cast<<#=className#>C*>(aService)->EnableAction<#=a.name#>(aCallback, aPtr);
+}
+<#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+int32_t <#=className#>SetProperty<#=s.name#>(THandle aService, <#=PropertyInArgs(s)#>)
+{
+<#      if (s.type=="bin.base64") #>
+<#      { #>
+    Brh buf;
+    buf.Set((const TByte*)aValue, aValueLen);
+    reinterpret_cast<<#=className#>C*>(aService)->SetProperty<#=s.name#>(buf);
+<#      } #>
+<#      else if (s.type=="string" || s.type=="uri") #>
+<#      { #>
+    Brhz buf(aValue);
+    reinterpret_cast<<#=className#>C*>(aService)->SetProperty<#=s.name#>(buf);
+<#      } #>
+<#      else if (s.type=="boolean") #>
+<#      { #>
+    reinterpret_cast<<#=className#>C*>(aService)->SetProperty<#=s.name#>((aValue!=0));
+<#      } #>
+<#      else #>
+<#      { #>
+    reinterpret_cast<<#=className#>C*>(aService)->SetProperty<#=s.name#>(aValue);
+<#      } #>
+    return 0;
+}
+
+void <#=className#>GetProperty<#=s.name#>(THandle aService, <#=PropertyOutArgs(s)#>)
+{
+<#      if (s.type=="bin.base64") #>
+<#      { #>
+    Brh buf;
+    reinterpret_cast<<#=className#>C*>(aService)->GetProperty<#=s.name#>(buf);
+    *aValueLen = buf.Bytes();
+    *aValue = (char*)buf.Extract();
+<#      } #>
+<#      else if (s.type=="string" || s.type=="uri") #>
+<#      { #>
+    Brhz buf;
+    reinterpret_cast<<#=className#>C*>(aService)->GetProperty<#=s.name#>(buf);
+    *aValue = (char*)buf.Transfer();
+<#      } #>
+<#      else if (s.type=="boolean") #>
+<#      { #>
+    TBool val;
+    reinterpret_cast<<#=className#>C*>(aService)->GetProperty<#=s.name#>(val);
+    *aValue = (val? 1 : 0);
+<#      } #>
+<#      else if (s.type=="i1" || s.type=="i2" || s.type=="i4") #>
+<#      { #>
+    int32_t val;
+    reinterpret_cast<<#=className#>C*>(aService)->GetProperty<#=s.name#>(val);
+    *aValue = val;
+<#      } #>
+<#      else #>
+<#      { #>
+    uint32_t val;
+    reinterpret_cast<<#=className#>C*>(aService)->GetProperty<#=s.name#>(val);
+    *aValue = val;
+<#      } #>
+}
+<#  } #>
+
+<#+
+Dictionary<string,string> inArgType = new Dictionary<string,string>();
+Dictionary<string,string> outArgType = new Dictionary<string,string>();
+Dictionary<string,string> propInArgType = new Dictionary<string,string>();
+Dictionary<string,string> invRespParamType = new Dictionary<string,string>();
+
+void Initialise()
+{
+    inArgType.Add("string", "const Brx&");
+    inArgType.Add("ui1", "TUint");
+    inArgType.Add("ui2", "TUint");
+    inArgType.Add("ui4", "TUint");
+    inArgType.Add("boolean", "TBool");
+    inArgType.Add("i1", "TInt");
+    inArgType.Add("i2", "TInt");
+    inArgType.Add("i4", "TInt");
+    inArgType.Add("bin.base64", "const Brx&");
+    inArgType.Add("uri", "const Brx&");
+
+    outArgType.Add("string", "char*");
+    outArgType.Add("ui1", "uint32_t");
+    outArgType.Add("ui2", "uint32_t");
+    outArgType.Add("ui4", "uint32_t");
+    outArgType.Add("boolean", "uint32_t");
+    outArgType.Add("i1", "int32_t");
+    outArgType.Add("i2", "int32_t");
+    outArgType.Add("i4", "int32_t");
+    outArgType.Add("bin.base64", "char*");
+    outArgType.Add("uri", "char*");
+
+    propInArgType.Add("string", "const char*");
+    propInArgType.Add("ui1", "uint32_t");
+    propInArgType.Add("ui2", "uint32_t");
+    propInArgType.Add("ui4", "uint32_t");
+    propInArgType.Add("boolean", "uint32_t");
+    propInArgType.Add("i1", "int32_t");
+    propInArgType.Add("i2", "int32_t");
+    propInArgType.Add("i4", "int32_t");
+    propInArgType.Add("bin.base64", "const char*");
+    propInArgType.Add("uri", "const char*");
+
+    invRespParamType.Add("string", "IInvocationResponseString");
+    invRespParamType.Add("ui1", "IInvocationResponseUint");
+    invRespParamType.Add("ui2", "IInvocationResponseUint");
+    invRespParamType.Add("ui4", "IInvocationResponseUint");
+    invRespParamType.Add("boolean", "IInvocationResponseBool");
+    invRespParamType.Add("i1", "IInvocationResponseInt");
+    invRespParamType.Add("i2", "IInvocationResponseInt");
+    invRespParamType.Add("i4", "IInvocationResponseInt");
+    invRespParamType.Add("bin.base64", "IInvocationResponseBinary");
+    invRespParamType.Add("uri", "IInvocationResponseString");
+}
+
+string ActionArgs(Method a)
+{
+    string result = "";
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += inArgType[i.variable.type];
+        result += " ";
+        result += "a" + i.name;
+    }
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += invRespParamType[o.variable.type] + "&";
+        result += " ";
+        result += "a" + o.name;
+    }
+    if (result.Length > 0)
+    {
+        result = ", " + result;
+    }
+    return result;
+}
+
+string CallbackArgs(Method a)
+{
+    string result = "";
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        if (i.variable.type=="bin.base64")
+        {
+            result += "(const char*)a" + i.name + ".Ptr(), a" + i.name + ".Bytes()";
+        }
+        else if (i.variable.type=="string" || i.variable.type=="uri")
+        {
+            result += "(const char*)a" + i.name + ".Ptr()";
+        }
+        else
+        {
+            result += "a" + i.name;
+        }
+
+    }
+    foreach (Argument o in a.outargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += "&" + o.name;
+        if (o.variable.type=="bin.base64")
+        {
+            result += ", &" + o.name + "Len";
+        }
+    }
+    if (result.Length > 0)
+    {
+        result = ", " + result;
+    }
+    return result;
+}
+
+string PropertyInArgs(Variable s)
+{
+    string result = propInArgType[s.type] + " aValue";
+    if (s.type == "bin.base64")
+    {
+        result += ", uint32_t aValueLen";
+    }
+    return result;
+}
+
+string PropertyOutArgs(Variable s)
+{
+    string result = outArgType[s.type] + "* aValue";
+    if (s.type == "bin.base64")
+    {
+        result += ", uint32_t* aValueLen";
+    }
+    return result;
+}
+
+string TemplateArgument(string aName)
+{
+	string[] args =  System.Environment.GetCommandLineArgs();
+		
+	bool isarg = false;
+	
+	foreach (string arg in args)
+	{
+		if (isarg)
+		{
+			string[] parts = arg.Split(new char[] {':'});
+			
+			if (parts.Length == 2)
+			{
+				if (parts[0] == aName)
+				{
+					return (parts[1]);
+				}
+			}
+
+			isarg = false;
+			continue;
+		}
+		
+		if (arg == "-a")
+		{
+			isarg = true;
+		}
+	}
+	
+	throw (new ArgumentException(aName + " not specified"));
+}
+#>

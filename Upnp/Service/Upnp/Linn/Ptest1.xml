@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+   <specVersion>
+      <major>1</major>
+      <minor>0</minor>
+   </specVersion>
+   
+   <actionList>
+   
+      <action>
+         <name>TestComPort</name>
+         <argumentList>
+                <argument>
+                    <name>aPort</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>ComPort</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>aResult</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>Bool</relatedStateVariable>
+                </argument>
+         </argumentList>
+      </action>
+      <action>
+         <name>LedsOn</name>
+      </action>
+      <action>
+         <name>LedsOff</name>
+      </action>
+      
+   </actionList>
+   
+   <serviceStateTable>
+       
+      <stateVariable sendEvents="no">
+         <name>Bool</name>
+         <dataType>boolean</dataType>
+      </stateVariable>
+      <stateVariable sendEvents="no">
+         <name>ComPort</name>
+         <dataType>ui2</dataType>
+      </stateVariable>
+      
+   </serviceStateTable>
+
+</scpd>
