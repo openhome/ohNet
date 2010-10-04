@@ -1,6 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
+#
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZappServices", "ZappServices\ZappServices.csproj", "{F0BF4FC0-B662-4DD2-A7DF-F90095DE4345}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZappControl", "ZappControl\ZappControl.csproj", "{42701C32-E2F7-4FCE-AF13-0325B4464E05}"
