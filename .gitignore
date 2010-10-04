@@ -1,0 +1,7 @@
+*.pdb
+*~
+
+/Upnp/*.sbr
+/Upnp/Build/
+/build/
+/install/
