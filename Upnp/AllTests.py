@@ -1,5 +1,6 @@
 import os
 import sys
+import subprocess
 
 def build(aTarget):
     buildCmd = 'make -s '
@@ -23,7 +24,8 @@ def test(aTarget, aCmdLine):
         testExe += '.exe'
     else:
         testExe += '.elf'
-    ret = os.spawnv(os.P_WAIT, testExe, aCmdLine)
+    aCmdLine.insert(0, testExe)
+    ret = subprocess.call(aCmdLine)
     if ret != 0:
         print '\nTest ' + aTarget + ' failed, aborting'
         sys.exit(ret)
