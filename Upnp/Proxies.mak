@@ -127,7 +127,7 @@ headers_proxy = $(inc_build)/Cpp/Buffer.h \
                 $(inc_build)/AsyncPrivate.h
 
 proxies : upnp_core $(objects_proxies)
-	$(ar)$(libprefix)ZappProxies.$(libext) $(objects_proxies)
+	$(ar)ZappProxies.$(libext) $(objects_proxies)
 $(objdir)CpUpnpOrgAVTransport1.$(objext) : $(proxySrcCppCore)CpUpnpOrgAVTransport1.cpp $(headers_proxy)
 	$(compiler)CpUpnpOrgAVTransport1.$(objext) -c $(cflags) $(includes) $(proxySrcCppCore)CpUpnpOrgAVTransport1.cpp
 $(objdir)CpUpnpOrgAVTransport1C.$(objext) : $(proxySrcC)CpUpnpOrgAVTransport1C.cpp $(headers_proxy)
@@ -456,4 +456,187 @@ CpZappOrgTestLights1Dll: ZappUpnpDll $(objdir)CpZappOrgTestLights1C.$(objext) $(
 	$(linker_dll_service)$(dllprefix)CpZappOrgTestLights1.$(dllext) $(objdir)CpZappOrgTestLights1C.$(objext) $(objdir)CpZappOrgTestLights1.$(objext)
 CpZappOrgTestDimmableLight1Dll: ZappUpnpDll $(objdir)CpZappOrgTestDimmableLight1C.$(objext) $(objdir)CpZappOrgTestDimmableLight1.$(objext)
 	$(linker_dll_service)$(dllprefix)CpZappOrgTestDimmableLight1.$(dllext) $(objdir)CpZappOrgTestDimmableLight1C.$(objext) $(objdir)CpZappOrgTestDimmableLight1.$(objext)
+
+# Proxy assemblies for .NET:
+
+$(objdir)CpUpnpOrgAVTransport1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpUpnpOrgAVTransport1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpUpnpOrgAVTransport1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpUpnpOrgAVTransport1.cs
+$(objdir)CpUpnpOrgAVTransport2Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpUpnpOrgAVTransport2.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpUpnpOrgAVTransport2Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpUpnpOrgAVTransport2.cs
+$(objdir)CpUpnpOrgConnectionManager1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpUpnpOrgConnectionManager1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpUpnpOrgConnectionManager1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpUpnpOrgConnectionManager1.cs
+$(objdir)CpUpnpOrgConnectionManager2Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpUpnpOrgConnectionManager2.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpUpnpOrgConnectionManager2Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpUpnpOrgConnectionManager2.cs
+$(objdir)CpUpnpOrgContentDirectory1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpUpnpOrgContentDirectory1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpUpnpOrgContentDirectory1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpUpnpOrgContentDirectory1.cs
+$(objdir)CpUpnpOrgContentDirectory2Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpUpnpOrgContentDirectory2.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpUpnpOrgContentDirectory2Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpUpnpOrgContentDirectory2.cs
+$(objdir)CpUpnpOrgContentDirectory3Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpUpnpOrgContentDirectory3.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpUpnpOrgContentDirectory3Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpUpnpOrgContentDirectory3.cs
+$(objdir)CpUpnpOrgRenderingControl1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpUpnpOrgRenderingControl1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpUpnpOrgRenderingControl1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpUpnpOrgRenderingControl1.cs
+$(objdir)CpUpnpOrgRenderingControl2Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpUpnpOrgRenderingControl2.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpUpnpOrgRenderingControl2Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpUpnpOrgRenderingControl2.cs
+$(objdir)CpUpnpOrgScheduledRecording1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpUpnpOrgScheduledRecording1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpUpnpOrgScheduledRecording1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpUpnpOrgScheduledRecording1.cs
+$(objdir)CpUpnpOrgScheduledRecording2Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpUpnpOrgScheduledRecording2.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpUpnpOrgScheduledRecording2Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpUpnpOrgScheduledRecording2.cs
+$(objdir)CpUpnpOrgSwitchPower1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpUpnpOrgSwitchPower1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpUpnpOrgSwitchPower1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpUpnpOrgSwitchPower1.cs
+$(objdir)CpUpnpOrgDimming1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpUpnpOrgDimming1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpUpnpOrgDimming1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpUpnpOrgDimming1.cs
+$(objdir)CpLinnCoUkComponent1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpLinnCoUkComponent1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpLinnCoUkComponent1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpLinnCoUkComponent1.cs
+$(objdir)CpLinnCoUkConfiguration1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpLinnCoUkConfiguration1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpLinnCoUkConfiguration1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpLinnCoUkConfiguration1.cs
+$(objdir)CpLinnCoUkDebug2Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpLinnCoUkDebug2.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpLinnCoUkDebug2Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpLinnCoUkDebug2.cs
+$(objdir)CpLinnCoUkDelay1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpLinnCoUkDelay1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpLinnCoUkDelay1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpLinnCoUkDelay1.cs
+$(objdir)CpLinnCoUkDiagnostics1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpLinnCoUkDiagnostics1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpLinnCoUkDiagnostics1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpLinnCoUkDiagnostics1.cs
+$(objdir)CpLinnCoUkDs1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpLinnCoUkDs1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpLinnCoUkDs1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpLinnCoUkDs1.cs
+$(objdir)CpLinnCoUkInfo1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpLinnCoUkInfo1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpLinnCoUkInfo1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpLinnCoUkInfo1.cs
+$(objdir)CpLinnCoUkJukebox1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpLinnCoUkJukebox1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpLinnCoUkJukebox1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpLinnCoUkJukebox1.cs
+$(objdir)CpLinnCoUkMediaTime1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpLinnCoUkMediaTime1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpLinnCoUkMediaTime1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpLinnCoUkMediaTime1.cs
+$(objdir)CpLinnCoUkPlaylist1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpLinnCoUkPlaylist1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpLinnCoUkPlaylist1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpLinnCoUkPlaylist1.cs
+$(objdir)CpLinnCoUkPreamp4Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpLinnCoUkPreamp4.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpLinnCoUkPreamp4Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpLinnCoUkPreamp4.cs
+$(objdir)CpLinnCoUkProduct1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpLinnCoUkProduct1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpLinnCoUkProduct1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpLinnCoUkProduct1.cs
+$(objdir)CpLinnCoUkProduct2Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpLinnCoUkProduct2.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpLinnCoUkProduct2Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpLinnCoUkProduct2.cs
+$(objdir)CpLinnCoUkProduct3Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpLinnCoUkProduct3.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpLinnCoUkProduct3Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpLinnCoUkProduct3.cs
+$(objdir)CpLinnCoUkProxyManager1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpLinnCoUkProxyManager1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpLinnCoUkProxyManager1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpLinnCoUkProxyManager1.cs
+$(objdir)CpLinnCoUkPtest1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpLinnCoUkPtest1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpLinnCoUkPtest1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpLinnCoUkPtest1.cs
+$(objdir)CpLinnCoUkRadio1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpLinnCoUkRadio1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpLinnCoUkRadio1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpLinnCoUkRadio1.cs
+$(objdir)CpLinnCoUkTime1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpLinnCoUkTime1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpLinnCoUkTime1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpLinnCoUkTime1.cs
+$(objdir)CpLinnCoUkUi2Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpLinnCoUkUi2.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpLinnCoUkUi2Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpLinnCoUkUi2.cs
+$(objdir)CpLinnCoUkVolkano1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpLinnCoUkVolkano1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpLinnCoUkVolkano1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpLinnCoUkVolkano1.cs
+$(objdir)CpZappOrgTestBasic1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpZappOrgTestBasic1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpZappOrgTestBasic1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpZappOrgTestBasic1.cs
+$(objdir)CpZappOrgTestLights1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpZappOrgTestLights1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpZappOrgTestLights1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpZappOrgTestLights1.cs
+$(objdir)CpZappOrgTestDimmableLight1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpZappOrgTestDimmableLight1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpZappOrgTestDimmableLight1Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)CpZappOrgTestDimmableLight1.cs
 

@@ -57,7 +57,22 @@ Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Dll: ZappUpnpDll $(objdir)Cp<#=Fi
 	$(linker_dll_service)$(dllprefix)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(dllext) $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext)
 <#  } #>
 
+# Proxy assemblies for .NET:
+
+<# foreach (Service s in u.iServices) #>
+<# { #>
+$(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)Cp<#=FilePrefixTypeAndVersion(s)#>.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>Assembly.dll \
+		/reference:$(objdir)ZappControl.dll \
+		$(proxySrcCs)Cp<#=FilePrefixTypeAndVersion(s)#>.cs
+<# } #>
+
 <#+
+string FilePrefixTypeAndVersion(Service s)
+{
+    return FilePrefix(s) + s.iType.ToString() + s.iVersion.ToString();
+}
 string FilePrefix(Service s)
 {
     string prefix = "";

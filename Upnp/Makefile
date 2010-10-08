@@ -10,9 +10,11 @@ includes = -IBuild/Include/ -IBuild/Include/Cpp/
 proxySrcCppCore = ControlPoint/Services/Cpp/Core/
 proxySrcC = ControlPoint/Services/C/
 proxySrcCppStd = ControlPoint/Services/Cpp/Std/
+proxySrcCs = ControlPoint/Services/Cs/
 deviceSrcCppCore = Device/Services/Cpp/Core/
 deviceSrcCppStd = Device/Services/Cpp/Std/
 deviceSrcC = Device/Services/C/
+deviceSrcCs = Device/Services/Cs/
 osdir = Posix
 objext = o
 libprefix = lib
@@ -24,14 +26,13 @@ dllprefix = lib
 dllext = so
 linker_dll = g++ -lpthread -shared -shared-libgcc -o $(objdir)
 linker_dll_service = g++ -lpthread -shared -shared-libgcc $(objdir)libZappUpnp.so -o $(objdir)
-
+csharp = gmcs /nologo
+publiccsdir = Public/Cs/
+dirsep = /
 # Actual building of code is shared between platforms
 include Common.mak
 
 # Following macros must be provided by each file which wraps Common.mak
-
-TestProxyCs: ZappUpnpDll CpUpnpOrgConnectionManager1Dll
-	gmcs /nologo /unsafe /t:exe -out:$(objdir)TestProxyCs.exe Public/Cs/CpDevice.cs Public/Cs/CpDeviceUpnp.cs Public/Cs/CpProxy.cs Public/Cs/Zapp.cs Public/Cs/AssemblyInfo.cs ControlPoint/Services/Cs/CpUpnpOrgConnectionManager1.cs  Public/Cs/TestProxy.cs
 
 make_obj_dir:
 	mkdir -p $(objdir)

@@ -1,3 +1,7 @@
+
+
+
+
 objects_core = $(objdir)Ascii.$(objext) \
                $(objdir)AsyncC.$(objext) \
                $(objdir)AsyncPrivate.$(objext) \
@@ -440,3 +444,26 @@ $(objdir)TestDvDeviceC.$(objext) : Public/C/TestDvDeviceC.cpp $(headers)
 	$(compiler)TestDvDeviceC.$(objext) -c $(cflags) $(includes) Public/C/TestDvDeviceC.cpp
 
 Tests: TestBuffer TestThread TestFifo TestQueue TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvDeviceStd TestDvDeviceC
+
+ZappControlDll : $(objdir)ZappControl.dll
+
+$(objdir)ZappControl.dll:
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)ZappControl.dll \
+		$(publiccsdir)CpDevice.cs \
+		$(publiccsdir)CpDeviceUpnp.cs \
+		$(publiccsdir)CpProxy.cs \
+		$(publiccsdir)DvDevice.cs \
+		$(publiccsdir)DvServiceErrors.cs \
+		$(publiccsdir)Zapp.cs
+
+TestProxyCs: $(objdir)TestProxyCs.exe
+
+$(objdir)TestProxyCs.exe: ZappUpnpDll CpUpnpOrgConnectionManager1Dll $(objdir)ZappControl.dll $(publiccsdir)TestProxy.cs $(objdir)CpUpnpOrgConnectionManager1Assembly.dll
+	$(csharp) /unsafe /t:exe \
+		/out:$(objdir)TestProxyCs.exe \
+		/reference:$(objdir)ZappControl.dll \
+		$(publiccsdir)TestProxy.cs \
+		/reference:$(objdir)CpUpnpOrgConnectionManager1Assembly.dll
+
+
