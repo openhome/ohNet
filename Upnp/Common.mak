@@ -448,7 +448,7 @@ Tests: TestBuffer TestThread TestFifo TestQueue TestNetwork TestEcho TestTimer T
 ZappControlDll : $(objdir)ZappControl.dll
 
 $(objdir)ZappControl.dll:
-	$(csharp) /unsafe /t:library \
+	$(csharp) /unsafe /t:library /debug+\
 		/out:$(objdir)ZappControl.dll \
 		$(publiccsdir)CpDevice.cs \
 		$(publiccsdir)CpDeviceUpnp.cs \
@@ -459,11 +459,18 @@ $(objdir)ZappControl.dll:
 
 TestProxyCs: $(objdir)TestProxyCs.exe
 
-$(objdir)TestProxyCs.exe: ZappUpnpDll CpUpnpOrgConnectionManager1Dll $(objdir)ZappControl.dll $(publiccsdir)TestProxy.cs $(objdir)CpUpnpOrgConnectionManager1Assembly.dll
-	$(csharp) /unsafe /t:exe \
+$(objdir)TestProxyCs.exe: \
+	ZappUpnpDll \
+	CpUpnpOrgConnectionManager1Dll \
+	$(objdir)ZappControl.dll \
+	$(publiccsdir)TestProxy.cs \
+	$(objdir)CpUpnpOrgConnectionManager1Assembly.dll \
+	
+	$(csharp) /unsafe /t:exe /debug+\
 		/out:$(objdir)TestProxyCs.exe \
 		/reference:$(objdir)ZappControl.dll \
+		/reference:$(objdir)CpUpnpOrgConnectionManager1Assembly.dll \
 		$(publiccsdir)TestProxy.cs \
-		/reference:$(objdir)CpUpnpOrgConnectionManager1Assembly.dll
+		
 
 
