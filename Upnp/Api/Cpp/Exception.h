@@ -47,7 +47,7 @@ DllExport void CallAssertHandler(const TChar*, TUint);
 
 /** Base class for all Zapp exceptions.  Some may be recoverable, others may
 not. */
-class Exception
+class DllExportClass Exception
 {
 public:
     DllExport Exception(const TChar* aMsg, const TChar* aFile, TUint aLine);

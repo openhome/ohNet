@@ -15,7 +15,7 @@ class Mutex;
 /**
  * Base class for all UPnP services
  */
-class CpProxy
+class DllExportClass CpProxy
 {
 public:
     /**
@@ -24,12 +24,12 @@ public:
      * in a given variable or SetPropertyChangesComplete() to register a callback
      * which runs after each group of 1..n changes is processed.
      */
-    void Subscribe();
+    DllExport void Subscribe();
     /**
      * Unsubscribe to notification of changes in state variables.
      * No further notifications will be published until Subscribe() is called again.
      */
-    void Unsubscribe();
+    DllExport void Unsubscribe();
     /**
      * Register a callback which will run after each group of 1..n changes to
      * state variable is processed.

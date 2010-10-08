@@ -21,7 +21,7 @@ namespace Zapp {
 /**
  * List of all UPnP devices on the current subnet
  */
-class CpDeviceListUpnpAll : public CpDeviceList
+class DllExportClass CpDeviceListUpnpAll : public CpDeviceList
 {
 public:
     DllExport CpDeviceListUpnpAll(FunctorCpDevice aAdded, FunctorCpDevice aRemoved);
@@ -30,7 +30,7 @@ public:
 /**
  * List of all root UPnP devices on the current subnet
  */
-class CpDeviceListUpnpRoot : public CpDeviceList
+class DllExportClass CpDeviceListUpnpRoot : public CpDeviceList
 {
 public:
     DllExport CpDeviceListUpnpRoot(FunctorCpDevice aAdded, FunctorCpDevice aRemoved);
@@ -39,7 +39,7 @@ public:
 /**
  * List of all UPnP devices with a given uuid (udn) on the current subnet
  */
-class CpDeviceListUpnpUuid : public CpDeviceList
+class DllExportClass CpDeviceListUpnpUuid : public CpDeviceList
 {
 public:
     DllExport CpDeviceListUpnpUuid(const Brx& aUuid, FunctorCpDevice aAdded, FunctorCpDevice aRemoved);
@@ -48,7 +48,7 @@ public:
 /**
  * List of all UPnP devices of a given device type on the current subnet
  */
-class CpDeviceListUpnpDeviceType : public CpDeviceList
+class DllExportClass CpDeviceListUpnpDeviceType : public CpDeviceList
 {
 public:
     DllExport CpDeviceListUpnpDeviceType(const Brx& aDomainName, const Brx& aDeviceType, TUint aVersion,
@@ -58,7 +58,7 @@ public:
 /**
  * List of all UPnP devices of a given service type on the current subnet
  */
-class CpDeviceListUpnpServiceType : public CpDeviceList
+class DllExportClass CpDeviceListUpnpServiceType : public CpDeviceList
 {
 public:
     DllExport CpDeviceListUpnpServiceType(const Brx& aDomainName, const Brx& aServiceType, TUint aVersion,

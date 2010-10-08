@@ -7,7 +7,7 @@
 
 namespace Zapp {
 
-class CpProxyC
+class DllExportClass CpProxyC
 {
 public:
     void Subscribe() { iProxy->Subscribe(); }

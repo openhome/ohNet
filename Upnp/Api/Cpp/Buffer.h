@@ -12,7 +12,7 @@ namespace Zapp {
 
 class Brn;
 
-class Brx
+class DllExportClass Brx
 {
 public:
     inline TUint Bytes() const;
@@ -39,7 +39,7 @@ private:
     Brx& operator=(const Brx& aBrx);
 };
 
-class Brn : public Brx
+class DllExportClass Brn : public Brx
 {
 public:
     inline explicit Brn();
@@ -57,7 +57,7 @@ private:
     Brn& operator=(const Brn& aBrn);
 };
 
-class Brv : public Brx, public INonCopyable
+class DllExportClass Brv : public Brx, public INonCopyable
 {
 public:
     DllExport ~Brv();
@@ -71,7 +71,7 @@ protected:
 
 class Brhz;
 
-class Brh : public Brv
+class DllExportClass Brh : public Brv
 {
 	friend class Bwh;
 	friend class Brhz;
@@ -86,7 +86,7 @@ public:
     DllExport TChar* Extract();
 };
 
-class Brhz : public Brv
+class DllExportClass Brhz : public Brv
 {
 	friend class Bwh;
 public:

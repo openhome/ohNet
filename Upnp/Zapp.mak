@@ -3,7 +3,7 @@
 
 # Macros used by Common.mak
 ar = lib /nologo /out:$(objdir)
-cflags = /MDd /W4 /WX /EHsc /RTC1 /Zi /FR /Gz -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS /Od -DDllImport=__declspec(dllimport) -DDllExport=__declspec(dllexport)
+cflags = /MDd /W4 /WX /EHsc /RTC1 /Zi /FR /Gz -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -D_CRT_SECURE_NO_WARNINGS /Od -DDllImport=__declspec(dllimport) -DDllExport=__declspec(dllexport) -DDllExportClass=
 objdirbare = Build\Obj\Windows
 objdir = $(objdirbare)\\
 inc_build = Build\\Include
