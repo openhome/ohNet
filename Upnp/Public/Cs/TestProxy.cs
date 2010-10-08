@@ -215,8 +215,8 @@ namespace Zapp
                 {
                     if (iDeviceList[i].Udn() == udn)
                     {
-                        iDeviceList.RemoveAt(i);
                         iDeviceList[i].RemoveRef();
+                        iDeviceList.RemoveAt(i);
                     }
                 }
             }
