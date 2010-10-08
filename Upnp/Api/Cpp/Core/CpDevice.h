@@ -10,7 +10,7 @@
 namespace Zapp {
 
 class CpiDevice;
-class CpDevice
+class DllExportClass CpDevice
 {
 public:
     CpDevice(CpiDevice& aDevice);
@@ -35,7 +35,7 @@ class FunctorCpiDevice;
 /**
  * List of devices available on the current subnet
  */
-class CpDeviceList
+class DllExportClass CpDeviceList
 {
 public:
     DllExport ~CpDeviceList();

@@ -19,7 +19,7 @@ public:
 };
 
 
-class SyncProxyAction
+class DllExportClass SyncProxyAction
 {
 public:
     DllExport FunctorAsync& Functor();

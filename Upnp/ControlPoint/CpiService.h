@@ -38,7 +38,7 @@ typedef std::map<Brn,Property*,BufferCmp> PropertyMap;
  * of the service will also own a device reference and will ensure that the service
  * is destroyed before the device reference is released.
  */
-class CpiService : public Zapp::Service
+class DllExportClass CpiService : public Zapp::Service
 {
 public:
     DllExport CpiService(const TChar* aDomain, const TChar* aName, TUint aVersion, CpiDevice& aDevice);
@@ -168,7 +168,7 @@ protected:
 /**
  * String argument.  Output buffers will be nul terminated.
  */
-class ArgumentString : public Argument
+class DllExportClass ArgumentString : public Argument
 {
 public:
     DllExport ArgumentString(const Zapp::Parameter& aParameter); // for output params
@@ -185,7 +185,7 @@ private:
 /**
  * Integer argument
  */
-class ArgumentInt : public Argument
+class DllExportClass ArgumentInt : public Argument
 {
 public:
     DllExport ArgumentInt(const Zapp::Parameter& aParameter);
@@ -201,7 +201,7 @@ private:
 /**
  * Unsigned integer argument
  */
-class ArgumentUint : public Argument
+class DllExportClass ArgumentUint : public Argument
 {
 public:
     DllExport ArgumentUint(const Zapp::Parameter& aParameter);
@@ -217,7 +217,7 @@ private:
 /**
  * Boolean arguments
  */
-class ArgumentBool : public Argument
+class DllExportClass ArgumentBool : public Argument
 {
 public:
     DllExport ArgumentBool(const Zapp::Parameter& aParameter);
@@ -233,7 +233,7 @@ private:
 /**
  * Binary argument.  Similar to ArgumentString but output will not be nul terminated
  */
-class ArgumentBinary : public Argument
+class DllExportClass ArgumentBinary : public Argument
 {
 public:
     DllExport ArgumentBinary(const Zapp::Parameter& aParameter);
@@ -284,7 +284,7 @@ public:
  *      true if the invocation failed.  If no error occurred, each member of
  *      OutputArguments() will be set.
  */
-class Invocation : public Async
+class DllExportClass Invocation : public Async
 {
 public:
     /**

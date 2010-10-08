@@ -54,7 +54,7 @@ private:
     THandle iHandle;
 };
 
-class Mutex : public INonCopyable
+class DllExportClass Mutex : public INonCopyable
 {
 public:
     DllExport Mutex(const TChar* aName);
@@ -214,7 +214,7 @@ private:
  * automatically be signalled on stack cleanup (ie on return or when an
  * exception passes up).
  */
-class AutoMutex : public INonCopyable
+class DllExportClass AutoMutex : public INonCopyable
 {
 public:
     DllExport AutoMutex(Mutex& aMutex);

@@ -16,7 +16,7 @@ public:
 };
 
 class DviDevice;
-class DvDevice
+class DllExportClass DvDevice
 {
 public:
     DvDevice(const Brx& aUdn);

@@ -14,7 +14,7 @@ class PropertyBool;
 class PropertyString;
 class PropertyBinary;
 
-class DvService
+class DllExportClass DvService
 {
 public:
     void PropertiesLock();
