@@ -58,16 +58,24 @@ private:
     ~DviDevice();
     void Construct(const Brx& aUdn);
     void SetParent(DviDevice* aParent);
+    void SetDisabled(Functor aCompleted, bool aLocked);
     void ProtocolDisabled();
     TBool HasService(const Zapp::ServiceType& aServiceType) const;
     TBool ChildHasService(const Zapp::ServiceType& aServiceType) const;
     void ConfigChanged();
     TUint SubscriptionId();
 private:
+    enum EEnableState
+    {
+        eDisabled
+       ,eDisabling
+       ,eEnabled
+    };
+private:
     mutable Mutex iLock;
     TUint iRefCount;
     Brhz iUdn;
-    TBool iEnabled;
+    EEnableState iEnabled;
     TUint iConfigId;
     TBool iConfigUpdated;
     DviDevice* iParent;

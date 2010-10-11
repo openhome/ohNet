@@ -33,7 +33,7 @@ void DviDevice::Construct(const Brx& aUdn)
 {
     iRefCount = 1;
     iUdn.Set(aUdn);
-    iEnabled = false;
+    iEnabled = eDisabled;
     iConfigId = 0;
     iConfigUpdated = false;
     iParent = NULL;
@@ -59,9 +59,9 @@ void DviDevice::Destroy()
         iDevices[i]->Destroy();
     }
     iDevices.clear();
-    if (iEnabled) {
+    if (iEnabled == eEnabled) {
         Functor blank;
-        SetDisabled(blank);
+        SetDisabled(blank, true);
     }
     iLock.Signal();
     iShutdownSem.Wait();
@@ -94,17 +94,19 @@ const Brx& DviDevice::Udn() const
 TBool DviDevice::Enabled() const
 {
     iLock.Wait();
-    TBool enabled = iEnabled;
+    TBool enabled = (iEnabled==eEnabled);
     iLock.Signal();
     return enabled;
 }
 
 void DviDevice::SetEnabled()
 {
-    ASSERT(!iEnabled && iProtocolDisableCount == 0);
-    iEnabled = true;
+    ASSERT(iEnabled != eEnabled && iProtocolDisableCount == 0);
+    iLock.Wait();
+    iEnabled = eEnabled;
     iConfigUpdated = false;
     iShutdownSem.Clear();
+    iLock.Signal();
     for (TUint i=0; i<kNumProtocols; i++) {
         iProtocols[i]->Enable();
 		// queue updates for all service properties
@@ -117,14 +119,7 @@ void DviDevice::SetEnabled()
 
 void DviDevice::SetDisabled(Functor aCompleted)
 {
-    ASSERT(iEnabled);
-    iEnabled = false;
-    iDisableComplete = aCompleted;
-    iProtocolDisableCount = kNumProtocols;
-    Functor functor = MakeFunctor(*this, &DviDevice::ProtocolDisabled);
-    for (TUint i=0; i<kNumProtocols; i++) {
-        iProtocols[i]->Disable(functor);
-    }
+    SetDisabled(aCompleted, false);
 }
 
 void DviDevice::GetAttribute(const TChar* aKey, const TChar** aValue) const
@@ -151,7 +146,7 @@ void DviDevice::SetAttribute(const TChar* aKey, const TChar* aValue)
     aKey += name.Bytes() + 1;
     // assume keys starting 'Test' are a special case which can be updated at any time
     if (strlen(aKey) <4 || strncmp(aKey, "Test", 4) != 0) {
-        ASSERT(!iEnabled);
+        ASSERT(iEnabled == eDisabled);
     }
     for (TUint i=0; i<kNumProtocols; i++) {
         IDvProtocol* protocol = iProtocols[i];
@@ -165,7 +160,7 @@ void DviDevice::SetAttribute(const TChar* aKey, const TChar* aValue)
 
 void DviDevice::AddService(DviService* aService)
 {
-    ASSERT(!iEnabled);
+    ASSERT(iEnabled == eDisabled);
     ASSERT(!Root()->HasService(aService->ServiceType()));
     iServices.push_back(aService);
     ConfigChanged();
@@ -290,11 +285,30 @@ DviDevice* DviDevice::Root() const
     return const_cast<DviDevice*>(root);
 }
 
+void DviDevice::SetDisabled(Functor aCompleted, bool aLocked)
+{
+    if (!aLocked) {
+        iLock.Wait();
+    }
+    ASSERT(iEnabled == eEnabled);
+    iEnabled = eDisabling;
+    iDisableComplete = aCompleted;
+    iProtocolDisableCount = kNumProtocols;
+    if (!aLocked) {
+        iLock.Signal();
+    }
+    Functor functor = MakeFunctor(*this, &DviDevice::ProtocolDisabled);
+    for (TUint i=0; i<kNumProtocols; i++) {
+        iProtocols[i]->Disable(functor);
+    }
+}
+
 void DviDevice::ProtocolDisabled()
 {
     iLock.Wait();
     ASSERT(iProtocolDisableCount != 0);
     if (--iProtocolDisableCount == 0) {
+        iEnabled = eDisabled;
         if (iDisableComplete) {
             iDisableComplete();
         }

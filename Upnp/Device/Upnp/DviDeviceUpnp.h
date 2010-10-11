@@ -129,7 +129,7 @@ private:
 
 class DeviceMsgScheduler : private INonCopyable
 {
-    static const TUint kMinTimerIntervalMs = 10;
+    static const TInt kMinTimerIntervalMs = 10;
 public:
     virtual ~DeviceMsgScheduler();
 	void Stop();
