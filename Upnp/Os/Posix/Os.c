@@ -32,14 +32,13 @@
 #define kThreadSchedPolicy (SCHED_RR)
 
 static struct timeval gStartTime;
-static THandle gMutex = kHandleNull;
+static THandle gMutex;
 
 
 int32_t OsCreate()
 {
     gettimeofday(&gStartTime, NULL);
-    gMutex = OsMutexCreate("DNSM");
-    if (gMutex == kHandleNull)
+    if (0 != OsMutexCreate("DNSM", &gMutex))
         return -1;
     return 0;
 }
@@ -47,7 +46,7 @@ int32_t OsCreate()
 void OsDestroy()
 {
     OsMutexDestroy(gMutex);
-    gMutex = kHandleNull;
+    HandleClear(&gMutex);
 }
 
 void OsQuit()
@@ -103,30 +102,34 @@ typedef struct
     uint32_t        iValue;
 } SemaphoreData;
 
-THandle OsSemaphoreCreate(const char* aName, uint32_t aCount)
+int32_t OsSemaphoreCreate(const char* aName, uint32_t aCount, THandle* aHandle)
 {
     SemaphoreData* data = (SemaphoreData*)calloc(1, sizeof(*data));
     if (data == NULL)
-        return kHandleNull;
+        return -1;
     int status = pthread_cond_init(&data->iCond, NULL);
     if (status != 0) {
         free(data);
-        return kHandleNull;
+        return -1;
     }
     status = pthread_mutex_init(&data->iLock, NULL);
     if (status != 0) {
         (void)pthread_cond_destroy(&data->iCond);
         free(data);
-        return kHandleNull;
+        return -1;
     }
     data->iValue = aCount;
-    return (THandle)data;
+    HandleClear(aHandle);
+    aHandle->iData.iPtr = data;
+    return 0;
 }
+
+#define SemaphoreData(aSem)  ((SemaphoreData*)aSem.iData.iPtr)
 
 void OsSemaphoreDestroy(THandle aSem)
 {
-    SemaphoreData* data = (SemaphoreData*)aSem;
-    if (data == kHandleNull) {
+    SemaphoreData* data = SemaphoreData(aSem);
+    if (data == NULL) {
         return;
     }
     (void)pthread_mutex_destroy(&data->iLock);
@@ -136,7 +139,7 @@ void OsSemaphoreDestroy(THandle aSem)
 
 int32_t OsSemaphoreWait(THandle aSem)
 {
-    SemaphoreData* data = (SemaphoreData*)aSem;
+    SemaphoreData* data = SemaphoreData(aSem);
     int status = pthread_mutex_lock(&data->iLock);
     if (status != 0) {
         goto exit;
@@ -155,7 +158,7 @@ exit:
 
 int32_t OsSemaphoreTimedWait(THandle aSem, uint32_t aTimeoutMs)
 {
-    SemaphoreData* data = (SemaphoreData*)aSem;
+    SemaphoreData* data = SemaphoreData(aSem);
     int32_t timeout = 0;
     struct timespec timeToWait;
     getAbsTimespec(&timeToWait, aTimeoutMs);
@@ -181,7 +184,7 @@ exit:
 uint32_t OsSemaphoreClear(THandle aSem)
 {
     uint32_t ret;
-    SemaphoreData* data = (SemaphoreData*)aSem;
+    SemaphoreData* data = SemaphoreData(aSem);
     pthread_mutex_lock(&data->iLock);
     ret = (data->iValue>0? 1 : 0);
     data->iValue = 0;
@@ -192,7 +195,7 @@ uint32_t OsSemaphoreClear(THandle aSem)
 int32_t OsSemaphoreSignal(THandle aSem)
 {
     int status;
-    SemaphoreData* data = (SemaphoreData*)aSem;
+    SemaphoreData* data = SemaphoreData(aSem);
     pthread_mutex_lock(&data->iLock);
     data->iValue += 1;
     pthread_mutex_unlock(&data->iLock);
@@ -200,42 +203,46 @@ int32_t OsSemaphoreSignal(THandle aSem)
     return (status==0? 0 : -1);
 }
 
-THandle OsMutexCreate(const char* aName)
+int32_t OsMutexCreate(const char* aName, THandle* aHandle)
 {
     pthread_mutexattr_t attr;
     pthread_mutexattr_init(&attr);
     (void)pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK);
     pthread_mutex_t* mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
     if (mutex == NULL) {
-        return kHandleNull;
+        return -1;
     }
     int status = pthread_mutex_init(mutex, &attr);
     if (status != 0) {
         free(mutex);
-        return kHandleNull;
+        return -1;
     }
-    return (THandle)mutex;
+    HandleClear(aHandle);
+    aHandle->iData.iPtr = mutex;
+    return 0;
 }
+
+#define MutexFromHandle(aMutex)  ((pthread_mutex_t*)aMutex.iData.iPtr)
 
 void OsMutexDestroy(THandle aMutex)
 {
-    if (aMutex == kHandleNull) {
+    if (HandleIsNull(&aMutex)) {
         return;
     }
-    pthread_mutex_t* mutex = (pthread_mutex_t*)aMutex;
+    pthread_mutex_t* mutex = MutexFromHandle(aMutex);
     (void)pthread_mutex_destroy(mutex);
     free(mutex);
 }
 
 int32_t OsMutexLock(THandle aMutex)
 {
-    int status = pthread_mutex_lock((pthread_mutex_t*)aMutex);
+    int status = pthread_mutex_lock(MutexFromHandle(aMutex));
     return (status==0? 0 : -1);
 }
 
 int32_t OsMutexUnlock(THandle aMutex)
 {
-    int status = pthread_mutex_unlock((pthread_mutex_t*)aMutex);
+    int status = pthread_mutex_unlock(MutexFromHandle(aMutex));
     return (status==0? 0 : -1);
 }
 
@@ -284,11 +291,11 @@ static void* threadEntrypoint(void* aArg)
     return NULL;
 }
 
-THandle OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackBytes, ThreadEntryPoint aEntryPoint, void* aArg)
+int32_t OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackBytes, ThreadEntryPoint aEntryPoint, void* aArg, THandle* aHandle)
 {
     ThreadData* data = (ThreadData*)calloc(1, sizeof(ThreadData));
     if (data == NULL) {
-        return kHandleNull;
+        return -1;
     }
     if (aStackBytes < kMinStackBytes)
         aStackBytes = kMinStackBytes;
@@ -304,10 +311,12 @@ THandle OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackByt
     int status = pthread_create(&data->iThread, &attr, threadEntrypoint, data);
     if (status != 0) {
         free(data);
-        return kHandleNull;
+        return -1;
     }
     (void)pthread_attr_destroy(&attr);
-    return (THandle)data;
+    HandleClear(aHandle);
+    aHandle->iData.iPtr = data;
+    return 0;
 }
 
 void* OsThreadTls()
@@ -318,7 +327,7 @@ void* OsThreadTls()
 void OsThreadDestroy(THandle aThread)
 {
     // no call to pthread_exit as it will have been implicitly called when the thread exited
-    free((ThreadData*)aThread);
+    free((ThreadData*)aThread.iData.iPtr);
 }
 
 int32_t OsThreadSupportsPriorities()
@@ -384,11 +393,11 @@ static OsNetworkHandle* CreateHandle(int32_t aSocket)
 {
     OsNetworkHandle* handle = (OsNetworkHandle*)malloc(sizeof(OsNetworkHandle));
     if (handle == NULL) {
-        return kHandleNull;
+        return NULL;
     }
     if (pipe(handle->iPipe) == -1) {
         free(handle);
-        return kHandleNull;
+        return NULL;
     }
     SetFdNonBlocking(handle->iPipe[0]);
     handle->iSocket = aSocket;
@@ -398,19 +407,21 @@ static OsNetworkHandle* CreateHandle(int32_t aSocket)
     return handle;
 }
 
-THandle OsNetworkCreate(OsNetworkSocketType aSocketType)
+int32_t OsNetworkCreate(OsNetworkSocketType aSocketType, THandle* aHandle)
 {
     int32_t socketH = socket(2, aSocketType, 0);
     OsNetworkHandle* handle = CreateHandle(socketH);
-    if (handle == kHandleNull) {
+    if (handle == NULL) {
         close(socketH);
     }
-    return (THandle)handle;
+    HandleClear(aHandle);
+    aHandle->iData.iPtr = handle;
+    return 0;
 }
 
 int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint16_t* aPort)
 {
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
     if (SocketInterrupted(handle)) {
         return -1;
     }
@@ -431,7 +442,7 @@ int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint16_t* aPort)
 
 int32_t OsNetworkConnect(THandle aHandle, TIpAddress aAddress, uint16_t aPort, uint32_t aTimeoutMs)
 {
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
     if (SocketInterrupted(handle)) {
         return -1;
     }
@@ -467,7 +478,7 @@ int32_t OsNetworkConnect(THandle aHandle, TIpAddress aAddress, uint16_t aPort, u
 
 int32_t OsNetworkSend(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes)
 {
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
     if (SocketInterrupted(handle)) {
         return -1;
     }
@@ -477,7 +488,7 @@ int32_t OsNetworkSend(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes)
 
 int32_t OsNetworkSendTo(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes, TIpAddress aAddress, uint16_t aPort)
 {
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
     if (SocketInterrupted(handle)) {
         return -1;
     }
@@ -498,7 +509,7 @@ int32_t OsNetworkSendTo(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes
 
 int32_t OsNetworkReceive(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes)
 {
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
     if (SocketInterrupted(handle)) {
         return -1;
     }
@@ -526,7 +537,7 @@ int32_t OsNetworkReceive(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes)
 
 int32_t OsNetworkReceiveFrom(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes, TIpAddress* aAddress, uint16_t* aPort)
 {
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
     if (SocketInterrupted(handle)) {
         return -1;
     }
@@ -560,7 +571,7 @@ int32_t OsNetworkReceiveFrom(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes,
 int32_t OsNetworkInterrupt(THandle aHandle, int32_t aInterrupt)
 {
     int32_t err = 0;
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
     OsMutexLock(gMutex);
     handle->iInterrupted = aInterrupt;
     int32_t val = 1;
@@ -580,7 +591,7 @@ int32_t OsNetworkInterrupt(THandle aHandle, int32_t aInterrupt)
 
 int32_t OsNetworkClose(THandle aHandle)
 {
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
     int32_t err = 0;
     if (handle != NULL) {
         err = close(handle->iSocket);
@@ -593,7 +604,7 @@ int32_t OsNetworkClose(THandle aHandle)
 
 int32_t OsNetworkListen(THandle aHandle, uint32_t aSlots)
 {
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
     if (SocketInterrupted(handle)) {
         return -1;
     }
@@ -601,11 +612,11 @@ int32_t OsNetworkListen(THandle aHandle, uint32_t aSlots)
     return err;
 }
 
-THandle OsNetworkAccept(THandle aHandle)
+int32_t OsNetworkAccept(THandle aHandle, THandle* aNewHandle)
 {
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
     if (SocketInterrupted(handle)) {
-        return kHandleNull;
+        return -1;
     }
     struct sockaddr_in addr;
     sockaddrFromEndpoint(&addr, 0, 0);
@@ -630,16 +641,18 @@ THandle OsNetworkAccept(THandle aHandle)
     }
     SetFdBlocking(handle->iSocket);
     if (h == -1) {
-        return kHandleNull;
+        return -1;
     }
 
     OsNetworkHandle* newHandle = CreateHandle(h);
     if (newHandle == NULL) {
         close(h);
-        return kHandleNull;
+        return -1;
     }
 
-    return (THandle)newHandle;
+    HandleClear(aNewHandle);
+    aNewHandle->iData.iPtr = newHandle;
+    return 0;
 }
 
 int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost)
@@ -660,14 +673,14 @@ int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost)
 
 int32_t OsNetworkSocketSetSendBufBytes(THandle aHandle, uint32_t aBytes)
 {
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
     int32_t err = setsockopt(handle->iSocket, SOL_SOCKET, SO_SNDBUF, &aBytes, sizeof(aBytes));
     return err;
 }
 
 int32_t OsNetworkSocketSetReceiveTimeout(THandle aHandle, uint32_t aMilliSeconds)
 {
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
     struct timeval tv;
     tv.tv_sec = aMilliSeconds/1000;
     tv.tv_usec = (aMilliSeconds%1000)*1000;
@@ -677,7 +690,7 @@ int32_t OsNetworkSocketSetReceiveTimeout(THandle aHandle, uint32_t aMilliSeconds
 
 int32_t OsNetworkTcpSetNoDelay(THandle aHandle)
 {
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
     uint32_t nodelay = 1;
     int32_t err = setsockopt(handle->iSocket, IPPROTO_TCP, TCP_NODELAY, &nodelay, sizeof(nodelay));
     return err;
@@ -685,7 +698,7 @@ int32_t OsNetworkTcpSetNoDelay(THandle aHandle)
 
 int32_t OsNetworkSocketSetReuseAddress(THandle aHandle)
 {
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
     int32_t reuseaddr = 1;
     int32_t err = setsockopt(handle->iSocket, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(reuseaddr));
     return err;
@@ -693,14 +706,14 @@ int32_t OsNetworkSocketSetReuseAddress(THandle aHandle)
 
 int32_t OsNetworkSocketSetMulticastTtl(THandle aHandle, uint8_t aTtl)
 {
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
     uint8_t err = setsockopt(handle->iSocket, IPPROTO_IP, IP_MULTICAST_TTL, &aTtl, sizeof(aTtl));
     return err;
 }
 
 int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aAddress, TIpAddress aInterface)
 {
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
     struct ip_mreq mreq;
     mreq.imr_multiaddr.s_addr = aAddress;
     mreq.imr_interface.s_addr = aInterface;
@@ -710,7 +723,7 @@ int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aAddre
 
 int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aAddress, TIpAddress aInterface)
 {
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
     struct ip_mreq mreq;
     mreq.imr_multiaddr.s_addr = aAddress;
     mreq.imr_interface.s_addr = aInterface;

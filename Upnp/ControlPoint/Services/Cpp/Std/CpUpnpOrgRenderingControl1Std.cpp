@@ -1121,7 +1121,7 @@ void CpProxyUpnpOrgRenderingControl1Cpp::BeginSelectPreset(uint32_t aInstanceID,
     const Action::VectorParameters& inParams = iActionSelectPreset->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     {
-        Brn buf((const TByte*)aPresetName.c_str(), aPresetName.length());
+        Brn buf((const TByte*)aPresetName.c_str(), (TUint)aPresetName.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -1872,7 +1872,7 @@ void CpProxyUpnpOrgRenderingControl1Cpp::BeginGetMute(uint32_t aInstanceID, cons
     const Action::VectorParameters& inParams = iActionGetMute->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     {
-        Brn buf((const TByte*)aChannel.c_str(), aChannel.length());
+        Brn buf((const TByte*)aChannel.c_str(), (TUint)aChannel.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -1908,7 +1908,7 @@ void CpProxyUpnpOrgRenderingControl1Cpp::BeginSetMute(uint32_t aInstanceID, cons
     const Action::VectorParameters& inParams = iActionSetMute->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     {
-        Brn buf((const TByte*)aChannel.c_str(), aChannel.length());
+        Brn buf((const TByte*)aChannel.c_str(), (TUint)aChannel.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aDesiredMute));
@@ -1940,7 +1940,7 @@ void CpProxyUpnpOrgRenderingControl1Cpp::BeginGetVolume(uint32_t aInstanceID, co
     const Action::VectorParameters& inParams = iActionGetVolume->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     {
-        Brn buf((const TByte*)aChannel.c_str(), aChannel.length());
+        Brn buf((const TByte*)aChannel.c_str(), (TUint)aChannel.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -1976,7 +1976,7 @@ void CpProxyUpnpOrgRenderingControl1Cpp::BeginSetVolume(uint32_t aInstanceID, co
     const Action::VectorParameters& inParams = iActionSetVolume->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     {
-        Brn buf((const TByte*)aChannel.c_str(), aChannel.length());
+        Brn buf((const TByte*)aChannel.c_str(), (TUint)aChannel.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredVolume));
@@ -2008,7 +2008,7 @@ void CpProxyUpnpOrgRenderingControl1Cpp::BeginGetVolumeDB(uint32_t aInstanceID, 
     const Action::VectorParameters& inParams = iActionGetVolumeDB->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     {
-        Brn buf((const TByte*)aChannel.c_str(), aChannel.length());
+        Brn buf((const TByte*)aChannel.c_str(), (TUint)aChannel.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -2044,7 +2044,7 @@ void CpProxyUpnpOrgRenderingControl1Cpp::BeginSetVolumeDB(uint32_t aInstanceID, 
     const Action::VectorParameters& inParams = iActionSetVolumeDB->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     {
-        Brn buf((const TByte*)aChannel.c_str(), aChannel.length());
+        Brn buf((const TByte*)aChannel.c_str(), (TUint)aChannel.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->AddInput(new ArgumentInt(*inParams[inIndex++], aDesiredVolume));
@@ -2076,7 +2076,7 @@ void CpProxyUpnpOrgRenderingControl1Cpp::BeginGetVolumeDBRange(uint32_t aInstanc
     const Action::VectorParameters& inParams = iActionGetVolumeDBRange->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     {
-        Brn buf((const TByte*)aChannel.c_str(), aChannel.length());
+        Brn buf((const TByte*)aChannel.c_str(), (TUint)aChannel.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -2114,7 +2114,7 @@ void CpProxyUpnpOrgRenderingControl1Cpp::BeginGetLoudness(uint32_t aInstanceID, 
     const Action::VectorParameters& inParams = iActionGetLoudness->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     {
-        Brn buf((const TByte*)aChannel.c_str(), aChannel.length());
+        Brn buf((const TByte*)aChannel.c_str(), (TUint)aChannel.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -2150,7 +2150,7 @@ void CpProxyUpnpOrgRenderingControl1Cpp::BeginSetLoudness(uint32_t aInstanceID, 
     const Action::VectorParameters& inParams = iActionSetLoudness->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     {
-        Brn buf((const TByte*)aChannel.c_str(), aChannel.length());
+        Brn buf((const TByte*)aChannel.c_str(), (TUint)aChannel.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aDesiredLoudness));

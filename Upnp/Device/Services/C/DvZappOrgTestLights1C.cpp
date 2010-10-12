@@ -206,46 +206,49 @@ void DvServiceZappOrgTestLights1C::GetColorComponents(IInvocationResponse& aResp
 
 THandle DvServiceZappOrgTestLights1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceZappOrgTestLights1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	THandle h;
+    HandleInit(&h);
+	h.iData.iPtr = new DvServiceZappOrgTestLights1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return h;
 }
 
 void DvServiceZappOrgTestLights1Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService);
+    delete reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService.iData.iPtr);
 }
 
 void DvServiceZappOrgTestLights1EnableActionGetCount(THandle aService, CallbackTestLights1GetCount aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService)->EnableActionGetCount(aCallback, aPtr);
+    reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService.iData.iPtr)->EnableActionGetCount(aCallback, aPtr);
 }
 
 void DvServiceZappOrgTestLights1EnableActionGetRoom(THandle aService, CallbackTestLights1GetRoom aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService)->EnableActionGetRoom(aCallback, aPtr);
+    reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService.iData.iPtr)->EnableActionGetRoom(aCallback, aPtr);
 }
 
 void DvServiceZappOrgTestLights1EnableActionGetName(THandle aService, CallbackTestLights1GetName aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService)->EnableActionGetName(aCallback, aPtr);
+    reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService.iData.iPtr)->EnableActionGetName(aCallback, aPtr);
 }
 
 void DvServiceZappOrgTestLights1EnableActionGetPosition(THandle aService, CallbackTestLights1GetPosition aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService)->EnableActionGetPosition(aCallback, aPtr);
+    reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService.iData.iPtr)->EnableActionGetPosition(aCallback, aPtr);
 }
 
 void DvServiceZappOrgTestLights1EnableActionSetColor(THandle aService, CallbackTestLights1SetColor aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService)->EnableActionSetColor(aCallback, aPtr);
+    reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService.iData.iPtr)->EnableActionSetColor(aCallback, aPtr);
 }
 
 void DvServiceZappOrgTestLights1EnableActionGetColor(THandle aService, CallbackTestLights1GetColor aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService)->EnableActionGetColor(aCallback, aPtr);
+    reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService.iData.iPtr)->EnableActionGetColor(aCallback, aPtr);
 }
 
 void DvServiceZappOrgTestLights1EnableActionGetColorComponents(THandle aService, CallbackTestLights1GetColorComponents aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService)->EnableActionGetColorComponents(aCallback, aPtr);
+    reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService.iData.iPtr)->EnableActionGetColorComponents(aCallback, aPtr);
 }
 

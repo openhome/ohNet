@@ -14,7 +14,7 @@ public:
 };
 
 CpProxyUpnpOrgRenderingControl1C::CpProxyUpnpOrgRenderingControl1C(CpDeviceC aDevice)
-    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice))
+    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice.iData.iPtr))
 {
     iProxy = new CpProxyUpnpOrgRenderingControl1(*iDevice);
 }
@@ -22,18 +22,21 @@ CpProxyUpnpOrgRenderingControl1C::CpProxyUpnpOrgRenderingControl1C(CpDeviceC aDe
 
 THandle CpProxyUpnpOrgRenderingControl1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyUpnpOrgRenderingControl1C(aDevice);
+    THandle h;
+    HandleInit(&h);
+    h.iData.iPtr = new CpProxyUpnpOrgRenderingControl1C(aDevice);
+    return h;
 }
 
 void CpProxyUpnpOrgRenderingControl1Destroy(THandle aHandle)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     delete proxyC;
 }
 
 void CpProxyUpnpOrgRenderingControl1SyncListPresets(THandle aHandle, uint32_t aInstanceID, char** aCurrentPresetNameList)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aCurrentPresetNameList;
     proxyC->Proxy()->SyncListPresets(aInstanceID, buf_aCurrentPresetNameList);
@@ -42,7 +45,7 @@ void CpProxyUpnpOrgRenderingControl1SyncListPresets(THandle aHandle, uint32_t aI
 
 void CpProxyUpnpOrgRenderingControl1BeginListPresets(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginListPresets(aInstanceID, functor);
@@ -51,9 +54,9 @@ void CpProxyUpnpOrgRenderingControl1BeginListPresets(THandle aHandle, uint32_t a
 int32_t CpProxyUpnpOrgRenderingControl1EndListPresets(THandle aHandle, ZappHandleAsync aAsync, char** aCurrentPresetNameList)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     Brh buf_aCurrentPresetNameList;
     *aCurrentPresetNameList = NULL;
@@ -69,7 +72,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndListPresets(THandle aHandle, ZappHandl
 
 void CpProxyUpnpOrgRenderingControl1SyncSelectPreset(THandle aHandle, uint32_t aInstanceID, const char* aPresetName)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aPresetName(aPresetName);
     proxyC->Proxy()->SyncSelectPreset(aInstanceID, buf_aPresetName);
@@ -77,7 +80,7 @@ void CpProxyUpnpOrgRenderingControl1SyncSelectPreset(THandle aHandle, uint32_t a
 
 void CpProxyUpnpOrgRenderingControl1BeginSelectPreset(THandle aHandle, uint32_t aInstanceID, const char* aPresetName, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aPresetName(aPresetName);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
@@ -87,9 +90,9 @@ void CpProxyUpnpOrgRenderingControl1BeginSelectPreset(THandle aHandle, uint32_t 
 int32_t CpProxyUpnpOrgRenderingControl1EndSelectPreset(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSelectPreset(*async);
@@ -102,14 +105,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSelectPreset(THandle aHandle, ZappHand
 
 void CpProxyUpnpOrgRenderingControl1SyncGetBrightness(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentBrightness)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncGetBrightness(aInstanceID, *aCurrentBrightness);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginGetBrightness(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetBrightness(aInstanceID, functor);
@@ -118,9 +121,9 @@ void CpProxyUpnpOrgRenderingControl1BeginGetBrightness(THandle aHandle, uint32_t
 int32_t CpProxyUpnpOrgRenderingControl1EndGetBrightness(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentBrightness)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndGetBrightness(*async, *aCurrentBrightness);
@@ -133,14 +136,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetBrightness(THandle aHandle, ZappHan
 
 void CpProxyUpnpOrgRenderingControl1SyncSetBrightness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBrightness)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetBrightness(aInstanceID, aDesiredBrightness);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginSetBrightness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBrightness, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetBrightness(aInstanceID, aDesiredBrightness, functor);
@@ -149,9 +152,9 @@ void CpProxyUpnpOrgRenderingControl1BeginSetBrightness(THandle aHandle, uint32_t
 int32_t CpProxyUpnpOrgRenderingControl1EndSetBrightness(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetBrightness(*async);
@@ -164,14 +167,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetBrightness(THandle aHandle, ZappHan
 
 void CpProxyUpnpOrgRenderingControl1SyncGetContrast(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentContrast)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncGetContrast(aInstanceID, *aCurrentContrast);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginGetContrast(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetContrast(aInstanceID, functor);
@@ -180,9 +183,9 @@ void CpProxyUpnpOrgRenderingControl1BeginGetContrast(THandle aHandle, uint32_t a
 int32_t CpProxyUpnpOrgRenderingControl1EndGetContrast(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentContrast)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndGetContrast(*async, *aCurrentContrast);
@@ -195,14 +198,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetContrast(THandle aHandle, ZappHandl
 
 void CpProxyUpnpOrgRenderingControl1SyncSetContrast(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredContrast)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetContrast(aInstanceID, aDesiredContrast);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginSetContrast(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredContrast, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetContrast(aInstanceID, aDesiredContrast, functor);
@@ -211,9 +214,9 @@ void CpProxyUpnpOrgRenderingControl1BeginSetContrast(THandle aHandle, uint32_t a
 int32_t CpProxyUpnpOrgRenderingControl1EndSetContrast(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetContrast(*async);
@@ -226,14 +229,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetContrast(THandle aHandle, ZappHandl
 
 void CpProxyUpnpOrgRenderingControl1SyncGetSharpness(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentSharpness)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncGetSharpness(aInstanceID, *aCurrentSharpness);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginGetSharpness(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetSharpness(aInstanceID, functor);
@@ -242,9 +245,9 @@ void CpProxyUpnpOrgRenderingControl1BeginGetSharpness(THandle aHandle, uint32_t 
 int32_t CpProxyUpnpOrgRenderingControl1EndGetSharpness(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentSharpness)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndGetSharpness(*async, *aCurrentSharpness);
@@ -257,14 +260,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetSharpness(THandle aHandle, ZappHand
 
 void CpProxyUpnpOrgRenderingControl1SyncSetSharpness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredSharpness)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetSharpness(aInstanceID, aDesiredSharpness);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginSetSharpness(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredSharpness, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetSharpness(aInstanceID, aDesiredSharpness, functor);
@@ -273,9 +276,9 @@ void CpProxyUpnpOrgRenderingControl1BeginSetSharpness(THandle aHandle, uint32_t 
 int32_t CpProxyUpnpOrgRenderingControl1EndSetSharpness(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetSharpness(*async);
@@ -288,14 +291,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetSharpness(THandle aHandle, ZappHand
 
 void CpProxyUpnpOrgRenderingControl1SyncGetRedVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentRedVideoGain)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncGetRedVideoGain(aInstanceID, *aCurrentRedVideoGain);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginGetRedVideoGain(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetRedVideoGain(aInstanceID, functor);
@@ -304,9 +307,9 @@ void CpProxyUpnpOrgRenderingControl1BeginGetRedVideoGain(THandle aHandle, uint32
 int32_t CpProxyUpnpOrgRenderingControl1EndGetRedVideoGain(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentRedVideoGain)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndGetRedVideoGain(*async, *aCurrentRedVideoGain);
@@ -319,14 +322,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetRedVideoGain(THandle aHandle, ZappH
 
 void CpProxyUpnpOrgRenderingControl1SyncSetRedVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoGain)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetRedVideoGain(aInstanceID, aDesiredRedVideoGain);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginSetRedVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoGain, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetRedVideoGain(aInstanceID, aDesiredRedVideoGain, functor);
@@ -335,9 +338,9 @@ void CpProxyUpnpOrgRenderingControl1BeginSetRedVideoGain(THandle aHandle, uint32
 int32_t CpProxyUpnpOrgRenderingControl1EndSetRedVideoGain(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetRedVideoGain(*async);
@@ -350,14 +353,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetRedVideoGain(THandle aHandle, ZappH
 
 void CpProxyUpnpOrgRenderingControl1SyncGetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoGain)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncGetGreenVideoGain(aInstanceID, *aCurrentGreenVideoGain);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginGetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetGreenVideoGain(aInstanceID, functor);
@@ -366,9 +369,9 @@ void CpProxyUpnpOrgRenderingControl1BeginGetGreenVideoGain(THandle aHandle, uint
 int32_t CpProxyUpnpOrgRenderingControl1EndGetGreenVideoGain(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentGreenVideoGain)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndGetGreenVideoGain(*async, *aCurrentGreenVideoGain);
@@ -381,14 +384,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetGreenVideoGain(THandle aHandle, Zap
 
 void CpProxyUpnpOrgRenderingControl1SyncSetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoGain)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetGreenVideoGain(aInstanceID, aDesiredGreenVideoGain);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginSetGreenVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoGain, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetGreenVideoGain(aInstanceID, aDesiredGreenVideoGain, functor);
@@ -397,9 +400,9 @@ void CpProxyUpnpOrgRenderingControl1BeginSetGreenVideoGain(THandle aHandle, uint
 int32_t CpProxyUpnpOrgRenderingControl1EndSetGreenVideoGain(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetGreenVideoGain(*async);
@@ -412,14 +415,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetGreenVideoGain(THandle aHandle, Zap
 
 void CpProxyUpnpOrgRenderingControl1SyncGetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoGain)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncGetBlueVideoGain(aInstanceID, *aCurrentBlueVideoGain);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginGetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetBlueVideoGain(aInstanceID, functor);
@@ -428,9 +431,9 @@ void CpProxyUpnpOrgRenderingControl1BeginGetBlueVideoGain(THandle aHandle, uint3
 int32_t CpProxyUpnpOrgRenderingControl1EndGetBlueVideoGain(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentBlueVideoGain)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndGetBlueVideoGain(*async, *aCurrentBlueVideoGain);
@@ -443,14 +446,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetBlueVideoGain(THandle aHandle, Zapp
 
 void CpProxyUpnpOrgRenderingControl1SyncSetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoGain)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetBlueVideoGain(aInstanceID, aDesiredBlueVideoGain);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginSetBlueVideoGain(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoGain, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetBlueVideoGain(aInstanceID, aDesiredBlueVideoGain, functor);
@@ -459,9 +462,9 @@ void CpProxyUpnpOrgRenderingControl1BeginSetBlueVideoGain(THandle aHandle, uint3
 int32_t CpProxyUpnpOrgRenderingControl1EndSetBlueVideoGain(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetBlueVideoGain(*async);
@@ -474,14 +477,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetBlueVideoGain(THandle aHandle, Zapp
 
 void CpProxyUpnpOrgRenderingControl1SyncGetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentRedVideoBlackLevel)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncGetRedVideoBlackLevel(aInstanceID, *aCurrentRedVideoBlackLevel);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginGetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetRedVideoBlackLevel(aInstanceID, functor);
@@ -490,9 +493,9 @@ void CpProxyUpnpOrgRenderingControl1BeginGetRedVideoBlackLevel(THandle aHandle, 
 int32_t CpProxyUpnpOrgRenderingControl1EndGetRedVideoBlackLevel(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentRedVideoBlackLevel)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndGetRedVideoBlackLevel(*async, *aCurrentRedVideoBlackLevel);
@@ -505,14 +508,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetRedVideoBlackLevel(THandle aHandle,
 
 void CpProxyUpnpOrgRenderingControl1SyncSetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoBlackLevel)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetRedVideoBlackLevel(aInstanceID, aDesiredRedVideoBlackLevel);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginSetRedVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredRedVideoBlackLevel, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetRedVideoBlackLevel(aInstanceID, aDesiredRedVideoBlackLevel, functor);
@@ -521,9 +524,9 @@ void CpProxyUpnpOrgRenderingControl1BeginSetRedVideoBlackLevel(THandle aHandle, 
 int32_t CpProxyUpnpOrgRenderingControl1EndSetRedVideoBlackLevel(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetRedVideoBlackLevel(*async);
@@ -536,14 +539,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetRedVideoBlackLevel(THandle aHandle,
 
 void CpProxyUpnpOrgRenderingControl1SyncGetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentGreenVideoBlackLevel)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncGetGreenVideoBlackLevel(aInstanceID, *aCurrentGreenVideoBlackLevel);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginGetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetGreenVideoBlackLevel(aInstanceID, functor);
@@ -552,9 +555,9 @@ void CpProxyUpnpOrgRenderingControl1BeginGetGreenVideoBlackLevel(THandle aHandle
 int32_t CpProxyUpnpOrgRenderingControl1EndGetGreenVideoBlackLevel(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentGreenVideoBlackLevel)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndGetGreenVideoBlackLevel(*async, *aCurrentGreenVideoBlackLevel);
@@ -567,14 +570,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetGreenVideoBlackLevel(THandle aHandl
 
 void CpProxyUpnpOrgRenderingControl1SyncSetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoBlackLevel)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetGreenVideoBlackLevel(aInstanceID, aDesiredGreenVideoBlackLevel);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginSetGreenVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredGreenVideoBlackLevel, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetGreenVideoBlackLevel(aInstanceID, aDesiredGreenVideoBlackLevel, functor);
@@ -583,9 +586,9 @@ void CpProxyUpnpOrgRenderingControl1BeginSetGreenVideoBlackLevel(THandle aHandle
 int32_t CpProxyUpnpOrgRenderingControl1EndSetGreenVideoBlackLevel(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetGreenVideoBlackLevel(*async);
@@ -598,14 +601,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetGreenVideoBlackLevel(THandle aHandl
 
 void CpProxyUpnpOrgRenderingControl1SyncGetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentBlueVideoBlackLevel)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncGetBlueVideoBlackLevel(aInstanceID, *aCurrentBlueVideoBlackLevel);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginGetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetBlueVideoBlackLevel(aInstanceID, functor);
@@ -614,9 +617,9 @@ void CpProxyUpnpOrgRenderingControl1BeginGetBlueVideoBlackLevel(THandle aHandle,
 int32_t CpProxyUpnpOrgRenderingControl1EndGetBlueVideoBlackLevel(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentBlueVideoBlackLevel)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndGetBlueVideoBlackLevel(*async, *aCurrentBlueVideoBlackLevel);
@@ -629,14 +632,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetBlueVideoBlackLevel(THandle aHandle
 
 void CpProxyUpnpOrgRenderingControl1SyncSetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoBlackLevel)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetBlueVideoBlackLevel(aInstanceID, aDesiredBlueVideoBlackLevel);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginSetBlueVideoBlackLevel(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredBlueVideoBlackLevel, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetBlueVideoBlackLevel(aInstanceID, aDesiredBlueVideoBlackLevel, functor);
@@ -645,9 +648,9 @@ void CpProxyUpnpOrgRenderingControl1BeginSetBlueVideoBlackLevel(THandle aHandle,
 int32_t CpProxyUpnpOrgRenderingControl1EndSetBlueVideoBlackLevel(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetBlueVideoBlackLevel(*async);
@@ -660,14 +663,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetBlueVideoBlackLevel(THandle aHandle
 
 void CpProxyUpnpOrgRenderingControl1SyncGetColorTemperature(THandle aHandle, uint32_t aInstanceID, uint32_t* aCurrentColorTemperature)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncGetColorTemperature(aInstanceID, *aCurrentColorTemperature);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginGetColorTemperature(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetColorTemperature(aInstanceID, functor);
@@ -676,9 +679,9 @@ void CpProxyUpnpOrgRenderingControl1BeginGetColorTemperature(THandle aHandle, ui
 int32_t CpProxyUpnpOrgRenderingControl1EndGetColorTemperature(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentColorTemperature)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndGetColorTemperature(*async, *aCurrentColorTemperature);
@@ -691,14 +694,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetColorTemperature(THandle aHandle, Z
 
 void CpProxyUpnpOrgRenderingControl1SyncSetColorTemperature(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredColorTemperature)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetColorTemperature(aInstanceID, aDesiredColorTemperature);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginSetColorTemperature(THandle aHandle, uint32_t aInstanceID, uint32_t aDesiredColorTemperature, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetColorTemperature(aInstanceID, aDesiredColorTemperature, functor);
@@ -707,9 +710,9 @@ void CpProxyUpnpOrgRenderingControl1BeginSetColorTemperature(THandle aHandle, ui
 int32_t CpProxyUpnpOrgRenderingControl1EndSetColorTemperature(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetColorTemperature(*async);
@@ -722,14 +725,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetColorTemperature(THandle aHandle, Z
 
 void CpProxyUpnpOrgRenderingControl1SyncGetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t* aCurrentHorizontalKeystone)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncGetHorizontalKeystone(aInstanceID, *aCurrentHorizontalKeystone);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginGetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetHorizontalKeystone(aInstanceID, functor);
@@ -738,9 +741,9 @@ void CpProxyUpnpOrgRenderingControl1BeginGetHorizontalKeystone(THandle aHandle, 
 int32_t CpProxyUpnpOrgRenderingControl1EndGetHorizontalKeystone(THandle aHandle, ZappHandleAsync aAsync, int32_t* aCurrentHorizontalKeystone)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndGetHorizontalKeystone(*async, *aCurrentHorizontalKeystone);
@@ -753,14 +756,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetHorizontalKeystone(THandle aHandle,
 
 void CpProxyUpnpOrgRenderingControl1SyncSetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredHorizontalKeystone)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetHorizontalKeystone(aInstanceID, aDesiredHorizontalKeystone);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginSetHorizontalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredHorizontalKeystone, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetHorizontalKeystone(aInstanceID, aDesiredHorizontalKeystone, functor);
@@ -769,9 +772,9 @@ void CpProxyUpnpOrgRenderingControl1BeginSetHorizontalKeystone(THandle aHandle, 
 int32_t CpProxyUpnpOrgRenderingControl1EndSetHorizontalKeystone(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetHorizontalKeystone(*async);
@@ -784,14 +787,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetHorizontalKeystone(THandle aHandle,
 
 void CpProxyUpnpOrgRenderingControl1SyncGetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t* aCurrentVerticalKeystone)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncGetVerticalKeystone(aInstanceID, *aCurrentVerticalKeystone);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginGetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetVerticalKeystone(aInstanceID, functor);
@@ -800,9 +803,9 @@ void CpProxyUpnpOrgRenderingControl1BeginGetVerticalKeystone(THandle aHandle, ui
 int32_t CpProxyUpnpOrgRenderingControl1EndGetVerticalKeystone(THandle aHandle, ZappHandleAsync aAsync, int32_t* aCurrentVerticalKeystone)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndGetVerticalKeystone(*async, *aCurrentVerticalKeystone);
@@ -815,14 +818,14 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetVerticalKeystone(THandle aHandle, Z
 
 void CpProxyUpnpOrgRenderingControl1SyncSetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredVerticalKeystone)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetVerticalKeystone(aInstanceID, aDesiredVerticalKeystone);
 }
 
 void CpProxyUpnpOrgRenderingControl1BeginSetVerticalKeystone(THandle aHandle, uint32_t aInstanceID, int32_t aDesiredVerticalKeystone, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetVerticalKeystone(aInstanceID, aDesiredVerticalKeystone, functor);
@@ -831,9 +834,9 @@ void CpProxyUpnpOrgRenderingControl1BeginSetVerticalKeystone(THandle aHandle, ui
 int32_t CpProxyUpnpOrgRenderingControl1EndSetVerticalKeystone(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetVerticalKeystone(*async);
@@ -846,7 +849,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetVerticalKeystone(THandle aHandle, Z
 
 void CpProxyUpnpOrgRenderingControl1SyncGetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentMute)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
     *aCurrentMute = 0;
@@ -855,7 +858,7 @@ void CpProxyUpnpOrgRenderingControl1SyncGetMute(THandle aHandle, uint32_t aInsta
 
 void CpProxyUpnpOrgRenderingControl1BeginGetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
@@ -865,9 +868,9 @@ void CpProxyUpnpOrgRenderingControl1BeginGetMute(THandle aHandle, uint32_t aInst
 int32_t CpProxyUpnpOrgRenderingControl1EndGetMute(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentMute)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     *aCurrentMute = 0;
     try {
@@ -881,7 +884,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetMute(THandle aHandle, ZappHandleAsy
 
 void CpProxyUpnpOrgRenderingControl1SyncSetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredMute)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
     proxyC->Proxy()->SyncSetMute(aInstanceID, buf_aChannel, (aDesiredMute==0? false : true));
@@ -889,7 +892,7 @@ void CpProxyUpnpOrgRenderingControl1SyncSetMute(THandle aHandle, uint32_t aInsta
 
 void CpProxyUpnpOrgRenderingControl1BeginSetMute(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredMute, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
@@ -899,9 +902,9 @@ void CpProxyUpnpOrgRenderingControl1BeginSetMute(THandle aHandle, uint32_t aInst
 int32_t CpProxyUpnpOrgRenderingControl1EndSetMute(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetMute(*async);
@@ -914,7 +917,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetMute(THandle aHandle, ZappHandleAsy
 
 void CpProxyUpnpOrgRenderingControl1SyncGetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentVolume)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
     proxyC->Proxy()->SyncGetVolume(aInstanceID, buf_aChannel, *aCurrentVolume);
@@ -922,7 +925,7 @@ void CpProxyUpnpOrgRenderingControl1SyncGetVolume(THandle aHandle, uint32_t aIns
 
 void CpProxyUpnpOrgRenderingControl1BeginGetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
@@ -932,9 +935,9 @@ void CpProxyUpnpOrgRenderingControl1BeginGetVolume(THandle aHandle, uint32_t aIn
 int32_t CpProxyUpnpOrgRenderingControl1EndGetVolume(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentVolume)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndGetVolume(*async, *aCurrentVolume);
@@ -947,7 +950,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetVolume(THandle aHandle, ZappHandleA
 
 void CpProxyUpnpOrgRenderingControl1SyncSetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredVolume)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
     proxyC->Proxy()->SyncSetVolume(aInstanceID, buf_aChannel, aDesiredVolume);
@@ -955,7 +958,7 @@ void CpProxyUpnpOrgRenderingControl1SyncSetVolume(THandle aHandle, uint32_t aIns
 
 void CpProxyUpnpOrgRenderingControl1BeginSetVolume(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredVolume, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
@@ -965,9 +968,9 @@ void CpProxyUpnpOrgRenderingControl1BeginSetVolume(THandle aHandle, uint32_t aIn
 int32_t CpProxyUpnpOrgRenderingControl1EndSetVolume(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetVolume(*async);
@@ -980,7 +983,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetVolume(THandle aHandle, ZappHandleA
 
 void CpProxyUpnpOrgRenderingControl1SyncGetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t* aCurrentVolume)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
     proxyC->Proxy()->SyncGetVolumeDB(aInstanceID, buf_aChannel, *aCurrentVolume);
@@ -988,7 +991,7 @@ void CpProxyUpnpOrgRenderingControl1SyncGetVolumeDB(THandle aHandle, uint32_t aI
 
 void CpProxyUpnpOrgRenderingControl1BeginGetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
@@ -998,9 +1001,9 @@ void CpProxyUpnpOrgRenderingControl1BeginGetVolumeDB(THandle aHandle, uint32_t a
 int32_t CpProxyUpnpOrgRenderingControl1EndGetVolumeDB(THandle aHandle, ZappHandleAsync aAsync, int32_t* aCurrentVolume)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndGetVolumeDB(*async, *aCurrentVolume);
@@ -1013,7 +1016,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetVolumeDB(THandle aHandle, ZappHandl
 
 void CpProxyUpnpOrgRenderingControl1SyncSetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t aDesiredVolume)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
     proxyC->Proxy()->SyncSetVolumeDB(aInstanceID, buf_aChannel, aDesiredVolume);
@@ -1021,7 +1024,7 @@ void CpProxyUpnpOrgRenderingControl1SyncSetVolumeDB(THandle aHandle, uint32_t aI
 
 void CpProxyUpnpOrgRenderingControl1BeginSetVolumeDB(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t aDesiredVolume, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
@@ -1031,9 +1034,9 @@ void CpProxyUpnpOrgRenderingControl1BeginSetVolumeDB(THandle aHandle, uint32_t a
 int32_t CpProxyUpnpOrgRenderingControl1EndSetVolumeDB(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetVolumeDB(*async);
@@ -1046,7 +1049,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetVolumeDB(THandle aHandle, ZappHandl
 
 void CpProxyUpnpOrgRenderingControl1SyncGetVolumeDBRange(THandle aHandle, uint32_t aInstanceID, const char* aChannel, int32_t* aMinValue, int32_t* aMaxValue)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
     proxyC->Proxy()->SyncGetVolumeDBRange(aInstanceID, buf_aChannel, *aMinValue, *aMaxValue);
@@ -1054,7 +1057,7 @@ void CpProxyUpnpOrgRenderingControl1SyncGetVolumeDBRange(THandle aHandle, uint32
 
 void CpProxyUpnpOrgRenderingControl1BeginGetVolumeDBRange(THandle aHandle, uint32_t aInstanceID, const char* aChannel, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
@@ -1064,9 +1067,9 @@ void CpProxyUpnpOrgRenderingControl1BeginGetVolumeDBRange(THandle aHandle, uint3
 int32_t CpProxyUpnpOrgRenderingControl1EndGetVolumeDBRange(THandle aHandle, ZappHandleAsync aAsync, int32_t* aMinValue, int32_t* aMaxValue)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndGetVolumeDBRange(*async, *aMinValue, *aMaxValue);
@@ -1079,7 +1082,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetVolumeDBRange(THandle aHandle, Zapp
 
 void CpProxyUpnpOrgRenderingControl1SyncGetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t* aCurrentLoudness)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
     *aCurrentLoudness = 0;
@@ -1088,7 +1091,7 @@ void CpProxyUpnpOrgRenderingControl1SyncGetLoudness(THandle aHandle, uint32_t aI
 
 void CpProxyUpnpOrgRenderingControl1BeginGetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
@@ -1098,9 +1101,9 @@ void CpProxyUpnpOrgRenderingControl1BeginGetLoudness(THandle aHandle, uint32_t a
 int32_t CpProxyUpnpOrgRenderingControl1EndGetLoudness(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aCurrentLoudness)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     *aCurrentLoudness = 0;
     try {
@@ -1114,7 +1117,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndGetLoudness(THandle aHandle, ZappHandl
 
 void CpProxyUpnpOrgRenderingControl1SyncSetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredLoudness)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
     proxyC->Proxy()->SyncSetLoudness(aInstanceID, buf_aChannel, (aDesiredLoudness==0? false : true));
@@ -1122,7 +1125,7 @@ void CpProxyUpnpOrgRenderingControl1SyncSetLoudness(THandle aHandle, uint32_t aI
 
 void CpProxyUpnpOrgRenderingControl1BeginSetLoudness(THandle aHandle, uint32_t aInstanceID, const char* aChannel, uint32_t aDesiredLoudness, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aChannel(aChannel);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
@@ -1132,9 +1135,9 @@ void CpProxyUpnpOrgRenderingControl1BeginSetLoudness(THandle aHandle, uint32_t a
 int32_t CpProxyUpnpOrgRenderingControl1EndSetLoudness(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetLoudness(*async);
@@ -1147,7 +1150,7 @@ int32_t CpProxyUpnpOrgRenderingControl1EndSetLoudness(THandle aHandle, ZappHandl
 
 void CpProxyUpnpOrgRenderingControl1SetPropertyLastChangeChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyLastChangeChanged(functor);
@@ -1155,7 +1158,7 @@ void CpProxyUpnpOrgRenderingControl1SetPropertyLastChangeChanged(THandle aHandle
 
 void CpProxyUpnpOrgRenderingControl1PropertyLastChange(THandle aHandle, char** aLastChange)
 {
-    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle);
+    CpProxyUpnpOrgRenderingControl1C* proxyC = reinterpret_cast<CpProxyUpnpOrgRenderingControl1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brhz buf_aLastChange;
     proxyC->Proxy()->PropertyLastChange(buf_aLastChange);

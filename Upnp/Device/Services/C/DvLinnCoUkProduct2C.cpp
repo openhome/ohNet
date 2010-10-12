@@ -319,125 +319,128 @@ void DvServiceLinnCoUkProduct2C::SourceType(IInvocationResponse& aResponse, TUin
 
 THandle DvServiceLinnCoUkProduct2Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkProduct2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	THandle h;
+    HandleInit(&h);
+	h.iData.iPtr = new DvServiceLinnCoUkProduct2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return h;
 }
 
 void DvServiceLinnCoUkProduct2Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService);
+    delete reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService.iData.iPtr);
 }
 
 void DvServiceLinnCoUkProduct2EnableActionType(THandle aService, CallbackProduct2Type aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->EnableActionType(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService.iData.iPtr)->EnableActionType(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProduct2EnableActionModel(THandle aService, CallbackProduct2Model aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->EnableActionModel(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService.iData.iPtr)->EnableActionModel(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProduct2EnableActionName(THandle aService, CallbackProduct2Name aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->EnableActionName(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService.iData.iPtr)->EnableActionName(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProduct2EnableActionSetName(THandle aService, CallbackProduct2SetName aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->EnableActionSetName(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService.iData.iPtr)->EnableActionSetName(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProduct2EnableActionRoom(THandle aService, CallbackProduct2Room aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->EnableActionRoom(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService.iData.iPtr)->EnableActionRoom(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProduct2EnableActionSetRoom(THandle aService, CallbackProduct2SetRoom aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->EnableActionSetRoom(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService.iData.iPtr)->EnableActionSetRoom(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProduct2EnableActionStandby(THandle aService, CallbackProduct2Standby aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->EnableActionStandby(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService.iData.iPtr)->EnableActionStandby(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProduct2EnableActionSetStandby(THandle aService, CallbackProduct2SetStandby aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->EnableActionSetStandby(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService.iData.iPtr)->EnableActionSetStandby(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProduct2EnableActionSourceCount(THandle aService, CallbackProduct2SourceCount aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->EnableActionSourceCount(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService.iData.iPtr)->EnableActionSourceCount(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProduct2EnableActionSourceIndex(THandle aService, CallbackProduct2SourceIndex aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->EnableActionSourceIndex(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService.iData.iPtr)->EnableActionSourceIndex(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProduct2EnableActionSetSourceIndex(THandle aService, CallbackProduct2SetSourceIndex aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->EnableActionSetSourceIndex(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService.iData.iPtr)->EnableActionSetSourceIndex(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProduct2EnableActionSourceType(THandle aService, CallbackProduct2SourceType aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->EnableActionSourceType(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService.iData.iPtr)->EnableActionSourceType(aCallback, aPtr);
 }
 
 int32_t DvServiceLinnCoUkProduct2SetPropertyProductName(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->SetPropertyProductName(buf);
+    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService.iData.iPtr)->SetPropertyProductName(buf);
     return 0;
 }
 
 void DvServiceLinnCoUkProduct2GetPropertyProductName(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->GetPropertyProductName(buf);
+    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService.iData.iPtr)->GetPropertyProductName(buf);
     *aValue = (char*)buf.Transfer();
 }
 
 int32_t DvServiceLinnCoUkProduct2SetPropertyProductRoom(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->SetPropertyProductRoom(buf);
+    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService.iData.iPtr)->SetPropertyProductRoom(buf);
     return 0;
 }
 
 void DvServiceLinnCoUkProduct2GetPropertyProductRoom(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->GetPropertyProductRoom(buf);
+    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService.iData.iPtr)->GetPropertyProductRoom(buf);
     *aValue = (char*)buf.Transfer();
 }
 
 int32_t DvServiceLinnCoUkProduct2SetPropertyProductStandby(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->SetPropertyProductStandby((aValue!=0));
+    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService.iData.iPtr)->SetPropertyProductStandby((aValue!=0));
     return 0;
 }
 
 void DvServiceLinnCoUkProduct2GetPropertyProductStandby(THandle aService, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->GetPropertyProductStandby(val);
+    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService.iData.iPtr)->GetPropertyProductStandby(val);
     *aValue = (val? 1 : 0);
 }
 
 int32_t DvServiceLinnCoUkProduct2SetPropertyProductSourceIndex(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->SetPropertyProductSourceIndex(aValue);
+    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService.iData.iPtr)->SetPropertyProductSourceIndex(aValue);
     return 0;
 }
 
 void DvServiceLinnCoUkProduct2GetPropertyProductSourceIndex(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->GetPropertyProductSourceIndex(val);
+    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService.iData.iPtr)->GetPropertyProductSourceIndex(val);
     *aValue = val;
 }
 

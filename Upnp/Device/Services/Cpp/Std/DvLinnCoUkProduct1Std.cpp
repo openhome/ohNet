@@ -8,7 +8,7 @@ using namespace Zapp;
 
 void DvServiceLinnCoUkProduct1Cpp::SetPropertyRoom(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     SetPropertyString(*iPropertyRoom, buf);
 }
 
@@ -78,7 +78,7 @@ void DvServiceLinnCoUkProduct1Cpp::DoRoom(IDvInvocation& aInvocation, TUint aVer
     Room(aVersion, respaRoom);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraRoom(aInvocation, "aRoom");
-    Brn buf_aRoom((const TByte*)respaRoom.c_str(), respaRoom.length());
+    Brn buf_aRoom((const TByte*)respaRoom.c_str(), (TUint)respaRoom.length());
     respWriteraRoom.Write(buf_aRoom);
     aInvocation.InvocationWriteStringEnd("aRoom");
 	aInvocation.InvocationWriteEnd();

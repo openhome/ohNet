@@ -501,115 +501,118 @@ void DvServiceUpnpOrgScheduledRecording2C::GetRecordTaskConflicts(IInvocationRes
 
 THandle DvServiceUpnpOrgScheduledRecording2Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceUpnpOrgScheduledRecording2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	THandle h;
+    HandleInit(&h);
+	h.iData.iPtr = new DvServiceUpnpOrgScheduledRecording2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return h;
 }
 
 void DvServiceUpnpOrgScheduledRecording2Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService);
+    delete reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService.iData.iPtr);
 }
 
 void DvServiceUpnpOrgScheduledRecording2EnableActionGetSortCapabilities(THandle aService, CallbackScheduledRecording2GetSortCapabilities aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->EnableActionGetSortCapabilities(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService.iData.iPtr)->EnableActionGetSortCapabilities(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgScheduledRecording2EnableActionGetPropertyList(THandle aService, CallbackScheduledRecording2GetPropertyList aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->EnableActionGetPropertyList(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService.iData.iPtr)->EnableActionGetPropertyList(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgScheduledRecording2EnableActionGetAllowedValues(THandle aService, CallbackScheduledRecording2GetAllowedValues aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->EnableActionGetAllowedValues(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService.iData.iPtr)->EnableActionGetAllowedValues(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgScheduledRecording2EnableActionGetStateUpdateID(THandle aService, CallbackScheduledRecording2GetStateUpdateID aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->EnableActionGetStateUpdateID(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService.iData.iPtr)->EnableActionGetStateUpdateID(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgScheduledRecording2EnableActionBrowseRecordSchedules(THandle aService, CallbackScheduledRecording2BrowseRecordSchedules aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->EnableActionBrowseRecordSchedules(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService.iData.iPtr)->EnableActionBrowseRecordSchedules(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgScheduledRecording2EnableActionBrowseRecordTasks(THandle aService, CallbackScheduledRecording2BrowseRecordTasks aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->EnableActionBrowseRecordTasks(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService.iData.iPtr)->EnableActionBrowseRecordTasks(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgScheduledRecording2EnableActionCreateRecordSchedule(THandle aService, CallbackScheduledRecording2CreateRecordSchedule aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->EnableActionCreateRecordSchedule(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService.iData.iPtr)->EnableActionCreateRecordSchedule(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgScheduledRecording2EnableActionDeleteRecordSchedule(THandle aService, CallbackScheduledRecording2DeleteRecordSchedule aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->EnableActionDeleteRecordSchedule(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService.iData.iPtr)->EnableActionDeleteRecordSchedule(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgScheduledRecording2EnableActionGetRecordSchedule(THandle aService, CallbackScheduledRecording2GetRecordSchedule aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->EnableActionGetRecordSchedule(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService.iData.iPtr)->EnableActionGetRecordSchedule(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgScheduledRecording2EnableActionEnableRecordSchedule(THandle aService, CallbackScheduledRecording2EnableRecordSchedule aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->EnableActionEnableRecordSchedule(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService.iData.iPtr)->EnableActionEnableRecordSchedule(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgScheduledRecording2EnableActionDisableRecordSchedule(THandle aService, CallbackScheduledRecording2DisableRecordSchedule aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->EnableActionDisableRecordSchedule(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService.iData.iPtr)->EnableActionDisableRecordSchedule(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgScheduledRecording2EnableActionDeleteRecordTask(THandle aService, CallbackScheduledRecording2DeleteRecordTask aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->EnableActionDeleteRecordTask(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService.iData.iPtr)->EnableActionDeleteRecordTask(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgScheduledRecording2EnableActionGetRecordTask(THandle aService, CallbackScheduledRecording2GetRecordTask aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->EnableActionGetRecordTask(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService.iData.iPtr)->EnableActionGetRecordTask(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgScheduledRecording2EnableActionEnableRecordTask(THandle aService, CallbackScheduledRecording2EnableRecordTask aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->EnableActionEnableRecordTask(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService.iData.iPtr)->EnableActionEnableRecordTask(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgScheduledRecording2EnableActionDisableRecordTask(THandle aService, CallbackScheduledRecording2DisableRecordTask aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->EnableActionDisableRecordTask(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService.iData.iPtr)->EnableActionDisableRecordTask(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgScheduledRecording2EnableActionResetRecordTask(THandle aService, CallbackScheduledRecording2ResetRecordTask aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->EnableActionResetRecordTask(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService.iData.iPtr)->EnableActionResetRecordTask(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgScheduledRecording2EnableActionGetRecordScheduleConflicts(THandle aService, CallbackScheduledRecording2GetRecordScheduleConflicts aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->EnableActionGetRecordScheduleConflicts(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService.iData.iPtr)->EnableActionGetRecordScheduleConflicts(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgScheduledRecording2EnableActionGetRecordTaskConflicts(THandle aService, CallbackScheduledRecording2GetRecordTaskConflicts aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->EnableActionGetRecordTaskConflicts(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService.iData.iPtr)->EnableActionGetRecordTaskConflicts(aCallback, aPtr);
 }
 
 int32_t DvServiceUpnpOrgScheduledRecording2SetPropertyLastChange(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->SetPropertyLastChange(buf);
+    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService.iData.iPtr)->SetPropertyLastChange(buf);
     return 0;
 }
 
 void DvServiceUpnpOrgScheduledRecording2GetPropertyLastChange(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->GetPropertyLastChange(buf);
+    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService.iData.iPtr)->GetPropertyLastChange(buf);
     *aValue = (char*)buf.Transfer();
 }
 

@@ -980,7 +980,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginSetInfraredCommands(const std::string& aaComman
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetInfraredCommands->InputParameters();
     {
-        Brn buf((const TByte*)aaCommands.c_str(), aaCommands.length());
+        Brn buf((const TByte*)aaCommands.c_str(), (TUint)aaCommands.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -1042,7 +1042,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginSetInfraredTerminalCommands(const std::string& 
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetInfraredTerminalCommands->InputParameters();
     {
-        Brn buf((const TByte*)aaCommands.c_str(), aaCommands.length());
+        Brn buf((const TByte*)aaCommands.c_str(), (TUint)aaCommands.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();

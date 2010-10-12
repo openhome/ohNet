@@ -516,110 +516,113 @@ void DvServiceUpnpOrgAVTransport1C::GetCurrentTransportActions(IInvocationRespon
 
 THandle DvServiceUpnpOrgAVTransport1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceUpnpOrgAVTransport1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	THandle h;
+    HandleInit(&h);
+	h.iData.iPtr = new DvServiceUpnpOrgAVTransport1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return h;
 }
 
 void DvServiceUpnpOrgAVTransport1Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService);
+    delete reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService.iData.iPtr);
 }
 
 void DvServiceUpnpOrgAVTransport1EnableActionSetAVTransportURI(THandle aService, CallbackAVTransport1SetAVTransportURI aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService)->EnableActionSetAVTransportURI(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService.iData.iPtr)->EnableActionSetAVTransportURI(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgAVTransport1EnableActionSetNextAVTransportURI(THandle aService, CallbackAVTransport1SetNextAVTransportURI aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService)->EnableActionSetNextAVTransportURI(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService.iData.iPtr)->EnableActionSetNextAVTransportURI(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgAVTransport1EnableActionGetMediaInfo(THandle aService, CallbackAVTransport1GetMediaInfo aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService)->EnableActionGetMediaInfo(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService.iData.iPtr)->EnableActionGetMediaInfo(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgAVTransport1EnableActionGetTransportInfo(THandle aService, CallbackAVTransport1GetTransportInfo aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService)->EnableActionGetTransportInfo(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService.iData.iPtr)->EnableActionGetTransportInfo(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgAVTransport1EnableActionGetPositionInfo(THandle aService, CallbackAVTransport1GetPositionInfo aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService)->EnableActionGetPositionInfo(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService.iData.iPtr)->EnableActionGetPositionInfo(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgAVTransport1EnableActionGetDeviceCapabilities(THandle aService, CallbackAVTransport1GetDeviceCapabilities aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService)->EnableActionGetDeviceCapabilities(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService.iData.iPtr)->EnableActionGetDeviceCapabilities(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgAVTransport1EnableActionGetTransportSettings(THandle aService, CallbackAVTransport1GetTransportSettings aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService)->EnableActionGetTransportSettings(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService.iData.iPtr)->EnableActionGetTransportSettings(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgAVTransport1EnableActionStop(THandle aService, CallbackAVTransport1Stop aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService)->EnableActionStop(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService.iData.iPtr)->EnableActionStop(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgAVTransport1EnableActionPlay(THandle aService, CallbackAVTransport1Play aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService)->EnableActionPlay(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService.iData.iPtr)->EnableActionPlay(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgAVTransport1EnableActionPause(THandle aService, CallbackAVTransport1Pause aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService)->EnableActionPause(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService.iData.iPtr)->EnableActionPause(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgAVTransport1EnableActionRecord(THandle aService, CallbackAVTransport1Record aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService)->EnableActionRecord(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService.iData.iPtr)->EnableActionRecord(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgAVTransport1EnableActionSeek(THandle aService, CallbackAVTransport1Seek aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService)->EnableActionSeek(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService.iData.iPtr)->EnableActionSeek(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgAVTransport1EnableActionNext(THandle aService, CallbackAVTransport1Next aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService)->EnableActionNext(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService.iData.iPtr)->EnableActionNext(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgAVTransport1EnableActionPrevious(THandle aService, CallbackAVTransport1Previous aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService)->EnableActionPrevious(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService.iData.iPtr)->EnableActionPrevious(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgAVTransport1EnableActionSetPlayMode(THandle aService, CallbackAVTransport1SetPlayMode aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService)->EnableActionSetPlayMode(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService.iData.iPtr)->EnableActionSetPlayMode(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgAVTransport1EnableActionSetRecordQualityMode(THandle aService, CallbackAVTransport1SetRecordQualityMode aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService)->EnableActionSetRecordQualityMode(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService.iData.iPtr)->EnableActionSetRecordQualityMode(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgAVTransport1EnableActionGetCurrentTransportActions(THandle aService, CallbackAVTransport1GetCurrentTransportActions aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService)->EnableActionGetCurrentTransportActions(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService.iData.iPtr)->EnableActionGetCurrentTransportActions(aCallback, aPtr);
 }
 
 int32_t DvServiceUpnpOrgAVTransport1SetPropertyLastChange(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService)->SetPropertyLastChange(buf);
+    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService.iData.iPtr)->SetPropertyLastChange(buf);
     return 0;
 }
 
 void DvServiceUpnpOrgAVTransport1GetPropertyLastChange(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService)->GetPropertyLastChange(buf);
+    reinterpret_cast<DvServiceUpnpOrgAVTransport1C*>(aService.iData.iPtr)->GetPropertyLastChange(buf);
     *aValue = (char*)buf.Transfer();
 }
 

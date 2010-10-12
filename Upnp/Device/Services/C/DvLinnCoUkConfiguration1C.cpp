@@ -100,54 +100,57 @@ void DvServiceLinnCoUkConfiguration1C::SetParameter(IInvocationResponse& aRespon
 
 THandle DvServiceLinnCoUkConfiguration1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkConfiguration1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	THandle h;
+    HandleInit(&h);
+	h.iData.iPtr = new DvServiceLinnCoUkConfiguration1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return h;
 }
 
 void DvServiceLinnCoUkConfiguration1Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService);
+    delete reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService.iData.iPtr);
 }
 
 void DvServiceLinnCoUkConfiguration1EnableActionConfigurationXml(THandle aService, CallbackConfiguration1ConfigurationXml aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService)->EnableActionConfigurationXml(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService.iData.iPtr)->EnableActionConfigurationXml(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkConfiguration1EnableActionParameterXml(THandle aService, CallbackConfiguration1ParameterXml aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService)->EnableActionParameterXml(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService.iData.iPtr)->EnableActionParameterXml(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkConfiguration1EnableActionSetParameter(THandle aService, CallbackConfiguration1SetParameter aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService)->EnableActionSetParameter(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService.iData.iPtr)->EnableActionSetParameter(aCallback, aPtr);
 }
 
 int32_t DvServiceLinnCoUkConfiguration1SetPropertyConfigurationXml(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService)->SetPropertyConfigurationXml(buf);
+    reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService.iData.iPtr)->SetPropertyConfigurationXml(buf);
     return 0;
 }
 
 void DvServiceLinnCoUkConfiguration1GetPropertyConfigurationXml(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService)->GetPropertyConfigurationXml(buf);
+    reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService.iData.iPtr)->GetPropertyConfigurationXml(buf);
     *aValue = (char*)buf.Transfer();
 }
 
 int32_t DvServiceLinnCoUkConfiguration1SetPropertyParameterXml(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService)->SetPropertyParameterXml(buf);
+    reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService.iData.iPtr)->SetPropertyParameterXml(buf);
     return 0;
 }
 
 void DvServiceLinnCoUkConfiguration1GetPropertyParameterXml(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService)->GetPropertyParameterXml(buf);
+    reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService.iData.iPtr)->GetPropertyParameterXml(buf);
     *aValue = (char*)buf.Transfer();
 }
 

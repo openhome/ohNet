@@ -73,7 +73,8 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
 
 //    Debug::SetLevel(Debug::kDevice);
     TBool block = true;
-    HandleCpDeviceList deviceList = kHandleNull;
+    HandleCpDeviceList deviceList;
+    HandleInit(&deviceList);
     Mutex* mutex = new Mutex("TDLM");
     if (all.IsSet()) {
         deviceList = CpDeviceListCreateUpnpAll(added, mutex, removed, mutex);
@@ -114,7 +115,7 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
         block = false;
     }
 
-    if (deviceList != kHandleNull) {
+    if (!HandleIsNull(&deviceList)) {
         Blocker* blocker = new Blocker;
         blocker->Wait(aInitParams->MsearchTimeSecs());
         delete blocker;

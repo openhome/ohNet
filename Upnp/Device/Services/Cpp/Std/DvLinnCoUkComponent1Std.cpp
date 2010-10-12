@@ -18,7 +18,7 @@ void DvServiceLinnCoUkComponent1Cpp::GetPropertyAmplifierEnabled(bool& aValue)
 
 void DvServiceLinnCoUkComponent1Cpp::SetPropertyAmplifierAttenuation(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     SetPropertyString(*iPropertyAmplifierAttenuation, buf);
 }
 
@@ -188,7 +188,7 @@ void DvServiceLinnCoUkComponent1Cpp::DoAmplifierAttenuation(IDvInvocation& aInvo
     AmplifierAttenuation(aVersion, respaAttenuation);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraAttenuation(aInvocation, "aAttenuation");
-    Brn buf_aAttenuation((const TByte*)respaAttenuation.c_str(), respaAttenuation.length());
+    Brn buf_aAttenuation((const TByte*)respaAttenuation.c_str(), (TUint)respaAttenuation.length());
     respWriteraAttenuation.Write(buf_aAttenuation);
     aInvocation.InvocationWriteStringEnd("aAttenuation");
 	aInvocation.InvocationWriteEnd();

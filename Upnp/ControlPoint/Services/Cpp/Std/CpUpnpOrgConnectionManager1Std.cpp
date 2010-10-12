@@ -282,16 +282,16 @@ void CpProxyUpnpOrgConnectionManager1Cpp::BeginPrepareForConnection(const std::s
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionPrepareForConnection->InputParameters();
     {
-        Brn buf((const TByte*)aRemoteProtocolInfo.c_str(), aRemoteProtocolInfo.length());
+        Brn buf((const TByte*)aRemoteProtocolInfo.c_str(), (TUint)aRemoteProtocolInfo.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aPeerConnectionManager.c_str(), aPeerConnectionManager.length());
+        Brn buf((const TByte*)aPeerConnectionManager.c_str(), (TUint)aPeerConnectionManager.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->AddInput(new ArgumentInt(*inParams[inIndex++], aPeerConnectionID));
     {
-        Brn buf((const TByte*)aDirection.c_str(), aDirection.length());
+        Brn buf((const TByte*)aDirection.c_str(), (TUint)aDirection.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;

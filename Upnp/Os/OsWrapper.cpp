@@ -15,13 +15,9 @@ Brn Os::GetPlatformNameAndVersion(TUint& aMajor, TUint& aMinor)
 	return nameBuf;
 }
 
-THandle Os::NetworkCreate(ESocketType aSocketType)
+TInt Os::NetworkCreate(ESocketType aSocketType, THandle* aHandle)
 {
-    THandle handle = OsNetworkCreate((OsNetworkSocketType)aSocketType);
-    if (handle == kHandleNull) {
-        THROW(NetworkError);
-    }
-    return handle;
+    return OsNetworkCreate((OsNetworkSocketType)aSocketType, aHandle);
 }
 
 TInt Os::NetworkBind(THandle aHandle, Endpoint& aEndpoint)

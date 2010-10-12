@@ -133,7 +133,7 @@ void DvServiceLinnCoUkVolkano1Cpp::DoBootMode(IDvInvocation& aInvocation, TUint 
     BootMode(aVersion, respaMode);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraMode(aInvocation, "aMode");
-    Brn buf_aMode((const TByte*)respaMode.c_str(), respaMode.length());
+    Brn buf_aMode((const TByte*)respaMode.c_str(), (TUint)respaMode.length());
     respWriteraMode.Write(buf_aMode);
     aInvocation.InvocationWriteStringEnd("aMode");
 	aInvocation.InvocationWriteEnd();
@@ -159,7 +159,7 @@ void DvServiceLinnCoUkVolkano1Cpp::DoBspType(IDvInvocation& aInvocation, TUint a
     BspType(aVersion, respaBspType);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraBspType(aInvocation, "aBspType");
-    Brn buf_aBspType((const TByte*)respaBspType.c_str(), respaBspType.length());
+    Brn buf_aBspType((const TByte*)respaBspType.c_str(), (TUint)respaBspType.length());
     respWriteraBspType.Write(buf_aBspType);
     aInvocation.InvocationWriteStringEnd("aBspType");
 	aInvocation.InvocationWriteEnd();
@@ -173,7 +173,7 @@ void DvServiceLinnCoUkVolkano1Cpp::DoUglyName(IDvInvocation& aInvocation, TUint 
     UglyName(aVersion, respaUglyName);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraUglyName(aInvocation, "aUglyName");
-    Brn buf_aUglyName((const TByte*)respaUglyName.c_str(), respaUglyName.length());
+    Brn buf_aUglyName((const TByte*)respaUglyName.c_str(), (TUint)respaUglyName.length());
     respWriteraUglyName.Write(buf_aUglyName);
     aInvocation.InvocationWriteStringEnd("aUglyName");
 	aInvocation.InvocationWriteEnd();
@@ -187,7 +187,7 @@ void DvServiceLinnCoUkVolkano1Cpp::DoMacAddress(IDvInvocation& aInvocation, TUin
     MacAddress(aVersion, respaMacAddress);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraMacAddress(aInvocation, "aMacAddress");
-    Brn buf_aMacAddress((const TByte*)respaMacAddress.c_str(), respaMacAddress.length());
+    Brn buf_aMacAddress((const TByte*)respaMacAddress.c_str(), (TUint)respaMacAddress.length());
     respWriteraMacAddress.Write(buf_aMacAddress);
     aInvocation.InvocationWriteStringEnd("aMacAddress");
 	aInvocation.InvocationWriteEnd();
@@ -201,7 +201,7 @@ void DvServiceLinnCoUkVolkano1Cpp::DoProductId(IDvInvocation& aInvocation, TUint
     ProductId(aVersion, respaProductNumber);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraProductNumber(aInvocation, "aProductNumber");
-    Brn buf_aProductNumber((const TByte*)respaProductNumber.c_str(), respaProductNumber.length());
+    Brn buf_aProductNumber((const TByte*)respaProductNumber.c_str(), (TUint)respaProductNumber.length());
     respWriteraProductNumber.Write(buf_aProductNumber);
     aInvocation.InvocationWriteStringEnd("aProductNumber");
 	aInvocation.InvocationWriteEnd();
@@ -216,7 +216,7 @@ void DvServiceLinnCoUkVolkano1Cpp::DoBoardId(IDvInvocation& aInvocation, TUint a
     BoardId(aVersion, aIndex, respaBoardNumber);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraBoardNumber(aInvocation, "aBoardNumber");
-    Brn buf_aBoardNumber((const TByte*)respaBoardNumber.c_str(), respaBoardNumber.length());
+    Brn buf_aBoardNumber((const TByte*)respaBoardNumber.c_str(), (TUint)respaBoardNumber.length());
     respWriteraBoardNumber.Write(buf_aBoardNumber);
     aInvocation.InvocationWriteStringEnd("aBoardNumber");
 	aInvocation.InvocationWriteEnd();
@@ -231,7 +231,7 @@ void DvServiceLinnCoUkVolkano1Cpp::DoBoardType(IDvInvocation& aInvocation, TUint
     BoardType(aVersion, aIndex, respaBoardNumber);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraBoardNumber(aInvocation, "aBoardNumber");
-    Brn buf_aBoardNumber((const TByte*)respaBoardNumber.c_str(), respaBoardNumber.length());
+    Brn buf_aBoardNumber((const TByte*)respaBoardNumber.c_str(), (TUint)respaBoardNumber.length());
     respWriteraBoardNumber.Write(buf_aBoardNumber);
     aInvocation.InvocationWriteStringEnd("aBoardNumber");
 	aInvocation.InvocationWriteEnd();
@@ -257,7 +257,7 @@ void DvServiceLinnCoUkVolkano1Cpp::DoSoftwareVersion(IDvInvocation& aInvocation,
     SoftwareVersion(aVersion, respaSoftwareVersion);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraSoftwareVersion(aInvocation, "aSoftwareVersion");
-    Brn buf_aSoftwareVersion((const TByte*)respaSoftwareVersion.c_str(), respaSoftwareVersion.length());
+    Brn buf_aSoftwareVersion((const TByte*)respaSoftwareVersion.c_str(), (TUint)respaSoftwareVersion.length());
     respWriteraSoftwareVersion.Write(buf_aSoftwareVersion);
     aInvocation.InvocationWriteStringEnd("aSoftwareVersion");
 	aInvocation.InvocationWriteEnd();
