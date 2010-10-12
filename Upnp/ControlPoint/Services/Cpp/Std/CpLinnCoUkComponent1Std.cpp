@@ -438,7 +438,7 @@ void CpProxyLinnCoUkComponent1Cpp::BeginSetAmplifierAttenuation(const std::strin
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetAmplifierAttenuation->InputParameters();
     {
-        Brn buf((const TByte*)aaAttenuation.c_str(), aaAttenuation.length());
+        Brn buf((const TByte*)aaAttenuation.c_str(), (TUint)aaAttenuation.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();

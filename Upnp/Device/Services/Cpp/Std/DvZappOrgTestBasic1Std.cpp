@@ -38,7 +38,7 @@ void DvServiceZappOrgTestBasic1Cpp::GetPropertyVarBool(bool& aValue)
 
 void DvServiceZappOrgTestBasic1Cpp::SetPropertyVarStr(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     SetPropertyString(*iPropertyVarStr, buf);
 }
 
@@ -50,7 +50,7 @@ void DvServiceZappOrgTestBasic1Cpp::GetPropertyVarStr(std::string& aValue)
 
 void DvServiceZappOrgTestBasic1Cpp::SetPropertyVarBin(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     SetPropertyBinary(*iPropertyVarBin, buf);
 }
 
@@ -261,7 +261,7 @@ void DvServiceZappOrgTestBasic1Cpp::DoEchoString(IDvInvocation& aInvocation, TUi
     EchoString(aVersion, Value, respResult);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriterResult(aInvocation, "Result");
-    Brn buf_Result((const TByte*)respResult.c_str(), respResult.length());
+    Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
     respWriterResult.Write(buf_Result);
     aInvocation.InvocationWriteStringEnd("Result");
 	aInvocation.InvocationWriteEnd();
@@ -278,7 +278,7 @@ void DvServiceZappOrgTestBasic1Cpp::DoEchoBinary(IDvInvocation& aInvocation, TUi
     EchoBinary(aVersion, Value, respResult);
 	aInvocation.InvocationWriteStart();
     InvocationResponseBinary respWriterResult(aInvocation, "Result");
-    Brn buf_Result((const TByte*)respResult.c_str(), respResult.length());
+    Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
     respWriterResult.Write(buf_Result);
     aInvocation.InvocationWriteBinaryEnd("Result");
 	aInvocation.InvocationWriteEnd();
@@ -382,7 +382,7 @@ void DvServiceZappOrgTestBasic1Cpp::DoGetString(IDvInvocation& aInvocation, TUin
     GetString(aVersion, respValueStr);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriterValueStr(aInvocation, "ValueStr");
-    Brn buf_ValueStr((const TByte*)respValueStr.c_str(), respValueStr.length());
+    Brn buf_ValueStr((const TByte*)respValueStr.c_str(), (TUint)respValueStr.length());
     respWriterValueStr.Write(buf_ValueStr);
     aInvocation.InvocationWriteStringEnd("ValueStr");
 	aInvocation.InvocationWriteEnd();
@@ -408,7 +408,7 @@ void DvServiceZappOrgTestBasic1Cpp::DoGetBinary(IDvInvocation& aInvocation, TUin
     GetBinary(aVersion, respValueBin);
 	aInvocation.InvocationWriteStart();
     InvocationResponseBinary respWriterValueBin(aInvocation, "ValueBin");
-    Brn buf_ValueBin((const TByte*)respValueBin.c_str(), respValueBin.length());
+    Brn buf_ValueBin((const TByte*)respValueBin.c_str(), (TUint)respValueBin.length());
     respWriterValueBin.Write(buf_ValueBin);
     aInvocation.InvocationWriteBinaryEnd("ValueBin");
 	aInvocation.InvocationWriteEnd();

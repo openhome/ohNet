@@ -35,7 +35,21 @@ typedef unsigned __int64 uint64_t;
 /**
  * Opaque handle to an OS resource
  */
-typedef int32_t THandle;
+typedef struct
+{
+    union {
+        void* iPtr;
+        int   iHandle;
+    } iData;
+} THandle;
+
+//void HandleInit(THandle* aHandle);
+#define HandleInit(h)       \
+    (h)->iData.iPtr = NULL; \
+    (h)->iData.iHandle = 0;
+#define HandleClear(h)    HandleInit(h)
+#define HandleIsNull(h) \
+    ((h)->iData.iPtr == NULL && (h)->iData.iHandle == 0)
 
 /**
  * IpV4 address as network order uint32

@@ -14,7 +14,7 @@ public:
 };
 
 CpProxyLinnCoUkPreamp4C::CpProxyLinnCoUkPreamp4C(CpDeviceC aDevice)
-    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice))
+    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice.iData.iPtr))
 {
     iProxy = new CpProxyLinnCoUkPreamp4(*iDevice);
 }
@@ -22,25 +22,28 @@ CpProxyLinnCoUkPreamp4C::CpProxyLinnCoUkPreamp4C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkPreamp4Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyLinnCoUkPreamp4C(aDevice);
+    THandle h;
+    HandleInit(&h);
+    h.iData.iPtr = new CpProxyLinnCoUkPreamp4C(aDevice);
+    return h;
 }
 
 void CpProxyLinnCoUkPreamp4Destroy(THandle aHandle)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     delete proxyC;
 }
 
 void CpProxyLinnCoUkPreamp4SyncVolumeInc(THandle aHandle)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncVolumeInc();
 }
 
 void CpProxyLinnCoUkPreamp4BeginVolumeInc(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginVolumeInc(functor);
@@ -49,9 +52,9 @@ void CpProxyLinnCoUkPreamp4BeginVolumeInc(THandle aHandle, ZappCallbackAsync aCa
 int32_t CpProxyLinnCoUkPreamp4EndVolumeInc(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndVolumeInc(*async);
@@ -64,14 +67,14 @@ int32_t CpProxyLinnCoUkPreamp4EndVolumeInc(THandle aHandle, ZappHandleAsync aAsy
 
 void CpProxyLinnCoUkPreamp4SyncVolumeDec(THandle aHandle)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncVolumeDec();
 }
 
 void CpProxyLinnCoUkPreamp4BeginVolumeDec(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginVolumeDec(functor);
@@ -80,9 +83,9 @@ void CpProxyLinnCoUkPreamp4BeginVolumeDec(THandle aHandle, ZappCallbackAsync aCa
 int32_t CpProxyLinnCoUkPreamp4EndVolumeDec(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndVolumeDec(*async);
@@ -95,14 +98,14 @@ int32_t CpProxyLinnCoUkPreamp4EndVolumeDec(THandle aHandle, ZappHandleAsync aAsy
 
 void CpProxyLinnCoUkPreamp4SyncSetVolume(THandle aHandle, uint32_t aaVolume)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetVolume(aaVolume);
 }
 
 void CpProxyLinnCoUkPreamp4BeginSetVolume(THandle aHandle, uint32_t aaVolume, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetVolume(aaVolume, functor);
@@ -111,9 +114,9 @@ void CpProxyLinnCoUkPreamp4BeginSetVolume(THandle aHandle, uint32_t aaVolume, Za
 int32_t CpProxyLinnCoUkPreamp4EndSetVolume(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetVolume(*async);
@@ -126,14 +129,14 @@ int32_t CpProxyLinnCoUkPreamp4EndSetVolume(THandle aHandle, ZappHandleAsync aAsy
 
 void CpProxyLinnCoUkPreamp4SyncVolume(THandle aHandle, uint32_t* aaVolume)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncVolume(*aaVolume);
 }
 
 void CpProxyLinnCoUkPreamp4BeginVolume(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginVolume(functor);
@@ -142,9 +145,9 @@ void CpProxyLinnCoUkPreamp4BeginVolume(THandle aHandle, ZappCallbackAsync aCallb
 int32_t CpProxyLinnCoUkPreamp4EndVolume(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaVolume)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndVolume(*async, *aaVolume);
@@ -157,14 +160,14 @@ int32_t CpProxyLinnCoUkPreamp4EndVolume(THandle aHandle, ZappHandleAsync aAsync,
 
 void CpProxyLinnCoUkPreamp4SyncSetMute(THandle aHandle, uint32_t aaMute)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetMute((aaMute==0? false : true));
 }
 
 void CpProxyLinnCoUkPreamp4BeginSetMute(THandle aHandle, uint32_t aaMute, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetMute((aaMute==0? false : true), functor);
@@ -173,9 +176,9 @@ void CpProxyLinnCoUkPreamp4BeginSetMute(THandle aHandle, uint32_t aaMute, ZappCa
 int32_t CpProxyLinnCoUkPreamp4EndSetMute(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetMute(*async);
@@ -188,7 +191,7 @@ int32_t CpProxyLinnCoUkPreamp4EndSetMute(THandle aHandle, ZappHandleAsync aAsync
 
 void CpProxyLinnCoUkPreamp4SyncMute(THandle aHandle, uint32_t* aaMute)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aaMute = 0;
     proxyC->Proxy()->SyncMute(*(TBool*)aaMute);
@@ -196,7 +199,7 @@ void CpProxyLinnCoUkPreamp4SyncMute(THandle aHandle, uint32_t* aaMute)
 
 void CpProxyLinnCoUkPreamp4BeginMute(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginMute(functor);
@@ -205,9 +208,9 @@ void CpProxyLinnCoUkPreamp4BeginMute(THandle aHandle, ZappCallbackAsync aCallbac
 int32_t CpProxyLinnCoUkPreamp4EndMute(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaMute)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     *aaMute = 0;
     try {
@@ -221,14 +224,14 @@ int32_t CpProxyLinnCoUkPreamp4EndMute(THandle aHandle, ZappHandleAsync aAsync, u
 
 void CpProxyLinnCoUkPreamp4SyncSetBalance(THandle aHandle, int32_t aaBalance)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetBalance(aaBalance);
 }
 
 void CpProxyLinnCoUkPreamp4BeginSetBalance(THandle aHandle, int32_t aaBalance, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetBalance(aaBalance, functor);
@@ -237,9 +240,9 @@ void CpProxyLinnCoUkPreamp4BeginSetBalance(THandle aHandle, int32_t aaBalance, Z
 int32_t CpProxyLinnCoUkPreamp4EndSetBalance(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetBalance(*async);
@@ -252,14 +255,14 @@ int32_t CpProxyLinnCoUkPreamp4EndSetBalance(THandle aHandle, ZappHandleAsync aAs
 
 void CpProxyLinnCoUkPreamp4SyncBalance(THandle aHandle, int32_t* aaBalance)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncBalance(*aaBalance);
 }
 
 void CpProxyLinnCoUkPreamp4BeginBalance(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginBalance(functor);
@@ -268,9 +271,9 @@ void CpProxyLinnCoUkPreamp4BeginBalance(THandle aHandle, ZappCallbackAsync aCall
 int32_t CpProxyLinnCoUkPreamp4EndBalance(THandle aHandle, ZappHandleAsync aAsync, int32_t* aaBalance)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndBalance(*async, *aaBalance);
@@ -283,14 +286,14 @@ int32_t CpProxyLinnCoUkPreamp4EndBalance(THandle aHandle, ZappHandleAsync aAsync
 
 void CpProxyLinnCoUkPreamp4SyncSetVolumeLimit(THandle aHandle, uint32_t aaVolumeLimit)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetVolumeLimit(aaVolumeLimit);
 }
 
 void CpProxyLinnCoUkPreamp4BeginSetVolumeLimit(THandle aHandle, uint32_t aaVolumeLimit, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetVolumeLimit(aaVolumeLimit, functor);
@@ -299,9 +302,9 @@ void CpProxyLinnCoUkPreamp4BeginSetVolumeLimit(THandle aHandle, uint32_t aaVolum
 int32_t CpProxyLinnCoUkPreamp4EndSetVolumeLimit(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetVolumeLimit(*async);
@@ -314,14 +317,14 @@ int32_t CpProxyLinnCoUkPreamp4EndSetVolumeLimit(THandle aHandle, ZappHandleAsync
 
 void CpProxyLinnCoUkPreamp4SyncVolumeLimit(THandle aHandle, uint32_t* aaVolumeLimit)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncVolumeLimit(*aaVolumeLimit);
 }
 
 void CpProxyLinnCoUkPreamp4BeginVolumeLimit(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginVolumeLimit(functor);
@@ -330,9 +333,9 @@ void CpProxyLinnCoUkPreamp4BeginVolumeLimit(THandle aHandle, ZappCallbackAsync a
 int32_t CpProxyLinnCoUkPreamp4EndVolumeLimit(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaVolumeLimit)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndVolumeLimit(*async, *aaVolumeLimit);
@@ -345,14 +348,14 @@ int32_t CpProxyLinnCoUkPreamp4EndVolumeLimit(THandle aHandle, ZappHandleAsync aA
 
 void CpProxyLinnCoUkPreamp4SyncSetStartupVolume(THandle aHandle, uint32_t aaStartupVolume)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetStartupVolume(aaStartupVolume);
 }
 
 void CpProxyLinnCoUkPreamp4BeginSetStartupVolume(THandle aHandle, uint32_t aaStartupVolume, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetStartupVolume(aaStartupVolume, functor);
@@ -361,9 +364,9 @@ void CpProxyLinnCoUkPreamp4BeginSetStartupVolume(THandle aHandle, uint32_t aaSta
 int32_t CpProxyLinnCoUkPreamp4EndSetStartupVolume(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetStartupVolume(*async);
@@ -376,14 +379,14 @@ int32_t CpProxyLinnCoUkPreamp4EndSetStartupVolume(THandle aHandle, ZappHandleAsy
 
 void CpProxyLinnCoUkPreamp4SyncStartupVolume(THandle aHandle, uint32_t* aaStartupVolume)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncStartupVolume(*aaStartupVolume);
 }
 
 void CpProxyLinnCoUkPreamp4BeginStartupVolume(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginStartupVolume(functor);
@@ -392,9 +395,9 @@ void CpProxyLinnCoUkPreamp4BeginStartupVolume(THandle aHandle, ZappCallbackAsync
 int32_t CpProxyLinnCoUkPreamp4EndStartupVolume(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaStartupVolume)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndStartupVolume(*async, *aaStartupVolume);
@@ -407,14 +410,14 @@ int32_t CpProxyLinnCoUkPreamp4EndStartupVolume(THandle aHandle, ZappHandleAsync 
 
 void CpProxyLinnCoUkPreamp4SyncSetStartupVolumeEnabled(THandle aHandle, uint32_t aaStartupVolumeEnabled)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetStartupVolumeEnabled((aaStartupVolumeEnabled==0? false : true));
 }
 
 void CpProxyLinnCoUkPreamp4BeginSetStartupVolumeEnabled(THandle aHandle, uint32_t aaStartupVolumeEnabled, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetStartupVolumeEnabled((aaStartupVolumeEnabled==0? false : true), functor);
@@ -423,9 +426,9 @@ void CpProxyLinnCoUkPreamp4BeginSetStartupVolumeEnabled(THandle aHandle, uint32_
 int32_t CpProxyLinnCoUkPreamp4EndSetStartupVolumeEnabled(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetStartupVolumeEnabled(*async);
@@ -438,7 +441,7 @@ int32_t CpProxyLinnCoUkPreamp4EndSetStartupVolumeEnabled(THandle aHandle, ZappHa
 
 void CpProxyLinnCoUkPreamp4SyncStartupVolumeEnabled(THandle aHandle, uint32_t* aaStartupVolumeEnabled)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aaStartupVolumeEnabled = 0;
     proxyC->Proxy()->SyncStartupVolumeEnabled(*(TBool*)aaStartupVolumeEnabled);
@@ -446,7 +449,7 @@ void CpProxyLinnCoUkPreamp4SyncStartupVolumeEnabled(THandle aHandle, uint32_t* a
 
 void CpProxyLinnCoUkPreamp4BeginStartupVolumeEnabled(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginStartupVolumeEnabled(functor);
@@ -455,9 +458,9 @@ void CpProxyLinnCoUkPreamp4BeginStartupVolumeEnabled(THandle aHandle, ZappCallba
 int32_t CpProxyLinnCoUkPreamp4EndStartupVolumeEnabled(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaStartupVolumeEnabled)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     *aaStartupVolumeEnabled = 0;
     try {
@@ -471,7 +474,7 @@ int32_t CpProxyLinnCoUkPreamp4EndStartupVolumeEnabled(THandle aHandle, ZappHandl
 
 void CpProxyLinnCoUkPreamp4SetPropertyVolumeChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyVolumeChanged(functor);
@@ -479,7 +482,7 @@ void CpProxyLinnCoUkPreamp4SetPropertyVolumeChanged(THandle aHandle, ZappCallbac
 
 void CpProxyLinnCoUkPreamp4SetPropertyMuteChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyMuteChanged(functor);
@@ -487,7 +490,7 @@ void CpProxyLinnCoUkPreamp4SetPropertyMuteChanged(THandle aHandle, ZappCallback 
 
 void CpProxyLinnCoUkPreamp4SetPropertyBalanceChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyBalanceChanged(functor);
@@ -495,7 +498,7 @@ void CpProxyLinnCoUkPreamp4SetPropertyBalanceChanged(THandle aHandle, ZappCallba
 
 void CpProxyLinnCoUkPreamp4SetPropertyVolumeLimitChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyVolumeLimitChanged(functor);
@@ -503,7 +506,7 @@ void CpProxyLinnCoUkPreamp4SetPropertyVolumeLimitChanged(THandle aHandle, ZappCa
 
 void CpProxyLinnCoUkPreamp4SetPropertyStartupVolumeChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyStartupVolumeChanged(functor);
@@ -511,7 +514,7 @@ void CpProxyLinnCoUkPreamp4SetPropertyStartupVolumeChanged(THandle aHandle, Zapp
 
 void CpProxyLinnCoUkPreamp4SetPropertyStartupVolumeEnabledChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyStartupVolumeEnabledChanged(functor);
@@ -519,14 +522,14 @@ void CpProxyLinnCoUkPreamp4SetPropertyStartupVolumeEnabledChanged(THandle aHandl
 
 void CpProxyLinnCoUkPreamp4PropertyVolume(THandle aHandle, uint32_t* aVolume)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->PropertyVolume(*aVolume);
 }
 
 void CpProxyLinnCoUkPreamp4PropertyMute(THandle aHandle, uint32_t* aMute)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aMute = false;
     proxyC->Proxy()->PropertyMute(*(TBool*)aMute);
@@ -534,28 +537,28 @@ void CpProxyLinnCoUkPreamp4PropertyMute(THandle aHandle, uint32_t* aMute)
 
 void CpProxyLinnCoUkPreamp4PropertyBalance(THandle aHandle, int32_t* aBalance)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->PropertyBalance(*aBalance);
 }
 
 void CpProxyLinnCoUkPreamp4PropertyVolumeLimit(THandle aHandle, uint32_t* aVolumeLimit)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->PropertyVolumeLimit(*aVolumeLimit);
 }
 
 void CpProxyLinnCoUkPreamp4PropertyStartupVolume(THandle aHandle, uint32_t* aStartupVolume)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->PropertyStartupVolume(*aStartupVolume);
 }
 
 void CpProxyLinnCoUkPreamp4PropertyStartupVolumeEnabled(THandle aHandle, uint32_t* aStartupVolumeEnabled)
 {
-    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle);
+    CpProxyLinnCoUkPreamp4C* proxyC = reinterpret_cast<CpProxyLinnCoUkPreamp4C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aStartupVolumeEnabled = false;
     proxyC->Proxy()->PropertyStartupVolumeEnabled(*(TBool*)aStartupVolumeEnabled);

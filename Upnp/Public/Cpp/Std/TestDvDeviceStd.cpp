@@ -166,8 +166,8 @@ static std::string gDeviceName("device");
 static void RandomiseUdn(std::string& aUdn)
 {
     Bwh udn;
-    udn.Grow(aUdn.length() + 1 + Ascii::kMaxUintStringBytes + 1);
-    Brn buf((const TByte*)aUdn.c_str(), aUdn.length());
+    udn.Grow((TUint)aUdn.length() + 1 + Ascii::kMaxUintStringBytes + 1);
+    Brn buf((const TByte*)aUdn.c_str(), (TUint)aUdn.length());
     udn.Append(buf);
     udn.Append('-');
     Bws<Ascii::kMaxUintStringBytes> addr;
@@ -236,7 +236,7 @@ CpDevices::CpDevices()
 
 CpDevices::~CpDevices()
 {
-    const TUint count = iList.size();
+    const TUint count = (TUint)iList.size();
     for (TUint i=0; i<count; i++) {
         iList[i]->RemoveRef();
     }

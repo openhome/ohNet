@@ -316,7 +316,7 @@ void DvServiceUpnpOrgDimming1Cpp::DoGetOnEffectParameters(IDvInvocation& aInvoca
     GetOnEffectParameters(aVersion, respretOnEffect, respretOnEffectLevel);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriterretOnEffect(aInvocation, "retOnEffect");
-    Brn buf_retOnEffect((const TByte*)respretOnEffect.c_str(), respretOnEffect.length());
+    Brn buf_retOnEffect((const TByte*)respretOnEffect.c_str(), (TUint)respretOnEffect.length());
     respWriterretOnEffect.Write(buf_retOnEffect);
     aInvocation.InvocationWriteStringEnd("retOnEffect");
     InvocationResponseUint respWriterretOnEffectLevel(aInvocation, "retOnEffectLevel");

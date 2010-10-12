@@ -14,7 +14,7 @@ public:
 };
 
 CpProxyLinnCoUkPlaylist1C::CpProxyLinnCoUkPlaylist1C(CpDeviceC aDevice)
-    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice))
+    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice.iData.iPtr))
 {
     iProxy = new CpProxyLinnCoUkPlaylist1(*iDevice);
 }
@@ -22,18 +22,21 @@ CpProxyLinnCoUkPlaylist1C::CpProxyLinnCoUkPlaylist1C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkPlaylist1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyLinnCoUkPlaylist1C(aDevice);
+    THandle h;
+    HandleInit(&h);
+    h.iData.iPtr = new CpProxyLinnCoUkPlaylist1C(aDevice);
+    return h;
 }
 
 void CpProxyLinnCoUkPlaylist1Destroy(THandle aHandle)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     delete proxyC;
 }
 
 void CpProxyLinnCoUkPlaylist1SyncRead(THandle aHandle, uint32_t aaId, char** aaUri, char** aaMetaData)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaUri;
     Brh buf_aaMetaData;
@@ -44,7 +47,7 @@ void CpProxyLinnCoUkPlaylist1SyncRead(THandle aHandle, uint32_t aaId, char** aaU
 
 void CpProxyLinnCoUkPlaylist1BeginRead(THandle aHandle, uint32_t aaId, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginRead(aaId, functor);
@@ -53,9 +56,9 @@ void CpProxyLinnCoUkPlaylist1BeginRead(THandle aHandle, uint32_t aaId, ZappCallb
 int32_t CpProxyLinnCoUkPlaylist1EndRead(THandle aHandle, ZappHandleAsync aAsync, char** aaUri, char** aaMetaData)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     Brh buf_aaUri;
     *aaUri = NULL;
@@ -74,7 +77,7 @@ int32_t CpProxyLinnCoUkPlaylist1EndRead(THandle aHandle, ZappHandleAsync aAsync,
 
 void CpProxyLinnCoUkPlaylist1SyncReadList(THandle aHandle, const char* aaIdList, char** aaMetaDataList)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaIdList(aaIdList);
     Brh buf_aaMetaDataList;
@@ -84,7 +87,7 @@ void CpProxyLinnCoUkPlaylist1SyncReadList(THandle aHandle, const char* aaIdList,
 
 void CpProxyLinnCoUkPlaylist1BeginReadList(THandle aHandle, const char* aaIdList, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaIdList(aaIdList);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
@@ -94,9 +97,9 @@ void CpProxyLinnCoUkPlaylist1BeginReadList(THandle aHandle, const char* aaIdList
 int32_t CpProxyLinnCoUkPlaylist1EndReadList(THandle aHandle, ZappHandleAsync aAsync, char** aaMetaDataList)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     Brh buf_aaMetaDataList;
     *aaMetaDataList = NULL;
@@ -112,7 +115,7 @@ int32_t CpProxyLinnCoUkPlaylist1EndReadList(THandle aHandle, ZappHandleAsync aAs
 
 void CpProxyLinnCoUkPlaylist1SyncInsert(THandle aHandle, uint32_t aaAfterId, const char* aaUri, const char* aaMetaData, uint32_t* aaNewId)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaUri(aaUri);
     Brh buf_aaMetaData(aaMetaData);
@@ -121,7 +124,7 @@ void CpProxyLinnCoUkPlaylist1SyncInsert(THandle aHandle, uint32_t aaAfterId, con
 
 void CpProxyLinnCoUkPlaylist1BeginInsert(THandle aHandle, uint32_t aaAfterId, const char* aaUri, const char* aaMetaData, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaUri(aaUri);
     Brh buf_aaMetaData(aaMetaData);
@@ -132,9 +135,9 @@ void CpProxyLinnCoUkPlaylist1BeginInsert(THandle aHandle, uint32_t aaAfterId, co
 int32_t CpProxyLinnCoUkPlaylist1EndInsert(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaNewId)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndInsert(*async, *aaNewId);
@@ -147,14 +150,14 @@ int32_t CpProxyLinnCoUkPlaylist1EndInsert(THandle aHandle, ZappHandleAsync aAsyn
 
 void CpProxyLinnCoUkPlaylist1SyncDelete(THandle aHandle, uint32_t aaId)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncDelete(aaId);
 }
 
 void CpProxyLinnCoUkPlaylist1BeginDelete(THandle aHandle, uint32_t aaId, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginDelete(aaId, functor);
@@ -163,9 +166,9 @@ void CpProxyLinnCoUkPlaylist1BeginDelete(THandle aHandle, uint32_t aaId, ZappCal
 int32_t CpProxyLinnCoUkPlaylist1EndDelete(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndDelete(*async);
@@ -178,14 +181,14 @@ int32_t CpProxyLinnCoUkPlaylist1EndDelete(THandle aHandle, ZappHandleAsync aAsyn
 
 void CpProxyLinnCoUkPlaylist1SyncDeleteAll(THandle aHandle)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncDeleteAll();
 }
 
 void CpProxyLinnCoUkPlaylist1BeginDeleteAll(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginDeleteAll(functor);
@@ -194,9 +197,9 @@ void CpProxyLinnCoUkPlaylist1BeginDeleteAll(THandle aHandle, ZappCallbackAsync a
 int32_t CpProxyLinnCoUkPlaylist1EndDeleteAll(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndDeleteAll(*async);
@@ -209,14 +212,14 @@ int32_t CpProxyLinnCoUkPlaylist1EndDeleteAll(THandle aHandle, ZappHandleAsync aA
 
 void CpProxyLinnCoUkPlaylist1SyncSetRepeat(THandle aHandle, uint32_t aaRepeat)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetRepeat((aaRepeat==0? false : true));
 }
 
 void CpProxyLinnCoUkPlaylist1BeginSetRepeat(THandle aHandle, uint32_t aaRepeat, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetRepeat((aaRepeat==0? false : true), functor);
@@ -225,9 +228,9 @@ void CpProxyLinnCoUkPlaylist1BeginSetRepeat(THandle aHandle, uint32_t aaRepeat, 
 int32_t CpProxyLinnCoUkPlaylist1EndSetRepeat(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetRepeat(*async);
@@ -240,7 +243,7 @@ int32_t CpProxyLinnCoUkPlaylist1EndSetRepeat(THandle aHandle, ZappHandleAsync aA
 
 void CpProxyLinnCoUkPlaylist1SyncRepeat(THandle aHandle, uint32_t* aaRepeat)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aaRepeat = 0;
     proxyC->Proxy()->SyncRepeat(*(TBool*)aaRepeat);
@@ -248,7 +251,7 @@ void CpProxyLinnCoUkPlaylist1SyncRepeat(THandle aHandle, uint32_t* aaRepeat)
 
 void CpProxyLinnCoUkPlaylist1BeginRepeat(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginRepeat(functor);
@@ -257,9 +260,9 @@ void CpProxyLinnCoUkPlaylist1BeginRepeat(THandle aHandle, ZappCallbackAsync aCal
 int32_t CpProxyLinnCoUkPlaylist1EndRepeat(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaRepeat)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     *aaRepeat = 0;
     try {
@@ -273,14 +276,14 @@ int32_t CpProxyLinnCoUkPlaylist1EndRepeat(THandle aHandle, ZappHandleAsync aAsyn
 
 void CpProxyLinnCoUkPlaylist1SyncSetShuffle(THandle aHandle, uint32_t aaShuffle)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetShuffle((aaShuffle==0? false : true));
 }
 
 void CpProxyLinnCoUkPlaylist1BeginSetShuffle(THandle aHandle, uint32_t aaShuffle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetShuffle((aaShuffle==0? false : true), functor);
@@ -289,9 +292,9 @@ void CpProxyLinnCoUkPlaylist1BeginSetShuffle(THandle aHandle, uint32_t aaShuffle
 int32_t CpProxyLinnCoUkPlaylist1EndSetShuffle(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetShuffle(*async);
@@ -304,7 +307,7 @@ int32_t CpProxyLinnCoUkPlaylist1EndSetShuffle(THandle aHandle, ZappHandleAsync a
 
 void CpProxyLinnCoUkPlaylist1SyncShuffle(THandle aHandle, uint32_t* aaShuffle)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aaShuffle = 0;
     proxyC->Proxy()->SyncShuffle(*(TBool*)aaShuffle);
@@ -312,7 +315,7 @@ void CpProxyLinnCoUkPlaylist1SyncShuffle(THandle aHandle, uint32_t* aaShuffle)
 
 void CpProxyLinnCoUkPlaylist1BeginShuffle(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginShuffle(functor);
@@ -321,9 +324,9 @@ void CpProxyLinnCoUkPlaylist1BeginShuffle(THandle aHandle, ZappCallbackAsync aCa
 int32_t CpProxyLinnCoUkPlaylist1EndShuffle(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaShuffle)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     *aaShuffle = 0;
     try {
@@ -337,14 +340,14 @@ int32_t CpProxyLinnCoUkPlaylist1EndShuffle(THandle aHandle, ZappHandleAsync aAsy
 
 void CpProxyLinnCoUkPlaylist1SyncTracksMax(THandle aHandle, uint32_t* aaTracksMax)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncTracksMax(*aaTracksMax);
 }
 
 void CpProxyLinnCoUkPlaylist1BeginTracksMax(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginTracksMax(functor);
@@ -353,9 +356,9 @@ void CpProxyLinnCoUkPlaylist1BeginTracksMax(THandle aHandle, ZappCallbackAsync a
 int32_t CpProxyLinnCoUkPlaylist1EndTracksMax(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaTracksMax)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndTracksMax(*async, *aaTracksMax);
@@ -368,7 +371,7 @@ int32_t CpProxyLinnCoUkPlaylist1EndTracksMax(THandle aHandle, ZappHandleAsync aA
 
 void CpProxyLinnCoUkPlaylist1SyncIdArray(THandle aHandle, uint32_t* aaIdArrayToken, char** aaIdArray, uint32_t* aaIdArrayLen)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaIdArray;
     proxyC->Proxy()->SyncIdArray(*aaIdArrayToken, buf_aaIdArray);
@@ -378,7 +381,7 @@ void CpProxyLinnCoUkPlaylist1SyncIdArray(THandle aHandle, uint32_t* aaIdArrayTok
 
 void CpProxyLinnCoUkPlaylist1BeginIdArray(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginIdArray(functor);
@@ -387,9 +390,9 @@ void CpProxyLinnCoUkPlaylist1BeginIdArray(THandle aHandle, ZappCallbackAsync aCa
 int32_t CpProxyLinnCoUkPlaylist1EndIdArray(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaIdArrayToken, char** aaIdArray, uint32_t* aaIdArrayLen)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     Brh buf_aaIdArray;
     *aaIdArray = NULL;
@@ -407,7 +410,7 @@ int32_t CpProxyLinnCoUkPlaylist1EndIdArray(THandle aHandle, ZappHandleAsync aAsy
 
 void CpProxyLinnCoUkPlaylist1SyncIdArrayChanged(THandle aHandle, uint32_t aaIdArrayToken, uint32_t* aaIdArrayChanged)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aaIdArrayChanged = 0;
     proxyC->Proxy()->SyncIdArrayChanged(aaIdArrayToken, *(TBool*)aaIdArrayChanged);
@@ -415,7 +418,7 @@ void CpProxyLinnCoUkPlaylist1SyncIdArrayChanged(THandle aHandle, uint32_t aaIdAr
 
 void CpProxyLinnCoUkPlaylist1BeginIdArrayChanged(THandle aHandle, uint32_t aaIdArrayToken, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginIdArrayChanged(aaIdArrayToken, functor);
@@ -424,9 +427,9 @@ void CpProxyLinnCoUkPlaylist1BeginIdArrayChanged(THandle aHandle, uint32_t aaIdA
 int32_t CpProxyLinnCoUkPlaylist1EndIdArrayChanged(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaIdArrayChanged)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     *aaIdArrayChanged = 0;
     try {
@@ -440,7 +443,7 @@ int32_t CpProxyLinnCoUkPlaylist1EndIdArrayChanged(THandle aHandle, ZappHandleAsy
 
 void CpProxyLinnCoUkPlaylist1SetPropertyIdArrayChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyIdArrayChanged(functor);
@@ -448,7 +451,7 @@ void CpProxyLinnCoUkPlaylist1SetPropertyIdArrayChanged(THandle aHandle, ZappCall
 
 void CpProxyLinnCoUkPlaylist1SetPropertyRepeatChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyRepeatChanged(functor);
@@ -456,7 +459,7 @@ void CpProxyLinnCoUkPlaylist1SetPropertyRepeatChanged(THandle aHandle, ZappCallb
 
 void CpProxyLinnCoUkPlaylist1SetPropertyShuffleChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyShuffleChanged(functor);
@@ -464,7 +467,7 @@ void CpProxyLinnCoUkPlaylist1SetPropertyShuffleChanged(THandle aHandle, ZappCall
 
 void CpProxyLinnCoUkPlaylist1SetPropertyTracksMaxChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyTracksMaxChanged(functor);
@@ -472,7 +475,7 @@ void CpProxyLinnCoUkPlaylist1SetPropertyTracksMaxChanged(THandle aHandle, ZappCa
 
 void CpProxyLinnCoUkPlaylist1PropertyIdArray(THandle aHandle, char** aIdArray, uint32_t* aLen)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aIdArray;
     proxyC->Proxy()->PropertyIdArray(buf_aIdArray);
@@ -482,7 +485,7 @@ void CpProxyLinnCoUkPlaylist1PropertyIdArray(THandle aHandle, char** aIdArray, u
 
 void CpProxyLinnCoUkPlaylist1PropertyRepeat(THandle aHandle, uint32_t* aRepeat)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aRepeat = false;
     proxyC->Proxy()->PropertyRepeat(*(TBool*)aRepeat);
@@ -490,7 +493,7 @@ void CpProxyLinnCoUkPlaylist1PropertyRepeat(THandle aHandle, uint32_t* aRepeat)
 
 void CpProxyLinnCoUkPlaylist1PropertyShuffle(THandle aHandle, uint32_t* aShuffle)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aShuffle = false;
     proxyC->Proxy()->PropertyShuffle(*(TBool*)aShuffle);
@@ -498,7 +501,7 @@ void CpProxyLinnCoUkPlaylist1PropertyShuffle(THandle aHandle, uint32_t* aShuffle
 
 void CpProxyLinnCoUkPlaylist1PropertyTracksMax(THandle aHandle, uint32_t* aTracksMax)
 {
-    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle);
+    CpProxyLinnCoUkPlaylist1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPlaylist1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->PropertyTracksMax(*aTracksMax);
 }

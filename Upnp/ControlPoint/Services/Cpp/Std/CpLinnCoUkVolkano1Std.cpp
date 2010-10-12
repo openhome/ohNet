@@ -399,7 +399,7 @@ void CpProxyLinnCoUkVolkano1Cpp::BeginSetBootMode(const std::string& aaMode, Fun
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetBootMode->InputParameters();
     {
-        Brn buf((const TByte*)aaMode.c_str(), aaMode.length());
+        Brn buf((const TByte*)aaMode.c_str(), (TUint)aaMode.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();

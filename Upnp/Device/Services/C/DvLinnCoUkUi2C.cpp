@@ -576,264 +576,267 @@ void DvServiceLinnCoUkUi2C::DisplayLedOff(IInvocationResponse& aResponse, TUint 
 
 THandle DvServiceLinnCoUkUi2Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkUi2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	THandle h;
+    HandleInit(&h);
+	h.iData.iPtr = new DvServiceLinnCoUkUi2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return h;
 }
 
 void DvServiceLinnCoUkUi2Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService);
+    delete reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionDisplayTestPattern(THandle aService, CallbackUi2DisplayTestPattern aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionDisplayTestPattern(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionDisplayTestPattern(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionDisplayFill(THandle aService, CallbackUi2DisplayFill aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionDisplayFill(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionDisplayFill(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionDisplayClear(THandle aService, CallbackUi2DisplayClear aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionDisplayClear(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionDisplayClear(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionSetTestModeEnabled(THandle aService, CallbackUi2SetTestModeEnabled aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionSetTestModeEnabled(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionSetTestModeEnabled(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionSimulateInfraredInput(THandle aService, CallbackUi2SimulateInfraredInput aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionSimulateInfraredInput(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionSimulateInfraredInput(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionSimulateButtonInput(THandle aService, CallbackUi2SimulateButtonInput aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionSimulateButtonInput(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionSimulateButtonInput(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionSimulateLightSensor(THandle aService, CallbackUi2SimulateLightSensor aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionSimulateLightSensor(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionSimulateLightSensor(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionGetLightSensorData(THandle aService, CallbackUi2GetLightSensorData aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionGetLightSensorData(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionGetLightSensorData(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionSetDisplayBrightness(THandle aService, CallbackUi2SetDisplayBrightness aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionSetDisplayBrightness(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionSetDisplayBrightness(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionSetDisplayBrightnessAuto(THandle aService, CallbackUi2SetDisplayBrightnessAuto aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionSetDisplayBrightnessAuto(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionSetDisplayBrightnessAuto(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionSetInfraredCommands(THandle aService, CallbackUi2SetInfraredCommands aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionSetInfraredCommands(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionSetInfraredCommands(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionInfraredCommands(THandle aService, CallbackUi2InfraredCommands aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionInfraredCommands(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionInfraredCommands(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionSetInfraredTerminalCommands(THandle aService, CallbackUi2SetInfraredTerminalCommands aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionSetInfraredTerminalCommands(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionSetInfraredTerminalCommands(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionInfraredTerminalCommands(THandle aService, CallbackUi2InfraredTerminalCommands aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionInfraredTerminalCommands(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionInfraredTerminalCommands(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionDisplayBrightness(THandle aService, CallbackUi2DisplayBrightness aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionDisplayBrightness(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionDisplayBrightness(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionDisplayBrightnessAuto(THandle aService, CallbackUi2DisplayBrightnessAuto aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionDisplayBrightnessAuto(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionDisplayBrightnessAuto(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionDisplayUpsideDown(THandle aService, CallbackUi2DisplayUpsideDown aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionDisplayUpsideDown(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionDisplayUpsideDown(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionSetDisplayUpsideDown(THandle aService, CallbackUi2SetDisplayUpsideDown aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionSetDisplayUpsideDown(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionSetDisplayUpsideDown(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionSetDisplayScrollText(THandle aService, CallbackUi2SetDisplayScrollText aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionSetDisplayScrollText(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionSetDisplayScrollText(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionDisplayScrollText(THandle aService, CallbackUi2DisplayScrollText aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionDisplayScrollText(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionDisplayScrollText(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionSetDisplaySleep(THandle aService, CallbackUi2SetDisplaySleep aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionSetDisplaySleep(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionSetDisplaySleep(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionDisplaySleep(THandle aService, CallbackUi2DisplaySleep aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionDisplaySleep(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionDisplaySleep(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionSetDisplayLedOff(THandle aService, CallbackUi2SetDisplayLedOff aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionSetDisplayLedOff(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionSetDisplayLedOff(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkUi2EnableActionDisplayLedOff(THandle aService, CallbackUi2DisplayLedOff aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionDisplayLedOff(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->EnableActionDisplayLedOff(aCallback, aPtr);
 }
 
 int32_t DvServiceLinnCoUkUi2SetPropertyDisplayBrightness(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyDisplayBrightness(aValue);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->SetPropertyDisplayBrightness(aValue);
     return 0;
 }
 
 void DvServiceLinnCoUkUi2GetPropertyDisplayBrightness(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->GetPropertyDisplayBrightness(val);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->GetPropertyDisplayBrightness(val);
     *aValue = val;
 }
 
 int32_t DvServiceLinnCoUkUi2SetPropertyDisplayBrightnessAuto(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyDisplayBrightnessAuto((aValue!=0));
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->SetPropertyDisplayBrightnessAuto((aValue!=0));
     return 0;
 }
 
 void DvServiceLinnCoUkUi2GetPropertyDisplayBrightnessAuto(THandle aService, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->GetPropertyDisplayBrightnessAuto(val);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->GetPropertyDisplayBrightnessAuto(val);
     *aValue = (val? 1 : 0);
 }
 
 int32_t DvServiceLinnCoUkUi2SetPropertyInfraredCommands(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyInfraredCommands(buf);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->SetPropertyInfraredCommands(buf);
     return 0;
 }
 
 void DvServiceLinnCoUkUi2GetPropertyInfraredCommands(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->GetPropertyInfraredCommands(buf);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->GetPropertyInfraredCommands(buf);
     *aValue = (char*)buf.Transfer();
 }
 
 int32_t DvServiceLinnCoUkUi2SetPropertyInfraredTerminalCommands(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyInfraredTerminalCommands(buf);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->SetPropertyInfraredTerminalCommands(buf);
     return 0;
 }
 
 void DvServiceLinnCoUkUi2GetPropertyInfraredTerminalCommands(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->GetPropertyInfraredTerminalCommands(buf);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->GetPropertyInfraredTerminalCommands(buf);
     *aValue = (char*)buf.Transfer();
 }
 
 int32_t DvServiceLinnCoUkUi2SetPropertyDisplayUpsideDown(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyDisplayUpsideDown((aValue!=0));
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->SetPropertyDisplayUpsideDown((aValue!=0));
     return 0;
 }
 
 void DvServiceLinnCoUkUi2GetPropertyDisplayUpsideDown(THandle aService, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->GetPropertyDisplayUpsideDown(val);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->GetPropertyDisplayUpsideDown(val);
     *aValue = (val? 1 : 0);
 }
 
 int32_t DvServiceLinnCoUkUi2SetPropertyDisplayScrollText(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyDisplayScrollText((aValue!=0));
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->SetPropertyDisplayScrollText((aValue!=0));
     return 0;
 }
 
 void DvServiceLinnCoUkUi2GetPropertyDisplayScrollText(THandle aService, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->GetPropertyDisplayScrollText(val);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->GetPropertyDisplayScrollText(val);
     *aValue = (val? 1 : 0);
 }
 
 int32_t DvServiceLinnCoUkUi2SetPropertyDisplaySleep(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyDisplaySleep((aValue!=0));
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->SetPropertyDisplaySleep((aValue!=0));
     return 0;
 }
 
 void DvServiceLinnCoUkUi2GetPropertyDisplaySleep(THandle aService, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->GetPropertyDisplaySleep(val);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->GetPropertyDisplaySleep(val);
     *aValue = (val? 1 : 0);
 }
 
 int32_t DvServiceLinnCoUkUi2SetPropertyDisplayLedOff(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyDisplayLedOff((aValue!=0));
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->SetPropertyDisplayLedOff((aValue!=0));
     return 0;
 }
 
 void DvServiceLinnCoUkUi2GetPropertyDisplayLedOff(THandle aService, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->GetPropertyDisplayLedOff(val);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->GetPropertyDisplayLedOff(val);
     *aValue = (val? 1 : 0);
 }
 
 int32_t DvServiceLinnCoUkUi2SetPropertyTerminalInputCode(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyTerminalInputCode(aValue);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->SetPropertyTerminalInputCode(aValue);
     return 0;
 }
 
 void DvServiceLinnCoUkUi2GetPropertyTerminalInputCode(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->GetPropertyTerminalInputCode(val);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->GetPropertyTerminalInputCode(val);
     *aValue = val;
 }
 
 int32_t DvServiceLinnCoUkUi2SetPropertyTerminalInputName(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyTerminalInputName(buf);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->SetPropertyTerminalInputName(buf);
     return 0;
 }
 
 void DvServiceLinnCoUkUi2GetPropertyTerminalInputName(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->GetPropertyTerminalInputName(buf);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->GetPropertyTerminalInputName(buf);
     *aValue = (char*)buf.Transfer();
 }
 
@@ -841,14 +844,14 @@ int32_t DvServiceLinnCoUkUi2SetPropertyDisplayPixels(THandle aService, const cha
 {
     Brh buf;
     buf.Set((const TByte*)aValue, aValueLen);
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyDisplayPixels(buf);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->SetPropertyDisplayPixels(buf);
     return 0;
 }
 
 void DvServiceLinnCoUkUi2GetPropertyDisplayPixels(THandle aService, char** aValue, uint32_t* aValueLen)
 {
     Brh buf;
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->GetPropertyDisplayPixels(buf);
+    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService.iData.iPtr)->GetPropertyDisplayPixels(buf);
     *aValueLen = buf.Bytes();
     *aValue = (char*)buf.Extract();
 }

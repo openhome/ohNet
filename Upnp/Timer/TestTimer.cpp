@@ -112,7 +112,7 @@ void SuiteTimerBasic::Test()
 
     MyTimer b;
     
-    Print("Wait for 5 seconds\n");
+    Print("\nWait for 5 seconds\n");
     a.FireIn(5000);
     a.Wait();
     Print("Wait finished\n");

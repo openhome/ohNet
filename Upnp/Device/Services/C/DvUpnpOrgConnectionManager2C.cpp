@@ -181,78 +181,81 @@ void DvServiceUpnpOrgConnectionManager2C::GetCurrentConnectionInfo(IInvocationRe
 
 THandle DvServiceUpnpOrgConnectionManager2Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceUpnpOrgConnectionManager2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	THandle h;
+    HandleInit(&h);
+	h.iData.iPtr = new DvServiceUpnpOrgConnectionManager2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return h;
 }
 
 void DvServiceUpnpOrgConnectionManager2Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService);
+    delete reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService.iData.iPtr);
 }
 
 void DvServiceUpnpOrgConnectionManager2EnableActionGetProtocolInfo(THandle aService, CallbackConnectionManager2GetProtocolInfo aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->EnableActionGetProtocolInfo(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService.iData.iPtr)->EnableActionGetProtocolInfo(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgConnectionManager2EnableActionPrepareForConnection(THandle aService, CallbackConnectionManager2PrepareForConnection aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->EnableActionPrepareForConnection(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService.iData.iPtr)->EnableActionPrepareForConnection(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgConnectionManager2EnableActionConnectionComplete(THandle aService, CallbackConnectionManager2ConnectionComplete aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->EnableActionConnectionComplete(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService.iData.iPtr)->EnableActionConnectionComplete(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgConnectionManager2EnableActionGetCurrentConnectionIDs(THandle aService, CallbackConnectionManager2GetCurrentConnectionIDs aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->EnableActionGetCurrentConnectionIDs(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService.iData.iPtr)->EnableActionGetCurrentConnectionIDs(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgConnectionManager2EnableActionGetCurrentConnectionInfo(THandle aService, CallbackConnectionManager2GetCurrentConnectionInfo aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->EnableActionGetCurrentConnectionInfo(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService.iData.iPtr)->EnableActionGetCurrentConnectionInfo(aCallback, aPtr);
 }
 
 int32_t DvServiceUpnpOrgConnectionManager2SetPropertySourceProtocolInfo(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->SetPropertySourceProtocolInfo(buf);
+    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService.iData.iPtr)->SetPropertySourceProtocolInfo(buf);
     return 0;
 }
 
 void DvServiceUpnpOrgConnectionManager2GetPropertySourceProtocolInfo(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->GetPropertySourceProtocolInfo(buf);
+    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService.iData.iPtr)->GetPropertySourceProtocolInfo(buf);
     *aValue = (char*)buf.Transfer();
 }
 
 int32_t DvServiceUpnpOrgConnectionManager2SetPropertySinkProtocolInfo(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->SetPropertySinkProtocolInfo(buf);
+    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService.iData.iPtr)->SetPropertySinkProtocolInfo(buf);
     return 0;
 }
 
 void DvServiceUpnpOrgConnectionManager2GetPropertySinkProtocolInfo(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->GetPropertySinkProtocolInfo(buf);
+    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService.iData.iPtr)->GetPropertySinkProtocolInfo(buf);
     *aValue = (char*)buf.Transfer();
 }
 
 int32_t DvServiceUpnpOrgConnectionManager2SetPropertyCurrentConnectionIDs(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->SetPropertyCurrentConnectionIDs(buf);
+    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService.iData.iPtr)->SetPropertyCurrentConnectionIDs(buf);
     return 0;
 }
 
 void DvServiceUpnpOrgConnectionManager2GetPropertyCurrentConnectionIDs(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->GetPropertyCurrentConnectionIDs(buf);
+    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService.iData.iPtr)->GetPropertyCurrentConnectionIDs(buf);
     *aValue = (char*)buf.Transfer();
 }
 

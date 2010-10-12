@@ -52,10 +52,10 @@ DviDeviceUpnp::~DviDeviceUpnp()
     for (TUint i=0; i<iListeners.size(); i++) {
         delete iListeners[i];
     }
+    iLock.Signal();
     for (TUint i=0; i<iMsgSchedulers.size(); i++) {
         delete iMsgSchedulers[i];
     }
-    iLock.Signal();
 }
 
 Brn DviDeviceUpnp::Domain() const
@@ -89,12 +89,11 @@ void DviDeviceUpnp::MsgSchedulerComplete(DeviceMsgScheduler* aScheduler)
         DeviceMsgScheduler* scheduler = iMsgSchedulers[i];
         if (scheduler == aScheduler) {
             iMsgSchedulers.erase(iMsgSchedulers.begin() + i);
-            iLock.Signal();
-            delete scheduler;
-            return;
+            break;
         }
     }
     iLock.Signal();
+    delete aScheduler;
 }
 
 void DviDeviceUpnp::AddListener(const NetworkInterface& aNif)
@@ -287,8 +286,7 @@ void DviDeviceUpnp::Disable(Functor& aComplete)
     for (i=0; i<iMsgSchedulers.size(); i++) {
         iMsgSchedulers[i]->Stop();
     }
-    iMsgSchedulers.clear();
-    iSubnetDisableCount = iListeners.size();
+    iSubnetDisableCount = (TUint)iListeners.size();
     Functor functor = MakeFunctor(*this, &DviDeviceUpnp::SubnetDisabled);
     for (i=0; i<iSubnetDisableCount; i++) {
         Bwh uri;
@@ -359,7 +357,7 @@ void DviDeviceUpnp::SendUpdateNotifications()
 {
     iLock.Wait();
     iAliveTimer->Cancel();
-    iUpdateCount = iListeners.size();
+    iUpdateCount = (TUint)iListeners.size();
     Functor functor = MakeFunctor(*this, &DviDeviceUpnp::SubnetUpdated);
     for (TUint i=0; i<iListeners.size(); i++) {
         Bwh uri;
@@ -1041,13 +1039,13 @@ void DeviceMsgScheduler::ScheduleNextTimer() const
 {
     TUint interval;
     TInt remaining = iEndTimeMs - Os::TimeInMs();
-    TUint maxInterval = (TUint)(remaining / (iTotal - iIndex));
+    TInt maxInterval = (remaining / (TInt)(iTotal - iIndex));
     if (maxInterval < kMinTimerIntervalMs) {
         // we're running behind.  Schedule another timer to run immediately
         interval = 0;
     }
     else {
-        interval = Random(maxInterval);
+        interval = Random((TUint)maxInterval);
     }
     iTimer->FireIn(interval);
 }

@@ -8,7 +8,7 @@ using namespace Zapp;
 
 void DvServiceUpnpOrgConnectionManager1Cpp::SetPropertySourceProtocolInfo(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     SetPropertyString(*iPropertySourceProtocolInfo, buf);
 }
 
@@ -20,7 +20,7 @@ void DvServiceUpnpOrgConnectionManager1Cpp::GetPropertySourceProtocolInfo(std::s
 
 void DvServiceUpnpOrgConnectionManager1Cpp::SetPropertySinkProtocolInfo(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     SetPropertyString(*iPropertySinkProtocolInfo, buf);
 }
 
@@ -32,7 +32,7 @@ void DvServiceUpnpOrgConnectionManager1Cpp::GetPropertySinkProtocolInfo(std::str
 
 void DvServiceUpnpOrgConnectionManager1Cpp::SetPropertyCurrentConnectionIDs(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     SetPropertyString(*iPropertyCurrentConnectionIDs, buf);
 }
 
@@ -139,11 +139,11 @@ void DvServiceUpnpOrgConnectionManager1Cpp::DoGetProtocolInfo(IDvInvocation& aIn
     GetProtocolInfo(aVersion, respSource, respSink);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriterSource(aInvocation, "Source");
-    Brn buf_Source((const TByte*)respSource.c_str(), respSource.length());
+    Brn buf_Source((const TByte*)respSource.c_str(), (TUint)respSource.length());
     respWriterSource.Write(buf_Source);
     aInvocation.InvocationWriteStringEnd("Source");
     InvocationResponseString respWriterSink(aInvocation, "Sink");
-    Brn buf_Sink((const TByte*)respSink.c_str(), respSink.length());
+    Brn buf_Sink((const TByte*)respSink.c_str(), (TUint)respSink.length());
     respWriterSink.Write(buf_Sink);
     aInvocation.InvocationWriteStringEnd("Sink");
 	aInvocation.InvocationWriteEnd();
@@ -195,7 +195,7 @@ void DvServiceUpnpOrgConnectionManager1Cpp::DoGetCurrentConnectionIDs(IDvInvocat
     GetCurrentConnectionIDs(aVersion, respConnectionIDs);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriterConnectionIDs(aInvocation, "ConnectionIDs");
-    Brn buf_ConnectionIDs((const TByte*)respConnectionIDs.c_str(), respConnectionIDs.length());
+    Brn buf_ConnectionIDs((const TByte*)respConnectionIDs.c_str(), (TUint)respConnectionIDs.length());
     respWriterConnectionIDs.Write(buf_ConnectionIDs);
     aInvocation.InvocationWriteStringEnd("ConnectionIDs");
 	aInvocation.InvocationWriteEnd();
@@ -220,21 +220,21 @@ void DvServiceUpnpOrgConnectionManager1Cpp::DoGetCurrentConnectionInfo(IDvInvoca
     InvocationResponseInt respWriterAVTransportID(aInvocation, "AVTransportID");
     respWriterAVTransportID.Write(respAVTransportID);
     InvocationResponseString respWriterProtocolInfo(aInvocation, "ProtocolInfo");
-    Brn buf_ProtocolInfo((const TByte*)respProtocolInfo.c_str(), respProtocolInfo.length());
+    Brn buf_ProtocolInfo((const TByte*)respProtocolInfo.c_str(), (TUint)respProtocolInfo.length());
     respWriterProtocolInfo.Write(buf_ProtocolInfo);
     aInvocation.InvocationWriteStringEnd("ProtocolInfo");
     InvocationResponseString respWriterPeerConnectionManager(aInvocation, "PeerConnectionManager");
-    Brn buf_PeerConnectionManager((const TByte*)respPeerConnectionManager.c_str(), respPeerConnectionManager.length());
+    Brn buf_PeerConnectionManager((const TByte*)respPeerConnectionManager.c_str(), (TUint)respPeerConnectionManager.length());
     respWriterPeerConnectionManager.Write(buf_PeerConnectionManager);
     aInvocation.InvocationWriteStringEnd("PeerConnectionManager");
     InvocationResponseInt respWriterPeerConnectionID(aInvocation, "PeerConnectionID");
     respWriterPeerConnectionID.Write(respPeerConnectionID);
     InvocationResponseString respWriterDirection(aInvocation, "Direction");
-    Brn buf_Direction((const TByte*)respDirection.c_str(), respDirection.length());
+    Brn buf_Direction((const TByte*)respDirection.c_str(), (TUint)respDirection.length());
     respWriterDirection.Write(buf_Direction);
     aInvocation.InvocationWriteStringEnd("Direction");
     InvocationResponseString respWriterStatus(aInvocation, "Status");
-    Brn buf_Status((const TByte*)respStatus.c_str(), respStatus.length());
+    Brn buf_Status((const TByte*)respStatus.c_str(), (TUint)respStatus.length());
     respWriterStatus.Write(buf_Status);
     aInvocation.InvocationWriteStringEnd("Status");
 	aInvocation.InvocationWriteEnd();

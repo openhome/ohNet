@@ -57,7 +57,7 @@ protected:
     virtual ~Socket() {}
     TBool TryClose();
 protected:
-    volatile THandle iHandle;
+    THandle iHandle;
 };
 
 /**

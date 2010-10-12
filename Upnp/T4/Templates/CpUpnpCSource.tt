@@ -64,7 +64,7 @@ public:
 };
 
 <#=className#>C::<#=className#>C(CpDeviceC aDevice)
-    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice))
+    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice.iData.iPtr))
 {
     iProxy = new <#=className#>(*iDevice);
 }
@@ -72,12 +72,15 @@ public:
 
 THandle <#=className#>Create(CpDeviceC aDevice)
 {
-    return (THandle)new <#=className#>C(aDevice);
+    THandle h;
+    HandleInit(&h);
+    h.iData.iPtr = new <#=className#>C(aDevice);
+    return h;
 }
 
 void <#=className#>Destroy(THandle aHandle)
 {
-    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle.iData.iPtr);
     delete proxyC;
 }
 <#  foreach (Method a in u.methods) #>
@@ -85,7 +88,7 @@ void <#=className#>Destroy(THandle aHandle)
 
 void <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>)
 {
-    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
 <#  foreach (Argument i in a.inargs) #>
 <#  { #>
@@ -133,7 +136,7 @@ void <#=className#>Sync<#=a.name#>(THandle aHandle<#=ArgString(a)#>)
 
 void <#=className#>Begin<#=a.name#>(THandle aHandle, <#=InTypesAndNamesTrailingComma(a)#>ZappCallbackAsync aCallback, void* aPtr)
 {
-    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
 <#  foreach (Argument i in a.inargs) #>
 <#  { #>
@@ -154,9 +157,9 @@ void <#=className#>Begin<#=a.name#>(THandle aHandle, <#=InTypesAndNamesTrailingC
 int32_t <#=className#>End<#=a.name#>(THandle aHandle, <#=PrefixedOutArgTypesAndNames("ZappHandleAsync aAsync", a)#>)
 {
     int32_t err = 0;
-    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
 <#  foreach (Argument o in a.outargs) #>
 <#  { #>
@@ -199,7 +202,7 @@ int32_t <#=className#>End<#=a.name#>(THandle aHandle, <#=PrefixedOutArgTypesAndN
 
 void <#=className#>SetProperty<#=s.name#>Changed(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetProperty<#=s.name#>Changed(functor);
@@ -212,7 +215,7 @@ void <#=className#>SetProperty<#=s.name#>Changed(THandle aHandle, ZappCallback a
 <#      { #>
 void <#=className#>Property<#=s.name#>(THandle aHandle, char** a<#=s.name#>)
 {
-    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brhz buf_a<#=s.name#>;
     proxyC->Proxy()->Property<#=s.name#>(buf_a<#=s.name#>);
@@ -223,7 +226,7 @@ void <#=className#>Property<#=s.name#>(THandle aHandle, char** a<#=s.name#>)
 <#      { #>
 void <#=className#>Property<#=s.name#>(THandle aHandle, char** a<#=s.name#>, uint32_t* aLen)
 {
-    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_a<#=s.name#>;
     proxyC->Proxy()->Property<#=s.name#>(buf_a<#=s.name#>);
@@ -235,7 +238,7 @@ void <#=className#>Property<#=s.name#>(THandle aHandle, char** a<#=s.name#>, uin
 <#      { #>
 void <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>)
 {
-    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *a<#=s.name#> = false;
     proxyC->Proxy()->Property<#=s.name#>(*(TBool*)a<#=s.name#>);
@@ -245,7 +248,7 @@ void <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> 
 <#      { #>
 void <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>)
 {
-    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle);
+    <#=className#>C* proxyC = reinterpret_cast<<#=className#>C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->Property<#=s.name#>(*a<#=s.name#>);
 }

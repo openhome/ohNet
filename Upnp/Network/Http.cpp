@@ -273,7 +273,7 @@ IHttpHeader& ReaderHttpHeader::Header() const
 void ReaderHttpHeader::ResetHeaders()
 {
     iHeader = 0;
-    TUint count = iHeaders.size();
+    TUint count = (TUint)iHeaders.size();
     for (TUint i = 0; i < count; i++) {
         iHeaders[i]->Reset();
     }
@@ -281,7 +281,7 @@ void ReaderHttpHeader::ResetHeaders()
 
 void ReaderHttpHeader::ProcessHeader(const Brx& aField, const Brx& aValue)
 {
-    TUint count = iHeaders.size();
+    TUint count = (TUint)iHeaders.size();
     for (TUint i = 0; i < count; i++) {
         IHttpHeader* header = iHeaders[i];
         if (header->Recognise(aField)) {
@@ -373,7 +373,7 @@ Http::EVersion ReaderHttpRequest::Version() const
     
 void ReaderHttpRequest::ProcessMethod(const Brx& aMethod, const Brx& aUri, const Brx& aVersion)
 {
-    TUint count = iMethods.size();
+    TUint count = (TUint)iMethods.size();
     for (TUint i = 0; i < count; i++) {
         if (*iMethods[i] == aMethod)
         {

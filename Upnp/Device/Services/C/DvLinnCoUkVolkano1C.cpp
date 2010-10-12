@@ -308,66 +308,69 @@ void DvServiceLinnCoUkVolkano1C::SoftwareVersion(IInvocationResponse& aResponse,
 
 THandle DvServiceLinnCoUkVolkano1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkVolkano1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	THandle h;
+    HandleInit(&h);
+	h.iData.iPtr = new DvServiceLinnCoUkVolkano1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return h;
 }
 
 void DvServiceLinnCoUkVolkano1Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService);
+    delete reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService.iData.iPtr);
 }
 
 void DvServiceLinnCoUkVolkano1EnableActionReboot(THandle aService, CallbackVolkano1Reboot aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService)->EnableActionReboot(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService.iData.iPtr)->EnableActionReboot(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkVolkano1EnableActionBootMode(THandle aService, CallbackVolkano1BootMode aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService)->EnableActionBootMode(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService.iData.iPtr)->EnableActionBootMode(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkVolkano1EnableActionSetBootMode(THandle aService, CallbackVolkano1SetBootMode aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService)->EnableActionSetBootMode(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService.iData.iPtr)->EnableActionSetBootMode(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkVolkano1EnableActionBspType(THandle aService, CallbackVolkano1BspType aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService)->EnableActionBspType(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService.iData.iPtr)->EnableActionBspType(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkVolkano1EnableActionUglyName(THandle aService, CallbackVolkano1UglyName aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService)->EnableActionUglyName(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService.iData.iPtr)->EnableActionUglyName(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkVolkano1EnableActionMacAddress(THandle aService, CallbackVolkano1MacAddress aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService)->EnableActionMacAddress(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService.iData.iPtr)->EnableActionMacAddress(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkVolkano1EnableActionProductId(THandle aService, CallbackVolkano1ProductId aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService)->EnableActionProductId(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService.iData.iPtr)->EnableActionProductId(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkVolkano1EnableActionBoardId(THandle aService, CallbackVolkano1BoardId aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService)->EnableActionBoardId(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService.iData.iPtr)->EnableActionBoardId(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkVolkano1EnableActionBoardType(THandle aService, CallbackVolkano1BoardType aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService)->EnableActionBoardType(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService.iData.iPtr)->EnableActionBoardType(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkVolkano1EnableActionMaxBoards(THandle aService, CallbackVolkano1MaxBoards aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService)->EnableActionMaxBoards(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService.iData.iPtr)->EnableActionMaxBoards(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkVolkano1EnableActionSoftwareVersion(THandle aService, CallbackVolkano1SoftwareVersion aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService)->EnableActionSoftwareVersion(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkVolkano1C*>(aService.iData.iPtr)->EnableActionSoftwareVersion(aCallback, aPtr);
 }
 
