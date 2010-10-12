@@ -8,7 +8,7 @@ using namespace Zapp;
 
 void DvServiceLinnCoUkPlaylist1Cpp::SetPropertyIdArray(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyBinary(*iPropertyIdArray, buf);
 }
 
@@ -175,11 +175,11 @@ void DvServiceLinnCoUkPlaylist1Cpp::DoRead(IDvInvocation& aInvocation, TUint aVe
     Read(aVersion, aId, respaUri, respaMetaData);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraUri(aInvocation, "aUri");
-    Brn buf_aUri((const TByte*)respaUri.c_str(), (TUint)respaUri.length());
+    Brn buf_aUri((const TByte*)respaUri.c_str(), respaUri.length());
     respWriteraUri.Write(buf_aUri);
     aInvocation.InvocationWriteStringEnd("aUri");
     InvocationResponseString respWriteraMetaData(aInvocation, "aMetaData");
-    Brn buf_aMetaData((const TByte*)respaMetaData.c_str(), (TUint)respaMetaData.length());
+    Brn buf_aMetaData((const TByte*)respaMetaData.c_str(), respaMetaData.length());
     respWriteraMetaData.Write(buf_aMetaData);
     aInvocation.InvocationWriteStringEnd("aMetaData");
 	aInvocation.InvocationWriteEnd();
@@ -196,7 +196,7 @@ void DvServiceLinnCoUkPlaylist1Cpp::DoReadList(IDvInvocation& aInvocation, TUint
     ReadList(aVersion, aIdList, respaMetaDataList);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraMetaDataList(aInvocation, "aMetaDataList");
-    Brn buf_aMetaDataList((const TByte*)respaMetaDataList.c_str(), (TUint)respaMetaDataList.length());
+    Brn buf_aMetaDataList((const TByte*)respaMetaDataList.c_str(), respaMetaDataList.length());
     respWriteraMetaDataList.Write(buf_aMetaDataList);
     aInvocation.InvocationWriteStringEnd("aMetaDataList");
 	aInvocation.InvocationWriteEnd();
@@ -307,7 +307,7 @@ void DvServiceLinnCoUkPlaylist1Cpp::DoIdArray(IDvInvocation& aInvocation, TUint 
     InvocationResponseUint respWriteraIdArrayToken(aInvocation, "aIdArrayToken");
     respWriteraIdArrayToken.Write(respaIdArrayToken);
     InvocationResponseBinary respWriteraIdArray(aInvocation, "aIdArray");
-    Brn buf_aIdArray((const TByte*)respaIdArray.c_str(), (TUint)respaIdArray.length());
+    Brn buf_aIdArray((const TByte*)respaIdArray.c_str(), respaIdArray.length());
     respWriteraIdArray.Write(buf_aIdArray);
     aInvocation.InvocationWriteBinaryEnd("aIdArray");
 	aInvocation.InvocationWriteEnd();

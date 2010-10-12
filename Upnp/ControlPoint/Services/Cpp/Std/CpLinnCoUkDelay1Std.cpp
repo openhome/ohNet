@@ -429,7 +429,7 @@ void CpProxyLinnCoUkDelay1Cpp::BeginSetPresetName(uint32_t aaIndex, const std::s
     const Action::VectorParameters& inParams = iActionSetPresetName->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaIndex));
     {
-        Brn buf((const TByte*)aaName.c_str(), (TUint)aaName.length());
+        Brn buf((const TByte*)aaName.c_str(), aaName.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();

@@ -15,7 +15,7 @@ CpTopology3Source::CpTopology3Source()
 	
 TUint CpTopology3Source::ChildCount() const
 {
-	return (TUint)iChildList.size();
+	return (iChildList.size());
 }
 
 CpTopology3Group& CpTopology3Source::Child(TUint aIndex) const
@@ -124,7 +124,7 @@ void CpTopology3Group::SetRoot(TBool aValue)
 
 TUint CpTopology3Group::SourceCount() const
 {
-    return (TUint)iSourceList.size();
+    return iSourceList.size();
 }
 
 void CpTopology3Group::ClearChildren()

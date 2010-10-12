@@ -8,28 +8,28 @@ using namespace Zapp;
 
 const char* CpDeviceCUdn(CpDeviceC aDevice)
 {
-    CpiDevice* device = reinterpret_cast<CpiDevice*>(aDevice.iData.iPtr);
+    CpiDevice* device = reinterpret_cast<CpiDevice*>(aDevice);
     ASSERT(device != NULL);
     return (const char*)device->Udn().Ptr();
 }
 
 void CpDeviceCAddRef(CpDeviceC aDevice)
 {
-    CpiDevice* device = reinterpret_cast<CpiDevice*>(aDevice.iData.iPtr);
+    CpiDevice* device = reinterpret_cast<CpiDevice*>(aDevice);
     ASSERT(device != NULL);
     device->AddRef();
 }
 
 void CpDeviceCRemoveRef(CpDeviceC aDevice)
 {
-    CpiDevice* device = reinterpret_cast<CpiDevice*>(aDevice.iData.iPtr);
+    CpiDevice* device = reinterpret_cast<CpiDevice*>(aDevice);
     ASSERT(device != NULL);
     device->RemoveRef();
 }
 
 int32_t CpDeviceCGetAttribute(CpDeviceC aDevice, const char* aKey, char** aValue)
 {
-    CpiDevice* device = reinterpret_cast<CpiDevice*>(aDevice.iData.iPtr);
+    CpiDevice* device = reinterpret_cast<CpiDevice*>(aDevice);
     Brh val;
     ASSERT(device != NULL);
     if (device->GetAttribute(aKey, val)) {
@@ -44,13 +44,13 @@ int32_t CpDeviceCGetAttribute(CpDeviceC aDevice, const char* aKey, char** aValue
 
 void CpDeviceListDestroy(HandleCpDeviceList aListHandle)
 {
-    CpiDeviceList* list = reinterpret_cast<CpiDeviceList*>(aListHandle.iData.iPtr);
+    CpiDeviceList* list = reinterpret_cast<CpiDeviceList*>(aListHandle);
     delete list;
 }
 
 void CpDeviceListRefresh(HandleCpDeviceList aListHandle)
 {
-    CpiDeviceList* list = reinterpret_cast<CpiDeviceList*>(aListHandle.iData.iPtr);
+    CpiDeviceList* list = reinterpret_cast<CpiDeviceList*>(aListHandle);
     ASSERT(list != NULL);
     list->Refresh();
 }

@@ -58,52 +58,44 @@ static int32_t echoBinary(void* /*aPtr*/, uint32_t /*aVersion*/, const char* aVa
     return 0;
 }
 
-static THandle MakeHandle(void* aPtr)
-{
-    THandle h;
-    HandleInit(&h);
-    h.iData.iPtr = aPtr;
-    return h;
-}
-
 static int32_t setUint(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueUint)
 {
-    return DvServiceZappOrgTestBasic1SetPropertyVarUint(MakeHandle(aPtr), aValueUint);
+    return DvServiceZappOrgTestBasic1SetPropertyVarUint((THandle)aPtr, aValueUint);
 }
 
 static int32_t getUint(void* aPtr, uint32_t /*aVersion*/, uint32_t* aValueUint)
 {
-    DvServiceZappOrgTestBasic1GetPropertyVarUint(MakeHandle(aPtr), aValueUint);
+    DvServiceZappOrgTestBasic1GetPropertyVarUint((THandle)aPtr, aValueUint);
     return 0;
 }
 
 static int32_t setInt(void* aPtr, uint32_t /*aVersion*/, int32_t aValueInt)
 {
-    return DvServiceZappOrgTestBasic1SetPropertyVarInt(MakeHandle(aPtr), aValueInt);
+    return DvServiceZappOrgTestBasic1SetPropertyVarInt((THandle)aPtr, aValueInt);
 }
 
 static int32_t getInt(void* aPtr, uint32_t /*aVersion*/, int32_t* aValueInt)
 {
-    DvServiceZappOrgTestBasic1GetPropertyVarInt(MakeHandle(aPtr), aValueInt);
+    DvServiceZappOrgTestBasic1GetPropertyVarInt((THandle)aPtr, aValueInt);
     return 0;
 }
 
 static int32_t setBool(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueBool)
 {
-    return DvServiceZappOrgTestBasic1SetPropertyVarBool(MakeHandle(aPtr), aValueBool);
+    return DvServiceZappOrgTestBasic1SetPropertyVarBool((THandle)aPtr, aValueBool);
 }
 
 static int32_t getBool(void* aPtr, uint32_t /*aVersion*/, uint32_t* aValueBool)
 {
-    DvServiceZappOrgTestBasic1GetPropertyVarBool(MakeHandle(aPtr), aValueBool);
+    DvServiceZappOrgTestBasic1GetPropertyVarBool((THandle)aPtr, aValueBool);
     return 0;
 }
 
 static int32_t setMultiple(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueUint, int32_t aValueInt, uint32_t aValueBool)
 {
-    if (0 == DvServiceZappOrgTestBasic1SetPropertyVarUint(MakeHandle(aPtr), aValueUint) &&
-        0 == DvServiceZappOrgTestBasic1SetPropertyVarInt(MakeHandle(aPtr), aValueInt)   &&
-        0 == DvServiceZappOrgTestBasic1SetPropertyVarBool(MakeHandle(aPtr), aValueBool)) {
+    if (0 == DvServiceZappOrgTestBasic1SetPropertyVarUint((THandle)aPtr, aValueUint) &&
+        0 == DvServiceZappOrgTestBasic1SetPropertyVarInt((THandle)aPtr, aValueInt)   &&
+        0 == DvServiceZappOrgTestBasic1SetPropertyVarBool((THandle)aPtr, aValueBool)) {
         return 0;
     }
     return -1;
@@ -111,23 +103,23 @@ static int32_t setMultiple(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueUin
 
 static int32_t setString(void* aPtr, uint32_t /*aVersion*/, const char* aValueStr)
 {
-    return DvServiceZappOrgTestBasic1SetPropertyVarStr(MakeHandle(aPtr), aValueStr);
+    return DvServiceZappOrgTestBasic1SetPropertyVarStr((THandle)aPtr, aValueStr);
 }
 
 static int32_t getString(void* aPtr, uint32_t /*aVersion*/, char** aValueStr)
 {
-    DvServiceZappOrgTestBasic1GetPropertyVarStr(MakeHandle(aPtr), aValueStr);
+    DvServiceZappOrgTestBasic1GetPropertyVarStr((THandle)aPtr, aValueStr);
     return 0;
 }
 
 static int32_t setBinary(void* aPtr, uint32_t /*aVersion*/, const char* aValueBin, uint32_t aValueBinLen)
 {
-    return DvServiceZappOrgTestBasic1SetPropertyVarBin(MakeHandle(aPtr), aValueBin, aValueBinLen);
+    return DvServiceZappOrgTestBasic1SetPropertyVarBin((THandle)aPtr, aValueBin, aValueBinLen);
 }
 
 static int32_t getBinary(void* aPtr, uint32_t /*aVersion*/, char** aValueBin, uint32_t* aValueBinLen)
 {
-    DvServiceZappOrgTestBasic1GetPropertyVarBin(MakeHandle(aPtr), aValueBin, aValueBinLen);
+    DvServiceZappOrgTestBasic1GetPropertyVarBin((THandle)aPtr, aValueBin, aValueBinLen);
     return 0;
 }
 
@@ -185,17 +177,17 @@ DeviceBasic::DeviceBasic()
     DvServiceZappOrgTestBasic1EnableActionToggle(iTestBasic, toggle, NULL);
     DvServiceZappOrgTestBasic1EnableActionEchoString(iTestBasic, echoString, NULL);
     DvServiceZappOrgTestBasic1EnableActionEchoBinary(iTestBasic, echoBinary, NULL);
-    DvServiceZappOrgTestBasic1EnableActionSetUint(iTestBasic, setUint, iTestBasic.iData.iPtr);
-    DvServiceZappOrgTestBasic1EnableActionGetUint(iTestBasic, getUint, iTestBasic.iData.iPtr);
-    DvServiceZappOrgTestBasic1EnableActionSetInt(iTestBasic, setInt, iTestBasic.iData.iPtr);
-    DvServiceZappOrgTestBasic1EnableActionGetInt(iTestBasic, getInt, iTestBasic.iData.iPtr);
-    DvServiceZappOrgTestBasic1EnableActionSetBool(iTestBasic, setBool, iTestBasic.iData.iPtr);
-    DvServiceZappOrgTestBasic1EnableActionGetBool(iTestBasic, getBool, iTestBasic.iData.iPtr);
-    DvServiceZappOrgTestBasic1EnableActionSetMultiple(iTestBasic, setMultiple, iTestBasic.iData.iPtr);
-    DvServiceZappOrgTestBasic1EnableActionSetString(iTestBasic, setString, iTestBasic.iData.iPtr);
-    DvServiceZappOrgTestBasic1EnableActionGetString(iTestBasic, getString, iTestBasic.iData.iPtr);
-    DvServiceZappOrgTestBasic1EnableActionSetBinary(iTestBasic, setBinary, iTestBasic.iData.iPtr);
-    DvServiceZappOrgTestBasic1EnableActionGetBinary(iTestBasic, getBinary, iTestBasic.iData.iPtr);
+    DvServiceZappOrgTestBasic1EnableActionSetUint(iTestBasic, setUint, (void*)iTestBasic);
+    DvServiceZappOrgTestBasic1EnableActionGetUint(iTestBasic, getUint, (void*)iTestBasic);
+    DvServiceZappOrgTestBasic1EnableActionSetInt(iTestBasic, setInt, (void*)iTestBasic);
+    DvServiceZappOrgTestBasic1EnableActionGetInt(iTestBasic, getInt, (void*)iTestBasic);
+    DvServiceZappOrgTestBasic1EnableActionSetBool(iTestBasic, setBool, (void*)iTestBasic);
+    DvServiceZappOrgTestBasic1EnableActionGetBool(iTestBasic, getBool, (void*)iTestBasic);
+    DvServiceZappOrgTestBasic1EnableActionSetMultiple(iTestBasic, setMultiple, (void*)iTestBasic);
+    DvServiceZappOrgTestBasic1EnableActionSetString(iTestBasic, setString, (void*)iTestBasic);
+    DvServiceZappOrgTestBasic1EnableActionGetString(iTestBasic, getString, (void*)iTestBasic);
+    DvServiceZappOrgTestBasic1EnableActionSetBinary(iTestBasic, setBinary, (void*)iTestBasic);
+    DvServiceZappOrgTestBasic1EnableActionGetBinary(iTestBasic, getBinary, (void*)iTestBasic);
 
     DvDeviceSetEnabled(iDevice);
 }
@@ -258,7 +250,7 @@ DeviceList::DeviceList()
 
 DeviceList::~DeviceList()
 {
-    const TUint count = (TUint)iList.size();
+    const TUint count = iList.size();
     for (TUint i=0; i<count; i++) {
         CpDeviceCRemoveRef(iList[i]);
     }
@@ -449,7 +441,7 @@ void DeviceList::Added(CpDeviceC aDevice)
 void DeviceList::Removed(CpDeviceC aDevice)
 {
     AutoMutex a(iLock);
-    const TUint count = (TUint)iList.size();
+    const TUint count = iList.size();
     const char* udn = CpDeviceCUdn(aDevice);
     for (TUint i=0; i<count; i++) {
         CpDeviceC device = iList[i];

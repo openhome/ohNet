@@ -8,7 +8,7 @@ using namespace Zapp;
 
 void DvServiceUpnpOrgRenderingControl2Cpp::SetPropertyLastChange(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyString(*iPropertyLastChange, buf);
 }
 
@@ -443,7 +443,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoListPresets(IDvInvocation& aInvocat
     ListPresets(aVersion, InstanceID, respCurrentPresetNameList);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriterCurrentPresetNameList(aInvocation, "CurrentPresetNameList");
-    Brn buf_CurrentPresetNameList((const TByte*)respCurrentPresetNameList.c_str(), (TUint)respCurrentPresetNameList.length());
+    Brn buf_CurrentPresetNameList((const TByte*)respCurrentPresetNameList.c_str(), respCurrentPresetNameList.length());
     respWriterCurrentPresetNameList.Write(buf_CurrentPresetNameList);
     aInvocation.InvocationWriteStringEnd("CurrentPresetNameList");
 	aInvocation.InvocationWriteEnd();
@@ -901,7 +901,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoGetStateVariables(IDvInvocation& aI
     GetStateVariables(aVersion, InstanceID, StateVariableList, respStateVariableValuePairs);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriterStateVariableValuePairs(aInvocation, "StateVariableValuePairs");
-    Brn buf_StateVariableValuePairs((const TByte*)respStateVariableValuePairs.c_str(), (TUint)respStateVariableValuePairs.length());
+    Brn buf_StateVariableValuePairs((const TByte*)respStateVariableValuePairs.c_str(), respStateVariableValuePairs.length());
     respWriterStateVariableValuePairs.Write(buf_StateVariableValuePairs);
     aInvocation.InvocationWriteStringEnd("StateVariableValuePairs");
 	aInvocation.InvocationWriteEnd();
@@ -928,7 +928,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoSetStateVariables(IDvInvocation& aI
     SetStateVariables(aVersion, InstanceID, RenderingControlUDN, ServiceType, ServiceId, StateVariableValuePairs, respStateVariableList);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriterStateVariableList(aInvocation, "StateVariableList");
-    Brn buf_StateVariableList((const TByte*)respStateVariableList.c_str(), (TUint)respStateVariableList.length());
+    Brn buf_StateVariableList((const TByte*)respStateVariableList.c_str(), respStateVariableList.length());
     respWriterStateVariableList.Write(buf_StateVariableList);
     aInvocation.InvocationWriteStringEnd("StateVariableList");
 	aInvocation.InvocationWriteEnd();

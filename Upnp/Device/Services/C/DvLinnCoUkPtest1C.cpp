@@ -92,29 +92,26 @@ void DvServiceLinnCoUkPtest1C::LedsOff(IInvocationResponse& aResponse, TUint aVe
 
 THandle DvServiceLinnCoUkPtest1Create(DvDeviceC aDevice)
 {
-	THandle h;
-    HandleInit(&h);
-	h.iData.iPtr = new DvServiceLinnCoUkPtest1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
-	return h;
+    return (THandle)new DvServiceLinnCoUkPtest1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkPtest1Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceLinnCoUkPtest1C*>(aService.iData.iPtr);
+    delete reinterpret_cast<DvServiceLinnCoUkPtest1C*>(aService);
 }
 
 void DvServiceLinnCoUkPtest1EnableActionTestComPort(THandle aService, CallbackPtest1TestComPort aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkPtest1C*>(aService.iData.iPtr)->EnableActionTestComPort(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkPtest1C*>(aService)->EnableActionTestComPort(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkPtest1EnableActionLedsOn(THandle aService, CallbackPtest1LedsOn aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkPtest1C*>(aService.iData.iPtr)->EnableActionLedsOn(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkPtest1C*>(aService)->EnableActionLedsOn(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkPtest1EnableActionLedsOff(THandle aService, CallbackPtest1LedsOff aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkPtest1C*>(aService.iData.iPtr)->EnableActionLedsOff(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkPtest1C*>(aService)->EnableActionLedsOff(aCallback, aPtr);
 }
 

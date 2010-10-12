@@ -6,13 +6,6 @@
 
 using namespace Zapp;
 
-static THandle ListAsHandle(CpiDeviceList* aList)
-{
-    THandle handle;
-    handle.iData.iPtr = aList;
-    return handle;
-}
-
 HandleCpDeviceList CpDeviceListCreateUpnpAll(ZappCallbackDevice aAdded, void* aPtrAdded,
                                              ZappCallbackDevice aRemoved, void* aPtrRemoved)
 {
@@ -20,7 +13,7 @@ HandleCpDeviceList CpDeviceListCreateUpnpAll(ZappCallbackDevice aAdded, void* aP
     FunctorCpiDevice removed = MakeFunctorCpiDeviceC(aPtrRemoved, (ZappFunctorDevice)aRemoved);
     CpiDeviceList* list = new CpiDeviceListUpnpAll(added, removed);
     list->Start();
-    return ListAsHandle(list);
+    return (THandle)list;
 }
 
 HandleCpDeviceList CpDeviceListCreateUpnpRoot(ZappCallbackDevice aAdded, void* aPtrAdded,
@@ -30,7 +23,7 @@ HandleCpDeviceList CpDeviceListCreateUpnpRoot(ZappCallbackDevice aAdded, void* a
     FunctorCpiDevice removed = MakeFunctorCpiDeviceC(aPtrRemoved, (ZappFunctorDevice)aRemoved);
     CpiDeviceList* list = new CpiDeviceListUpnpRoot(added, removed);
     list->Start();
-    return ListAsHandle(list);
+    return (THandle)list;
 }
 
 HandleCpDeviceList CpDeviceListCreateUpnpUuid(const char* aUuid,
@@ -42,7 +35,7 @@ HandleCpDeviceList CpDeviceListCreateUpnpUuid(const char* aUuid,
     const Brn uuid(aUuid);
     CpiDeviceList* list = new CpiDeviceListUpnpUuid(uuid, added, removed);
     list->Start();
-    return ListAsHandle(list);
+    return (THandle)list;
 }
 
 HandleCpDeviceList CpDeviceListCreateUpnpDeviceType(const char* aDomainName, const char* aDeviceType, uint32_t aVersion,
@@ -55,7 +48,7 @@ HandleCpDeviceList CpDeviceListCreateUpnpDeviceType(const char* aDomainName, con
     const Brn type(aDeviceType);
     CpiDeviceList* list = new CpiDeviceListUpnpDeviceType(domain, type, aVersion, added, removed);
     list->Start();
-    return ListAsHandle(list);
+    return (THandle)list;
 }
 
 HandleCpDeviceList CpDeviceListCreateUpnpServiceType(const char* aDomainName, const char* aServiceType, uint32_t aVersion,
@@ -68,5 +61,5 @@ HandleCpDeviceList CpDeviceListCreateUpnpServiceType(const char* aDomainName, co
     const Brn type(aServiceType);
     CpiDeviceList* list = new CpiDeviceListUpnpServiceType(domain, type, aVersion, added, removed);
     list->Start();
-    return ListAsHandle(list);
+    return (THandle)list;
 }

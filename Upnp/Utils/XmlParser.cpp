@@ -59,7 +59,7 @@ Brn XmlParserBasic::Find(const Brx& aTag, const Brx& aDocument, Brn& aRemaining)
                 else if (tagType == eTagClose && namesp == ns) {
                     if (ignoreClose == 0) {
                         aRemaining.Set(remaining);
-                        const TUint retBytes = (TUint)(doc.Ptr() - retStart.Ptr()) + index;
+                        const TUint retBytes = doc.Ptr() - retStart.Ptr() + index;
                         Brn ret(retStart.Ptr(), retBytes);
                         return ret;
                     }
@@ -95,7 +95,7 @@ void XmlParserBasic::NextTag(const Brx& aDocument, Brn& aName, Brn& aAttributes,
         if (bytes < 2 || item[0] != '<') {
             THROW(XmlError);
         }
-        aIndex = (TUint)(item.Ptr() - aDocument.Ptr());
+        aIndex = item.Ptr() - aDocument.Ptr();
         if (item[1] == '?') {
             if (bytes < 3) { // catch special case of <?>
                 THROW(XmlError);

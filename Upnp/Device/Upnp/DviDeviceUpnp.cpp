@@ -286,7 +286,7 @@ void DviDeviceUpnp::Disable(Functor& aComplete)
     for (i=0; i<iMsgSchedulers.size(); i++) {
         iMsgSchedulers[i]->Stop();
     }
-    iSubnetDisableCount = (TUint)iListeners.size();
+    iSubnetDisableCount = iListeners.size();
     Functor functor = MakeFunctor(*this, &DviDeviceUpnp::SubnetDisabled);
     for (i=0; i<iSubnetDisableCount; i++) {
         Bwh uri;
@@ -357,7 +357,7 @@ void DviDeviceUpnp::SendUpdateNotifications()
 {
     iLock.Wait();
     iAliveTimer->Cancel();
-    iUpdateCount = (TUint)iListeners.size();
+    iUpdateCount = iListeners.size();
     Functor functor = MakeFunctor(*this, &DviDeviceUpnp::SubnetUpdated);
     for (TUint i=0; i<iListeners.size(); i++) {
         Bwh uri;

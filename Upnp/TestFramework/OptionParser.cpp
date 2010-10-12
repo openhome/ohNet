@@ -180,7 +180,7 @@ void OptionParser::AddOption(Option* aOption)
 TBool OptionParser::Parse(TInt aArgc, TChar* aArgv[])
 {
     iPosArgs.clear();
-    TUint count = (TUint)iOptions.size();
+    TUint count = iOptions.size();
     for (TUint i = 0; i<count; i++) {
         iOptions[i]->Reset();
     }
@@ -245,7 +245,7 @@ void OptionParser::DisplayHelp()
     else {
         Print("%s\n", iUsage);
     }
-    TUint count = (TUint)iOptions.size();
+    TUint count = iOptions.size();
     for (TUint i = 0; i < count; i++) {
         const TChar* optHelp = iOptions[i]->HelpText();
         Print("  %s\n", optHelp);
@@ -267,7 +267,7 @@ VectorPosArg& OptionParser::PosArgs()
 
 Option* OptionParser::Find(const TChar* aName)
 {
-    TUint count = (TUint)iOptions.size();
+    TUint count = iOptions.size();
     for (TUint i = 0; i < count; i++) {
         if (iOptions[i]->Match(aName)) {
             return iOptions[i];

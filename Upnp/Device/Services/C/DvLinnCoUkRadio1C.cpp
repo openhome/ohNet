@@ -421,163 +421,160 @@ void DvServiceLinnCoUkRadio1C::IdsMax(IInvocationResponse& aResponse, TUint aVer
 
 THandle DvServiceLinnCoUkRadio1Create(DvDeviceC aDevice)
 {
-	THandle h;
-    HandleInit(&h);
-	h.iData.iPtr = new DvServiceLinnCoUkRadio1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
-	return h;
+    return (THandle)new DvServiceLinnCoUkRadio1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkRadio1Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr);
+    delete reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService);
 }
 
 void DvServiceLinnCoUkRadio1EnableActionPlay(THandle aService, CallbackRadio1Play aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->EnableActionPlay(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->EnableActionPlay(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkRadio1EnableActionPause(THandle aService, CallbackRadio1Pause aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->EnableActionPause(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->EnableActionPause(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkRadio1EnableActionStop(THandle aService, CallbackRadio1Stop aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->EnableActionStop(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->EnableActionStop(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkRadio1EnableActionSeekSecondAbsolute(THandle aService, CallbackRadio1SeekSecondAbsolute aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->EnableActionSeekSecondAbsolute(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->EnableActionSeekSecondAbsolute(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkRadio1EnableActionSeekSecondRelative(THandle aService, CallbackRadio1SeekSecondRelative aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->EnableActionSeekSecondRelative(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->EnableActionSeekSecondRelative(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkRadio1EnableActionChannel(THandle aService, CallbackRadio1Channel aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->EnableActionChannel(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->EnableActionChannel(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkRadio1EnableActionSetChannel(THandle aService, CallbackRadio1SetChannel aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->EnableActionSetChannel(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->EnableActionSetChannel(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkRadio1EnableActionProtocolInfo(THandle aService, CallbackRadio1ProtocolInfo aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->EnableActionProtocolInfo(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->EnableActionProtocolInfo(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkRadio1EnableActionTransportState(THandle aService, CallbackRadio1TransportState aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->EnableActionTransportState(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->EnableActionTransportState(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkRadio1EnableActionId(THandle aService, CallbackRadio1Id aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->EnableActionId(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->EnableActionId(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkRadio1EnableActionSetId(THandle aService, CallbackRadio1SetId aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->EnableActionSetId(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->EnableActionSetId(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkRadio1EnableActionRead(THandle aService, CallbackRadio1Read aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->EnableActionRead(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->EnableActionRead(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkRadio1EnableActionReadList(THandle aService, CallbackRadio1ReadList aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->EnableActionReadList(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->EnableActionReadList(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkRadio1EnableActionIdArray(THandle aService, CallbackRadio1IdArray aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->EnableActionIdArray(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->EnableActionIdArray(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkRadio1EnableActionIdArrayChanged(THandle aService, CallbackRadio1IdArrayChanged aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->EnableActionIdArrayChanged(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->EnableActionIdArrayChanged(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkRadio1EnableActionIdsMax(THandle aService, CallbackRadio1IdsMax aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->EnableActionIdsMax(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->EnableActionIdsMax(aCallback, aPtr);
 }
 
 int32_t DvServiceLinnCoUkRadio1SetPropertyChannelUri(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->SetPropertyChannelUri(buf);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->SetPropertyChannelUri(buf);
     return 0;
 }
 
 void DvServiceLinnCoUkRadio1GetPropertyChannelUri(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->GetPropertyChannelUri(buf);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->GetPropertyChannelUri(buf);
     *aValue = (char*)buf.Transfer();
 }
 
 int32_t DvServiceLinnCoUkRadio1SetPropertyChannelMetadata(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->SetPropertyChannelMetadata(buf);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->SetPropertyChannelMetadata(buf);
     return 0;
 }
 
 void DvServiceLinnCoUkRadio1GetPropertyChannelMetadata(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->GetPropertyChannelMetadata(buf);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->GetPropertyChannelMetadata(buf);
     *aValue = (char*)buf.Transfer();
 }
 
 int32_t DvServiceLinnCoUkRadio1SetPropertyTransportState(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->SetPropertyTransportState(buf);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->SetPropertyTransportState(buf);
     return 0;
 }
 
 void DvServiceLinnCoUkRadio1GetPropertyTransportState(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->GetPropertyTransportState(buf);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->GetPropertyTransportState(buf);
     *aValue = (char*)buf.Transfer();
 }
 
 int32_t DvServiceLinnCoUkRadio1SetPropertyProtocolInfo(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->SetPropertyProtocolInfo(buf);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->SetPropertyProtocolInfo(buf);
     return 0;
 }
 
 void DvServiceLinnCoUkRadio1GetPropertyProtocolInfo(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->GetPropertyProtocolInfo(buf);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->GetPropertyProtocolInfo(buf);
     *aValue = (char*)buf.Transfer();
 }
 
 int32_t DvServiceLinnCoUkRadio1SetPropertyId(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->SetPropertyId(aValue);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->SetPropertyId(aValue);
     return 0;
 }
 
 void DvServiceLinnCoUkRadio1GetPropertyId(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->GetPropertyId(val);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->GetPropertyId(val);
     *aValue = val;
 }
 
@@ -585,28 +582,28 @@ int32_t DvServiceLinnCoUkRadio1SetPropertyIdArray(THandle aService, const char* 
 {
     Brh buf;
     buf.Set((const TByte*)aValue, aValueLen);
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->SetPropertyIdArray(buf);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->SetPropertyIdArray(buf);
     return 0;
 }
 
 void DvServiceLinnCoUkRadio1GetPropertyIdArray(THandle aService, char** aValue, uint32_t* aValueLen)
 {
     Brh buf;
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->GetPropertyIdArray(buf);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->GetPropertyIdArray(buf);
     *aValueLen = buf.Bytes();
     *aValue = (char*)buf.Extract();
 }
 
 int32_t DvServiceLinnCoUkRadio1SetPropertyIdsMax(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->SetPropertyIdsMax(aValue);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->SetPropertyIdsMax(aValue);
     return 0;
 }
 
 void DvServiceLinnCoUkRadio1GetPropertyIdsMax(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService.iData.iPtr)->GetPropertyIdsMax(val);
+    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->GetPropertyIdsMax(val);
     *aValue = val;
 }
 

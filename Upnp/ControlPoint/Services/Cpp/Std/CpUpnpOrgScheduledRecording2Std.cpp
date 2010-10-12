@@ -650,7 +650,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::BeginGetPropertyList(const std::strin
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionGetPropertyList->InputParameters();
     {
-        Brn buf((const TByte*)aDataTypeID.c_str(), (TUint)aDataTypeID.length());
+        Brn buf((const TByte*)aDataTypeID.c_str(), aDataTypeID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -688,11 +688,11 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::BeginGetAllowedValues(const std::stri
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionGetAllowedValues->InputParameters();
     {
-        Brn buf((const TByte*)aDataTypeID.c_str(), (TUint)aDataTypeID.length());
+        Brn buf((const TByte*)aDataTypeID.c_str(), aDataTypeID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aFilter.c_str(), (TUint)aFilter.length());
+        Brn buf((const TByte*)aFilter.c_str(), aFilter.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -759,13 +759,13 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::BeginBrowseRecordSchedules(const std:
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionBrowseRecordSchedules->InputParameters();
     {
-        Brn buf((const TByte*)aFilter.c_str(), (TUint)aFilter.length());
+        Brn buf((const TByte*)aFilter.c_str(), aFilter.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aStartingIndex));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aRequestedCount));
     {
-        Brn buf((const TByte*)aSortCriteria.c_str(), (TUint)aSortCriteria.length());
+        Brn buf((const TByte*)aSortCriteria.c_str(), aSortCriteria.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -809,17 +809,17 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::BeginBrowseRecordTasks(const std::str
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionBrowseRecordTasks->InputParameters();
     {
-        Brn buf((const TByte*)aRecordScheduleID.c_str(), (TUint)aRecordScheduleID.length());
+        Brn buf((const TByte*)aRecordScheduleID.c_str(), aRecordScheduleID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aFilter.c_str(), (TUint)aFilter.length());
+        Brn buf((const TByte*)aFilter.c_str(), aFilter.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aStartingIndex));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aRequestedCount));
     {
-        Brn buf((const TByte*)aSortCriteria.c_str(), (TUint)aSortCriteria.length());
+        Brn buf((const TByte*)aSortCriteria.c_str(), aSortCriteria.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -863,7 +863,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::BeginCreateRecordSchedule(const std::
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionCreateRecordSchedule->InputParameters();
     {
-        Brn buf((const TByte*)aElements.c_str(), (TUint)aElements.length());
+        Brn buf((const TByte*)aElements.c_str(), aElements.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -908,7 +908,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::BeginDeleteRecordSchedule(const std::
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionDeleteRecordSchedule->InputParameters();
     {
-        Brn buf((const TByte*)aRecordScheduleID.c_str(), (TUint)aRecordScheduleID.length());
+        Brn buf((const TByte*)aRecordScheduleID.c_str(), aRecordScheduleID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -938,11 +938,11 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::BeginGetRecordSchedule(const std::str
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionGetRecordSchedule->InputParameters();
     {
-        Brn buf((const TByte*)aRecordScheduleID.c_str(), (TUint)aRecordScheduleID.length());
+        Brn buf((const TByte*)aRecordScheduleID.c_str(), aRecordScheduleID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aFilter.c_str(), (TUint)aFilter.length());
+        Brn buf((const TByte*)aFilter.c_str(), aFilter.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -982,7 +982,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::BeginEnableRecordSchedule(const std::
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionEnableRecordSchedule->InputParameters();
     {
-        Brn buf((const TByte*)aRecordScheduleID.c_str(), (TUint)aRecordScheduleID.length());
+        Brn buf((const TByte*)aRecordScheduleID.c_str(), aRecordScheduleID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -1012,7 +1012,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::BeginDisableRecordSchedule(const std:
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionDisableRecordSchedule->InputParameters();
     {
-        Brn buf((const TByte*)aRecordScheduleID.c_str(), (TUint)aRecordScheduleID.length());
+        Brn buf((const TByte*)aRecordScheduleID.c_str(), aRecordScheduleID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -1042,7 +1042,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::BeginDeleteRecordTask(const std::stri
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionDeleteRecordTask->InputParameters();
     {
-        Brn buf((const TByte*)aRecordTaskID.c_str(), (TUint)aRecordTaskID.length());
+        Brn buf((const TByte*)aRecordTaskID.c_str(), aRecordTaskID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -1072,11 +1072,11 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::BeginGetRecordTask(const std::string&
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionGetRecordTask->InputParameters();
     {
-        Brn buf((const TByte*)aRecordTaskID.c_str(), (TUint)aRecordTaskID.length());
+        Brn buf((const TByte*)aRecordTaskID.c_str(), aRecordTaskID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aFilter.c_str(), (TUint)aFilter.length());
+        Brn buf((const TByte*)aFilter.c_str(), aFilter.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -1116,7 +1116,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::BeginEnableRecordTask(const std::stri
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionEnableRecordTask->InputParameters();
     {
-        Brn buf((const TByte*)aRecordTaskID.c_str(), (TUint)aRecordTaskID.length());
+        Brn buf((const TByte*)aRecordTaskID.c_str(), aRecordTaskID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -1146,7 +1146,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::BeginDisableRecordTask(const std::str
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionDisableRecordTask->InputParameters();
     {
-        Brn buf((const TByte*)aRecordTaskID.c_str(), (TUint)aRecordTaskID.length());
+        Brn buf((const TByte*)aRecordTaskID.c_str(), aRecordTaskID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -1176,7 +1176,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::BeginResetRecordTask(const std::strin
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionResetRecordTask->InputParameters();
     {
-        Brn buf((const TByte*)aRecordTaskID.c_str(), (TUint)aRecordTaskID.length());
+        Brn buf((const TByte*)aRecordTaskID.c_str(), aRecordTaskID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -1206,7 +1206,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::BeginGetRecordScheduleConflicts(const
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionGetRecordScheduleConflicts->InputParameters();
     {
-        Brn buf((const TByte*)aRecordScheduleID.c_str(), (TUint)aRecordScheduleID.length());
+        Brn buf((const TByte*)aRecordScheduleID.c_str(), aRecordScheduleID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -1246,7 +1246,7 @@ void CpProxyUpnpOrgScheduledRecording2Cpp::BeginGetRecordTaskConflicts(const std
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionGetRecordTaskConflicts->InputParameters();
     {
-        Brn buf((const TByte*)aRecordTaskID.c_str(), (TUint)aRecordTaskID.length());
+        Brn buf((const TByte*)aRecordTaskID.c_str(), aRecordTaskID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;

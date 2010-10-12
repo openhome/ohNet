@@ -70,37 +70,34 @@ void DvServiceZappOrgTestDimmableLight1C::SetLevel(IInvocationResponse& aRespons
 
 THandle DvServiceZappOrgTestDimmableLight1Create(DvDeviceC aDevice)
 {
-	THandle h;
-    HandleInit(&h);
-	h.iData.iPtr = new DvServiceZappOrgTestDimmableLight1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
-	return h;
+    return (THandle)new DvServiceZappOrgTestDimmableLight1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceZappOrgTestDimmableLight1Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceZappOrgTestDimmableLight1C*>(aService.iData.iPtr);
+    delete reinterpret_cast<DvServiceZappOrgTestDimmableLight1C*>(aService);
 }
 
 void DvServiceZappOrgTestDimmableLight1EnableActionGetLevel(THandle aService, CallbackTestDimmableLight1GetLevel aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestDimmableLight1C*>(aService.iData.iPtr)->EnableActionGetLevel(aCallback, aPtr);
+    reinterpret_cast<DvServiceZappOrgTestDimmableLight1C*>(aService)->EnableActionGetLevel(aCallback, aPtr);
 }
 
 void DvServiceZappOrgTestDimmableLight1EnableActionSetLevel(THandle aService, CallbackTestDimmableLight1SetLevel aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestDimmableLight1C*>(aService.iData.iPtr)->EnableActionSetLevel(aCallback, aPtr);
+    reinterpret_cast<DvServiceZappOrgTestDimmableLight1C*>(aService)->EnableActionSetLevel(aCallback, aPtr);
 }
 
 int32_t DvServiceZappOrgTestDimmableLight1SetPropertyA_ARG_Level(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceZappOrgTestDimmableLight1C*>(aService.iData.iPtr)->SetPropertyA_ARG_Level(aValue);
+    reinterpret_cast<DvServiceZappOrgTestDimmableLight1C*>(aService)->SetPropertyA_ARG_Level(aValue);
     return 0;
 }
 
 void DvServiceZappOrgTestDimmableLight1GetPropertyA_ARG_Level(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceZappOrgTestDimmableLight1C*>(aService.iData.iPtr)->GetPropertyA_ARG_Level(val);
+    reinterpret_cast<DvServiceZappOrgTestDimmableLight1C*>(aService)->GetPropertyA_ARG_Level(val);
     *aValue = val;
 }
 

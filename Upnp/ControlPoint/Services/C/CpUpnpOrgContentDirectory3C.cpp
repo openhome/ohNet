@@ -14,7 +14,7 @@ public:
 };
 
 CpProxyUpnpOrgContentDirectory3C::CpProxyUpnpOrgContentDirectory3C(CpDeviceC aDevice)
-    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice.iData.iPtr))
+    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice))
 {
     iProxy = new CpProxyUpnpOrgContentDirectory3(*iDevice);
 }
@@ -22,21 +22,18 @@ CpProxyUpnpOrgContentDirectory3C::CpProxyUpnpOrgContentDirectory3C(CpDeviceC aDe
 
 THandle CpProxyUpnpOrgContentDirectory3Create(CpDeviceC aDevice)
 {
-    THandle h;
-    HandleInit(&h);
-    h.iData.iPtr = new CpProxyUpnpOrgContentDirectory3C(aDevice);
-    return h;
+    return (THandle)new CpProxyUpnpOrgContentDirectory3C(aDevice);
 }
 
 void CpProxyUpnpOrgContentDirectory3Destroy(THandle aHandle)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     delete proxyC;
 }
 
 void CpProxyUpnpOrgContentDirectory3SyncGetSearchCapabilities(THandle aHandle, char** aSearchCaps)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aSearchCaps;
     proxyC->Proxy()->SyncGetSearchCapabilities(buf_aSearchCaps);
@@ -45,7 +42,7 @@ void CpProxyUpnpOrgContentDirectory3SyncGetSearchCapabilities(THandle aHandle, c
 
 void CpProxyUpnpOrgContentDirectory3BeginGetSearchCapabilities(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetSearchCapabilities(functor);
@@ -54,9 +51,9 @@ void CpProxyUpnpOrgContentDirectory3BeginGetSearchCapabilities(THandle aHandle, 
 int32_t CpProxyUpnpOrgContentDirectory3EndGetSearchCapabilities(THandle aHandle, ZappHandleAsync aAsync, char** aSearchCaps)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     Brh buf_aSearchCaps;
     *aSearchCaps = NULL;
@@ -72,7 +69,7 @@ int32_t CpProxyUpnpOrgContentDirectory3EndGetSearchCapabilities(THandle aHandle,
 
 void CpProxyUpnpOrgContentDirectory3SyncGetSortCapabilities(THandle aHandle, char** aSortCaps)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aSortCaps;
     proxyC->Proxy()->SyncGetSortCapabilities(buf_aSortCaps);
@@ -81,7 +78,7 @@ void CpProxyUpnpOrgContentDirectory3SyncGetSortCapabilities(THandle aHandle, cha
 
 void CpProxyUpnpOrgContentDirectory3BeginGetSortCapabilities(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetSortCapabilities(functor);
@@ -90,9 +87,9 @@ void CpProxyUpnpOrgContentDirectory3BeginGetSortCapabilities(THandle aHandle, Za
 int32_t CpProxyUpnpOrgContentDirectory3EndGetSortCapabilities(THandle aHandle, ZappHandleAsync aAsync, char** aSortCaps)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     Brh buf_aSortCaps;
     *aSortCaps = NULL;
@@ -108,7 +105,7 @@ int32_t CpProxyUpnpOrgContentDirectory3EndGetSortCapabilities(THandle aHandle, Z
 
 void CpProxyUpnpOrgContentDirectory3SyncGetSortExtensionCapabilities(THandle aHandle, char** aSortExtensionCaps)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aSortExtensionCaps;
     proxyC->Proxy()->SyncGetSortExtensionCapabilities(buf_aSortExtensionCaps);
@@ -117,7 +114,7 @@ void CpProxyUpnpOrgContentDirectory3SyncGetSortExtensionCapabilities(THandle aHa
 
 void CpProxyUpnpOrgContentDirectory3BeginGetSortExtensionCapabilities(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetSortExtensionCapabilities(functor);
@@ -126,9 +123,9 @@ void CpProxyUpnpOrgContentDirectory3BeginGetSortExtensionCapabilities(THandle aH
 int32_t CpProxyUpnpOrgContentDirectory3EndGetSortExtensionCapabilities(THandle aHandle, ZappHandleAsync aAsync, char** aSortExtensionCaps)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     Brh buf_aSortExtensionCaps;
     *aSortExtensionCaps = NULL;
@@ -144,7 +141,7 @@ int32_t CpProxyUpnpOrgContentDirectory3EndGetSortExtensionCapabilities(THandle a
 
 void CpProxyUpnpOrgContentDirectory3SyncGetFeatureList(THandle aHandle, char** aFeatureList)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aFeatureList;
     proxyC->Proxy()->SyncGetFeatureList(buf_aFeatureList);
@@ -153,7 +150,7 @@ void CpProxyUpnpOrgContentDirectory3SyncGetFeatureList(THandle aHandle, char** a
 
 void CpProxyUpnpOrgContentDirectory3BeginGetFeatureList(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetFeatureList(functor);
@@ -162,9 +159,9 @@ void CpProxyUpnpOrgContentDirectory3BeginGetFeatureList(THandle aHandle, ZappCal
 int32_t CpProxyUpnpOrgContentDirectory3EndGetFeatureList(THandle aHandle, ZappHandleAsync aAsync, char** aFeatureList)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     Brh buf_aFeatureList;
     *aFeatureList = NULL;
@@ -180,14 +177,14 @@ int32_t CpProxyUpnpOrgContentDirectory3EndGetFeatureList(THandle aHandle, ZappHa
 
 void CpProxyUpnpOrgContentDirectory3SyncGetSystemUpdateID(THandle aHandle, uint32_t* aId)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncGetSystemUpdateID(*aId);
 }
 
 void CpProxyUpnpOrgContentDirectory3BeginGetSystemUpdateID(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetSystemUpdateID(functor);
@@ -196,9 +193,9 @@ void CpProxyUpnpOrgContentDirectory3BeginGetSystemUpdateID(THandle aHandle, Zapp
 int32_t CpProxyUpnpOrgContentDirectory3EndGetSystemUpdateID(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aId)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndGetSystemUpdateID(*async, *aId);
@@ -211,7 +208,7 @@ int32_t CpProxyUpnpOrgContentDirectory3EndGetSystemUpdateID(THandle aHandle, Zap
 
 void CpProxyUpnpOrgContentDirectory3SyncGetServiceResetToken(THandle aHandle, char** aResetToken)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aResetToken;
     proxyC->Proxy()->SyncGetServiceResetToken(buf_aResetToken);
@@ -220,7 +217,7 @@ void CpProxyUpnpOrgContentDirectory3SyncGetServiceResetToken(THandle aHandle, ch
 
 void CpProxyUpnpOrgContentDirectory3BeginGetServiceResetToken(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetServiceResetToken(functor);
@@ -229,9 +226,9 @@ void CpProxyUpnpOrgContentDirectory3BeginGetServiceResetToken(THandle aHandle, Z
 int32_t CpProxyUpnpOrgContentDirectory3EndGetServiceResetToken(THandle aHandle, ZappHandleAsync aAsync, char** aResetToken)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     Brh buf_aResetToken;
     *aResetToken = NULL;
@@ -247,7 +244,7 @@ int32_t CpProxyUpnpOrgContentDirectory3EndGetServiceResetToken(THandle aHandle, 
 
 void CpProxyUpnpOrgContentDirectory3SyncBrowse(THandle aHandle, const char* aObjectID, const char* aBrowseFlag, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aObjectID(aObjectID);
     Brh buf_aBrowseFlag(aBrowseFlag);
@@ -260,7 +257,7 @@ void CpProxyUpnpOrgContentDirectory3SyncBrowse(THandle aHandle, const char* aObj
 
 void CpProxyUpnpOrgContentDirectory3BeginBrowse(THandle aHandle, const char* aObjectID, const char* aBrowseFlag, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aObjectID(aObjectID);
     Brh buf_aBrowseFlag(aBrowseFlag);
@@ -273,9 +270,9 @@ void CpProxyUpnpOrgContentDirectory3BeginBrowse(THandle aHandle, const char* aOb
 int32_t CpProxyUpnpOrgContentDirectory3EndBrowse(THandle aHandle, ZappHandleAsync aAsync, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     Brh buf_aResult;
     *aResult = NULL;
@@ -291,7 +288,7 @@ int32_t CpProxyUpnpOrgContentDirectory3EndBrowse(THandle aHandle, ZappHandleAsyn
 
 void CpProxyUpnpOrgContentDirectory3SyncSearch(THandle aHandle, const char* aContainerID, const char* aSearchCriteria, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aContainerID(aContainerID);
     Brh buf_aSearchCriteria(aSearchCriteria);
@@ -304,7 +301,7 @@ void CpProxyUpnpOrgContentDirectory3SyncSearch(THandle aHandle, const char* aCon
 
 void CpProxyUpnpOrgContentDirectory3BeginSearch(THandle aHandle, const char* aContainerID, const char* aSearchCriteria, const char* aFilter, uint32_t aStartingIndex, uint32_t aRequestedCount, const char* aSortCriteria, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aContainerID(aContainerID);
     Brh buf_aSearchCriteria(aSearchCriteria);
@@ -317,9 +314,9 @@ void CpProxyUpnpOrgContentDirectory3BeginSearch(THandle aHandle, const char* aCo
 int32_t CpProxyUpnpOrgContentDirectory3EndSearch(THandle aHandle, ZappHandleAsync aAsync, char** aResult, uint32_t* aNumberReturned, uint32_t* aTotalMatches, uint32_t* aUpdateID)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     Brh buf_aResult;
     *aResult = NULL;
@@ -335,7 +332,7 @@ int32_t CpProxyUpnpOrgContentDirectory3EndSearch(THandle aHandle, ZappHandleAsyn
 
 void CpProxyUpnpOrgContentDirectory3SyncCreateObject(THandle aHandle, const char* aContainerID, const char* aElements, char** aObjectID, char** aResult)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aContainerID(aContainerID);
     Brh buf_aElements(aElements);
@@ -348,7 +345,7 @@ void CpProxyUpnpOrgContentDirectory3SyncCreateObject(THandle aHandle, const char
 
 void CpProxyUpnpOrgContentDirectory3BeginCreateObject(THandle aHandle, const char* aContainerID, const char* aElements, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aContainerID(aContainerID);
     Brh buf_aElements(aElements);
@@ -359,9 +356,9 @@ void CpProxyUpnpOrgContentDirectory3BeginCreateObject(THandle aHandle, const cha
 int32_t CpProxyUpnpOrgContentDirectory3EndCreateObject(THandle aHandle, ZappHandleAsync aAsync, char** aObjectID, char** aResult)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     Brh buf_aObjectID;
     *aObjectID = NULL;
@@ -380,7 +377,7 @@ int32_t CpProxyUpnpOrgContentDirectory3EndCreateObject(THandle aHandle, ZappHand
 
 void CpProxyUpnpOrgContentDirectory3SyncDestroyObject(THandle aHandle, const char* aObjectID)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aObjectID(aObjectID);
     proxyC->Proxy()->SyncDestroyObject(buf_aObjectID);
@@ -388,7 +385,7 @@ void CpProxyUpnpOrgContentDirectory3SyncDestroyObject(THandle aHandle, const cha
 
 void CpProxyUpnpOrgContentDirectory3BeginDestroyObject(THandle aHandle, const char* aObjectID, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aObjectID(aObjectID);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
@@ -398,9 +395,9 @@ void CpProxyUpnpOrgContentDirectory3BeginDestroyObject(THandle aHandle, const ch
 int32_t CpProxyUpnpOrgContentDirectory3EndDestroyObject(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndDestroyObject(*async);
@@ -413,7 +410,7 @@ int32_t CpProxyUpnpOrgContentDirectory3EndDestroyObject(THandle aHandle, ZappHan
 
 void CpProxyUpnpOrgContentDirectory3SyncUpdateObject(THandle aHandle, const char* aObjectID, const char* aCurrentTagValue, const char* aNewTagValue)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aObjectID(aObjectID);
     Brh buf_aCurrentTagValue(aCurrentTagValue);
@@ -423,7 +420,7 @@ void CpProxyUpnpOrgContentDirectory3SyncUpdateObject(THandle aHandle, const char
 
 void CpProxyUpnpOrgContentDirectory3BeginUpdateObject(THandle aHandle, const char* aObjectID, const char* aCurrentTagValue, const char* aNewTagValue, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aObjectID(aObjectID);
     Brh buf_aCurrentTagValue(aCurrentTagValue);
@@ -435,9 +432,9 @@ void CpProxyUpnpOrgContentDirectory3BeginUpdateObject(THandle aHandle, const cha
 int32_t CpProxyUpnpOrgContentDirectory3EndUpdateObject(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndUpdateObject(*async);
@@ -450,7 +447,7 @@ int32_t CpProxyUpnpOrgContentDirectory3EndUpdateObject(THandle aHandle, ZappHand
 
 void CpProxyUpnpOrgContentDirectory3SyncMoveObject(THandle aHandle, const char* aObjectID, const char* aNewParentID, char** aNewObjectID)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aObjectID(aObjectID);
     Brh buf_aNewParentID(aNewParentID);
@@ -461,7 +458,7 @@ void CpProxyUpnpOrgContentDirectory3SyncMoveObject(THandle aHandle, const char* 
 
 void CpProxyUpnpOrgContentDirectory3BeginMoveObject(THandle aHandle, const char* aObjectID, const char* aNewParentID, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aObjectID(aObjectID);
     Brh buf_aNewParentID(aNewParentID);
@@ -472,9 +469,9 @@ void CpProxyUpnpOrgContentDirectory3BeginMoveObject(THandle aHandle, const char*
 int32_t CpProxyUpnpOrgContentDirectory3EndMoveObject(THandle aHandle, ZappHandleAsync aAsync, char** aNewObjectID)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     Brh buf_aNewObjectID;
     *aNewObjectID = NULL;
@@ -490,7 +487,7 @@ int32_t CpProxyUpnpOrgContentDirectory3EndMoveObject(THandle aHandle, ZappHandle
 
 void CpProxyUpnpOrgContentDirectory3SyncImportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, uint32_t* aTransferID)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aSourceURI(aSourceURI);
     Brh buf_aDestinationURI(aDestinationURI);
@@ -499,7 +496,7 @@ void CpProxyUpnpOrgContentDirectory3SyncImportResource(THandle aHandle, const ch
 
 void CpProxyUpnpOrgContentDirectory3BeginImportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aSourceURI(aSourceURI);
     Brh buf_aDestinationURI(aDestinationURI);
@@ -510,9 +507,9 @@ void CpProxyUpnpOrgContentDirectory3BeginImportResource(THandle aHandle, const c
 int32_t CpProxyUpnpOrgContentDirectory3EndImportResource(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aTransferID)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndImportResource(*async, *aTransferID);
@@ -525,7 +522,7 @@ int32_t CpProxyUpnpOrgContentDirectory3EndImportResource(THandle aHandle, ZappHa
 
 void CpProxyUpnpOrgContentDirectory3SyncExportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, uint32_t* aTransferID)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aSourceURI(aSourceURI);
     Brh buf_aDestinationURI(aDestinationURI);
@@ -534,7 +531,7 @@ void CpProxyUpnpOrgContentDirectory3SyncExportResource(THandle aHandle, const ch
 
 void CpProxyUpnpOrgContentDirectory3BeginExportResource(THandle aHandle, const char* aSourceURI, const char* aDestinationURI, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aSourceURI(aSourceURI);
     Brh buf_aDestinationURI(aDestinationURI);
@@ -545,9 +542,9 @@ void CpProxyUpnpOrgContentDirectory3BeginExportResource(THandle aHandle, const c
 int32_t CpProxyUpnpOrgContentDirectory3EndExportResource(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aTransferID)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndExportResource(*async, *aTransferID);
@@ -560,7 +557,7 @@ int32_t CpProxyUpnpOrgContentDirectory3EndExportResource(THandle aHandle, ZappHa
 
 void CpProxyUpnpOrgContentDirectory3SyncDeleteResource(THandle aHandle, const char* aResourceURI)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aResourceURI(aResourceURI);
     proxyC->Proxy()->SyncDeleteResource(buf_aResourceURI);
@@ -568,7 +565,7 @@ void CpProxyUpnpOrgContentDirectory3SyncDeleteResource(THandle aHandle, const ch
 
 void CpProxyUpnpOrgContentDirectory3BeginDeleteResource(THandle aHandle, const char* aResourceURI, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aResourceURI(aResourceURI);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
@@ -578,9 +575,9 @@ void CpProxyUpnpOrgContentDirectory3BeginDeleteResource(THandle aHandle, const c
 int32_t CpProxyUpnpOrgContentDirectory3EndDeleteResource(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndDeleteResource(*async);
@@ -593,14 +590,14 @@ int32_t CpProxyUpnpOrgContentDirectory3EndDeleteResource(THandle aHandle, ZappHa
 
 void CpProxyUpnpOrgContentDirectory3SyncStopTransferResource(THandle aHandle, uint32_t aTransferID)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncStopTransferResource(aTransferID);
 }
 
 void CpProxyUpnpOrgContentDirectory3BeginStopTransferResource(THandle aHandle, uint32_t aTransferID, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginStopTransferResource(aTransferID, functor);
@@ -609,9 +606,9 @@ void CpProxyUpnpOrgContentDirectory3BeginStopTransferResource(THandle aHandle, u
 int32_t CpProxyUpnpOrgContentDirectory3EndStopTransferResource(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndStopTransferResource(*async);
@@ -624,7 +621,7 @@ int32_t CpProxyUpnpOrgContentDirectory3EndStopTransferResource(THandle aHandle, 
 
 void CpProxyUpnpOrgContentDirectory3SyncGetTransferProgress(THandle aHandle, uint32_t aTransferID, char** aTransferStatus, char** aTransferLength, char** aTransferTotal)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aTransferStatus;
     Brh buf_aTransferLength;
@@ -637,7 +634,7 @@ void CpProxyUpnpOrgContentDirectory3SyncGetTransferProgress(THandle aHandle, uin
 
 void CpProxyUpnpOrgContentDirectory3BeginGetTransferProgress(THandle aHandle, uint32_t aTransferID, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetTransferProgress(aTransferID, functor);
@@ -646,9 +643,9 @@ void CpProxyUpnpOrgContentDirectory3BeginGetTransferProgress(THandle aHandle, ui
 int32_t CpProxyUpnpOrgContentDirectory3EndGetTransferProgress(THandle aHandle, ZappHandleAsync aAsync, char** aTransferStatus, char** aTransferLength, char** aTransferTotal)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     Brh buf_aTransferStatus;
     *aTransferStatus = NULL;
@@ -670,7 +667,7 @@ int32_t CpProxyUpnpOrgContentDirectory3EndGetTransferProgress(THandle aHandle, Z
 
 void CpProxyUpnpOrgContentDirectory3SyncCreateReference(THandle aHandle, const char* aContainerID, const char* aObjectID, char** aNewID)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aContainerID(aContainerID);
     Brh buf_aObjectID(aObjectID);
@@ -681,7 +678,7 @@ void CpProxyUpnpOrgContentDirectory3SyncCreateReference(THandle aHandle, const c
 
 void CpProxyUpnpOrgContentDirectory3BeginCreateReference(THandle aHandle, const char* aContainerID, const char* aObjectID, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aContainerID(aContainerID);
     Brh buf_aObjectID(aObjectID);
@@ -692,9 +689,9 @@ void CpProxyUpnpOrgContentDirectory3BeginCreateReference(THandle aHandle, const 
 int32_t CpProxyUpnpOrgContentDirectory3EndCreateReference(THandle aHandle, ZappHandleAsync aAsync, char** aNewID)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     Brh buf_aNewID;
     *aNewID = NULL;
@@ -710,7 +707,7 @@ int32_t CpProxyUpnpOrgContentDirectory3EndCreateReference(THandle aHandle, ZappH
 
 void CpProxyUpnpOrgContentDirectory3SyncFreeFormQuery(THandle aHandle, const char* aContainerID, uint32_t aCDSView, const char* aQueryRequest, char** aQueryResult, uint32_t* aUpdateID)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aContainerID(aContainerID);
     Brh buf_aQueryRequest(aQueryRequest);
@@ -721,7 +718,7 @@ void CpProxyUpnpOrgContentDirectory3SyncFreeFormQuery(THandle aHandle, const cha
 
 void CpProxyUpnpOrgContentDirectory3BeginFreeFormQuery(THandle aHandle, const char* aContainerID, uint32_t aCDSView, const char* aQueryRequest, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aContainerID(aContainerID);
     Brh buf_aQueryRequest(aQueryRequest);
@@ -732,9 +729,9 @@ void CpProxyUpnpOrgContentDirectory3BeginFreeFormQuery(THandle aHandle, const ch
 int32_t CpProxyUpnpOrgContentDirectory3EndFreeFormQuery(THandle aHandle, ZappHandleAsync aAsync, char** aQueryResult, uint32_t* aUpdateID)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     Brh buf_aQueryResult;
     *aQueryResult = NULL;
@@ -750,7 +747,7 @@ int32_t CpProxyUpnpOrgContentDirectory3EndFreeFormQuery(THandle aHandle, ZappHan
 
 void CpProxyUpnpOrgContentDirectory3SyncGetFreeFormQueryCapabilities(THandle aHandle, char** aFFQCapabilities)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aFFQCapabilities;
     proxyC->Proxy()->SyncGetFreeFormQueryCapabilities(buf_aFFQCapabilities);
@@ -759,7 +756,7 @@ void CpProxyUpnpOrgContentDirectory3SyncGetFreeFormQueryCapabilities(THandle aHa
 
 void CpProxyUpnpOrgContentDirectory3BeginGetFreeFormQueryCapabilities(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetFreeFormQueryCapabilities(functor);
@@ -768,9 +765,9 @@ void CpProxyUpnpOrgContentDirectory3BeginGetFreeFormQueryCapabilities(THandle aH
 int32_t CpProxyUpnpOrgContentDirectory3EndGetFreeFormQueryCapabilities(THandle aHandle, ZappHandleAsync aAsync, char** aFFQCapabilities)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     Brh buf_aFFQCapabilities;
     *aFFQCapabilities = NULL;
@@ -786,7 +783,7 @@ int32_t CpProxyUpnpOrgContentDirectory3EndGetFreeFormQueryCapabilities(THandle a
 
 void CpProxyUpnpOrgContentDirectory3SetPropertySystemUpdateIDChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertySystemUpdateIDChanged(functor);
@@ -794,7 +791,7 @@ void CpProxyUpnpOrgContentDirectory3SetPropertySystemUpdateIDChanged(THandle aHa
 
 void CpProxyUpnpOrgContentDirectory3SetPropertyContainerUpdateIDsChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyContainerUpdateIDsChanged(functor);
@@ -802,7 +799,7 @@ void CpProxyUpnpOrgContentDirectory3SetPropertyContainerUpdateIDsChanged(THandle
 
 void CpProxyUpnpOrgContentDirectory3SetPropertyLastChangeChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyLastChangeChanged(functor);
@@ -810,7 +807,7 @@ void CpProxyUpnpOrgContentDirectory3SetPropertyLastChangeChanged(THandle aHandle
 
 void CpProxyUpnpOrgContentDirectory3SetPropertyTransferIDsChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyTransferIDsChanged(functor);
@@ -818,14 +815,14 @@ void CpProxyUpnpOrgContentDirectory3SetPropertyTransferIDsChanged(THandle aHandl
 
 void CpProxyUpnpOrgContentDirectory3PropertySystemUpdateID(THandle aHandle, uint32_t* aSystemUpdateID)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->PropertySystemUpdateID(*aSystemUpdateID);
 }
 
 void CpProxyUpnpOrgContentDirectory3PropertyContainerUpdateIDs(THandle aHandle, char** aContainerUpdateIDs)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aContainerUpdateIDs;
     proxyC->Proxy()->PropertyContainerUpdateIDs(buf_aContainerUpdateIDs);
@@ -834,7 +831,7 @@ void CpProxyUpnpOrgContentDirectory3PropertyContainerUpdateIDs(THandle aHandle, 
 
 void CpProxyUpnpOrgContentDirectory3PropertyLastChange(THandle aHandle, char** aLastChange)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aLastChange;
     proxyC->Proxy()->PropertyLastChange(buf_aLastChange);
@@ -843,7 +840,7 @@ void CpProxyUpnpOrgContentDirectory3PropertyLastChange(THandle aHandle, char** a
 
 void CpProxyUpnpOrgContentDirectory3PropertyTransferIDs(THandle aHandle, char** aTransferIDs)
 {
-    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgContentDirectory3C* proxyC = reinterpret_cast<CpProxyUpnpOrgContentDirectory3C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aTransferIDs;
     proxyC->Proxy()->PropertyTransferIDs(buf_aTransferIDs);

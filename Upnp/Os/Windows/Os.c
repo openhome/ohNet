@@ -29,7 +29,7 @@ typedef struct InterfaceChangeObserver
 
 static uint64_t gStartTime;
 static DWORD gTlsIndex;
-static THandle gMutex = {0};
+static THandle gMutex = kHandleNull;
 static InterfaceChangeObserver* gInterfaceChangeObserver = NULL;
 static int32_t gTestInterfaceIndex = -1;
 
@@ -48,8 +48,8 @@ int32_t OsCreate()
     if (TLS_OUT_OF_INDEXES == gTlsIndex) {
         return -1;
     }
-    OsMutexCreate("", &gMutex);
-    if (HandleIsNull(&gMutex)) {
+    gMutex = OsMutexCreate("");
+    if (kHandleNull == gMutex) {
         TlsFree(gTlsIndex);
         return -1;
     }
@@ -75,7 +75,7 @@ void OsDestroy()
     }
     (void)WSACleanup();
     OsMutexDestroy(gMutex);
-    HandleClear(&gMutex);
+    gMutex = kHandleNull;
     TlsFree(gTlsIndex);
 }
 
@@ -115,32 +115,26 @@ void OsGetPlatformNameAndVersion(char** aName, uint32_t* aMajor, uint32_t* aMino
 	*aMinor = verInfo.dwMinorVersion;
 }
 
-static HANDLE WindowsHandle(THandle aHandle)
-{
-    return (HANDLE)aHandle.iData.iPtr;
-}
-
-int32_t OsSemaphoreCreate(const char* aName, uint32_t aCount, THandle* aHandle)
+THandle OsSemaphoreCreate(const char* aName, uint32_t aCount)
 {
     aName = aName;
-    (HANDLE)aHandle->iData.iPtr = CreateSemaphore(NULL, aCount, INT32_MAX, NULL);
-    return (aHandle->iData.iPtr!=0? 0 : 1);
+    return (THandle)CreateSemaphore(NULL, aCount, INT32_MAX, NULL);
 }
 
 void OsSemaphoreDestroy(THandle aSem)
 {
-    CloseHandle(WindowsHandle(aSem));
+    CloseHandle((HANDLE)aSem);
 }
 
 int32_t OsSemaphoreWait(THandle aSem)
 {
-    DWORD ret = WaitForSingleObject(WindowsHandle(aSem), INFINITE);
+    DWORD ret = WaitForSingleObject((HANDLE)aSem, INFINITE);
     return (ret==WAIT_OBJECT_0? 0 : -1);
 }
 
 int32_t OsSemaphoreTimedWait(THandle aSem, uint32_t aTimeoutMs)
 {
-    DWORD ret = WaitForSingleObject(WindowsHandle(aSem), aTimeoutMs);
+    DWORD ret = WaitForSingleObject((HANDLE)aSem, aTimeoutMs);
     if (WAIT_OBJECT_0 == ret) {
         return 1;
     }
@@ -153,7 +147,7 @@ int32_t OsSemaphoreTimedWait(THandle aSem, uint32_t aTimeoutMs)
 uint32_t OsSemaphoreClear(THandle aSem)
 {
     uint32_t cleared = 0;
-    while (WAIT_OBJECT_0 == WaitForSingleObject(WindowsHandle(aSem), 0)) {
+    while (WAIT_OBJECT_0 == WaitForSingleObject((HANDLE)aSem, 0)) {
         cleared = 1;
     }
     return cleared;
@@ -162,7 +156,7 @@ uint32_t OsSemaphoreClear(THandle aSem)
 int32_t OsSemaphoreSignal(THandle aSem)
 {
     int32_t ret = 0;
-    if (0 == ReleaseSemaphore(WindowsHandle(aSem), 1, NULL)) {
+    if (0 == ReleaseSemaphore((HANDLE)aSem, 1, NULL)) {
         ret = -1;
     }
     return ret;
@@ -174,30 +168,27 @@ typedef struct
     uint32_t         iCount;
 } Mutex;
 
-#define MutexFromHandle(h) ((Mutex*)(h.iData.iPtr))
-
-int32_t OsMutexCreate(const char* aName, THandle* aHandle)
+THandle OsMutexCreate(const char* aName)
 {
     Mutex* mutex = calloc(1, sizeof(*mutex));
     aName = aName;
     if (NULL == mutex) {
-        return -1;
+        return kHandleNull;
     }
     InitializeCriticalSection(&mutex->iCs);
-    aHandle->iData.iPtr = mutex;
-    return 0;
+    return (THandle)mutex;
 }
 
 void OsMutexDestroy(THandle aMutex)
 {
-    Mutex* mutex = MutexFromHandle(aMutex);
+    Mutex* mutex = (Mutex*)aMutex;
     DeleteCriticalSection(&mutex->iCs);
     free(mutex);
 }
 
 int32_t OsMutexLock(THandle aMutex)
 {
-    Mutex* mutex = MutexFromHandle(aMutex);
+    Mutex* mutex = (Mutex*)aMutex;
     EnterCriticalSection(&mutex->iCs);
     if (0 != mutex->iCount) {
         LeaveCriticalSection(&mutex->iCs);
@@ -209,7 +200,7 @@ int32_t OsMutexLock(THandle aMutex)
 
 int32_t OsMutexUnlock(THandle aMutex)
 {
-    Mutex* mutex = MutexFromHandle(aMutex);
+    Mutex* mutex = (Mutex*)aMutex;
     if (1 != mutex->iCount) {
         return -1;
     }
@@ -261,19 +252,17 @@ DWORD threadEntrypoint(LPVOID aArg)
     return 0;
 }
 
-int32_t OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackBytes,
-                       ThreadEntryPoint aEntryPoint, void* aArg, THandle* aHandle)
+THandle OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackBytes,
+                       ThreadEntryPoint aEntryPoint, void* aArg)
 {
-    ThreadData* data;
-    HandleInit(aHandle);
-    if (aPriority < kPriorityMin || aPriority > kPriorityMax) {
-        return -1;
-    }
-    data = (ThreadData*)calloc(1, sizeof(ThreadData));
+    ThreadData* data = (ThreadData*)calloc(1, sizeof(ThreadData));
     if (NULL == data) {
-        return -1;
+        return kHandleNull;
     }
     aName = aName;
+    if (aPriority < kPriorityMin || aPriority > kPriorityMax) {
+        return kHandleNull;
+    }
     if (aStackBytes < kMinStackBytes) {
         aStackBytes = kMinStackBytes;
     }
@@ -285,10 +274,8 @@ int32_t OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackByt
     data->iThread = CreateThread(NULL, aStackBytes, (LPTHREAD_START_ROUTINE)&threadEntrypoint, data, 0, NULL);
     if (0 == data->iThread) {
         free(data);
-        return -1;
     }
-    aHandle->iData.iPtr = data;
-    return 0;
+    return (THandle)data;
 }
 
 void* OsThreadTls()
@@ -298,7 +285,7 @@ void* OsThreadTls()
 
 void OsThreadDestroy(THandle aThread)
 {
-    free((ThreadData*)aThread.iData.iPtr);
+    free((ThreadData*)aThread);
 }
 
 int32_t OsThreadSupportsPriorities()
@@ -336,13 +323,13 @@ static OsNetworkHandle* CreateHandle(SOCKET aSocket)
     OsNetworkHandle* handle = (OsNetworkHandle*)malloc(sizeof(OsNetworkHandle));
     if (NULL == handle) {
         (void)closesocket(handle->iSocket);
-        return NULL;
+        return kHandleNull;
     }
     handle->iEvent = WSACreateEvent();
     if (NULL == handle->iEvent) {
         (void)closesocket(handle->iSocket);
         free(handle);
-        return NULL;
+        return kHandleNull;
     }
     handle->iSocket = aSocket;
     handle->iInterrupted = 0;
@@ -359,15 +346,11 @@ static void SetSocketNonBlocking(SOCKET aSocket)
     }
 }
 
-int32_t OsNetworkCreate(OsNetworkSocketType aSocketType, THandle* aHandle)
+THandle OsNetworkCreate(OsNetworkSocketType aSocketType)
 {
-    SOCKET socketH = socket(AF_INET, aSocketType, 0);
+    int32_t socketH = socket(AF_INET, aSocketType, 0);
     OsNetworkHandle* handle = CreateHandle(socketH);
-    if (handle == NULL) {
-        return -1;
-    }
-    aHandle->iData.iPtr = handle;
-    return 0;
+    return (THandle)handle;
 }
 
 int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint16_t* aPort)
@@ -375,7 +358,7 @@ int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint16_t* aPort)
     struct sockaddr_in addr;
 	int len;
     int err;
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     if (SocketInterrupted(handle)) {
         return -1;
     }
@@ -395,7 +378,7 @@ int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint16_t* aPort)
 int32_t OsNetworkConnect(THandle aHandle, TIpAddress aAddress, uint16_t aPort, uint32_t aTimeoutMs)
 {
     int32_t err = -1;
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     struct sockaddr_in addr;
     WSAEVENT event;
     HANDLE handles[2];
@@ -431,7 +414,7 @@ int32_t OsNetworkConnect(THandle aHandle, TIpAddress aAddress, uint16_t aPort, u
 int32_t OsNetworkSend(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes)
 {
     int32_t sent;
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     if (SocketInterrupted(handle)) {
         return -1;
     }
@@ -452,7 +435,7 @@ int32_t OsNetworkSendTo(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes
 {
     int32_t sent;
     struct sockaddr_in addr;
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     if (SocketInterrupted(handle)) {
         return -1;
     }
@@ -473,7 +456,7 @@ int32_t OsNetworkSendTo(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes
 int32_t OsNetworkReceive(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes)
 {
     int32_t received;
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     WSAEVENT event;
     HANDLE handles[2];
     DWORD ret;
@@ -509,7 +492,7 @@ int32_t OsNetworkReceive(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes)
 int32_t OsNetworkReceiveFrom(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes, TIpAddress* aAddress, uint16_t* aPort)
 {
     int32_t received;
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     struct sockaddr_in addr;
     int len = sizeof(addr);
     WSAEVENT event;
@@ -551,7 +534,7 @@ int32_t OsNetworkReceiveFrom(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes,
 int32_t OsNetworkInterrupt(THandle aHandle, int32_t aInterrupt)
 {
     int32_t err = 0;
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     OsMutexLock(gMutex);
     handle->iInterrupted = aInterrupt;
     if (aInterrupt != 0) {
@@ -566,7 +549,7 @@ int32_t OsNetworkInterrupt(THandle aHandle, int32_t aInterrupt)
 
 int32_t OsNetworkClose(THandle aHandle)
 {
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     int32_t err = closesocket(handle->iSocket);
     if (0 == err) {
         WSACloseEvent(handle->iEvent);
@@ -578,7 +561,7 @@ int32_t OsNetworkClose(THandle aHandle)
 int32_t OsNetworkListen(THandle aHandle, uint32_t aSlots)
 {
     int32_t err;
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     if (SocketInterrupted(handle)) {
         return -1;
     }
@@ -586,25 +569,25 @@ int32_t OsNetworkListen(THandle aHandle, uint32_t aSlots)
     return err;
 }
 
-int32_t OsNetworkAccept(THandle aHandle, THandle* aNewHandle)
+THandle OsNetworkAccept(THandle aHandle)
 {
     SOCKET h;
     OsNetworkHandle* newHandle;
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     WSAEVENT event;
     HANDLE handles[2];
     DWORD ret;
 
     if (SocketInterrupted(handle)) {
-        return -1;
+        return kHandleNull;
     }
     event = WSACreateEvent();
     if (NULL == event) {
-        return -1;
+        return kHandleNull;
     }
     if (0 != WSAEventSelect(handle->iSocket, event, FD_ACCEPT|FD_CLOSE)) {
         WSACloseEvent(event);
-        return -1;
+        return kHandleNull;
     }
 
     h = accept(handle->iSocket, NULL, NULL);
@@ -619,16 +602,15 @@ int32_t OsNetworkAccept(THandle aHandle, THandle* aNewHandle)
     SetSocketNonBlocking(handle->iSocket);
     WSACloseEvent(event);
     if (INVALID_SOCKET == h) {
-        return -1;
+        return kHandleNull;
     }
 
     newHandle = CreateHandle(h);
     if (NULL == newHandle) {
-        return -1;
+        return kHandleNull;
     }
 
-    aNewHandle->iData.iPtr = newHandle;
-    return 0;
+    return (THandle)newHandle;
 }
 
 int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost)
@@ -647,7 +629,7 @@ int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost)
 
 int32_t OsNetworkSocketSetSendBufBytes(THandle aHandle, uint32_t aBytes)
 {
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     int32_t err = setsockopt(handle->iSocket, SOL_SOCKET, SO_SNDBUF, (const char*)&aBytes, sizeof(aBytes));
     return err;
 }
@@ -655,7 +637,7 @@ int32_t OsNetworkSocketSetSendBufBytes(THandle aHandle, uint32_t aBytes)
 int32_t OsNetworkSocketSetReceiveTimeout(THandle aHandle, uint32_t aMilliSeconds)
 {
     int32_t err;
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     struct timeval tv;
     tv.tv_sec = aMilliSeconds/1000;
     tv.tv_usec = (aMilliSeconds%1000)*1000;
@@ -665,7 +647,7 @@ int32_t OsNetworkSocketSetReceiveTimeout(THandle aHandle, uint32_t aMilliSeconds
 
 int32_t OsNetworkTcpSetNoDelay(THandle aHandle)
 {
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     uint32_t nodelay = 1;
     int32_t err = setsockopt(handle->iSocket, IPPROTO_TCP, TCP_NODELAY, (const char*)&nodelay, sizeof(nodelay));
     return err;
@@ -673,7 +655,7 @@ int32_t OsNetworkTcpSetNoDelay(THandle aHandle)
 
 int32_t OsNetworkSocketSetReuseAddress(THandle aHandle)
 {
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     int32_t reuseaddr = 1;
     int32_t err = setsockopt(handle->iSocket, SOL_SOCKET, SO_REUSEADDR, (const char*)&reuseaddr, sizeof(reuseaddr));
     return err;
@@ -681,7 +663,7 @@ int32_t OsNetworkSocketSetReuseAddress(THandle aHandle)
 
 int32_t OsNetworkSocketSetMulticastTtl(THandle aHandle, uint8_t aTtl)
 {
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     int32_t err = setsockopt(handle->iSocket, IPPROTO_IP, IP_MULTICAST_TTL, (const char*)&aTtl, sizeof(aTtl));
     return err;
 }
@@ -689,7 +671,7 @@ int32_t OsNetworkSocketSetMulticastTtl(THandle aHandle, uint8_t aTtl)
 int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aAddress, TIpAddress aInterface)
 {
     int32_t err;
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     struct ip_mreq mreq;
     mreq.imr_multiaddr.s_addr = aAddress;
     mreq.imr_interface.s_addr = aInterface;
@@ -700,7 +682,7 @@ int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aAddre
 int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aAddress, TIpAddress aInterface)
 {
     int32_t err;
-    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle.iData.iPtr;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     struct ip_mreq mreq;
     mreq.imr_multiaddr.s_addr = aAddress;
     mreq.imr_interface.s_addr = aInterface;

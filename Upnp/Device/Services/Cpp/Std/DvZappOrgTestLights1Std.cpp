@@ -100,7 +100,7 @@ void DvServiceZappOrgTestLights1Cpp::DoGetRoom(IDvInvocation& aInvocation, TUint
     GetRoom(aVersion, Index, respRoomName);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriterRoomName(aInvocation, "RoomName");
-    Brn buf_RoomName((const TByte*)respRoomName.c_str(), (TUint)respRoomName.length());
+    Brn buf_RoomName((const TByte*)respRoomName.c_str(), respRoomName.length());
     respWriterRoomName.Write(buf_RoomName);
     aInvocation.InvocationWriteStringEnd("RoomName");
 	aInvocation.InvocationWriteEnd();
@@ -115,7 +115,7 @@ void DvServiceZappOrgTestLights1Cpp::DoGetName(IDvInvocation& aInvocation, TUint
     GetName(aVersion, Index, respFriendlyName);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriterFriendlyName(aInvocation, "FriendlyName");
-    Brn buf_FriendlyName((const TByte*)respFriendlyName.c_str(), (TUint)respFriendlyName.length());
+    Brn buf_FriendlyName((const TByte*)respFriendlyName.c_str(), respFriendlyName.length());
     respWriterFriendlyName.Write(buf_FriendlyName);
     aInvocation.InvocationWriteStringEnd("FriendlyName");
 	aInvocation.InvocationWriteEnd();

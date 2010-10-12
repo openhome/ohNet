@@ -14,7 +14,7 @@ public:
 };
 
 CpProxyLinnCoUkConfiguration1C::CpProxyLinnCoUkConfiguration1C(CpDeviceC aDevice)
-    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice.iData.iPtr))
+    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice))
 {
     iProxy = new CpProxyLinnCoUkConfiguration1(*iDevice);
 }
@@ -22,21 +22,18 @@ CpProxyLinnCoUkConfiguration1C::CpProxyLinnCoUkConfiguration1C(CpDeviceC aDevice
 
 THandle CpProxyLinnCoUkConfiguration1Create(CpDeviceC aDevice)
 {
-    THandle h;
-    HandleInit(&h);
-    h.iData.iPtr = new CpProxyLinnCoUkConfiguration1C(aDevice);
-    return h;
+    return (THandle)new CpProxyLinnCoUkConfiguration1C(aDevice);
 }
 
 void CpProxyLinnCoUkConfiguration1Destroy(THandle aHandle)
 {
-    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle);
     delete proxyC;
 }
 
 void CpProxyLinnCoUkConfiguration1SyncConfigurationXml(THandle aHandle, char** aaConfigurationXml)
 {
-    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aaConfigurationXml;
     proxyC->Proxy()->SyncConfigurationXml(buf_aaConfigurationXml);
@@ -45,7 +42,7 @@ void CpProxyLinnCoUkConfiguration1SyncConfigurationXml(THandle aHandle, char** a
 
 void CpProxyLinnCoUkConfiguration1BeginConfigurationXml(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginConfigurationXml(functor);
@@ -54,9 +51,9 @@ void CpProxyLinnCoUkConfiguration1BeginConfigurationXml(THandle aHandle, ZappCal
 int32_t CpProxyLinnCoUkConfiguration1EndConfigurationXml(THandle aHandle, ZappHandleAsync aAsync, char** aaConfigurationXml)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     Brh buf_aaConfigurationXml;
     *aaConfigurationXml = NULL;
@@ -72,7 +69,7 @@ int32_t CpProxyLinnCoUkConfiguration1EndConfigurationXml(THandle aHandle, ZappHa
 
 void CpProxyLinnCoUkConfiguration1SyncParameterXml(THandle aHandle, char** aaParameterXml)
 {
-    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aaParameterXml;
     proxyC->Proxy()->SyncParameterXml(buf_aaParameterXml);
@@ -81,7 +78,7 @@ void CpProxyLinnCoUkConfiguration1SyncParameterXml(THandle aHandle, char** aaPar
 
 void CpProxyLinnCoUkConfiguration1BeginParameterXml(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginParameterXml(functor);
@@ -90,9 +87,9 @@ void CpProxyLinnCoUkConfiguration1BeginParameterXml(THandle aHandle, ZappCallbac
 int32_t CpProxyLinnCoUkConfiguration1EndParameterXml(THandle aHandle, ZappHandleAsync aAsync, char** aaParameterXml)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     Brh buf_aaParameterXml;
     *aaParameterXml = NULL;
@@ -108,7 +105,7 @@ int32_t CpProxyLinnCoUkConfiguration1EndParameterXml(THandle aHandle, ZappHandle
 
 void CpProxyLinnCoUkConfiguration1SyncSetParameter(THandle aHandle, const char* aaTarget, const char* aaName, const char* aaValue)
 {
-    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aaTarget(aaTarget);
     Brh buf_aaName(aaName);
@@ -118,7 +115,7 @@ void CpProxyLinnCoUkConfiguration1SyncSetParameter(THandle aHandle, const char* 
 
 void CpProxyLinnCoUkConfiguration1BeginSetParameter(THandle aHandle, const char* aaTarget, const char* aaName, const char* aaValue, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aaTarget(aaTarget);
     Brh buf_aaName(aaName);
@@ -130,9 +127,9 @@ void CpProxyLinnCoUkConfiguration1BeginSetParameter(THandle aHandle, const char*
 int32_t CpProxyLinnCoUkConfiguration1EndSetParameter(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetParameter(*async);
@@ -145,7 +142,7 @@ int32_t CpProxyLinnCoUkConfiguration1EndSetParameter(THandle aHandle, ZappHandle
 
 void CpProxyLinnCoUkConfiguration1SetPropertyConfigurationXmlChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyConfigurationXmlChanged(functor);
@@ -153,7 +150,7 @@ void CpProxyLinnCoUkConfiguration1SetPropertyConfigurationXmlChanged(THandle aHa
 
 void CpProxyLinnCoUkConfiguration1SetPropertyParameterXmlChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyParameterXmlChanged(functor);
@@ -161,7 +158,7 @@ void CpProxyLinnCoUkConfiguration1SetPropertyParameterXmlChanged(THandle aHandle
 
 void CpProxyLinnCoUkConfiguration1PropertyConfigurationXml(THandle aHandle, char** aConfigurationXml)
 {
-    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aConfigurationXml;
     proxyC->Proxy()->PropertyConfigurationXml(buf_aConfigurationXml);
@@ -170,7 +167,7 @@ void CpProxyLinnCoUkConfiguration1PropertyConfigurationXml(THandle aHandle, char
 
 void CpProxyLinnCoUkConfiguration1PropertyParameterXml(THandle aHandle, char** aParameterXml)
 {
-    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkConfiguration1C* proxyC = reinterpret_cast<CpProxyLinnCoUkConfiguration1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aParameterXml;
     proxyC->Proxy()->PropertyParameterXml(buf_aParameterXml);

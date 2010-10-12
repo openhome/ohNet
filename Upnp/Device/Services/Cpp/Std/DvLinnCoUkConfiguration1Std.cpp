@@ -8,7 +8,7 @@ using namespace Zapp;
 
 void DvServiceLinnCoUkConfiguration1Cpp::SetPropertyConfigurationXml(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyString(*iPropertyConfigurationXml, buf);
 }
 
@@ -20,7 +20,7 @@ void DvServiceLinnCoUkConfiguration1Cpp::GetPropertyConfigurationXml(std::string
 
 void DvServiceLinnCoUkConfiguration1Cpp::SetPropertyParameterXml(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyString(*iPropertyParameterXml, buf);
 }
 
@@ -74,7 +74,7 @@ void DvServiceLinnCoUkConfiguration1Cpp::DoConfigurationXml(IDvInvocation& aInvo
     ConfigurationXml(aVersion, respaConfigurationXml);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraConfigurationXml(aInvocation, "aConfigurationXml");
-    Brn buf_aConfigurationXml((const TByte*)respaConfigurationXml.c_str(), (TUint)respaConfigurationXml.length());
+    Brn buf_aConfigurationXml((const TByte*)respaConfigurationXml.c_str(), respaConfigurationXml.length());
     respWriteraConfigurationXml.Write(buf_aConfigurationXml);
     aInvocation.InvocationWriteStringEnd("aConfigurationXml");
 	aInvocation.InvocationWriteEnd();
@@ -88,7 +88,7 @@ void DvServiceLinnCoUkConfiguration1Cpp::DoParameterXml(IDvInvocation& aInvocati
     ParameterXml(aVersion, respaParameterXml);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraParameterXml(aInvocation, "aParameterXml");
-    Brn buf_aParameterXml((const TByte*)respaParameterXml.c_str(), (TUint)respaParameterXml.length());
+    Brn buf_aParameterXml((const TByte*)respaParameterXml.c_str(), respaParameterXml.length());
     respWriteraParameterXml.Write(buf_aParameterXml);
     aInvocation.InvocationWriteStringEnd("aParameterXml");
 	aInvocation.InvocationWriteEnd();

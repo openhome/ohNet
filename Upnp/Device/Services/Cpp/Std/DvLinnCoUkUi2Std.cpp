@@ -28,7 +28,7 @@ void DvServiceLinnCoUkUi2Cpp::GetPropertyDisplayBrightnessAuto(bool& aValue)
 
 void DvServiceLinnCoUkUi2Cpp::SetPropertyInfraredCommands(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyString(*iPropertyInfraredCommands, buf);
 }
 
@@ -40,7 +40,7 @@ void DvServiceLinnCoUkUi2Cpp::GetPropertyInfraredCommands(std::string& aValue)
 
 void DvServiceLinnCoUkUi2Cpp::SetPropertyInfraredTerminalCommands(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyString(*iPropertyInfraredTerminalCommands, buf);
 }
 
@@ -102,7 +102,7 @@ void DvServiceLinnCoUkUi2Cpp::GetPropertyTerminalInputCode(uint32_t& aValue)
 
 void DvServiceLinnCoUkUi2Cpp::SetPropertyTerminalInputName(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyString(*iPropertyTerminalInputName, buf);
 }
 
@@ -114,7 +114,7 @@ void DvServiceLinnCoUkUi2Cpp::GetPropertyTerminalInputName(std::string& aValue)
 
 void DvServiceLinnCoUkUi2Cpp::SetPropertyDisplayPixels(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyBinary(*iPropertyDisplayPixels, buf);
 }
 
@@ -478,7 +478,7 @@ void DvServiceLinnCoUkUi2Cpp::DoInfraredCommands(IDvInvocation& aInvocation, TUi
     InfraredCommands(aVersion, respaCommands);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraCommands(aInvocation, "aCommands");
-    Brn buf_aCommands((const TByte*)respaCommands.c_str(), (TUint)respaCommands.length());
+    Brn buf_aCommands((const TByte*)respaCommands.c_str(), respaCommands.length());
     respWriteraCommands.Write(buf_aCommands);
     aInvocation.InvocationWriteStringEnd("aCommands");
 	aInvocation.InvocationWriteEnd();
@@ -504,7 +504,7 @@ void DvServiceLinnCoUkUi2Cpp::DoInfraredTerminalCommands(IDvInvocation& aInvocat
     InfraredTerminalCommands(aVersion, respaCommands);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraCommands(aInvocation, "aCommands");
-    Brn buf_aCommands((const TByte*)respaCommands.c_str(), (TUint)respaCommands.length());
+    Brn buf_aCommands((const TByte*)respaCommands.c_str(), respaCommands.length());
     respWriteraCommands.Write(buf_aCommands);
     aInvocation.InvocationWriteStringEnd("aCommands");
 	aInvocation.InvocationWriteEnd();

@@ -271,184 +271,181 @@ void DvServiceLinnCoUkDs1C::ProtocolInfo(IInvocationResponse& aResponse, TUint a
 
 THandle DvServiceLinnCoUkDs1Create(DvDeviceC aDevice)
 {
-	THandle h;
-    HandleInit(&h);
-	h.iData.iPtr = new DvServiceLinnCoUkDs1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
-	return h;
+    return (THandle)new DvServiceLinnCoUkDs1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkDs1Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr);
+    delete reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService);
 }
 
 void DvServiceLinnCoUkDs1EnableActionPlay(THandle aService, CallbackDs1Play aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->EnableActionPlay(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->EnableActionPlay(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDs1EnableActionPause(THandle aService, CallbackDs1Pause aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->EnableActionPause(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->EnableActionPause(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDs1EnableActionStop(THandle aService, CallbackDs1Stop aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->EnableActionStop(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->EnableActionStop(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDs1EnableActionSeekSecondAbsolute(THandle aService, CallbackDs1SeekSecondAbsolute aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->EnableActionSeekSecondAbsolute(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->EnableActionSeekSecondAbsolute(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDs1EnableActionSeekSecondRelative(THandle aService, CallbackDs1SeekSecondRelative aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->EnableActionSeekSecondRelative(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->EnableActionSeekSecondRelative(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDs1EnableActionSeekTrackId(THandle aService, CallbackDs1SeekTrackId aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->EnableActionSeekTrackId(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->EnableActionSeekTrackId(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDs1EnableActionSeekTrackAbsolute(THandle aService, CallbackDs1SeekTrackAbsolute aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->EnableActionSeekTrackAbsolute(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->EnableActionSeekTrackAbsolute(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDs1EnableActionSeekTrackRelative(THandle aService, CallbackDs1SeekTrackRelative aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->EnableActionSeekTrackRelative(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->EnableActionSeekTrackRelative(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDs1EnableActionState(THandle aService, CallbackDs1State aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->EnableActionState(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->EnableActionState(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDs1EnableActionProtocolInfo(THandle aService, CallbackDs1ProtocolInfo aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->EnableActionProtocolInfo(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->EnableActionProtocolInfo(aCallback, aPtr);
 }
 
 int32_t DvServiceLinnCoUkDs1SetPropertySupportedProtocols(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->SetPropertySupportedProtocols(buf);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->SetPropertySupportedProtocols(buf);
     return 0;
 }
 
 void DvServiceLinnCoUkDs1GetPropertySupportedProtocols(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->GetPropertySupportedProtocols(buf);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->GetPropertySupportedProtocols(buf);
     *aValue = (char*)buf.Transfer();
 }
 
 int32_t DvServiceLinnCoUkDs1SetPropertyTrackDuration(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->SetPropertyTrackDuration(aValue);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->SetPropertyTrackDuration(aValue);
     return 0;
 }
 
 void DvServiceLinnCoUkDs1GetPropertyTrackDuration(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->GetPropertyTrackDuration(val);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->GetPropertyTrackDuration(val);
     *aValue = val;
 }
 
 int32_t DvServiceLinnCoUkDs1SetPropertyTrackBitRate(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->SetPropertyTrackBitRate(aValue);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->SetPropertyTrackBitRate(aValue);
     return 0;
 }
 
 void DvServiceLinnCoUkDs1GetPropertyTrackBitRate(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->GetPropertyTrackBitRate(val);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->GetPropertyTrackBitRate(val);
     *aValue = val;
 }
 
 int32_t DvServiceLinnCoUkDs1SetPropertyTrackLossless(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->SetPropertyTrackLossless((aValue!=0));
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->SetPropertyTrackLossless((aValue!=0));
     return 0;
 }
 
 void DvServiceLinnCoUkDs1GetPropertyTrackLossless(THandle aService, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->GetPropertyTrackLossless(val);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->GetPropertyTrackLossless(val);
     *aValue = (val? 1 : 0);
 }
 
 int32_t DvServiceLinnCoUkDs1SetPropertyTrackBitDepth(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->SetPropertyTrackBitDepth(aValue);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->SetPropertyTrackBitDepth(aValue);
     return 0;
 }
 
 void DvServiceLinnCoUkDs1GetPropertyTrackBitDepth(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->GetPropertyTrackBitDepth(val);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->GetPropertyTrackBitDepth(val);
     *aValue = val;
 }
 
 int32_t DvServiceLinnCoUkDs1SetPropertyTrackSampleRate(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->SetPropertyTrackSampleRate(aValue);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->SetPropertyTrackSampleRate(aValue);
     return 0;
 }
 
 void DvServiceLinnCoUkDs1GetPropertyTrackSampleRate(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->GetPropertyTrackSampleRate(val);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->GetPropertyTrackSampleRate(val);
     *aValue = val;
 }
 
 int32_t DvServiceLinnCoUkDs1SetPropertyTrackCodecName(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->SetPropertyTrackCodecName(buf);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->SetPropertyTrackCodecName(buf);
     return 0;
 }
 
 void DvServiceLinnCoUkDs1GetPropertyTrackCodecName(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->GetPropertyTrackCodecName(buf);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->GetPropertyTrackCodecName(buf);
     *aValue = (char*)buf.Transfer();
 }
 
 int32_t DvServiceLinnCoUkDs1SetPropertyTrackId(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->SetPropertyTrackId(aValue);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->SetPropertyTrackId(aValue);
     return 0;
 }
 
 void DvServiceLinnCoUkDs1GetPropertyTrackId(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->GetPropertyTrackId(val);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->GetPropertyTrackId(val);
     *aValue = val;
 }
 
 int32_t DvServiceLinnCoUkDs1SetPropertyTransportState(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->SetPropertyTransportState(buf);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->SetPropertyTransportState(buf);
     return 0;
 }
 
 void DvServiceLinnCoUkDs1GetPropertyTransportState(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService.iData.iPtr)->GetPropertyTransportState(buf);
+    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->GetPropertyTransportState(buf);
     *aValue = (char*)buf.Transfer();
 }
 

@@ -171,7 +171,7 @@ void CpProxyLinnCoUkDebug2Cpp::BeginMemWrite(uint32_t aaMemAddress, const std::s
     const Action::VectorParameters& inParams = iActionMemWrite->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaMemAddress));
     {
-        Brn buf((const TByte*)aaMemData.c_str(), (TUint)aaMemData.length());
+        Brn buf((const TByte*)aaMemData.c_str(), aaMemData.length());
         invocation->AddInput(new ArgumentBinary(*inParams[inIndex++], buf));
     }
     invocation->Invoke();

@@ -14,7 +14,7 @@ public:
 };
 
 CpProxyLinnCoUkMediaTime1C::CpProxyLinnCoUkMediaTime1C(CpDeviceC aDevice)
-    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice.iData.iPtr))
+    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice))
 {
     iProxy = new CpProxyLinnCoUkMediaTime1(*iDevice);
 }
@@ -22,28 +22,25 @@ CpProxyLinnCoUkMediaTime1C::CpProxyLinnCoUkMediaTime1C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkMediaTime1Create(CpDeviceC aDevice)
 {
-    THandle h;
-    HandleInit(&h);
-    h.iData.iPtr = new CpProxyLinnCoUkMediaTime1C(aDevice);
-    return h;
+    return (THandle)new CpProxyLinnCoUkMediaTime1C(aDevice);
 }
 
 void CpProxyLinnCoUkMediaTime1Destroy(THandle aHandle)
 {
-    CpProxyLinnCoUkMediaTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkMediaTime1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkMediaTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkMediaTime1C*>(aHandle);
     delete proxyC;
 }
 
 void CpProxyLinnCoUkMediaTime1SyncSeconds(THandle aHandle, uint32_t* aaSeconds)
 {
-    CpProxyLinnCoUkMediaTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkMediaTime1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkMediaTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkMediaTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSeconds(*aaSeconds);
 }
 
 void CpProxyLinnCoUkMediaTime1BeginSeconds(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkMediaTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkMediaTime1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkMediaTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkMediaTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSeconds(functor);
@@ -52,9 +49,9 @@ void CpProxyLinnCoUkMediaTime1BeginSeconds(THandle aHandle, ZappCallbackAsync aC
 int32_t CpProxyLinnCoUkMediaTime1EndSeconds(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaSeconds)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkMediaTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkMediaTime1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkMediaTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkMediaTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSeconds(*async, *aaSeconds);
@@ -67,7 +64,7 @@ int32_t CpProxyLinnCoUkMediaTime1EndSeconds(THandle aHandle, ZappHandleAsync aAs
 
 void CpProxyLinnCoUkMediaTime1SetPropertySecondsChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkMediaTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkMediaTime1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkMediaTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkMediaTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertySecondsChanged(functor);
@@ -75,7 +72,7 @@ void CpProxyLinnCoUkMediaTime1SetPropertySecondsChanged(THandle aHandle, ZappCal
 
 void CpProxyLinnCoUkMediaTime1PropertySeconds(THandle aHandle, uint32_t* aSeconds)
 {
-    CpProxyLinnCoUkMediaTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkMediaTime1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkMediaTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkMediaTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->PropertySeconds(*aSeconds);
 }

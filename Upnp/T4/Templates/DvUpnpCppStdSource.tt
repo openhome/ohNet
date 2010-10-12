@@ -55,7 +55,7 @@ void <#=className#>::SetProperty<#=s.name#>(<#=inArgType[s.type]#> aValue)
 {
 <#      if (IsStringType(s)) #>
 <#      { #>
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     <#=propertySetter[s.type]#>(*iProperty<#=s.name#>, buf);
 <#      } #>
 <#      else #>
@@ -197,7 +197,7 @@ void <#=className#>::Do<#=a.name#>(IDvInvocation& aInvocation, TUint aVersion)
     <#=invRespType[o.variable.type]#> respWriter<#=o.name#>(aInvocation, "<#=o.name#>");
 <#          if (IsStringType(o.variable)) #>
 <#          { #>
-    Brn buf_<#=o.name#>((const TByte*)resp<#=o.name#>.c_str(), (TUint)resp<#=o.name#>.length());
+    Brn buf_<#=o.name#>((const TByte*)resp<#=o.name#>.c_str(), resp<#=o.name#>.length());
     respWriter<#=o.name#>.Write(buf_<#=o.name#>);
 <#              if (o.variable.type == "bin.base64") #>
 <#              { #>

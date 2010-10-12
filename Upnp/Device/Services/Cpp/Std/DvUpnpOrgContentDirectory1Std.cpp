@@ -8,7 +8,7 @@ using namespace Zapp;
 
 void DvServiceUpnpOrgContentDirectory1Cpp::SetPropertyTransferIDs(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyString(*iPropertyTransferIDs, buf);
 }
 
@@ -30,7 +30,7 @@ void DvServiceUpnpOrgContentDirectory1Cpp::GetPropertySystemUpdateID(uint32_t& a
 
 void DvServiceUpnpOrgContentDirectory1Cpp::SetPropertyContainerUpdateIDs(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyString(*iPropertyContainerUpdateIDs, buf);
 }
 
@@ -220,7 +220,7 @@ void DvServiceUpnpOrgContentDirectory1Cpp::DoGetSearchCapabilities(IDvInvocation
     GetSearchCapabilities(aVersion, respSearchCaps);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriterSearchCaps(aInvocation, "SearchCaps");
-    Brn buf_SearchCaps((const TByte*)respSearchCaps.c_str(), (TUint)respSearchCaps.length());
+    Brn buf_SearchCaps((const TByte*)respSearchCaps.c_str(), respSearchCaps.length());
     respWriterSearchCaps.Write(buf_SearchCaps);
     aInvocation.InvocationWriteStringEnd("SearchCaps");
 	aInvocation.InvocationWriteEnd();
@@ -234,7 +234,7 @@ void DvServiceUpnpOrgContentDirectory1Cpp::DoGetSortCapabilities(IDvInvocation& 
     GetSortCapabilities(aVersion, respSortCaps);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriterSortCaps(aInvocation, "SortCaps");
-    Brn buf_SortCaps((const TByte*)respSortCaps.c_str(), (TUint)respSortCaps.length());
+    Brn buf_SortCaps((const TByte*)respSortCaps.c_str(), respSortCaps.length());
     respWriterSortCaps.Write(buf_SortCaps);
     aInvocation.InvocationWriteStringEnd("SortCaps");
 	aInvocation.InvocationWriteEnd();
@@ -277,7 +277,7 @@ void DvServiceUpnpOrgContentDirectory1Cpp::DoBrowse(IDvInvocation& aInvocation, 
     Browse(aVersion, ObjectID, BrowseFlag, Filter, StartingIndex, RequestedCount, SortCriteria, respResult, respNumberReturned, respTotalMatches, respUpdateID);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriterResult(aInvocation, "Result");
-    Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
+    Brn buf_Result((const TByte*)respResult.c_str(), respResult.length());
     respWriterResult.Write(buf_Result);
     aInvocation.InvocationWriteStringEnd("Result");
     InvocationResponseUint respWriterNumberReturned(aInvocation, "NumberReturned");
@@ -314,7 +314,7 @@ void DvServiceUpnpOrgContentDirectory1Cpp::DoSearch(IDvInvocation& aInvocation, 
     Search(aVersion, ContainerID, SearchCriteria, Filter, StartingIndex, RequestedCount, SortCriteria, respResult, respNumberReturned, respTotalMatches, respUpdateID);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriterResult(aInvocation, "Result");
-    Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
+    Brn buf_Result((const TByte*)respResult.c_str(), respResult.length());
     respWriterResult.Write(buf_Result);
     aInvocation.InvocationWriteStringEnd("Result");
     InvocationResponseUint respWriterNumberReturned(aInvocation, "NumberReturned");
@@ -341,11 +341,11 @@ void DvServiceUpnpOrgContentDirectory1Cpp::DoCreateObject(IDvInvocation& aInvoca
     CreateObject(aVersion, ContainerID, Elements, respObjectID, respResult);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriterObjectID(aInvocation, "ObjectID");
-    Brn buf_ObjectID((const TByte*)respObjectID.c_str(), (TUint)respObjectID.length());
+    Brn buf_ObjectID((const TByte*)respObjectID.c_str(), respObjectID.length());
     respWriterObjectID.Write(buf_ObjectID);
     aInvocation.InvocationWriteStringEnd("ObjectID");
     InvocationResponseString respWriterResult(aInvocation, "Result");
-    Brn buf_Result((const TByte*)respResult.c_str(), (TUint)respResult.length());
+    Brn buf_Result((const TByte*)respResult.c_str(), respResult.length());
     respWriterResult.Write(buf_Result);
     aInvocation.InvocationWriteStringEnd("Result");
 	aInvocation.InvocationWriteEnd();
@@ -438,15 +438,15 @@ void DvServiceUpnpOrgContentDirectory1Cpp::DoGetTransferProgress(IDvInvocation& 
     GetTransferProgress(aVersion, TransferID, respTransferStatus, respTransferLength, respTransferTotal);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriterTransferStatus(aInvocation, "TransferStatus");
-    Brn buf_TransferStatus((const TByte*)respTransferStatus.c_str(), (TUint)respTransferStatus.length());
+    Brn buf_TransferStatus((const TByte*)respTransferStatus.c_str(), respTransferStatus.length());
     respWriterTransferStatus.Write(buf_TransferStatus);
     aInvocation.InvocationWriteStringEnd("TransferStatus");
     InvocationResponseString respWriterTransferLength(aInvocation, "TransferLength");
-    Brn buf_TransferLength((const TByte*)respTransferLength.c_str(), (TUint)respTransferLength.length());
+    Brn buf_TransferLength((const TByte*)respTransferLength.c_str(), respTransferLength.length());
     respWriterTransferLength.Write(buf_TransferLength);
     aInvocation.InvocationWriteStringEnd("TransferLength");
     InvocationResponseString respWriterTransferTotal(aInvocation, "TransferTotal");
-    Brn buf_TransferTotal((const TByte*)respTransferTotal.c_str(), (TUint)respTransferTotal.length());
+    Brn buf_TransferTotal((const TByte*)respTransferTotal.c_str(), respTransferTotal.length());
     respWriterTransferTotal.Write(buf_TransferTotal);
     aInvocation.InvocationWriteStringEnd("TransferTotal");
 	aInvocation.InvocationWriteEnd();
@@ -478,7 +478,7 @@ void DvServiceUpnpOrgContentDirectory1Cpp::DoCreateReference(IDvInvocation& aInv
     CreateReference(aVersion, ContainerID, ObjectID, respNewID);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriterNewID(aInvocation, "NewID");
-    Brn buf_NewID((const TByte*)respNewID.c_str(), (TUint)respNewID.length());
+    Brn buf_NewID((const TByte*)respNewID.c_str(), respNewID.length());
     respWriterNewID.Write(buf_NewID);
     aInvocation.InvocationWriteStringEnd("NewID");
 	aInvocation.InvocationWriteEnd();
