@@ -29,6 +29,10 @@ linker_dll_service = g++ -lpthread -shared -shared-libgcc $(objdir)libZappUpnp.s
 csharp = gmcs /nologo
 publiccsdir = Public/Cs/
 dirsep = /
+prefix = /usr/local
+installlibdir = $(prefix)/lib/zapp
+installincludedir = $(prefix)/include/zapp
+installpkgconfdir = $(prefix)/lib/pkgconfig
 # Actual building of code is shared between platforms
 include Common.mak
 
@@ -71,3 +75,34 @@ copy_build_includes:
 clean :
 	rm -rf $(objdir)
 	rm -rf $(inc_build)
+
+install : install-pkgconf install-libs install-includes
+
+uninstall : uninstall-pkgconf uninstall-libs uninstall-includes
+
+install-pkgconf : tt
+	mkdir -p $(installpkgconfdir)
+	$(t4) -o $(installpkgconfdir)/managed.zapp.pc T4/Templates/managed.zapp.pc.tt -a xml:Service/Services.xml
+	#TODO: Install a pkg-config file for the native interface.
+
+install-libs :
+	mkdir -p $(installlibdir)
+	cp -ut $(installlibdir) $(objdir)* 
+
+install-includes :
+	mkdir -p $(installincludedir)
+	cp -urt $(installincludedir) $(inc_build)/*
+
+uninstall-pkgconf :
+	rm -f $(installpkgconfdir)/managed.zapp.pc
+
+uninstall-libs :
+	rm -rf $(installlibdir)
+
+uninstall-includes :
+	rm -rf $(installincludedir)
+
+# We need to run a T4 template to generate our pkg-config file for installing, so
+# we pull in T4Linux. We could probably restructure these dependencies to be a bit
+# nicer in the future.
+include T4Linux.mak

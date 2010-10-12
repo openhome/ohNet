@@ -30,6 +30,9 @@ linker_dll_service = link /nologo /debug /machine:I386  /map $(objdir)ZappUpnp.l
 csharp = csc /nologo /platform:x86
 publiccsdir = Public\Cs^\
 dirsep = ^\
+installdir = $(PROGRAMFILES)\Zapp
+installlibdir = $(installdir)\lib
+installincludedir = $(installdir)\include
 
 # Actual building of code is shared between platforms
 include Common.mak
@@ -79,3 +82,18 @@ copy_build_includes:
 clean :
 	del /q $(objdir)*
 	rd /s/q $(inc_build)
+
+install :
+	if not exist "$(installdir)" mkdir "$(installdir)"
+	if not exist "$(installlibdir)" mkdir "$(installlibdir)"
+	if not exist "$(installincludedir)" mkdir "$(installincludedir)"
+	copy "$(objdir)*" "$(installlibdir)" > nul
+	xcopy "$(inc_build)" "$(installincludedir)" /Y /S /I > nul
+
+uninstall :
+	if not exist "$(installdir)" echo Nothing to uninstall && exit /b 1
+	if exist "$(installlibdir)" del /q "$(installlibdir)\*" > nul
+	if exist "$(installlibdir)" rmdir "$(installlibdir)"
+	if exist "$(installincludedir)" rmdir /s /q "$(installincludedir)"
+	rmdir "$(installdir)"
+

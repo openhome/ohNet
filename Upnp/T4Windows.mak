@@ -29,8 +29,8 @@ include T4.mak
 
 tt: mkToolsDir UpnpServiceXml.dll
 	cd T4/TextTemplating/Mono.TextTemplating
-    csc /nologo /t:library -out:../../../$(toolsDir)Mono.TextTemplating.dll /recurse:*.cs
-    cd ../TextTransform
+	csc /nologo /t:library -out:../../../$(toolsDir)Mono.TextTemplating.dll /recurse:*.cs
+	cd ../TextTransform
 	csc /nologo /t:exe -out:../../../$(toolsDir)TextTransform.exe /r:../../../$(toolsDir)Mono.TextTemplating.dll  /recurse:*.cs
 	cd ../../../
 
@@ -42,7 +42,7 @@ UpnpServiceXml.dll: mkToolsDir
 UpnpServiceMake.dll: mkToolsDir
 	csc -target:library -out:$(upnpServiceMake) T4\\UpnpServiceMake\\AssemblyInfo.cs T4\\UpnpServiceMake\\UpnpServiceMake.cs
 
-clean:
+clean-t4:
 	rd /s/q $(toolsDir)
 
 mkToolsDir:
