@@ -127,7 +127,7 @@ headers_proxy = $(inc_build)/Cpp/Buffer.h \
                 $(inc_build)/AsyncPrivate.h
 
 proxies : upnp_core $(objects_proxies)
-	$(ar)ZappProxies.$(libext) $(objects_proxies)
+	$(ar)$(libprefix)ZappProxies.$(libext) $(objects_proxies)
 $(objdir)CpUpnpOrgAVTransport1.$(objext) : $(proxySrcCppCore)CpUpnpOrgAVTransport1.cpp $(headers_proxy)
 	$(compiler)CpUpnpOrgAVTransport1.$(objext) -c $(cflags) $(includes) $(proxySrcCppCore)CpUpnpOrgAVTransport1.cpp
 $(objdir)CpUpnpOrgAVTransport1C.$(objext) : $(proxySrcC)CpUpnpOrgAVTransport1C.cpp $(headers_proxy)

@@ -121,7 +121,7 @@ headers_device = $(inc_build)/Cpp/ZappTypes.h \
                 $(inc_build)/FunctorDvInvocation.h
 
 devices : upnp_core $(objects_devices)
-	$(ar)ZappDevices.$(libext) $(objects_devices)
+	$(ar)$(libprefix)ZappDevices.$(libext) $(objects_devices)
 $(objdir)DvUpnpOrgAVTransport1.$(objext) : $(deviceSrcCppCore)DvUpnpOrgAVTransport1.cpp $(headers_device)
 	$(compiler)DvUpnpOrgAVTransport1.$(objext) -c $(cflags) $(includes) $(deviceSrcCppCore)DvUpnpOrgAVTransport1.cpp
 $(objdir)DvUpnpOrgAVTransport1Std.$(objext) : $(deviceSrcCppStd)DvUpnpOrgAVTransport1Std.cpp $(headers_device)
