@@ -14,7 +14,7 @@ public:
 };
 
 CpProxyLinnCoUkJukebox1C::CpProxyLinnCoUkJukebox1C(CpDeviceC aDevice)
-    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice))
+    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice.iData.iPtr))
 {
     iProxy = new CpProxyLinnCoUkJukebox1(*iDevice);
 }
@@ -22,18 +22,21 @@ CpProxyLinnCoUkJukebox1C::CpProxyLinnCoUkJukebox1C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkJukebox1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyLinnCoUkJukebox1C(aDevice);
+    THandle h;
+    HandleInit(&h);
+    h.iData.iPtr = new CpProxyLinnCoUkJukebox1C(aDevice);
+    return h;
 }
 
 void CpProxyLinnCoUkJukebox1Destroy(THandle aHandle)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     delete proxyC;
 }
 
 void CpProxyLinnCoUkJukebox1SyncSetPresetPrefix(THandle aHandle, const char* aaUri)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaUri(aaUri);
     proxyC->Proxy()->SyncSetPresetPrefix(buf_aaUri);
@@ -41,7 +44,7 @@ void CpProxyLinnCoUkJukebox1SyncSetPresetPrefix(THandle aHandle, const char* aaU
 
 void CpProxyLinnCoUkJukebox1BeginSetPresetPrefix(THandle aHandle, const char* aaUri, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaUri(aaUri);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
@@ -51,9 +54,9 @@ void CpProxyLinnCoUkJukebox1BeginSetPresetPrefix(THandle aHandle, const char* aa
 int32_t CpProxyLinnCoUkJukebox1EndSetPresetPrefix(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetPresetPrefix(*async);
@@ -66,7 +69,7 @@ int32_t CpProxyLinnCoUkJukebox1EndSetPresetPrefix(THandle aHandle, ZappHandleAsy
 
 void CpProxyLinnCoUkJukebox1SyncPresetPrefix(THandle aHandle, char** aaUri)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaUri;
     proxyC->Proxy()->SyncPresetPrefix(buf_aaUri);
@@ -75,7 +78,7 @@ void CpProxyLinnCoUkJukebox1SyncPresetPrefix(THandle aHandle, char** aaUri)
 
 void CpProxyLinnCoUkJukebox1BeginPresetPrefix(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginPresetPrefix(functor);
@@ -84,9 +87,9 @@ void CpProxyLinnCoUkJukebox1BeginPresetPrefix(THandle aHandle, ZappCallbackAsync
 int32_t CpProxyLinnCoUkJukebox1EndPresetPrefix(THandle aHandle, ZappHandleAsync aAsync, char** aaUri)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     Brh buf_aaUri;
     *aaUri = NULL;
@@ -102,7 +105,7 @@ int32_t CpProxyLinnCoUkJukebox1EndPresetPrefix(THandle aHandle, ZappHandleAsync 
 
 void CpProxyLinnCoUkJukebox1SyncSetAlbumArtFileName(THandle aHandle, const char* aaName)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaName(aaName);
     proxyC->Proxy()->SyncSetAlbumArtFileName(buf_aaName);
@@ -110,7 +113,7 @@ void CpProxyLinnCoUkJukebox1SyncSetAlbumArtFileName(THandle aHandle, const char*
 
 void CpProxyLinnCoUkJukebox1BeginSetAlbumArtFileName(THandle aHandle, const char* aaName, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaName(aaName);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
@@ -120,9 +123,9 @@ void CpProxyLinnCoUkJukebox1BeginSetAlbumArtFileName(THandle aHandle, const char
 int32_t CpProxyLinnCoUkJukebox1EndSetAlbumArtFileName(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetAlbumArtFileName(*async);
@@ -135,7 +138,7 @@ int32_t CpProxyLinnCoUkJukebox1EndSetAlbumArtFileName(THandle aHandle, ZappHandl
 
 void CpProxyLinnCoUkJukebox1SyncAlbumArtFileName(THandle aHandle, char** aaName)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaName;
     proxyC->Proxy()->SyncAlbumArtFileName(buf_aaName);
@@ -144,7 +147,7 @@ void CpProxyLinnCoUkJukebox1SyncAlbumArtFileName(THandle aHandle, char** aaName)
 
 void CpProxyLinnCoUkJukebox1BeginAlbumArtFileName(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginAlbumArtFileName(functor);
@@ -153,9 +156,9 @@ void CpProxyLinnCoUkJukebox1BeginAlbumArtFileName(THandle aHandle, ZappCallbackA
 int32_t CpProxyLinnCoUkJukebox1EndAlbumArtFileName(THandle aHandle, ZappHandleAsync aAsync, char** aaName)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     Brh buf_aaName;
     *aaName = NULL;
@@ -171,14 +174,14 @@ int32_t CpProxyLinnCoUkJukebox1EndAlbumArtFileName(THandle aHandle, ZappHandleAs
 
 void CpProxyLinnCoUkJukebox1SyncSetCurrentPreset(THandle aHandle, uint32_t aaPreset)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetCurrentPreset(aaPreset);
 }
 
 void CpProxyLinnCoUkJukebox1BeginSetCurrentPreset(THandle aHandle, uint32_t aaPreset, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetCurrentPreset(aaPreset, functor);
@@ -187,9 +190,9 @@ void CpProxyLinnCoUkJukebox1BeginSetCurrentPreset(THandle aHandle, uint32_t aaPr
 int32_t CpProxyLinnCoUkJukebox1EndSetCurrentPreset(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetCurrentPreset(*async);
@@ -202,14 +205,14 @@ int32_t CpProxyLinnCoUkJukebox1EndSetCurrentPreset(THandle aHandle, ZappHandleAs
 
 void CpProxyLinnCoUkJukebox1SyncCurrentPreset(THandle aHandle, uint32_t* aaPreset)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncCurrentPreset(*aaPreset);
 }
 
 void CpProxyLinnCoUkJukebox1BeginCurrentPreset(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginCurrentPreset(functor);
@@ -218,9 +221,9 @@ void CpProxyLinnCoUkJukebox1BeginCurrentPreset(THandle aHandle, ZappCallbackAsyn
 int32_t CpProxyLinnCoUkJukebox1EndCurrentPreset(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaPreset)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndCurrentPreset(*async, *aaPreset);
@@ -233,7 +236,7 @@ int32_t CpProxyLinnCoUkJukebox1EndCurrentPreset(THandle aHandle, ZappHandleAsync
 
 void CpProxyLinnCoUkJukebox1SyncPresetMetaData(THandle aHandle, uint32_t aaPreset, char** aaMetaData)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaMetaData;
     proxyC->Proxy()->SyncPresetMetaData(aaPreset, buf_aaMetaData);
@@ -242,7 +245,7 @@ void CpProxyLinnCoUkJukebox1SyncPresetMetaData(THandle aHandle, uint32_t aaPrese
 
 void CpProxyLinnCoUkJukebox1BeginPresetMetaData(THandle aHandle, uint32_t aaPreset, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginPresetMetaData(aaPreset, functor);
@@ -251,9 +254,9 @@ void CpProxyLinnCoUkJukebox1BeginPresetMetaData(THandle aHandle, uint32_t aaPres
 int32_t CpProxyLinnCoUkJukebox1EndPresetMetaData(THandle aHandle, ZappHandleAsync aAsync, char** aaMetaData)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     Brh buf_aaMetaData;
     *aaMetaData = NULL;
@@ -269,14 +272,14 @@ int32_t CpProxyLinnCoUkJukebox1EndPresetMetaData(THandle aHandle, ZappHandleAsyn
 
 void CpProxyLinnCoUkJukebox1SyncLoadManifest(THandle aHandle, uint32_t* aaTotalPresets)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncLoadManifest(*aaTotalPresets);
 }
 
 void CpProxyLinnCoUkJukebox1BeginLoadManifest(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginLoadManifest(functor);
@@ -285,9 +288,9 @@ void CpProxyLinnCoUkJukebox1BeginLoadManifest(THandle aHandle, ZappCallbackAsync
 int32_t CpProxyLinnCoUkJukebox1EndLoadManifest(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaTotalPresets)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndLoadManifest(*async, *aaTotalPresets);
@@ -300,7 +303,7 @@ int32_t CpProxyLinnCoUkJukebox1EndLoadManifest(THandle aHandle, ZappHandleAsync 
 
 void CpProxyLinnCoUkJukebox1SetPropertyCurrentPresetChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyCurrentPresetChanged(functor);
@@ -308,7 +311,7 @@ void CpProxyLinnCoUkJukebox1SetPropertyCurrentPresetChanged(THandle aHandle, Zap
 
 void CpProxyLinnCoUkJukebox1SetPropertyPresetPrefixChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyPresetPrefixChanged(functor);
@@ -316,7 +319,7 @@ void CpProxyLinnCoUkJukebox1SetPropertyPresetPrefixChanged(THandle aHandle, Zapp
 
 void CpProxyLinnCoUkJukebox1SetPropertyAlbumArtFileNameChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyAlbumArtFileNameChanged(functor);
@@ -324,14 +327,14 @@ void CpProxyLinnCoUkJukebox1SetPropertyAlbumArtFileNameChanged(THandle aHandle, 
 
 void CpProxyLinnCoUkJukebox1PropertyCurrentPreset(THandle aHandle, uint32_t* aCurrentPreset)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->PropertyCurrentPreset(*aCurrentPreset);
 }
 
 void CpProxyLinnCoUkJukebox1PropertyPresetPrefix(THandle aHandle, char** aPresetPrefix)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brhz buf_aPresetPrefix;
     proxyC->Proxy()->PropertyPresetPrefix(buf_aPresetPrefix);
@@ -340,7 +343,7 @@ void CpProxyLinnCoUkJukebox1PropertyPresetPrefix(THandle aHandle, char** aPreset
 
 void CpProxyLinnCoUkJukebox1PropertyAlbumArtFileName(THandle aHandle, char** aAlbumArtFileName)
 {
-    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle);
+    CpProxyLinnCoUkJukebox1C* proxyC = reinterpret_cast<CpProxyLinnCoUkJukebox1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brhz buf_aAlbumArtFileName;
     proxyC->Proxy()->PropertyAlbumArtFileName(buf_aAlbumArtFileName);

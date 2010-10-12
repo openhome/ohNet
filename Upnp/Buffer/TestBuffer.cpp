@@ -523,11 +523,11 @@ void SuiteTestBwn::Test()
     // the '; (void)bwn4' just shuts the compiler up about unused variables
     TEST_THROWS( Bwn bwn4( fakeBuff1, fakeBuffMaxLen1, fakeBuffMaxLen1-1 ); (void)bwn4, AssertionFailed );  
 
-    Bwn bwn1( fakeBuff1, strlen((const TChar *)fakeBuff1), fakeBuffMaxLen1 );                    // create a bwn.
-    Bwn bwn2( fakeBuff1, strlen((const TChar *)fakeBuff1), fakeBuffMaxLen1 );                    // and another...
+    Bwn bwn1( fakeBuff1, (TUint)strlen((const TChar *)fakeBuff1), fakeBuffMaxLen1 );                    // create a bwn.
+    Bwn bwn2( fakeBuff1, (TUint)strlen((const TChar *)fakeBuff1), fakeBuffMaxLen1 );                    // and another...
 
     TEST( bwn1.Equals( bwn2 ) == true );                                                        // Ensure Set works.
-    bwn2.Set( fakeBuff2, strlen((const TChar *)fakeBuff2), fakeBuffMaxLen2 );                    // test Set.
+    bwn2.Set( fakeBuff2, (TUint)strlen((const TChar *)fakeBuff2), fakeBuffMaxLen2 );                    // test Set.
     TEST( bwn1.Equals( bwn2 ) == false );                                                       // Ensure Set works.
 
     TEST( bwn1.Ptr() == fakeBuff1 );

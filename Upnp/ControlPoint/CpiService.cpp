@@ -471,7 +471,7 @@ void Zapp::Invocation::Output(IAsyncOutput& aConsole)
     aConsole.Output("SequenceNumber", (const TChar*)buf.Ptr());
     aConsole.Output("Service", (const TChar*)ServiceType().FullName().Ptr());
     aConsole.Output("Action", (const TChar*)iAction->Name().Ptr());
-    TUint count = iInput.size();
+    TUint count = (TUint)iInput.size();
     for (TUint i=0; i<count; i++) {
         OutputArgument(aConsole, "InputArg", *(iInput[i]));
     }
@@ -479,7 +479,7 @@ void Zapp::Invocation::Output(IAsyncOutput& aConsole)
         iError.Output(aConsole);
     }
     else if (iCompleted) {
-        count = iOutput.size();
+        count = (TUint)iOutput.size();
         for (TUint i=0; i<count; i++) {
             OutputArgument(aConsole, "OutputArg", *(iOutput[i]));
         }

@@ -14,7 +14,7 @@ public:
 };
 
 CpProxyLinnCoUkProxyManager1C::CpProxyLinnCoUkProxyManager1C(CpDeviceC aDevice)
-    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice))
+    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice.iData.iPtr))
 {
     iProxy = new CpProxyLinnCoUkProxyManager1(*iDevice);
 }
@@ -22,18 +22,21 @@ CpProxyLinnCoUkProxyManager1C::CpProxyLinnCoUkProxyManager1C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkProxyManager1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyLinnCoUkProxyManager1C(aDevice);
+    THandle h;
+    HandleInit(&h);
+    h.iData.iPtr = new CpProxyLinnCoUkProxyManager1C(aDevice);
+    return h;
 }
 
 void CpProxyLinnCoUkProxyManager1Destroy(THandle aHandle)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     delete proxyC;
 }
 
 void CpProxyLinnCoUkProxyManager1SyncKontrolProductConnected(THandle aHandle, char** aaConnected)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaConnected;
     proxyC->Proxy()->SyncKontrolProductConnected(buf_aaConnected);
@@ -42,7 +45,7 @@ void CpProxyLinnCoUkProxyManager1SyncKontrolProductConnected(THandle aHandle, ch
 
 void CpProxyLinnCoUkProxyManager1BeginKontrolProductConnected(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginKontrolProductConnected(functor);
@@ -51,9 +54,9 @@ void CpProxyLinnCoUkProxyManager1BeginKontrolProductConnected(THandle aHandle, Z
 int32_t CpProxyLinnCoUkProxyManager1EndKontrolProductConnected(THandle aHandle, ZappHandleAsync aAsync, char** aaConnected)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     Brh buf_aaConnected;
     *aaConnected = NULL;
@@ -69,7 +72,7 @@ int32_t CpProxyLinnCoUkProxyManager1EndKontrolProductConnected(THandle aHandle, 
 
 void CpProxyLinnCoUkProxyManager1SyncSetKontrolProductConnected(THandle aHandle, const char* aaConnected)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaConnected(aaConnected);
     proxyC->Proxy()->SyncSetKontrolProductConnected(buf_aaConnected);
@@ -77,7 +80,7 @@ void CpProxyLinnCoUkProxyManager1SyncSetKontrolProductConnected(THandle aHandle,
 
 void CpProxyLinnCoUkProxyManager1BeginSetKontrolProductConnected(THandle aHandle, const char* aaConnected, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaConnected(aaConnected);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
@@ -87,9 +90,9 @@ void CpProxyLinnCoUkProxyManager1BeginSetKontrolProductConnected(THandle aHandle
 int32_t CpProxyLinnCoUkProxyManager1EndSetKontrolProductConnected(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetKontrolProductConnected(*async);
@@ -102,14 +105,14 @@ int32_t CpProxyLinnCoUkProxyManager1EndSetKontrolProductConnected(THandle aHandl
 
 void CpProxyLinnCoUkProxyManager1SyncKontrolProductComPort(THandle aHandle, uint32_t* aaPort)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncKontrolProductComPort(*aaPort);
 }
 
 void CpProxyLinnCoUkProxyManager1BeginKontrolProductComPort(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginKontrolProductComPort(functor);
@@ -118,9 +121,9 @@ void CpProxyLinnCoUkProxyManager1BeginKontrolProductComPort(THandle aHandle, Zap
 int32_t CpProxyLinnCoUkProxyManager1EndKontrolProductComPort(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaPort)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndKontrolProductComPort(*async, *aaPort);
@@ -133,14 +136,14 @@ int32_t CpProxyLinnCoUkProxyManager1EndKontrolProductComPort(THandle aHandle, Za
 
 void CpProxyLinnCoUkProxyManager1SyncSetKontrolProductComPort(THandle aHandle, uint32_t aaConnected)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetKontrolProductComPort(aaConnected);
 }
 
 void CpProxyLinnCoUkProxyManager1BeginSetKontrolProductComPort(THandle aHandle, uint32_t aaConnected, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetKontrolProductComPort(aaConnected, functor);
@@ -149,9 +152,9 @@ void CpProxyLinnCoUkProxyManager1BeginSetKontrolProductComPort(THandle aHandle, 
 int32_t CpProxyLinnCoUkProxyManager1EndSetKontrolProductComPort(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetKontrolProductComPort(*async);
@@ -164,7 +167,7 @@ int32_t CpProxyLinnCoUkProxyManager1EndSetKontrolProductComPort(THandle aHandle,
 
 void CpProxyLinnCoUkProxyManager1SyncDiscPlayerConnected(THandle aHandle, char** aaConnected)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaConnected;
     proxyC->Proxy()->SyncDiscPlayerConnected(buf_aaConnected);
@@ -173,7 +176,7 @@ void CpProxyLinnCoUkProxyManager1SyncDiscPlayerConnected(THandle aHandle, char**
 
 void CpProxyLinnCoUkProxyManager1BeginDiscPlayerConnected(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginDiscPlayerConnected(functor);
@@ -182,9 +185,9 @@ void CpProxyLinnCoUkProxyManager1BeginDiscPlayerConnected(THandle aHandle, ZappC
 int32_t CpProxyLinnCoUkProxyManager1EndDiscPlayerConnected(THandle aHandle, ZappHandleAsync aAsync, char** aaConnected)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     Brh buf_aaConnected;
     *aaConnected = NULL;
@@ -200,7 +203,7 @@ int32_t CpProxyLinnCoUkProxyManager1EndDiscPlayerConnected(THandle aHandle, Zapp
 
 void CpProxyLinnCoUkProxyManager1SyncSetDiscPlayerConnected(THandle aHandle, const char* aaConnected)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaConnected(aaConnected);
     proxyC->Proxy()->SyncSetDiscPlayerConnected(buf_aaConnected);
@@ -208,7 +211,7 @@ void CpProxyLinnCoUkProxyManager1SyncSetDiscPlayerConnected(THandle aHandle, con
 
 void CpProxyLinnCoUkProxyManager1BeginSetDiscPlayerConnected(THandle aHandle, const char* aaConnected, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaConnected(aaConnected);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
@@ -218,9 +221,9 @@ void CpProxyLinnCoUkProxyManager1BeginSetDiscPlayerConnected(THandle aHandle, co
 int32_t CpProxyLinnCoUkProxyManager1EndSetDiscPlayerConnected(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetDiscPlayerConnected(*async);
@@ -233,14 +236,14 @@ int32_t CpProxyLinnCoUkProxyManager1EndSetDiscPlayerConnected(THandle aHandle, Z
 
 void CpProxyLinnCoUkProxyManager1SyncDiscPlayerComPort(THandle aHandle, uint32_t* aaPort)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncDiscPlayerComPort(*aaPort);
 }
 
 void CpProxyLinnCoUkProxyManager1BeginDiscPlayerComPort(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginDiscPlayerComPort(functor);
@@ -249,9 +252,9 @@ void CpProxyLinnCoUkProxyManager1BeginDiscPlayerComPort(THandle aHandle, ZappCal
 int32_t CpProxyLinnCoUkProxyManager1EndDiscPlayerComPort(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaPort)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndDiscPlayerComPort(*async, *aaPort);
@@ -264,14 +267,14 @@ int32_t CpProxyLinnCoUkProxyManager1EndDiscPlayerComPort(THandle aHandle, ZappHa
 
 void CpProxyLinnCoUkProxyManager1SyncSetDiscPlayerComPort(THandle aHandle, uint32_t aaConnected)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetDiscPlayerComPort(aaConnected);
 }
 
 void CpProxyLinnCoUkProxyManager1BeginSetDiscPlayerComPort(THandle aHandle, uint32_t aaConnected, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetDiscPlayerComPort(aaConnected, functor);
@@ -280,9 +283,9 @@ void CpProxyLinnCoUkProxyManager1BeginSetDiscPlayerComPort(THandle aHandle, uint
 int32_t CpProxyLinnCoUkProxyManager1EndSetDiscPlayerComPort(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetDiscPlayerComPort(*async);
@@ -295,7 +298,7 @@ int32_t CpProxyLinnCoUkProxyManager1EndSetDiscPlayerComPort(THandle aHandle, Zap
 
 void CpProxyLinnCoUkProxyManager1SyncTestKontrolProductConnection(THandle aHandle, uint32_t* aaResult)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aaResult = 0;
     proxyC->Proxy()->SyncTestKontrolProductConnection(*(TBool*)aaResult);
@@ -303,7 +306,7 @@ void CpProxyLinnCoUkProxyManager1SyncTestKontrolProductConnection(THandle aHandl
 
 void CpProxyLinnCoUkProxyManager1BeginTestKontrolProductConnection(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginTestKontrolProductConnection(functor);
@@ -312,9 +315,9 @@ void CpProxyLinnCoUkProxyManager1BeginTestKontrolProductConnection(THandle aHand
 int32_t CpProxyLinnCoUkProxyManager1EndTestKontrolProductConnection(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaResult)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     *aaResult = 0;
     try {
@@ -328,7 +331,7 @@ int32_t CpProxyLinnCoUkProxyManager1EndTestKontrolProductConnection(THandle aHan
 
 void CpProxyLinnCoUkProxyManager1SyncTestDiscPlayerConnection(THandle aHandle, uint32_t* aaResult)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aaResult = 0;
     proxyC->Proxy()->SyncTestDiscPlayerConnection(*(TBool*)aaResult);
@@ -336,7 +339,7 @@ void CpProxyLinnCoUkProxyManager1SyncTestDiscPlayerConnection(THandle aHandle, u
 
 void CpProxyLinnCoUkProxyManager1BeginTestDiscPlayerConnection(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginTestDiscPlayerConnection(functor);
@@ -345,9 +348,9 @@ void CpProxyLinnCoUkProxyManager1BeginTestDiscPlayerConnection(THandle aHandle, 
 int32_t CpProxyLinnCoUkProxyManager1EndTestDiscPlayerConnection(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaResult)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     *aaResult = 0;
     try {
@@ -361,7 +364,7 @@ int32_t CpProxyLinnCoUkProxyManager1EndTestDiscPlayerConnection(THandle aHandle,
 
 void CpProxyLinnCoUkProxyManager1SetPropertyKontrolProductConnectedChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyKontrolProductConnectedChanged(functor);
@@ -369,7 +372,7 @@ void CpProxyLinnCoUkProxyManager1SetPropertyKontrolProductConnectedChanged(THand
 
 void CpProxyLinnCoUkProxyManager1SetPropertyKontrolProductComPortChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyKontrolProductComPortChanged(functor);
@@ -377,7 +380,7 @@ void CpProxyLinnCoUkProxyManager1SetPropertyKontrolProductComPortChanged(THandle
 
 void CpProxyLinnCoUkProxyManager1SetPropertyDiscPlayerConnectedChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyDiscPlayerConnectedChanged(functor);
@@ -385,7 +388,7 @@ void CpProxyLinnCoUkProxyManager1SetPropertyDiscPlayerConnectedChanged(THandle a
 
 void CpProxyLinnCoUkProxyManager1SetPropertyDiscPlayerComPortChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyDiscPlayerComPortChanged(functor);
@@ -393,7 +396,7 @@ void CpProxyLinnCoUkProxyManager1SetPropertyDiscPlayerComPortChanged(THandle aHa
 
 void CpProxyLinnCoUkProxyManager1PropertyKontrolProductConnected(THandle aHandle, char** aKontrolProductConnected)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brhz buf_aKontrolProductConnected;
     proxyC->Proxy()->PropertyKontrolProductConnected(buf_aKontrolProductConnected);
@@ -402,14 +405,14 @@ void CpProxyLinnCoUkProxyManager1PropertyKontrolProductConnected(THandle aHandle
 
 void CpProxyLinnCoUkProxyManager1PropertyKontrolProductComPort(THandle aHandle, uint32_t* aKontrolProductComPort)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->PropertyKontrolProductComPort(*aKontrolProductComPort);
 }
 
 void CpProxyLinnCoUkProxyManager1PropertyDiscPlayerConnected(THandle aHandle, char** aDiscPlayerConnected)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brhz buf_aDiscPlayerConnected;
     proxyC->Proxy()->PropertyDiscPlayerConnected(buf_aDiscPlayerConnected);
@@ -418,7 +421,7 @@ void CpProxyLinnCoUkProxyManager1PropertyDiscPlayerConnected(THandle aHandle, ch
 
 void CpProxyLinnCoUkProxyManager1PropertyDiscPlayerComPort(THandle aHandle, uint32_t* aDiscPlayerComPort)
 {
-    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle);
+    CpProxyLinnCoUkProxyManager1C* proxyC = reinterpret_cast<CpProxyLinnCoUkProxyManager1C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->PropertyDiscPlayerComPort(*aDiscPlayerComPort);
 }

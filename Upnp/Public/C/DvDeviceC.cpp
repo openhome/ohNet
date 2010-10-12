@@ -63,13 +63,17 @@ void DviDeviceC::WriteResourceEnd(void* aPtr)
 DvDeviceC DvDeviceCreateNoResources(const char* aUdn)
 {
 	DviDeviceC* wrapper = new DviDeviceC(aUdn);
-	return (DvDeviceC)wrapper;
+    THandle handle;
+    handle.iData.iPtr = wrapper;
+    return handle;
 }
 
 DvDeviceC DvDeviceCreate(const char* aUdn, ZappCallbackResourceManager aResourceManager, void* aPtr)
 {
 	DviDeviceC* wrapper = new DviDeviceC(aUdn, aResourceManager, aPtr);
-	return (DvDeviceC)wrapper;
+    THandle handle;
+    handle.iData.iPtr = wrapper;
+    return handle;
 }
 
 void DvDeviceDestroy(DvDeviceC aDevice)

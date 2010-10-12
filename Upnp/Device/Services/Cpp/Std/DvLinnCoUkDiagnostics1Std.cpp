@@ -140,7 +140,7 @@ void DvServiceLinnCoUkDiagnostics1Cpp::DoEcho(IDvInvocation& aInvocation, TUint 
     Echo(aVersion, aIn, respaOut);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraOut(aInvocation, "aOut");
-    Brn buf_aOut((const TByte*)respaOut.c_str(), respaOut.length());
+    Brn buf_aOut((const TByte*)respaOut.c_str(), (TUint)respaOut.length());
     respWriteraOut.Write(buf_aOut);
     aInvocation.InvocationWriteStringEnd("aOut");
 	aInvocation.InvocationWriteEnd();
@@ -154,7 +154,7 @@ void DvServiceLinnCoUkDiagnostics1Cpp::DoElfFile(IDvInvocation& aInvocation, TUi
     ElfFile(aVersion, respaElfFile);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraElfFile(aInvocation, "aElfFile");
-    Brn buf_aElfFile((const TByte*)respaElfFile.c_str(), respaElfFile.length());
+    Brn buf_aElfFile((const TByte*)respaElfFile.c_str(), (TUint)respaElfFile.length());
     respWriteraElfFile.Write(buf_aElfFile);
     aInvocation.InvocationWriteStringEnd("aElfFile");
 	aInvocation.InvocationWriteEnd();
@@ -168,7 +168,7 @@ void DvServiceLinnCoUkDiagnostics1Cpp::DoElfFingerprint(IDvInvocation& aInvocati
     ElfFingerprint(aVersion, respaElfFileFingerprint);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraElfFileFingerprint(aInvocation, "aElfFileFingerprint");
-    Brn buf_aElfFileFingerprint((const TByte*)respaElfFileFingerprint.c_str(), respaElfFileFingerprint.length());
+    Brn buf_aElfFileFingerprint((const TByte*)respaElfFileFingerprint.c_str(), (TUint)respaElfFileFingerprint.length());
     respWriteraElfFileFingerprint.Write(buf_aElfFileFingerprint);
     aInvocation.InvocationWriteStringEnd("aElfFileFingerprint");
 	aInvocation.InvocationWriteEnd();
@@ -182,7 +182,7 @@ void DvServiceLinnCoUkDiagnostics1Cpp::DoCrashDataStatus(IDvInvocation& aInvocat
     CrashDataStatus(aVersion, respaCrashDataStatus);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraCrashDataStatus(aInvocation, "aCrashDataStatus");
-    Brn buf_aCrashDataStatus((const TByte*)respaCrashDataStatus.c_str(), respaCrashDataStatus.length());
+    Brn buf_aCrashDataStatus((const TByte*)respaCrashDataStatus.c_str(), (TUint)respaCrashDataStatus.length());
     respWriteraCrashDataStatus.Write(buf_aCrashDataStatus);
     aInvocation.InvocationWriteStringEnd("aCrashDataStatus");
 	aInvocation.InvocationWriteEnd();
@@ -196,7 +196,7 @@ void DvServiceLinnCoUkDiagnostics1Cpp::DoCrashDataFetch(IDvInvocation& aInvocati
     CrashDataFetch(aVersion, respaCrashData);
 	aInvocation.InvocationWriteStart();
     InvocationResponseBinary respWriteraCrashData(aInvocation, "aCrashData");
-    Brn buf_aCrashData((const TByte*)respaCrashData.c_str(), respaCrashData.length());
+    Brn buf_aCrashData((const TByte*)respaCrashData.c_str(), (TUint)respaCrashData.length());
     respWriteraCrashData.Write(buf_aCrashData);
     aInvocation.InvocationWriteBinaryEnd("aCrashData");
 	aInvocation.InvocationWriteEnd();
@@ -219,7 +219,7 @@ void DvServiceLinnCoUkDiagnostics1Cpp::DoSysLog(IDvInvocation& aInvocation, TUin
     SysLog(aVersion, respaSysLog);
 	aInvocation.InvocationWriteStart();
     InvocationResponseBinary respWriteraSysLog(aInvocation, "aSysLog");
-    Brn buf_aSysLog((const TByte*)respaSysLog.c_str(), respaSysLog.length());
+    Brn buf_aSysLog((const TByte*)respaSysLog.c_str(), (TUint)respaSysLog.length());
     respWriteraSysLog.Write(buf_aSysLog);
     aInvocation.InvocationWriteBinaryEnd("aSysLog");
 	aInvocation.InvocationWriteEnd();
@@ -236,7 +236,7 @@ void DvServiceLinnCoUkDiagnostics1Cpp::DoDiagnostic(IDvInvocation& aInvocation, 
     Diagnostic(aVersion, aDiagnosticType, respaDiagnosticInfo);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraDiagnosticInfo(aInvocation, "aDiagnosticInfo");
-    Brn buf_aDiagnosticInfo((const TByte*)respaDiagnosticInfo.c_str(), respaDiagnosticInfo.length());
+    Brn buf_aDiagnosticInfo((const TByte*)respaDiagnosticInfo.c_str(), (TUint)respaDiagnosticInfo.length());
     respWriteraDiagnosticInfo.Write(buf_aDiagnosticInfo);
     aInvocation.InvocationWriteStringEnd("aDiagnosticInfo");
 	aInvocation.InvocationWriteEnd();

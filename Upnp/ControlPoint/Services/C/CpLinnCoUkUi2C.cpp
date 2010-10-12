@@ -14,7 +14,7 @@ public:
 };
 
 CpProxyLinnCoUkUi2C::CpProxyLinnCoUkUi2C(CpDeviceC aDevice)
-    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice))
+    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice.iData.iPtr))
 {
     iProxy = new CpProxyLinnCoUkUi2(*iDevice);
 }
@@ -22,25 +22,28 @@ CpProxyLinnCoUkUi2C::CpProxyLinnCoUkUi2C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkUi2Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyLinnCoUkUi2C(aDevice);
+    THandle h;
+    HandleInit(&h);
+    h.iData.iPtr = new CpProxyLinnCoUkUi2C(aDevice);
+    return h;
 }
 
 void CpProxyLinnCoUkUi2Destroy(THandle aHandle)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     delete proxyC;
 }
 
 void CpProxyLinnCoUkUi2SyncDisplayTestPattern(THandle aHandle, int32_t aaTestPattern)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncDisplayTestPattern(aaTestPattern);
 }
 
 void CpProxyLinnCoUkUi2BeginDisplayTestPattern(THandle aHandle, int32_t aaTestPattern, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginDisplayTestPattern(aaTestPattern, functor);
@@ -49,9 +52,9 @@ void CpProxyLinnCoUkUi2BeginDisplayTestPattern(THandle aHandle, int32_t aaTestPa
 int32_t CpProxyLinnCoUkUi2EndDisplayTestPattern(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndDisplayTestPattern(*async);
@@ -64,14 +67,14 @@ int32_t CpProxyLinnCoUkUi2EndDisplayTestPattern(THandle aHandle, ZappHandleAsync
 
 void CpProxyLinnCoUkUi2SyncDisplayFill(THandle aHandle)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncDisplayFill();
 }
 
 void CpProxyLinnCoUkUi2BeginDisplayFill(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginDisplayFill(functor);
@@ -80,9 +83,9 @@ void CpProxyLinnCoUkUi2BeginDisplayFill(THandle aHandle, ZappCallbackAsync aCall
 int32_t CpProxyLinnCoUkUi2EndDisplayFill(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndDisplayFill(*async);
@@ -95,14 +98,14 @@ int32_t CpProxyLinnCoUkUi2EndDisplayFill(THandle aHandle, ZappHandleAsync aAsync
 
 void CpProxyLinnCoUkUi2SyncDisplayClear(THandle aHandle)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncDisplayClear();
 }
 
 void CpProxyLinnCoUkUi2BeginDisplayClear(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginDisplayClear(functor);
@@ -111,9 +114,9 @@ void CpProxyLinnCoUkUi2BeginDisplayClear(THandle aHandle, ZappCallbackAsync aCal
 int32_t CpProxyLinnCoUkUi2EndDisplayClear(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndDisplayClear(*async);
@@ -126,14 +129,14 @@ int32_t CpProxyLinnCoUkUi2EndDisplayClear(THandle aHandle, ZappHandleAsync aAsyn
 
 void CpProxyLinnCoUkUi2SyncSetTestModeEnabled(THandle aHandle, uint32_t aaEnabled)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetTestModeEnabled((aaEnabled==0? false : true));
 }
 
 void CpProxyLinnCoUkUi2BeginSetTestModeEnabled(THandle aHandle, uint32_t aaEnabled, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetTestModeEnabled((aaEnabled==0? false : true), functor);
@@ -142,9 +145,9 @@ void CpProxyLinnCoUkUi2BeginSetTestModeEnabled(THandle aHandle, uint32_t aaEnabl
 int32_t CpProxyLinnCoUkUi2EndSetTestModeEnabled(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetTestModeEnabled(*async);
@@ -157,14 +160,14 @@ int32_t CpProxyLinnCoUkUi2EndSetTestModeEnabled(THandle aHandle, ZappHandleAsync
 
 void CpProxyLinnCoUkUi2SyncSimulateInfraredInput(THandle aHandle, uint32_t aaCode)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSimulateInfraredInput(aaCode);
 }
 
 void CpProxyLinnCoUkUi2BeginSimulateInfraredInput(THandle aHandle, uint32_t aaCode, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSimulateInfraredInput(aaCode, functor);
@@ -173,9 +176,9 @@ void CpProxyLinnCoUkUi2BeginSimulateInfraredInput(THandle aHandle, uint32_t aaCo
 int32_t CpProxyLinnCoUkUi2EndSimulateInfraredInput(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSimulateInfraredInput(*async);
@@ -188,14 +191,14 @@ int32_t CpProxyLinnCoUkUi2EndSimulateInfraredInput(THandle aHandle, ZappHandleAs
 
 void CpProxyLinnCoUkUi2SyncSimulateButtonInput(THandle aHandle, uint32_t aaCode)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSimulateButtonInput(aaCode);
 }
 
 void CpProxyLinnCoUkUi2BeginSimulateButtonInput(THandle aHandle, uint32_t aaCode, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSimulateButtonInput(aaCode, functor);
@@ -204,9 +207,9 @@ void CpProxyLinnCoUkUi2BeginSimulateButtonInput(THandle aHandle, uint32_t aaCode
 int32_t CpProxyLinnCoUkUi2EndSimulateButtonInput(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSimulateButtonInput(*async);
@@ -219,14 +222,14 @@ int32_t CpProxyLinnCoUkUi2EndSimulateButtonInput(THandle aHandle, ZappHandleAsyn
 
 void CpProxyLinnCoUkUi2SyncSimulateLightSensor(THandle aHandle, uint32_t aaLightLevel)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSimulateLightSensor(aaLightLevel);
 }
 
 void CpProxyLinnCoUkUi2BeginSimulateLightSensor(THandle aHandle, uint32_t aaLightLevel, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSimulateLightSensor(aaLightLevel, functor);
@@ -235,9 +238,9 @@ void CpProxyLinnCoUkUi2BeginSimulateLightSensor(THandle aHandle, uint32_t aaLigh
 int32_t CpProxyLinnCoUkUi2EndSimulateLightSensor(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSimulateLightSensor(*async);
@@ -250,14 +253,14 @@ int32_t CpProxyLinnCoUkUi2EndSimulateLightSensor(THandle aHandle, ZappHandleAsyn
 
 void CpProxyLinnCoUkUi2SyncGetLightSensorData(THandle aHandle, uint32_t* aaLightLevel)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncGetLightSensorData(*aaLightLevel);
 }
 
 void CpProxyLinnCoUkUi2BeginGetLightSensorData(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetLightSensorData(functor);
@@ -266,9 +269,9 @@ void CpProxyLinnCoUkUi2BeginGetLightSensorData(THandle aHandle, ZappCallbackAsyn
 int32_t CpProxyLinnCoUkUi2EndGetLightSensorData(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaLightLevel)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndGetLightSensorData(*async, *aaLightLevel);
@@ -281,14 +284,14 @@ int32_t CpProxyLinnCoUkUi2EndGetLightSensorData(THandle aHandle, ZappHandleAsync
 
 void CpProxyLinnCoUkUi2SyncSetDisplayBrightness(THandle aHandle, uint32_t aaBrightness)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetDisplayBrightness(aaBrightness);
 }
 
 void CpProxyLinnCoUkUi2BeginSetDisplayBrightness(THandle aHandle, uint32_t aaBrightness, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetDisplayBrightness(aaBrightness, functor);
@@ -297,9 +300,9 @@ void CpProxyLinnCoUkUi2BeginSetDisplayBrightness(THandle aHandle, uint32_t aaBri
 int32_t CpProxyLinnCoUkUi2EndSetDisplayBrightness(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetDisplayBrightness(*async);
@@ -312,14 +315,14 @@ int32_t CpProxyLinnCoUkUi2EndSetDisplayBrightness(THandle aHandle, ZappHandleAsy
 
 void CpProxyLinnCoUkUi2SyncSetDisplayBrightnessAuto(THandle aHandle, uint32_t aaBrightnessAuto)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetDisplayBrightnessAuto((aaBrightnessAuto==0? false : true));
 }
 
 void CpProxyLinnCoUkUi2BeginSetDisplayBrightnessAuto(THandle aHandle, uint32_t aaBrightnessAuto, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetDisplayBrightnessAuto((aaBrightnessAuto==0? false : true), functor);
@@ -328,9 +331,9 @@ void CpProxyLinnCoUkUi2BeginSetDisplayBrightnessAuto(THandle aHandle, uint32_t a
 int32_t CpProxyLinnCoUkUi2EndSetDisplayBrightnessAuto(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetDisplayBrightnessAuto(*async);
@@ -343,7 +346,7 @@ int32_t CpProxyLinnCoUkUi2EndSetDisplayBrightnessAuto(THandle aHandle, ZappHandl
 
 void CpProxyLinnCoUkUi2SyncSetInfraredCommands(THandle aHandle, const char* aaCommands)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaCommands(aaCommands);
     proxyC->Proxy()->SyncSetInfraredCommands(buf_aaCommands);
@@ -351,7 +354,7 @@ void CpProxyLinnCoUkUi2SyncSetInfraredCommands(THandle aHandle, const char* aaCo
 
 void CpProxyLinnCoUkUi2BeginSetInfraredCommands(THandle aHandle, const char* aaCommands, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaCommands(aaCommands);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
@@ -361,9 +364,9 @@ void CpProxyLinnCoUkUi2BeginSetInfraredCommands(THandle aHandle, const char* aaC
 int32_t CpProxyLinnCoUkUi2EndSetInfraredCommands(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetInfraredCommands(*async);
@@ -376,7 +379,7 @@ int32_t CpProxyLinnCoUkUi2EndSetInfraredCommands(THandle aHandle, ZappHandleAsyn
 
 void CpProxyLinnCoUkUi2SyncInfraredCommands(THandle aHandle, char** aaCommands)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaCommands;
     proxyC->Proxy()->SyncInfraredCommands(buf_aaCommands);
@@ -385,7 +388,7 @@ void CpProxyLinnCoUkUi2SyncInfraredCommands(THandle aHandle, char** aaCommands)
 
 void CpProxyLinnCoUkUi2BeginInfraredCommands(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginInfraredCommands(functor);
@@ -394,9 +397,9 @@ void CpProxyLinnCoUkUi2BeginInfraredCommands(THandle aHandle, ZappCallbackAsync 
 int32_t CpProxyLinnCoUkUi2EndInfraredCommands(THandle aHandle, ZappHandleAsync aAsync, char** aaCommands)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     Brh buf_aaCommands;
     *aaCommands = NULL;
@@ -412,7 +415,7 @@ int32_t CpProxyLinnCoUkUi2EndInfraredCommands(THandle aHandle, ZappHandleAsync a
 
 void CpProxyLinnCoUkUi2SyncSetInfraredTerminalCommands(THandle aHandle, const char* aaCommands)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaCommands(aaCommands);
     proxyC->Proxy()->SyncSetInfraredTerminalCommands(buf_aaCommands);
@@ -420,7 +423,7 @@ void CpProxyLinnCoUkUi2SyncSetInfraredTerminalCommands(THandle aHandle, const ch
 
 void CpProxyLinnCoUkUi2BeginSetInfraredTerminalCommands(THandle aHandle, const char* aaCommands, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaCommands(aaCommands);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
@@ -430,9 +433,9 @@ void CpProxyLinnCoUkUi2BeginSetInfraredTerminalCommands(THandle aHandle, const c
 int32_t CpProxyLinnCoUkUi2EndSetInfraredTerminalCommands(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetInfraredTerminalCommands(*async);
@@ -445,7 +448,7 @@ int32_t CpProxyLinnCoUkUi2EndSetInfraredTerminalCommands(THandle aHandle, ZappHa
 
 void CpProxyLinnCoUkUi2SyncInfraredTerminalCommands(THandle aHandle, char** aaCommands)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaCommands;
     proxyC->Proxy()->SyncInfraredTerminalCommands(buf_aaCommands);
@@ -454,7 +457,7 @@ void CpProxyLinnCoUkUi2SyncInfraredTerminalCommands(THandle aHandle, char** aaCo
 
 void CpProxyLinnCoUkUi2BeginInfraredTerminalCommands(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginInfraredTerminalCommands(functor);
@@ -463,9 +466,9 @@ void CpProxyLinnCoUkUi2BeginInfraredTerminalCommands(THandle aHandle, ZappCallba
 int32_t CpProxyLinnCoUkUi2EndInfraredTerminalCommands(THandle aHandle, ZappHandleAsync aAsync, char** aaCommands)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     Brh buf_aaCommands;
     *aaCommands = NULL;
@@ -481,14 +484,14 @@ int32_t CpProxyLinnCoUkUi2EndInfraredTerminalCommands(THandle aHandle, ZappHandl
 
 void CpProxyLinnCoUkUi2SyncDisplayBrightness(THandle aHandle, uint32_t* aaBrightness)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncDisplayBrightness(*aaBrightness);
 }
 
 void CpProxyLinnCoUkUi2BeginDisplayBrightness(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginDisplayBrightness(functor);
@@ -497,9 +500,9 @@ void CpProxyLinnCoUkUi2BeginDisplayBrightness(THandle aHandle, ZappCallbackAsync
 int32_t CpProxyLinnCoUkUi2EndDisplayBrightness(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaBrightness)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndDisplayBrightness(*async, *aaBrightness);
@@ -512,7 +515,7 @@ int32_t CpProxyLinnCoUkUi2EndDisplayBrightness(THandle aHandle, ZappHandleAsync 
 
 void CpProxyLinnCoUkUi2SyncDisplayBrightnessAuto(THandle aHandle, uint32_t* aaBrightnessAuto)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aaBrightnessAuto = 0;
     proxyC->Proxy()->SyncDisplayBrightnessAuto(*(TBool*)aaBrightnessAuto);
@@ -520,7 +523,7 @@ void CpProxyLinnCoUkUi2SyncDisplayBrightnessAuto(THandle aHandle, uint32_t* aaBr
 
 void CpProxyLinnCoUkUi2BeginDisplayBrightnessAuto(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginDisplayBrightnessAuto(functor);
@@ -529,9 +532,9 @@ void CpProxyLinnCoUkUi2BeginDisplayBrightnessAuto(THandle aHandle, ZappCallbackA
 int32_t CpProxyLinnCoUkUi2EndDisplayBrightnessAuto(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaBrightnessAuto)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     *aaBrightnessAuto = 0;
     try {
@@ -545,7 +548,7 @@ int32_t CpProxyLinnCoUkUi2EndDisplayBrightnessAuto(THandle aHandle, ZappHandleAs
 
 void CpProxyLinnCoUkUi2SyncDisplayUpsideDown(THandle aHandle, uint32_t* aaUpsideDown)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aaUpsideDown = 0;
     proxyC->Proxy()->SyncDisplayUpsideDown(*(TBool*)aaUpsideDown);
@@ -553,7 +556,7 @@ void CpProxyLinnCoUkUi2SyncDisplayUpsideDown(THandle aHandle, uint32_t* aaUpside
 
 void CpProxyLinnCoUkUi2BeginDisplayUpsideDown(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginDisplayUpsideDown(functor);
@@ -562,9 +565,9 @@ void CpProxyLinnCoUkUi2BeginDisplayUpsideDown(THandle aHandle, ZappCallbackAsync
 int32_t CpProxyLinnCoUkUi2EndDisplayUpsideDown(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaUpsideDown)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     *aaUpsideDown = 0;
     try {
@@ -578,14 +581,14 @@ int32_t CpProxyLinnCoUkUi2EndDisplayUpsideDown(THandle aHandle, ZappHandleAsync 
 
 void CpProxyLinnCoUkUi2SyncSetDisplayUpsideDown(THandle aHandle, uint32_t aaUpsideDown)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetDisplayUpsideDown((aaUpsideDown==0? false : true));
 }
 
 void CpProxyLinnCoUkUi2BeginSetDisplayUpsideDown(THandle aHandle, uint32_t aaUpsideDown, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetDisplayUpsideDown((aaUpsideDown==0? false : true), functor);
@@ -594,9 +597,9 @@ void CpProxyLinnCoUkUi2BeginSetDisplayUpsideDown(THandle aHandle, uint32_t aaUps
 int32_t CpProxyLinnCoUkUi2EndSetDisplayUpsideDown(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetDisplayUpsideDown(*async);
@@ -609,14 +612,14 @@ int32_t CpProxyLinnCoUkUi2EndSetDisplayUpsideDown(THandle aHandle, ZappHandleAsy
 
 void CpProxyLinnCoUkUi2SyncSetDisplayScrollText(THandle aHandle, uint32_t aaDisplayScrollText)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetDisplayScrollText((aaDisplayScrollText==0? false : true));
 }
 
 void CpProxyLinnCoUkUi2BeginSetDisplayScrollText(THandle aHandle, uint32_t aaDisplayScrollText, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetDisplayScrollText((aaDisplayScrollText==0? false : true), functor);
@@ -625,9 +628,9 @@ void CpProxyLinnCoUkUi2BeginSetDisplayScrollText(THandle aHandle, uint32_t aaDis
 int32_t CpProxyLinnCoUkUi2EndSetDisplayScrollText(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetDisplayScrollText(*async);
@@ -640,7 +643,7 @@ int32_t CpProxyLinnCoUkUi2EndSetDisplayScrollText(THandle aHandle, ZappHandleAsy
 
 void CpProxyLinnCoUkUi2SyncDisplayScrollText(THandle aHandle, uint32_t* aaDisplayScrollTextEnabled)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aaDisplayScrollTextEnabled = 0;
     proxyC->Proxy()->SyncDisplayScrollText(*(TBool*)aaDisplayScrollTextEnabled);
@@ -648,7 +651,7 @@ void CpProxyLinnCoUkUi2SyncDisplayScrollText(THandle aHandle, uint32_t* aaDispla
 
 void CpProxyLinnCoUkUi2BeginDisplayScrollText(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginDisplayScrollText(functor);
@@ -657,9 +660,9 @@ void CpProxyLinnCoUkUi2BeginDisplayScrollText(THandle aHandle, ZappCallbackAsync
 int32_t CpProxyLinnCoUkUi2EndDisplayScrollText(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaDisplayScrollTextEnabled)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     *aaDisplayScrollTextEnabled = 0;
     try {
@@ -673,14 +676,14 @@ int32_t CpProxyLinnCoUkUi2EndDisplayScrollText(THandle aHandle, ZappHandleAsync 
 
 void CpProxyLinnCoUkUi2SyncSetDisplaySleep(THandle aHandle, uint32_t aaEnabled)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetDisplaySleep((aaEnabled==0? false : true));
 }
 
 void CpProxyLinnCoUkUi2BeginSetDisplaySleep(THandle aHandle, uint32_t aaEnabled, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetDisplaySleep((aaEnabled==0? false : true), functor);
@@ -689,9 +692,9 @@ void CpProxyLinnCoUkUi2BeginSetDisplaySleep(THandle aHandle, uint32_t aaEnabled,
 int32_t CpProxyLinnCoUkUi2EndSetDisplaySleep(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetDisplaySleep(*async);
@@ -704,7 +707,7 @@ int32_t CpProxyLinnCoUkUi2EndSetDisplaySleep(THandle aHandle, ZappHandleAsync aA
 
 void CpProxyLinnCoUkUi2SyncDisplaySleep(THandle aHandle, uint32_t* aaEnabled)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aaEnabled = 0;
     proxyC->Proxy()->SyncDisplaySleep(*(TBool*)aaEnabled);
@@ -712,7 +715,7 @@ void CpProxyLinnCoUkUi2SyncDisplaySleep(THandle aHandle, uint32_t* aaEnabled)
 
 void CpProxyLinnCoUkUi2BeginDisplaySleep(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginDisplaySleep(functor);
@@ -721,9 +724,9 @@ void CpProxyLinnCoUkUi2BeginDisplaySleep(THandle aHandle, ZappCallbackAsync aCal
 int32_t CpProxyLinnCoUkUi2EndDisplaySleep(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaEnabled)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     *aaEnabled = 0;
     try {
@@ -737,14 +740,14 @@ int32_t CpProxyLinnCoUkUi2EndDisplaySleep(THandle aHandle, ZappHandleAsync aAsyn
 
 void CpProxyLinnCoUkUi2SyncSetDisplayLedOff(THandle aHandle, uint32_t aaOff)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetDisplayLedOff((aaOff==0? false : true));
 }
 
 void CpProxyLinnCoUkUi2BeginSetDisplayLedOff(THandle aHandle, uint32_t aaOff, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetDisplayLedOff((aaOff==0? false : true), functor);
@@ -753,9 +756,9 @@ void CpProxyLinnCoUkUi2BeginSetDisplayLedOff(THandle aHandle, uint32_t aaOff, Za
 int32_t CpProxyLinnCoUkUi2EndSetDisplayLedOff(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetDisplayLedOff(*async);
@@ -768,7 +771,7 @@ int32_t CpProxyLinnCoUkUi2EndSetDisplayLedOff(THandle aHandle, ZappHandleAsync a
 
 void CpProxyLinnCoUkUi2SyncDisplayLedOff(THandle aHandle, uint32_t* aaOff)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aaOff = 0;
     proxyC->Proxy()->SyncDisplayLedOff(*(TBool*)aaOff);
@@ -776,7 +779,7 @@ void CpProxyLinnCoUkUi2SyncDisplayLedOff(THandle aHandle, uint32_t* aaOff)
 
 void CpProxyLinnCoUkUi2BeginDisplayLedOff(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginDisplayLedOff(functor);
@@ -785,9 +788,9 @@ void CpProxyLinnCoUkUi2BeginDisplayLedOff(THandle aHandle, ZappCallbackAsync aCa
 int32_t CpProxyLinnCoUkUi2EndDisplayLedOff(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaOff)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     *aaOff = 0;
     try {
@@ -801,7 +804,7 @@ int32_t CpProxyLinnCoUkUi2EndDisplayLedOff(THandle aHandle, ZappHandleAsync aAsy
 
 void CpProxyLinnCoUkUi2SetPropertyDisplayBrightnessChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyDisplayBrightnessChanged(functor);
@@ -809,7 +812,7 @@ void CpProxyLinnCoUkUi2SetPropertyDisplayBrightnessChanged(THandle aHandle, Zapp
 
 void CpProxyLinnCoUkUi2SetPropertyDisplayBrightnessAutoChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyDisplayBrightnessAutoChanged(functor);
@@ -817,7 +820,7 @@ void CpProxyLinnCoUkUi2SetPropertyDisplayBrightnessAutoChanged(THandle aHandle, 
 
 void CpProxyLinnCoUkUi2SetPropertyInfraredCommandsChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyInfraredCommandsChanged(functor);
@@ -825,7 +828,7 @@ void CpProxyLinnCoUkUi2SetPropertyInfraredCommandsChanged(THandle aHandle, ZappC
 
 void CpProxyLinnCoUkUi2SetPropertyInfraredTerminalCommandsChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyInfraredTerminalCommandsChanged(functor);
@@ -833,7 +836,7 @@ void CpProxyLinnCoUkUi2SetPropertyInfraredTerminalCommandsChanged(THandle aHandl
 
 void CpProxyLinnCoUkUi2SetPropertyDisplayUpsideDownChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyDisplayUpsideDownChanged(functor);
@@ -841,7 +844,7 @@ void CpProxyLinnCoUkUi2SetPropertyDisplayUpsideDownChanged(THandle aHandle, Zapp
 
 void CpProxyLinnCoUkUi2SetPropertyDisplayScrollTextChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyDisplayScrollTextChanged(functor);
@@ -849,7 +852,7 @@ void CpProxyLinnCoUkUi2SetPropertyDisplayScrollTextChanged(THandle aHandle, Zapp
 
 void CpProxyLinnCoUkUi2SetPropertyDisplaySleepChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyDisplaySleepChanged(functor);
@@ -857,7 +860,7 @@ void CpProxyLinnCoUkUi2SetPropertyDisplaySleepChanged(THandle aHandle, ZappCallb
 
 void CpProxyLinnCoUkUi2SetPropertyDisplayLedOffChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyDisplayLedOffChanged(functor);
@@ -865,7 +868,7 @@ void CpProxyLinnCoUkUi2SetPropertyDisplayLedOffChanged(THandle aHandle, ZappCall
 
 void CpProxyLinnCoUkUi2SetPropertyTerminalInputCodeChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyTerminalInputCodeChanged(functor);
@@ -873,7 +876,7 @@ void CpProxyLinnCoUkUi2SetPropertyTerminalInputCodeChanged(THandle aHandle, Zapp
 
 void CpProxyLinnCoUkUi2SetPropertyTerminalInputNameChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyTerminalInputNameChanged(functor);
@@ -881,7 +884,7 @@ void CpProxyLinnCoUkUi2SetPropertyTerminalInputNameChanged(THandle aHandle, Zapp
 
 void CpProxyLinnCoUkUi2SetPropertyDisplayPixelsChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyDisplayPixelsChanged(functor);
@@ -889,14 +892,14 @@ void CpProxyLinnCoUkUi2SetPropertyDisplayPixelsChanged(THandle aHandle, ZappCall
 
 void CpProxyLinnCoUkUi2PropertyDisplayBrightness(THandle aHandle, uint32_t* aDisplayBrightness)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->PropertyDisplayBrightness(*aDisplayBrightness);
 }
 
 void CpProxyLinnCoUkUi2PropertyDisplayBrightnessAuto(THandle aHandle, uint32_t* aDisplayBrightnessAuto)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aDisplayBrightnessAuto = false;
     proxyC->Proxy()->PropertyDisplayBrightnessAuto(*(TBool*)aDisplayBrightnessAuto);
@@ -904,7 +907,7 @@ void CpProxyLinnCoUkUi2PropertyDisplayBrightnessAuto(THandle aHandle, uint32_t* 
 
 void CpProxyLinnCoUkUi2PropertyInfraredCommands(THandle aHandle, char** aInfraredCommands)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brhz buf_aInfraredCommands;
     proxyC->Proxy()->PropertyInfraredCommands(buf_aInfraredCommands);
@@ -913,7 +916,7 @@ void CpProxyLinnCoUkUi2PropertyInfraredCommands(THandle aHandle, char** aInfrare
 
 void CpProxyLinnCoUkUi2PropertyInfraredTerminalCommands(THandle aHandle, char** aInfraredTerminalCommands)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brhz buf_aInfraredTerminalCommands;
     proxyC->Proxy()->PropertyInfraredTerminalCommands(buf_aInfraredTerminalCommands);
@@ -922,7 +925,7 @@ void CpProxyLinnCoUkUi2PropertyInfraredTerminalCommands(THandle aHandle, char** 
 
 void CpProxyLinnCoUkUi2PropertyDisplayUpsideDown(THandle aHandle, uint32_t* aDisplayUpsideDown)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aDisplayUpsideDown = false;
     proxyC->Proxy()->PropertyDisplayUpsideDown(*(TBool*)aDisplayUpsideDown);
@@ -930,7 +933,7 @@ void CpProxyLinnCoUkUi2PropertyDisplayUpsideDown(THandle aHandle, uint32_t* aDis
 
 void CpProxyLinnCoUkUi2PropertyDisplayScrollText(THandle aHandle, uint32_t* aDisplayScrollText)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aDisplayScrollText = false;
     proxyC->Proxy()->PropertyDisplayScrollText(*(TBool*)aDisplayScrollText);
@@ -938,7 +941,7 @@ void CpProxyLinnCoUkUi2PropertyDisplayScrollText(THandle aHandle, uint32_t* aDis
 
 void CpProxyLinnCoUkUi2PropertyDisplaySleep(THandle aHandle, uint32_t* aDisplaySleep)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aDisplaySleep = false;
     proxyC->Proxy()->PropertyDisplaySleep(*(TBool*)aDisplaySleep);
@@ -946,7 +949,7 @@ void CpProxyLinnCoUkUi2PropertyDisplaySleep(THandle aHandle, uint32_t* aDisplayS
 
 void CpProxyLinnCoUkUi2PropertyDisplayLedOff(THandle aHandle, uint32_t* aDisplayLedOff)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aDisplayLedOff = false;
     proxyC->Proxy()->PropertyDisplayLedOff(*(TBool*)aDisplayLedOff);
@@ -954,14 +957,14 @@ void CpProxyLinnCoUkUi2PropertyDisplayLedOff(THandle aHandle, uint32_t* aDisplay
 
 void CpProxyLinnCoUkUi2PropertyTerminalInputCode(THandle aHandle, uint32_t* aTerminalInputCode)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->PropertyTerminalInputCode(*aTerminalInputCode);
 }
 
 void CpProxyLinnCoUkUi2PropertyTerminalInputName(THandle aHandle, char** aTerminalInputName)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brhz buf_aTerminalInputName;
     proxyC->Proxy()->PropertyTerminalInputName(buf_aTerminalInputName);
@@ -970,7 +973,7 @@ void CpProxyLinnCoUkUi2PropertyTerminalInputName(THandle aHandle, char** aTermin
 
 void CpProxyLinnCoUkUi2PropertyDisplayPixels(THandle aHandle, char** aDisplayPixels, uint32_t* aLen)
 {
-    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle);
+    CpProxyLinnCoUkUi2C* proxyC = reinterpret_cast<CpProxyLinnCoUkUi2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aDisplayPixels;
     proxyC->Proxy()->PropertyDisplayPixels(buf_aDisplayPixels);

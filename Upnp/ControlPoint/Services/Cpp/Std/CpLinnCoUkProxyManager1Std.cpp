@@ -397,7 +397,7 @@ void CpProxyLinnCoUkProxyManager1Cpp::BeginSetKontrolProductConnected(const std:
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetKontrolProductConnected->InputParameters();
     {
-        Brn buf((const TByte*)aaConnected.c_str(), aaConnected.length());
+        Brn buf((const TByte*)aaConnected.c_str(), (TUint)aaConnected.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -515,7 +515,7 @@ void CpProxyLinnCoUkProxyManager1Cpp::BeginSetDiscPlayerConnected(const std::str
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetDiscPlayerConnected->InputParameters();
     {
-        Brn buf((const TByte*)aaConnected.c_str(), aaConnected.length());
+        Brn buf((const TByte*)aaConnected.c_str(), (TUint)aaConnected.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();

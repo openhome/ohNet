@@ -149,7 +149,7 @@ void ServiceLights::InitMode3()
 void ServiceLights::GetCount(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseUint& aCount)
 {
     aResponse.Start();
-    aCount.Write(iLights.size());
+    aCount.Write((TUint)iLights.size());
     aResponse.End();
 }
 

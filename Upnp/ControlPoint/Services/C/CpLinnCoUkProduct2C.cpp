@@ -14,7 +14,7 @@ public:
 };
 
 CpProxyLinnCoUkProduct2C::CpProxyLinnCoUkProduct2C(CpDeviceC aDevice)
-    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice))
+    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice.iData.iPtr))
 {
     iProxy = new CpProxyLinnCoUkProduct2(*iDevice);
 }
@@ -22,18 +22,21 @@ CpProxyLinnCoUkProduct2C::CpProxyLinnCoUkProduct2C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkProduct2Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyLinnCoUkProduct2C(aDevice);
+    THandle h;
+    HandleInit(&h);
+    h.iData.iPtr = new CpProxyLinnCoUkProduct2C(aDevice);
+    return h;
 }
 
 void CpProxyLinnCoUkProduct2Destroy(THandle aHandle)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     delete proxyC;
 }
 
 void CpProxyLinnCoUkProduct2SyncType(THandle aHandle, char** aaType)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaType;
     proxyC->Proxy()->SyncType(buf_aaType);
@@ -42,7 +45,7 @@ void CpProxyLinnCoUkProduct2SyncType(THandle aHandle, char** aaType)
 
 void CpProxyLinnCoUkProduct2BeginType(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginType(functor);
@@ -51,9 +54,9 @@ void CpProxyLinnCoUkProduct2BeginType(THandle aHandle, ZappCallbackAsync aCallba
 int32_t CpProxyLinnCoUkProduct2EndType(THandle aHandle, ZappHandleAsync aAsync, char** aaType)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     Brh buf_aaType;
     *aaType = NULL;
@@ -69,7 +72,7 @@ int32_t CpProxyLinnCoUkProduct2EndType(THandle aHandle, ZappHandleAsync aAsync, 
 
 void CpProxyLinnCoUkProduct2SyncModel(THandle aHandle, char** aaModel)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaModel;
     proxyC->Proxy()->SyncModel(buf_aaModel);
@@ -78,7 +81,7 @@ void CpProxyLinnCoUkProduct2SyncModel(THandle aHandle, char** aaModel)
 
 void CpProxyLinnCoUkProduct2BeginModel(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginModel(functor);
@@ -87,9 +90,9 @@ void CpProxyLinnCoUkProduct2BeginModel(THandle aHandle, ZappCallbackAsync aCallb
 int32_t CpProxyLinnCoUkProduct2EndModel(THandle aHandle, ZappHandleAsync aAsync, char** aaModel)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     Brh buf_aaModel;
     *aaModel = NULL;
@@ -105,7 +108,7 @@ int32_t CpProxyLinnCoUkProduct2EndModel(THandle aHandle, ZappHandleAsync aAsync,
 
 void CpProxyLinnCoUkProduct2SyncName(THandle aHandle, char** aaName)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaName;
     proxyC->Proxy()->SyncName(buf_aaName);
@@ -114,7 +117,7 @@ void CpProxyLinnCoUkProduct2SyncName(THandle aHandle, char** aaName)
 
 void CpProxyLinnCoUkProduct2BeginName(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginName(functor);
@@ -123,9 +126,9 @@ void CpProxyLinnCoUkProduct2BeginName(THandle aHandle, ZappCallbackAsync aCallba
 int32_t CpProxyLinnCoUkProduct2EndName(THandle aHandle, ZappHandleAsync aAsync, char** aaName)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     Brh buf_aaName;
     *aaName = NULL;
@@ -141,7 +144,7 @@ int32_t CpProxyLinnCoUkProduct2EndName(THandle aHandle, ZappHandleAsync aAsync, 
 
 void CpProxyLinnCoUkProduct2SyncSetName(THandle aHandle, const char* aaName)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaName(aaName);
     proxyC->Proxy()->SyncSetName(buf_aaName);
@@ -149,7 +152,7 @@ void CpProxyLinnCoUkProduct2SyncSetName(THandle aHandle, const char* aaName)
 
 void CpProxyLinnCoUkProduct2BeginSetName(THandle aHandle, const char* aaName, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaName(aaName);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
@@ -159,9 +162,9 @@ void CpProxyLinnCoUkProduct2BeginSetName(THandle aHandle, const char* aaName, Za
 int32_t CpProxyLinnCoUkProduct2EndSetName(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetName(*async);
@@ -174,7 +177,7 @@ int32_t CpProxyLinnCoUkProduct2EndSetName(THandle aHandle, ZappHandleAsync aAsyn
 
 void CpProxyLinnCoUkProduct2SyncRoom(THandle aHandle, char** aaRoom)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaRoom;
     proxyC->Proxy()->SyncRoom(buf_aaRoom);
@@ -183,7 +186,7 @@ void CpProxyLinnCoUkProduct2SyncRoom(THandle aHandle, char** aaRoom)
 
 void CpProxyLinnCoUkProduct2BeginRoom(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginRoom(functor);
@@ -192,9 +195,9 @@ void CpProxyLinnCoUkProduct2BeginRoom(THandle aHandle, ZappCallbackAsync aCallba
 int32_t CpProxyLinnCoUkProduct2EndRoom(THandle aHandle, ZappHandleAsync aAsync, char** aaRoom)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     Brh buf_aaRoom;
     *aaRoom = NULL;
@@ -210,7 +213,7 @@ int32_t CpProxyLinnCoUkProduct2EndRoom(THandle aHandle, ZappHandleAsync aAsync, 
 
 void CpProxyLinnCoUkProduct2SyncSetRoom(THandle aHandle, const char* aaRoom)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaRoom(aaRoom);
     proxyC->Proxy()->SyncSetRoom(buf_aaRoom);
@@ -218,7 +221,7 @@ void CpProxyLinnCoUkProduct2SyncSetRoom(THandle aHandle, const char* aaRoom)
 
 void CpProxyLinnCoUkProduct2BeginSetRoom(THandle aHandle, const char* aaRoom, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaRoom(aaRoom);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
@@ -228,9 +231,9 @@ void CpProxyLinnCoUkProduct2BeginSetRoom(THandle aHandle, const char* aaRoom, Za
 int32_t CpProxyLinnCoUkProduct2EndSetRoom(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetRoom(*async);
@@ -243,7 +246,7 @@ int32_t CpProxyLinnCoUkProduct2EndSetRoom(THandle aHandle, ZappHandleAsync aAsyn
 
 void CpProxyLinnCoUkProduct2SyncStandby(THandle aHandle, uint32_t* aaStandby)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aaStandby = 0;
     proxyC->Proxy()->SyncStandby(*(TBool*)aaStandby);
@@ -251,7 +254,7 @@ void CpProxyLinnCoUkProduct2SyncStandby(THandle aHandle, uint32_t* aaStandby)
 
 void CpProxyLinnCoUkProduct2BeginStandby(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginStandby(functor);
@@ -260,9 +263,9 @@ void CpProxyLinnCoUkProduct2BeginStandby(THandle aHandle, ZappCallbackAsync aCal
 int32_t CpProxyLinnCoUkProduct2EndStandby(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaStandby)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     *aaStandby = 0;
     try {
@@ -276,14 +279,14 @@ int32_t CpProxyLinnCoUkProduct2EndStandby(THandle aHandle, ZappHandleAsync aAsyn
 
 void CpProxyLinnCoUkProduct2SyncSetStandby(THandle aHandle, uint32_t aaStandby)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetStandby((aaStandby==0? false : true));
 }
 
 void CpProxyLinnCoUkProduct2BeginSetStandby(THandle aHandle, uint32_t aaStandby, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetStandby((aaStandby==0? false : true), functor);
@@ -292,9 +295,9 @@ void CpProxyLinnCoUkProduct2BeginSetStandby(THandle aHandle, uint32_t aaStandby,
 int32_t CpProxyLinnCoUkProduct2EndSetStandby(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetStandby(*async);
@@ -307,14 +310,14 @@ int32_t CpProxyLinnCoUkProduct2EndSetStandby(THandle aHandle, ZappHandleAsync aA
 
 void CpProxyLinnCoUkProduct2SyncSourceCount(THandle aHandle, uint32_t* aaSourceCount)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSourceCount(*aaSourceCount);
 }
 
 void CpProxyLinnCoUkProduct2BeginSourceCount(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSourceCount(functor);
@@ -323,9 +326,9 @@ void CpProxyLinnCoUkProduct2BeginSourceCount(THandle aHandle, ZappCallbackAsync 
 int32_t CpProxyLinnCoUkProduct2EndSourceCount(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaSourceCount)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSourceCount(*async, *aaSourceCount);
@@ -338,14 +341,14 @@ int32_t CpProxyLinnCoUkProduct2EndSourceCount(THandle aHandle, ZappHandleAsync a
 
 void CpProxyLinnCoUkProduct2SyncSourceIndex(THandle aHandle, uint32_t* aaSourceIndex)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSourceIndex(*aaSourceIndex);
 }
 
 void CpProxyLinnCoUkProduct2BeginSourceIndex(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSourceIndex(functor);
@@ -354,9 +357,9 @@ void CpProxyLinnCoUkProduct2BeginSourceIndex(THandle aHandle, ZappCallbackAsync 
 int32_t CpProxyLinnCoUkProduct2EndSourceIndex(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaSourceIndex)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSourceIndex(*async, *aaSourceIndex);
@@ -369,14 +372,14 @@ int32_t CpProxyLinnCoUkProduct2EndSourceIndex(THandle aHandle, ZappHandleAsync a
 
 void CpProxyLinnCoUkProduct2SyncSetSourceIndex(THandle aHandle, uint32_t aaSourceIndex)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSetSourceIndex(aaSourceIndex);
 }
 
 void CpProxyLinnCoUkProduct2BeginSetSourceIndex(THandle aHandle, uint32_t aaSourceIndex, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSetSourceIndex(aaSourceIndex, functor);
@@ -385,9 +388,9 @@ void CpProxyLinnCoUkProduct2BeginSetSourceIndex(THandle aHandle, uint32_t aaSour
 int32_t CpProxyLinnCoUkProduct2EndSetSourceIndex(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSetSourceIndex(*async);
@@ -400,7 +403,7 @@ int32_t CpProxyLinnCoUkProduct2EndSetSourceIndex(THandle aHandle, ZappHandleAsyn
 
 void CpProxyLinnCoUkProduct2SyncSourceType(THandle aHandle, uint32_t aaSourceIndex, char** aaSourceType)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brh buf_aaSourceType;
     proxyC->Proxy()->SyncSourceType(aaSourceIndex, buf_aaSourceType);
@@ -409,7 +412,7 @@ void CpProxyLinnCoUkProduct2SyncSourceType(THandle aHandle, uint32_t aaSourceInd
 
 void CpProxyLinnCoUkProduct2BeginSourceType(THandle aHandle, uint32_t aaSourceIndex, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSourceType(aaSourceIndex, functor);
@@ -418,9 +421,9 @@ void CpProxyLinnCoUkProduct2BeginSourceType(THandle aHandle, uint32_t aaSourceIn
 int32_t CpProxyLinnCoUkProduct2EndSourceType(THandle aHandle, ZappHandleAsync aAsync, char** aaSourceType)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
     ASSERT(async != NULL);
     Brh buf_aaSourceType;
     *aaSourceType = NULL;
@@ -436,7 +439,7 @@ int32_t CpProxyLinnCoUkProduct2EndSourceType(THandle aHandle, ZappHandleAsync aA
 
 void CpProxyLinnCoUkProduct2SetPropertyProductNameChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyProductNameChanged(functor);
@@ -444,7 +447,7 @@ void CpProxyLinnCoUkProduct2SetPropertyProductNameChanged(THandle aHandle, ZappC
 
 void CpProxyLinnCoUkProduct2SetPropertyProductRoomChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyProductRoomChanged(functor);
@@ -452,7 +455,7 @@ void CpProxyLinnCoUkProduct2SetPropertyProductRoomChanged(THandle aHandle, ZappC
 
 void CpProxyLinnCoUkProduct2SetPropertyProductStandbyChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyProductStandbyChanged(functor);
@@ -460,7 +463,7 @@ void CpProxyLinnCoUkProduct2SetPropertyProductStandbyChanged(THandle aHandle, Za
 
 void CpProxyLinnCoUkProduct2SetPropertyProductSourceIndexChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyProductSourceIndexChanged(functor);
@@ -468,7 +471,7 @@ void CpProxyLinnCoUkProduct2SetPropertyProductSourceIndexChanged(THandle aHandle
 
 void CpProxyLinnCoUkProduct2PropertyProductName(THandle aHandle, char** aProductName)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brhz buf_aProductName;
     proxyC->Proxy()->PropertyProductName(buf_aProductName);
@@ -477,7 +480,7 @@ void CpProxyLinnCoUkProduct2PropertyProductName(THandle aHandle, char** aProduct
 
 void CpProxyLinnCoUkProduct2PropertyProductRoom(THandle aHandle, char** aProductRoom)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     Brhz buf_aProductRoom;
     proxyC->Proxy()->PropertyProductRoom(buf_aProductRoom);
@@ -486,7 +489,7 @@ void CpProxyLinnCoUkProduct2PropertyProductRoom(THandle aHandle, char** aProduct
 
 void CpProxyLinnCoUkProduct2PropertyProductStandby(THandle aHandle, uint32_t* aProductStandby)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     *aProductStandby = false;
     proxyC->Proxy()->PropertyProductStandby(*(TBool*)aProductStandby);
@@ -494,7 +497,7 @@ void CpProxyLinnCoUkProduct2PropertyProductStandby(THandle aHandle, uint32_t* aP
 
 void CpProxyLinnCoUkProduct2PropertyProductSourceIndex(THandle aHandle, uint32_t* aProductSourceIndex)
 {
-    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle);
+    CpProxyLinnCoUkProduct2C* proxyC = reinterpret_cast<CpProxyLinnCoUkProduct2C*>(aHandle.iData.iPtr);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->PropertyProductSourceIndex(*aProductSourceIndex);
 }

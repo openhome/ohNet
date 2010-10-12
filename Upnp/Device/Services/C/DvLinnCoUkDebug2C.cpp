@@ -92,26 +92,29 @@ void DvServiceLinnCoUkDebug2C::MemWrite(IInvocationResponse& aResponse, TUint aV
 
 THandle DvServiceLinnCoUkDebug2Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkDebug2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	THandle h;
+    HandleInit(&h);
+	h.iData.iPtr = new DvServiceLinnCoUkDebug2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return h;
 }
 
 void DvServiceLinnCoUkDebug2Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceLinnCoUkDebug2C*>(aService);
+    delete reinterpret_cast<DvServiceLinnCoUkDebug2C*>(aService.iData.iPtr);
 }
 
 void DvServiceLinnCoUkDebug2EnableActionSetDebugLevel(THandle aService, CallbackDebug2SetDebugLevel aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDebug2C*>(aService)->EnableActionSetDebugLevel(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDebug2C*>(aService.iData.iPtr)->EnableActionSetDebugLevel(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDebug2EnableActionDebugLevel(THandle aService, CallbackDebug2DebugLevel aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDebug2C*>(aService)->EnableActionDebugLevel(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDebug2C*>(aService.iData.iPtr)->EnableActionDebugLevel(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDebug2EnableActionMemWrite(THandle aService, CallbackDebug2MemWrite aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDebug2C*>(aService)->EnableActionMemWrite(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDebug2C*>(aService.iData.iPtr)->EnableActionMemWrite(aCallback, aPtr);
 }
 

@@ -507,181 +507,184 @@ void DvServiceUpnpOrgDimming1C::GetRampTime(IInvocationResponse& aResponse, TUin
 
 THandle DvServiceUpnpOrgDimming1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceUpnpOrgDimming1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	THandle h;
+    HandleInit(&h);
+	h.iData.iPtr = new DvServiceUpnpOrgDimming1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return h;
 }
 
 void DvServiceUpnpOrgDimming1Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService);
+    delete reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr);
 }
 
 void DvServiceUpnpOrgDimming1EnableActionSetLoadLevelTarget(THandle aService, CallbackDimming1SetLoadLevelTarget aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionSetLoadLevelTarget(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->EnableActionSetLoadLevelTarget(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgDimming1EnableActionGetLoadLevelTarget(THandle aService, CallbackDimming1GetLoadLevelTarget aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionGetLoadLevelTarget(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->EnableActionGetLoadLevelTarget(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgDimming1EnableActionGetLoadLevelStatus(THandle aService, CallbackDimming1GetLoadLevelStatus aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionGetLoadLevelStatus(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->EnableActionGetLoadLevelStatus(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgDimming1EnableActionSetOnEffectLevel(THandle aService, CallbackDimming1SetOnEffectLevel aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionSetOnEffectLevel(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->EnableActionSetOnEffectLevel(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgDimming1EnableActionSetOnEffect(THandle aService, CallbackDimming1SetOnEffect aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionSetOnEffect(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->EnableActionSetOnEffect(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgDimming1EnableActionGetOnEffectParameters(THandle aService, CallbackDimming1GetOnEffectParameters aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionGetOnEffectParameters(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->EnableActionGetOnEffectParameters(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgDimming1EnableActionStepUp(THandle aService, CallbackDimming1StepUp aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionStepUp(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->EnableActionStepUp(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgDimming1EnableActionStepDown(THandle aService, CallbackDimming1StepDown aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionStepDown(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->EnableActionStepDown(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgDimming1EnableActionStartRampUp(THandle aService, CallbackDimming1StartRampUp aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionStartRampUp(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->EnableActionStartRampUp(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgDimming1EnableActionStartRampDown(THandle aService, CallbackDimming1StartRampDown aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionStartRampDown(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->EnableActionStartRampDown(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgDimming1EnableActionStopRamp(THandle aService, CallbackDimming1StopRamp aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionStopRamp(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->EnableActionStopRamp(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgDimming1EnableActionStartRampToLevel(THandle aService, CallbackDimming1StartRampToLevel aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionStartRampToLevel(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->EnableActionStartRampToLevel(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgDimming1EnableActionSetStepDelta(THandle aService, CallbackDimming1SetStepDelta aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionSetStepDelta(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->EnableActionSetStepDelta(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgDimming1EnableActionGetStepDelta(THandle aService, CallbackDimming1GetStepDelta aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionGetStepDelta(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->EnableActionGetStepDelta(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgDimming1EnableActionSetRampRate(THandle aService, CallbackDimming1SetRampRate aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionSetRampRate(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->EnableActionSetRampRate(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgDimming1EnableActionGetRampRate(THandle aService, CallbackDimming1GetRampRate aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionGetRampRate(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->EnableActionGetRampRate(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgDimming1EnableActionPauseRamp(THandle aService, CallbackDimming1PauseRamp aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionPauseRamp(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->EnableActionPauseRamp(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgDimming1EnableActionResumeRamp(THandle aService, CallbackDimming1ResumeRamp aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionResumeRamp(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->EnableActionResumeRamp(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgDimming1EnableActionGetIsRamping(THandle aService, CallbackDimming1GetIsRamping aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionGetIsRamping(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->EnableActionGetIsRamping(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgDimming1EnableActionGetRampPaused(THandle aService, CallbackDimming1GetRampPaused aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionGetRampPaused(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->EnableActionGetRampPaused(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgDimming1EnableActionGetRampTime(THandle aService, CallbackDimming1GetRampTime aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionGetRampTime(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->EnableActionGetRampTime(aCallback, aPtr);
 }
 
 int32_t DvServiceUpnpOrgDimming1SetPropertyLoadLevelStatus(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->SetPropertyLoadLevelStatus(aValue);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->SetPropertyLoadLevelStatus(aValue);
     return 0;
 }
 
 void DvServiceUpnpOrgDimming1GetPropertyLoadLevelStatus(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->GetPropertyLoadLevelStatus(val);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->GetPropertyLoadLevelStatus(val);
     *aValue = val;
 }
 
 int32_t DvServiceUpnpOrgDimming1SetPropertyStepDelta(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->SetPropertyStepDelta(aValue);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->SetPropertyStepDelta(aValue);
     return 0;
 }
 
 void DvServiceUpnpOrgDimming1GetPropertyStepDelta(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->GetPropertyStepDelta(val);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->GetPropertyStepDelta(val);
     *aValue = val;
 }
 
 int32_t DvServiceUpnpOrgDimming1SetPropertyRampRate(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->SetPropertyRampRate(aValue);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->SetPropertyRampRate(aValue);
     return 0;
 }
 
 void DvServiceUpnpOrgDimming1GetPropertyRampRate(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->GetPropertyRampRate(val);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->GetPropertyRampRate(val);
     *aValue = val;
 }
 
 int32_t DvServiceUpnpOrgDimming1SetPropertyIsRamping(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->SetPropertyIsRamping((aValue!=0));
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->SetPropertyIsRamping((aValue!=0));
     return 0;
 }
 
 void DvServiceUpnpOrgDimming1GetPropertyIsRamping(THandle aService, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->GetPropertyIsRamping(val);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->GetPropertyIsRamping(val);
     *aValue = (val? 1 : 0);
 }
 
 int32_t DvServiceUpnpOrgDimming1SetPropertyRampPaused(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->SetPropertyRampPaused((aValue!=0));
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->SetPropertyRampPaused((aValue!=0));
     return 0;
 }
 
 void DvServiceUpnpOrgDimming1GetPropertyRampPaused(THandle aService, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->GetPropertyRampPaused(val);
+    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService.iData.iPtr)->GetPropertyRampPaused(val);
     *aValue = (val? 1 : 0);
 }
 

@@ -400,122 +400,125 @@ void DvServiceUpnpOrgContentDirectory1C::CreateReference(IInvocationResponse& aR
 
 THandle DvServiceUpnpOrgContentDirectory1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceUpnpOrgContentDirectory1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	THandle h;
+    HandleInit(&h);
+	h.iData.iPtr = new DvServiceUpnpOrgContentDirectory1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return h;
 }
 
 void DvServiceUpnpOrgContentDirectory1Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService);
+    delete reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService.iData.iPtr);
 }
 
 void DvServiceUpnpOrgContentDirectory1EnableActionGetSearchCapabilities(THandle aService, CallbackContentDirectory1GetSearchCapabilities aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionGetSearchCapabilities(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService.iData.iPtr)->EnableActionGetSearchCapabilities(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgContentDirectory1EnableActionGetSortCapabilities(THandle aService, CallbackContentDirectory1GetSortCapabilities aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionGetSortCapabilities(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService.iData.iPtr)->EnableActionGetSortCapabilities(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgContentDirectory1EnableActionGetSystemUpdateID(THandle aService, CallbackContentDirectory1GetSystemUpdateID aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionGetSystemUpdateID(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService.iData.iPtr)->EnableActionGetSystemUpdateID(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgContentDirectory1EnableActionBrowse(THandle aService, CallbackContentDirectory1Browse aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionBrowse(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService.iData.iPtr)->EnableActionBrowse(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgContentDirectory1EnableActionSearch(THandle aService, CallbackContentDirectory1Search aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionSearch(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService.iData.iPtr)->EnableActionSearch(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgContentDirectory1EnableActionCreateObject(THandle aService, CallbackContentDirectory1CreateObject aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionCreateObject(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService.iData.iPtr)->EnableActionCreateObject(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgContentDirectory1EnableActionDestroyObject(THandle aService, CallbackContentDirectory1DestroyObject aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionDestroyObject(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService.iData.iPtr)->EnableActionDestroyObject(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgContentDirectory1EnableActionUpdateObject(THandle aService, CallbackContentDirectory1UpdateObject aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionUpdateObject(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService.iData.iPtr)->EnableActionUpdateObject(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgContentDirectory1EnableActionImportResource(THandle aService, CallbackContentDirectory1ImportResource aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionImportResource(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService.iData.iPtr)->EnableActionImportResource(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgContentDirectory1EnableActionExportResource(THandle aService, CallbackContentDirectory1ExportResource aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionExportResource(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService.iData.iPtr)->EnableActionExportResource(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgContentDirectory1EnableActionStopTransferResource(THandle aService, CallbackContentDirectory1StopTransferResource aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionStopTransferResource(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService.iData.iPtr)->EnableActionStopTransferResource(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgContentDirectory1EnableActionGetTransferProgress(THandle aService, CallbackContentDirectory1GetTransferProgress aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionGetTransferProgress(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService.iData.iPtr)->EnableActionGetTransferProgress(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgContentDirectory1EnableActionDeleteResource(THandle aService, CallbackContentDirectory1DeleteResource aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionDeleteResource(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService.iData.iPtr)->EnableActionDeleteResource(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgContentDirectory1EnableActionCreateReference(THandle aService, CallbackContentDirectory1CreateReference aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionCreateReference(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService.iData.iPtr)->EnableActionCreateReference(aCallback, aPtr);
 }
 
 int32_t DvServiceUpnpOrgContentDirectory1SetPropertyTransferIDs(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->SetPropertyTransferIDs(buf);
+    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService.iData.iPtr)->SetPropertyTransferIDs(buf);
     return 0;
 }
 
 void DvServiceUpnpOrgContentDirectory1GetPropertyTransferIDs(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->GetPropertyTransferIDs(buf);
+    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService.iData.iPtr)->GetPropertyTransferIDs(buf);
     *aValue = (char*)buf.Transfer();
 }
 
 int32_t DvServiceUpnpOrgContentDirectory1SetPropertySystemUpdateID(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->SetPropertySystemUpdateID(aValue);
+    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService.iData.iPtr)->SetPropertySystemUpdateID(aValue);
     return 0;
 }
 
 void DvServiceUpnpOrgContentDirectory1GetPropertySystemUpdateID(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->GetPropertySystemUpdateID(val);
+    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService.iData.iPtr)->GetPropertySystemUpdateID(val);
     *aValue = val;
 }
 
 int32_t DvServiceUpnpOrgContentDirectory1SetPropertyContainerUpdateIDs(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->SetPropertyContainerUpdateIDs(buf);
+    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService.iData.iPtr)->SetPropertyContainerUpdateIDs(buf);
     return 0;
 }
 
 void DvServiceUpnpOrgContentDirectory1GetPropertyContainerUpdateIDs(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->GetPropertyContainerUpdateIDs(buf);
+    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService.iData.iPtr)->GetPropertyContainerUpdateIDs(buf);
     *aValue = (char*)buf.Transfer();
 }
 
