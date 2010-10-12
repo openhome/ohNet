@@ -2,7 +2,7 @@
 # Could be extended to support Mac in future
 
 # Macros used by Common.mak
-ar = ar rc $(objdir)
+ar = ${CROSS_COMPILE}ar rc $(objdir)
 cflags = -fexceptions -Wall -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -g -O0 -Wno-psabi -fvisibility=hidden -DDllImport="__attribute__ ((visibility(\"default\")))" -DDllExport="__attribute__ ((visibility(\"default\")))" -DDllExportClass="__attribute__ ((visibility(\"default\")))"
 objdir = Build/Obj/Posix/
 inc_build = Build/Include
@@ -20,12 +20,12 @@ objext = o
 libprefix = lib
 libext = a
 exeext = elf
-compiler = gcc -o $(objdir)
-linker = g++ -lpthread -o $(objdir)
+compiler = ${CROSS_COMPILE}gcc -o $(objdir)
+linker = ${CROSS_COMPILE}g++ -lpthread -o $(objdir)
 dllprefix = lib
 dllext = so
-linker_dll = g++ -lpthread -shared -shared-libgcc -o $(objdir)
-linker_dll_service = g++ -lpthread -shared -shared-libgcc $(objdir)libZappUpnp.so -o $(objdir)
+linker_dll = ${CROSS_COMPILE}g++ -lpthread -shared -shared-libgcc -o $(objdir)
+linker_dll_service = ${CROSS_COMPILE}g++ -lpthread -shared -shared-libgcc $(objdir)libZappUpnp.so -o $(objdir)
 csharp = gmcs /nologo
 publiccsdir = Public/Cs/
 dirsep = /
