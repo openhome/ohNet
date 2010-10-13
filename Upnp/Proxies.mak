@@ -127,6 +127,44 @@ headers_proxy = $(inc_build)/Cpp/Buffer.h \
                 $(inc_build)/AsyncPrivate.h
 
 proxy_dotnet_assemblies = \
+		CpUpnpOrgAVTransport1Assembly.dll \
+		CpUpnpOrgAVTransport2Assembly.dll \
+		CpUpnpOrgConnectionManager1Assembly.dll \
+		CpUpnpOrgConnectionManager2Assembly.dll \
+		CpUpnpOrgContentDirectory1Assembly.dll \
+		CpUpnpOrgContentDirectory2Assembly.dll \
+		CpUpnpOrgContentDirectory3Assembly.dll \
+		CpUpnpOrgRenderingControl1Assembly.dll \
+		CpUpnpOrgRenderingControl2Assembly.dll \
+		CpUpnpOrgScheduledRecording1Assembly.dll \
+		CpUpnpOrgScheduledRecording2Assembly.dll \
+		CpUpnpOrgSwitchPower1Assembly.dll \
+		CpUpnpOrgDimming1Assembly.dll \
+		CpLinnCoUkComponent1Assembly.dll \
+		CpLinnCoUkConfiguration1Assembly.dll \
+		CpLinnCoUkDebug2Assembly.dll \
+		CpLinnCoUkDelay1Assembly.dll \
+		CpLinnCoUkDiagnostics1Assembly.dll \
+		CpLinnCoUkDs1Assembly.dll \
+		CpLinnCoUkInfo1Assembly.dll \
+		CpLinnCoUkJukebox1Assembly.dll \
+		CpLinnCoUkMediaTime1Assembly.dll \
+		CpLinnCoUkPlaylist1Assembly.dll \
+		CpLinnCoUkPreamp4Assembly.dll \
+		CpLinnCoUkProduct1Assembly.dll \
+		CpLinnCoUkProduct2Assembly.dll \
+		CpLinnCoUkProduct3Assembly.dll \
+		CpLinnCoUkProxyManager1Assembly.dll \
+		CpLinnCoUkPtest1Assembly.dll \
+		CpLinnCoUkRadio1Assembly.dll \
+		CpLinnCoUkTime1Assembly.dll \
+		CpLinnCoUkUi2Assembly.dll \
+		CpLinnCoUkVolkano1Assembly.dll \
+		CpZappOrgTestBasic1Assembly.dll \
+		CpZappOrgTestLights1Assembly.dll \
+		CpZappOrgTestDimmableLight1Assembly.dll \
+
+proxy_dotnet_assemblies_with_path = \
 		$(objdir)CpUpnpOrgAVTransport1Assembly.dll \
 		$(objdir)CpUpnpOrgAVTransport2Assembly.dll \
 		$(objdir)CpUpnpOrgConnectionManager1Assembly.dll \
@@ -164,8 +202,9 @@ proxy_dotnet_assemblies = \
 		$(objdir)CpZappOrgTestLights1Assembly.dll \
 		$(objdir)CpZappOrgTestDimmableLight1Assembly.dll \
 
+
 proxies : upnp_core $(objects_proxies)
-	$(ar)$(libprefix)ZappProxies.$(libext) $(objects_proxies)
+	$(ar)ZappProxies.$(libext) $(objects_proxies)
 $(objdir)CpUpnpOrgAVTransport1.$(objext) : $(proxySrcCppCore)CpUpnpOrgAVTransport1.cpp $(headers_proxy)
 	$(compiler)CpUpnpOrgAVTransport1.$(objext) -c $(cflags) $(includes) $(proxySrcCppCore)CpUpnpOrgAVTransport1.cpp
 $(objdir)CpUpnpOrgAVTransport1C.$(objext) : $(proxySrcC)CpUpnpOrgAVTransport1C.cpp $(headers_proxy)
@@ -497,7 +536,7 @@ CpZappOrgTestDimmableLight1Dll: ZappUpnpDll $(objdir)CpZappOrgTestDimmableLight1
 
 # Proxy assemblies for .NET:
 
-CpProxyDotNetAssemblies: $(proxy_dotnet_assemblies)
+CpProxyDotNetAssemblies: $(proxy_dotnet_assemblies_with_path)
 
 $(objdir)CpUpnpOrgAVTransport1Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)CpUpnpOrgAVTransport1.cs
 	$(csharp) /unsafe /t:library \

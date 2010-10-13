@@ -35,8 +35,15 @@ headers_proxy = $(inc_build)/Cpp/Buffer.h \
 proxy_dotnet_assemblies = \
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
+		Cp<#=FilePrefixTypeAndVersion(s)#>Assembly.dll \
+<#  } #>
+
+proxy_dotnet_assemblies_with_path = \
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
 		$(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>Assembly.dll \
 <#  } #>
+
 
 proxies : upnp_core $(objects_proxies)
 	$(ar)ZappProxies.$(libext) $(objects_proxies)
@@ -65,7 +72,7 @@ Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Dll: ZappUpnpDll $(objdir)Cp<#=Fi
 
 # Proxy assemblies for .NET:
 
-CpProxyDotNetAssemblies: $(proxy_dotnet_assemblies)
+CpProxyDotNetAssemblies: $(proxy_dotnet_assemblies_with_path)
 
 <# foreach (Service s in u.iServices) #>
 <# { #>
