@@ -508,6 +508,9 @@ void SuiteMsearch::TestMsearchAll()
     iListener->Reset();
     iListenerUnicast->MsearchAll();
     Wait();
+    if (iListener->RootDeviceCount() != 2) {
+        Print("MseachAll: found %u root devices (expected 2)\n", iListener->RootDeviceCount());
+    }
     TEST(iListener->RootDeviceCount() == 2);
     TEST(iListener->DeviceCount() == 3);
     TEST(iListener->ServiceCount() == 8);
@@ -662,6 +665,7 @@ void SuiteMsearch::TestMsearchServiceType()
 
 void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
 {
+    aInitParams->SetMsearchTime(1);
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartDv();
 
