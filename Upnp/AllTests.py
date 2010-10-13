@@ -61,7 +61,7 @@ def runTests():
     testNoArgs('TestDvDeviceStd')
     testNoArgs('TestDvDeviceC')
     # TestTopology1, TestTopology2 not quite ready for general use just yet
-    # TestDviDiscovery doesn't support overlapping instances on a network
+    testNoArgs('TestProxyCs')
 
 cleanCmd = ''
 if os.name == 'nt':
