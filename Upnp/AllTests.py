@@ -12,7 +12,7 @@ def build(aTarget):
         print '\nBuild for ' + aTarget + ' failed, aborting'
         sys.exit(ret)
 
-def test(aTarget, aCmdLine):
+def doTest(aTarget, aCmdLine, aCs):
     build(aTarget)
     testExe = 'Build/Obj/'
     if os.name == 'nt':
@@ -22,6 +22,9 @@ def test(aTarget, aCmdLine):
     testExe += aTarget
     if os.name == 'nt':
         testExe += '.exe'
+    elif aCs == 1:
+        os.environ['LD_LIBRARY_PATH'] = 'Build/Obj/Posix'
+        testExe += '.exe'
     else:
         testExe += '.elf'
     aCmdLine.insert(0, testExe)
@@ -30,8 +33,14 @@ def test(aTarget, aCmdLine):
         print '\nTest ' + aTarget + ' failed, aborting'
         sys.exit(ret)
 
+def test(aTarget, aCmdLine):
+    doTest(aTarget, aCmdLine, 0)
+
 def testNoArgs(aTarget):
     test(aTarget, [''])
+
+def testCs(aTarget, aCmdLine):
+    doTest(aTarget, aCmdLine, 1)
 
 def runTests():
     buildOnly = 0
@@ -45,6 +54,7 @@ def runTests():
             print 'Unrecognised argument - ' + arg
             sys.exit(1)
     if incremental == 0:
+        cleanCmd = ''
         if os.name == 'nt':
             cleanCmd = 'nmake /s /f Zapp.mak clean'
         else:
@@ -79,9 +89,8 @@ def runTests():
         testNoArgs('TestDvDeviceStd')
         testNoArgs('TestDvDeviceC')
         # TestTopology1, TestTopology2 not quite ready for general use just yet
-        testNoArgs('TestProxyCs')
+        testCs('TestProxyCs', [''])
         print '\nFinished.  All tests passed'
 
-cleanCmd = ''
 os.environ["ABORT_ON_FAILURE"] = "1"
 runTests()
