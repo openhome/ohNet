@@ -22,7 +22,7 @@ CpProxyLinnCoUkTime1C::CpProxyLinnCoUkTime1C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkTime1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyLinnCoUkTime1C(aDevice);
+    return new CpProxyLinnCoUkTime1C(aDevice);
 }
 
 void CpProxyLinnCoUkTime1Destroy(THandle aHandle)

@@ -564,7 +564,7 @@ void DvServiceUpnpOrgContentDirectory3C::GetFreeFormQueryCapabilities(IInvocatio
 
 THandle DvServiceUpnpOrgContentDirectory3Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceUpnpOrgContentDirectory3C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceUpnpOrgContentDirectory3C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceUpnpOrgContentDirectory3Destroy(THandle aService)

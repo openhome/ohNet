@@ -507,7 +507,7 @@ void DvServiceUpnpOrgDimming1C::GetRampTime(IInvocationResponse& aResponse, TUin
 
 THandle DvServiceUpnpOrgDimming1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceUpnpOrgDimming1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceUpnpOrgDimming1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceUpnpOrgDimming1Destroy(THandle aService)

@@ -582,7 +582,7 @@ void CpProxyZappOrgTestBasic1Cpp::BeginEchoString(const std::string& aValue, Fun
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionEchoString->InputParameters();
     {
-        Brn buf((const TByte*)aValue.c_str(), aValue.length());
+        Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -620,7 +620,7 @@ void CpProxyZappOrgTestBasic1Cpp::BeginEchoBinary(const std::string& aValue, Fun
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionEchoBinary->InputParameters();
     {
-        Brn buf((const TByte*)aValue.c_str(), aValue.length());
+        Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
         invocation->AddInput(new ArgumentBinary(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -855,7 +855,7 @@ void CpProxyZappOrgTestBasic1Cpp::BeginSetString(const std::string& aValueStr, F
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetString->InputParameters();
     {
-        Brn buf((const TByte*)aValueStr.c_str(), aValueStr.length());
+        Brn buf((const TByte*)aValueStr.c_str(), (TUint)aValueStr.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -917,7 +917,7 @@ void CpProxyZappOrgTestBasic1Cpp::BeginSetBinary(const std::string& aValueBin, F
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetBinary->InputParameters();
     {
-        Brn buf((const TByte*)aValueBin.c_str(), aValueBin.length());
+        Brn buf((const TByte*)aValueBin.c_str(), (TUint)aValueBin.length());
         invocation->AddInput(new ArgumentBinary(*inParams[inIndex++], buf));
     }
     invocation->Invoke();

@@ -22,7 +22,7 @@ CpProxyLinnCoUkMediaTime1C::CpProxyLinnCoUkMediaTime1C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkMediaTime1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyLinnCoUkMediaTime1C(aDevice);
+    return new CpProxyLinnCoUkMediaTime1C(aDevice);
 }
 
 void CpProxyLinnCoUkMediaTime1Destroy(THandle aHandle)

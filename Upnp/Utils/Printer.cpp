@@ -107,5 +107,5 @@ TInt Log::DoPrint(FunctorMsg& aOutput, const TByte* aMessage)
     if (aOutput) {
         aOutput((const char*)aMessage);
     }
-    return strlen((const char*)aMessage);
+    return (TUint)strlen((const char*)aMessage);
 }

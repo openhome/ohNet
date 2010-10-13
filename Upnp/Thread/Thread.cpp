@@ -148,7 +148,7 @@ Thread::Thread(const TChar* aName, TUint aPriority, TUint aStackBytes)
     , iPriority(aPriority)
 {
     ASSERT(aName != NULL);
-    TUint bytes = strlen(aName);
+    TUint bytes = (TUint)strlen(aName);
     if (bytes > kNameBytes) {
         bytes = kNameBytes;
     }

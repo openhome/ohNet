@@ -835,7 +835,7 @@ void DvServiceUpnpOrgRenderingControl1C::SetLoudness(IInvocationResponse& aRespo
 
 THandle DvServiceUpnpOrgRenderingControl1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceUpnpOrgRenderingControl1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceUpnpOrgRenderingControl1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceUpnpOrgRenderingControl1Destroy(THandle aService)

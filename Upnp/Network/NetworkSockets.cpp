@@ -423,7 +423,7 @@ SocketTcpServer::~SocketTcpServer()
 
     // cause exception in pending AND subsequent accept attempts in session threads.
     Interrupt(true);
-    TUint count = iVector.size();
+    TUint count = (TUint)iVector.size();
     for (TUint i = 0; i < count; i++) {             // delete all sessions
         delete iVector[i];
     }

@@ -412,7 +412,7 @@ void DvServiceZappOrgTestBasic1C::GetBinary(IInvocationResponse& aResponse, TUin
 
 THandle DvServiceZappOrgTestBasic1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceZappOrgTestBasic1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceZappOrgTestBasic1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceZappOrgTestBasic1Destroy(THandle aService)

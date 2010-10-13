@@ -348,7 +348,7 @@ static void SetSocketNonBlocking(SOCKET aSocket)
 
 THandle OsNetworkCreate(OsNetworkSocketType aSocketType)
 {
-    int32_t socketH = socket(AF_INET, aSocketType, 0);
+    SOCKET socketH = socket(AF_INET, aSocketType, 0);
     OsNetworkHandle* handle = CreateHandle(socketH);
     return (THandle)handle;
 }

@@ -262,7 +262,7 @@ void DvServiceLinnCoUkProxyManager1C::TestDiscPlayerConnection(IInvocationRespon
 
 THandle DvServiceLinnCoUkProxyManager1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkProxyManager1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceLinnCoUkProxyManager1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkProxyManager1Destroy(THandle aService)

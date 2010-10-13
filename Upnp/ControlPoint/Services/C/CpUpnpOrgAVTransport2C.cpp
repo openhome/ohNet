@@ -22,7 +22,7 @@ CpProxyUpnpOrgAVTransport2C::CpProxyUpnpOrgAVTransport2C(CpDeviceC aDevice)
 
 THandle CpProxyUpnpOrgAVTransport2Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyUpnpOrgAVTransport2C(aDevice);
+    return new CpProxyUpnpOrgAVTransport2C(aDevice);
 }
 
 void CpProxyUpnpOrgAVTransport2Destroy(THandle aHandle)

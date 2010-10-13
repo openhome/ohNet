@@ -190,15 +190,15 @@ void CpProxyLinnCoUkConfiguration1Cpp::BeginSetParameter(const std::string& aaTa
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetParameter->InputParameters();
     {
-        Brn buf((const TByte*)aaTarget.c_str(), aaTarget.length());
+        Brn buf((const TByte*)aaTarget.c_str(), (TUint)aaTarget.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aaName.c_str(), aaName.length());
+        Brn buf((const TByte*)aaName.c_str(), (TUint)aaName.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aaValue.c_str(), aaValue.length());
+        Brn buf((const TByte*)aaValue.c_str(), (TUint)aaValue.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();

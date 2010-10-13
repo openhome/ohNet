@@ -22,7 +22,7 @@ CpProxyUpnpOrgDimming1C::CpProxyUpnpOrgDimming1C(CpDeviceC aDevice)
 
 THandle CpProxyUpnpOrgDimming1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyUpnpOrgDimming1C(aDevice);
+    return new CpProxyUpnpOrgDimming1C(aDevice);
 }
 
 void CpProxyUpnpOrgDimming1Destroy(THandle aHandle)

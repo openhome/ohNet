@@ -516,7 +516,7 @@ void DvServiceUpnpOrgAVTransport1C::GetCurrentTransportActions(IInvocationRespon
 
 THandle DvServiceUpnpOrgAVTransport1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceUpnpOrgAVTransport1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceUpnpOrgAVTransport1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceUpnpOrgAVTransport1Destroy(THandle aService)

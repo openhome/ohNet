@@ -481,7 +481,7 @@ void DvServiceUpnpOrgContentDirectory2C::CreateReference(IInvocationResponse& aR
 
 THandle DvServiceUpnpOrgContentDirectory2Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceUpnpOrgContentDirectory2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceUpnpOrgContentDirectory2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceUpnpOrgContentDirectory2Destroy(THandle aService)

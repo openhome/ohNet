@@ -22,7 +22,7 @@ CpProxyLinnCoUkJukebox1C::CpProxyLinnCoUkJukebox1C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkJukebox1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyLinnCoUkJukebox1C(aDevice);
+    return new CpProxyLinnCoUkJukebox1C(aDevice);
 }
 
 void CpProxyLinnCoUkJukebox1Destroy(THandle aHandle)

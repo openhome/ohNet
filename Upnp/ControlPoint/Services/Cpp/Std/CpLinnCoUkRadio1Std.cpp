@@ -660,11 +660,11 @@ void CpProxyLinnCoUkRadio1Cpp::BeginSetChannel(const std::string& aaUri, const s
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetChannel->InputParameters();
     {
-        Brn buf((const TByte*)aaUri.c_str(), aaUri.length());
+        Brn buf((const TByte*)aaUri.c_str(), (TUint)aaUri.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aaMetadata.c_str(), aaMetadata.length());
+        Brn buf((const TByte*)aaMetadata.c_str(), (TUint)aaMetadata.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -788,7 +788,7 @@ void CpProxyLinnCoUkRadio1Cpp::BeginSetId(uint32_t aaId, const std::string& aaUr
     const Action::VectorParameters& inParams = iActionSetId->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaId));
     {
-        Brn buf((const TByte*)aaUri.c_str(), aaUri.length());
+        Brn buf((const TByte*)aaUri.c_str(), (TUint)aaUri.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -853,7 +853,7 @@ void CpProxyLinnCoUkRadio1Cpp::BeginReadList(const std::string& aaIdList, Functo
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionReadList->InputParameters();
     {
-        Brn buf((const TByte*)aaIdList.c_str(), aaIdList.length());
+        Brn buf((const TByte*)aaIdList.c_str(), (TUint)aaIdList.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;

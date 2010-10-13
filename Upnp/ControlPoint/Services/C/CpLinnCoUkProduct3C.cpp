@@ -22,7 +22,7 @@ CpProxyLinnCoUkProduct3C::CpProxyLinnCoUkProduct3C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkProduct3Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyLinnCoUkProduct3C(aDevice);
+    return new CpProxyLinnCoUkProduct3C(aDevice);
 }
 
 void CpProxyLinnCoUkProduct3Destroy(THandle aHandle)

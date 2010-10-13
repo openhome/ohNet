@@ -22,7 +22,7 @@ CpProxyLinnCoUkConfiguration1C::CpProxyLinnCoUkConfiguration1C(CpDeviceC aDevice
 
 THandle CpProxyLinnCoUkConfiguration1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyLinnCoUkConfiguration1C(aDevice);
+    return new CpProxyLinnCoUkConfiguration1C(aDevice);
 }
 
 void CpProxyLinnCoUkConfiguration1Destroy(THandle aHandle)

@@ -576,7 +576,7 @@ void DvServiceLinnCoUkUi2C::DisplayLedOff(IInvocationResponse& aResponse, TUint 
 
 THandle DvServiceLinnCoUkUi2Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkUi2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceLinnCoUkUi2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkUi2Destroy(THandle aService)

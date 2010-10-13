@@ -48,7 +48,7 @@ void DvServiceLinnCoUkMediaTime1C::Seconds(IInvocationResponse& aResponse, TUint
 
 THandle DvServiceLinnCoUkMediaTime1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkMediaTime1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceLinnCoUkMediaTime1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkMediaTime1Destroy(THandle aService)

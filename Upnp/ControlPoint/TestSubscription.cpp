@@ -52,7 +52,7 @@ DeviceList::DeviceList()
 
 DeviceList::~DeviceList()
 {
-    const TUint count = iList.size();
+    const TUint count = (TUint)iList.size();
     for (TUint i=0; i<count; i++) {
         iList[i]->RemoveRef();
         iList[i] = NULL;
@@ -67,7 +67,7 @@ void DeviceList::Stop()
 void DeviceList::Poll()
 {
     Functor updatesComplete = MakeFunctor(*this, &DeviceList::InitialNotificationComplete);
-    const TUint count = iList.size();
+    const TUint count = (TUint)iList.size();
     for (TUint i=0; i<count; i++) {
         CpDevice* device = iList[i];
         TUint countBefore = gSubscriptionCount;
@@ -96,7 +96,7 @@ void DeviceList::Poll()
 
 TUint DeviceList::Count() const
 {
-    return iList.size();
+    return (TUint)iList.size();
 }
 
 void DeviceList::InitialNotificationComplete()
@@ -120,7 +120,7 @@ void DeviceList::Removed(CpDevice& aDevice)
     }
 
     AutoMutex a(iLock);
-    const TUint count = iList.size();
+    const TUint count = (TUint)iList.size();
     for (TUint i=0; i<count; i++) {
         CpDevice* device = iList[i];
         if (device->Udn() == aDevice.Udn()) {

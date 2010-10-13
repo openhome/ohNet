@@ -22,7 +22,7 @@ CpProxyUpnpOrgRenderingControl1C::CpProxyUpnpOrgRenderingControl1C(CpDeviceC aDe
 
 THandle CpProxyUpnpOrgRenderingControl1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyUpnpOrgRenderingControl1C(aDevice);
+    return new CpProxyUpnpOrgRenderingControl1C(aDevice);
 }
 
 void CpProxyUpnpOrgRenderingControl1Destroy(THandle aHandle)

@@ -22,7 +22,7 @@ CpProxyLinnCoUkDiagnostics1C::CpProxyLinnCoUkDiagnostics1C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkDiagnostics1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyLinnCoUkDiagnostics1C(aDevice);
+    return new CpProxyLinnCoUkDiagnostics1C(aDevice);
 }
 
 void CpProxyLinnCoUkDiagnostics1Destroy(THandle aHandle)

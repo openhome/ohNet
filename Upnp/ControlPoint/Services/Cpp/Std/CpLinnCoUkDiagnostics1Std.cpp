@@ -385,7 +385,7 @@ void CpProxyLinnCoUkDiagnostics1Cpp::BeginEcho(const std::string& aaIn, FunctorA
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionEcho->InputParameters();
     {
-        Brn buf((const TByte*)aaIn.c_str(), aaIn.length());
+        Brn buf((const TByte*)aaIn.c_str(), (TUint)aaIn.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -607,7 +607,7 @@ void CpProxyLinnCoUkDiagnostics1Cpp::BeginDiagnostic(const std::string& aaDiagno
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionDiagnostic->InputParameters();
     {
-        Brn buf((const TByte*)aaDiagnosticType.c_str(), aaDiagnosticType.length());
+        Brn buf((const TByte*)aaDiagnosticType.c_str(), (TUint)aaDiagnosticType.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;

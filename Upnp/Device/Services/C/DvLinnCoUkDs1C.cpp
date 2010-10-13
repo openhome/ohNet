@@ -271,7 +271,7 @@ void DvServiceLinnCoUkDs1C::ProtocolInfo(IInvocationResponse& aResponse, TUint a
 
 THandle DvServiceLinnCoUkDs1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkDs1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceLinnCoUkDs1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkDs1Destroy(THandle aService)

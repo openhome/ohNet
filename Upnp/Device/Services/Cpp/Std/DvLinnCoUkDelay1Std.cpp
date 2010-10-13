@@ -8,7 +8,7 @@ using namespace Zapp;
 
 void DvServiceLinnCoUkDelay1Cpp::SetPropertyPresetXml(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     SetPropertyString(*iPropertyPresetXml, buf);
 }
 
@@ -121,7 +121,7 @@ void DvServiceLinnCoUkDelay1Cpp::DoPresetXml(IDvInvocation& aInvocation, TUint a
     PresetXml(aVersion, respaPresetXml);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraPresetXml(aInvocation, "aPresetXml");
-    Brn buf_aPresetXml((const TByte*)respaPresetXml.c_str(), respaPresetXml.length());
+    Brn buf_aPresetXml((const TByte*)respaPresetXml.c_str(), (TUint)respaPresetXml.length());
     respWriteraPresetXml.Write(buf_aPresetXml);
     aInvocation.InvocationWriteStringEnd("aPresetXml");
 	aInvocation.InvocationWriteEnd();

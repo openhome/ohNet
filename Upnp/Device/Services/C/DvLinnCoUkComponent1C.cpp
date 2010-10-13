@@ -281,7 +281,7 @@ void DvServiceLinnCoUkComponent1C::Locate(IInvocationResponse& aResponse, TUint 
 
 THandle DvServiceLinnCoUkComponent1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkComponent1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceLinnCoUkComponent1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkComponent1Destroy(THandle aService)

@@ -22,7 +22,7 @@ CpProxyUpnpOrgSwitchPower1C::CpProxyUpnpOrgSwitchPower1C(CpDeviceC aDevice)
 
 THandle CpProxyUpnpOrgSwitchPower1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyUpnpOrgSwitchPower1C(aDevice);
+    return new CpProxyUpnpOrgSwitchPower1C(aDevice);
 }
 
 void CpProxyUpnpOrgSwitchPower1Destroy(THandle aHandle)

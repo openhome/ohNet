@@ -501,7 +501,7 @@ void DvServiceUpnpOrgScheduledRecording2C::GetRecordTaskConflicts(IInvocationRes
 
 THandle DvServiceUpnpOrgScheduledRecording2Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceUpnpOrgScheduledRecording2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceUpnpOrgScheduledRecording2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceUpnpOrgScheduledRecording2Destroy(THandle aService)

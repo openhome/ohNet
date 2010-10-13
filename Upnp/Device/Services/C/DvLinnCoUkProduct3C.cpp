@@ -604,7 +604,7 @@ void DvServiceLinnCoUkProduct3C::SetSourceVisible(IInvocationResponse& aResponse
 
 THandle DvServiceLinnCoUkProduct3Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkProduct3C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceLinnCoUkProduct3C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkProduct3Destroy(THandle aService)

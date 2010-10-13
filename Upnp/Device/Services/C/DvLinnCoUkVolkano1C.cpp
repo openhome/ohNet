@@ -308,7 +308,7 @@ void DvServiceLinnCoUkVolkano1C::SoftwareVersion(IInvocationResponse& aResponse,
 
 THandle DvServiceLinnCoUkVolkano1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkVolkano1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceLinnCoUkVolkano1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkVolkano1Destroy(THandle aService)

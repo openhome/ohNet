@@ -8,7 +8,7 @@ using namespace Zapp;
 
 void DvServiceLinnCoUkDs1Cpp::SetPropertySupportedProtocols(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     SetPropertyString(*iPropertySupportedProtocols, buf);
 }
 
@@ -70,7 +70,7 @@ void DvServiceLinnCoUkDs1Cpp::GetPropertyTrackSampleRate(uint32_t& aValue)
 
 void DvServiceLinnCoUkDs1Cpp::SetPropertyTrackCodecName(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     SetPropertyString(*iPropertyTrackCodecName, buf);
 }
 
@@ -92,7 +92,7 @@ void DvServiceLinnCoUkDs1Cpp::GetPropertyTrackId(uint32_t& aValue)
 
 void DvServiceLinnCoUkDs1Cpp::SetPropertyTransportState(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     SetPropertyString(*iPropertyTransportState, buf);
 }
 
@@ -311,7 +311,7 @@ void DvServiceLinnCoUkDs1Cpp::DoState(IDvInvocation& aInvocation, TUint aVersion
     State(aVersion, respaTransportState, respaTrackDuration, respaTrackBitRate, respaTrackLossless, respaTrackBitDepth, respaTrackSampleRate, respaTrackCodecName, respaTrackId);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraTransportState(aInvocation, "aTransportState");
-    Brn buf_aTransportState((const TByte*)respaTransportState.c_str(), respaTransportState.length());
+    Brn buf_aTransportState((const TByte*)respaTransportState.c_str(), (TUint)respaTransportState.length());
     respWriteraTransportState.Write(buf_aTransportState);
     aInvocation.InvocationWriteStringEnd("aTransportState");
     InvocationResponseUint respWriteraTrackDuration(aInvocation, "aTrackDuration");
@@ -325,7 +325,7 @@ void DvServiceLinnCoUkDs1Cpp::DoState(IDvInvocation& aInvocation, TUint aVersion
     InvocationResponseUint respWriteraTrackSampleRate(aInvocation, "aTrackSampleRate");
     respWriteraTrackSampleRate.Write(respaTrackSampleRate);
     InvocationResponseString respWriteraTrackCodecName(aInvocation, "aTrackCodecName");
-    Brn buf_aTrackCodecName((const TByte*)respaTrackCodecName.c_str(), respaTrackCodecName.length());
+    Brn buf_aTrackCodecName((const TByte*)respaTrackCodecName.c_str(), (TUint)respaTrackCodecName.length());
     respWriteraTrackCodecName.Write(buf_aTrackCodecName);
     aInvocation.InvocationWriteStringEnd("aTrackCodecName");
     InvocationResponseUint respWriteraTrackId(aInvocation, "aTrackId");
@@ -341,7 +341,7 @@ void DvServiceLinnCoUkDs1Cpp::DoProtocolInfo(IDvInvocation& aInvocation, TUint a
     ProtocolInfo(aVersion, respaSupportedProtocols);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraSupportedProtocols(aInvocation, "aSupportedProtocols");
-    Brn buf_aSupportedProtocols((const TByte*)respaSupportedProtocols.c_str(), respaSupportedProtocols.length());
+    Brn buf_aSupportedProtocols((const TByte*)respaSupportedProtocols.c_str(), (TUint)respaSupportedProtocols.length());
     respWriteraSupportedProtocols.Write(buf_aSupportedProtocols);
     aInvocation.InvocationWriteStringEnd("aSupportedProtocols");
 	aInvocation.InvocationWriteEnd();

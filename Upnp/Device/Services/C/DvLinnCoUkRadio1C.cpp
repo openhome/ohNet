@@ -421,7 +421,7 @@ void DvServiceLinnCoUkRadio1C::IdsMax(IInvocationResponse& aResponse, TUint aVer
 
 THandle DvServiceLinnCoUkRadio1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkRadio1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceLinnCoUkRadio1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkRadio1Destroy(THandle aService)

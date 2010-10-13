@@ -22,7 +22,7 @@ CpProxyLinnCoUkComponent1C::CpProxyLinnCoUkComponent1C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkComponent1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyLinnCoUkComponent1C(aDevice);
+    return new CpProxyLinnCoUkComponent1C(aDevice);
 }
 
 void CpProxyLinnCoUkComponent1Destroy(THandle aHandle)

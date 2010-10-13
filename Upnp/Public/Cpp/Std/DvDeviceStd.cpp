@@ -11,7 +11,7 @@ using namespace Zapp;
 
 DvDeviceStd::DvDeviceStd(const std::string& aUdn)
 {
-    Brn buf((const TByte*)aUdn.c_str(), aUdn.length());
+    Brn buf((const TByte*)aUdn.c_str(), (TUint)aUdn.length());
     iDevice = new DviDevice(buf);
     iUdn.assign(aUdn);
     iResourceManager = NULL;
@@ -19,7 +19,7 @@ DvDeviceStd::DvDeviceStd(const std::string& aUdn)
     
 DvDeviceStd::DvDeviceStd(const std::string& aUdn, IResourceManagerStd& aResourceManager)
 {
-    Brn buf((const TByte*)aUdn.c_str(), aUdn.length());
+    Brn buf((const TByte*)aUdn.c_str(), (TUint)aUdn.length());
     iDevice = new DviDevice(buf, *this);
     iUdn.assign(aUdn);
     iResourceManager = &aResourceManager;

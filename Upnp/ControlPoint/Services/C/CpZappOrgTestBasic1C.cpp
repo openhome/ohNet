@@ -22,7 +22,7 @@ CpProxyZappOrgTestBasic1C::CpProxyZappOrgTestBasic1C(CpDeviceC aDevice)
 
 THandle CpProxyZappOrgTestBasic1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyZappOrgTestBasic1C(aDevice);
+    return new CpProxyZappOrgTestBasic1C(aDevice);
 }
 
 void CpProxyZappOrgTestBasic1Destroy(THandle aHandle)

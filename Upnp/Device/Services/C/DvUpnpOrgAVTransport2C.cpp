@@ -666,7 +666,7 @@ void DvServiceUpnpOrgAVTransport2C::SetStateVariables(IInvocationResponse& aResp
 
 THandle DvServiceUpnpOrgAVTransport2Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceUpnpOrgAVTransport2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceUpnpOrgAVTransport2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceUpnpOrgAVTransport2Destroy(THandle aService)

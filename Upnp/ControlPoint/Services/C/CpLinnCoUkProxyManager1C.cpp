@@ -22,7 +22,7 @@ CpProxyLinnCoUkProxyManager1C::CpProxyLinnCoUkProxyManager1C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkProxyManager1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyLinnCoUkProxyManager1C(aDevice);
+    return new CpProxyLinnCoUkProxyManager1C(aDevice);
 }
 
 void CpProxyLinnCoUkProxyManager1Destroy(THandle aHandle)

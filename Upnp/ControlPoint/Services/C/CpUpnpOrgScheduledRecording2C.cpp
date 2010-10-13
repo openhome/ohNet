@@ -22,7 +22,7 @@ CpProxyUpnpOrgScheduledRecording2C::CpProxyUpnpOrgScheduledRecording2C(CpDeviceC
 
 THandle CpProxyUpnpOrgScheduledRecording2Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyUpnpOrgScheduledRecording2C(aDevice);
+    return new CpProxyUpnpOrgScheduledRecording2C(aDevice);
 }
 
 void CpProxyUpnpOrgScheduledRecording2Destroy(THandle aHandle)
