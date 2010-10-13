@@ -14,7 +14,7 @@ public:
 };
 
 CpProxyLinnCoUkDs1C::CpProxyLinnCoUkDs1C(CpDeviceC aDevice)
-    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice.iData.iPtr))
+    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice))
 {
     iProxy = new CpProxyLinnCoUkDs1(*iDevice);
 }
@@ -22,28 +22,25 @@ CpProxyLinnCoUkDs1C::CpProxyLinnCoUkDs1C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkDs1Create(CpDeviceC aDevice)
 {
-    THandle h;
-    HandleInit(&h);
-    h.iData.iPtr = new CpProxyLinnCoUkDs1C(aDevice);
-    return h;
+    return (THandle)new CpProxyLinnCoUkDs1C(aDevice);
 }
 
 void CpProxyLinnCoUkDs1Destroy(THandle aHandle)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     delete proxyC;
 }
 
 void CpProxyLinnCoUkDs1SyncPlay(THandle aHandle)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncPlay();
 }
 
 void CpProxyLinnCoUkDs1BeginPlay(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginPlay(functor);
@@ -52,9 +49,9 @@ void CpProxyLinnCoUkDs1BeginPlay(THandle aHandle, ZappCallbackAsync aCallback, v
 int32_t CpProxyLinnCoUkDs1EndPlay(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndPlay(*async);
@@ -67,14 +64,14 @@ int32_t CpProxyLinnCoUkDs1EndPlay(THandle aHandle, ZappHandleAsync aAsync)
 
 void CpProxyLinnCoUkDs1SyncPause(THandle aHandle)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncPause();
 }
 
 void CpProxyLinnCoUkDs1BeginPause(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginPause(functor);
@@ -83,9 +80,9 @@ void CpProxyLinnCoUkDs1BeginPause(THandle aHandle, ZappCallbackAsync aCallback, 
 int32_t CpProxyLinnCoUkDs1EndPause(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndPause(*async);
@@ -98,14 +95,14 @@ int32_t CpProxyLinnCoUkDs1EndPause(THandle aHandle, ZappHandleAsync aAsync)
 
 void CpProxyLinnCoUkDs1SyncStop(THandle aHandle)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncStop();
 }
 
 void CpProxyLinnCoUkDs1BeginStop(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginStop(functor);
@@ -114,9 +111,9 @@ void CpProxyLinnCoUkDs1BeginStop(THandle aHandle, ZappCallbackAsync aCallback, v
 int32_t CpProxyLinnCoUkDs1EndStop(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndStop(*async);
@@ -129,14 +126,14 @@ int32_t CpProxyLinnCoUkDs1EndStop(THandle aHandle, ZappHandleAsync aAsync)
 
 void CpProxyLinnCoUkDs1SyncSeekSecondAbsolute(THandle aHandle, uint32_t aaSecond)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSeekSecondAbsolute(aaSecond);
 }
 
 void CpProxyLinnCoUkDs1BeginSeekSecondAbsolute(THandle aHandle, uint32_t aaSecond, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSeekSecondAbsolute(aaSecond, functor);
@@ -145,9 +142,9 @@ void CpProxyLinnCoUkDs1BeginSeekSecondAbsolute(THandle aHandle, uint32_t aaSecon
 int32_t CpProxyLinnCoUkDs1EndSeekSecondAbsolute(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSeekSecondAbsolute(*async);
@@ -160,14 +157,14 @@ int32_t CpProxyLinnCoUkDs1EndSeekSecondAbsolute(THandle aHandle, ZappHandleAsync
 
 void CpProxyLinnCoUkDs1SyncSeekSecondRelative(THandle aHandle, int32_t aaSecond)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSeekSecondRelative(aaSecond);
 }
 
 void CpProxyLinnCoUkDs1BeginSeekSecondRelative(THandle aHandle, int32_t aaSecond, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSeekSecondRelative(aaSecond, functor);
@@ -176,9 +173,9 @@ void CpProxyLinnCoUkDs1BeginSeekSecondRelative(THandle aHandle, int32_t aaSecond
 int32_t CpProxyLinnCoUkDs1EndSeekSecondRelative(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSeekSecondRelative(*async);
@@ -191,14 +188,14 @@ int32_t CpProxyLinnCoUkDs1EndSeekSecondRelative(THandle aHandle, ZappHandleAsync
 
 void CpProxyLinnCoUkDs1SyncSeekTrackId(THandle aHandle, uint32_t aaTrackId)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSeekTrackId(aaTrackId);
 }
 
 void CpProxyLinnCoUkDs1BeginSeekTrackId(THandle aHandle, uint32_t aaTrackId, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSeekTrackId(aaTrackId, functor);
@@ -207,9 +204,9 @@ void CpProxyLinnCoUkDs1BeginSeekTrackId(THandle aHandle, uint32_t aaTrackId, Zap
 int32_t CpProxyLinnCoUkDs1EndSeekTrackId(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSeekTrackId(*async);
@@ -222,14 +219,14 @@ int32_t CpProxyLinnCoUkDs1EndSeekTrackId(THandle aHandle, ZappHandleAsync aAsync
 
 void CpProxyLinnCoUkDs1SyncSeekTrackAbsolute(THandle aHandle, uint32_t aaTrack)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSeekTrackAbsolute(aaTrack);
 }
 
 void CpProxyLinnCoUkDs1BeginSeekTrackAbsolute(THandle aHandle, uint32_t aaTrack, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSeekTrackAbsolute(aaTrack, functor);
@@ -238,9 +235,9 @@ void CpProxyLinnCoUkDs1BeginSeekTrackAbsolute(THandle aHandle, uint32_t aaTrack,
 int32_t CpProxyLinnCoUkDs1EndSeekTrackAbsolute(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSeekTrackAbsolute(*async);
@@ -253,14 +250,14 @@ int32_t CpProxyLinnCoUkDs1EndSeekTrackAbsolute(THandle aHandle, ZappHandleAsync 
 
 void CpProxyLinnCoUkDs1SyncSeekTrackRelative(THandle aHandle, int32_t aaTrack)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncSeekTrackRelative(aaTrack);
 }
 
 void CpProxyLinnCoUkDs1BeginSeekTrackRelative(THandle aHandle, int32_t aaTrack, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginSeekTrackRelative(aaTrack, functor);
@@ -269,9 +266,9 @@ void CpProxyLinnCoUkDs1BeginSeekTrackRelative(THandle aHandle, int32_t aaTrack, 
 int32_t CpProxyLinnCoUkDs1EndSeekTrackRelative(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndSeekTrackRelative(*async);
@@ -284,7 +281,7 @@ int32_t CpProxyLinnCoUkDs1EndSeekTrackRelative(THandle aHandle, ZappHandleAsync 
 
 void CpProxyLinnCoUkDs1SyncState(THandle aHandle, char** aaTransportState, uint32_t* aaTrackDuration, uint32_t* aaTrackBitRate, uint32_t* aaTrackLossless, uint32_t* aaTrackBitDepth, uint32_t* aaTrackSampleRate, char** aaTrackCodecName, uint32_t* aaTrackId)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aaTransportState;
     *aaTrackLossless = 0;
@@ -296,7 +293,7 @@ void CpProxyLinnCoUkDs1SyncState(THandle aHandle, char** aaTransportState, uint3
 
 void CpProxyLinnCoUkDs1BeginState(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginState(functor);
@@ -305,9 +302,9 @@ void CpProxyLinnCoUkDs1BeginState(THandle aHandle, ZappCallbackAsync aCallback, 
 int32_t CpProxyLinnCoUkDs1EndState(THandle aHandle, ZappHandleAsync aAsync, char** aaTransportState, uint32_t* aaTrackDuration, uint32_t* aaTrackBitRate, uint32_t* aaTrackLossless, uint32_t* aaTrackBitDepth, uint32_t* aaTrackSampleRate, char** aaTrackCodecName, uint32_t* aaTrackId)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     Brh buf_aaTransportState;
     *aaTransportState = NULL;
@@ -327,7 +324,7 @@ int32_t CpProxyLinnCoUkDs1EndState(THandle aHandle, ZappHandleAsync aAsync, char
 
 void CpProxyLinnCoUkDs1SyncProtocolInfo(THandle aHandle, char** aaSupportedProtocols)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aaSupportedProtocols;
     proxyC->Proxy()->SyncProtocolInfo(buf_aaSupportedProtocols);
@@ -336,7 +333,7 @@ void CpProxyLinnCoUkDs1SyncProtocolInfo(THandle aHandle, char** aaSupportedProto
 
 void CpProxyLinnCoUkDs1BeginProtocolInfo(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginProtocolInfo(functor);
@@ -345,9 +342,9 @@ void CpProxyLinnCoUkDs1BeginProtocolInfo(THandle aHandle, ZappCallbackAsync aCal
 int32_t CpProxyLinnCoUkDs1EndProtocolInfo(THandle aHandle, ZappHandleAsync aAsync, char** aaSupportedProtocols)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     Brh buf_aaSupportedProtocols;
     *aaSupportedProtocols = NULL;
@@ -363,7 +360,7 @@ int32_t CpProxyLinnCoUkDs1EndProtocolInfo(THandle aHandle, ZappHandleAsync aAsyn
 
 void CpProxyLinnCoUkDs1SetPropertySupportedProtocolsChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertySupportedProtocolsChanged(functor);
@@ -371,7 +368,7 @@ void CpProxyLinnCoUkDs1SetPropertySupportedProtocolsChanged(THandle aHandle, Zap
 
 void CpProxyLinnCoUkDs1SetPropertyTrackDurationChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyTrackDurationChanged(functor);
@@ -379,7 +376,7 @@ void CpProxyLinnCoUkDs1SetPropertyTrackDurationChanged(THandle aHandle, ZappCall
 
 void CpProxyLinnCoUkDs1SetPropertyTrackBitRateChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyTrackBitRateChanged(functor);
@@ -387,7 +384,7 @@ void CpProxyLinnCoUkDs1SetPropertyTrackBitRateChanged(THandle aHandle, ZappCallb
 
 void CpProxyLinnCoUkDs1SetPropertyTrackLosslessChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyTrackLosslessChanged(functor);
@@ -395,7 +392,7 @@ void CpProxyLinnCoUkDs1SetPropertyTrackLosslessChanged(THandle aHandle, ZappCall
 
 void CpProxyLinnCoUkDs1SetPropertyTrackBitDepthChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyTrackBitDepthChanged(functor);
@@ -403,7 +400,7 @@ void CpProxyLinnCoUkDs1SetPropertyTrackBitDepthChanged(THandle aHandle, ZappCall
 
 void CpProxyLinnCoUkDs1SetPropertyTrackSampleRateChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyTrackSampleRateChanged(functor);
@@ -411,7 +408,7 @@ void CpProxyLinnCoUkDs1SetPropertyTrackSampleRateChanged(THandle aHandle, ZappCa
 
 void CpProxyLinnCoUkDs1SetPropertyTrackCodecNameChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyTrackCodecNameChanged(functor);
@@ -419,7 +416,7 @@ void CpProxyLinnCoUkDs1SetPropertyTrackCodecNameChanged(THandle aHandle, ZappCal
 
 void CpProxyLinnCoUkDs1SetPropertyTrackIdChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyTrackIdChanged(functor);
@@ -427,7 +424,7 @@ void CpProxyLinnCoUkDs1SetPropertyTrackIdChanged(THandle aHandle, ZappCallback a
 
 void CpProxyLinnCoUkDs1SetPropertyTransportStateChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyTransportStateChanged(functor);
@@ -435,7 +432,7 @@ void CpProxyLinnCoUkDs1SetPropertyTransportStateChanged(THandle aHandle, ZappCal
 
 void CpProxyLinnCoUkDs1PropertySupportedProtocols(THandle aHandle, char** aSupportedProtocols)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aSupportedProtocols;
     proxyC->Proxy()->PropertySupportedProtocols(buf_aSupportedProtocols);
@@ -444,21 +441,21 @@ void CpProxyLinnCoUkDs1PropertySupportedProtocols(THandle aHandle, char** aSuppo
 
 void CpProxyLinnCoUkDs1PropertyTrackDuration(THandle aHandle, uint32_t* aTrackDuration)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->PropertyTrackDuration(*aTrackDuration);
 }
 
 void CpProxyLinnCoUkDs1PropertyTrackBitRate(THandle aHandle, uint32_t* aTrackBitRate)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->PropertyTrackBitRate(*aTrackBitRate);
 }
 
 void CpProxyLinnCoUkDs1PropertyTrackLossless(THandle aHandle, uint32_t* aTrackLossless)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     *aTrackLossless = false;
     proxyC->Proxy()->PropertyTrackLossless(*(TBool*)aTrackLossless);
@@ -466,21 +463,21 @@ void CpProxyLinnCoUkDs1PropertyTrackLossless(THandle aHandle, uint32_t* aTrackLo
 
 void CpProxyLinnCoUkDs1PropertyTrackBitDepth(THandle aHandle, uint32_t* aTrackBitDepth)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->PropertyTrackBitDepth(*aTrackBitDepth);
 }
 
 void CpProxyLinnCoUkDs1PropertyTrackSampleRate(THandle aHandle, uint32_t* aTrackSampleRate)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->PropertyTrackSampleRate(*aTrackSampleRate);
 }
 
 void CpProxyLinnCoUkDs1PropertyTrackCodecName(THandle aHandle, char** aTrackCodecName)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aTrackCodecName;
     proxyC->Proxy()->PropertyTrackCodecName(buf_aTrackCodecName);
@@ -489,14 +486,14 @@ void CpProxyLinnCoUkDs1PropertyTrackCodecName(THandle aHandle, char** aTrackCode
 
 void CpProxyLinnCoUkDs1PropertyTrackId(THandle aHandle, uint32_t* aTrackId)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->PropertyTrackId(*aTrackId);
 }
 
 void CpProxyLinnCoUkDs1PropertyTransportState(THandle aHandle, char** aTransportState)
 {
-    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkDs1C* proxyC = reinterpret_cast<CpProxyLinnCoUkDs1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aTransportState;
     proxyC->Proxy()->PropertyTransportState(buf_aTransportState);

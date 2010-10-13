@@ -14,7 +14,7 @@
 /**
  * 'Null' handle implying no underlying OS object exists
  */
-//#define kHandleNull  (0)
+#define kHandleNull  (0)
 
 /**
  * Big endian representation of a 16-bit integer for little endian builds and vice-versa
@@ -86,15 +86,14 @@ void OsGetPlatformNameAndVersion(char** aName, uint32_t* aMajor, uint32_t* aMino
 /**
  * Create a semaphore.
  *
- * @param[in]  aName      Name for this semaphore.  May not be unique.
+ * @param[in] aName       Name for this semaphore.  May not be unique.
  *                        Maximum length is 4 characters.
- * @param[in]  aCount     Initial count.  If this is greater than zero, the first aCount
+ * @param[in] aCount      Initial count.  If this is greater than zero, the first aCount
  *                        calls to Wait() will complete immediately
- * @param[out] aHandle    Handle to the semaphore
  *
- * @return  0 on success; other on failure
+ * @return  a valid handle on success; kHandleNull if creation failed.
  */
-int32_t OsSemaphoreCreate(const char* aName, uint32_t aCount, THandle* aHandle);
+THandle OsSemaphoreCreate(const char* aName, uint32_t aCount);
 
 /**
  * Destroy a semaphore.
@@ -159,13 +158,12 @@ int32_t OsSemaphoreSignal(THandle aSem);
 /**
  * Create a mutex.
  *
- * @param[in]  aName      Name for this mutex.  May not be unique.
- *                        Maximum length is 4 characters.
- * @param[out] aHandle    Handle to the mutex
+ * @param[in] aName   Name for this mutex.  May not be unique.
+ *                    Maximum length is 4 characters.
  *
- * @return  0 on success; other on failure
+ * @return  a valid handle on success; kHandleNull if creation failed.
  */
-int32_t OsMutexCreate(const char* aName, THandle* aHandle);
+THandle OsMutexCreate(const char* aName);
 
 /**
  * Destroy a mutex.  No further operations will be attempted using this handle.
@@ -228,12 +226,11 @@ typedef void(*ThreadEntryPoint)(void*);
  * @param[in] aArg         Pointer to pass to aEntryPoint.  This should be stored in
  *                         thread local storage of the created thread for later retrieval
  *                         by OsThreadTls().
- * @param[out] aHandle     Handle to the thread
  *
- * @return  0 on success; other on failure
+ * @return  a valid handle on success; kHandleNull if creation failed.
  */
-int32_t OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackBytes,
-                       ThreadEntryPoint aEntryPoint, void* aArg, THandle* aHandle);
+THandle OsThreadCreate(const char* aName, uint32_t aPriority, uint32_t aStackBytes,
+                       ThreadEntryPoint aEntryPoint, void* aArg);
 
 /**
  * Return the 'aArg' value passed to the entrypoint for the current thread
@@ -273,12 +270,11 @@ typedef enum
  * This is equivalent to the BSD socket() function with two of its parameters assumed
  * to be constant - 'af' should always be 2 (IpV4) and 'protocol' should always be 0.
  *
- * @param[in]  aSocketType  The type of socket to create
- * @param[out] aHandle      Handle to the socket
+ * @param[in] aSocketType  The type of socket to create
  *
- * @return  0 on success; other on failure
+ * @return  a valid handle on success; kHandleNull if creation failed.
  */
-int32_t OsNetworkCreate(OsNetworkSocketType aSocketType, THandle* aHandle);
+THandle OsNetworkCreate(OsNetworkSocketType aSocketType);
 
 /**
  * Assign a name to a socket.
@@ -407,12 +403,11 @@ int32_t OsNetworkListen(THandle aHandle, uint32_t aSlots);
  *
  * This is equivalent to the BSD accept() function
  *
- * @param[in]  aHandle      Socket handle returned from OsNetworkCreate()
- * @param[out] aNewHandle   Handle to the accepted socket
+ * @param[in] aHandle      Socket handle returned from OsNetworkCreate()
  *
- * @return  0 on success; other on failure
+ * @return  a valid handle on success; kHandleNull if creation failed.
  */
-int32_t OsNetworkAccept(THandle aHandle, THandle* aNewHandle);
+THandle OsNetworkAccept(THandle aHandle);
 
 /**
  * Convert a string into a IpV4 address

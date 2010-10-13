@@ -812,7 +812,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSetName(const std::string& aaName, Functor
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetName->InputParameters();
     {
-        Brn buf((const TByte*)aaName.c_str(), (TUint)aaName.length());
+        Brn buf((const TByte*)aaName.c_str(), aaName.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -874,7 +874,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSetRoom(const std::string& aaRoom, Functor
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetRoom->InputParameters();
     {
-        Brn buf((const TByte*)aaRoom.c_str(), (TUint)aaRoom.length());
+        Brn buf((const TByte*)aaRoom.c_str(), aaRoom.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -1077,7 +1077,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSetSourceIndexByName(const std::string& aa
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetSourceIndexByName->InputParameters();
     {
-        Brn buf((const TByte*)aaSourceName.c_str(), (TUint)aaSourceName.length());
+        Brn buf((const TByte*)aaSourceName.c_str(), aaSourceName.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -1107,7 +1107,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSetStartupSourceIndexByName(const std::str
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetStartupSourceIndexByName->InputParameters();
     {
-        Brn buf((const TByte*)aaSourceName.c_str(), (TUint)aaSourceName.length());
+        Brn buf((const TByte*)aaSourceName.c_str(), aaSourceName.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -1320,7 +1320,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSetSourceName(uint32_t aaSourceIndex, cons
     const Action::VectorParameters& inParams = iActionSetSourceName->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaSourceIndex));
     {
-        Brn buf((const TByte*)aaSourceName.c_str(), (TUint)aaSourceName.length());
+        Brn buf((const TByte*)aaSourceName.c_str(), aaSourceName.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();

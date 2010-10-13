@@ -97,7 +97,7 @@ NetworkInterfaceList& Stack::NetworkInterfaceList()
 SsdpListenerMulticast& Stack::MulticastListenerClaim(TIpAddress aInterface)
 {
     AutoMutex a(gStack->iLock);
-    const TInt count = (TUint)gStack->iMulticastListeners.size();
+    const TInt count = gStack->iMulticastListeners.size();
     for (TInt i=0; i<count; i++) {
         Stack::MListener* listener = gStack->iMulticastListeners[i];
         if (listener->Interface() == aInterface) {
@@ -115,7 +115,7 @@ SsdpListenerMulticast& Stack::MulticastListenerClaim(TIpAddress aInterface)
 void Stack::MulticastListenerRelease(TIpAddress aInterface)
 {
     gStack->iLock.Wait();
-    const TInt count = (TUint)gStack->iMulticastListeners.size();
+    const TInt count = gStack->iMulticastListeners.size();
     for (TInt i=0; i<count; i++) {
         Stack::MListener* listener = gStack->iMulticastListeners[i];
         if (listener->Interface() == aInterface) {

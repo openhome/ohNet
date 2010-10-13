@@ -8,7 +8,7 @@ using namespace Zapp;
 
 void DvServiceLinnCoUkRadio1Cpp::SetPropertyChannelUri(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyString(*iPropertyChannelUri, buf);
 }
 
@@ -20,7 +20,7 @@ void DvServiceLinnCoUkRadio1Cpp::GetPropertyChannelUri(std::string& aValue)
 
 void DvServiceLinnCoUkRadio1Cpp::SetPropertyChannelMetadata(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyString(*iPropertyChannelMetadata, buf);
 }
 
@@ -32,7 +32,7 @@ void DvServiceLinnCoUkRadio1Cpp::GetPropertyChannelMetadata(std::string& aValue)
 
 void DvServiceLinnCoUkRadio1Cpp::SetPropertyTransportState(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyString(*iPropertyTransportState, buf);
 }
 
@@ -44,7 +44,7 @@ void DvServiceLinnCoUkRadio1Cpp::GetPropertyTransportState(std::string& aValue)
 
 void DvServiceLinnCoUkRadio1Cpp::SetPropertyProtocolInfo(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyString(*iPropertyProtocolInfo, buf);
 }
 
@@ -66,7 +66,7 @@ void DvServiceLinnCoUkRadio1Cpp::GetPropertyId(uint32_t& aValue)
 
 void DvServiceLinnCoUkRadio1Cpp::SetPropertyIdArray(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyBinary(*iPropertyIdArray, buf);
 }
 
@@ -303,11 +303,11 @@ void DvServiceLinnCoUkRadio1Cpp::DoChannel(IDvInvocation& aInvocation, TUint aVe
     Channel(aVersion, respaUri, respaMetadata);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraUri(aInvocation, "aUri");
-    Brn buf_aUri((const TByte*)respaUri.c_str(), (TUint)respaUri.length());
+    Brn buf_aUri((const TByte*)respaUri.c_str(), respaUri.length());
     respWriteraUri.Write(buf_aUri);
     aInvocation.InvocationWriteStringEnd("aUri");
     InvocationResponseString respWriteraMetadata(aInvocation, "aMetadata");
-    Brn buf_aMetadata((const TByte*)respaMetadata.c_str(), (TUint)respaMetadata.length());
+    Brn buf_aMetadata((const TByte*)respaMetadata.c_str(), respaMetadata.length());
     respWriteraMetadata.Write(buf_aMetadata);
     aInvocation.InvocationWriteStringEnd("aMetadata");
 	aInvocation.InvocationWriteEnd();
@@ -336,7 +336,7 @@ void DvServiceLinnCoUkRadio1Cpp::DoProtocolInfo(IDvInvocation& aInvocation, TUin
     ProtocolInfo(aVersion, respaInfo);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraInfo(aInvocation, "aInfo");
-    Brn buf_aInfo((const TByte*)respaInfo.c_str(), (TUint)respaInfo.length());
+    Brn buf_aInfo((const TByte*)respaInfo.c_str(), respaInfo.length());
     respWriteraInfo.Write(buf_aInfo);
     aInvocation.InvocationWriteStringEnd("aInfo");
 	aInvocation.InvocationWriteEnd();
@@ -350,7 +350,7 @@ void DvServiceLinnCoUkRadio1Cpp::DoTransportState(IDvInvocation& aInvocation, TU
     TransportState(aVersion, respaState);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraState(aInvocation, "aState");
-    Brn buf_aState((const TByte*)respaState.c_str(), (TUint)respaState.length());
+    Brn buf_aState((const TByte*)respaState.c_str(), respaState.length());
     respWriteraState.Write(buf_aState);
     aInvocation.InvocationWriteStringEnd("aState");
 	aInvocation.InvocationWriteEnd();
@@ -390,7 +390,7 @@ void DvServiceLinnCoUkRadio1Cpp::DoRead(IDvInvocation& aInvocation, TUint aVersi
     Read(aVersion, aId, respaMetadata);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraMetadata(aInvocation, "aMetadata");
-    Brn buf_aMetadata((const TByte*)respaMetadata.c_str(), (TUint)respaMetadata.length());
+    Brn buf_aMetadata((const TByte*)respaMetadata.c_str(), respaMetadata.length());
     respWriteraMetadata.Write(buf_aMetadata);
     aInvocation.InvocationWriteStringEnd("aMetadata");
 	aInvocation.InvocationWriteEnd();
@@ -407,7 +407,7 @@ void DvServiceLinnCoUkRadio1Cpp::DoReadList(IDvInvocation& aInvocation, TUint aV
     ReadList(aVersion, aIdList, respaMetadataList);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraMetadataList(aInvocation, "aMetadataList");
-    Brn buf_aMetadataList((const TByte*)respaMetadataList.c_str(), (TUint)respaMetadataList.length());
+    Brn buf_aMetadataList((const TByte*)respaMetadataList.c_str(), respaMetadataList.length());
     respWriteraMetadataList.Write(buf_aMetadataList);
     aInvocation.InvocationWriteStringEnd("aMetadataList");
 	aInvocation.InvocationWriteEnd();
@@ -424,7 +424,7 @@ void DvServiceLinnCoUkRadio1Cpp::DoIdArray(IDvInvocation& aInvocation, TUint aVe
     InvocationResponseUint respWriteraIdArrayToken(aInvocation, "aIdArrayToken");
     respWriteraIdArrayToken.Write(respaIdArrayToken);
     InvocationResponseBinary respWriteraIdArray(aInvocation, "aIdArray");
-    Brn buf_aIdArray((const TByte*)respaIdArray.c_str(), (TUint)respaIdArray.length());
+    Brn buf_aIdArray((const TByte*)respaIdArray.c_str(), respaIdArray.length());
     respWriteraIdArray.Write(buf_aIdArray);
     aInvocation.InvocationWriteBinaryEnd("aIdArray");
 	aInvocation.InvocationWriteEnd();

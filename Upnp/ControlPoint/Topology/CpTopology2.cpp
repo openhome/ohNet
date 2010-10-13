@@ -115,7 +115,7 @@ void CpTopology2Group::RemoveRef()
 
 TUint CpTopology2Group::SourceCount() const
 {
-	return (TUint)iSourceList.size();
+	return (iSourceList.size());
 }
 
 TUint CpTopology2Group::SourceIndex() const
@@ -826,7 +826,7 @@ CpTopology2::~CpTopology2()
 {
 	delete (iTopology1);
 	
-    TUint count = (TUint)iDeviceList.size();
+    TUint count = iDeviceList.size();
     
     for (TUint i = 0; i < count; i++) {
     	delete (iDeviceList[i]);
@@ -872,7 +872,7 @@ void CpTopology2::UpnpRemoved(CpDevice& aDevice)
 
 void CpTopology2::DeviceRemoved(CpDevice& aDevice)
 {
-    TUint count = (TUint)iDeviceList.size();
+    TUint count = iDeviceList.size();
     
     for (TUint i = 0; i < count; i++) {
     	CpTopology2Device* device = iDeviceList[i];

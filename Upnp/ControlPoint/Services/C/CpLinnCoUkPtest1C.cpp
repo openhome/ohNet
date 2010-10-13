@@ -14,7 +14,7 @@ public:
 };
 
 CpProxyLinnCoUkPtest1C::CpProxyLinnCoUkPtest1C(CpDeviceC aDevice)
-    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice.iData.iPtr))
+    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice))
 {
     iProxy = new CpProxyLinnCoUkPtest1(*iDevice);
 }
@@ -22,21 +22,18 @@ CpProxyLinnCoUkPtest1C::CpProxyLinnCoUkPtest1C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkPtest1Create(CpDeviceC aDevice)
 {
-    THandle h;
-    HandleInit(&h);
-    h.iData.iPtr = new CpProxyLinnCoUkPtest1C(aDevice);
-    return h;
+    return (THandle)new CpProxyLinnCoUkPtest1C(aDevice);
 }
 
 void CpProxyLinnCoUkPtest1Destroy(THandle aHandle)
 {
-    CpProxyLinnCoUkPtest1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPtest1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkPtest1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPtest1C*>(aHandle);
     delete proxyC;
 }
 
 void CpProxyLinnCoUkPtest1SyncTestComPort(THandle aHandle, uint32_t aaPort, uint32_t* aaResult)
 {
-    CpProxyLinnCoUkPtest1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPtest1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkPtest1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPtest1C*>(aHandle);
     ASSERT(proxyC != NULL);
     *aaResult = 0;
     proxyC->Proxy()->SyncTestComPort(aaPort, *(TBool*)aaResult);
@@ -44,7 +41,7 @@ void CpProxyLinnCoUkPtest1SyncTestComPort(THandle aHandle, uint32_t aaPort, uint
 
 void CpProxyLinnCoUkPtest1BeginTestComPort(THandle aHandle, uint32_t aaPort, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPtest1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPtest1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkPtest1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPtest1C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginTestComPort(aaPort, functor);
@@ -53,9 +50,9 @@ void CpProxyLinnCoUkPtest1BeginTestComPort(THandle aHandle, uint32_t aaPort, Zap
 int32_t CpProxyLinnCoUkPtest1EndTestComPort(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaResult)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPtest1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPtest1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkPtest1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPtest1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     *aaResult = 0;
     try {
@@ -69,14 +66,14 @@ int32_t CpProxyLinnCoUkPtest1EndTestComPort(THandle aHandle, ZappHandleAsync aAs
 
 void CpProxyLinnCoUkPtest1SyncLedsOn(THandle aHandle)
 {
-    CpProxyLinnCoUkPtest1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPtest1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkPtest1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPtest1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncLedsOn();
 }
 
 void CpProxyLinnCoUkPtest1BeginLedsOn(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPtest1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPtest1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkPtest1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPtest1C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginLedsOn(functor);
@@ -85,9 +82,9 @@ void CpProxyLinnCoUkPtest1BeginLedsOn(THandle aHandle, ZappCallbackAsync aCallba
 int32_t CpProxyLinnCoUkPtest1EndLedsOn(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPtest1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPtest1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkPtest1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPtest1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndLedsOn(*async);
@@ -100,14 +97,14 @@ int32_t CpProxyLinnCoUkPtest1EndLedsOn(THandle aHandle, ZappHandleAsync aAsync)
 
 void CpProxyLinnCoUkPtest1SyncLedsOff(THandle aHandle)
 {
-    CpProxyLinnCoUkPtest1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPtest1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkPtest1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPtest1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncLedsOff();
 }
 
 void CpProxyLinnCoUkPtest1BeginLedsOff(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkPtest1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPtest1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkPtest1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPtest1C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginLedsOff(functor);
@@ -116,9 +113,9 @@ void CpProxyLinnCoUkPtest1BeginLedsOff(THandle aHandle, ZappCallbackAsync aCallb
 int32_t CpProxyLinnCoUkPtest1EndLedsOff(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkPtest1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPtest1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkPtest1C* proxyC = reinterpret_cast<CpProxyLinnCoUkPtest1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndLedsOff(*async);

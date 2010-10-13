@@ -258,7 +258,7 @@ void CpProxyLinnCoUkJukebox1Cpp::BeginSetPresetPrefix(const std::string& aaUri, 
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetPresetPrefix->InputParameters();
     {
-        Brn buf((const TByte*)aaUri.c_str(), (TUint)aaUri.length());
+        Brn buf((const TByte*)aaUri.c_str(), aaUri.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -320,7 +320,7 @@ void CpProxyLinnCoUkJukebox1Cpp::BeginSetAlbumArtFileName(const std::string& aaN
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetAlbumArtFileName->InputParameters();
     {
-        Brn buf((const TByte*)aaName.c_str(), (TUint)aaName.length());
+        Brn buf((const TByte*)aaName.c_str(), aaName.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();

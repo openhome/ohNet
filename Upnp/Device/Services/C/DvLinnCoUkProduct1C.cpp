@@ -119,61 +119,58 @@ void DvServiceLinnCoUkProduct1C::SetStandby(IInvocationResponse& aResponse, TUin
 
 THandle DvServiceLinnCoUkProduct1Create(DvDeviceC aDevice)
 {
-	THandle h;
-    HandleInit(&h);
-	h.iData.iPtr = new DvServiceLinnCoUkProduct1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
-	return h;
+    return (THandle)new DvServiceLinnCoUkProduct1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkProduct1Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService.iData.iPtr);
+    delete reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService);
 }
 
 void DvServiceLinnCoUkProduct1EnableActionRoom(THandle aService, CallbackProduct1Room aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService.iData.iPtr)->EnableActionRoom(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService)->EnableActionRoom(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProduct1EnableActionSetRoom(THandle aService, CallbackProduct1SetRoom aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService.iData.iPtr)->EnableActionSetRoom(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService)->EnableActionSetRoom(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProduct1EnableActionStandby(THandle aService, CallbackProduct1Standby aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService.iData.iPtr)->EnableActionStandby(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService)->EnableActionStandby(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProduct1EnableActionSetStandby(THandle aService, CallbackProduct1SetStandby aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService.iData.iPtr)->EnableActionSetStandby(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService)->EnableActionSetStandby(aCallback, aPtr);
 }
 
 int32_t DvServiceLinnCoUkProduct1SetPropertyRoom(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService.iData.iPtr)->SetPropertyRoom(buf);
+    reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService)->SetPropertyRoom(buf);
     return 0;
 }
 
 void DvServiceLinnCoUkProduct1GetPropertyRoom(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService.iData.iPtr)->GetPropertyRoom(buf);
+    reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService)->GetPropertyRoom(buf);
     *aValue = (char*)buf.Transfer();
 }
 
 int32_t DvServiceLinnCoUkProduct1SetPropertyStandby(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService.iData.iPtr)->SetPropertyStandby((aValue!=0));
+    reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService)->SetPropertyStandby((aValue!=0));
     return 0;
 }
 
 void DvServiceLinnCoUkProduct1GetPropertyStandby(THandle aService, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService.iData.iPtr)->GetPropertyStandby(val);
+    reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService)->GetPropertyStandby(val);
     *aValue = (val? 1 : 0);
 }
 

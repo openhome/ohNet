@@ -87,7 +87,7 @@ void SsdpListenerMulticast::Run()
                     if (method == Ssdp::kMethodNotify) {
                         LOG(kSsdpMulticast, "SSDP Multicast      Notify\n");
                         iLock.Wait();
-                        TUint count = (TUint)iNotifyHandlers.size();
+                        TUint count = iNotifyHandlers.size();
                         for (TUint i = 0; i<count; i++) {
                             Notify(*(iNotifyHandlers[i].iHandler));
                         }
@@ -96,7 +96,7 @@ void SsdpListenerMulticast::Run()
                     else if (method == Ssdp::kMethodMsearch) {
                         LOG(kSsdpMulticast, "SSDP Multicast      Msearch\n");
                         iLock.Wait();
-                        TUint count = (TUint)iMsearchHandlers.size();
+                        TUint count = iMsearchHandlers.size();
                         for (TUint i = 0; i<count; i++) {
                             Msearch(*(iMsearchHandlers[i].iHandler));
                         }
@@ -292,7 +292,7 @@ TInt SsdpListenerMulticast::AddMsearchHandler(ISsdpMsearchHandler* aMsearchHandl
 void SsdpListenerMulticast::RemoveNotifyHandler(TInt aHandlerId)
 {
     iLock.Wait();
-    TUint count = (TUint)iNotifyHandlers.size();
+    TUint count = iNotifyHandlers.size();
     for (TUint i = 0; i<count; i++) {
         if (iNotifyHandlers[i].iId == aHandlerId) {
             iNotifyHandlers.erase(iNotifyHandlers.begin() + i);
@@ -304,7 +304,7 @@ void SsdpListenerMulticast::RemoveNotifyHandler(TInt aHandlerId)
 void SsdpListenerMulticast::RemoveMsearchHandler(TInt aHandlerId)
 {
     iLock.Wait();
-    TUint count = (TUint)iMsearchHandlers.size();
+    TUint count = iMsearchHandlers.size();
     for (TUint i = 0; i<count; i++) {
         if (iMsearchHandlers[i].iId == aHandlerId) {
             iMsearchHandlers.erase(iMsearchHandlers.begin() + i);

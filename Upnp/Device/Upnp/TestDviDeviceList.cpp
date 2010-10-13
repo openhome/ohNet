@@ -123,7 +123,7 @@ CpDevices::~CpDevices()
 void CpDevices::Clear()
 {
     iLock.Wait();
-    const TUint count = (TUint)iList.size();
+    const TUint count = iList.size();
     for (TUint i=0; i<count; i++) {
         iList[i]->RemoveRef();
     }

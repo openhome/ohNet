@@ -24,22 +24,22 @@ public:
     inline static TUint64 TimeInUs();
     inline static void ConsoleWrite(const TChar* aStr);
 	static Brn GetPlatformNameAndVersion(TUint& aMajor, TUint& aMinor);
-    inline static TInt SemaphoreCreate(const TChar* aName, TUint aCount, THandle* aHandle);
+    inline static THandle SemaphoreCreate(const TChar* aName, TUint aCount);
     inline static void SemaphoreDestroy(THandle aSem);
     inline static void SemaphoreWait(THandle aSem);
     inline static TBool  SemaphoreTimedWait(THandle aSem, TUint aTimeoutMs);
     inline static TBool SemaphoreClear(THandle aSem);
     inline static void SemaphoreSignal(THandle aSem);
-    inline static TInt MutexCreate(const TChar* aName, THandle* aHandle);
+    inline static THandle MutexCreate(const TChar* aName);
     inline static void MutexDestroy(THandle aMutex);
     inline static void MutexLock(THandle aMutex);
     inline static void MutexUnlock(THandle aMutex);
-    inline static TInt ThreadCreate(const TChar* aName, TUint aPriority, TUint aStackBytes,
-                                    ThreadEntryPoint aEntryPoint, void* aArg, THandle* aHandle);
+    inline static THandle ThreadCreate(const TChar* aName, TUint aPriority, TUint aStackBytes,
+                                       ThreadEntryPoint aEntryPoint, void* aArg);
     inline static void* ThreadTls();
     inline static void ThreadDestroy(THandle aThread);
     inline static TBool ThreadSupportsPriorities();
-    static TInt NetworkCreate(ESocketType aSocketType, THandle* aHandle);
+    static THandle NetworkCreate(ESocketType aSocketType);
     static TInt NetworkBind(THandle aHandle, Endpoint& aEndpoint);
     static void NetworkConnect(THandle aHandle, const Endpoint& aEndpoint, TUint aTimeoutMs);
     inline static TInt NetworkSend(THandle aHandle, const Brx& aBuffer);
@@ -49,7 +49,7 @@ public:
     inline static TInt NetworkInterrupt(THandle aHandle, TBool aInterrupt);
     inline static TInt NetworkClose(THandle aHandle);
     inline static TInt NetworkListen(THandle aHandle, TUint aSlots);
-    inline static TInt NetworkAccept(THandle aHandle, THandle* aNewHandle);
+    inline static THandle NetworkAccept(THandle aHandle);
     static TIpAddress NetworkGetHostByName(const Brx& aAddress);
     static void NetworkSocketSetSendBufBytes(THandle aHandle, TUint aBytes);
     static void NetworkSocketSetReceiveTimeout(THandle aHandle, TUint aMilliSeconds);

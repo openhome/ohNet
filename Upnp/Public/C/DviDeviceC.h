@@ -27,7 +27,7 @@ private:
 
 inline DvDevice* DviDeviceC::DeviceFromHandle(DvDeviceC aHandle)
 {
-	return reinterpret_cast<DviDeviceC*>(aHandle.iData.iPtr)->Device();
+	return reinterpret_cast<DviDeviceC*>(aHandle)->Device();
 }
 
 } // namespace Zapp

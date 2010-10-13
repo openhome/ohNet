@@ -18,7 +18,7 @@ void DvServiceLinnCoUkJukebox1Cpp::GetPropertyCurrentPreset(uint32_t& aValue)
 
 void DvServiceLinnCoUkJukebox1Cpp::SetPropertyPresetPrefix(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyString(*iPropertyPresetPrefix, buf);
 }
 
@@ -30,7 +30,7 @@ void DvServiceLinnCoUkJukebox1Cpp::GetPropertyPresetPrefix(std::string& aValue)
 
 void DvServiceLinnCoUkJukebox1Cpp::SetPropertyAlbumArtFileName(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyString(*iPropertyAlbumArtFileName, buf);
 }
 
@@ -137,7 +137,7 @@ void DvServiceLinnCoUkJukebox1Cpp::DoPresetPrefix(IDvInvocation& aInvocation, TU
     PresetPrefix(aVersion, respaUri);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraUri(aInvocation, "aUri");
-    Brn buf_aUri((const TByte*)respaUri.c_str(), (TUint)respaUri.length());
+    Brn buf_aUri((const TByte*)respaUri.c_str(), respaUri.length());
     respWriteraUri.Write(buf_aUri);
     aInvocation.InvocationWriteStringEnd("aUri");
 	aInvocation.InvocationWriteEnd();
@@ -163,7 +163,7 @@ void DvServiceLinnCoUkJukebox1Cpp::DoAlbumArtFileName(IDvInvocation& aInvocation
     AlbumArtFileName(aVersion, respaName);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraName(aInvocation, "aName");
-    Brn buf_aName((const TByte*)respaName.c_str(), (TUint)respaName.length());
+    Brn buf_aName((const TByte*)respaName.c_str(), respaName.length());
     respWriteraName.Write(buf_aName);
     aInvocation.InvocationWriteStringEnd("aName");
 	aInvocation.InvocationWriteEnd();
@@ -200,7 +200,7 @@ void DvServiceLinnCoUkJukebox1Cpp::DoPresetMetaData(IDvInvocation& aInvocation, 
     PresetMetaData(aVersion, aPreset, respaMetaData);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraMetaData(aInvocation, "aMetaData");
-    Brn buf_aMetaData((const TByte*)respaMetaData.c_str(), (TUint)respaMetaData.length());
+    Brn buf_aMetaData((const TByte*)respaMetaData.c_str(), respaMetaData.length());
     respWriteraMetaData.Write(buf_aMetaData);
     aInvocation.InvocationWriteStringEnd("aMetaData");
 	aInvocation.InvocationWriteEnd();

@@ -94,42 +94,39 @@ void DvServiceUpnpOrgSwitchPower1C::GetStatus(IInvocationResponse& aResponse, TU
 
 THandle DvServiceUpnpOrgSwitchPower1Create(DvDeviceC aDevice)
 {
-	THandle h;
-    HandleInit(&h);
-	h.iData.iPtr = new DvServiceUpnpOrgSwitchPower1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
-	return h;
+    return (THandle)new DvServiceUpnpOrgSwitchPower1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceUpnpOrgSwitchPower1Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceUpnpOrgSwitchPower1C*>(aService.iData.iPtr);
+    delete reinterpret_cast<DvServiceUpnpOrgSwitchPower1C*>(aService);
 }
 
 void DvServiceUpnpOrgSwitchPower1EnableActionSetTarget(THandle aService, CallbackSwitchPower1SetTarget aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgSwitchPower1C*>(aService.iData.iPtr)->EnableActionSetTarget(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgSwitchPower1C*>(aService)->EnableActionSetTarget(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgSwitchPower1EnableActionGetTarget(THandle aService, CallbackSwitchPower1GetTarget aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgSwitchPower1C*>(aService.iData.iPtr)->EnableActionGetTarget(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgSwitchPower1C*>(aService)->EnableActionGetTarget(aCallback, aPtr);
 }
 
 void DvServiceUpnpOrgSwitchPower1EnableActionGetStatus(THandle aService, CallbackSwitchPower1GetStatus aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgSwitchPower1C*>(aService.iData.iPtr)->EnableActionGetStatus(aCallback, aPtr);
+    reinterpret_cast<DvServiceUpnpOrgSwitchPower1C*>(aService)->EnableActionGetStatus(aCallback, aPtr);
 }
 
 int32_t DvServiceUpnpOrgSwitchPower1SetPropertyStatus(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceUpnpOrgSwitchPower1C*>(aService.iData.iPtr)->SetPropertyStatus((aValue!=0));
+    reinterpret_cast<DvServiceUpnpOrgSwitchPower1C*>(aService)->SetPropertyStatus((aValue!=0));
     return 0;
 }
 
 void DvServiceUpnpOrgSwitchPower1GetPropertyStatus(THandle aService, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvServiceUpnpOrgSwitchPower1C*>(aService.iData.iPtr)->GetPropertyStatus(val);
+    reinterpret_cast<DvServiceUpnpOrgSwitchPower1C*>(aService)->GetPropertyStatus(val);
     *aValue = (val? 1 : 0);
 }
 

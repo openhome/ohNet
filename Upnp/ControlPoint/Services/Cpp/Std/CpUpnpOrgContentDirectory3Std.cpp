@@ -880,21 +880,21 @@ void CpProxyUpnpOrgContentDirectory3Cpp::BeginBrowse(const std::string& aObjectI
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionBrowse->InputParameters();
     {
-        Brn buf((const TByte*)aObjectID.c_str(), (TUint)aObjectID.length());
+        Brn buf((const TByte*)aObjectID.c_str(), aObjectID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aBrowseFlag.c_str(), (TUint)aBrowseFlag.length());
+        Brn buf((const TByte*)aBrowseFlag.c_str(), aBrowseFlag.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aFilter.c_str(), (TUint)aFilter.length());
+        Brn buf((const TByte*)aFilter.c_str(), aFilter.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aStartingIndex));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aRequestedCount));
     {
-        Brn buf((const TByte*)aSortCriteria.c_str(), (TUint)aSortCriteria.length());
+        Brn buf((const TByte*)aSortCriteria.c_str(), aSortCriteria.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -938,21 +938,21 @@ void CpProxyUpnpOrgContentDirectory3Cpp::BeginSearch(const std::string& aContain
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSearch->InputParameters();
     {
-        Brn buf((const TByte*)aContainerID.c_str(), (TUint)aContainerID.length());
+        Brn buf((const TByte*)aContainerID.c_str(), aContainerID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aSearchCriteria.c_str(), (TUint)aSearchCriteria.length());
+        Brn buf((const TByte*)aSearchCriteria.c_str(), aSearchCriteria.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aFilter.c_str(), (TUint)aFilter.length());
+        Brn buf((const TByte*)aFilter.c_str(), aFilter.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aStartingIndex));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aRequestedCount));
     {
-        Brn buf((const TByte*)aSortCriteria.c_str(), (TUint)aSortCriteria.length());
+        Brn buf((const TByte*)aSortCriteria.c_str(), aSortCriteria.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -996,11 +996,11 @@ void CpProxyUpnpOrgContentDirectory3Cpp::BeginCreateObject(const std::string& aC
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionCreateObject->InputParameters();
     {
-        Brn buf((const TByte*)aContainerID.c_str(), (TUint)aContainerID.length());
+        Brn buf((const TByte*)aContainerID.c_str(), aContainerID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aElements.c_str(), (TUint)aElements.length());
+        Brn buf((const TByte*)aElements.c_str(), aElements.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -1043,7 +1043,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::BeginDestroyObject(const std::string& a
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionDestroyObject->InputParameters();
     {
-        Brn buf((const TByte*)aObjectID.c_str(), (TUint)aObjectID.length());
+        Brn buf((const TByte*)aObjectID.c_str(), aObjectID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -1073,15 +1073,15 @@ void CpProxyUpnpOrgContentDirectory3Cpp::BeginUpdateObject(const std::string& aO
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionUpdateObject->InputParameters();
     {
-        Brn buf((const TByte*)aObjectID.c_str(), (TUint)aObjectID.length());
+        Brn buf((const TByte*)aObjectID.c_str(), aObjectID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aCurrentTagValue.c_str(), (TUint)aCurrentTagValue.length());
+        Brn buf((const TByte*)aCurrentTagValue.c_str(), aCurrentTagValue.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aNewTagValue.c_str(), (TUint)aNewTagValue.length());
+        Brn buf((const TByte*)aNewTagValue.c_str(), aNewTagValue.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -1111,11 +1111,11 @@ void CpProxyUpnpOrgContentDirectory3Cpp::BeginMoveObject(const std::string& aObj
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionMoveObject->InputParameters();
     {
-        Brn buf((const TByte*)aObjectID.c_str(), (TUint)aObjectID.length());
+        Brn buf((const TByte*)aObjectID.c_str(), aObjectID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aNewParentID.c_str(), (TUint)aNewParentID.length());
+        Brn buf((const TByte*)aNewParentID.c_str(), aNewParentID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -1153,11 +1153,11 @@ void CpProxyUpnpOrgContentDirectory3Cpp::BeginImportResource(const std::string& 
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionImportResource->InputParameters();
     {
-        Brn buf((const TByte*)aSourceURI.c_str(), (TUint)aSourceURI.length());
+        Brn buf((const TByte*)aSourceURI.c_str(), aSourceURI.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aDestinationURI.c_str(), (TUint)aDestinationURI.length());
+        Brn buf((const TByte*)aDestinationURI.c_str(), aDestinationURI.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -1192,11 +1192,11 @@ void CpProxyUpnpOrgContentDirectory3Cpp::BeginExportResource(const std::string& 
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionExportResource->InputParameters();
     {
-        Brn buf((const TByte*)aSourceURI.c_str(), (TUint)aSourceURI.length());
+        Brn buf((const TByte*)aSourceURI.c_str(), aSourceURI.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aDestinationURI.c_str(), (TUint)aDestinationURI.length());
+        Brn buf((const TByte*)aDestinationURI.c_str(), aDestinationURI.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -1231,7 +1231,7 @@ void CpProxyUpnpOrgContentDirectory3Cpp::BeginDeleteResource(const std::string& 
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionDeleteResource->InputParameters();
     {
-        Brn buf((const TByte*)aResourceURI.c_str(), (TUint)aResourceURI.length());
+        Brn buf((const TByte*)aResourceURI.c_str(), aResourceURI.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -1333,11 +1333,11 @@ void CpProxyUpnpOrgContentDirectory3Cpp::BeginCreateReference(const std::string&
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionCreateReference->InputParameters();
     {
-        Brn buf((const TByte*)aContainerID.c_str(), (TUint)aContainerID.length());
+        Brn buf((const TByte*)aContainerID.c_str(), aContainerID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aObjectID.c_str(), (TUint)aObjectID.length());
+        Brn buf((const TByte*)aObjectID.c_str(), aObjectID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -1375,12 +1375,12 @@ void CpProxyUpnpOrgContentDirectory3Cpp::BeginFreeFormQuery(const std::string& a
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionFreeFormQuery->InputParameters();
     {
-        Brn buf((const TByte*)aContainerID.c_str(), (TUint)aContainerID.length());
+        Brn buf((const TByte*)aContainerID.c_str(), aContainerID.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aCDSView));
     {
-        Brn buf((const TByte*)aQueryRequest.c_str(), (TUint)aQueryRequest.length());
+        Brn buf((const TByte*)aQueryRequest.c_str(), aQueryRequest.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;

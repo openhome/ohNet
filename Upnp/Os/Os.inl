@@ -13,13 +13,13 @@ inline TUint Os::TimeInMs()
 { return (TUint)TimeInUs()/1000; }
 inline void Os::ConsoleWrite(const TChar* aStr)
 { OsConsoleWrite(aStr); }
-inline TInt Os::SemaphoreCreate(const TChar* aName, TUint aCount, THandle* aHandle)
-{ return OsSemaphoreCreate(aName, aCount, aHandle); }
+inline THandle Os::SemaphoreCreate(const TChar* aName, TUint aCount)
+{ return OsSemaphoreCreate(aName, aCount); }
 inline void Os::SemaphoreDestroy(THandle aSem)
 { OsSemaphoreDestroy(aSem); }
 inline void Os::SemaphoreWait(THandle aSem)
 {
-    ASSERT(!HandleIsNull(&aSem));
+    ASSERT(aSem != kHandleNull);
     int status = OsSemaphoreWait(aSem);
     ASSERT(status == 0);
 }
@@ -33,29 +33,29 @@ inline TBool Os::SemaphoreClear(THandle aSem)
 { return (OsSemaphoreClear(aSem) == 1); }
 inline void Os::SemaphoreSignal(THandle aSem)
 {
-    ASSERT(!HandleIsNull(&aSem));
+    ASSERT(aSem != kHandleNull);
     int status = OsSemaphoreSignal(aSem);
     ASSERT(status == 0);
 }
-inline TInt Os::MutexCreate(const TChar* aName, THandle* aHandle)
-{ return OsMutexCreate(aName, aHandle); }
+inline THandle Os::MutexCreate(const TChar* aName)
+{ return OsMutexCreate(aName); }
 inline void Os::MutexDestroy(THandle aMutex)
 { OsMutexDestroy(aMutex); }
 inline void Os::MutexLock(THandle aMutex)
 {
-    ASSERT(!HandleIsNull(&aMutex));
+    ASSERT(aMutex != kHandleNull);
     int status = OsMutexLock(aMutex);
     ASSERT(status == 0);
 }
 inline void Os::MutexUnlock(THandle aMutex)
 {
-    ASSERT(!HandleIsNull(&aMutex));
+    ASSERT(aMutex != kHandleNull);
     int status = OsMutexUnlock(aMutex);
     ASSERT(status == 0);
 }
-inline TInt Os::ThreadCreate(const TChar* aName, TUint aPriority, TUint aStackBytes,
-                             ThreadEntryPoint aEntryPoint, void* aArg, THandle* aHandle)
-{ return OsThreadCreate(aName, aPriority, aStackBytes, aEntryPoint, aArg, aHandle); }
+inline THandle Os::ThreadCreate(const TChar* aName, TUint aPriority, TUint aStackBytes,
+                                ThreadEntryPoint aEntryPoint, void* aArg)
+{ return OsThreadCreate(aName, aPriority, aStackBytes, aEntryPoint, aArg); }
 inline void* Os::ThreadTls()
 { return OsThreadTls(); }
 inline void Os::ThreadDestroy(THandle aThread)
@@ -75,8 +75,8 @@ inline TInt Os::NetworkClose(THandle aHandle)
 { return OsNetworkClose(aHandle); }
 inline TInt Os::NetworkListen(THandle aHandle, TUint aSlots)
 { return OsNetworkListen(aHandle, aSlots); }
-inline TInt Os::NetworkAccept(THandle aHandle, THandle* aNewHandle)
-{ return OsNetworkAccept(aHandle, aNewHandle); }
+inline THandle Os::NetworkAccept(THandle aHandle)
+{ return OsNetworkAccept(aHandle); }
 void Os::NetworkSetInterfaceChangedObserver(InterfaceListChanged aCallback, void* aArg)
 { OsNetworkSetInterfaceChangedObserver(aCallback, aArg); }
 

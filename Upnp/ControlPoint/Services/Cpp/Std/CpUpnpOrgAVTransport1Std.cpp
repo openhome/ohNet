@@ -620,11 +620,11 @@ void CpProxyUpnpOrgAVTransport1Cpp::BeginSetAVTransportURI(uint32_t aInstanceID,
     const Action::VectorParameters& inParams = iActionSetAVTransportURI->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     {
-        Brn buf((const TByte*)aCurrentURI.c_str(), (TUint)aCurrentURI.length());
+        Brn buf((const TByte*)aCurrentURI.c_str(), aCurrentURI.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aCurrentURIMetaData.c_str(), (TUint)aCurrentURIMetaData.length());
+        Brn buf((const TByte*)aCurrentURIMetaData.c_str(), aCurrentURIMetaData.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -655,11 +655,11 @@ void CpProxyUpnpOrgAVTransport1Cpp::BeginSetNextAVTransportURI(uint32_t aInstanc
     const Action::VectorParameters& inParams = iActionSetNextAVTransportURI->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     {
-        Brn buf((const TByte*)aNextURI.c_str(), (TUint)aNextURI.length());
+        Brn buf((const TByte*)aNextURI.c_str(), aNextURI.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aNextURIMetaData.c_str(), (TUint)aNextURIMetaData.length());
+        Brn buf((const TByte*)aNextURIMetaData.c_str(), aNextURIMetaData.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -980,7 +980,7 @@ void CpProxyUpnpOrgAVTransport1Cpp::BeginPlay(uint32_t aInstanceID, const std::s
     const Action::VectorParameters& inParams = iActionPlay->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     {
-        Brn buf((const TByte*)aSpeed.c_str(), (TUint)aSpeed.length());
+        Brn buf((const TByte*)aSpeed.c_str(), aSpeed.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -1065,11 +1065,11 @@ void CpProxyUpnpOrgAVTransport1Cpp::BeginSeek(uint32_t aInstanceID, const std::s
     const Action::VectorParameters& inParams = iActionSeek->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     {
-        Brn buf((const TByte*)aUnit.c_str(), (TUint)aUnit.length());
+        Brn buf((const TByte*)aUnit.c_str(), aUnit.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aTarget.c_str(), (TUint)aTarget.length());
+        Brn buf((const TByte*)aTarget.c_str(), aTarget.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -1154,7 +1154,7 @@ void CpProxyUpnpOrgAVTransport1Cpp::BeginSetPlayMode(uint32_t aInstanceID, const
     const Action::VectorParameters& inParams = iActionSetPlayMode->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     {
-        Brn buf((const TByte*)aNewPlayMode.c_str(), (TUint)aNewPlayMode.length());
+        Brn buf((const TByte*)aNewPlayMode.c_str(), aNewPlayMode.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -1185,7 +1185,7 @@ void CpProxyUpnpOrgAVTransport1Cpp::BeginSetRecordQualityMode(uint32_t aInstance
     const Action::VectorParameters& inParams = iActionSetRecordQualityMode->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     {
-        Brn buf((const TByte*)aNewRecordQualityMode.c_str(), (TUint)aNewRecordQualityMode.length());
+        Brn buf((const TByte*)aNewRecordQualityMode.c_str(), aNewRecordQualityMode.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();

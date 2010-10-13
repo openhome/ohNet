@@ -14,7 +14,7 @@ public:
 };
 
 CpProxyLinnCoUkTime1C::CpProxyLinnCoUkTime1C(CpDeviceC aDevice)
-    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice.iData.iPtr))
+    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice))
 {
     iProxy = new CpProxyLinnCoUkTime1(*iDevice);
 }
@@ -22,28 +22,25 @@ CpProxyLinnCoUkTime1C::CpProxyLinnCoUkTime1C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkTime1Create(CpDeviceC aDevice)
 {
-    THandle h;
-    HandleInit(&h);
-    h.iData.iPtr = new CpProxyLinnCoUkTime1C(aDevice);
-    return h;
+    return (THandle)new CpProxyLinnCoUkTime1C(aDevice);
 }
 
 void CpProxyLinnCoUkTime1Destroy(THandle aHandle)
 {
-    CpProxyLinnCoUkTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkTime1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkTime1C*>(aHandle);
     delete proxyC;
 }
 
 void CpProxyLinnCoUkTime1SyncTime(THandle aHandle, uint32_t* aaTrackCount, uint32_t* aaDuration, uint32_t* aaSeconds)
 {
-    CpProxyLinnCoUkTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkTime1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncTime(*aaTrackCount, *aaDuration, *aaSeconds);
 }
 
 void CpProxyLinnCoUkTime1BeginTime(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkTime1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginTime(functor);
@@ -52,9 +49,9 @@ void CpProxyLinnCoUkTime1BeginTime(THandle aHandle, ZappCallbackAsync aCallback,
 int32_t CpProxyLinnCoUkTime1EndTime(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aaTrackCount, uint32_t* aaDuration, uint32_t* aaSeconds)
 {
     int32_t err = 0;
-    CpProxyLinnCoUkTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkTime1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndTime(*async, *aaTrackCount, *aaDuration, *aaSeconds);
@@ -67,7 +64,7 @@ int32_t CpProxyLinnCoUkTime1EndTime(THandle aHandle, ZappHandleAsync aAsync, uin
 
 void CpProxyLinnCoUkTime1SetPropertyTrackCountChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkTime1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyTrackCountChanged(functor);
@@ -75,7 +72,7 @@ void CpProxyLinnCoUkTime1SetPropertyTrackCountChanged(THandle aHandle, ZappCallb
 
 void CpProxyLinnCoUkTime1SetPropertyDurationChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkTime1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyDurationChanged(functor);
@@ -83,7 +80,7 @@ void CpProxyLinnCoUkTime1SetPropertyDurationChanged(THandle aHandle, ZappCallbac
 
 void CpProxyLinnCoUkTime1SetPropertySecondsChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyLinnCoUkTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkTime1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertySecondsChanged(functor);
@@ -91,21 +88,21 @@ void CpProxyLinnCoUkTime1SetPropertySecondsChanged(THandle aHandle, ZappCallback
 
 void CpProxyLinnCoUkTime1PropertyTrackCount(THandle aHandle, uint32_t* aTrackCount)
 {
-    CpProxyLinnCoUkTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkTime1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->PropertyTrackCount(*aTrackCount);
 }
 
 void CpProxyLinnCoUkTime1PropertyDuration(THandle aHandle, uint32_t* aDuration)
 {
-    CpProxyLinnCoUkTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkTime1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->PropertyDuration(*aDuration);
 }
 
 void CpProxyLinnCoUkTime1PropertySeconds(THandle aHandle, uint32_t* aSeconds)
 {
-    CpProxyLinnCoUkTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkTime1C*>(aHandle.iData.iPtr);
+    CpProxyLinnCoUkTime1C* proxyC = reinterpret_cast<CpProxyLinnCoUkTime1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->PropertySeconds(*aSeconds);
 }

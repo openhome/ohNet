@@ -8,7 +8,7 @@ using namespace Zapp;
 
 void DvServiceLinnCoUkProduct3Cpp::SetPropertyProductType(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyString(*iPropertyProductType, buf);
 }
 
@@ -20,7 +20,7 @@ void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductType(std::string& aValue)
 
 void DvServiceLinnCoUkProduct3Cpp::SetPropertyProductModel(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyString(*iPropertyProductModel, buf);
 }
 
@@ -32,7 +32,7 @@ void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductModel(std::string& aValue)
 
 void DvServiceLinnCoUkProduct3Cpp::SetPropertyProductName(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyString(*iPropertyProductName, buf);
 }
 
@@ -44,7 +44,7 @@ void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductName(std::string& aValue)
 
 void DvServiceLinnCoUkProduct3Cpp::SetPropertyProductRoom(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyString(*iPropertyProductRoom, buf);
 }
 
@@ -86,7 +86,7 @@ void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductSourceCount(uint32_t& aValu
 
 void DvServiceLinnCoUkProduct3Cpp::SetPropertyProductSourceXml(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), aValue.length());
     SetPropertyString(*iPropertyProductSourceXml, buf);
 }
 
@@ -384,7 +384,7 @@ void DvServiceLinnCoUkProduct3Cpp::DoType(IDvInvocation& aInvocation, TUint aVer
     Type(aVersion, respaType);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraType(aInvocation, "aType");
-    Brn buf_aType((const TByte*)respaType.c_str(), (TUint)respaType.length());
+    Brn buf_aType((const TByte*)respaType.c_str(), respaType.length());
     respWriteraType.Write(buf_aType);
     aInvocation.InvocationWriteStringEnd("aType");
 	aInvocation.InvocationWriteEnd();
@@ -398,7 +398,7 @@ void DvServiceLinnCoUkProduct3Cpp::DoModel(IDvInvocation& aInvocation, TUint aVe
     Model(aVersion, respaModel);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraModel(aInvocation, "aModel");
-    Brn buf_aModel((const TByte*)respaModel.c_str(), (TUint)respaModel.length());
+    Brn buf_aModel((const TByte*)respaModel.c_str(), respaModel.length());
     respWriteraModel.Write(buf_aModel);
     aInvocation.InvocationWriteStringEnd("aModel");
 	aInvocation.InvocationWriteEnd();
@@ -412,7 +412,7 @@ void DvServiceLinnCoUkProduct3Cpp::DoName(IDvInvocation& aInvocation, TUint aVer
     Name(aVersion, respaName);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraName(aInvocation, "aName");
-    Brn buf_aName((const TByte*)respaName.c_str(), (TUint)respaName.length());
+    Brn buf_aName((const TByte*)respaName.c_str(), respaName.length());
     respWriteraName.Write(buf_aName);
     aInvocation.InvocationWriteStringEnd("aName");
 	aInvocation.InvocationWriteEnd();
@@ -438,7 +438,7 @@ void DvServiceLinnCoUkProduct3Cpp::DoRoom(IDvInvocation& aInvocation, TUint aVer
     Room(aVersion, respaRoom);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraRoom(aInvocation, "aRoom");
-    Brn buf_aRoom((const TByte*)respaRoom.c_str(), (TUint)respaRoom.length());
+    Brn buf_aRoom((const TByte*)respaRoom.c_str(), respaRoom.length());
     respWriteraRoom.Write(buf_aRoom);
     aInvocation.InvocationWriteStringEnd("aRoom");
 	aInvocation.InvocationWriteEnd();
@@ -498,7 +498,7 @@ void DvServiceLinnCoUkProduct3Cpp::DoSourceXml(IDvInvocation& aInvocation, TUint
     SourceXml(aVersion, respaSourceXml);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraSourceXml(aInvocation, "aSourceXml");
-    Brn buf_aSourceXml((const TByte*)respaSourceXml.c_str(), (TUint)respaSourceXml.length());
+    Brn buf_aSourceXml((const TByte*)respaSourceXml.c_str(), respaSourceXml.length());
     respWriteraSourceXml.Write(buf_aSourceXml);
     aInvocation.InvocationWriteStringEnd("aSourceXml");
 	aInvocation.InvocationWriteEnd();
@@ -603,7 +603,7 @@ void DvServiceLinnCoUkProduct3Cpp::DoSourceSystemName(IDvInvocation& aInvocation
     SourceSystemName(aVersion, aSourceIndex, respaSourceName);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraSourceName(aInvocation, "aSourceName");
-    Brn buf_aSourceName((const TByte*)respaSourceName.c_str(), (TUint)respaSourceName.length());
+    Brn buf_aSourceName((const TByte*)respaSourceName.c_str(), respaSourceName.length());
     respWriteraSourceName.Write(buf_aSourceName);
     aInvocation.InvocationWriteStringEnd("aSourceName");
 	aInvocation.InvocationWriteEnd();
@@ -618,7 +618,7 @@ void DvServiceLinnCoUkProduct3Cpp::DoSourceName(IDvInvocation& aInvocation, TUin
     SourceName(aVersion, aSourceIndex, respaSourceName);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraSourceName(aInvocation, "aSourceName");
-    Brn buf_aSourceName((const TByte*)respaSourceName.c_str(), (TUint)respaSourceName.length());
+    Brn buf_aSourceName((const TByte*)respaSourceName.c_str(), respaSourceName.length());
     respWriteraSourceName.Write(buf_aSourceName);
     aInvocation.InvocationWriteStringEnd("aSourceName");
 	aInvocation.InvocationWriteEnd();
@@ -646,7 +646,7 @@ void DvServiceLinnCoUkProduct3Cpp::DoSourceType(IDvInvocation& aInvocation, TUin
     SourceType(aVersion, aSourceIndex, respaSourceType);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraSourceType(aInvocation, "aSourceType");
-    Brn buf_aSourceType((const TByte*)respaSourceType.c_str(), (TUint)respaSourceType.length());
+    Brn buf_aSourceType((const TByte*)respaSourceType.c_str(), respaSourceType.length());
     respWriteraSourceType.Write(buf_aSourceType);
     aInvocation.InvocationWriteStringEnd("aSourceType");
 	aInvocation.InvocationWriteEnd();

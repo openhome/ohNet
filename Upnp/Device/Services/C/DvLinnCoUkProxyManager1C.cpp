@@ -262,118 +262,115 @@ void DvServiceLinnCoUkProxyManager1C::TestDiscPlayerConnection(IInvocationRespon
 
 THandle DvServiceLinnCoUkProxyManager1Create(DvDeviceC aDevice)
 {
-	THandle h;
-    HandleInit(&h);
-	h.iData.iPtr = new DvServiceLinnCoUkProxyManager1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
-	return h;
+    return (THandle)new DvServiceLinnCoUkProxyManager1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkProxyManager1Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService.iData.iPtr);
+    delete reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService);
 }
 
 void DvServiceLinnCoUkProxyManager1EnableActionKontrolProductConnected(THandle aService, CallbackProxyManager1KontrolProductConnected aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService.iData.iPtr)->EnableActionKontrolProductConnected(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->EnableActionKontrolProductConnected(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProxyManager1EnableActionSetKontrolProductConnected(THandle aService, CallbackProxyManager1SetKontrolProductConnected aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService.iData.iPtr)->EnableActionSetKontrolProductConnected(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->EnableActionSetKontrolProductConnected(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProxyManager1EnableActionKontrolProductComPort(THandle aService, CallbackProxyManager1KontrolProductComPort aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService.iData.iPtr)->EnableActionKontrolProductComPort(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->EnableActionKontrolProductComPort(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProxyManager1EnableActionSetKontrolProductComPort(THandle aService, CallbackProxyManager1SetKontrolProductComPort aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService.iData.iPtr)->EnableActionSetKontrolProductComPort(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->EnableActionSetKontrolProductComPort(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProxyManager1EnableActionDiscPlayerConnected(THandle aService, CallbackProxyManager1DiscPlayerConnected aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService.iData.iPtr)->EnableActionDiscPlayerConnected(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->EnableActionDiscPlayerConnected(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProxyManager1EnableActionSetDiscPlayerConnected(THandle aService, CallbackProxyManager1SetDiscPlayerConnected aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService.iData.iPtr)->EnableActionSetDiscPlayerConnected(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->EnableActionSetDiscPlayerConnected(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProxyManager1EnableActionDiscPlayerComPort(THandle aService, CallbackProxyManager1DiscPlayerComPort aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService.iData.iPtr)->EnableActionDiscPlayerComPort(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->EnableActionDiscPlayerComPort(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProxyManager1EnableActionSetDiscPlayerComPort(THandle aService, CallbackProxyManager1SetDiscPlayerComPort aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService.iData.iPtr)->EnableActionSetDiscPlayerComPort(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->EnableActionSetDiscPlayerComPort(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProxyManager1EnableActionTestKontrolProductConnection(THandle aService, CallbackProxyManager1TestKontrolProductConnection aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService.iData.iPtr)->EnableActionTestKontrolProductConnection(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->EnableActionTestKontrolProductConnection(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkProxyManager1EnableActionTestDiscPlayerConnection(THandle aService, CallbackProxyManager1TestDiscPlayerConnection aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService.iData.iPtr)->EnableActionTestDiscPlayerConnection(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->EnableActionTestDiscPlayerConnection(aCallback, aPtr);
 }
 
 int32_t DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductConnected(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService.iData.iPtr)->SetPropertyKontrolProductConnected(buf);
+    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->SetPropertyKontrolProductConnected(buf);
     return 0;
 }
 
 void DvServiceLinnCoUkProxyManager1GetPropertyKontrolProductConnected(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService.iData.iPtr)->GetPropertyKontrolProductConnected(buf);
+    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->GetPropertyKontrolProductConnected(buf);
     *aValue = (char*)buf.Transfer();
 }
 
 int32_t DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductComPort(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService.iData.iPtr)->SetPropertyKontrolProductComPort(aValue);
+    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->SetPropertyKontrolProductComPort(aValue);
     return 0;
 }
 
 void DvServiceLinnCoUkProxyManager1GetPropertyKontrolProductComPort(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService.iData.iPtr)->GetPropertyKontrolProductComPort(val);
+    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->GetPropertyKontrolProductComPort(val);
     *aValue = val;
 }
 
 int32_t DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerConnected(THandle aService, const char* aValue)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService.iData.iPtr)->SetPropertyDiscPlayerConnected(buf);
+    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->SetPropertyDiscPlayerConnected(buf);
     return 0;
 }
 
 void DvServiceLinnCoUkProxyManager1GetPropertyDiscPlayerConnected(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService.iData.iPtr)->GetPropertyDiscPlayerConnected(buf);
+    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->GetPropertyDiscPlayerConnected(buf);
     *aValue = (char*)buf.Transfer();
 }
 
 int32_t DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerComPort(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService.iData.iPtr)->SetPropertyDiscPlayerComPort(aValue);
+    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->SetPropertyDiscPlayerComPort(aValue);
     return 0;
 }
 
 void DvServiceLinnCoUkProxyManager1GetPropertyDiscPlayerComPort(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService.iData.iPtr)->GetPropertyDiscPlayerComPort(val);
+    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->GetPropertyDiscPlayerComPort(val);
     *aValue = val;
 }
 

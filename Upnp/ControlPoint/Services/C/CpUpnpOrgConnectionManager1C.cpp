@@ -14,7 +14,7 @@ public:
 };
 
 CpProxyUpnpOrgConnectionManager1C::CpProxyUpnpOrgConnectionManager1C(CpDeviceC aDevice)
-    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice.iData.iPtr))
+    : CpProxyC(*reinterpret_cast<CpiDevice*>(aDevice))
 {
     iProxy = new CpProxyUpnpOrgConnectionManager1(*iDevice);
 }
@@ -22,21 +22,18 @@ CpProxyUpnpOrgConnectionManager1C::CpProxyUpnpOrgConnectionManager1C(CpDeviceC a
 
 THandle CpProxyUpnpOrgConnectionManager1Create(CpDeviceC aDevice)
 {
-    THandle h;
-    HandleInit(&h);
-    h.iData.iPtr = new CpProxyUpnpOrgConnectionManager1C(aDevice);
-    return h;
+    return (THandle)new CpProxyUpnpOrgConnectionManager1C(aDevice);
 }
 
 void CpProxyUpnpOrgConnectionManager1Destroy(THandle aHandle)
 {
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     delete proxyC;
 }
 
 void CpProxyUpnpOrgConnectionManager1SyncGetProtocolInfo(THandle aHandle, char** aSource, char** aSink)
 {
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aSource;
     Brh buf_aSink;
@@ -47,7 +44,7 @@ void CpProxyUpnpOrgConnectionManager1SyncGetProtocolInfo(THandle aHandle, char**
 
 void CpProxyUpnpOrgConnectionManager1BeginGetProtocolInfo(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetProtocolInfo(functor);
@@ -56,9 +53,9 @@ void CpProxyUpnpOrgConnectionManager1BeginGetProtocolInfo(THandle aHandle, ZappC
 int32_t CpProxyUpnpOrgConnectionManager1EndGetProtocolInfo(THandle aHandle, ZappHandleAsync aAsync, char** aSource, char** aSink)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     Brh buf_aSource;
     *aSource = NULL;
@@ -77,7 +74,7 @@ int32_t CpProxyUpnpOrgConnectionManager1EndGetProtocolInfo(THandle aHandle, Zapp
 
 void CpProxyUpnpOrgConnectionManager1SyncPrepareForConnection(THandle aHandle, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, int32_t* aConnectionID, int32_t* aAVTransportID, int32_t* aRcsID)
 {
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRemoteProtocolInfo(aRemoteProtocolInfo);
     Brh buf_aPeerConnectionManager(aPeerConnectionManager);
@@ -87,7 +84,7 @@ void CpProxyUpnpOrgConnectionManager1SyncPrepareForConnection(THandle aHandle, c
 
 void CpProxyUpnpOrgConnectionManager1BeginPrepareForConnection(THandle aHandle, const char* aRemoteProtocolInfo, const char* aPeerConnectionManager, int32_t aPeerConnectionID, const char* aDirection, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aRemoteProtocolInfo(aRemoteProtocolInfo);
     Brh buf_aPeerConnectionManager(aPeerConnectionManager);
@@ -99,9 +96,9 @@ void CpProxyUpnpOrgConnectionManager1BeginPrepareForConnection(THandle aHandle, 
 int32_t CpProxyUpnpOrgConnectionManager1EndPrepareForConnection(THandle aHandle, ZappHandleAsync aAsync, int32_t* aConnectionID, int32_t* aAVTransportID, int32_t* aRcsID)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndPrepareForConnection(*async, *aConnectionID, *aAVTransportID, *aRcsID);
@@ -114,14 +111,14 @@ int32_t CpProxyUpnpOrgConnectionManager1EndPrepareForConnection(THandle aHandle,
 
 void CpProxyUpnpOrgConnectionManager1SyncConnectionComplete(THandle aHandle, int32_t aConnectionID)
 {
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Proxy()->SyncConnectionComplete(aConnectionID);
 }
 
 void CpProxyUpnpOrgConnectionManager1BeginConnectionComplete(THandle aHandle, int32_t aConnectionID, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginConnectionComplete(aConnectionID, functor);
@@ -130,9 +127,9 @@ void CpProxyUpnpOrgConnectionManager1BeginConnectionComplete(THandle aHandle, in
 int32_t CpProxyUpnpOrgConnectionManager1EndConnectionComplete(THandle aHandle, ZappHandleAsync aAsync)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     try {
         proxyC->Proxy()->EndConnectionComplete(*async);
@@ -145,7 +142,7 @@ int32_t CpProxyUpnpOrgConnectionManager1EndConnectionComplete(THandle aHandle, Z
 
 void CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionIDs(THandle aHandle, char** aConnectionIDs)
 {
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aConnectionIDs;
     proxyC->Proxy()->SyncGetCurrentConnectionIDs(buf_aConnectionIDs);
@@ -154,7 +151,7 @@ void CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionIDs(THandle aHandle
 
 void CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionIDs(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetCurrentConnectionIDs(functor);
@@ -163,9 +160,9 @@ void CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionIDs(THandle aHandl
 int32_t CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionIDs(THandle aHandle, ZappHandleAsync aAsync, char** aConnectionIDs)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     Brh buf_aConnectionIDs;
     *aConnectionIDs = NULL;
@@ -181,7 +178,7 @@ int32_t CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionIDs(THandle aHand
 
 void CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionInfo(THandle aHandle, int32_t aConnectionID, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus)
 {
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aProtocolInfo;
     Brh buf_aPeerConnectionManager;
@@ -196,7 +193,7 @@ void CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionInfo(THandle aHandl
 
 void CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionInfo(THandle aHandle, int32_t aConnectionID, ZappCallbackAsync aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
     proxyC->Proxy()->BeginGetCurrentConnectionInfo(aConnectionID, functor);
@@ -205,9 +202,9 @@ void CpProxyUpnpOrgConnectionManager1BeginGetCurrentConnectionInfo(THandle aHand
 int32_t CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionInfo(THandle aHandle, ZappHandleAsync aAsync, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus)
 {
     int32_t err = 0;
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
-    IAsync* async = reinterpret_cast<IAsync*>(aAsync.iData.iPtr);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
     ASSERT(async != NULL);
     Brh buf_aProtocolInfo;
     *aProtocolInfo = NULL;
@@ -232,7 +229,7 @@ int32_t CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionInfo(THandle aHan
 
 void CpProxyUpnpOrgConnectionManager1SetPropertySourceProtocolInfoChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertySourceProtocolInfoChanged(functor);
@@ -240,7 +237,7 @@ void CpProxyUpnpOrgConnectionManager1SetPropertySourceProtocolInfoChanged(THandl
 
 void CpProxyUpnpOrgConnectionManager1SetPropertySinkProtocolInfoChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertySinkProtocolInfoChanged(functor);
@@ -248,7 +245,7 @@ void CpProxyUpnpOrgConnectionManager1SetPropertySinkProtocolInfoChanged(THandle 
 
 void CpProxyUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDsChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->Proxy()->SetPropertyCurrentConnectionIDsChanged(functor);
@@ -256,7 +253,7 @@ void CpProxyUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDsChanged(THan
 
 void CpProxyUpnpOrgConnectionManager1PropertySourceProtocolInfo(THandle aHandle, char** aSourceProtocolInfo)
 {
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aSourceProtocolInfo;
     proxyC->Proxy()->PropertySourceProtocolInfo(buf_aSourceProtocolInfo);
@@ -265,7 +262,7 @@ void CpProxyUpnpOrgConnectionManager1PropertySourceProtocolInfo(THandle aHandle,
 
 void CpProxyUpnpOrgConnectionManager1PropertySinkProtocolInfo(THandle aHandle, char** aSinkProtocolInfo)
 {
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aSinkProtocolInfo;
     proxyC->Proxy()->PropertySinkProtocolInfo(buf_aSinkProtocolInfo);
@@ -274,7 +271,7 @@ void CpProxyUpnpOrgConnectionManager1PropertySinkProtocolInfo(THandle aHandle, c
 
 void CpProxyUpnpOrgConnectionManager1PropertyCurrentConnectionIDs(THandle aHandle, char** aCurrentConnectionIDs)
 {
-    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle.iData.iPtr);
+    CpProxyUpnpOrgConnectionManager1C* proxyC = reinterpret_cast<CpProxyUpnpOrgConnectionManager1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brhz buf_aCurrentConnectionIDs;
     proxyC->Proxy()->PropertyCurrentConnectionIDs(buf_aCurrentConnectionIDs);

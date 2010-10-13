@@ -181,7 +181,7 @@ void <#=className#>::Begin<#=a.name#>(<#=InTypesAndNamesTrailingComma(a)#>Functo
 <#          if (i.variable.type=="string" || i.variable.type=="bin.base64" || i.variable.type=="uri") #>
 <#              { #>
     {
-        Brn buf((const TByte*)a<#=i.name#>.c_str(), (TUint)a<#=i.name#>.length());
+        Brn buf((const TByte*)a<#=i.name#>.c_str(), a<#=i.name#>.length());
         invocation->AddInput(new <#=argclass[i.variable.type]#>(*inParams[inIndex++], buf));
     }
 <#              } #>

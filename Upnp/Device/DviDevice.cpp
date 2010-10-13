@@ -168,7 +168,7 @@ void DviDevice::AddService(DviService* aService)
 
 TUint DviDevice::ServiceCount() const
 {
-    return (TUint)iServices.size();
+    return iServices.size();
 }
 
 DviService& DviDevice::Service(TUint aIndex) const
@@ -187,7 +187,7 @@ void DviDevice::AddDevice(DviDevice* aDevice)
 
 TUint DviDevice::DeviceCount() const
 {
-    return (TUint)iDevices.size();
+    return iDevices.size();
 }
 
 DviDevice& DviDevice::Device(TUint aIndex) const

@@ -13,10 +13,7 @@ using namespace Zapp;
 static THandle SocketCreate(ESocketType aSocketType)
 {
     LOGF(kNetwork, "SocketCreate  ST = %d, \n", aSocketType);
-    THandle handle;
-    if (0 != Zapp::Os::NetworkCreate(aSocketType, &handle)) {
-        THROW(NetworkError);
-    }
+    THandle handle = Zapp::Os::NetworkCreate(aSocketType);
     LOGF(kNetwork, "SocketCreate  Socket H = %d\n", handle);
     return handle;
 }
@@ -148,12 +145,12 @@ static void SocketListen(THandle aHandle, TUint aSlots)
 static THandle SocketAccept(THandle aHandle)
 {
     LOGF(kNetwork, "SocketAccept H = %d\n", aHandle);
-    THandle handle;
-    if (0 != Zapp::Os::NetworkAccept(aHandle, &handle)) {
+    THandle handle = Zapp::Os::NetworkAccept(aHandle);
+    LOGF(kNetwork,"SocketAccept Accepted Handle = %d\n", handle);
+    if(handle == kHandleNull) {
         LOG2F(kNetwork, kError, "SocketAccept H = %d\n", handle);
         THROW(NetworkError);
     }
-    LOGF(kNetwork,"SocketAccept Accepted Handle = %d\n", handle);
     return handle;
 }
 
@@ -240,7 +237,7 @@ TBool Endpoint::Equals(const Endpoint& aEndpoint) const
 
 Socket::Socket()
 {
-    HandleInit(&iHandle);
+    iHandle = kHandleNull;
 }
 
 void Socket::Interrupt(TBool aInterrupt)
@@ -254,7 +251,7 @@ void Socket::Close()
     LOGF(kNetwork, "Socket::Close\n");
     // close connection and allow caller to handle any exceptions
     SocketClose(iHandle);
-    HandleClear(&iHandle);
+    iHandle = kHandleNull;
 }
 
 void Socket::SetSendBufBytes(TUint aBytes)
@@ -426,7 +423,7 @@ SocketTcpServer::~SocketTcpServer()
 
     // cause exception in pending AND subsequent accept attempts in session threads.
     Interrupt(true);
-    TUint count = (TUint)iVector.size();
+    TUint count = iVector.size();
     for (TUint i = 0; i < count; i++) {             // delete all sessions
         delete iVector[i];
     }

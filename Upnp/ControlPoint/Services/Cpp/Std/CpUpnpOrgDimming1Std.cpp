@@ -711,7 +711,7 @@ void CpProxyUpnpOrgDimming1Cpp::BeginSetOnEffect(const std::string& anewOnEffect
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetOnEffect->InputParameters();
     {
-        Brn buf((const TByte*)anewOnEffect.c_str(), (TUint)anewOnEffect.length());
+        Brn buf((const TByte*)anewOnEffect.c_str(), anewOnEffect.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();

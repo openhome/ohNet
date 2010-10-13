@@ -126,7 +126,7 @@ void InvocationUpnp::ReadResponse()
     }
 
     const Invocation::VectorArguments& outArgs = iInvocation.OutputArguments();
-    const TUint count = (TUint)outArgs.size();
+    const TUint count = outArgs.size();
     Brn envelope = XmlParserBasic::Find("Envelope", entity);
     Brn body = XmlParserBasic::Find("Body", envelope);
     const Brn responseTagTrailer("Response");
@@ -215,7 +215,7 @@ void InvocationBodyWriter::Write(const Invocation& aInvocation)
     iWriteBuffer.Write('>');
     iWriterAscii.WriteNewline();
     const Invocation::VectorArguments& inArgs = aInvocation.InputArguments();
-    const TUint count = (TUint)inArgs.size();
+    const TUint count = inArgs.size();
     for (TUint i=0; i<count; i++) {
         iWriteBuffer.Write('<');
         const Brx& argName = inArgs[i]->Parameter().Name();

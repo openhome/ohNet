@@ -353,92 +353,89 @@ void DvServiceLinnCoUkDiagnostics1C::Reboot(IInvocationResponse& aResponse, TUin
 
 THandle DvServiceLinnCoUkDiagnostics1Create(DvDeviceC aDevice)
 {
-	THandle h;
-    HandleInit(&h);
-	h.iData.iPtr = new DvServiceLinnCoUkDiagnostics1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
-	return h;
+    return (THandle)new DvServiceLinnCoUkDiagnostics1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkDiagnostics1Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService.iData.iPtr);
+    delete reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService);
 }
 
 void DvServiceLinnCoUkDiagnostics1EnableActionEcho(THandle aService, CallbackDiagnostics1Echo aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService.iData.iPtr)->EnableActionEcho(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService)->EnableActionEcho(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDiagnostics1EnableActionElfFile(THandle aService, CallbackDiagnostics1ElfFile aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService.iData.iPtr)->EnableActionElfFile(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService)->EnableActionElfFile(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDiagnostics1EnableActionElfFingerprint(THandle aService, CallbackDiagnostics1ElfFingerprint aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService.iData.iPtr)->EnableActionElfFingerprint(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService)->EnableActionElfFingerprint(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDiagnostics1EnableActionCrashDataStatus(THandle aService, CallbackDiagnostics1CrashDataStatus aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService.iData.iPtr)->EnableActionCrashDataStatus(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService)->EnableActionCrashDataStatus(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDiagnostics1EnableActionCrashDataFetch(THandle aService, CallbackDiagnostics1CrashDataFetch aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService.iData.iPtr)->EnableActionCrashDataFetch(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService)->EnableActionCrashDataFetch(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDiagnostics1EnableActionCrashDataClear(THandle aService, CallbackDiagnostics1CrashDataClear aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService.iData.iPtr)->EnableActionCrashDataClear(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService)->EnableActionCrashDataClear(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDiagnostics1EnableActionSysLog(THandle aService, CallbackDiagnostics1SysLog aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService.iData.iPtr)->EnableActionSysLog(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService)->EnableActionSysLog(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDiagnostics1EnableActionDiagnostic(THandle aService, CallbackDiagnostics1Diagnostic aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService.iData.iPtr)->EnableActionDiagnostic(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService)->EnableActionDiagnostic(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDiagnostics1EnableActionStateVariable(THandle aService, CallbackDiagnostics1StateVariable aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService.iData.iPtr)->EnableActionStateVariable(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService)->EnableActionStateVariable(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDiagnostics1EnableActionSetStateVariable(THandle aService, CallbackDiagnostics1SetStateVariable aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService.iData.iPtr)->EnableActionSetStateVariable(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService)->EnableActionSetStateVariable(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDiagnostics1EnableActionStateVariablePeriod(THandle aService, CallbackDiagnostics1StateVariablePeriod aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService.iData.iPtr)->EnableActionStateVariablePeriod(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService)->EnableActionStateVariablePeriod(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDiagnostics1EnableActionSetStateVariablePeriod(THandle aService, CallbackDiagnostics1SetStateVariablePeriod aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService.iData.iPtr)->EnableActionSetStateVariablePeriod(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService)->EnableActionSetStateVariablePeriod(aCallback, aPtr);
 }
 
 void DvServiceLinnCoUkDiagnostics1EnableActionReboot(THandle aService, CallbackDiagnostics1Reboot aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService.iData.iPtr)->EnableActionReboot(aCallback, aPtr);
+    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService)->EnableActionReboot(aCallback, aPtr);
 }
 
 int32_t DvServiceLinnCoUkDiagnostics1SetPropertyaStateVariable(THandle aService, uint32_t aValue)
 {
-    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService.iData.iPtr)->SetPropertyaStateVariable(aValue);
+    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService)->SetPropertyaStateVariable(aValue);
     return 0;
 }
 
 void DvServiceLinnCoUkDiagnostics1GetPropertyaStateVariable(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService.iData.iPtr)->GetPropertyaStateVariable(val);
+    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService)->GetPropertyaStateVariable(val);
     *aValue = val;
 }
 

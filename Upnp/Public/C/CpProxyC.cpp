@@ -21,21 +21,21 @@ CpProxyC::~CpProxyC()
 
 void CpProxyCSubscribe(THandle aHandle)
 {
-    CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle.iData.iPtr);
+    CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Subscribe();
 }
 
 void CpProxyCUnsubscribe(THandle aHandle)
 {
-    CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle.iData.iPtr);
+    CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle);
     ASSERT(proxyC != NULL);
     proxyC->Unsubscribe();
 }
 
 void CpProxyCSetPropertyChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
-    CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle.iData.iPtr);
+    CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle);
     ASSERT(proxyC != NULL);
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->SetPropertyChanged(functor);

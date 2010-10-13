@@ -28,5 +28,5 @@ void AsyncOutput::Output(const TChar* aKey, const TChar* aValue)
 void ZappAsyncOutput(ZappHandleAsync aAsync, ZappCallbackAsyncOutput aOutput)
 {
     AsyncOutput ao(aOutput);
-    ((IAsync*)aAsync.iData.iPtr)->Output(ao);
+    ((IAsync*)aAsync)->Output(ao);
 }

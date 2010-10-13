@@ -11,7 +11,8 @@ using namespace Zapp;
 
 Semaphore::Semaphore(const TChar* aName, TUint aCount)
 {
-    if (0 != Zapp::Os::SemaphoreCreate(aName, aCount, &iHandle)) {
+    iHandle = Zapp::Os::SemaphoreCreate(aName, aCount);
+    if (iHandle == kHandleNull) {
         throw std::bad_alloc();
     }
 }
@@ -31,7 +32,7 @@ void Semaphore::Wait(TUint aTimeoutMs)
     if (aTimeoutMs == 0) {
         return (Wait());
     }
-    ASSERT(!HandleIsNull(&iHandle));
+    ASSERT(iHandle != kHandleNull);
     if (!Zapp::Os::SemaphoreTimedWait(iHandle, aTimeoutMs)) {
         THROW(Timeout);
     }
@@ -39,7 +40,7 @@ void Semaphore::Wait(TUint aTimeoutMs)
 
 TBool Semaphore::Clear()
 {
-    ASSERT(!HandleIsNull(&iHandle));
+    ASSERT(iHandle != kHandleNull);
     return Zapp::Os::SemaphoreClear(iHandle);
 }
 
@@ -54,7 +55,8 @@ void Semaphore::Signal()
 
 Mutex::Mutex(const TChar* aName)
 {
-    if (0 != Zapp::Os::MutexCreate(aName, &iHandle)) {
+    iHandle = Zapp::Os::MutexCreate(aName);
+    if (iHandle == kHandleNull) {
         throw std::bad_alloc();
     }
 }
@@ -138,15 +140,15 @@ void SemaphoreActive::ConsumeAll()
 const TUint Zapp::Thread::kDefaultStackBytes = 16 * 1024;
 
 Thread::Thread(const TChar* aName, TUint aPriority, TUint aStackBytes)
-    : iSema("TSEM", 0)
+    : iHandle(kHandleNull)
+    , iSema("TSEM", 0)
     , iTerminated(aName, 0)
     , iKill(false)
     , iStackBytes(aStackBytes)
     , iPriority(aPriority)
 {
-    HandleInit(&iHandle);
     ASSERT(aName != NULL);
-    TUint bytes = (TUint)strlen(aName);
+    TUint bytes = strlen(aName);
     if (bytes > kNameBytes) {
         bytes = kNameBytes;
     }
@@ -167,7 +169,7 @@ void Thread::Start()
 {
     TChar name[kNameBytes+1] = {0};
     (void)memcpy(name, iName.Ptr(), iName.Bytes());
-    (void)Zapp::Os::ThreadCreate(name, iPriority, iStackBytes, &Thread::EntryPoint, this, &iHandle);
+    iHandle = Zapp::Os::ThreadCreate(name, iPriority, iStackBytes, &Thread::EntryPoint, this);
 }
 
 void Thread::EntryPoint(void* aArg)
