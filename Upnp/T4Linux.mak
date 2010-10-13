@@ -28,7 +28,10 @@ include T4.mak
 
 # Following macros must be provided by each file which wraps Common.mak
 
-tt: mkToolsDir UpnpServiceXml.dll
+tt: $(toolsDir)UpnpServiceXml.dll $(toolsDir)UpnpServiceMake.dll $(toolsDir)Mono.TextTemplating.dll $(toolsDir)TextTransform.exe
+
+$(toolsDir)Mono.TextTemplating.dll :
+	@mkdir -p $(toolsDir)
 	gmcs /t:library -out:$(toolsDir)Mono.TextTemplating.dll \
                           T4/TextTemplating/Mono.TextTemplating/AssemblyInfo.cs \
                           T4/TextTemplating/Mono.TextTemplating/Microsoft.VisualStudio.TextTemplating/DirectiveProcessor.cs \
@@ -46,21 +49,27 @@ tt: mkToolsDir UpnpServiceXml.dll
                           T4/TextTemplating/Mono.TextTemplating/Mono.TextTemplating/TemplateSettings.cs \
                           T4/TextTemplating/Mono.TextTemplating/Mono.TextTemplating/ParsedTemplate.cs \
                           T4/TextTemplating/Mono.TextTemplating/Mono.TextTemplating/CompiledTemplate.cs
+$(toolsDir)TextTransform.exe : $(toolsDir)Mono.TextTemplating.dll
+	@mkdir -p $(toolsDir)
 	gmcs /t:exe -out:$(toolsDir)TextTransform.exe /r:$(toolsDir)Mono.TextTemplating.dll \
                           T4/TextTemplating/TextTransform/AssemblyInfo.cs \
                           T4/TextTemplating/TextTransform/Options.cs \
                           T4/TextTemplating/TextTransform/TextTransform.cs
 
-UpnpServiceXml.dll: mkToolsDir
+UpnpServiceXml.dll: $(toolsDir)UpnpServiceXml.dll
+
+$(toolsDir)UpnpServiceXml.dll: 
+	@mkdir -p $(toolsDir)
 	gmcs -target:library -out:$(upnpServiceXml) T4/UpnpServiceXml/AssemblyInfo.cs T4/UpnpServiceXml/UpnpServiceXml.cs
 	cp -u T4/UpnpServiceXml/UpnpServiceDescription.xsd $(toolsDir)
 	cp -u T4/UpnpServiceXml/UpnpServiceTemplate.xsd $(toolsDir)
 
-UpnpServiceMake.dll: mkToolsDir
+UpnpServiceMake.dll: $(toolsDir)UpnpServiceMake.dll
+
+$(toolsDir)UpnpServiceMake.dll :
+	@mkdir -p $(toolsDir)
 	gmcs -target:library -out:$(upnpServiceMake) T4/UpnpServiceMake/AssemblyInfo.cs T4/UpnpServiceMake/UpnpServiceMake.cs
 
-clean:
+clean-t4:
 	if test -d $(toolsDir); then rm -r $(toolsDir); fi
 
-mkToolsDir:
-	if test -d $(toolsDir); then echo; else mkdir -p $(toolsDir); fi
