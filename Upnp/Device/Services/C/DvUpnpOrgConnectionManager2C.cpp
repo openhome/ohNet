@@ -181,7 +181,7 @@ void DvServiceUpnpOrgConnectionManager2C::GetCurrentConnectionInfo(IInvocationRe
 
 THandle DvServiceUpnpOrgConnectionManager2Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceUpnpOrgConnectionManager2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceUpnpOrgConnectionManager2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceUpnpOrgConnectionManager2Destroy(THandle aService)

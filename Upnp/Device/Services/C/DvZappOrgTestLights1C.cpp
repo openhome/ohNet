@@ -206,7 +206,7 @@ void DvServiceZappOrgTestLights1C::GetColorComponents(IInvocationResponse& aResp
 
 THandle DvServiceZappOrgTestLights1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceZappOrgTestLights1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceZappOrgTestLights1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceZappOrgTestLights1Destroy(THandle aService)

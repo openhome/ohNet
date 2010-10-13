@@ -92,7 +92,7 @@ void DvServiceLinnCoUkDebug2C::MemWrite(IInvocationResponse& aResponse, TUint aV
 
 THandle DvServiceLinnCoUkDebug2Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkDebug2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceLinnCoUkDebug2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkDebug2Destroy(THandle aService)

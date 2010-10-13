@@ -22,7 +22,7 @@ CpProxyZappOrgTestDimmableLight1C::CpProxyZappOrgTestDimmableLight1C(CpDeviceC a
 
 THandle CpProxyZappOrgTestDimmableLight1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyZappOrgTestDimmableLight1C(aDevice);
+    return new CpProxyZappOrgTestDimmableLight1C(aDevice);
 }
 
 void CpProxyZappOrgTestDimmableLight1Destroy(THandle aHandle)

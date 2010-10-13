@@ -22,7 +22,7 @@ CpProxyLinnCoUkDebug2C::CpProxyLinnCoUkDebug2C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkDebug2Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyLinnCoUkDebug2C(aDevice);
+    return new CpProxyLinnCoUkDebug2C(aDevice);
 }
 
 void CpProxyLinnCoUkDebug2Destroy(THandle aHandle)

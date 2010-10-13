@@ -151,7 +151,7 @@ void <#=className#>C::<#=a.name#>(IInvocationResponse& aResponse, TUint aVersion
 
 THandle <#=className#>Create(DvDeviceC aDevice)
 {
-    return (THandle)new <#=className#>C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new <#=className#>C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void <#=className#>Destroy(THandle aService)

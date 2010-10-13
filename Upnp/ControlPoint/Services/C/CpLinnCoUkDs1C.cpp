@@ -22,7 +22,7 @@ CpProxyLinnCoUkDs1C::CpProxyLinnCoUkDs1C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkDs1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyLinnCoUkDs1C(aDevice);
+    return new CpProxyLinnCoUkDs1C(aDevice);
 }
 
 void CpProxyLinnCoUkDs1Destroy(THandle aHandle)

@@ -94,7 +94,7 @@ void DvServiceUpnpOrgSwitchPower1C::GetStatus(IInvocationResponse& aResponse, TU
 
 THandle DvServiceUpnpOrgSwitchPower1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceUpnpOrgSwitchPower1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceUpnpOrgSwitchPower1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceUpnpOrgSwitchPower1Destroy(THandle aService)

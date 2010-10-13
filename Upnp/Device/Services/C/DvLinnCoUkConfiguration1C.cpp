@@ -100,7 +100,7 @@ void DvServiceLinnCoUkConfiguration1C::SetParameter(IInvocationResponse& aRespon
 
 THandle DvServiceLinnCoUkConfiguration1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkConfiguration1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceLinnCoUkConfiguration1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkConfiguration1Destroy(THandle aService)

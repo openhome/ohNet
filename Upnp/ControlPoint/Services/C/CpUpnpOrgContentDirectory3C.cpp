@@ -22,7 +22,7 @@ CpProxyUpnpOrgContentDirectory3C::CpProxyUpnpOrgContentDirectory3C(CpDeviceC aDe
 
 THandle CpProxyUpnpOrgContentDirectory3Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyUpnpOrgContentDirectory3C(aDevice);
+    return new CpProxyUpnpOrgContentDirectory3C(aDevice);
 }
 
 void CpProxyUpnpOrgContentDirectory3Destroy(THandle aHandle)

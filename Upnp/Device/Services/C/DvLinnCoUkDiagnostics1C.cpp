@@ -353,7 +353,7 @@ void DvServiceLinnCoUkDiagnostics1C::Reboot(IInvocationResponse& aResponse, TUin
 
 THandle DvServiceLinnCoUkDiagnostics1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkDiagnostics1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceLinnCoUkDiagnostics1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkDiagnostics1Destroy(THandle aService)

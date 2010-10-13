@@ -423,7 +423,7 @@ void CpProxyLinnCoUkPlaylist1Cpp::BeginReadList(const std::string& aaIdList, Fun
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionReadList->InputParameters();
     {
-        Brn buf((const TByte*)aaIdList.c_str(), aaIdList.length());
+        Brn buf((const TByte*)aaIdList.c_str(), (TUint)aaIdList.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;
@@ -462,11 +462,11 @@ void CpProxyLinnCoUkPlaylist1Cpp::BeginInsert(uint32_t aaAfterId, const std::str
     const Action::VectorParameters& inParams = iActionInsert->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaAfterId));
     {
-        Brn buf((const TByte*)aaUri.c_str(), aaUri.length());
+        Brn buf((const TByte*)aaUri.c_str(), (TUint)aaUri.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     {
-        Brn buf((const TByte*)aaMetaData.c_str(), aaMetaData.length());
+        Brn buf((const TByte*)aaMetaData.c_str(), (TUint)aaMetaData.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     TUint outIndex = 0;

@@ -400,7 +400,7 @@ void DvServiceUpnpOrgContentDirectory1C::CreateReference(IInvocationResponse& aR
 
 THandle DvServiceUpnpOrgContentDirectory1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceUpnpOrgContentDirectory1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceUpnpOrgContentDirectory1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceUpnpOrgContentDirectory1Destroy(THandle aService)

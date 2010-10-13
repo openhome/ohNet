@@ -322,7 +322,7 @@ void DvServiceLinnCoUkPlaylist1C::IdArrayChanged(IInvocationResponse& aResponse,
 
 THandle DvServiceLinnCoUkPlaylist1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkPlaylist1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceLinnCoUkPlaylist1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkPlaylist1Destroy(THandle aService)

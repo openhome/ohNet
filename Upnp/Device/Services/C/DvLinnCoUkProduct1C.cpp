@@ -119,7 +119,7 @@ void DvServiceLinnCoUkProduct1C::SetStandby(IInvocationResponse& aResponse, TUin
 
 THandle DvServiceLinnCoUkProduct1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkProduct1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceLinnCoUkProduct1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkProduct1Destroy(THandle aService)

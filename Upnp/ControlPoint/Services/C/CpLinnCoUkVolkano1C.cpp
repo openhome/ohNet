@@ -22,7 +22,7 @@ CpProxyLinnCoUkVolkano1C::CpProxyLinnCoUkVolkano1C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkVolkano1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyLinnCoUkVolkano1C(aDevice);
+    return new CpProxyLinnCoUkVolkano1C(aDevice);
 }
 
 void CpProxyLinnCoUkVolkano1Destroy(THandle aHandle)

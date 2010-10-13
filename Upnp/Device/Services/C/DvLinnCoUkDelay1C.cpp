@@ -235,7 +235,7 @@ void DvServiceLinnCoUkDelay1C::PresetCount(IInvocationResponse& aResponse, TUint
 
 THandle DvServiceLinnCoUkDelay1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkDelay1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceLinnCoUkDelay1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkDelay1Destroy(THandle aService)

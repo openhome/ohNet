@@ -463,7 +463,7 @@ void CpProxyLinnCoUkProduct2Cpp::BeginSetName(const std::string& aaName, Functor
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetName->InputParameters();
     {
-        Brn buf((const TByte*)aaName.c_str(), aaName.length());
+        Brn buf((const TByte*)aaName.c_str(), (TUint)aaName.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();
@@ -525,7 +525,7 @@ void CpProxyLinnCoUkProduct2Cpp::BeginSetRoom(const std::string& aaRoom, Functor
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetRoom->InputParameters();
     {
-        Brn buf((const TByte*)aaRoom.c_str(), aaRoom.length());
+        Brn buf((const TByte*)aaRoom.c_str(), (TUint)aaRoom.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
     invocation->Invoke();

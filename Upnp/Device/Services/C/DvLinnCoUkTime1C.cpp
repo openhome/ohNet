@@ -52,7 +52,7 @@ void DvServiceLinnCoUkTime1C::Time(IInvocationResponse& aResponse, TUint aVersio
 
 THandle DvServiceLinnCoUkTime1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkTime1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceLinnCoUkTime1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkTime1Destroy(THandle aService)

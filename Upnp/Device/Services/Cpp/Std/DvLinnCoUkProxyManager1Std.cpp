@@ -8,7 +8,7 @@ using namespace Zapp;
 
 void DvServiceLinnCoUkProxyManager1Cpp::SetPropertyKontrolProductConnected(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     SetPropertyString(*iPropertyKontrolProductConnected, buf);
 }
 
@@ -30,7 +30,7 @@ void DvServiceLinnCoUkProxyManager1Cpp::GetPropertyKontrolProductComPort(uint32_
 
 void DvServiceLinnCoUkProxyManager1Cpp::SetPropertyDiscPlayerConnected(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     SetPropertyString(*iPropertyDiscPlayerConnected, buf);
 }
 
@@ -180,7 +180,7 @@ void DvServiceLinnCoUkProxyManager1Cpp::DoKontrolProductConnected(IDvInvocation&
     KontrolProductConnected(aVersion, respaConnected);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraConnected(aInvocation, "aConnected");
-    Brn buf_aConnected((const TByte*)respaConnected.c_str(), respaConnected.length());
+    Brn buf_aConnected((const TByte*)respaConnected.c_str(), (TUint)respaConnected.length());
     respWriteraConnected.Write(buf_aConnected);
     aInvocation.InvocationWriteStringEnd("aConnected");
 	aInvocation.InvocationWriteEnd();
@@ -228,7 +228,7 @@ void DvServiceLinnCoUkProxyManager1Cpp::DoDiscPlayerConnected(IDvInvocation& aIn
     DiscPlayerConnected(aVersion, respaConnected);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraConnected(aInvocation, "aConnected");
-    Brn buf_aConnected((const TByte*)respaConnected.c_str(), respaConnected.length());
+    Brn buf_aConnected((const TByte*)respaConnected.c_str(), (TUint)respaConnected.length());
     respWriteraConnected.Write(buf_aConnected);
     aInvocation.InvocationWriteStringEnd("aConnected");
 	aInvocation.InvocationWriteEnd();

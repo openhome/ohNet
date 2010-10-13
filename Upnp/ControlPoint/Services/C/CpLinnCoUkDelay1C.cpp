@@ -22,7 +22,7 @@ CpProxyLinnCoUkDelay1C::CpProxyLinnCoUkDelay1C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkDelay1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyLinnCoUkDelay1C(aDevice);
+    return new CpProxyLinnCoUkDelay1C(aDevice);
 }
 
 void CpProxyLinnCoUkDelay1Destroy(THandle aHandle)

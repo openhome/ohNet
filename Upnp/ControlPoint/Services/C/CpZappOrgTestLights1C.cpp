@@ -22,7 +22,7 @@ CpProxyZappOrgTestLights1C::CpProxyZappOrgTestLights1C(CpDeviceC aDevice)
 
 THandle CpProxyZappOrgTestLights1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyZappOrgTestLights1C(aDevice);
+    return new CpProxyZappOrgTestLights1C(aDevice);
 }
 
 void CpProxyZappOrgTestLights1Destroy(THandle aHandle)

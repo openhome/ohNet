@@ -443,7 +443,7 @@ TestDvDeviceC: upnp_core $(objdir)TestDvDeviceC.$(objext) $(objdir)DvZappOrgTest
 $(objdir)TestDvDeviceC.$(objext) : Public/C/TestDvDeviceC.cpp $(headers)
 	$(compiler)TestDvDeviceC.$(objext) -c $(cflags) $(includes) Public/C/TestDvDeviceC.cpp
 
-Tests: TestBuffer TestThread TestFifo TestQueue TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvDeviceStd TestDvDeviceC
+Tests: TestBuffer TestThread TestFifo TestQueue TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvDeviceStd TestDvDeviceC TestProxyCs
 
 ZappControlDll : $(objdir)ZappControl.dll
 

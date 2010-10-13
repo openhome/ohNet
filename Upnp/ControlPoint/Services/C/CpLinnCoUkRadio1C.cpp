@@ -22,7 +22,7 @@ CpProxyLinnCoUkRadio1C::CpProxyLinnCoUkRadio1C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkRadio1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyLinnCoUkRadio1C(aDevice);
+    return new CpProxyLinnCoUkRadio1C(aDevice);
 }
 
 void CpProxyLinnCoUkRadio1Destroy(THandle aHandle)

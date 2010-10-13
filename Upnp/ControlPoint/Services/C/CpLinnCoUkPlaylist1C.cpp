@@ -22,7 +22,7 @@ CpProxyLinnCoUkPlaylist1C::CpProxyLinnCoUkPlaylist1C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkPlaylist1Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyLinnCoUkPlaylist1C(aDevice);
+    return new CpProxyLinnCoUkPlaylist1C(aDevice);
 }
 
 void CpProxyLinnCoUkPlaylist1Destroy(THandle aHandle)

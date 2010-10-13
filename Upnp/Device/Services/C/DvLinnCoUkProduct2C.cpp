@@ -319,7 +319,7 @@ void DvServiceLinnCoUkProduct2C::SourceType(IInvocationResponse& aResponse, TUin
 
 THandle DvServiceLinnCoUkProduct2Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkProduct2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceLinnCoUkProduct2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkProduct2Destroy(THandle aService)

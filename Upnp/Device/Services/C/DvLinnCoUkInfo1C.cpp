@@ -148,7 +148,7 @@ void DvServiceLinnCoUkInfo1C::Metatext(IInvocationResponse& aResponse, TUint aVe
 
 THandle DvServiceLinnCoUkInfo1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkInfo1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceLinnCoUkInfo1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkInfo1Destroy(THandle aService)

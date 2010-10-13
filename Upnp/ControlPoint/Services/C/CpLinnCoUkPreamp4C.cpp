@@ -22,7 +22,7 @@ CpProxyLinnCoUkPreamp4C::CpProxyLinnCoUkPreamp4C(CpDeviceC aDevice)
 
 THandle CpProxyLinnCoUkPreamp4Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyLinnCoUkPreamp4C(aDevice);
+    return new CpProxyLinnCoUkPreamp4C(aDevice);
 }
 
 void CpProxyLinnCoUkPreamp4Destroy(THandle aHandle)

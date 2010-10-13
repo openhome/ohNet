@@ -334,7 +334,7 @@ XmlFetchManager::~XmlFetchManager()
     }
     free(iFetchers);
 
-    TUint size = iList.size();
+    TUint size = (TUint)iList.size();
     while (size > 0) {
         XmlFetch* fetch = iList.front();
         fetch->SetError(Error::eAsync, Error::eCodeShutdown,

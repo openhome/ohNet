@@ -38,7 +38,7 @@ void DvServiceLinnCoUkInfo1Cpp::GetPropertyMetatextCount(uint32_t& aValue)
 
 void DvServiceLinnCoUkInfo1Cpp::SetPropertyUri(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     SetPropertyString(*iPropertyUri, buf);
 }
 
@@ -50,7 +50,7 @@ void DvServiceLinnCoUkInfo1Cpp::GetPropertyUri(std::string& aValue)
 
 void DvServiceLinnCoUkInfo1Cpp::SetPropertyMetadata(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     SetPropertyString(*iPropertyMetadata, buf);
 }
 
@@ -112,7 +112,7 @@ void DvServiceLinnCoUkInfo1Cpp::GetPropertyLossless(bool& aValue)
 
 void DvServiceLinnCoUkInfo1Cpp::SetPropertyCodecName(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     SetPropertyString(*iPropertyCodecName, buf);
 }
 
@@ -124,7 +124,7 @@ void DvServiceLinnCoUkInfo1Cpp::GetPropertyCodecName(std::string& aValue)
 
 void DvServiceLinnCoUkInfo1Cpp::SetPropertyMetatext(const std::string& aValue)
 {
-    Brn buf((const TByte*)aValue.c_str(), aValue.length());
+    Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     SetPropertyString(*iPropertyMetatext, buf);
 }
 
@@ -231,11 +231,11 @@ void DvServiceLinnCoUkInfo1Cpp::DoTrack(IDvInvocation& aInvocation, TUint aVersi
     Track(aVersion, respaUri, respaMetadata);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraUri(aInvocation, "aUri");
-    Brn buf_aUri((const TByte*)respaUri.c_str(), respaUri.length());
+    Brn buf_aUri((const TByte*)respaUri.c_str(), (TUint)respaUri.length());
     respWriteraUri.Write(buf_aUri);
     aInvocation.InvocationWriteStringEnd("aUri");
     InvocationResponseString respWriteraMetadata(aInvocation, "aMetadata");
-    Brn buf_aMetadata((const TByte*)respaMetadata.c_str(), respaMetadata.length());
+    Brn buf_aMetadata((const TByte*)respaMetadata.c_str(), (TUint)respaMetadata.length());
     respWriteraMetadata.Write(buf_aMetadata);
     aInvocation.InvocationWriteStringEnd("aMetadata");
 	aInvocation.InvocationWriteEnd();
@@ -264,7 +264,7 @@ void DvServiceLinnCoUkInfo1Cpp::DoDetails(IDvInvocation& aInvocation, TUint aVer
     InvocationResponseBool respWriteraLossless(aInvocation, "aLossless");
     respWriteraLossless.Write(respaLossless);
     InvocationResponseString respWriteraCodecName(aInvocation, "aCodecName");
-    Brn buf_aCodecName((const TByte*)respaCodecName.c_str(), respaCodecName.length());
+    Brn buf_aCodecName((const TByte*)respaCodecName.c_str(), (TUint)respaCodecName.length());
     respWriteraCodecName.Write(buf_aCodecName);
     aInvocation.InvocationWriteStringEnd("aCodecName");
 	aInvocation.InvocationWriteEnd();
@@ -278,7 +278,7 @@ void DvServiceLinnCoUkInfo1Cpp::DoMetatext(IDvInvocation& aInvocation, TUint aVe
     Metatext(aVersion, respaMetatext);
 	aInvocation.InvocationWriteStart();
     InvocationResponseString respWriteraMetatext(aInvocation, "aMetatext");
-    Brn buf_aMetatext((const TByte*)respaMetatext.c_str(), respaMetatext.length());
+    Brn buf_aMetatext((const TByte*)respaMetatext.c_str(), (TUint)respaMetatext.length());
     respWriteraMetatext.Write(buf_aMetatext);
     aInvocation.InvocationWriteStringEnd("aMetatext");
 	aInvocation.InvocationWriteEnd();

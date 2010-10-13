@@ -344,7 +344,7 @@ void DvServiceLinnCoUkPreamp4C::StartupVolumeEnabled(IInvocationResponse& aRespo
 
 THandle DvServiceLinnCoUkPreamp4Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkPreamp4C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceLinnCoUkPreamp4C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkPreamp4Destroy(THandle aService)

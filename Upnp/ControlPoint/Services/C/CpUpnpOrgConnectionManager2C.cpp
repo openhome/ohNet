@@ -22,7 +22,7 @@ CpProxyUpnpOrgConnectionManager2C::CpProxyUpnpOrgConnectionManager2C(CpDeviceC a
 
 THandle CpProxyUpnpOrgConnectionManager2Create(CpDeviceC aDevice)
 {
-    return (THandle)new CpProxyUpnpOrgConnectionManager2C(aDevice);
+    return new CpProxyUpnpOrgConnectionManager2C(aDevice);
 }
 
 void CpProxyUpnpOrgConnectionManager2Destroy(THandle aHandle)

@@ -72,7 +72,7 @@ public:
 
 THandle <#=className#>Create(CpDeviceC aDevice)
 {
-    return (THandle)new <#=className#>C(aDevice);
+    return new <#=className#>C(aDevice);
 }
 
 void <#=className#>Destroy(THandle aHandle)

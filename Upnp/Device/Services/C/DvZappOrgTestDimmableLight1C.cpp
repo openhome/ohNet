@@ -70,7 +70,7 @@ void DvServiceZappOrgTestDimmableLight1C::SetLevel(IInvocationResponse& aRespons
 
 THandle DvServiceZappOrgTestDimmableLight1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceZappOrgTestDimmableLight1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceZappOrgTestDimmableLight1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceZappOrgTestDimmableLight1Destroy(THandle aService)

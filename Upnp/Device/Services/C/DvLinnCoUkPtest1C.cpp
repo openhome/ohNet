@@ -92,7 +92,7 @@ void DvServiceLinnCoUkPtest1C::LedsOff(IInvocationResponse& aResponse, TUint aVe
 
 THandle DvServiceLinnCoUkPtest1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkPtest1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceLinnCoUkPtest1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkPtest1Destroy(THandle aService)

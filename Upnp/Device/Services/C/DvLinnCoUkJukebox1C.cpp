@@ -219,7 +219,7 @@ void DvServiceLinnCoUkJukebox1C::LoadManifest(IInvocationResponse& aResponse, TU
 
 THandle DvServiceLinnCoUkJukebox1Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceLinnCoUkJukebox1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceLinnCoUkJukebox1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceLinnCoUkJukebox1Destroy(THandle aService)

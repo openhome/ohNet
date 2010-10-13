@@ -889,7 +889,7 @@ void DvServiceUpnpOrgRenderingControl2C::SetStateVariables(IInvocationResponse& 
 
 THandle DvServiceUpnpOrgRenderingControl2Create(DvDeviceC aDevice)
 {
-    return (THandle)new DvServiceUpnpOrgRenderingControl2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvServiceUpnpOrgRenderingControl2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
 void DvServiceUpnpOrgRenderingControl2Destroy(THandle aService)

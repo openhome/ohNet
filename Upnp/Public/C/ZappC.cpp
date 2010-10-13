@@ -269,7 +269,7 @@ uint32_t ZappSubnetListSize(ZappHandleNetworkInterfaceList aList)
 {
     std::vector<NetworkInterface*>* list = reinterpret_cast<std::vector<NetworkInterface*>*>(aList);
     ASSERT(list != NULL);
-    return list->size();
+    return (TUint)list->size();
 }
 
 ZappHandleNetworkInterface ZappSubnetAt(ZappHandleNetworkInterfaceList aList, uint32_t aIndex)

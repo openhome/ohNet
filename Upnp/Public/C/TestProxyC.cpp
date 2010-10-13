@@ -85,7 +85,7 @@ DeviceList::DeviceList()
 
 DeviceList::~DeviceList()
 {
-    const TUint count = iList.size();
+    const TUint count = (TUint)iList.size();
     for (TUint i=0; i<count; i++) {
         CpDeviceCRemoveRef(iList[i]);
     }
@@ -166,7 +166,7 @@ void DeviceList::PollSubscribe()
 
 TUint DeviceList::Count() const
 {
-    return iList.size();
+    return (TUint)iList.size();
 }
 
 void DeviceList::Added(CpDeviceC aDevice)
@@ -185,7 +185,7 @@ void DeviceList::Removed(CpDeviceC aDevice)
     }
 
     AutoMutex a(iLock);
-    const TUint count = iList.size();
+    const TUint count = (TUint)iList.size();
     const char* udn = CpDeviceCUdn(aDevice);
     for (TUint i=0; i<count; i++) {
         CpDeviceC device = iList[i];
