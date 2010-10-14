@@ -97,7 +97,6 @@ void DviSubscription::WriteChanges()
 		for (TUint i=0; i<properties.size(); i++) {
 			Property* prop = properties[i];
 			TUint seq = prop->SequenceNumber();
-            if (seq==0) _asm int 3;
 			ASSERT(seq != 0); // => implementor hasn't initialised the property
 			if (seq != iPropertySequenceNumbers[i]) {
 				if (first) {
