@@ -28,11 +28,13 @@ namespace Zapp
         private DateTime iActionPollStopTime;
         private Semaphore iActionPollStop;
         private Semaphore iSubscriptionSem;
+        private bool iListFrozen;
         private const uint kDevicePollMs = 1000;
         private const uint kDevicePollSecs = 1;
 
         public Runner()
         {
+            iListFrozen = false;
             iDeviceList = new List<CpDevice>();
             CpDeviceList.ChangeHandler added = new CpDeviceList.ChangeHandler(DeviceAdded);
             CpDeviceList.ChangeHandler removed = new CpDeviceList.ChangeHandler(DeviceRemoved);
@@ -40,6 +42,7 @@ namespace Zapp
             //CpDeviceListUpnpUuid list = new CpDeviceListUpnpUuid("896659847466-a4badbeaacbc-737837", added, removed);
             Semaphore sem = new Semaphore(0, 1);
             sem.WaitOne(6000);
+            iListFrozen = true;
             
             InvokeSync();
             // Note that following tests handle the device list changing (i.e. devices being switched on/off) badly
@@ -198,9 +201,12 @@ namespace Zapp
         {
             lock (this)
             {
-                PrintDeviceInfo("Added", aDevice);
-                aDevice.AddRef();
-                iDeviceList.Add(aDevice);
+                if (!iListFrozen)
+                {
+                    PrintDeviceInfo("Added", aDevice);
+                    aDevice.AddRef();
+                    iDeviceList.Add(aDevice);
+                }
             }
         }
 
@@ -208,15 +214,18 @@ namespace Zapp
         {
             lock (this)
             {
-                PrintDeviceInfo("Removed", aDevice);
-                string udn = aDevice.Udn();
-                int count = iDeviceList.Count;
-                for (int i = 0; i < count; i++)
+                if (!iListFrozen)
                 {
-                    if (iDeviceList[i].Udn() == udn)
+                    PrintDeviceInfo("Removed", aDevice);
+                    string udn = aDevice.Udn();
+                    int count = iDeviceList.Count;
+                    for (int i = 0; i < count; i++)
                     {
-                        iDeviceList[i].RemoveRef();
-                        iDeviceList.RemoveAt(i);
+                        if (iDeviceList[i].Udn() == udn)
+                        {
+                            iDeviceList[i].RemoveRef();
+                            iDeviceList.RemoveAt(i);
+                        }
                     }
                 }
             }
