@@ -45,12 +45,12 @@ def testCs(aTarget, aCmdLine):
 def runTests():
     buildOnly = 0
     incremental = 0
-    for arg in sys.argv:
+    for arg in sys.argv[1:]:
         if arg == '-b' or arg == '--buildonly':
             buildOnly = 1
         elif arg == '-i' or arg == '--incremental':
             incremental = 1
-        elif arg != 'AllTests.py':
+        else:
             print 'Unrecognised argument - ' + arg
             sys.exit(1)
     if incremental == 0:
