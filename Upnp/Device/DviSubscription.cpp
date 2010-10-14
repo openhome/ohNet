@@ -27,7 +27,6 @@ DviSubscription::DviSubscription(DviDevice& aDevice, IPropertyWriterFactory& aWr
     , iService(NULL)
     , iSequenceNumber(0)
 {
-    iDevice.AddWeakRef();
     aSid.TransferTo(iSid);
     Functor functor = MakeFunctor(*this, &DviSubscription::Expired);
     iTimer = new Timer(functor);
@@ -98,6 +97,7 @@ void DviSubscription::WriteChanges()
 		for (TUint i=0; i<properties.size(); i++) {
 			Property* prop = properties[i];
 			TUint seq = prop->SequenceNumber();
+            if (seq==0) _asm int 3;
 			ASSERT(seq != 0); // => implementor hasn't initialised the property
 			if (seq != iPropertySequenceNumbers[i]) {
 				if (first) {
@@ -143,7 +143,6 @@ const Brx& DviSubscription::Sid() const
 DviSubscription::~DviSubscription()
 {
     delete iTimer;
-    iDevice.RemoveWeakRef();
 }
 
 void DviSubscription::Expired()
@@ -221,7 +220,6 @@ DviSubscriptionManager::DviSubscriptionManager()
     : Thread("DVSM")
     , iLock("DSBM")
     , iFree(Stack::InitParams().DvNumPublisherThreads())
-    , iShutdownSem("DSBM", 0)
 {
 	const TUint numPublisherThreads = Stack::InitParams().DvNumPublisherThreads();
     LOG(kDvEvent, "> DviSubscriptionManager: creating %u publisher threads\n", numPublisherThreads);
@@ -239,20 +237,12 @@ DviSubscriptionManager::DviSubscriptionManager()
 DviSubscriptionManager::~DviSubscriptionManager()
 {
     LOG(kDvEvent, "> ~DviSubscriptionManager\n");
-    TBool wait;
-    iLock.Wait();
-    wait = (iMap.size() > 0);
-    iShutdownSem.Clear();
-    iLock.Signal();
-    if (wait) {
-        iShutdownSem.Wait();
-    }
-    ASSERT(iMap.size() == 0);
 
     iLock.Wait();
     Kill();
     Join();
     iLock.Signal();
+    ASSERT(iMap.size() == 0); // => device(s) still to be destroyed
 
 	const TUint numPublisherThreads = Stack::InitParams().DvNumPublisherThreads();
     for (TUint i=0; i<numPublisherThreads; i++) {
@@ -274,21 +264,14 @@ void DviSubscriptionManager::AddSubscription(DviSubscription& aSubscription)
 
 void DviSubscriptionManager::RemoveSubscription(DviSubscription& aSubscription)
 {
-    TBool shutdownSignal = false;
     DviSubscriptionManager& self = DviSubscriptionManager::Self();
     self.iLock.Wait();
     Brn sid(aSubscription.Sid());
     Map::iterator it = self.iMap.find(sid);
     if (it != self.iMap.end()) {
         self.iMap.erase(it);
-        if (self.iMap.size() == 0) {
-            shutdownSignal = true;
-        }
     }
     self.iLock.Signal();
-    if (shutdownSignal) {
-        self.iShutdownSem.Signal();
-    }
 }
 
 DviSubscription* DviSubscriptionManager::Find(const Brx& aSid)

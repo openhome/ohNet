@@ -141,12 +141,6 @@ void DviService::AddSubscription(DviSubscription* aSubscription)
 
 void DviService::RemoveSubscription(const Brx& aSid)
 {
-    /* Removing a reference from a subscription may cause the subscription to be deleted
-       Deleting a subscription causes it to release its reference to a device
-       Removing the device reference may cause the device to be deleted
-       Deleting the device will cause it to release its references to its services (including this one)
-       Avoid this service being deleted mid-function by claiming our own reference */
-    AddRef();
     iLock.Wait();
     for (TUint i=0; i<iSubscriptions.size(); i++) {
         DviSubscription* subscription = iSubscriptions[i];
@@ -155,12 +149,10 @@ void DviService::RemoveSubscription(const Brx& aSid)
             iSubscriptions.erase(iSubscriptions.begin() + i);
             iLock.Signal();
             subscription->RemoveRef();
-            RemoveRef();
             return;
         }
     }
     iLock.Signal();
-    RemoveRef();
 }
 
 

@@ -80,7 +80,6 @@ private:
     Publisher** iPublishers;
     typedef std::map<Brn,DviSubscription*,BufferCmp> Map;
     Map iMap;
-    Semaphore iShutdownSem;
 };
 
 } // namespace Zapp

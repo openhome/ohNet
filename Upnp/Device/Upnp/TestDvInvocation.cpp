@@ -41,6 +41,13 @@ private:
 ServiceTestBasic::ServiceTestBasic(DvDevice& aDevice)
     : DvServiceZappOrgTestBasic1(aDevice)
 {
+    // Initialise all properties in case external control points decide to subscribe to this service
+    SetPropertyVarUint(0);
+    SetPropertyVarInt(0);
+    SetPropertyVarBool(false);
+    SetPropertyVarStr(Brx::Empty());
+    SetPropertyVarBin(Brx::Empty());
+
     EnableActionIncrement();
     EnableActionDecrement();
     EnableActionToggle();
