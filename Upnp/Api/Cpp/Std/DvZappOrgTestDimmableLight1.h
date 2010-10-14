@@ -24,8 +24,6 @@ class DvServiceZappOrgTestDimmableLight1Cpp : public DvService
 {
 public:
     virtual ~DvServiceZappOrgTestDimmableLight1Cpp() {}
-    void SetPropertyA_ARG_Level(uint32_t aValue);
-    void GetPropertyA_ARG_Level(uint32_t& aValue);
 protected:
     DvServiceZappOrgTestDimmableLight1Cpp(DvDeviceStd& aDevice);
     void EnableActionGetLevel();
@@ -38,7 +36,6 @@ private:
     void DoGetLevel(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoSetLevel(IDvInvocation& aInvocation, uint32_t aVersion);
 private:
-    PropertyUint* iPropertyA_ARG_Level;
 };
 
 } // namespace Zapp
