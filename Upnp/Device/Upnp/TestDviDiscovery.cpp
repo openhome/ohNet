@@ -515,6 +515,9 @@ void SuiteMsearch::TestMsearchAll()
     TEST(iListener->DeviceCount() == 3);
     TEST(iListener->ServiceCount() == 8);
     TEST(iListener->Udns() == 7);
+    if (iListener->TotalMessages() != 16) {
+        Print("MseachAll: received %u responses (expected 16)\n", iListener->TotalMessages());
+    }
     TEST(iListener->TotalMessages() == 16);
     TEST(DeviceTypeMatches(iListener->Dev1Type(), "upnp.org:test1:1"));
     TEST(DeviceTypeMatches(iListener->Dev2Type(), "linn.co.uk:test2:2"));
