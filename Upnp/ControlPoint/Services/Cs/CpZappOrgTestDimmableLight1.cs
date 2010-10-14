@@ -23,16 +23,10 @@ namespace Zapp
         static extern unsafe void CpProxyZappOrgTestDimmableLight1BeginSetLevel(uint aHandle, uint aLevel, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestDimmableLight1")]
         static extern unsafe int CpProxyZappOrgTestDimmableLight1EndSetLevel(uint aHandle, uint aAsync);
-        [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern void CpProxyZappOrgTestDimmableLight1SetPropertyA_ARG_LevelChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern unsafe void CpProxyZappOrgTestDimmableLight1PropertyA_ARG_Level(uint aHandle, uint* aA_ARG_Level);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
         private GCHandle iGch;
-        private CallbackPropertyChanged iA_ARG_LevelChanged;
-        private Callback iCallbackA_ARG_LevelChanged;
 
         public CpProxyZappOrgTestDimmableLight1(CpDevice aDevice)
         {
@@ -87,29 +81,6 @@ namespace Zapp
 				{
 					throw(new ProxyError());
 				}
-			}
-        }
-
-        public void SetPropertyA_ARG_LevelChanged(CallbackPropertyChanged aA_ARG_LevelChanged)
-        {
-            iA_ARG_LevelChanged = aA_ARG_LevelChanged;
-            iCallbackA_ARG_LevelChanged = new Callback(PropertyA_ARG_LevelChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyZappOrgTestDimmableLight1SetPropertyA_ARG_LevelChanged(iHandle, iCallbackA_ARG_LevelChanged, ptr);
-        }
-
-        private void PropertyA_ARG_LevelChanged(IntPtr aPtr)
-        {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyZappOrgTestDimmableLight1 self = (CpProxyZappOrgTestDimmableLight1)gch.Target;
-            self.iA_ARG_LevelChanged();
-        }
-
-        public unsafe void PropertyA_ARG_Level(out uint aA_ARG_Level)
-        {
-			fixed (uint* a_ARG_Level = &aA_ARG_Level)
-			{
-	            CpProxyZappOrgTestDimmableLight1PropertyA_ARG_Level(iHandle, a_ARG_Level);
 			}
         }
 

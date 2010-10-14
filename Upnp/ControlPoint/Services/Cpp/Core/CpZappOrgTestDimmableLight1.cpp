@@ -62,11 +62,6 @@ CpProxyZappOrgTestDimmableLight1::CpProxyZappOrgTestDimmableLight1(CpDevice& aDe
     iActionSetLevel = new Action("SetLevel");
     param = new Zapp::ParameterUint("Level");
     iActionSetLevel->AddInputParameter(param);
-
-    Functor functor;
-    functor = MakeFunctor(*this, &CpProxyZappOrgTestDimmableLight1::A_ARG_LevelPropertyChanged);
-    iA_ARG_Level = new PropertyUint("A_ARG_Level", functor);
-    iService->AddProperty(iA_ARG_Level);
 }
 
 CpProxyZappOrgTestDimmableLight1::~CpProxyZappOrgTestDimmableLight1()
@@ -129,30 +124,6 @@ void CpProxyZappOrgTestDimmableLight1::EndSetLevel(IAsync& aAsync)
 
     if (invocation.Error()) {
         THROW(ProxyError);
-    }
-}
-
-void CpProxyZappOrgTestDimmableLight1::SetPropertyA_ARG_LevelChanged(Functor& aFunctor)
-{
-    iLock->Wait();
-    iA_ARG_LevelChanged = aFunctor;
-    iLock->Signal();
-}
-
-void CpProxyZappOrgTestDimmableLight1::PropertyA_ARG_Level(TUint& aA_ARG_Level) const
-{
-    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
-    aA_ARG_Level = iA_ARG_Level->Value();
-}
-
-void CpProxyZappOrgTestDimmableLight1::A_ARG_LevelPropertyChanged()
-{
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iA_ARG_LevelChanged != NULL) {
-        iA_ARG_LevelChanged();
     }
 }
 
