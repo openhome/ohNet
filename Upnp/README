@@ -1,0 +1,111 @@
+Zapp library
+------------
+
+Zapp is a library for the discovery, monitoring, manipulation and implementation
+of UPnP devices, generalized to be extensible to other similar protocols.
+
+Prerequisites
+-------------
+
+On Windows:
+	Microsoft Visual Studio
+	(Express versions are okay. Not sure what is the minimum version.)
+	Microsoft .NET 3.5 SDK (optional, required for changes to service descriptions)
+
+On Linux:
+	Mono (optional, required for changes to service descriptions)
+
+Building
+--------
+
+On windows, in the UPnP directory, run:
+	make generate-makefiles
+	make
+
+On Linux, in the UPnP directory, run:
+	make
+
+Installing
+----------
+
+See INSTALL.
+
+Directories
+-----------
+
+Build/
+	Generated during the build process. Build artefacts go here.
+
+Build/Obj/Windows/
+Build/Obj/Posix/
+	Binaries and shared libraries are built to here during a build.
+
+Build/Tools/
+	Binaries that are required by the build process are built to here.
+
+Build/Include/
+	Header files needed by users of the library are copied here during the build.
+
+Generated/
+	Files that come with the distribution but which are generated from
+	templates and can be rebuilt if they are deleted.
+
+Scripts/
+	Scripts that are needed by the build process.
+
+T4/
+	Files related to template-based generation of source and makefiles.
+
+T4/Templates/
+	Templates for source and makefiles.
+
+Api/
+Arch/
+Buffer/
+ControlPoint/
+Device/
+Exception/
+Network/
+Os/
+Public/
+Service/
+Ssdp/
+TestFramework/
+Thread/
+Timer/
+Utils/
+	Source code. (TODO: Describe this better. I've not actually looked through
+	the source enough to really understand what goes where. --andreww)
+
+
+Make targets
+------------
+
+all
+	This is the default target. It (should) build everything.
+
+generate-makefiles
+	This regenerates the makefiles in Generated/ that are derived from the
+	service descriptions. GNU make will detect these changes automatically,
+	but Microsoft's nmake doesn't handle this, so Windows users will need
+	to use this target when the service descriptions or T4 templates for
+	the makefiles have been changed.
+
+install
+	See INSTALL.
+
+uninstall
+	See INSTALL.
+
+clean
+	Removes files from Build/Obj/$platform/ and Build/Include/
+
+mostlyclean
+	Also removes the auto-generated makefiles from Generated/
+
+maintainer-clean
+	Also removes Build/Tools/
+	(Should - but doesn't yet - remove auto-generated source files too.)
+
+
+
