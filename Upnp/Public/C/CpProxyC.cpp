@@ -40,3 +40,11 @@ void CpProxyCSetPropertyChanged(THandle aHandle, ZappCallback aCallback, void* a
     Functor functor = MakeFunctor(aPtr, aCallback);
     proxyC->SetPropertyChanged(functor);
 }
+
+void CpProxyCSetPropertyInitialEvent(THandle aHandle, ZappCallback aCallback, void* aPtr)
+{
+    CpProxyC* proxyC = reinterpret_cast<CpProxyC*>(aHandle);
+    ASSERT(proxyC != NULL);
+    Functor functor = MakeFunctor(aPtr, aCallback);
+    proxyC->SetPropertyInitialEvent(functor);
+}

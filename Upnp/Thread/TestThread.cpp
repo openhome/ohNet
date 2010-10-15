@@ -665,7 +665,9 @@ void MainTestThread::Run()
     runner.Add(new SuiteMutex());
     runner.Add(new SuiteAutoMutex());
     runner.Add(new SuiteStartStop());
-    runner.Add(new SuitePerformance());
+    // Performance tests disabled as they cause intermittent failures for automated tests
+    // (which run on servers with variable loads)
+    //runner.Add(new SuitePerformance());
     runner.Add(new SuiteThreadKill());
     if (Zapp::Thread::SupportsPriorities())
     {

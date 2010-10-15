@@ -517,8 +517,8 @@ void SyncSetSourceVisibleLinnCoUkProduct3::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkProduct3::CpProxyLinnCoUkProduct3(CpDevice& aDevice)
+    : CpProxy("linn-co-uk", "Product", 3, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Product", 3, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionType = new Action("Type");
@@ -673,7 +673,7 @@ CpProxyLinnCoUkProduct3::CpProxyLinnCoUkProduct3(CpDevice& aDevice)
 
 CpProxyLinnCoUkProduct3::~CpProxyLinnCoUkProduct3()
 {
-    delete iService;
+    DestroyService();
     delete iActionType;
     delete iActionModel;
     delete iActionName;
@@ -1561,144 +1561,66 @@ void CpProxyLinnCoUkProduct3::PropertyProductAnySourceType(TUint& aProductAnySou
 
 void CpProxyLinnCoUkProduct3::ProductTypePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iProductTypeChanged != NULL) {
-        iProductTypeChanged();
-    }
+    ReportEvent(iProductTypeChanged);
 }
 
 void CpProxyLinnCoUkProduct3::ProductModelPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iProductModelChanged != NULL) {
-        iProductModelChanged();
-    }
+    ReportEvent(iProductModelChanged);
 }
 
 void CpProxyLinnCoUkProduct3::ProductNamePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iProductNameChanged != NULL) {
-        iProductNameChanged();
-    }
+    ReportEvent(iProductNameChanged);
 }
 
 void CpProxyLinnCoUkProduct3::ProductRoomPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iProductRoomChanged != NULL) {
-        iProductRoomChanged();
-    }
+    ReportEvent(iProductRoomChanged);
 }
 
 void CpProxyLinnCoUkProduct3::ProductStandbyPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iProductStandbyChanged != NULL) {
-        iProductStandbyChanged();
-    }
+    ReportEvent(iProductStandbyChanged);
 }
 
 void CpProxyLinnCoUkProduct3::ProductSourceIndexPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iProductSourceIndexChanged != NULL) {
-        iProductSourceIndexChanged();
-    }
+    ReportEvent(iProductSourceIndexChanged);
 }
 
 void CpProxyLinnCoUkProduct3::ProductSourceCountPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iProductSourceCountChanged != NULL) {
-        iProductSourceCountChanged();
-    }
+    ReportEvent(iProductSourceCountChanged);
 }
 
 void CpProxyLinnCoUkProduct3::ProductSourceXmlPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iProductSourceXmlChanged != NULL) {
-        iProductSourceXmlChanged();
-    }
+    ReportEvent(iProductSourceXmlChanged);
 }
 
 void CpProxyLinnCoUkProduct3::StartupSourceIndexPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iStartupSourceIndexChanged != NULL) {
-        iStartupSourceIndexChanged();
-    }
+    ReportEvent(iStartupSourceIndexChanged);
 }
 
 void CpProxyLinnCoUkProduct3::StartupSourceEnabledPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iStartupSourceEnabledChanged != NULL) {
-        iStartupSourceEnabledChanged();
-    }
+    ReportEvent(iStartupSourceEnabledChanged);
 }
 
 void CpProxyLinnCoUkProduct3::ProductAnySourceNamePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iProductAnySourceNameChanged != NULL) {
-        iProductAnySourceNameChanged();
-    }
+    ReportEvent(iProductAnySourceNameChanged);
 }
 
 void CpProxyLinnCoUkProduct3::ProductAnySourceVisiblePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iProductAnySourceVisibleChanged != NULL) {
-        iProductAnySourceVisibleChanged();
-    }
+    ReportEvent(iProductAnySourceVisibleChanged);
 }
 
 void CpProxyLinnCoUkProduct3::ProductAnySourceTypePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iProductAnySourceTypeChanged != NULL) {
-        iProductAnySourceTypeChanged();
-    }
+    ReportEvent(iProductAnySourceTypeChanged);
 }
 

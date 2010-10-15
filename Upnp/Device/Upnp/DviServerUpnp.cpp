@@ -416,7 +416,6 @@ void DviSessionUpnp::Get()
         }
     }
 
-    // !!!! accept-language handling
     DviStack::DeviceMap().WriteResource(iReaderRequest->Uri(), iInterface, *this);
     if (iResponseStarted) {
         ASSERT(iResponseEnded);

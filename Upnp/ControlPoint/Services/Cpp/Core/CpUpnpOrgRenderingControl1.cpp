@@ -747,8 +747,8 @@ void SyncSetLoudnessUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyUpnpOrgRenderingControl1::CpProxyUpnpOrgRenderingControl1(CpDevice& aDevice)
+    : CpProxy("schemas-upnp-org", "RenderingControl", 1, aDevice.Device())
 {
-    iService = new CpiService("schemas-upnp-org", "RenderingControl", 1, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -1031,7 +1031,7 @@ CpProxyUpnpOrgRenderingControl1::CpProxyUpnpOrgRenderingControl1(CpDevice& aDevi
 
 CpProxyUpnpOrgRenderingControl1::~CpProxyUpnpOrgRenderingControl1()
 {
-    delete iService;
+    DestroyService();
     delete iActionListPresets;
     delete iActionSelectPreset;
     delete iActionGetBrightness;
@@ -2147,12 +2147,6 @@ void CpProxyUpnpOrgRenderingControl1::PropertyLastChange(Brhz& aLastChange) cons
 
 void CpProxyUpnpOrgRenderingControl1::LastChangePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iLastChangeChanged != NULL) {
-        iLastChangeChanged();
-    }
+    ReportEvent(iLastChangeChanged);
 }
 

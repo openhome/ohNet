@@ -401,8 +401,8 @@ void SyncGetCurrentTransportActionsUpnpOrgAVTransport1::CompleteRequest(IAsync& 
 
 
 CpProxyUpnpOrgAVTransport1::CpProxyUpnpOrgAVTransport1(CpDevice& aDevice)
+    : CpProxy("schemas-upnp-org", "AVTransport", 1, aDevice.Device())
 {
-    iService = new CpiService("schemas-upnp-org", "AVTransport", 1, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -583,7 +583,7 @@ CpProxyUpnpOrgAVTransport1::CpProxyUpnpOrgAVTransport1(CpDevice& aDevice)
 
 CpProxyUpnpOrgAVTransport1::~CpProxyUpnpOrgAVTransport1()
 {
-    delete iService;
+    DestroyService();
     delete iActionSetAVTransportURI;
     delete iActionSetNextAVTransportURI;
     delete iActionGetMediaInfo;
@@ -1156,12 +1156,6 @@ void CpProxyUpnpOrgAVTransport1::PropertyLastChange(Brhz& aLastChange) const
 
 void CpProxyUpnpOrgAVTransport1::LastChangePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iLastChangeChanged != NULL) {
-        iLastChangeChanged();
-    }
+    ReportEvent(iLastChangeChanged);
 }
 

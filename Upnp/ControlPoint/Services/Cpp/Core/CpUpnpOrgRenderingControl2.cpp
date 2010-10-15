@@ -791,8 +791,8 @@ void SyncSetStateVariablesUpnpOrgRenderingControl2::CompleteRequest(IAsync& aAsy
 
 
 CpProxyUpnpOrgRenderingControl2::CpProxyUpnpOrgRenderingControl2(CpDevice& aDevice)
+    : CpProxy("schemas-upnp-org", "RenderingControl", 2, aDevice.Device())
 {
-    iService = new CpiService("schemas-upnp-org", "RenderingControl", 2, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -1097,7 +1097,7 @@ CpProxyUpnpOrgRenderingControl2::CpProxyUpnpOrgRenderingControl2(CpDevice& aDevi
 
 CpProxyUpnpOrgRenderingControl2::~CpProxyUpnpOrgRenderingControl2()
 {
-    delete iService;
+    DestroyService();
     delete iActionListPresets;
     delete iActionSelectPreset;
     delete iActionGetBrightness;
@@ -2284,12 +2284,6 @@ void CpProxyUpnpOrgRenderingControl2::PropertyLastChange(Brhz& aLastChange) cons
 
 void CpProxyUpnpOrgRenderingControl2::LastChangePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iLastChangeChanged != NULL) {
-        iLastChangeChanged();
-    }
+    ReportEvent(iLastChangeChanged);
 }
 

@@ -351,8 +351,8 @@ void SyncIdsMaxLinnCoUkRadio1::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkRadio1::CpProxyLinnCoUkRadio1(CpDevice& aDevice)
+    : CpProxy("linn-co-uk", "Radio", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Radio", 1, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -462,7 +462,7 @@ CpProxyLinnCoUkRadio1::CpProxyLinnCoUkRadio1(CpDevice& aDevice)
 
 CpProxyLinnCoUkRadio1::~CpProxyLinnCoUkRadio1()
 {
-    delete iService;
+    DestroyService();
     delete iActionPlay;
     delete iActionPause;
     delete iActionStop;
@@ -1030,78 +1030,36 @@ void CpProxyLinnCoUkRadio1::PropertyIdsMax(TUint& aIdsMax) const
 
 void CpProxyLinnCoUkRadio1::ChannelUriPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iChannelUriChanged != NULL) {
-        iChannelUriChanged();
-    }
+    ReportEvent(iChannelUriChanged);
 }
 
 void CpProxyLinnCoUkRadio1::ChannelMetadataPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iChannelMetadataChanged != NULL) {
-        iChannelMetadataChanged();
-    }
+    ReportEvent(iChannelMetadataChanged);
 }
 
 void CpProxyLinnCoUkRadio1::TransportStatePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iTransportStateChanged != NULL) {
-        iTransportStateChanged();
-    }
+    ReportEvent(iTransportStateChanged);
 }
 
 void CpProxyLinnCoUkRadio1::ProtocolInfoPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iProtocolInfoChanged != NULL) {
-        iProtocolInfoChanged();
-    }
+    ReportEvent(iProtocolInfoChanged);
 }
 
 void CpProxyLinnCoUkRadio1::IdPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iIdChanged != NULL) {
-        iIdChanged();
-    }
+    ReportEvent(iIdChanged);
 }
 
 void CpProxyLinnCoUkRadio1::IdArrayPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iIdArrayChanged != NULL) {
-        iIdArrayChanged();
-    }
+    ReportEvent(iIdArrayChanged);
 }
 
 void CpProxyLinnCoUkRadio1::IdsMaxPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iIdsMaxChanged != NULL) {
-        iIdsMaxChanged();
-    }
+    ReportEvent(iIdsMaxChanged);
 }
 

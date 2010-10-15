@@ -221,8 +221,8 @@ void SyncTestDiscPlayerConnectionLinnCoUkProxyManager1::CompleteRequest(IAsync& 
 
 
 CpProxyLinnCoUkProxyManager1::CpProxyLinnCoUkProxyManager1(CpDevice& aDevice)
+    : CpProxy("linn-co-uk", "ProxyManager", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "ProxyManager", 1, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -336,7 +336,7 @@ CpProxyLinnCoUkProxyManager1::CpProxyLinnCoUkProxyManager1(CpDevice& aDevice)
 
 CpProxyLinnCoUkProxyManager1::~CpProxyLinnCoUkProxyManager1()
 {
-    delete iService;
+    DestroyService();
     delete iActionKontrolProductConnected;
     delete iActionSetKontrolProductConnected;
     delete iActionKontrolProductComPort;
@@ -685,45 +685,21 @@ void CpProxyLinnCoUkProxyManager1::PropertyDiscPlayerComPort(TUint& aDiscPlayerC
 
 void CpProxyLinnCoUkProxyManager1::KontrolProductConnectedPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iKontrolProductConnectedChanged != NULL) {
-        iKontrolProductConnectedChanged();
-    }
+    ReportEvent(iKontrolProductConnectedChanged);
 }
 
 void CpProxyLinnCoUkProxyManager1::KontrolProductComPortPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iKontrolProductComPortChanged != NULL) {
-        iKontrolProductComPortChanged();
-    }
+    ReportEvent(iKontrolProductComPortChanged);
 }
 
 void CpProxyLinnCoUkProxyManager1::DiscPlayerConnectedPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDiscPlayerConnectedChanged != NULL) {
-        iDiscPlayerConnectedChanged();
-    }
+    ReportEvent(iDiscPlayerConnectedChanged);
 }
 
 void CpProxyLinnCoUkProxyManager1::DiscPlayerComPortPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDiscPlayerComPortChanged != NULL) {
-        iDiscPlayerComPortChanged();
-    }
+    ReportEvent(iDiscPlayerComPortChanged);
 }
 

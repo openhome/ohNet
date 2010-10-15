@@ -182,8 +182,8 @@ void SyncLoadManifestLinnCoUkJukebox1Cpp::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkJukebox1Cpp::CpProxyLinnCoUkJukebox1Cpp(CpDeviceCpp& aDevice)
+    : CpProxy("linn-co-uk", "Jukebox", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Jukebox", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionSetPresetPrefix = new Action("SetPresetPrefix");
@@ -234,7 +234,7 @@ CpProxyLinnCoUkJukebox1Cpp::CpProxyLinnCoUkJukebox1Cpp(CpDeviceCpp& aDevice)
 
 CpProxyLinnCoUkJukebox1Cpp::~CpProxyLinnCoUkJukebox1Cpp()
 {
-    delete iService;
+    DestroyService();
     delete iActionSetPresetPrefix;
     delete iActionPresetPrefix;
     delete iActionSetAlbumArtFileName;
@@ -532,34 +532,16 @@ void CpProxyLinnCoUkJukebox1Cpp::PropertyAlbumArtFileName(std::string& aAlbumArt
 
 void CpProxyLinnCoUkJukebox1Cpp::CurrentPresetPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iCurrentPresetChanged != NULL) {
-        iCurrentPresetChanged();
-    }
+    ReportEvent(iCurrentPresetChanged);
 }
 
 void CpProxyLinnCoUkJukebox1Cpp::PresetPrefixPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iPresetPrefixChanged != NULL) {
-        iPresetPrefixChanged();
-    }
+    ReportEvent(iPresetPrefixChanged);
 }
 
 void CpProxyLinnCoUkJukebox1Cpp::AlbumArtFileNamePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iAlbumArtFileNameChanged != NULL) {
-        iAlbumArtFileNameChanged();
-    }
+    ReportEvent(iAlbumArtFileNameChanged);
 }
 

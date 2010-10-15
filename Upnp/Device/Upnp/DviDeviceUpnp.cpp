@@ -841,8 +841,7 @@ void DviDeviceUpnpXmlWriter::Write(TIpAddress aInterface)
         iWriter.Write('>');
     }
     WriteTag("friendlyName", "FriendlyName");
-    WriteTag("manufacturer", "Manufacturer"); /* !!!! could allow attribute in init params as default
-                                                      or set init version in device ctor? */
+    WriteTag("manufacturer", "Manufacturer");
     WriteTag("manufacturerURL", "ManufacturerUrl");
     WriteTag("modelDescription", "ModelDescription");
     WriteTag("modelName", "ModelName");

@@ -290,8 +290,8 @@ void SyncRebootLinnCoUkDiagnostics1Cpp::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkDiagnostics1Cpp::CpProxyLinnCoUkDiagnostics1Cpp(CpDeviceCpp& aDevice)
+    : CpProxy("linn-co-uk", "Diagnostics", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Diagnostics", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionEcho = new Action("Echo");
@@ -356,7 +356,7 @@ CpProxyLinnCoUkDiagnostics1Cpp::CpProxyLinnCoUkDiagnostics1Cpp(CpDeviceCpp& aDev
 
 CpProxyLinnCoUkDiagnostics1Cpp::~CpProxyLinnCoUkDiagnostics1Cpp()
 {
-    delete iService;
+    DestroyService();
     delete iActionEcho;
     delete iActionElfFile;
     delete iActionElfFingerprint;
@@ -786,12 +786,6 @@ void CpProxyLinnCoUkDiagnostics1Cpp::PropertyaStateVariable(uint32_t& aaStateVar
 
 void CpProxyLinnCoUkDiagnostics1Cpp::aStateVariablePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iaStateVariableChanged != NULL) {
-        iaStateVariableChanged();
-    }
+    ReportEvent(iaStateVariableChanged);
 }
 

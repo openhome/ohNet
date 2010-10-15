@@ -91,8 +91,8 @@ void Sync<#=a.name#><#=syncClassSuffix#>::CompleteRequest(IAsync& aAsync)
 
 
 <#=className#>::<#=className#>(CpDevice& aDevice)
+    : CpProxy("<#=upnpdomain#>", "<#=type#>", <#=version#>, aDevice.Device())
 {
-    iService = new CpiService("<#=upnpdomain#>", "<#=type#>", <#=version#>, aDevice.Device());
     <#=DeclareConstructLocalVars(u)#>
 <#  foreach (Method a in u.methods) #>
 <#  { #>
@@ -150,7 +150,7 @@ void Sync<#=a.name#><#=syncClassSuffix#>::CompleteRequest(IAsync& aAsync)
 
 <#=className#>::~<#=className#>()
 {
-    delete iService;
+    DestroyService();
 <#  foreach (Method a in u.methods) #>
 <#  { #>
     delete iAction<#=a.name#>;
@@ -247,13 +247,7 @@ void <#=className#>::Property<#=s.name#>(<#=propargtype[s.type]#> a<#=s.name#>) 
 
 void <#=className#>::<#=s.name#>PropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && i<#=s.name#>Changed != NULL) {
-        i<#=s.name#>Changed();
-    }
+    ReportEvent(i<#=s.name#>Changed);
 }
 <#  } #>
 

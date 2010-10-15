@@ -420,8 +420,8 @@ void SyncGetRecordTaskConflictsUpnpOrgScheduledRecording1Cpp::CompleteRequest(IA
 
 
 CpProxyUpnpOrgScheduledRecording1Cpp::CpProxyUpnpOrgScheduledRecording1Cpp(CpDeviceCpp& aDevice)
+    : CpProxy("schemas-upnp-org", "ScheduledRecording", 1, aDevice.Device())
 {
-    iService = new CpiService("schemas-upnp-org", "ScheduledRecording", 1, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -582,7 +582,7 @@ CpProxyUpnpOrgScheduledRecording1Cpp::CpProxyUpnpOrgScheduledRecording1Cpp(CpDev
 
 CpProxyUpnpOrgScheduledRecording1Cpp::~CpProxyUpnpOrgScheduledRecording1Cpp()
 {
-    delete iService;
+    DestroyService();
     delete iActionGetSortCapabilities;
     delete iActionGetPropertyList;
     delete iActionGetAllowedValues;
@@ -1289,12 +1289,6 @@ void CpProxyUpnpOrgScheduledRecording1Cpp::PropertyLastChange(std::string& aLast
 
 void CpProxyUpnpOrgScheduledRecording1Cpp::LastChangePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iLastChangeChanged != NULL) {
-        iLastChangeChanged();
-    }
+    ReportEvent(iLastChangeChanged);
 }
 

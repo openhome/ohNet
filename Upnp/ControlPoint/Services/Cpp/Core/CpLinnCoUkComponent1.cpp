@@ -241,8 +241,8 @@ void SyncLocateLinnCoUkComponent1::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkComponent1::CpProxyLinnCoUkComponent1(CpDevice& aDevice)
+    : CpProxy("linn-co-uk", "Component", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Component", 1, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -320,7 +320,7 @@ CpProxyLinnCoUkComponent1::CpProxyLinnCoUkComponent1(CpDevice& aDevice)
 
 CpProxyLinnCoUkComponent1::~CpProxyLinnCoUkComponent1()
 {
-    delete iService;
+    DestroyService();
     delete iActionAmplifierEnabled;
     delete iActionSetAmplifierEnabled;
     delete iActionAmplifierAttenuation;
@@ -694,45 +694,21 @@ void CpProxyLinnCoUkComponent1::PropertyDigitalAudioOutputRaw(TBool& aDigitalAud
 
 void CpProxyLinnCoUkComponent1::AmplifierEnabledPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iAmplifierEnabledChanged != NULL) {
-        iAmplifierEnabledChanged();
-    }
+    ReportEvent(iAmplifierEnabledChanged);
 }
 
 void CpProxyLinnCoUkComponent1::AmplifierAttenuationPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iAmplifierAttenuationChanged != NULL) {
-        iAmplifierAttenuationChanged();
-    }
+    ReportEvent(iAmplifierAttenuationChanged);
 }
 
 void CpProxyLinnCoUkComponent1::VolumeControlEnabledPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iVolumeControlEnabledChanged != NULL) {
-        iVolumeControlEnabledChanged();
-    }
+    ReportEvent(iVolumeControlEnabledChanged);
 }
 
 void CpProxyLinnCoUkComponent1::DigitalAudioOutputRawPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDigitalAudioOutputRawChanged != NULL) {
-        iDigitalAudioOutputRawChanged();
-    }
+    ReportEvent(iDigitalAudioOutputRawChanged);
 }
 

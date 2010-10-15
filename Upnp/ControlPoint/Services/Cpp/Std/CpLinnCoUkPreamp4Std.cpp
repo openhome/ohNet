@@ -304,8 +304,8 @@ void SyncStartupVolumeEnabledLinnCoUkPreamp4Cpp::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkPreamp4Cpp::CpProxyLinnCoUkPreamp4Cpp(CpDeviceCpp& aDevice)
+    : CpProxy("linn-co-uk", "Preamp", 4, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Preamp", 4, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionVolumeInc = new Action("VolumeInc");
@@ -383,7 +383,7 @@ CpProxyLinnCoUkPreamp4Cpp::CpProxyLinnCoUkPreamp4Cpp(CpDeviceCpp& aDevice)
 
 CpProxyLinnCoUkPreamp4Cpp::~CpProxyLinnCoUkPreamp4Cpp()
 {
-    delete iService;
+    DestroyService();
     delete iActionVolumeInc;
     delete iActionVolumeDec;
     delete iActionSetVolume;
@@ -864,67 +864,31 @@ void CpProxyLinnCoUkPreamp4Cpp::PropertyStartupVolumeEnabled(bool& aStartupVolum
 
 void CpProxyLinnCoUkPreamp4Cpp::VolumePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iVolumeChanged != NULL) {
-        iVolumeChanged();
-    }
+    ReportEvent(iVolumeChanged);
 }
 
 void CpProxyLinnCoUkPreamp4Cpp::MutePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iMuteChanged != NULL) {
-        iMuteChanged();
-    }
+    ReportEvent(iMuteChanged);
 }
 
 void CpProxyLinnCoUkPreamp4Cpp::BalancePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iBalanceChanged != NULL) {
-        iBalanceChanged();
-    }
+    ReportEvent(iBalanceChanged);
 }
 
 void CpProxyLinnCoUkPreamp4Cpp::VolumeLimitPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iVolumeLimitChanged != NULL) {
-        iVolumeLimitChanged();
-    }
+    ReportEvent(iVolumeLimitChanged);
 }
 
 void CpProxyLinnCoUkPreamp4Cpp::StartupVolumePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iStartupVolumeChanged != NULL) {
-        iStartupVolumeChanged();
-    }
+    ReportEvent(iStartupVolumeChanged);
 }
 
 void CpProxyLinnCoUkPreamp4Cpp::StartupVolumeEnabledPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iStartupVolumeEnabledChanged != NULL) {
-        iStartupVolumeEnabledChanged();
-    }
+    ReportEvent(iStartupVolumeEnabledChanged);
 }
 

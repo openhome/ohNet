@@ -330,8 +330,8 @@ void SyncCreateReferenceUpnpOrgContentDirectory1Cpp::CompleteRequest(IAsync& aAs
 
 
 CpProxyUpnpOrgContentDirectory1Cpp::CpProxyUpnpOrgContentDirectory1Cpp(CpDeviceCpp& aDevice)
+    : CpProxy("schemas-upnp-org", "ContentDirectory", 1, aDevice.Device())
 {
-    iService = new CpiService("schemas-upnp-org", "ContentDirectory", 1, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -482,7 +482,7 @@ CpProxyUpnpOrgContentDirectory1Cpp::CpProxyUpnpOrgContentDirectory1Cpp(CpDeviceC
 
 CpProxyUpnpOrgContentDirectory1Cpp::~CpProxyUpnpOrgContentDirectory1Cpp()
 {
-    delete iService;
+    DestroyService();
     delete iActionGetSearchCapabilities;
     delete iActionGetSortCapabilities;
     delete iActionGetSystemUpdateID;
@@ -1088,34 +1088,16 @@ void CpProxyUpnpOrgContentDirectory1Cpp::PropertyContainerUpdateIDs(std::string&
 
 void CpProxyUpnpOrgContentDirectory1Cpp::TransferIDsPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iTransferIDsChanged != NULL) {
-        iTransferIDsChanged();
-    }
+    ReportEvent(iTransferIDsChanged);
 }
 
 void CpProxyUpnpOrgContentDirectory1Cpp::SystemUpdateIDPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iSystemUpdateIDChanged != NULL) {
-        iSystemUpdateIDChanged();
-    }
+    ReportEvent(iSystemUpdateIDChanged);
 }
 
 void CpProxyUpnpOrgContentDirectory1Cpp::ContainerUpdateIDsPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iContainerUpdateIDsChanged != NULL) {
-        iContainerUpdateIDsChanged();
-    }
+    ReportEvent(iContainerUpdateIDsChanged);
 }
 

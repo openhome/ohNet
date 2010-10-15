@@ -35,8 +35,8 @@ void SyncTimeLinnCoUkTime1::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkTime1::CpProxyLinnCoUkTime1(CpDevice& aDevice)
+    : CpProxy("linn-co-uk", "Time", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Time", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionTime = new Action("Time");
@@ -61,7 +61,7 @@ CpProxyLinnCoUkTime1::CpProxyLinnCoUkTime1(CpDevice& aDevice)
 
 CpProxyLinnCoUkTime1::~CpProxyLinnCoUkTime1()
 {
-    delete iService;
+    DestroyService();
     delete iActionTime;
 }
 
@@ -139,34 +139,16 @@ void CpProxyLinnCoUkTime1::PropertySeconds(TUint& aSeconds) const
 
 void CpProxyLinnCoUkTime1::TrackCountPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iTrackCountChanged != NULL) {
-        iTrackCountChanged();
-    }
+    ReportEvent(iTrackCountChanged);
 }
 
 void CpProxyLinnCoUkTime1::DurationPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDurationChanged != NULL) {
-        iDurationChanged();
-    }
+    ReportEvent(iDurationChanged);
 }
 
 void CpProxyLinnCoUkTime1::SecondsPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iSecondsChanged != NULL) {
-        iSecondsChanged();
-    }
+    ReportEvent(iSecondsChanged);
 }
 

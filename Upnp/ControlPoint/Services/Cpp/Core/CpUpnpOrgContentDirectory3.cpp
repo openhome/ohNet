@@ -461,8 +461,8 @@ void SyncGetFreeFormQueryCapabilitiesUpnpOrgContentDirectory3::CompleteRequest(I
 
 
 CpProxyUpnpOrgContentDirectory3::CpProxyUpnpOrgContentDirectory3(CpDevice& aDevice)
+    : CpProxy("schemas-upnp-org", "ContentDirectory", 3, aDevice.Device())
 {
-    iService = new CpiService("schemas-upnp-org", "ContentDirectory", 3, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -652,7 +652,7 @@ CpProxyUpnpOrgContentDirectory3::CpProxyUpnpOrgContentDirectory3(CpDevice& aDevi
 
 CpProxyUpnpOrgContentDirectory3::~CpProxyUpnpOrgContentDirectory3()
 {
-    delete iService;
+    DestroyService();
     delete iActionGetSearchCapabilities;
     delete iActionGetSortCapabilities;
     delete iActionGetSortExtensionCapabilities;
@@ -1367,45 +1367,21 @@ void CpProxyUpnpOrgContentDirectory3::PropertyTransferIDs(Brhz& aTransferIDs) co
 
 void CpProxyUpnpOrgContentDirectory3::SystemUpdateIDPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iSystemUpdateIDChanged != NULL) {
-        iSystemUpdateIDChanged();
-    }
+    ReportEvent(iSystemUpdateIDChanged);
 }
 
 void CpProxyUpnpOrgContentDirectory3::ContainerUpdateIDsPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iContainerUpdateIDsChanged != NULL) {
-        iContainerUpdateIDsChanged();
-    }
+    ReportEvent(iContainerUpdateIDsChanged);
 }
 
 void CpProxyUpnpOrgContentDirectory3::LastChangePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iLastChangeChanged != NULL) {
-        iLastChangeChanged();
-    }
+    ReportEvent(iLastChangeChanged);
 }
 
 void CpProxyUpnpOrgContentDirectory3::TransferIDsPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iTransferIDsChanged != NULL) {
-        iTransferIDsChanged();
-    }
+    ReportEvent(iTransferIDsChanged);
 }
 

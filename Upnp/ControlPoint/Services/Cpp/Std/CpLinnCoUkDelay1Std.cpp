@@ -202,8 +202,8 @@ void SyncPresetCountLinnCoUkDelay1Cpp::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkDelay1Cpp::CpProxyLinnCoUkDelay1Cpp(CpDeviceCpp& aDevice)
+    : CpProxy("linn-co-uk", "Delay", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Delay", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionPresetXml = new Action("PresetXml");
@@ -259,7 +259,7 @@ CpProxyLinnCoUkDelay1Cpp::CpProxyLinnCoUkDelay1Cpp(CpDeviceCpp& aDevice)
 
 CpProxyLinnCoUkDelay1Cpp::~CpProxyLinnCoUkDelay1Cpp()
 {
-    delete iService;
+    DestroyService();
     delete iActionPresetXml;
     delete iActionPresetIndex;
     delete iActionSetPresetIndex;
@@ -562,23 +562,11 @@ void CpProxyLinnCoUkDelay1Cpp::PropertyPresetIndex(uint32_t& aPresetIndex) const
 
 void CpProxyLinnCoUkDelay1Cpp::PresetXmlPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iPresetXmlChanged != NULL) {
-        iPresetXmlChanged();
-    }
+    ReportEvent(iPresetXmlChanged);
 }
 
 void CpProxyLinnCoUkDelay1Cpp::PresetIndexPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iPresetIndexChanged != NULL) {
-        iPresetIndexChanged();
-    }
+    ReportEvent(iPresetIndexChanged);
 }
 

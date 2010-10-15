@@ -507,8 +507,8 @@ void SyncDisplayLedOffLinnCoUkUi2::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkUi2::CpProxyLinnCoUkUi2(CpDevice& aDevice)
+    : CpProxy("linn-co-uk", "Ui", 2, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Ui", 2, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -671,7 +671,7 @@ CpProxyLinnCoUkUi2::CpProxyLinnCoUkUi2(CpDevice& aDevice)
 
 CpProxyLinnCoUkUi2::~CpProxyLinnCoUkUi2()
 {
-    delete iService;
+    DestroyService();
     delete iActionDisplayTestPattern;
     delete iActionDisplayFill;
     delete iActionDisplayClear;
@@ -1503,122 +1503,56 @@ void CpProxyLinnCoUkUi2::PropertyDisplayPixels(Brh& aDisplayPixels) const
 
 void CpProxyLinnCoUkUi2::DisplayBrightnessPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDisplayBrightnessChanged != NULL) {
-        iDisplayBrightnessChanged();
-    }
+    ReportEvent(iDisplayBrightnessChanged);
 }
 
 void CpProxyLinnCoUkUi2::DisplayBrightnessAutoPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDisplayBrightnessAutoChanged != NULL) {
-        iDisplayBrightnessAutoChanged();
-    }
+    ReportEvent(iDisplayBrightnessAutoChanged);
 }
 
 void CpProxyLinnCoUkUi2::InfraredCommandsPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iInfraredCommandsChanged != NULL) {
-        iInfraredCommandsChanged();
-    }
+    ReportEvent(iInfraredCommandsChanged);
 }
 
 void CpProxyLinnCoUkUi2::InfraredTerminalCommandsPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iInfraredTerminalCommandsChanged != NULL) {
-        iInfraredTerminalCommandsChanged();
-    }
+    ReportEvent(iInfraredTerminalCommandsChanged);
 }
 
 void CpProxyLinnCoUkUi2::DisplayUpsideDownPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDisplayUpsideDownChanged != NULL) {
-        iDisplayUpsideDownChanged();
-    }
+    ReportEvent(iDisplayUpsideDownChanged);
 }
 
 void CpProxyLinnCoUkUi2::DisplayScrollTextPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDisplayScrollTextChanged != NULL) {
-        iDisplayScrollTextChanged();
-    }
+    ReportEvent(iDisplayScrollTextChanged);
 }
 
 void CpProxyLinnCoUkUi2::DisplaySleepPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDisplaySleepChanged != NULL) {
-        iDisplaySleepChanged();
-    }
+    ReportEvent(iDisplaySleepChanged);
 }
 
 void CpProxyLinnCoUkUi2::DisplayLedOffPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDisplayLedOffChanged != NULL) {
-        iDisplayLedOffChanged();
-    }
+    ReportEvent(iDisplayLedOffChanged);
 }
 
 void CpProxyLinnCoUkUi2::TerminalInputCodePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iTerminalInputCodeChanged != NULL) {
-        iTerminalInputCodeChanged();
-    }
+    ReportEvent(iTerminalInputCodeChanged);
 }
 
 void CpProxyLinnCoUkUi2::TerminalInputNamePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iTerminalInputNameChanged != NULL) {
-        iTerminalInputNameChanged();
-    }
+    ReportEvent(iTerminalInputNameChanged);
 }
 
 void CpProxyLinnCoUkUi2::DisplayPixelsPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDisplayPixelsChanged != NULL) {
-        iDisplayPixelsChanged();
-    }
+    ReportEvent(iDisplayPixelsChanged);
 }
 

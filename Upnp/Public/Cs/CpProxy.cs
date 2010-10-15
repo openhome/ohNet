@@ -17,6 +17,8 @@ namespace Zapp
         static extern void CpProxyCUnsubscribe(uint aHandle);
         [DllImport("ZappUpnp")]
         static extern void CpProxyCSetPropertyChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        [DllImport("ZappUpnp")]
+        static extern void CpProxyCSetPropertyInitialEvent(uint aHandle, Callback aCallback, IntPtr aPtr);
 
         public delegate void CallbackPropertyChanged();
         public delegate void CallbackAsyncComplete(uint aAsyncHandle);
@@ -28,6 +30,8 @@ namespace Zapp
         private GCHandle iGchProxy;
         private CallbackPropertyChanged iPropertyChanged;
         private Callback iCallbackPropertyChanged;
+        private CallbackPropertyChanged iInitialEvent;
+        private Callback iCallbackInitialEvent;
 
         public void Subscribe()
         {
@@ -45,6 +49,14 @@ namespace Zapp
             iCallbackPropertyChanged = new Callback(PropertyChanged);
             IntPtr ptr = GCHandle.ToIntPtr(iGchProxy);
             CpProxyCSetPropertyChanged(iHandle, iCallbackPropertyChanged, ptr);
+        }
+
+        public void SetPropertyInitialEvent(CallbackPropertyChanged aInitialEvent)
+        {
+            iInitialEvent = aInitialEvent;
+            iCallbackInitialEvent = new Callback(InitialEvent);
+            IntPtr ptr = GCHandle.ToIntPtr(iGchProxy);
+            CpProxyCSetPropertyInitialEvent(iHandle, iCallbackInitialEvent, ptr);
         }
 
         protected CpProxy()
@@ -67,7 +79,14 @@ namespace Zapp
             CpProxy self = (CpProxy)gch.Target;
             self.iPropertyChanged();
         }
-    
+
+        private void InitialEvent(IntPtr aPtr)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            CpProxy self = (CpProxy)gch.Target;
+            self.iInitialEvent();
+        }
+
         ~CpProxy()
         {
             DisposeProxy();

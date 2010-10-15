@@ -269,8 +269,8 @@ void SyncIdArrayChangedLinnCoUkPlaylist1::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkPlaylist1::CpProxyLinnCoUkPlaylist1(CpDevice& aDevice)
+    : CpProxy("linn-co-uk", "Playlist", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Playlist", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionRead = new Action("Read");
@@ -352,7 +352,7 @@ CpProxyLinnCoUkPlaylist1::CpProxyLinnCoUkPlaylist1(CpDevice& aDevice)
 
 CpProxyLinnCoUkPlaylist1::~CpProxyLinnCoUkPlaylist1()
 {
-    delete iService;
+    DestroyService();
     delete iActionRead;
     delete iActionReadList;
     delete iActionInsert;
@@ -776,45 +776,21 @@ void CpProxyLinnCoUkPlaylist1::PropertyTracksMax(TUint& aTracksMax) const
 
 void CpProxyLinnCoUkPlaylist1::IdArrayPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iIdArrayChanged != NULL) {
-        iIdArrayChanged();
-    }
+    ReportEvent(iIdArrayChanged);
 }
 
 void CpProxyLinnCoUkPlaylist1::RepeatPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iRepeatChanged != NULL) {
-        iRepeatChanged();
-    }
+    ReportEvent(iRepeatChanged);
 }
 
 void CpProxyLinnCoUkPlaylist1::ShufflePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iShuffleChanged != NULL) {
-        iShuffleChanged();
-    }
+    ReportEvent(iShuffleChanged);
 }
 
 void CpProxyLinnCoUkPlaylist1::TracksMaxPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iTracksMaxChanged != NULL) {
-        iTracksMaxChanged();
-    }
+    ReportEvent(iTracksMaxChanged);
 }
 

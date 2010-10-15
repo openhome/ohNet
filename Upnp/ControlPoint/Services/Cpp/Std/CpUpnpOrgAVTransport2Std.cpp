@@ -510,8 +510,8 @@ void SyncSetStateVariablesUpnpOrgAVTransport2Cpp::CompleteRequest(IAsync& aAsync
 
 
 CpProxyUpnpOrgAVTransport2Cpp::CpProxyUpnpOrgAVTransport2Cpp(CpDeviceCpp& aDevice)
+    : CpProxy("schemas-upnp-org", "AVTransport", 2, aDevice.Device())
 {
-    iService = new CpiService("schemas-upnp-org", "AVTransport", 2, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -757,7 +757,7 @@ CpProxyUpnpOrgAVTransport2Cpp::CpProxyUpnpOrgAVTransport2Cpp(CpDeviceCpp& aDevic
 
 CpProxyUpnpOrgAVTransport2Cpp::~CpProxyUpnpOrgAVTransport2Cpp()
 {
-    delete iService;
+    DestroyService();
     delete iActionSetAVTransportURI;
     delete iActionSetNextAVTransportURI;
     delete iActionGetMediaInfo;
@@ -1644,23 +1644,11 @@ void CpProxyUpnpOrgAVTransport2Cpp::PropertyDRMState(std::string& aDRMState) con
 
 void CpProxyUpnpOrgAVTransport2Cpp::LastChangePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iLastChangeChanged != NULL) {
-        iLastChangeChanged();
-    }
+    ReportEvent(iLastChangeChanged);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::DRMStatePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDRMStateChanged != NULL) {
-        iDRMStateChanged();
-    }
+    ReportEvent(iDRMStateChanged);
 }
 

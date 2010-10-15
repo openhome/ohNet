@@ -73,8 +73,8 @@ void SyncSetParameterLinnCoUkConfiguration1::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkConfiguration1::CpProxyLinnCoUkConfiguration1(CpDevice& aDevice)
+    : CpProxy("linn-co-uk", "Configuration", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Configuration", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionConfigurationXml = new Action("ConfigurationXml");
@@ -104,7 +104,7 @@ CpProxyLinnCoUkConfiguration1::CpProxyLinnCoUkConfiguration1(CpDevice& aDevice)
 
 CpProxyLinnCoUkConfiguration1::~CpProxyLinnCoUkConfiguration1()
 {
-    delete iService;
+    DestroyService();
     delete iActionConfigurationXml;
     delete iActionParameterXml;
     delete iActionSetParameter;
@@ -225,23 +225,11 @@ void CpProxyLinnCoUkConfiguration1::PropertyParameterXml(Brhz& aParameterXml) co
 
 void CpProxyLinnCoUkConfiguration1::ConfigurationXmlPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iConfigurationXmlChanged != NULL) {
-        iConfigurationXmlChanged();
-    }
+    ReportEvent(iConfigurationXmlChanged);
 }
 
 void CpProxyLinnCoUkConfiguration1::ParameterXmlPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iParameterXmlChanged != NULL) {
-        iParameterXmlChanged();
-    }
+    ReportEvent(iParameterXmlChanged);
 }
 

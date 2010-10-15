@@ -135,8 +135,8 @@ void SyncGetCurrentConnectionInfoUpnpOrgConnectionManager1::CompleteRequest(IAsy
 
 
 CpProxyUpnpOrgConnectionManager1::CpProxyUpnpOrgConnectionManager1(CpDevice& aDevice)
+    : CpProxy("schemas-upnp-org", "ConnectionManager", 1, aDevice.Device())
 {
-    iService = new CpiService("schemas-upnp-org", "ConnectionManager", 1, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -221,7 +221,7 @@ CpProxyUpnpOrgConnectionManager1::CpProxyUpnpOrgConnectionManager1(CpDevice& aDe
 
 CpProxyUpnpOrgConnectionManager1::~CpProxyUpnpOrgConnectionManager1()
 {
-    delete iService;
+    DestroyService();
     delete iActionGetProtocolInfo;
     delete iActionPrepareForConnection;
     delete iActionConnectionComplete;
@@ -440,34 +440,16 @@ void CpProxyUpnpOrgConnectionManager1::PropertyCurrentConnectionIDs(Brhz& aCurre
 
 void CpProxyUpnpOrgConnectionManager1::SourceProtocolInfoPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iSourceProtocolInfoChanged != NULL) {
-        iSourceProtocolInfoChanged();
-    }
+    ReportEvent(iSourceProtocolInfoChanged);
 }
 
 void CpProxyUpnpOrgConnectionManager1::SinkProtocolInfoPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iSinkProtocolInfoChanged != NULL) {
-        iSinkProtocolInfoChanged();
-    }
+    ReportEvent(iSinkProtocolInfoChanged);
 }
 
 void CpProxyUpnpOrgConnectionManager1::CurrentConnectionIDsPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iCurrentConnectionIDsChanged != NULL) {
-        iCurrentConnectionIDsChanged();
-    }
+    ReportEvent(iCurrentConnectionIDsChanged);
 }
 

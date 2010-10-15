@@ -48,7 +48,7 @@ DviDevice::~DviDevice()
     DviDeviceMap::Remove(*this);
     delete iProtocols[0];
     for (TUint i=0; i<iServices.size(); i++) {
-        iServices[i]->RemoveRef();;
+        iServices[i]->RemoveRef();
     }
 }
 
@@ -435,6 +435,15 @@ DviDeviceMap::DviDeviceMap()
 
 DviDeviceMap::~DviDeviceMap()
 {
+    /*if (iMap.size() != 0) {
+        Map::iterator it = iMap.begin();
+        while (it != iMap.end()) {
+            Log::Print("Orphaned device: ");
+            Log::Print(it->second->Udn());
+            Log::Print("\n");
+            it++;
+        }
+    }*/
     ASSERT(iMap.size() == 0);
 }
 

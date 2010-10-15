@@ -349,8 +349,8 @@ void SyncGetBinaryZappOrgTestBasic1::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyZappOrgTestBasic1::CpProxyZappOrgTestBasic1(CpDevice& aDevice)
+    : CpProxy("zapp-org", "TestBasic", 1, aDevice.Device())
 {
-    iService = new CpiService("zapp-org", "TestBasic", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionIncrement = new Action("Increment");
@@ -451,7 +451,7 @@ CpProxyZappOrgTestBasic1::CpProxyZappOrgTestBasic1(CpDevice& aDevice)
 
 CpProxyZappOrgTestBasic1::~CpProxyZappOrgTestBasic1()
 {
-    delete iService;
+    DestroyService();
     delete iActionIncrement;
     delete iActionDecrement;
     delete iActionToggle;
@@ -1006,56 +1006,26 @@ void CpProxyZappOrgTestBasic1::PropertyVarBin(Brh& aVarBin) const
 
 void CpProxyZappOrgTestBasic1::VarUintPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iVarUintChanged != NULL) {
-        iVarUintChanged();
-    }
+    ReportEvent(iVarUintChanged);
 }
 
 void CpProxyZappOrgTestBasic1::VarIntPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iVarIntChanged != NULL) {
-        iVarIntChanged();
-    }
+    ReportEvent(iVarIntChanged);
 }
 
 void CpProxyZappOrgTestBasic1::VarBoolPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iVarBoolChanged != NULL) {
-        iVarBoolChanged();
-    }
+    ReportEvent(iVarBoolChanged);
 }
 
 void CpProxyZappOrgTestBasic1::VarStrPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iVarStrChanged != NULL) {
-        iVarStrChanged();
-    }
+    ReportEvent(iVarStrChanged);
 }
 
 void CpProxyZappOrgTestBasic1::VarBinPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iVarBinChanged != NULL) {
-        iVarBinChanged();
-    }
+    ReportEvent(iVarBinChanged);
 }
 

@@ -450,8 +450,8 @@ void SyncGetRampTimeUpnpOrgDimming1Cpp::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyUpnpOrgDimming1Cpp::CpProxyUpnpOrgDimming1Cpp(CpDeviceCpp& aDevice)
+    : CpProxy("schemas-upnp-org", "Dimming", 1, aDevice.Device())
 {
-    iService = new CpiService("schemas-upnp-org", "Dimming", 1, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -562,7 +562,7 @@ CpProxyUpnpOrgDimming1Cpp::CpProxyUpnpOrgDimming1Cpp(CpDeviceCpp& aDevice)
 
 CpProxyUpnpOrgDimming1Cpp::~CpProxyUpnpOrgDimming1Cpp()
 {
-    delete iService;
+    DestroyService();
     delete iActionSetLoadLevelTarget;
     delete iActionGetLoadLevelTarget;
     delete iActionGetLoadLevelStatus;
@@ -1224,56 +1224,26 @@ void CpProxyUpnpOrgDimming1Cpp::PropertyRampPaused(bool& aRampPaused) const
 
 void CpProxyUpnpOrgDimming1Cpp::LoadLevelStatusPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iLoadLevelStatusChanged != NULL) {
-        iLoadLevelStatusChanged();
-    }
+    ReportEvent(iLoadLevelStatusChanged);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::StepDeltaPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iStepDeltaChanged != NULL) {
-        iStepDeltaChanged();
-    }
+    ReportEvent(iStepDeltaChanged);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::RampRatePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iRampRateChanged != NULL) {
-        iRampRateChanged();
-    }
+    ReportEvent(iRampRateChanged);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::IsRampingPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iIsRampingChanged != NULL) {
-        iIsRampingChanged();
-    }
+    ReportEvent(iIsRampingChanged);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::RampPausedPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iRampPausedChanged != NULL) {
-        iRampPausedChanged();
-    }
+    ReportEvent(iRampPausedChanged);
 }
 
