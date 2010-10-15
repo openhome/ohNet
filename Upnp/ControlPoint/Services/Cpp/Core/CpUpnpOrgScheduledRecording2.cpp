@@ -417,8 +417,8 @@ void SyncGetRecordTaskConflictsUpnpOrgScheduledRecording2::CompleteRequest(IAsyn
 
 
 CpProxyUpnpOrgScheduledRecording2::CpProxyUpnpOrgScheduledRecording2(CpDevice& aDevice)
+    : CpProxy("schemas-upnp-org", "ScheduledRecording", 2, aDevice.Device())
 {
-    iService = new CpiService("schemas-upnp-org", "ScheduledRecording", 2, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -579,7 +579,7 @@ CpProxyUpnpOrgScheduledRecording2::CpProxyUpnpOrgScheduledRecording2(CpDevice& a
 
 CpProxyUpnpOrgScheduledRecording2::~CpProxyUpnpOrgScheduledRecording2()
 {
-    delete iService;
+    DestroyService();
     delete iActionGetSortCapabilities;
     delete iActionGetPropertyList;
     delete iActionGetAllowedValues;

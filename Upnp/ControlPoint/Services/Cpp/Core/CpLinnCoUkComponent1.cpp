@@ -241,8 +241,8 @@ void SyncLocateLinnCoUkComponent1::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkComponent1::CpProxyLinnCoUkComponent1(CpDevice& aDevice)
+    : CpProxy("linn-co-uk", "Component", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Component", 1, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -320,7 +320,7 @@ CpProxyLinnCoUkComponent1::CpProxyLinnCoUkComponent1(CpDevice& aDevice)
 
 CpProxyLinnCoUkComponent1::~CpProxyLinnCoUkComponent1()
 {
-    delete iService;
+    DestroyService();
     delete iActionAmplifierEnabled;
     delete iActionSetAmplifierEnabled;
     delete iActionAmplifierAttenuation;

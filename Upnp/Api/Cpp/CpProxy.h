@@ -9,6 +9,7 @@ EXCEPTION(ProxyError);
 
 namespace Zapp {
 
+class CpiDevice;
 class CpiService;
 class Mutex;
 
@@ -37,12 +38,20 @@ public:
      * @param[in]  aFunctor  The callback to be run
      */
     DllExport void SetPropertyChanged(Functor& aFunctor);
+    /**
+     * Register a callback which will run when the state of all properties becomes available.
+     * This is often the first point at which UI elements can be fully initialised.
+     *
+     * @param[in]  aFunctor  The callback to be run
+     */
+    DllExport void SetPropertyInitialEvent(Functor& aFunctor);
 protected:
-    DllExport CpProxy();
+    DllExport CpProxy(const TChar* aDomain, const TChar* aName, TUint aVersion, CpiDevice& aDevice);
     DllExport virtual ~CpProxy();
+    DllExport void DestroyService();
     DllExport void ReportEvent(Functor aFunctor);
 private:
-    void Construct();
+    void PropertyChanged();
 protected:
     enum SubscriptionStatus
     {
@@ -54,7 +63,10 @@ protected:
     CpiService* iService;
     Mutex* iLock;
     SubscriptionStatus iCpSubscriptionStatus;
+private:
     Functor iPropertyChanged;
+    TBool iInitialEventDelivered;
+    Functor iInitialEvent;
 
     friend class CpProxyC;
 };

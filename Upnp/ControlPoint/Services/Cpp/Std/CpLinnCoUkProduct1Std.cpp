@@ -96,8 +96,8 @@ void SyncSetStandbyLinnCoUkProduct1Cpp::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkProduct1Cpp::CpProxyLinnCoUkProduct1Cpp(CpDeviceCpp& aDevice)
+    : CpProxy("linn-co-uk", "Product", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Product", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionRoom = new Action("Room");
@@ -127,7 +127,7 @@ CpProxyLinnCoUkProduct1Cpp::CpProxyLinnCoUkProduct1Cpp(CpDeviceCpp& aDevice)
 
 CpProxyLinnCoUkProduct1Cpp::~CpProxyLinnCoUkProduct1Cpp()
 {
-    delete iService;
+    DestroyService();
     delete iActionRoom;
     delete iActionSetRoom;
     delete iActionStandby;

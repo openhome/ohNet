@@ -31,8 +31,8 @@ void SyncSecondsLinnCoUkMediaTime1::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkMediaTime1::CpProxyLinnCoUkMediaTime1(CpDevice& aDevice)
+    : CpProxy("linn-co-uk", "MediaTime", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "MediaTime", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionSeconds = new Action("Seconds");
@@ -47,7 +47,7 @@ CpProxyLinnCoUkMediaTime1::CpProxyLinnCoUkMediaTime1(CpDevice& aDevice)
 
 CpProxyLinnCoUkMediaTime1::~CpProxyLinnCoUkMediaTime1()
 {
-    delete iService;
+    DestroyService();
     delete iActionSeconds;
 }
 

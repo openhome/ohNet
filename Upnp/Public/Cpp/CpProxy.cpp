@@ -20,12 +20,14 @@ void CpProxy::Unsubscribe()
     iService->Unsubscribe();
 }
 
-CpProxy::CpProxy()
-    : iService(NULL)
-    , iLock(NULL)
+CpProxy::CpProxy(const TChar* aDomain, const TChar* aName, TUint aVersion, CpiDevice& aDevice)
 {
+    iService = new CpiService(aDomain, aName, aVersion, aDevice);
+    Functor functor = MakeFunctor(*this, &CpProxy::PropertyChanged);
+    iService->SetPropertyChanged(functor);
     iCpSubscriptionStatus = eNotSubscribed;
     iLock = new Mutex("PRXY");
+    iInitialEventDelivered = false;
 }
 
 CpProxy::~CpProxy()
@@ -33,9 +35,26 @@ CpProxy::~CpProxy()
     delete iLock;
 }
 
+void CpProxy::DestroyService()
+{
+    delete iService;
+}
+
 void CpProxy::SetPropertyChanged(Functor& aFunctor)
 {
-    iService->SetPropertyChanged(aFunctor);
+    iLock->Wait();
+    iPropertyChanged = aFunctor;
+    iLock->Signal();
+}
+
+void CpProxy::SetPropertyInitialEvent(Functor& aFunctor)
+{
+    iLock->Wait();
+    iInitialEvent = aFunctor;
+    if (iInitialEventDelivered && iInitialEvent) {
+        iInitialEvent();
+    }
+    iLock->Signal();
 }
 
 void CpProxy::ReportEvent(Functor aFunctor)
@@ -46,6 +65,21 @@ void CpProxy::ReportEvent(Functor aFunctor)
     }
     if (iCpSubscriptionStatus == CpProxy::eSubscribed && aFunctor != NULL) {
         aFunctor();
+    }
+    iLock->Signal();
+}
+
+void CpProxy::PropertyChanged()
+{
+    iLock->Wait();
+    if (iPropertyChanged) {
+        iPropertyChanged();
+    }
+    if (!iInitialEventDelivered) {
+        iInitialEventDelivered = true;
+        if (iInitialEvent) {
+            iInitialEvent();
+        }
     }
     iLock->Signal();
 }

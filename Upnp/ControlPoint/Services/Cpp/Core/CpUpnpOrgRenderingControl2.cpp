@@ -791,8 +791,8 @@ void SyncSetStateVariablesUpnpOrgRenderingControl2::CompleteRequest(IAsync& aAsy
 
 
 CpProxyUpnpOrgRenderingControl2::CpProxyUpnpOrgRenderingControl2(CpDevice& aDevice)
+    : CpProxy("schemas-upnp-org", "RenderingControl", 2, aDevice.Device())
 {
-    iService = new CpiService("schemas-upnp-org", "RenderingControl", 2, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -1097,7 +1097,7 @@ CpProxyUpnpOrgRenderingControl2::CpProxyUpnpOrgRenderingControl2(CpDevice& aDevi
 
 CpProxyUpnpOrgRenderingControl2::~CpProxyUpnpOrgRenderingControl2()
 {
-    delete iService;
+    DestroyService();
     delete iActionListPresets;
     delete iActionSelectPreset;
     delete iActionGetBrightness;

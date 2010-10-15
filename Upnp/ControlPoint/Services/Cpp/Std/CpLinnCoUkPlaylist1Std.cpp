@@ -272,8 +272,8 @@ void SyncIdArrayChangedLinnCoUkPlaylist1Cpp::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkPlaylist1Cpp::CpProxyLinnCoUkPlaylist1Cpp(CpDeviceCpp& aDevice)
+    : CpProxy("linn-co-uk", "Playlist", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Playlist", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionRead = new Action("Read");
@@ -355,7 +355,7 @@ CpProxyLinnCoUkPlaylist1Cpp::CpProxyLinnCoUkPlaylist1Cpp(CpDeviceCpp& aDevice)
 
 CpProxyLinnCoUkPlaylist1Cpp::~CpProxyLinnCoUkPlaylist1Cpp()
 {
-    delete iService;
+    DestroyService();
     delete iActionRead;
     delete iActionReadList;
     delete iActionInsert;

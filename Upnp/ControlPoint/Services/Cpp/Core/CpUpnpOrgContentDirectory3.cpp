@@ -461,8 +461,8 @@ void SyncGetFreeFormQueryCapabilitiesUpnpOrgContentDirectory3::CompleteRequest(I
 
 
 CpProxyUpnpOrgContentDirectory3::CpProxyUpnpOrgContentDirectory3(CpDevice& aDevice)
+    : CpProxy("schemas-upnp-org", "ContentDirectory", 3, aDevice.Device())
 {
-    iService = new CpiService("schemas-upnp-org", "ContentDirectory", 3, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -652,7 +652,7 @@ CpProxyUpnpOrgContentDirectory3::CpProxyUpnpOrgContentDirectory3(CpDevice& aDevi
 
 CpProxyUpnpOrgContentDirectory3::~CpProxyUpnpOrgContentDirectory3()
 {
-    delete iService;
+    DestroyService();
     delete iActionGetSearchCapabilities;
     delete iActionGetSortCapabilities;
     delete iActionGetSortExtensionCapabilities;

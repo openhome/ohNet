@@ -113,8 +113,8 @@ void SyncMetatextLinnCoUkInfo1::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkInfo1::CpProxyLinnCoUkInfo1(CpDevice& aDevice)
+    : CpProxy("linn-co-uk", "Info", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Info", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionCounters = new Action("Counters");
@@ -190,7 +190,7 @@ CpProxyLinnCoUkInfo1::CpProxyLinnCoUkInfo1(CpDevice& aDevice)
 
 CpProxyLinnCoUkInfo1::~CpProxyLinnCoUkInfo1()
 {
-    delete iService;
+    DestroyService();
     delete iActionCounters;
     delete iActionTrack;
     delete iActionDetails;

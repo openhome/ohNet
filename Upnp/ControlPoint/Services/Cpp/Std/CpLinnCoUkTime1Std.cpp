@@ -38,8 +38,8 @@ void SyncTimeLinnCoUkTime1Cpp::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkTime1Cpp::CpProxyLinnCoUkTime1Cpp(CpDeviceCpp& aDevice)
+    : CpProxy("linn-co-uk", "Time", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Time", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionTime = new Action("Time");
@@ -64,7 +64,7 @@ CpProxyLinnCoUkTime1Cpp::CpProxyLinnCoUkTime1Cpp(CpDeviceCpp& aDevice)
 
 CpProxyLinnCoUkTime1Cpp::~CpProxyLinnCoUkTime1Cpp()
 {
-    delete iService;
+    DestroyService();
     delete iActionTime;
 }
 

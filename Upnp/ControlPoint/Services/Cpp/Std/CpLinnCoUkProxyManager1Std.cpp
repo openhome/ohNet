@@ -224,8 +224,8 @@ void SyncTestDiscPlayerConnectionLinnCoUkProxyManager1Cpp::CompleteRequest(IAsyn
 
 
 CpProxyLinnCoUkProxyManager1Cpp::CpProxyLinnCoUkProxyManager1Cpp(CpDeviceCpp& aDevice)
+    : CpProxy("linn-co-uk", "ProxyManager", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "ProxyManager", 1, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -339,7 +339,7 @@ CpProxyLinnCoUkProxyManager1Cpp::CpProxyLinnCoUkProxyManager1Cpp(CpDeviceCpp& aD
 
 CpProxyLinnCoUkProxyManager1Cpp::~CpProxyLinnCoUkProxyManager1Cpp()
 {
-    delete iService;
+    DestroyService();
     delete iActionKontrolProductConnected;
     delete iActionSetKontrolProductConnected;
     delete iActionKontrolProductComPort;

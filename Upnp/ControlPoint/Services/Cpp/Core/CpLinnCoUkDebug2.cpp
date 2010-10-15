@@ -71,8 +71,8 @@ void SyncMemWriteLinnCoUkDebug2::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkDebug2::CpProxyLinnCoUkDebug2(CpDevice& aDevice)
+    : CpProxy("linn-co-uk", "Debug", 2, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Debug", 2, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionSetDebugLevel = new Action("SetDebugLevel");
@@ -92,7 +92,7 @@ CpProxyLinnCoUkDebug2::CpProxyLinnCoUkDebug2(CpDevice& aDevice)
 
 CpProxyLinnCoUkDebug2::~CpProxyLinnCoUkDebug2()
 {
-    delete iService;
+    DestroyService();
     delete iActionSetDebugLevel;
     delete iActionDebugLevel;
     delete iActionMemWrite;

@@ -352,8 +352,8 @@ void SyncGetBinaryZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyZappOrgTestBasic1Cpp::CpProxyZappOrgTestBasic1Cpp(CpDeviceCpp& aDevice)
+    : CpProxy("zapp-org", "TestBasic", 1, aDevice.Device())
 {
-    iService = new CpiService("zapp-org", "TestBasic", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionIncrement = new Action("Increment");
@@ -454,7 +454,7 @@ CpProxyZappOrgTestBasic1Cpp::CpProxyZappOrgTestBasic1Cpp(CpDeviceCpp& aDevice)
 
 CpProxyZappOrgTestBasic1Cpp::~CpProxyZappOrgTestBasic1Cpp()
 {
-    delete iService;
+    DestroyService();
     delete iActionIncrement;
     delete iActionDecrement;
     delete iActionToggle;

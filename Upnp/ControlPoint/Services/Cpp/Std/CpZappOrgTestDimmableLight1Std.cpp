@@ -54,8 +54,8 @@ void SyncSetLevelZappOrgTestDimmableLight1Cpp::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyZappOrgTestDimmableLight1Cpp::CpProxyZappOrgTestDimmableLight1Cpp(CpDeviceCpp& aDevice)
+    : CpProxy("zapp-org", "TestDimmableLight", 1, aDevice.Device())
 {
-    iService = new CpiService("zapp-org", "TestDimmableLight", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionGetLevel = new Action("GetLevel");
@@ -69,7 +69,7 @@ CpProxyZappOrgTestDimmableLight1Cpp::CpProxyZappOrgTestDimmableLight1Cpp(CpDevic
 
 CpProxyZappOrgTestDimmableLight1Cpp::~CpProxyZappOrgTestDimmableLight1Cpp()
 {
-    delete iService;
+    DestroyService();
     delete iActionGetLevel;
     delete iActionSetLevel;
 }

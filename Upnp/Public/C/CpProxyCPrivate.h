@@ -13,6 +13,7 @@ public:
     void Subscribe() { iProxy->Subscribe(); }
     void Unsubscribe() { iProxy->Unsubscribe(); }
     void SetPropertyChanged(Functor& aFunctor) { iProxy->SetPropertyChanged(aFunctor); }
+    void SetPropertyInitialEvent(Functor& aFunctor) { iProxy->SetPropertyInitialEvent(aFunctor); }
 protected:
     DllExport CpProxyC(CpiDevice& aDevice);
     DllExport virtual ~CpProxyC();

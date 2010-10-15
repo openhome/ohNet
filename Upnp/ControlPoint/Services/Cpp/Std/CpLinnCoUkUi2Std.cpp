@@ -510,8 +510,8 @@ void SyncDisplayLedOffLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkUi2Cpp::CpProxyLinnCoUkUi2Cpp(CpDeviceCpp& aDevice)
+    : CpProxy("linn-co-uk", "Ui", 2, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Ui", 2, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -674,7 +674,7 @@ CpProxyLinnCoUkUi2Cpp::CpProxyLinnCoUkUi2Cpp(CpDeviceCpp& aDevice)
 
 CpProxyLinnCoUkUi2Cpp::~CpProxyLinnCoUkUi2Cpp()
 {
-    delete iService;
+    DestroyService();
     delete iActionDisplayTestPattern;
     delete iActionDisplayFill;
     delete iActionDisplayClear;

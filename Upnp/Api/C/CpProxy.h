@@ -42,6 +42,16 @@ DllExport void CpProxyCUnsubscribe(THandle aHandle);
  */
 DllExport void CpProxyCSetPropertyChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
 
+/**
+ * Register a callback which will run when the state of all properties becomes available.
+ * This is often the first point at which UI elements can be fully initialised.
+ *
+ * @param[in] aHandle    Returned from [service]CreateEvented
+ * @param[in] aCallback  The callback to run
+ * @param[in] aPtr       Data to be passed to the callback
+ */
+DllExport void CpProxyCSetPropertyInitialEvent(THandle aHandle, ZappCallback aCallback, void* aPtr);
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

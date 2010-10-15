@@ -94,8 +94,8 @@ void Sync<#=a.name#><#=syncClassSuffix#>::CompleteRequest(IAsync& aAsync)
 
 
 <#=className#>::<#=className#>(CpDeviceCpp& aDevice)
+    : CpProxy("<#=upnpdomain#>", "<#=type#>", <#=version#>, aDevice.Device())
 {
-    iService = new CpiService("<#=upnpdomain#>", "<#=type#>", <#=version#>, aDevice.Device());
     <#=DeclareConstructLocalVars(u)#>
 <#  foreach (Method a in u.methods) #>
 <#  { #>
@@ -153,7 +153,7 @@ void Sync<#=a.name#><#=syncClassSuffix#>::CompleteRequest(IAsync& aAsync)
 
 <#=className#>::~<#=className#>()
 {
-    delete iService;
+    DestroyService();
 <#  foreach (Method a in u.methods) #>
 <#  { #>
     delete iAction<#=a.name#>;

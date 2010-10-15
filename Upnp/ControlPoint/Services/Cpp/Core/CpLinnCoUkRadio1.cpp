@@ -351,8 +351,8 @@ void SyncIdsMaxLinnCoUkRadio1::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkRadio1::CpProxyLinnCoUkRadio1(CpDevice& aDevice)
+    : CpProxy("linn-co-uk", "Radio", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Radio", 1, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -462,7 +462,7 @@ CpProxyLinnCoUkRadio1::CpProxyLinnCoUkRadio1(CpDevice& aDevice)
 
 CpProxyLinnCoUkRadio1::~CpProxyLinnCoUkRadio1()
 {
-    delete iService;
+    DestroyService();
     delete iActionPlay;
     delete iActionPause;
     delete iActionStop;

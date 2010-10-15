@@ -247,8 +247,8 @@ void SyncSoftwareVersionLinnCoUkVolkano1::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkVolkano1::CpProxyLinnCoUkVolkano1(CpDevice& aDevice)
+    : CpProxy("linn-co-uk", "Volkano", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Volkano", 1, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -313,7 +313,7 @@ CpProxyLinnCoUkVolkano1::CpProxyLinnCoUkVolkano1(CpDevice& aDevice)
 
 CpProxyLinnCoUkVolkano1::~CpProxyLinnCoUkVolkano1()
 {
-    delete iService;
+    DestroyService();
     delete iActionReboot;
     delete iActionBootMode;
     delete iActionSetBootMode;

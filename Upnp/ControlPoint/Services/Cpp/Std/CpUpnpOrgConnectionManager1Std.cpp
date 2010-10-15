@@ -138,8 +138,8 @@ void SyncGetCurrentConnectionInfoUpnpOrgConnectionManager1Cpp::CompleteRequest(I
 
 
 CpProxyUpnpOrgConnectionManager1Cpp::CpProxyUpnpOrgConnectionManager1Cpp(CpDeviceCpp& aDevice)
+    : CpProxy("schemas-upnp-org", "ConnectionManager", 1, aDevice.Device())
 {
-    iService = new CpiService("schemas-upnp-org", "ConnectionManager", 1, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -224,7 +224,7 @@ CpProxyUpnpOrgConnectionManager1Cpp::CpProxyUpnpOrgConnectionManager1Cpp(CpDevic
 
 CpProxyUpnpOrgConnectionManager1Cpp::~CpProxyUpnpOrgConnectionManager1Cpp()
 {
-    delete iService;
+    DestroyService();
     delete iActionGetProtocolInfo;
     delete iActionPrepareForConnection;
     delete iActionConnectionComplete;

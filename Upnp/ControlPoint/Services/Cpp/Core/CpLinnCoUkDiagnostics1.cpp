@@ -287,8 +287,8 @@ void SyncRebootLinnCoUkDiagnostics1::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkDiagnostics1::CpProxyLinnCoUkDiagnostics1(CpDevice& aDevice)
+    : CpProxy("linn-co-uk", "Diagnostics", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Diagnostics", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionEcho = new Action("Echo");
@@ -353,7 +353,7 @@ CpProxyLinnCoUkDiagnostics1::CpProxyLinnCoUkDiagnostics1(CpDevice& aDevice)
 
 CpProxyLinnCoUkDiagnostics1::~CpProxyLinnCoUkDiagnostics1()
 {
-    delete iService;
+    DestroyService();
     delete iActionEcho;
     delete iActionElfFile;
     delete iActionElfFingerprint;

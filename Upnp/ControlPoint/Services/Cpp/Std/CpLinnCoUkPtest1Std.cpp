@@ -74,8 +74,8 @@ void SyncLedsOffLinnCoUkPtest1Cpp::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkPtest1Cpp::CpProxyLinnCoUkPtest1Cpp(CpDeviceCpp& aDevice)
+    : CpProxy("linn-co-uk", "Ptest", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Ptest", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionTestComPort = new Action("TestComPort");
@@ -91,7 +91,7 @@ CpProxyLinnCoUkPtest1Cpp::CpProxyLinnCoUkPtest1Cpp(CpDeviceCpp& aDevice)
 
 CpProxyLinnCoUkPtest1Cpp::~CpProxyLinnCoUkPtest1Cpp()
 {
-    delete iService;
+    DestroyService();
     delete iActionTestComPort;
     delete iActionLedsOn;
     delete iActionLedsOff;

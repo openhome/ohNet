@@ -171,8 +171,8 @@ void SyncGetColorComponentsZappOrgTestLights1::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyZappOrgTestLights1::CpProxyZappOrgTestLights1(CpDevice& aDevice)
+    : CpProxy("zapp-org", "TestLights", 1, aDevice.Device())
 {
-    iService = new CpiService("zapp-org", "TestLights", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionGetCount = new Action("GetCount");
@@ -228,7 +228,7 @@ CpProxyZappOrgTestLights1::CpProxyZappOrgTestLights1(CpDevice& aDevice)
 
 CpProxyZappOrgTestLights1::~CpProxyZappOrgTestLights1()
 {
-    delete iService;
+    DestroyService();
     delete iActionGetCount;
     delete iActionGetRoom;
     delete iActionGetName;

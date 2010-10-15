@@ -227,8 +227,8 @@ void SyncProtocolInfoLinnCoUkDs1::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkDs1::CpProxyLinnCoUkDs1(CpDevice& aDevice)
+    : CpProxy("linn-co-uk", "Ds", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Ds", 1, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -320,7 +320,7 @@ CpProxyLinnCoUkDs1::CpProxyLinnCoUkDs1(CpDevice& aDevice)
 
 CpProxyLinnCoUkDs1::~CpProxyLinnCoUkDs1()
 {
-    delete iService;
+    DestroyService();
     delete iActionPlay;
     delete iActionPause;
     delete iActionStop;

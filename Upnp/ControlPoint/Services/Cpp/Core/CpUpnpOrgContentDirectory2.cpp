@@ -393,8 +393,8 @@ void SyncCreateReferenceUpnpOrgContentDirectory2::CompleteRequest(IAsync& aAsync
 
 
 CpProxyUpnpOrgContentDirectory2::CpProxyUpnpOrgContentDirectory2(CpDevice& aDevice)
+    : CpProxy("schemas-upnp-org", "ContentDirectory", 2, aDevice.Device())
 {
-    iService = new CpiService("schemas-upnp-org", "ContentDirectory", 2, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -561,7 +561,7 @@ CpProxyUpnpOrgContentDirectory2::CpProxyUpnpOrgContentDirectory2(CpDevice& aDevi
 
 CpProxyUpnpOrgContentDirectory2::~CpProxyUpnpOrgContentDirectory2()
 {
-    delete iService;
+    DestroyService();
     delete iActionGetSearchCapabilities;
     delete iActionGetSortCapabilities;
     delete iActionGetSortExtensionCapabilities;

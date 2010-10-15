@@ -447,8 +447,8 @@ void SyncGetRampTimeUpnpOrgDimming1::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyUpnpOrgDimming1::CpProxyUpnpOrgDimming1(CpDevice& aDevice)
+    : CpProxy("schemas-upnp-org", "Dimming", 1, aDevice.Device())
 {
-    iService = new CpiService("schemas-upnp-org", "Dimming", 1, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -559,7 +559,7 @@ CpProxyUpnpOrgDimming1::CpProxyUpnpOrgDimming1(CpDevice& aDevice)
 
 CpProxyUpnpOrgDimming1::~CpProxyUpnpOrgDimming1()
 {
-    delete iService;
+    DestroyService();
     delete iActionSetLoadLevelTarget;
     delete iActionGetLoadLevelTarget;
     delete iActionGetLoadLevelStatus;

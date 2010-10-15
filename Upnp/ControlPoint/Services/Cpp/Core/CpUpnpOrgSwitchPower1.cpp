@@ -73,8 +73,8 @@ void SyncGetStatusUpnpOrgSwitchPower1::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyUpnpOrgSwitchPower1::CpProxyUpnpOrgSwitchPower1(CpDevice& aDevice)
+    : CpProxy("schemas-upnp-org", "SwitchPower", 1, aDevice.Device())
 {
-    iService = new CpiService("schemas-upnp-org", "SwitchPower", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionSetTarget = new Action("SetTarget");
@@ -97,7 +97,7 @@ CpProxyUpnpOrgSwitchPower1::CpProxyUpnpOrgSwitchPower1(CpDevice& aDevice)
 
 CpProxyUpnpOrgSwitchPower1::~CpProxyUpnpOrgSwitchPower1()
 {
-    delete iService;
+    DestroyService();
     delete iActionSetTarget;
     delete iActionGetTarget;
     delete iActionGetStatus;

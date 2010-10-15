@@ -517,8 +517,8 @@ void SyncSetSourceVisibleLinnCoUkProduct3::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkProduct3::CpProxyLinnCoUkProduct3(CpDevice& aDevice)
+    : CpProxy("linn-co-uk", "Product", 3, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Product", 3, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionType = new Action("Type");
@@ -673,7 +673,7 @@ CpProxyLinnCoUkProduct3::CpProxyLinnCoUkProduct3(CpDevice& aDevice)
 
 CpProxyLinnCoUkProduct3::~CpProxyLinnCoUkProduct3()
 {
-    delete iService;
+    DestroyService();
     delete iActionType;
     delete iActionModel;
     delete iActionName;

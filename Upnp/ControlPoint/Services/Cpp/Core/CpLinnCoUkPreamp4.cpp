@@ -301,8 +301,8 @@ void SyncStartupVolumeEnabledLinnCoUkPreamp4::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkPreamp4::CpProxyLinnCoUkPreamp4(CpDevice& aDevice)
+    : CpProxy("linn-co-uk", "Preamp", 4, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Preamp", 4, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionVolumeInc = new Action("VolumeInc");
@@ -380,7 +380,7 @@ CpProxyLinnCoUkPreamp4::CpProxyLinnCoUkPreamp4(CpDevice& aDevice)
 
 CpProxyLinnCoUkPreamp4::~CpProxyLinnCoUkPreamp4()
 {
-    delete iService;
+    DestroyService();
     delete iActionVolumeInc;
     delete iActionVolumeDec;
     delete iActionSetVolume;

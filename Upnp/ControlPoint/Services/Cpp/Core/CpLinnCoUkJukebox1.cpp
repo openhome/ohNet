@@ -179,8 +179,8 @@ void SyncLoadManifestLinnCoUkJukebox1::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkJukebox1::CpProxyLinnCoUkJukebox1(CpDevice& aDevice)
+    : CpProxy("linn-co-uk", "Jukebox", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Jukebox", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionSetPresetPrefix = new Action("SetPresetPrefix");
@@ -231,7 +231,7 @@ CpProxyLinnCoUkJukebox1::CpProxyLinnCoUkJukebox1(CpDevice& aDevice)
 
 CpProxyLinnCoUkJukebox1::~CpProxyLinnCoUkJukebox1()
 {
-    delete iService;
+    DestroyService();
     delete iActionSetPresetPrefix;
     delete iActionPresetPrefix;
     delete iActionSetAlbumArtFileName;

@@ -199,8 +199,8 @@ void SyncPresetCountLinnCoUkDelay1::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkDelay1::CpProxyLinnCoUkDelay1(CpDevice& aDevice)
+    : CpProxy("linn-co-uk", "Delay", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Delay", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionPresetXml = new Action("PresetXml");
@@ -256,7 +256,7 @@ CpProxyLinnCoUkDelay1::CpProxyLinnCoUkDelay1(CpDevice& aDevice)
 
 CpProxyLinnCoUkDelay1::~CpProxyLinnCoUkDelay1()
 {
-    delete iService;
+    DestroyService();
     delete iActionPresetXml;
     delete iActionPresetIndex;
     delete iActionSetPresetIndex;

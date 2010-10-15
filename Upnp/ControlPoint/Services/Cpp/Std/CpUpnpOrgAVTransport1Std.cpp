@@ -404,8 +404,8 @@ void SyncGetCurrentTransportActionsUpnpOrgAVTransport1Cpp::CompleteRequest(IAsyn
 
 
 CpProxyUpnpOrgAVTransport1Cpp::CpProxyUpnpOrgAVTransport1Cpp(CpDeviceCpp& aDevice)
+    : CpProxy("schemas-upnp-org", "AVTransport", 1, aDevice.Device())
 {
-    iService = new CpiService("schemas-upnp-org", "AVTransport", 1, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -586,7 +586,7 @@ CpProxyUpnpOrgAVTransport1Cpp::CpProxyUpnpOrgAVTransport1Cpp(CpDeviceCpp& aDevic
 
 CpProxyUpnpOrgAVTransport1Cpp::~CpProxyUpnpOrgAVTransport1Cpp()
 {
-    delete iService;
+    DestroyService();
     delete iActionSetAVTransportURI;
     delete iActionSetNextAVTransportURI;
     delete iActionGetMediaInfo;

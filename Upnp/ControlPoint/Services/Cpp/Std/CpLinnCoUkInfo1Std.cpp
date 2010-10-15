@@ -116,8 +116,8 @@ void SyncMetatextLinnCoUkInfo1Cpp::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkInfo1Cpp::CpProxyLinnCoUkInfo1Cpp(CpDeviceCpp& aDevice)
+    : CpProxy("linn-co-uk", "Info", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Info", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionCounters = new Action("Counters");
@@ -193,7 +193,7 @@ CpProxyLinnCoUkInfo1Cpp::CpProxyLinnCoUkInfo1Cpp(CpDeviceCpp& aDevice)
 
 CpProxyLinnCoUkInfo1Cpp::~CpProxyLinnCoUkInfo1Cpp()
 {
-    delete iService;
+    DestroyService();
     delete iActionCounters;
     delete iActionTrack;
     delete iActionDetails;

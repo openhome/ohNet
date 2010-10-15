@@ -507,8 +507,8 @@ void SyncSetStateVariablesUpnpOrgAVTransport2::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyUpnpOrgAVTransport2::CpProxyUpnpOrgAVTransport2(CpDevice& aDevice)
+    : CpProxy("schemas-upnp-org", "AVTransport", 2, aDevice.Device())
 {
-    iService = new CpiService("schemas-upnp-org", "AVTransport", 2, aDevice.Device());
     Zapp::Parameter* param;
     TChar** allowedValues;
     TUint index;
@@ -754,7 +754,7 @@ CpProxyUpnpOrgAVTransport2::CpProxyUpnpOrgAVTransport2(CpDevice& aDevice)
 
 CpProxyUpnpOrgAVTransport2::~CpProxyUpnpOrgAVTransport2()
 {
-    delete iService;
+    DestroyService();
     delete iActionSetAVTransportURI;
     delete iActionSetNextAVTransportURI;
     delete iActionGetMediaInfo;

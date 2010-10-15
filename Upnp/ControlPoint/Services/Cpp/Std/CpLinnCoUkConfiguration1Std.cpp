@@ -76,8 +76,8 @@ void SyncSetParameterLinnCoUkConfiguration1Cpp::CompleteRequest(IAsync& aAsync)
 
 
 CpProxyLinnCoUkConfiguration1Cpp::CpProxyLinnCoUkConfiguration1Cpp(CpDeviceCpp& aDevice)
+    : CpProxy("linn-co-uk", "Configuration", 1, aDevice.Device())
 {
-    iService = new CpiService("linn-co-uk", "Configuration", 1, aDevice.Device());
     Zapp::Parameter* param;
 
     iActionConfigurationXml = new Action("ConfigurationXml");
@@ -107,7 +107,7 @@ CpProxyLinnCoUkConfiguration1Cpp::CpProxyLinnCoUkConfiguration1Cpp(CpDeviceCpp& 
 
 CpProxyLinnCoUkConfiguration1Cpp::~CpProxyLinnCoUkConfiguration1Cpp()
 {
-    delete iService;
+    DestroyService();
     delete iActionConfigurationXml;
     delete iActionParameterXml;
     delete iActionSetParameter;
