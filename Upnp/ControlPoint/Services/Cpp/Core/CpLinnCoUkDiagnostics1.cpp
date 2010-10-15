@@ -756,12 +756,6 @@ void CpProxyLinnCoUkDiagnostics1::PropertyaStateVariable(TUint& aaStateVariable)
 
 void CpProxyLinnCoUkDiagnostics1::aStateVariablePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iaStateVariableChanged != NULL) {
-        iaStateVariableChanged();
-    }
+    ReportEvent(iaStateVariableChanged);
 }
 

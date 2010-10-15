@@ -38,14 +38,14 @@ void CpProxy::SetPropertyChanged(Functor& aFunctor)
     iService->SetPropertyChanged(aFunctor);
 }
 
-TBool CpProxy::ReportEvent()
+void CpProxy::ReportEvent(Functor aFunctor)
 {
-    TBool report;
     iLock->Wait();
-    report = (iCpSubscriptionStatus != eNotSubscribed);
     if (iCpSubscriptionStatus == eSubscribing) {
         iCpSubscriptionStatus = eSubscribed;
     }
+    if (iCpSubscriptionStatus == CpProxy::eSubscribed && aFunctor != NULL) {
+        aFunctor();
+    }
     iLock->Signal();
-    return report;
 }

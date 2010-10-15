@@ -1495,23 +1495,11 @@ void CpProxyUpnpOrgAVTransport2::PropertyDRMState(Brhz& aDRMState) const
 
 void CpProxyUpnpOrgAVTransport2::LastChangePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iLastChangeChanged != NULL) {
-        iLastChangeChanged();
-    }
+    ReportEvent(iLastChangeChanged);
 }
 
 void CpProxyUpnpOrgAVTransport2::DRMStatePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDRMStateChanged != NULL) {
-        iDRMStateChanged();
-    }
+    ReportEvent(iDRMStateChanged);
 }
 

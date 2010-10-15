@@ -512,34 +512,16 @@ void CpProxyLinnCoUkJukebox1::PropertyAlbumArtFileName(Brhz& aAlbumArtFileName) 
 
 void CpProxyLinnCoUkJukebox1::CurrentPresetPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iCurrentPresetChanged != NULL) {
-        iCurrentPresetChanged();
-    }
+    ReportEvent(iCurrentPresetChanged);
 }
 
 void CpProxyLinnCoUkJukebox1::PresetPrefixPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iPresetPrefixChanged != NULL) {
-        iPresetPrefixChanged();
-    }
+    ReportEvent(iPresetPrefixChanged);
 }
 
 void CpProxyLinnCoUkJukebox1::AlbumArtFileNamePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iAlbumArtFileNameChanged != NULL) {
-        iAlbumArtFileNameChanged();
-    }
+    ReportEvent(iAlbumArtFileNameChanged);
 }
 

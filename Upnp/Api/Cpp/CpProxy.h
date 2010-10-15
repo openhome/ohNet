@@ -40,7 +40,7 @@ public:
 protected:
     DllExport CpProxy();
     DllExport virtual ~CpProxy();
-    DllExport TBool ReportEvent();
+    DllExport void ReportEvent(Functor aFunctor);
 private:
     void Construct();
 protected:

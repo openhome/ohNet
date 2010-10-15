@@ -1186,12 +1186,6 @@ void CpProxyUpnpOrgScheduledRecording2::PropertyLastChange(Brhz& aLastChange) co
 
 void CpProxyUpnpOrgScheduledRecording2::LastChangePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iLastChangeChanged != NULL) {
-        iLastChangeChanged();
-    }
+    ReportEvent(iLastChangeChanged);
 }
 

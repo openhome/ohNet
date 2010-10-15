@@ -225,23 +225,11 @@ void CpProxyLinnCoUkConfiguration1::PropertyParameterXml(Brhz& aParameterXml) co
 
 void CpProxyLinnCoUkConfiguration1::ConfigurationXmlPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iConfigurationXmlChanged != NULL) {
-        iConfigurationXmlChanged();
-    }
+    ReportEvent(iConfigurationXmlChanged);
 }
 
 void CpProxyLinnCoUkConfiguration1::ParameterXmlPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iParameterXmlChanged != NULL) {
-        iParameterXmlChanged();
-    }
+    ReportEvent(iParameterXmlChanged);
 }
 

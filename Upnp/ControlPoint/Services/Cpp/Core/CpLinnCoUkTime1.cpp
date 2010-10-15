@@ -139,34 +139,16 @@ void CpProxyLinnCoUkTime1::PropertySeconds(TUint& aSeconds) const
 
 void CpProxyLinnCoUkTime1::TrackCountPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iTrackCountChanged != NULL) {
-        iTrackCountChanged();
-    }
+    ReportEvent(iTrackCountChanged);
 }
 
 void CpProxyLinnCoUkTime1::DurationPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDurationChanged != NULL) {
-        iDurationChanged();
-    }
+    ReportEvent(iDurationChanged);
 }
 
 void CpProxyLinnCoUkTime1::SecondsPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iSecondsChanged != NULL) {
-        iSecondsChanged();
-    }
+    ReportEvent(iSecondsChanged);
 }
 

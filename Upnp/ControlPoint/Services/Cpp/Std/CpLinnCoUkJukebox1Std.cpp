@@ -532,34 +532,16 @@ void CpProxyLinnCoUkJukebox1Cpp::PropertyAlbumArtFileName(std::string& aAlbumArt
 
 void CpProxyLinnCoUkJukebox1Cpp::CurrentPresetPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iCurrentPresetChanged != NULL) {
-        iCurrentPresetChanged();
-    }
+    ReportEvent(iCurrentPresetChanged);
 }
 
 void CpProxyLinnCoUkJukebox1Cpp::PresetPrefixPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iPresetPrefixChanged != NULL) {
-        iPresetPrefixChanged();
-    }
+    ReportEvent(iPresetPrefixChanged);
 }
 
 void CpProxyLinnCoUkJukebox1Cpp::AlbumArtFileNamePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iAlbumArtFileNameChanged != NULL) {
-        iAlbumArtFileNameChanged();
-    }
+    ReportEvent(iAlbumArtFileNameChanged);
 }
 

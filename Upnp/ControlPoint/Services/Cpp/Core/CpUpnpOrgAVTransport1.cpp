@@ -1156,12 +1156,6 @@ void CpProxyUpnpOrgAVTransport1::PropertyLastChange(Brhz& aLastChange) const
 
 void CpProxyUpnpOrgAVTransport1::LastChangePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iLastChangeChanged != NULL) {
-        iLastChangeChanged();
-    }
+    ReportEvent(iLastChangeChanged);
 }
 

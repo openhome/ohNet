@@ -2147,12 +2147,6 @@ void CpProxyUpnpOrgRenderingControl1::PropertyLastChange(Brhz& aLastChange) cons
 
 void CpProxyUpnpOrgRenderingControl1::LastChangePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iLastChangeChanged != NULL) {
-        iLastChangeChanged();
-    }
+    ReportEvent(iLastChangeChanged);
 }
 

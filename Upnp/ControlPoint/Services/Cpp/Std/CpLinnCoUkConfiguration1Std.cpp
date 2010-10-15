@@ -245,23 +245,11 @@ void CpProxyLinnCoUkConfiguration1Cpp::PropertyParameterXml(std::string& aParame
 
 void CpProxyLinnCoUkConfiguration1Cpp::ConfigurationXmlPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iConfigurationXmlChanged != NULL) {
-        iConfigurationXmlChanged();
-    }
+    ReportEvent(iConfigurationXmlChanged);
 }
 
 void CpProxyLinnCoUkConfiguration1Cpp::ParameterXmlPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iParameterXmlChanged != NULL) {
-        iParameterXmlChanged();
-    }
+    ReportEvent(iParameterXmlChanged);
 }
 

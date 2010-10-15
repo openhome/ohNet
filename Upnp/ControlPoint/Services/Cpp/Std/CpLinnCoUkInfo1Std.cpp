@@ -506,133 +506,61 @@ void CpProxyLinnCoUkInfo1Cpp::PropertyMetatext(std::string& aMetatext) const
 
 void CpProxyLinnCoUkInfo1Cpp::TrackCountPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iTrackCountChanged != NULL) {
-        iTrackCountChanged();
-    }
+    ReportEvent(iTrackCountChanged);
 }
 
 void CpProxyLinnCoUkInfo1Cpp::DetailsCountPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDetailsCountChanged != NULL) {
-        iDetailsCountChanged();
-    }
+    ReportEvent(iDetailsCountChanged);
 }
 
 void CpProxyLinnCoUkInfo1Cpp::MetatextCountPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iMetatextCountChanged != NULL) {
-        iMetatextCountChanged();
-    }
+    ReportEvent(iMetatextCountChanged);
 }
 
 void CpProxyLinnCoUkInfo1Cpp::UriPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iUriChanged != NULL) {
-        iUriChanged();
-    }
+    ReportEvent(iUriChanged);
 }
 
 void CpProxyLinnCoUkInfo1Cpp::MetadataPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iMetadataChanged != NULL) {
-        iMetadataChanged();
-    }
+    ReportEvent(iMetadataChanged);
 }
 
 void CpProxyLinnCoUkInfo1Cpp::DurationPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDurationChanged != NULL) {
-        iDurationChanged();
-    }
+    ReportEvent(iDurationChanged);
 }
 
 void CpProxyLinnCoUkInfo1Cpp::BitRatePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iBitRateChanged != NULL) {
-        iBitRateChanged();
-    }
+    ReportEvent(iBitRateChanged);
 }
 
 void CpProxyLinnCoUkInfo1Cpp::BitDepthPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iBitDepthChanged != NULL) {
-        iBitDepthChanged();
-    }
+    ReportEvent(iBitDepthChanged);
 }
 
 void CpProxyLinnCoUkInfo1Cpp::SampleRatePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iSampleRateChanged != NULL) {
-        iSampleRateChanged();
-    }
+    ReportEvent(iSampleRateChanged);
 }
 
 void CpProxyLinnCoUkInfo1Cpp::LosslessPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iLosslessChanged != NULL) {
-        iLosslessChanged();
-    }
+    ReportEvent(iLosslessChanged);
 }
 
 void CpProxyLinnCoUkInfo1Cpp::CodecNamePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iCodecNameChanged != NULL) {
-        iCodecNameChanged();
-    }
+    ReportEvent(iCodecNameChanged);
 }
 
 void CpProxyLinnCoUkInfo1Cpp::MetatextPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iMetatextChanged != NULL) {
-        iMetatextChanged();
-    }
+    ReportEvent(iMetatextChanged);
 }
 

@@ -281,23 +281,11 @@ void CpProxyLinnCoUkProduct1Cpp::PropertyStandby(bool& aStandby) const
 
 void CpProxyLinnCoUkProduct1Cpp::RoomPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iRoomChanged != NULL) {
-        iRoomChanged();
-    }
+    ReportEvent(iRoomChanged);
 }
 
 void CpProxyLinnCoUkProduct1Cpp::StandbyPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iStandbyChanged != NULL) {
-        iStandbyChanged();
-    }
+    ReportEvent(iStandbyChanged);
 }
 

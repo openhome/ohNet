@@ -552,23 +552,11 @@ void CpProxyLinnCoUkDelay1::PropertyPresetIndex(TUint& aPresetIndex) const
 
 void CpProxyLinnCoUkDelay1::PresetXmlPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iPresetXmlChanged != NULL) {
-        iPresetXmlChanged();
-    }
+    ReportEvent(iPresetXmlChanged);
 }
 
 void CpProxyLinnCoUkDelay1::PresetIndexPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iPresetIndexChanged != NULL) {
-        iPresetIndexChanged();
-    }
+    ReportEvent(iPresetIndexChanged);
 }
 

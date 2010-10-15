@@ -1071,78 +1071,36 @@ void CpProxyLinnCoUkRadio1Cpp::PropertyIdsMax(uint32_t& aIdsMax) const
 
 void CpProxyLinnCoUkRadio1Cpp::ChannelUriPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iChannelUriChanged != NULL) {
-        iChannelUriChanged();
-    }
+    ReportEvent(iChannelUriChanged);
 }
 
 void CpProxyLinnCoUkRadio1Cpp::ChannelMetadataPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iChannelMetadataChanged != NULL) {
-        iChannelMetadataChanged();
-    }
+    ReportEvent(iChannelMetadataChanged);
 }
 
 void CpProxyLinnCoUkRadio1Cpp::TransportStatePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iTransportStateChanged != NULL) {
-        iTransportStateChanged();
-    }
+    ReportEvent(iTransportStateChanged);
 }
 
 void CpProxyLinnCoUkRadio1Cpp::ProtocolInfoPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iProtocolInfoChanged != NULL) {
-        iProtocolInfoChanged();
-    }
+    ReportEvent(iProtocolInfoChanged);
 }
 
 void CpProxyLinnCoUkRadio1Cpp::IdPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iIdChanged != NULL) {
-        iIdChanged();
-    }
+    ReportEvent(iIdChanged);
 }
 
 void CpProxyLinnCoUkRadio1Cpp::IdArrayPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iIdArrayChanged != NULL) {
-        iIdArrayChanged();
-    }
+    ReportEvent(iIdArrayChanged);
 }
 
 void CpProxyLinnCoUkRadio1Cpp::IdsMaxPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iIdsMaxChanged != NULL) {
-        iIdsMaxChanged();
-    }
+    ReportEvent(iIdsMaxChanged);
 }
 

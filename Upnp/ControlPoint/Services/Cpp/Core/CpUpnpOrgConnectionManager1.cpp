@@ -440,34 +440,16 @@ void CpProxyUpnpOrgConnectionManager1::PropertyCurrentConnectionIDs(Brhz& aCurre
 
 void CpProxyUpnpOrgConnectionManager1::SourceProtocolInfoPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iSourceProtocolInfoChanged != NULL) {
-        iSourceProtocolInfoChanged();
-    }
+    ReportEvent(iSourceProtocolInfoChanged);
 }
 
 void CpProxyUpnpOrgConnectionManager1::SinkProtocolInfoPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iSinkProtocolInfoChanged != NULL) {
-        iSinkProtocolInfoChanged();
-    }
+    ReportEvent(iSinkProtocolInfoChanged);
 }
 
 void CpProxyUpnpOrgConnectionManager1::CurrentConnectionIDsPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iCurrentConnectionIDsChanged != NULL) {
-        iCurrentConnectionIDsChanged();
-    }
+    ReportEvent(iCurrentConnectionIDsChanged);
 }
 

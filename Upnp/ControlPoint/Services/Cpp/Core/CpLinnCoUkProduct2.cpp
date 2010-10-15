@@ -748,45 +748,21 @@ void CpProxyLinnCoUkProduct2::PropertyProductSourceIndex(TUint& aProductSourceIn
 
 void CpProxyLinnCoUkProduct2::ProductNamePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iProductNameChanged != NULL) {
-        iProductNameChanged();
-    }
+    ReportEvent(iProductNameChanged);
 }
 
 void CpProxyLinnCoUkProduct2::ProductRoomPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iProductRoomChanged != NULL) {
-        iProductRoomChanged();
-    }
+    ReportEvent(iProductRoomChanged);
 }
 
 void CpProxyLinnCoUkProduct2::ProductStandbyPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iProductStandbyChanged != NULL) {
-        iProductStandbyChanged();
-    }
+    ReportEvent(iProductStandbyChanged);
 }
 
 void CpProxyLinnCoUkProduct2::ProductSourceIndexPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iProductSourceIndexChanged != NULL) {
-        iProductSourceIndexChanged();
-    }
+    ReportEvent(iProductSourceIndexChanged);
 }
 

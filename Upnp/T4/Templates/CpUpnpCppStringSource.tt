@@ -264,13 +264,7 @@ void <#=className#>::Property<#=s.name#>(<#=outargtype[s.type]#> a<#=s.name#>) c
 
 void <#=className#>::<#=s.name#>PropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && i<#=s.name#>Changed != NULL) {
-        i<#=s.name#>Changed();
-    }
+    ReportEvent(i<#=s.name#>Changed);
 }
 <#  } #>
 

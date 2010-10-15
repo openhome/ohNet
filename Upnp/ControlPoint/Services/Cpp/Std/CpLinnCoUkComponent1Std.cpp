@@ -704,45 +704,21 @@ void CpProxyLinnCoUkComponent1Cpp::PropertyDigitalAudioOutputRaw(bool& aDigitalA
 
 void CpProxyLinnCoUkComponent1Cpp::AmplifierEnabledPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iAmplifierEnabledChanged != NULL) {
-        iAmplifierEnabledChanged();
-    }
+    ReportEvent(iAmplifierEnabledChanged);
 }
 
 void CpProxyLinnCoUkComponent1Cpp::AmplifierAttenuationPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iAmplifierAttenuationChanged != NULL) {
-        iAmplifierAttenuationChanged();
-    }
+    ReportEvent(iAmplifierAttenuationChanged);
 }
 
 void CpProxyLinnCoUkComponent1Cpp::VolumeControlEnabledPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iVolumeControlEnabledChanged != NULL) {
-        iVolumeControlEnabledChanged();
-    }
+    ReportEvent(iVolumeControlEnabledChanged);
 }
 
 void CpProxyLinnCoUkComponent1Cpp::DigitalAudioOutputRawPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDigitalAudioOutputRawChanged != NULL) {
-        iDigitalAudioOutputRawChanged();
-    }
+    ReportEvent(iDigitalAudioOutputRawChanged);
 }
 

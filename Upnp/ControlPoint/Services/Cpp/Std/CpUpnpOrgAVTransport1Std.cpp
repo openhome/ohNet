@@ -1253,12 +1253,6 @@ void CpProxyUpnpOrgAVTransport1Cpp::PropertyLastChange(std::string& aLastChange)
 
 void CpProxyUpnpOrgAVTransport1Cpp::LastChangePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iLastChangeChanged != NULL) {
-        iLastChangeChanged();
-    }
+    ReportEvent(iLastChangeChanged);
 }
 

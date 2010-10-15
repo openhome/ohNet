@@ -776,45 +776,21 @@ void CpProxyLinnCoUkPlaylist1::PropertyTracksMax(TUint& aTracksMax) const
 
 void CpProxyLinnCoUkPlaylist1::IdArrayPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iIdArrayChanged != NULL) {
-        iIdArrayChanged();
-    }
+    ReportEvent(iIdArrayChanged);
 }
 
 void CpProxyLinnCoUkPlaylist1::RepeatPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iRepeatChanged != NULL) {
-        iRepeatChanged();
-    }
+    ReportEvent(iRepeatChanged);
 }
 
 void CpProxyLinnCoUkPlaylist1::ShufflePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iShuffleChanged != NULL) {
-        iShuffleChanged();
-    }
+    ReportEvent(iShuffleChanged);
 }
 
 void CpProxyLinnCoUkPlaylist1::TracksMaxPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iTracksMaxChanged != NULL) {
-        iTracksMaxChanged();
-    }
+    ReportEvent(iTracksMaxChanged);
 }
 

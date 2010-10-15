@@ -1644,23 +1644,11 @@ void CpProxyUpnpOrgAVTransport2Cpp::PropertyDRMState(std::string& aDRMState) con
 
 void CpProxyUpnpOrgAVTransport2Cpp::LastChangePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iLastChangeChanged != NULL) {
-        iLastChangeChanged();
-    }
+    ReportEvent(iLastChangeChanged);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::DRMStatePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDRMStateChanged != NULL) {
-        iDRMStateChanged();
-    }
+    ReportEvent(iDRMStateChanged);
 }
 

@@ -206,12 +206,6 @@ void CpProxyUpnpOrgSwitchPower1Cpp::PropertyStatus(bool& aStatus) const
 
 void CpProxyUpnpOrgSwitchPower1Cpp::StatusPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iStatusChanged != NULL) {
-        iStatusChanged();
-    }
+    ReportEvent(iStatusChanged);
 }
 

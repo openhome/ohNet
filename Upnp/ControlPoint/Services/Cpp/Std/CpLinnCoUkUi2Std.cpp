@@ -1522,122 +1522,56 @@ void CpProxyLinnCoUkUi2Cpp::PropertyDisplayPixels(std::string& aDisplayPixels) c
 
 void CpProxyLinnCoUkUi2Cpp::DisplayBrightnessPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDisplayBrightnessChanged != NULL) {
-        iDisplayBrightnessChanged();
-    }
+    ReportEvent(iDisplayBrightnessChanged);
 }
 
 void CpProxyLinnCoUkUi2Cpp::DisplayBrightnessAutoPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDisplayBrightnessAutoChanged != NULL) {
-        iDisplayBrightnessAutoChanged();
-    }
+    ReportEvent(iDisplayBrightnessAutoChanged);
 }
 
 void CpProxyLinnCoUkUi2Cpp::InfraredCommandsPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iInfraredCommandsChanged != NULL) {
-        iInfraredCommandsChanged();
-    }
+    ReportEvent(iInfraredCommandsChanged);
 }
 
 void CpProxyLinnCoUkUi2Cpp::InfraredTerminalCommandsPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iInfraredTerminalCommandsChanged != NULL) {
-        iInfraredTerminalCommandsChanged();
-    }
+    ReportEvent(iInfraredTerminalCommandsChanged);
 }
 
 void CpProxyLinnCoUkUi2Cpp::DisplayUpsideDownPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDisplayUpsideDownChanged != NULL) {
-        iDisplayUpsideDownChanged();
-    }
+    ReportEvent(iDisplayUpsideDownChanged);
 }
 
 void CpProxyLinnCoUkUi2Cpp::DisplayScrollTextPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDisplayScrollTextChanged != NULL) {
-        iDisplayScrollTextChanged();
-    }
+    ReportEvent(iDisplayScrollTextChanged);
 }
 
 void CpProxyLinnCoUkUi2Cpp::DisplaySleepPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDisplaySleepChanged != NULL) {
-        iDisplaySleepChanged();
-    }
+    ReportEvent(iDisplaySleepChanged);
 }
 
 void CpProxyLinnCoUkUi2Cpp::DisplayLedOffPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDisplayLedOffChanged != NULL) {
-        iDisplayLedOffChanged();
-    }
+    ReportEvent(iDisplayLedOffChanged);
 }
 
 void CpProxyLinnCoUkUi2Cpp::TerminalInputCodePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iTerminalInputCodeChanged != NULL) {
-        iTerminalInputCodeChanged();
-    }
+    ReportEvent(iTerminalInputCodeChanged);
 }
 
 void CpProxyLinnCoUkUi2Cpp::TerminalInputNamePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iTerminalInputNameChanged != NULL) {
-        iTerminalInputNameChanged();
-    }
+    ReportEvent(iTerminalInputNameChanged);
 }
 
 void CpProxyLinnCoUkUi2Cpp::DisplayPixelsPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDisplayPixelsChanged != NULL) {
-        iDisplayPixelsChanged();
-    }
+    ReportEvent(iDisplayPixelsChanged);
 }
 

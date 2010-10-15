@@ -98,12 +98,6 @@ void CpProxyLinnCoUkMediaTime1Cpp::PropertySeconds(uint32_t& aSeconds) const
 
 void CpProxyLinnCoUkMediaTime1Cpp::SecondsPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iSecondsChanged != NULL) {
-        iSecondsChanged();
-    }
+    ReportEvent(iSecondsChanged);
 }
 

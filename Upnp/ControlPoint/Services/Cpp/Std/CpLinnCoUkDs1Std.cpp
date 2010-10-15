@@ -746,100 +746,46 @@ void CpProxyLinnCoUkDs1Cpp::PropertyTransportState(std::string& aTransportState)
 
 void CpProxyLinnCoUkDs1Cpp::SupportedProtocolsPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iSupportedProtocolsChanged != NULL) {
-        iSupportedProtocolsChanged();
-    }
+    ReportEvent(iSupportedProtocolsChanged);
 }
 
 void CpProxyLinnCoUkDs1Cpp::TrackDurationPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iTrackDurationChanged != NULL) {
-        iTrackDurationChanged();
-    }
+    ReportEvent(iTrackDurationChanged);
 }
 
 void CpProxyLinnCoUkDs1Cpp::TrackBitRatePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iTrackBitRateChanged != NULL) {
-        iTrackBitRateChanged();
-    }
+    ReportEvent(iTrackBitRateChanged);
 }
 
 void CpProxyLinnCoUkDs1Cpp::TrackLosslessPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iTrackLosslessChanged != NULL) {
-        iTrackLosslessChanged();
-    }
+    ReportEvent(iTrackLosslessChanged);
 }
 
 void CpProxyLinnCoUkDs1Cpp::TrackBitDepthPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iTrackBitDepthChanged != NULL) {
-        iTrackBitDepthChanged();
-    }
+    ReportEvent(iTrackBitDepthChanged);
 }
 
 void CpProxyLinnCoUkDs1Cpp::TrackSampleRatePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iTrackSampleRateChanged != NULL) {
-        iTrackSampleRateChanged();
-    }
+    ReportEvent(iTrackSampleRateChanged);
 }
 
 void CpProxyLinnCoUkDs1Cpp::TrackCodecNamePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iTrackCodecNameChanged != NULL) {
-        iTrackCodecNameChanged();
-    }
+    ReportEvent(iTrackCodecNameChanged);
 }
 
 void CpProxyLinnCoUkDs1Cpp::TrackIdPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iTrackIdChanged != NULL) {
-        iTrackIdChanged();
-    }
+    ReportEvent(iTrackIdChanged);
 }
 
 void CpProxyLinnCoUkDs1Cpp::TransportStatePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iTransportStateChanged != NULL) {
-        iTransportStateChanged();
-    }
+    ReportEvent(iTransportStateChanged);
 }
 

@@ -1289,12 +1289,6 @@ void CpProxyUpnpOrgScheduledRecording1Cpp::PropertyLastChange(std::string& aLast
 
 void CpProxyUpnpOrgScheduledRecording1Cpp::LastChangePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iLastChangeChanged != NULL) {
-        iLastChangeChanged();
-    }
+    ReportEvent(iLastChangeChanged);
 }
 

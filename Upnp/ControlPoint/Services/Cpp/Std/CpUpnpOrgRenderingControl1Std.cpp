@@ -2184,12 +2184,6 @@ void CpProxyUpnpOrgRenderingControl1Cpp::PropertyLastChange(std::string& aLastCh
 
 void CpProxyUpnpOrgRenderingControl1Cpp::LastChangePropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iLastChangeChanged != NULL) {
-        iLastChangeChanged();
-    }
+    ReportEvent(iLastChangeChanged);
 }
 

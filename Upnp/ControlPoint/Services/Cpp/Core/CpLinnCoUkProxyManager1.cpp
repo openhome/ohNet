@@ -685,45 +685,21 @@ void CpProxyLinnCoUkProxyManager1::PropertyDiscPlayerComPort(TUint& aDiscPlayerC
 
 void CpProxyLinnCoUkProxyManager1::KontrolProductConnectedPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iKontrolProductConnectedChanged != NULL) {
-        iKontrolProductConnectedChanged();
-    }
+    ReportEvent(iKontrolProductConnectedChanged);
 }
 
 void CpProxyLinnCoUkProxyManager1::KontrolProductComPortPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iKontrolProductComPortChanged != NULL) {
-        iKontrolProductComPortChanged();
-    }
+    ReportEvent(iKontrolProductComPortChanged);
 }
 
 void CpProxyLinnCoUkProxyManager1::DiscPlayerConnectedPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDiscPlayerConnectedChanged != NULL) {
-        iDiscPlayerConnectedChanged();
-    }
+    ReportEvent(iDiscPlayerConnectedChanged);
 }
 
 void CpProxyLinnCoUkProxyManager1::DiscPlayerComPortPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iDiscPlayerComPortChanged != NULL) {
-        iDiscPlayerComPortChanged();
-    }
+    ReportEvent(iDiscPlayerComPortChanged);
 }
 

@@ -1006,56 +1006,26 @@ void CpProxyZappOrgTestBasic1::PropertyVarBin(Brh& aVarBin) const
 
 void CpProxyZappOrgTestBasic1::VarUintPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iVarUintChanged != NULL) {
-        iVarUintChanged();
-    }
+    ReportEvent(iVarUintChanged);
 }
 
 void CpProxyZappOrgTestBasic1::VarIntPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iVarIntChanged != NULL) {
-        iVarIntChanged();
-    }
+    ReportEvent(iVarIntChanged);
 }
 
 void CpProxyZappOrgTestBasic1::VarBoolPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iVarBoolChanged != NULL) {
-        iVarBoolChanged();
-    }
+    ReportEvent(iVarBoolChanged);
 }
 
 void CpProxyZappOrgTestBasic1::VarStrPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iVarStrChanged != NULL) {
-        iVarStrChanged();
-    }
+    ReportEvent(iVarStrChanged);
 }
 
 void CpProxyZappOrgTestBasic1::VarBinPropertyChanged()
 {
-    if (!ReportEvent()) {
-        return;
-    }
-    AutoMutex a(*iLock);
-    if (iCpSubscriptionStatus == CpProxy::eSubscribed && iVarBinChanged != NULL) {
-        iVarBinChanged();
-    }
+    ReportEvent(iVarBinChanged);
 }
 
