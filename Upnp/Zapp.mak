@@ -33,6 +33,8 @@ dirsep = ^\
 installdir = $(PROGRAMFILES)\Zapp
 installlibdir = $(installdir)\lib
 installincludedir = $(installdir)\include
+mkdir = Scripts\mkdir.bat
+rmdir = Scripts\rmdir.bat
 
 # Actual building of code is shared between platforms
 include Common.mak

@@ -33,6 +33,9 @@ prefix = /usr/local
 installlibdir = $(prefix)/lib/zapp
 installincludedir = $(prefix)/include/zapp
 installpkgconfdir = $(prefix)/lib/pkgconfig
+mkdir = mkdir -p
+rmdir = rm -rf
+
 # Actual building of code is shared between platforms
 include Common.mak
 
