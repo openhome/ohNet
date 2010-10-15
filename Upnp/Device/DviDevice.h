@@ -41,6 +41,8 @@ public:
     void SetDisabled(Functor aCompleted);
     void GetAttribute(const TChar* aKey, const TChar** aValue) const;
     void SetAttribute(const TChar* aKey, const TChar* aValue);
+    void SetXmlExtension(const TChar* aXml);
+    const Brx& XmlExtension() const;
     TUint ServiceCount() const;
     DviService& Service(TUint aIndex) const;
     void AddService(DviService* aService);
@@ -87,6 +89,7 @@ private:
     Functor iDisableComplete;
     Semaphore iShutdownSem;
     TUint iSubscriptionId;
+    Brh iXmlExtension;
 };
 
 class AttributeMap

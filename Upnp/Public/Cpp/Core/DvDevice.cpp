@@ -56,3 +56,8 @@ void DvDevice::SetAttribute(const TChar* aKey, const TChar* aValue)
 {
     iDevice->SetAttribute(aKey, aValue);
 }
+
+void DvDevice::SetXmlExtension(const TChar* aXml)
+{
+    iDevice->SetXmlExtension(aXml);
+}

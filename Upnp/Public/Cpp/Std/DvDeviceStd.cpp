@@ -64,6 +64,11 @@ void DvDeviceStd::SetAttribute(const char* aKey, const char* aValue)
 {
     iDevice->SetAttribute(aKey, aValue);
 }
+
+void DvDeviceStd::SetXmlExtension(const TChar* aXml)
+{
+    iDevice->SetXmlExtension(aXml);
+}
     
 void DvDeviceStd::WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter)
 {

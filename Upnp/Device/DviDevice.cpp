@@ -158,6 +158,16 @@ void DviDevice::SetAttribute(const TChar* aKey, const TChar* aValue)
     }
 }
 
+void DviDevice::SetXmlExtension(const TChar* aXml)
+{
+    iXmlExtension.Set(aXml);
+}
+
+const Brx& DviDevice::XmlExtension() const
+{
+    return iXmlExtension;
+}
+
 void DviDevice::AddService(DviService* aService)
 {
     ASSERT(iEnabled == eDisabled);
