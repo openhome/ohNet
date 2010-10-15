@@ -42,8 +42,6 @@ include T4Windows.mak
 # Actual building of code is shared between platforms
 include Common.mak
 
-
-
 !if exist (Generated\GenerateSourceFiles.mak)
 !include Generated\GenerateSourceFiles.mak
 !else
@@ -62,6 +60,7 @@ include Common.mak
 !message Note: Generated\Devices.mak does not yet exist. Try "make generate-makefiles".
 !endif
 
+include UserTargets.mak
 
 # Following macros must be provided by each file which wraps Common.mak
 
