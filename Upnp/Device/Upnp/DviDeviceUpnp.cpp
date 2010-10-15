@@ -821,6 +821,10 @@ void DviDeviceUpnpXmlWriter::Write(TIpAddress aInterface)
     (void)Ascii::AppendDec(verBuf, iDeviceUpnp.Version());
     iWriter.Write(verBuf);
     iWriter.Write(Brn("</deviceType>"));
+    const Brx& xmlExtension = iDeviceUpnp.iDevice.XmlExtension();
+    if (xmlExtension.Bytes() != 0) {
+        iWriter.Write(xmlExtension);
+    }
 
     if (iDeviceUpnp.iDevice.ResourceManager() != NULL) {
         iWriter.Write('<');

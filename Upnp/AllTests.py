@@ -43,18 +43,8 @@ def testNoArgs(aTarget):
 def testCs(aTarget, aCmdLine):
     doTest(aTarget, aCmdLine, 1)
 
-def runTests():
-    buildOnly = 0
-    incremental = 0
-    for arg in sys.argv[1:]:
-        if arg == '-b' or arg == '--buildonly':
-            buildOnly = 1
-        elif arg == '-i' or arg == '--incremental':
-            incremental = 1
-        else:
-            print 'Unrecognised argument - ' + arg
-            sys.exit(1)
-    if incremental == 0:
+def runBuilds(aIncremental):
+    if aIncremental == 0:
         cleanCmd = ''
         if os.name == 'nt':
             cleanCmd = 'nmake /s /f Zapp.mak clean'
@@ -66,35 +56,51 @@ def runTests():
     build('CpProxyDlls')
     build('DvDeviceDlls')
     print '\nBuilds complete'
-    if buildOnly == 0:
-        testNoArgs('TestBuffer')
-        testNoArgs('TestThread')
-        testNoArgs('TestFifo')
-        testNoArgs('TestQueue')
-        testNoArgs('TestNetwork')
-        # TestEcho is interactive so can't be run here
-        # TestTimer is relatively long running and covers an area that rarely changes
-        test('TestSsdpMListen', ['-d', '10'])
-        test('TestSsdpUListen', ['-t', 'linn.co.uk:service:Radio:1'])
-        test('TestDeviceList', ['-t', 'linn.co.uk:service:Radio:1', '-f'])
-        test('TestDeviceListStd', ['-t', 'linn.co.uk:service:Radio:1', '-f'])
-        test('TestDeviceListC', ['-t', 'linn.co.uk:service:Radio:1', '-f'])
-        testNoArgs('TestInvocation')
-        testNoArgs('TestInvocationStd')
-        testNoArgs('TestSubscription')
-        testNoArgs('TestProxyC')
-        testNoArgs('TestDviDiscovery')
-        testNoArgs('TestDviDeviceList')
-        testNoArgs('TestDvInvocation')
-        testNoArgs('TestDvSubscription')
-        testNoArgs('TestDvDeviceStd')
-        testNoArgs('TestDvDeviceC')
-        # TestTopology1, TestTopology2 not quite ready for general use just yet
-        testCs('TestProxyCs', [''])
-        print '\nFinished.  All tests passed'
+
+def runTests():
+    testNoArgs('TestBuffer')
+    testNoArgs('TestThread')
+    testNoArgs('TestFifo')
+    testNoArgs('TestQueue')
+    testNoArgs('TestNetwork')
+    # TestEcho is interactive so can't be run here
+    # TestTimer is relatively long running and covers an area that rarely changes
+    test('TestSsdpMListen', ['-d', '10'])
+    test('TestSsdpUListen', ['-t', 'linn.co.uk:service:Radio:1'])
+    test('TestDeviceList', ['-t', 'linn.co.uk:service:Radio:1', '-f'])
+    test('TestDeviceListStd', ['-t', 'linn.co.uk:service:Radio:1', '-f'])
+    test('TestDeviceListC', ['-t', 'linn.co.uk:service:Radio:1', '-f'])
+    testNoArgs('TestInvocation')
+    testNoArgs('TestInvocationStd')
+    testNoArgs('TestSubscription')
+    testNoArgs('TestProxyC')
+    testNoArgs('TestDviDiscovery')
+    testNoArgs('TestDviDeviceList')
+    testNoArgs('TestDvInvocation')
+    testNoArgs('TestDvSubscription')
+    testNoArgs('TestDvDeviceStd')
+    testNoArgs('TestDvDeviceC')
+    # TestTopology1, TestTopology2 not quite ready for general use just yet
+    testCs('TestProxyCs', [''])
+    print '\nFinished.  All tests passed'
 
 os.environ["ABORT_ON_FAILURE"] = "1"
-startTime = time.strftime('%H:%M:%S')
-runTests()
-print 'Start time: ' + startTime
+gStartTime = time.strftime('%H:%M:%S')
+gBuildsCompleteTime = ''
+gBuildOnly = 0
+gIncremental = 0
+for arg in sys.argv[1:]:
+    if arg == '-b' or arg == '--buildonly':
+        gBuildOnly = 1
+    elif arg == '-i' or arg == '--incremental':
+        gIncremental = 1
+    else:
+        print 'Unrecognised argument - ' + arg
+        sys.exit(1)
+runBuilds(gIncremental)
+gBuildsCompleteTime = time.strftime('%H:%M:%S')
+if gBuildOnly == 0:
+    runTests()
+print 'Start time: ' + gStartTime
+print 'Builds complete: ' + gBuildsCompleteTime
 print 'End time: ' + time.strftime('%H:%M:%S')

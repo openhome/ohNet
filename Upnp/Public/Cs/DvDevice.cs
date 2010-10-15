@@ -74,6 +74,8 @@ namespace Zapp
         [DllImport("ZappUpnp")]
         static extern unsafe void DvDeviceSetAttribute(uint aDevice, char* aKey, char* aValue);
         [DllImport("ZappUpnp")]
+        static extern unsafe void DvDeviceSetXmlExtension(uint aDevice, char* aXml);
+        [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
         public delegate void Callback();
@@ -172,6 +174,13 @@ namespace Zapp
             DvDeviceSetAttribute(iHandle, key, value);
             Marshal.FreeHGlobal((IntPtr)key);
             Marshal.FreeHGlobal((IntPtr)value);
+        }
+
+        public unsafe void SetXmlExtension(string aXml)
+        {
+            char* xml = (char*)Marshal.StringToHGlobalAnsi(aXml).ToPointer();
+            DvDeviceSetXmlExtension(iHandle, xml);
+            Marshal.FreeHGlobal((IntPtr)xml);
         }
 
         public uint Handle()

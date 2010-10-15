@@ -31,6 +31,7 @@ public:
     void SetDisabled(Functor aCompleted);
     void GetAttribute(const char* aKey, const char** aValue) const;
     void SetAttribute(const char* aKey, const char* aValue);
+    void SetXmlExtension(const TChar* aXml);
 private:
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter);
 private:

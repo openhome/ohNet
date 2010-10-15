@@ -31,6 +31,7 @@ DllExport void DvDeviceSetEnabled(DvDeviceC aDevice);
 DllExport void DvDeviceSetDisabled(DvDeviceC aDevice, ZappCallback aCompleted, void* aPtr);
 DllExport void DvDeviceGetAttribute(DvDeviceC aDevice, const char* aKey, const char** aValue);
 DllExport void DvDeviceSetAttribute(DvDeviceC aDevice, const char* aKey, const char* aValue);
+DllExport void DvDeviceSetXmlExtension(DvDeviceC aDevice, const char* aXml);
 
 #ifdef __cplusplus
 } // extern "C"

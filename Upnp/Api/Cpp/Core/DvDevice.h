@@ -29,6 +29,7 @@ public:
     void SetDisabled(Functor aCompleted);
     void GetAttribute(const TChar* aKey, const TChar** aValue) const;
     void SetAttribute(const TChar* aKey, const TChar* aValue);
+    void SetXmlExtension(const TChar* aXml);
 private:
     DviDevice* iDevice;
 };

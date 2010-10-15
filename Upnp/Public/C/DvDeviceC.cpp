@@ -107,3 +107,8 @@ void DvDeviceSetAttribute(DvDeviceC aDevice, const char* aKey, const char* aValu
 {
 	DviDeviceC::DeviceFromHandle(aDevice)->SetAttribute(aKey, aValue);
 }
+
+void DvDeviceSetXmlExtension(DvDeviceC aDevice, const char* aXml)
+{
+	DviDeviceC::DeviceFromHandle(aDevice)->SetXmlExtension(aXml);
+}
