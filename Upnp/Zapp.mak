@@ -35,6 +35,7 @@ installlibdir = $(installdir)\lib
 installincludedir = $(installdir)\include
 mkdir = Scripts\mkdir.bat
 rmdir = Scripts\rmdir.bat
+default : all
 
 # Actual building of code is shared between platforms
 include Common.mak
@@ -80,10 +81,6 @@ copy_build_includes:
 	copy Timer\Timer.h $(inc_build) > nul
 	copy Utils\*.h $(inc_build) > nul
 	copy TestFramework\*.h $(inc_build) > nul
-
-clean :
-	del /q $(objdir)*
-	rd /s/q $(inc_build)
 
 install :
 	if not exist "$(installdir)" mkdir "$(installdir)"

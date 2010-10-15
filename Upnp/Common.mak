@@ -1,6 +1,6 @@
 
 
-
+all : Tests TestProxyCs $(proxy_dlls) $(proxy_dotnet_assemblies_with_path)
 
 objects_core = $(objdir)Ascii.$(objext) \
                $(objdir)AsyncC.$(objext) \
@@ -472,5 +472,14 @@ $(objdir)TestProxyCs.exe: \
 		/reference:$(objdir)CpUpnpOrgConnectionManager1Assembly.dll \
 		$(publiccsdir)TestProxy.cs \
 		
+
+clean :
+	$(rmdir) $(objdir)
+	$(rmdir) $(inc_build)
+
+mostlyclean : clean clean-t4
+	$(rmdir) Generated
+
+maintainer-clean : mostlyclean
 
 

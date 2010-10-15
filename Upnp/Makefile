@@ -36,6 +36,8 @@ installpkgconfdir = $(prefix)/lib/pkgconfig
 mkdir = mkdir -p
 rmdir = rm -rf
 
+default : all
+
 # Actual building of code is shared between platforms
 include Common.mak
 
@@ -74,10 +76,6 @@ copy_build_includes:
 	cp -u Timer/Timer.h $(inc_build)
 	cp -u Utils/*.h $(inc_build)
 	cp -u TestFramework/*.h $(inc_build)
-
-clean :
-	rm -rf $(objdir)
-	rm -rf $(inc_build)
 
 install : install-pkgconf install-libs install-includes
 
