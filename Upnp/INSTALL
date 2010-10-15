@@ -1,0 +1,42 @@
+Installing Zapp Library
+-----------------------
+
+Having built the library:
+	make
+
+You can install it with:
+	sudo make install
+
+Install behaviour varies by platform:
+
+Posix
+-----
+
+By default, zapp is installed in "/usr". Libraries go in "/usr/lib/zapp",
+include files go in "/usr/include/zapp". Zapp also installs a pkg-config
+file to "/usr/lib/pkgconfig/managed.zapp.pc" that can be used by .NET
+applications to build referencing the Zapp libraries. There is no
+pkg-config file for the native interface yet.
+
+You can install to a different location like so:
+
+	make install prefix=~/myzappinstall
+
+This will install libraries to "~/myzappinstall/lib/zapp" and include files
+to "~/myzappinstall/include/zapp".
+
+Windows
+-------
+
+To install to "%PROGRAMFILES%\Zapp" do:
+
+	make install
+
+To install to a different location, do:
+
+	make install installdir="C:\path\to\install\dir"
+
+Nothing is installed to the registry or outside of the specified directory.
+Applications building against Zapp must have their include and library
+directories updated manually. Binaries go in "$installdir\lib", include
+files go in "$installdir\include".

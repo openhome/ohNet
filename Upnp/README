@@ -21,6 +21,9 @@ Building
 On windows, in the UPnP directory, run:
 	make generate-makefiles
 	make
+The first step is only required if the service XML or the associated templates have
+been altered. If you have a clean distribution or you have never touched these files,
+there's no need to run it, but it should not hurt.
 
 On Linux, in the UPnP directory, run:
 	make
