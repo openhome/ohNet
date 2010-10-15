@@ -1,6 +1,7 @@
 import os
 import sys
 import subprocess
+import time
 
 def build(aTarget):
     buildCmd = 'make -s '
@@ -93,4 +94,7 @@ def runTests():
         print '\nFinished.  All tests passed'
 
 os.environ["ABORT_ON_FAILURE"] = "1"
+startTime = time.strftime('%H:%M:%S')
 runTests()
+print 'Start time: ' + startTime
+print 'End time: ' + time.strftime('%H:%M:%S')
