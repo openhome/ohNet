@@ -78,14 +78,14 @@
   </service>
   <service>
     <publisher>Upnp</publisher>
-    <dcpdir>Lighting Controls_1</dcpdir>
+    <dcpdir>LightingControls_1</dcpdir>
     <domain>upnp.org</domain>
     <type>SwitchPower</type>
     <version>1</version>
   </service>
   <service>
     <publisher>Upnp</publisher>
-    <dcpdir>Lighting Controls_1</dcpdir>
+    <dcpdir>LightingControls_1</dcpdir>
     <domain>upnp.org</domain>
     <type>Dimming</type>
     <version>1</version>

@@ -18,94 +18,117 @@ AllCp: CpApiCppCore CpSrcCppCore CpApiCppStd CpSrcCppStd CpApiC CpSrcC CpCs
 AllDv: DvApiCppCore DvSrcCppCore DvApiCppStd DvSrcCppStd DvApiC DvSrcC DvCs
 
 
-CpApiCppCore: tt
+CpApiCppCore:  <# foreach (Service s in u.iServices) { #> $(proxyApiCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h<# } #>
+
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-	$(t4) -o $(proxyApiCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h T4/Templates/CpUpnpCppHeader.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#> -a buffer:1
+$(proxyApiCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h : $(tt) T4/Templates/CpUpnpCppHeader.tt <#=ServiceXmlPath(s)#>
+	$(t4) -o $(proxyApiCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h T4/Templates/CpUpnpCppHeader.tt -a "xml:<#=ServiceXmlPath(s)#>" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#> -a buffer:1
 <#  } #>
 
-CpSrcCppCore: tt
+CpSrcCppCore:  <# foreach (Service s in u.iServices) { #> $(proxySrcCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp<# } #>
+
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-	$(t4) -o $(proxySrcCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp T4/Templates/CpUpnpCppBufferSource.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+$(proxySrcCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp : $(tt) T4/Templates/CpUpnpCppBufferSource.tt <#=ServiceXmlPath(s)#>
+	$(t4) -o $(proxySrcCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp T4/Templates/CpUpnpCppBufferSource.tt -a "xml:<#=ServiceXmlPath(s)#>" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
 <#  } #>
 
-CpApiCppStd: tt
+CpApiCppStd:  <# foreach (Service s in u.iServices) { #> $(proxyApiCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h<# } #>
+
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-	$(t4) -o $(proxyApiCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h T4/Templates/CpUpnpCppHeader.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#> -a buffer:0
+$(proxyApiCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h : $(tt) T4/Templates/CpUpnpCppHeader.tt <#=ServiceXmlPath(s)#>
+	$(t4) -o $(proxyApiCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h T4/Templates/CpUpnpCppHeader.tt -a "xml:<#=ServiceXmlPath(s)#>" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#> -a buffer:0
 <#  } #>
 
-CpSrcCppStd: tt
+CpSrcCppStd:  <# foreach (Service s in u.iServices) { #> $(proxySrcCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp<# } #>
+
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-	$(t4) -o $(proxySrcCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp T4/Templates/CpUpnpCppStringSource.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+$(proxySrcCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp : $(tt) T4/Templates/CpUpnpCppStringSource.tt <#=ServiceXmlPath(s)#>
+	$(t4) -o $(proxySrcCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp T4/Templates/CpUpnpCppStringSource.tt -a "xml:<#=ServiceXmlPath(s)#>" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
 <#  } #>
 
-CpApiC: tt
+CpApiC:  <# foreach (Service s in u.iServices) { #> $(proxyApiC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h<# } #>
+
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-	$(t4) -o $(proxyApiC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h T4/Templates/CpUpnpCHeader.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+$(proxyApiC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h : $(tt) T4/Templates/CpUpnpCHeader.tt <#=ServiceXmlPath(s)#>
+	$(t4) -o $(proxyApiC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h T4/Templates/CpUpnpCHeader.tt -a "xml:<#=ServiceXmlPath(s)#>" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
 <#  } #>
 
-CpSrcC: tt
+CpSrcC:  <# foreach (Service s in u.iServices) { #> $(proxySrcC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp<# } #>
+
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-	$(t4) -o $(proxySrcC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp T4/Templates/CpUpnpCSource.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+$(proxySrcC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp : $(tt) T4/Templates/CpUpnpCSource.tt <#=ServiceXmlPath(s)#>
+	$(t4) -o $(proxySrcC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp T4/Templates/CpUpnpCSource.tt -a "xml:<#=ServiceXmlPath(s)#>" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
 <#  } #>
 
-CpCs: tt
+CpCs:  <# foreach (Service s in u.iServices) { #> $(proxyCs)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs<# } #>
+
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-	$(t4) -o $(proxyCs)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs T4/Templates/CpUpnpCs.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+$(proxyCs)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs : $(tt) T4/Templates/CpUpnpCs.tt <#=ServiceXmlPath(s)#>
+	$(t4) -o $(proxyCs)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs T4/Templates/CpUpnpCs.tt -a "xml:<#=ServiceXmlPath(s)#>" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
 <#  } #>
 
-DvApiCppCore : tt
+DvApiCppCore :  <# foreach (Service s in u.iServices) { #> $(deviceApiCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h<# } #>
+
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-	$(t4) -o $(deviceApiCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h T4/Templates/DvUpnpCppCoreHeader.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+$(deviceApiCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h : $(tt) T4/Templates/DvUpnpCppCoreHeader.tt <#=ServiceXmlPath(s)#>
+	$(t4) -o $(deviceApiCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h T4/Templates/DvUpnpCppCoreHeader.tt -a "xml:<#=ServiceXmlPath(s)#>" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
 <#  } #>
 
-DvSrcCppCore : tt
+DvSrcCppCore :  <# foreach (Service s in u.iServices) { #> $(deviceSrcCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp<# } #>
+
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-	$(t4) -o $(deviceSrcCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp T4/Templates/DvUpnpCppCoreSource.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+$(deviceSrcCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp : $(tt) T4/Templates/DvUpnpCppCoreSource.tt <#=ServiceXmlPath(s)#>
+	$(t4) -o $(deviceSrcCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp T4/Templates/DvUpnpCppCoreSource.tt -a "xml:<#=ServiceXmlPath(s)#>" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
 <#  } #>
 
-DvApiCppStd : tt
+DvApiCppStd :  <# foreach (Service s in u.iServices) { #> $(deviceApiCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h<# } #>
+
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-	$(t4) -o $(deviceApiCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h T4/Templates/DvUpnpCppStdHeader.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+$(deviceApiCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h : $(tt) T4/Templates/DvUpnpCppStdHeader.tt <#=ServiceXmlPath(s)#>
+	$(t4) -o $(deviceApiCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h T4/Templates/DvUpnpCppStdHeader.tt -a "xml:<#=ServiceXmlPath(s)#>" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
 <#  } #>
 
-DvSrcCppStd : tt
+DvSrcCppStd :  <# foreach (Service s in u.iServices) { #> $(deviceSrcCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp<# } #>
+
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-	$(t4) -o $(deviceSrcCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp T4/Templates/DvUpnpCppStdSource.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+$(deviceSrcCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp : $(tt) T4/Templates/DvUpnpCppStdSource.tt <#=ServiceXmlPath(s)#>
+	$(t4) -o $(deviceSrcCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp T4/Templates/DvUpnpCppStdSource.tt -a "xml:<#=ServiceXmlPath(s)#>" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
 <#  } #>
 
-DvApiC : tt
+DvApiC :  <# foreach (Service s in u.iServices) { #> $(deviceApiC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h<# } #>
+
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-	$(t4) -o $(deviceApiC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h T4/Templates/DvUpnpCHeader.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+$(deviceApiC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h : $(tt) T4/Templates/DvUpnpCHeader.tt <#=ServiceXmlPath(s)#>
+	$(t4) -o $(deviceApiC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h T4/Templates/DvUpnpCHeader.tt -a "xml:<#=ServiceXmlPath(s)#>" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
 <#  } #>
 
-DvSrcC : tt
+DvSrcC :  <# foreach (Service s in u.iServices) { #> $(deviceSrcC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp<# } #>
+
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-	$(t4) -o $(deviceSrcC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp T4/Templates/DvUpnpCSource.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+$(deviceSrcC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp : $(tt) T4/Templates/DvUpnpCSource.tt <#=ServiceXmlPath(s)#>
+	$(t4) -o $(deviceSrcC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp T4/Templates/DvUpnpCSource.tt -a "xml:<#=ServiceXmlPath(s)#>" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
 <#  } #>
 
-DvCs: tt
+DvCs:  <# foreach (Service s in u.iServices) { #> $(deviceCs)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs<# } #>
+
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-	$(t4) -o $(deviceCs)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs T4/Templates/DvUpnpCs.tt -a "xml:Service/Upnp/<#=s.iPublisher#>/<#=DcpDir(s)#><#=s.iType#><#=s.iVersion#>.xml" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+$(deviceCs)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs : $(tt) T4/Templates/DvUpnpCs.tt <#=ServiceXmlPath(s)#>
+	$(t4) -o $(deviceCs)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs T4/Templates/DvUpnpCs.tt -a "xml:<#=ServiceXmlPath(s)#>" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
 <#  } #>
-
-UpnpServiceMakeGen : UpnpServiceMake.dll tt
-	$(t4) -o T4.mak T4/Templates/UpnpMakeT4.tt -a xml:Service/Services.xml
-	$(t4) -o Proxies.mak T4/Templates/CpUpnpMakeProxies.tt -a xml:Service/Services.xml
-	$(t4) -o Devices.mak T4/Templates/DvUpnpMakeDevices.tt -a xml:Service/Services.xml
 
 <#+
 string FilePrefix(Service s)
@@ -132,6 +155,11 @@ string DcpDir(Service s)
         dir = s.iDcpDir + "/";
     }
     return dir;
+}
+
+string ServiceXmlPath(Service s)
+{
+    return String.Format("Service/Upnp/{0}/{1}{2}{3}.xml", s.iPublisher, DcpDir(s), s.iType, s.iVersion);
 }
 
 string TemplateArgument(string aName)

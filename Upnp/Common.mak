@@ -275,11 +275,9 @@ $(objdir)Os.$(objext) : Os/$(osdir)/Os.c $(headers)
 
 
 ZappUpnpDll: upnp_core
-	$(linker_dll)$(dllprefix)ZappUpnp.$(dllext) $(objects_core)
+	$(link_dll) $(linkoutput)$(objdir)$(dllprefix)ZappUpnp.$(dllext) $(objects_core)
 
 
-include Proxies.mak
-include Devices.mak
 
 Zapp: proxies devices
 	$(ar)$(libprefix)Zapp.$(libext) $(objects_core) $(objects_proxies) $(objects_devices)
@@ -296,160 +294,160 @@ $(objdir)OptionParser.$(objext) : TestFramework/OptionParser.cpp $(headers)
 
 
 TestBuffer: upnp_core $(objdir)TestBuffer.$(objext) TestFramework.$(libext)
-	$(linker)TestBuffer.$(exeext) $(objdir)TestBuffer.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestBuffer.$(exeext) $(objdir)TestBuffer.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestBuffer.$(objext) : Buffer/TestBuffer.cpp $(headers)
 	$(compiler)TestBuffer.$(objext) -c $(cflags) $(includes) Buffer/TestBuffer.cpp
 
 TestThread: upnp_core $(objdir)TestThread.$(objext) TestFramework.$(libext)
-	$(linker)TestThread.$(exeext) $(objdir)TestThread.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestThread.$(exeext) $(objdir)TestThread.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestThread.$(objext) : Thread/TestThread.cpp $(headers)
 	$(compiler)TestThread.$(objext) -c $(cflags) $(includes) Thread/TestThread.cpp
 
 TestQueue: upnp_core $(objdir)TestQueue.$(objext) TestFramework.$(libext)
-	$(linker)TestQueue.$(exeext) $(objdir)TestQueue.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestQueue.$(exeext) $(objdir)TestQueue.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestQueue.$(objext) : Utils/TestQueue.cpp $(headers)
 	$(compiler)TestQueue.$(objext) -c $(cflags) $(includes) Utils/TestQueue.cpp
 
 TestFifo: upnp_core $(objdir)TestFifo.$(objext) TestFramework.$(libext)
-	$(linker)TestFifo.$(exeext) $(objdir)TestFifo.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestFifo.$(exeext) $(objdir)TestFifo.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestFifo.$(objext) : Utils/TestFifo.cpp $(headers)
 	$(compiler)TestFifo.$(objext) -c $(cflags) $(includes) Utils/TestFifo.cpp
 
 TestEcho: upnp_core $(objdir)TestEcho.$(objext) TestFramework.$(libext)
-	$(linker)TestEcho.$(exeext) $(objdir)TestEcho.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestEcho.$(exeext) $(objdir)TestEcho.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestEcho.$(objext) : Network/TestEcho.cpp $(headers)
 	$(compiler)TestEcho.$(objext) -c $(cflags) $(includes) Network/TestEcho.cpp
 
 TestNetwork: upnp_core $(objdir)TestNetwork.$(objext) TestFramework.$(libext)
-	$(linker)TestNetwork.$(exeext) $(objdir)TestNetwork.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestNetwork.$(exeext) $(objdir)TestNetwork.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestNetwork.$(objext) : Network/TestNetwork.cpp $(headers)
 	$(compiler)TestNetwork.$(objext) -c $(cflags) $(includes) Network/TestNetwork.cpp
 
 TestTimer: upnp_core $(objdir)TestTimer.$(objext) TestFramework.$(libext)
-	$(linker)TestTimer.$(exeext) $(objdir)TestTimer.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestTimer.$(exeext) $(objdir)TestTimer.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestTimer.$(objext) : Timer/TestTimer.cpp $(headers)
 	$(compiler)TestTimer.$(objext) -c $(cflags) $(includes) Timer/TestTimer.cpp
 
 TestSsdpMListen: upnp_core $(objdir)TestSsdpMListen.$(objext) TestFramework.$(libext)
-	$(linker)TestSsdpMListen.$(exeext) $(objdir)TestSsdpMListen.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestSsdpMListen.$(exeext) $(objdir)TestSsdpMListen.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestSsdpMListen.$(objext) : Ssdp/TestSsdpMListen.cpp $(headers)
 	$(compiler)TestSsdpMListen.$(objext) -c $(cflags) $(includes) Ssdp/TestSsdpMListen.cpp
 
 TestSsdpUListen: upnp_core $(objdir)TestSsdpUListen.$(objext) TestFramework.$(libext)
-	$(linker)TestSsdpUListen.$(exeext) $(objdir)TestSsdpUListen.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestSsdpUListen.$(exeext) $(objdir)TestSsdpUListen.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestSsdpUListen.$(objext) : Ssdp/TestSsdpUListen.cpp $(headers)
 	$(compiler)TestSsdpUListen.$(objext) -c $(cflags) $(includes) Ssdp/TestSsdpUListen.cpp
 
 TestDeviceList: upnp_core $(objdir)TestDeviceList.$(objext) TestFramework.$(libext)
-	$(linker)TestDeviceList.$(exeext) $(objdir)TestDeviceList.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestDeviceList.$(exeext) $(objdir)TestDeviceList.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestDeviceList.$(objext) : ControlPoint/TestDeviceList.cpp $(headers)
 	$(compiler)TestDeviceList.$(objext) -c $(cflags) $(includes) ControlPoint/TestDeviceList.cpp
 
 TestDeviceListC: upnp_core $(objdir)TestDeviceListC.$(objext) TestFramework.$(libext)
-	$(linker)TestDeviceListC.$(exeext) $(objdir)TestDeviceListC.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestDeviceListC.$(exeext) $(objdir)TestDeviceListC.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestDeviceListC.$(objext) : Public/C/TestDeviceListC.cpp $(headers)
 	$(compiler)TestDeviceListC.$(objext) -c $(cflags) $(includes) Public/C/TestDeviceListC.cpp
 
 TestDeviceListStd: upnp_core $(objdir)TestDeviceListStd.$(objext) TestFramework.$(libext)
-	$(linker)TestDeviceListStd.$(exeext) $(objdir)TestDeviceListStd.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestDeviceListStd.$(exeext) $(objdir)TestDeviceListStd.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestDeviceListStd.$(objext) : Public/Cpp/Std/TestDeviceListStd.cpp $(headers)
 	$(compiler)TestDeviceListStd.$(objext) -c $(cflags) $(includes) Public/Cpp/Std/TestDeviceListStd.cpp
 
 TestDimmableLights: zapp $(objdir)TestDimmableLights.$(objext) TestFramework.$(libext)
-	$(linker)TestDimmableLights.$(exeext) $(objdir)TestDimmableLights.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)Zapp.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestDimmableLights.$(exeext) $(objdir)TestDimmableLights.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)Zapp.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestDimmableLights.$(objext) : ControlPoint/TestDimmableLights.cpp $(headers)
 	$(compiler)TestDimmableLights.$(objext) -c $(cflags) $(includes) ControlPoint/TestDimmableLights.cpp
 
 TestInvocation: upnp_core $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)TestInvocation.$(objext) TestFramework.$(libext)
-	$(linker)TestInvocation.$(exeext) $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)TestInvocation.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestInvocation.$(exeext) $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)TestInvocation.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestInvocation.$(objext) : ControlPoint/TestInvocation.cpp $(headers)
 	$(compiler)TestInvocation.$(objext) -c $(cflags) $(includes) ControlPoint/TestInvocation.cpp
 
 TestInvocationStd: upnp_core $(objdir)CpUpnpOrgConnectionManager1Std.$(objext) $(objdir)TestInvocationStd.$(objext) TestFramework.$(libext)
-	$(linker)TestInvocationStd.$(exeext) $(objdir)CpUpnpOrgConnectionManager1Std.$(objext) $(objdir)TestInvocationStd.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestInvocationStd.$(exeext) $(objdir)CpUpnpOrgConnectionManager1Std.$(objext) $(objdir)TestInvocationStd.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestInvocationStd.$(objext) : Public/Cpp/Std/TestInvocationStd.cpp $(headers)
 	$(compiler)TestInvocationStd.$(objext) -c $(cflags) $(includes) Public/Cpp/Std/TestInvocationStd.cpp
 
 TestSubscription: upnp_core $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)TestSubscription.$(objext) TestFramework.$(libext)
-	$(linker)TestSubscription.$(exeext) $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)TestSubscription.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestSubscription.$(exeext) $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)TestSubscription.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestSubscription.$(objext) : ControlPoint/TestSubscription.cpp $(headers)
 	$(compiler)TestSubscription.$(objext) -c $(cflags) $(includes) ControlPoint/TestSubscription.cpp
 
 TestNetworkInterfaceChange: upnp_core $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)LinnCoUkPlaylist1.$(objext) $(objdir)TestNetworkInterfaceChange.$(objext) TestFramework.$(libext)
-	$(linker)TestNetworkInterfaceChange.$(exeext) $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)LinnCoUkPlaylist1.$(objext) $(objdir)TestNetworkInterfaceChange.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestNetworkInterfaceChange.$(exeext) $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)LinnCoUkPlaylist1.$(objext) $(objdir)TestNetworkInterfaceChange.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestNetworkInterfaceChange.$(objext) : ControlPoint/TestNetworkInterfaceChange.cpp $(headers)
 	$(compiler)TestNetworkInterfaceChange.$(objext) -c $(cflags) $(includes) ControlPoint/TestNetworkInterfaceChange.cpp
 
 TestProxyC: upnp_core $(objdir)CpUpnpOrgConnectionManager1C.$(objext) $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)TestProxyC.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext)
-	$(linker)TestProxyC.$(exeext) $(objdir)CpUpnpOrgConnectionManager1C.$(objext) $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)TestProxyC.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestProxyC.$(exeext) $(objdir)CpUpnpOrgConnectionManager1C.$(objext) $(objdir)CpUpnpOrgConnectionManager1.$(objext) $(objdir)TestProxyC.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestProxyC.$(objext) : Public/C/TestProxyC.cpp $(headers)
 	$(compiler)TestProxyC.$(objext) -c $(cflags) $(includes) Public/C/TestProxyC.cpp
 $(objdir)MainC.$(objext) : Os/$(osdir)/MainC.c $(headers)
 	$(compiler)MainC.$(objext) -c $(cflags) $(includes) Os/$(osdir)/MainC.c
 
 TestTopology1: upnp_core $(objdir)CpTopology1.$(objext) $(objdir)TestTopology1.$(objext) TestFramework.$(libext)
-	$(linker)TestTopology1.$(exeext) $(objdir)CpTopology1.$(objext) $(objdir)TestTopology1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestTopology1.$(exeext) $(objdir)CpTopology1.$(objext) $(objdir)TestTopology1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)CpTopology1.$(objext) : ControlPoint/Topology/CpTopology1.cpp $(headers)
 	$(compiler)CpTopology1.$(objext) -c $(cflags) $(includes) ControlPoint/Topology/CpTopology1.cpp 
 $(objdir)TestTopology1.$(objext) : ControlPoint/Topology/TestTopology1.cpp $(headers)
 	$(compiler)TestTopology1.$(objext) -c $(cflags) $(includes) ControlPoint/Topology/TestTopology1.cpp
 
 TestTopology2: upnp_core $(objdir)CpTopology1.$(objext) $(objdir)CpTopology2.$(objext) $(objdir)TestTopology2.$(objext) $(objdir)CpLinnCoUkProduct3.$(objext) $(objdir)CpLinnCoUkPreamp4.$(objext) $(objdir)CpUpnpOrgRenderingControl1.$(objext) TestFramework.$(libext)
-	$(linker)TestTopology2.$(exeext) $(objdir)CpTopology1.$(objext) $(objdir)CpTopology2.$(objext) $(objdir)TestTopology2.$(objext) $(objdir)CpLinnCoUkProduct3.$(objext) $(objdir)CpLinnCoUkPreamp4.$(objext) $(objdir)CpUpnpOrgRenderingControl1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestTopology2.$(exeext) $(objdir)CpTopology1.$(objext) $(objdir)CpTopology2.$(objext) $(objdir)TestTopology2.$(objext) $(objdir)CpLinnCoUkProduct3.$(objext) $(objdir)CpLinnCoUkPreamp4.$(objext) $(objdir)CpUpnpOrgRenderingControl1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)CpTopology2.$(objext) : ControlPoint/Topology/CpTopology2.cpp $(headers)
 	$(compiler)CpTopology2.$(objext) -c $(cflags) $(includes) ControlPoint/Topology/CpTopology2.cpp 
 $(objdir)TestTopology2.$(objext) : ControlPoint/Topology/TestTopology2.cpp $(headers)
 	$(compiler)TestTopology2.$(objext) -c $(cflags) $(includes) ControlPoint/Topology/TestTopology2.cpp
 
 TestTopology3: upnp_core $(objdir)CpTopology1.$(objext) $(objdir)CpTopology2.$(objext) $(objdir)CpTopology3.$(objext) $(objdir)TestTopology3.$(objext) $(objdir)CpLinnCoUkProduct3.$(objext) $(objdir)CpLinnCoUkPreamp4.$(objext) $(objdir)CpUpnpOrgRenderingControl1.$(objext) TestFramework.$(libext)
-	$(linker)TestTopology3.$(exeext) $(objdir)CpTopology1.$(objext) $(objdir)CpTopology2.$(objext) $(objdir)CpTopology3.$(objext) $(objdir)TestTopology3.$(objext) $(objdir)CpLinnCoUkProduct3.$(objext) $(objdir)CpLinnCoUkPreamp4.$(objext) $(objdir)CpUpnpOrgRenderingControl1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestTopology3.$(exeext) $(objdir)CpTopology1.$(objext) $(objdir)CpTopology2.$(objext) $(objdir)CpTopology3.$(objext) $(objdir)TestTopology3.$(objext) $(objdir)CpLinnCoUkProduct3.$(objext) $(objdir)CpLinnCoUkPreamp4.$(objext) $(objdir)CpUpnpOrgRenderingControl1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)CpTopology3.$(objext) : ControlPoint/Topology/CpTopology3.cpp $(headers)
 	$(compiler)CpTopology3.$(objext) -c $(cflags) $(includes) ControlPoint/Topology/CpTopology3.cpp 
 $(objdir)TestTopology3.$(objext) : ControlPoint/Topology/TestTopology3.cpp $(headers)
 	$(compiler)TestTopology3.$(objext) -c $(cflags) $(includes) ControlPoint/Topology/TestTopology3.cpp
 
 TestDviDiscovery: upnp_core $(objdir)TestDviDiscovery.$(objext) TestFramework.$(libext)
-	$(linker)TestDviDiscovery.$(exeext) $(objdir)TestDviDiscovery.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestDviDiscovery.$(exeext) $(objdir)TestDviDiscovery.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestDviDiscovery.$(objext) : Device/Upnp/TestDviDiscovery.cpp $(headers)
 	$(compiler)TestDviDiscovery.$(objext) -c $(cflags) $(includes) Device/Upnp/TestDviDiscovery.cpp
 
 TestDviDeviceList: upnp_core $(objdir)TestDviDeviceList.$(objext) TestFramework.$(libext)
-	$(linker)TestDviDeviceList.$(exeext) $(objdir)TestDviDeviceList.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestDviDeviceList.$(exeext) $(objdir)TestDviDeviceList.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestDviDeviceList.$(objext) : Device/Upnp/TestDviDeviceList.cpp $(headers)
 	$(compiler)TestDviDeviceList.$(objext) -c $(cflags) $(includes) Device/Upnp/TestDviDeviceList.cpp
 
 TestDvInvocation: upnp_core $(objdir)TestDvInvocation.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) TestFramework.$(libext)
-	$(linker)TestDvInvocation.$(exeext) $(objdir)TestDvInvocation.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestDvInvocation.$(exeext) $(objdir)TestDvInvocation.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestDvInvocation.$(objext) : Device/Upnp/TestDvInvocation.cpp $(headers)
 	$(compiler)TestDvInvocation.$(objext) -c $(cflags) $(includes) Device/Upnp/TestDvInvocation.cpp
 
 TestDvSubscription: upnp_core $(objdir)TestDvSubscription.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) TestFramework.$(libext)
-	$(linker)TestDvSubscription.$(exeext) $(objdir)TestDvSubscription.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestDvSubscription.$(exeext) $(objdir)TestDvSubscription.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestDvSubscription.$(objext) : Device/Upnp/TestDvSubscription.cpp $(headers)
 	$(compiler)TestDvSubscription.$(objext) -c $(cflags) $(includes) Device/Upnp/TestDvSubscription.cpp
 
 TestDvLights: upnp_core $(objdir)TestDvLights.$(objext) $(objdir)DvZappOrgTestLights1.$(objext) TestFramework.$(libext)
-	$(linker)TestDvLights.$(exeext) $(objdir)TestDvLights.$(objext) $(objdir)DvZappOrgTestLights1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestDvLights.$(exeext) $(objdir)TestDvLights.$(objext) $(objdir)DvZappOrgTestLights1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestDvLights.$(objext) : Device/Upnp/TestDvLights.cpp $(headers)
 	$(compiler)TestDvLights.$(objext) -c $(cflags) $(includes) Device/Upnp/TestDvLights.cpp
 
 TestDvDeviceStd: upnp_core $(objdir)TestDvDeviceStd.$(objext) $(objdir)DvZappOrgTestBasic1Std.$(objext) $(objdir)CpZappOrgTestBasic1Std.$(objext) TestFramework.$(libext)
-	$(linker)TestDvDeviceStd.$(exeext) $(objdir)TestDvDeviceStd.$(objext) $(objdir)DvZappOrgTestBasic1Std.$(objext) $(objdir)CpZappOrgTestBasic1Std.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestDvDeviceStd.$(exeext) $(objdir)TestDvDeviceStd.$(objext) $(objdir)DvZappOrgTestBasic1Std.$(objext) $(objdir)CpZappOrgTestBasic1Std.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestDvDeviceStd.$(objext) : Public/Cpp/Std/TestDvDeviceStd.cpp $(headers)
 	$(compiler)TestDvDeviceStd.$(objext) -c $(cflags) $(includes) Public/Cpp/Std/TestDvDeviceStd.cpp
 
 TestDvDeviceC: upnp_core $(objdir)TestDvDeviceC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext)
-	$(linker)TestDvDeviceC.$(exeext) $(objdir)TestDvDeviceC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext) $(objdir)$(libprefix)upnp_core.$(libext)
+	$(link) $(linkoutput)$(objdir)TestDvDeviceC.$(exeext) $(objdir)TestDvDeviceC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestDvDeviceC.$(objext) : Public/C/TestDvDeviceC.cpp $(headers)
 	$(compiler)TestDvDeviceC.$(objext) -c $(cflags) $(includes) Public/C/TestDvDeviceC.cpp
 
 Tests: TestBuffer TestThread TestFifo TestQueue TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvDeviceStd TestDvDeviceC TestProxyCs
 
-ZappControlDll : $(objdir)ZappControl.dll
+Zapp.net.dll : $(objdir)Zapp.net.dll
 
-$(objdir)ZappControl.dll:
+$(objdir)Zapp.net.dll:
 	$(csharp) /unsafe /t:library /debug+\
-		/out:$(objdir)ZappControl.dll \
+		/out:$(objdir)Zapp.net.dll \
 		$(publiccsdir)CpDevice.cs \
 		$(publiccsdir)CpDeviceUpnp.cs \
 		$(publiccsdir)CpProxy.cs \
@@ -462,14 +460,14 @@ TestProxyCs: $(objdir)TestProxyCs.exe
 $(objdir)TestProxyCs.exe: \
 	ZappUpnpDll \
 	CpUpnpOrgConnectionManager1Dll \
-	$(objdir)ZappControl.dll \
+	$(objdir)Zapp.net.dll \
 	$(publiccsdir)TestProxy.cs \
-	$(objdir)CpUpnpOrgConnectionManager1Assembly.dll \
+	$(objdir)CpUpnpOrgConnectionManager1.net.dll \
 	
 	$(csharp) /unsafe /t:exe /debug+\
 		/out:$(objdir)TestProxyCs.exe \
-		/reference:$(objdir)ZappControl.dll \
-		/reference:$(objdir)CpUpnpOrgConnectionManager1Assembly.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)CpUpnpOrgConnectionManager1.net.dll \
 		$(publiccsdir)TestProxy.cs \
 		
 
@@ -481,5 +479,22 @@ mostlyclean : clean clean-t4
 	$(rmdir) Generated
 
 maintainer-clean : mostlyclean
+
+depend : Generated$(dirsep)GenerateSourceFiles.mak Generated$(dirsep)Proxies.mak Generated$(dirsep)Devices.mak	
+
+Generated$(dirsep)GenerateSourceFiles.mak : $(tt) Service$(dirsep)Services.xml T4/Templates/UpnpMakeT4.tt
+	$(mkdir) Generated
+	$(t4) -o Generated$(dirsep)GenerateSourceFiles.mak T4/Templates/UpnpMakeT4.tt -a xml:Service/Services.xml
+	@echo Warning: a makefile has been re-generated.
+
+Generated$(dirsep)Proxies.mak : $(tt) Service$(dirsep)Services.xml T4/Templates/CpUpnpMakeProxies.tt
+	$(mkdir) Generated
+	$(t4) -o Generated$(dirsep)Proxies.mak T4/Templates/CpUpnpMakeProxies.tt -a xml:Service/Services.xml
+	@echo Warning: a makefile has been re-generated.
+
+Generated$(dirsep)Devices.mak : $(tt) Service$(dirsep)Services.xml T4/Templates/DvUpnpMakeDevices.tt
+	$(mkdir) Generated
+	$(t4) -o Generated$(dirsep)Devices.mak T4/Templates/DvUpnpMakeDevices.tt -a xml:Service/Services.xml
+	@echo Warning: a makefile has been re-generated.
 
 

@@ -22,11 +22,12 @@ libprefix =
 libext = lib
 exeext = exe
 compiler = cl /nologo /Fo$(objdir)
-linker = link /nologo /debug /machine:I386 /SUBSYSTEM:CONSOLE /map Ws2_32.lib Iphlpapi.lib /out:$(objdir)
+link = link /nologo /debug /machine:I386 /SUBSYSTEM:CONSOLE /map Ws2_32.lib Iphlpapi.lib
+linkoutput = /out:
 dllprefix =
 dllext = dll
-linker_dll = link /nologo /debug /machine:I386  /map Ws2_32.lib Iphlpapi.lib /dll /out:$(objdir)
-linker_dll_service = link /nologo /debug /machine:I386  /map $(objdir)ZappUpnp.lib Ws2_32.lib Iphlpapi.lib /dll /out:$(objdir)
+link_dll = link /nologo /debug /machine:I386  /map Ws2_32.lib Iphlpapi.lib /dll
+link_dll_service = link /nologo /debug /machine:I386  /map $(objdir)ZappUpnp.lib Ws2_32.lib Iphlpapi.lib /dll
 csharp = csc /nologo /platform:x86
 publiccsdir = Public\Cs^\
 dirsep = ^\
@@ -37,8 +38,30 @@ mkdir = Scripts\mkdir.bat
 rmdir = Scripts\rmdir.bat
 default : all
 
+include T4Windows.mak
 # Actual building of code is shared between platforms
 include Common.mak
+
+
+
+!if exist (Generated\GenerateSourceFiles.mak)
+!include Generated\GenerateSourceFiles.mak
+!else
+!message Note: Generated\GenerateSourceFiles.mak does not yet exist. Try "make depend".
+!endif
+
+!if exist (Generated\Proxies.mak)
+!include Generated\Proxies.mak
+!else
+!message Note: Generated\Proxies.mak does not yet exist. Try "make depend".
+!endif
+
+!if exist (Generated\Devices.mak)
+!include Generated\Devices.mak
+!else
+!message Note: Generated\Devices.mak does not yet exist. Try "make depend".
+!endif
+
 
 # Following macros must be provided by each file which wraps Common.mak
 

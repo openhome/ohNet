@@ -47,8 +47,9 @@ device_dlls = \
 DvDeviceDlls: $(device_dlls)
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Dll: ZappUpnpDll $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext)
-	$(linker_dll_service)$(dllprefix)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(dllext) $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext)
+Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Dll: $(objdir)$(dllprefix)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(dllext) 
+$(objdir)$(dllprefix)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(dllext) : ZappUpnpDll $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(dllext) $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext)
 <#  } #>
 
 <#+

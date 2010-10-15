@@ -21,11 +21,12 @@ libprefix = lib
 libext = a
 exeext = elf
 compiler = ${CROSS_COMPILE}gcc -fPIC -o $(objdir)
-linker = ${CROSS_COMPILE}g++ -lpthread -o $(objdir)
+link = ${CROSS_COMPILE}g++ -lpthread
+linkoutput = -o 
 dllprefix = lib
 dllext = so
-linker_dll = ${CROSS_COMPILE}g++ -lpthread -shared -shared-libgcc -o $(objdir)
-linker_dll_service = ${CROSS_COMPILE}g++ -lpthread -shared -shared-libgcc -lZappUpnp -L$(objdir) -o $(objdir)
+link_dll = ${CROSS_COMPILE}g++ -lpthread -shared -shared-libgcc
+link_dll_service = ${CROSS_COMPILE}g++ -lpthread -shared -shared-libgcc -lZappUpnp -L$(objdir)
 csharp = gmcs /nologo
 publiccsdir = Public/Cs/
 dirsep = /
@@ -38,8 +39,18 @@ rmdir = rm -rf
 
 default : all
 
+# Include the rules to prepare the template engine and the macros to use it.
+include T4Linux.mak
+
 # Actual building of code is shared between platforms
 include Common.mak
+
+# Include the generated makefiles. Because nmake on Windows requires contortions to
+# include such files and handle their non-existance, these includes have to be at
+# the platform-specific level.
+include Generated/GenerateSourceFiles.mak
+include Generated/Proxies.mak
+include Generated/Devices.mak
 
 # Following macros must be provided by each file which wraps Common.mak
 
@@ -103,7 +114,3 @@ uninstall-libs :
 uninstall-includes :
 	rm -rf $(installincludedir)
 
-# We need to run a T4 template to generate our pkg-config file for installing, so
-# we pull in T4Linux. We could probably restructure these dependencies to be a bit
-# nicer in the future.
-include T4Linux.mak

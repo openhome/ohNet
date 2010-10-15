@@ -21,25 +21,30 @@ deviceApiCppStd = $(proxyApiCppStd)
 deviceSrcC = Device\\Services\\C\\
 deviceApiC = $(proxyApiC)
 deviceCs = Device\\Services\\Cs\\
+tt = $(toolsDir)UpnpServiceXml.dll $(toolsDir)UpnpServiceMake.dll $(toolsDir)Mono.TextTemplating.dll $(toolsDir)TextTransform.exe
 
-# Actual building of code is shared between platforms
-include T4.mak
+tt : $(tt)
 
-# Following macros must be provided by each file which wraps Common.mak
-
-tt: mkToolsDir UpnpServiceXml.dll
-	cd T4/TextTemplating/Mono.TextTemplating
+$(toolsDir)Mono.TextTemplating.dll :
+	@if not exist $(toolsDir) mkdir $(toolsDir)
+	@cd T4/TextTemplating/Mono.TextTemplating
 	csc /nologo /t:library -out:../../../$(toolsDir)Mono.TextTemplating.dll /recurse:*.cs
-	cd ../TextTransform
-	csc /nologo /t:exe -out:../../../$(toolsDir)TextTransform.exe /r:../../../$(toolsDir)Mono.TextTemplating.dll  /recurse:*.cs
-	cd ../../../
+	@cd ../../../
 
-UpnpServiceXml.dll: mkToolsDir
+$(toolsDir)TextTransform.exe : $(toolsDir)Mono.TextTemplating.dll
+	@if not exist $(toolsDir) mkdir $(toolsDir)
+	@cd T4/TextTemplating/TextTransform
+	csc /nologo /t:exe -out:../../../$(toolsDir)TextTransform.exe /r:../../../$(toolsDir)Mono.TextTemplating.dll  /recurse:*.cs
+	@cd ../../../
+
+$(toolsDir)UpnpServiceXml.dll: 	
+	@if not exist $(toolsDir) mkdir $(toolsDir)
 	csc -target:library -out:$(upnpServiceXml) T4\\UpnpServiceXml\\AssemblyInfo.cs T4\\UpnpServiceXml\\UpnpServiceXml.cs
 	copy /y T4\\UpnpServiceXml\\UpnpServiceDescription.xsd $(toolsDir)
 	copy /y T4\\UpnpServiceXml\\UpnpServiceTemplate.xsd $(toolsDir)
 
-UpnpServiceMake.dll: mkToolsDir
+$(toolsDir)UpnpServiceMake.dll:
+	@if not exist $(toolsDir) mkdir $(toolsDir)
 	csc -target:library -out:$(upnpServiceMake) T4\\UpnpServiceMake\\AssemblyInfo.cs T4\\UpnpServiceMake\\UpnpServiceMake.cs
 
 clean-t4:

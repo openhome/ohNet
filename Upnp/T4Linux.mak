@@ -22,13 +22,9 @@ deviceApiCppStd = $(proxyApiCppStd)
 deviceSrcC = Device/Services/C/
 deviceApiC = $(proxyApiC)
 deviceCs = Device/Services/Cs/
+tt = $(toolsDir)UpnpServiceXml.dll $(toolsDir)UpnpServiceMake.dll $(toolsDir)Mono.TextTemplating.dll $(toolsDir)TextTransform.exe
 
-# Actual building of code is shared between platforms
-include T4.mak
-
-# Following macros must be provided by each file which wraps Common.mak
-
-tt: $(toolsDir)UpnpServiceXml.dll $(toolsDir)UpnpServiceMake.dll $(toolsDir)Mono.TextTemplating.dll $(toolsDir)TextTransform.exe
+tt : $(tt)
 
 $(toolsDir)Mono.TextTemplating.dll :
 	@mkdir -p $(toolsDir)

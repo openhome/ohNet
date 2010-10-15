@@ -35,13 +35,13 @@ headers_proxy = $(inc_build)/Cpp/Buffer.h \
 proxy_dotnet_assemblies = \
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-		Cp<#=FilePrefixTypeAndVersion(s)#>Assembly.dll \
+		Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll \
 <#  } #>
 
 proxy_dotnet_assemblies_with_path = \
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-		$(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>Assembly.dll \
+		$(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll \
 <#  } #>
 
 
@@ -64,10 +64,12 @@ proxy_dlls = \
 <#  } #>
 
 CpProxyDlls: $(proxy_dlls)
+
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Dll: ZappUpnpDll $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext)
-	$(linker_dll_service)$(dllprefix)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(dllext) $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext)
+Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Dll: $(objdir)$(dllprefix)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(dllext)
+$(objdir)$(dllprefix)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(dllext) : ZappUpnpDll $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(dllext) $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) $(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext)
 <#  } #>
 
 # Proxy assemblies for .NET:
@@ -76,11 +78,11 @@ CpProxyDotNetAssemblies: $(proxy_dotnet_assemblies_with_path)
 
 <# foreach (Service s in u.iServices) #>
 <# { #>
-$(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>Assembly.dll: $(objdir)ZappControl.dll $(proxySrcCs)Cp<#=FilePrefixTypeAndVersion(s)#>.cs
+$(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll: $(objdir)Zapp.net.dll $(proxyCs)Cp<#=FilePrefixTypeAndVersion(s)#>.cs
 	$(csharp) /unsafe /t:library \
-		/out:$(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>Assembly.dll \
-		/reference:$(objdir)ZappControl.dll \
-		$(proxySrcCs)Cp<#=FilePrefixTypeAndVersion(s)#>.cs
+		/out:$(objdir)Cp<#=FilePrefixTypeAndVersion(s)#>.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(proxyCs)Cp<#=FilePrefixTypeAndVersion(s)#>.cs
 <# } #>
 
 <#+
