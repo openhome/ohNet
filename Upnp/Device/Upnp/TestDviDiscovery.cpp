@@ -343,10 +343,12 @@ TBool CpListenerMsearch::LogUdn(const Brx& aUuid, const Brx& aLocation)
     TBool correctSubnet = nif->ContainsAddress(endpt.Address());
     delete nif;
     if (!correctSubnet) {
+#if 0
         Print("Discarding advertisement from ");
         Print(aUuid);
         TIpAddress addr = endpt.Address();
         Print(" at %u.%u.%u.%u:%u\n", addr&0xff, ((addr>>8)&0xff), ((addr>>16)&0xff), (addr>>24), endpt.Port());
+#endif
         return false;
     }
 
@@ -391,6 +393,9 @@ void CpListenerMsearch::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocati
     AutoMutex a(iLock);
     if (LogUdn(aUuid, aLocation)) {
         iRoot++;
+        Print("Received root alive from ");
+        Print(aUuid);
+        Print("\n");
     }
 }
 
@@ -456,7 +461,6 @@ SuiteMsearch::SuiteMsearch()
     RandomiseUdn(gNameDevice1);
     RandomiseUdn(gNameDevice2);
     RandomiseUdn(gNameDevice2Embedded1);
-    Stack::InitParams().SetMsearchTime(1);
     iBlocker = new Blocker;
     iListener = new CpListenerMsearch;
     NetworkInterface* nif = Stack::NetworkInterfaceList().CurrentInterface();
