@@ -266,6 +266,12 @@ const Brx& DviDeviceUpnp::ProtocolName() const
 void DviDeviceUpnp::Enable()
 {
     iLock.Wait();
+    
+    // check we have at least the basic attributes requried for advertisement
+    ASSERT(Domain().Bytes() > 0);
+    ASSERT(Type().Bytes() > 0);
+    ASSERT(Version() > 0);
+    
     for (TUint i=0; i<iListeners.size(); i++) {
         DviDeviceUpnp::MulticastListener* listener = iListeners[i];
         Bwh uriBase;
