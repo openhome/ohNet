@@ -30,6 +30,7 @@ private:
     void SsdpNotifyDeviceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion);
     void SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion);
 private:
+    Mutex iLock;
     TUint iTotal;
 };
 
@@ -60,6 +61,7 @@ private:
     void SsdpNotifyDeviceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion);
     void SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion);
 private:
+    Mutex iLock;
     TUint iTotal;
     TUint iRoot;
     TUint iUdn;
@@ -137,14 +139,17 @@ static TBool ServiceVectorContainsType(const std::vector<TChar*>& aVector, const
 // CpListenerBasic
 
 CpListenerBasic::CpListenerBasic()
-    : iTotal(0)
+    : iLock("LBMX")
+    , iTotal(0)
 {
 }
 
 TBool CpListenerBasic::LogAdd(const Brx& aUuid)
 {
     if (aUuid == SuiteAlive::gNameDevice1) {
+        iLock.Wait();
         iTotal++;
+        iLock.Signal();
         return true;
     }
     return false;
@@ -153,8 +158,10 @@ TBool CpListenerBasic::LogAdd(const Brx& aUuid)
 TBool CpListenerBasic::LogRemove(const Brx& aUuid)
 {
     if (aUuid == SuiteAlive::gNameDevice1) {
+        iLock.Wait();
         ASSERT(iTotal != 0);
         iTotal--;
+        iLock.Signal();
         return true;
     }
     return false;
@@ -286,6 +293,7 @@ void SuiteAlive::Disabled()
 // CpListenerMsearch
 
 CpListenerMsearch::CpListenerMsearch()
+    : iLock("LMMX")
 {
     iDev1Type = iDev2Type = iDev21Type = NULL;
     Reset();
@@ -303,6 +311,7 @@ TUint CpListenerMsearch::Udns() const
 
 void CpListenerMsearch::Reset()
 {
+    iLock.Wait();
     iTotal = 0;
     iRoot = 0;
     iUdn = 0;
@@ -321,6 +330,7 @@ void CpListenerMsearch::Reset()
         delete iServices[i];
     }
     iServices.clear();
+    iLock.Signal();
 }
 
 TBool CpListenerMsearch::LogUdn(const Brx& aUuid, const Brx& aLocation)
@@ -331,6 +341,10 @@ TBool CpListenerMsearch::LogUdn(const Brx& aUuid, const Brx& aLocation)
     TBool correctSubnet = nif->ContainsAddress(endpt.Address());
     delete nif;
     if (!correctSubnet) {
+        Print("Discarding advertisement from ");
+        Print(aUuid);
+        TIpAddress addr = endpt.Address();
+        Print(" at %u.%u.%u.%u:%u\n", (addr>>24), ((addr>>16)&0xff), ((addr>>8)&0xff), addr&0xff, endpt.Port());
         return false;
     }
 
@@ -372,6 +386,7 @@ TChar* CpListenerMsearch::CreateTypeString(const Brx& aDomain, const Brx& aType,
 
 void CpListenerMsearch::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint /*aMaxAge*/)
 {
+    AutoMutex a(iLock);
     if (LogUdn(aUuid, aLocation)) {
         iRoot++;
     }
@@ -379,11 +394,13 @@ void CpListenerMsearch::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocati
 
 void CpListenerMsearch::SsdpNotifyUuidAlive(const Brx& aUuid, const Brx& aLocation, TUint /*aMaxAge*/)
 {
+    AutoMutex a(iLock);
     (void)LogUdn(aUuid, aLocation);
 }
 
 void CpListenerMsearch::SsdpNotifyDeviceTypeAlive(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion, const Brx& aLocation, TUint /*aMaxAge*/)
 {
+    AutoMutex a(iLock);
     if (LogUdn(aUuid, aLocation)) {
         iDevice++;
         TChar* type = CreateTypeString(aDomain, aType, aVersion);
@@ -404,6 +421,7 @@ void CpListenerMsearch::SsdpNotifyDeviceTypeAlive(const Brx& aUuid, const Brx& a
 
 void CpListenerMsearch::SsdpNotifyServiceTypeAlive(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion, const Brx& aLocation, TUint /*aMaxAge*/)
 {
+    AutoMutex a(iLock);
     if (LogUdn(aUuid, aLocation)) {
         iService++;
         TChar* type = CreateTypeString(aDomain, aType, aVersion);
