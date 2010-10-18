@@ -22,10 +22,16 @@ public:
     {
     }
 
+    ~TestServerSession()
+    {
+        ASSERT(iCleanExit);
+    }
+
     void Run()
     {
         LOG(kNetwork, ">TestServerSession::Run\n");
         TBool exit = false;
+        iCleanExit = false;
         while (!exit) {
             LOG(kNetwork, "TestServerSession::Run waiting on semaphore\n");
             iSemaphore.Wait();
@@ -54,6 +60,7 @@ public:
             iControllerSem.Signal();
         }
         LOG(kNetwork, "<TestServerSession::Run\n");
+        iCleanExit = true;
     }
 
     void Close()
@@ -84,6 +91,7 @@ private:
     Bws<64> iBuffer;
     TUint iTest;
     TBool iTestDone;
+    TBool iCleanExit;
 };
 
 
