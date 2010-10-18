@@ -141,8 +141,8 @@ headers = $(inc_build)/Ascii.h \
           $(inc_build)/C/Zapp.h \
           $(inc_build)/Cpp/ZappTypes.h
 
-upnp_core : make_obj_dir copy_build_includes $(objects_core)
-$(objdir)$(libprefix)unpn_core.$(libext) : $(objects_core)
+upnp_core : make_obj_dir copy_build_includes $(objects_core) $(objdir)$(libprefix)upnp_core.$(libext) 
+$(objdir)$(libprefix)upnp_core.$(libext) : $(objects_core)
 	$(ar)$(libprefix)upnp_core.$(libext) $(objects_core)
 $(objdir)Ascii.$(objext) : Utils/Ascii.cpp $(headers)
 	$(compiler)Ascii.$(objext) -c $(cflags) $(includes) Utils/Ascii.cpp
