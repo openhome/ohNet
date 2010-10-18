@@ -7,19 +7,19 @@ namespace Zapp
     public class CpDevice
     {
         [DllImport ("ZappUpnp", CharSet = CharSet.Ansi)]
-        static extern IntPtr CpDeviceCUdn(uint aDevice);
+        static extern IntPtr CpDeviceCUdn(IntPtr aDevice);
         [DllImport ("ZappUpnp")]
-        static extern void CpDeviceCAddRef(uint aDevice);
+        static extern void CpDeviceCAddRef(IntPtr aDevice);
         [DllImport ("ZappUpnp")]
-        static extern void CpDeviceCRemoveRef(uint aDevice);
+        static extern void CpDeviceCRemoveRef(IntPtr aDevice);
         [DllImport ("ZappUpnp", CharSet = CharSet.Ansi)]
-        static extern unsafe int CpDeviceCGetAttribute(uint aDevice, char* aKey, char** aValue);
+        static extern unsafe int CpDeviceCGetAttribute(IntPtr aDevice, char* aKey, char** aValue);
         [DllImport ("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
-        private uint iHandle;
+        private IntPtr iHandle;
 
-        public CpDevice(uint aHandle)
+        public CpDevice(IntPtr aHandle)
         {
             iHandle = aHandle;
         }
@@ -57,7 +57,7 @@ namespace Zapp
             return false;
         }
         
-        public uint Handle()
+        public IntPtr Handle()
         {
             return iHandle;
         }
@@ -66,18 +66,18 @@ namespace Zapp
     public class CpDeviceList : IDisposable
     {
         [DllImport ("ZappUpnp")]
-        static extern void CpDeviceListDestroy(uint aListHandle);
+        static extern void CpDeviceListDestroy(IntPtr aListHandle);
         [DllImport ("ZappUpnp")]
-        static extern void CpDeviceListRefresh(uint aListHandle);
+        static extern void CpDeviceListRefresh(IntPtr aListHandle);
 
-        protected uint iHandle;
+        protected IntPtr iHandle;
         protected GCHandle iGch;
         protected ChangeHandler iAdded;
         protected ChangeHandler iRemoved;
         protected CallbackDevice iFnAdded;
         protected CallbackDevice iFnRemoved;
 
-        protected delegate void CallbackDevice(IntPtr aPtr, uint aHandle);
+        protected delegate void CallbackDevice(IntPtr aPtr, IntPtr aHandle);
 
         public delegate void ChangeHandler(CpDeviceList aList, CpDevice aDevice);
 
@@ -99,7 +99,7 @@ namespace Zapp
             iFnRemoved = new CallbackDevice(Removed);
         }
 
-        protected static void Added(IntPtr aPtr, uint aHandle)
+        protected static void Added(IntPtr aPtr, IntPtr aHandle)
         {
             CpDevice device = new CpDevice(aHandle);
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
@@ -109,7 +109,7 @@ namespace Zapp
             }
         }
 
-        protected static void Removed(IntPtr aPtr, uint aHandle)
+        protected static void Removed(IntPtr aPtr, IntPtr aHandle)
         {
             CpDevice device = new CpDevice(aHandle);
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
@@ -126,10 +126,10 @@ namespace Zapp
 
         private void DoDispose()
         {
-            if (iHandle != 0)
+            if (iHandle != IntPtr.Zero)
             {
                 CpDeviceListDestroy(iHandle);
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
                 iGch.Free();
             }
         }

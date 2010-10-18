@@ -8,19 +8,19 @@ namespace Zapp
     public class DvServiceUpnpOrgSwitchPower1 : IDisposable
     {
         [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern uint DvServiceUpnpOrgSwitchPower1Create(uint aDeviceHandle);
+        static extern IntPtr DvServiceUpnpOrgSwitchPower1Create(IntPtr aDeviceHandle);
         [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern void DvServiceUpnpOrgSwitchPower1Destroy(uint aHandle);
+        static extern void DvServiceUpnpOrgSwitchPower1Destroy(IntPtr aHandle);
         [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern unsafe int DvServiceUpnpOrgSwitchPower1SetPropertyStatus(uint aHandle, int aValue);
+        static extern unsafe int DvServiceUpnpOrgSwitchPower1SetPropertyStatus(IntPtr aHandle, int aValue);
         [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern unsafe void DvServiceUpnpOrgSwitchPower1GetPropertyStatus(uint aHandle, int* aValue);
+        static extern unsafe void DvServiceUpnpOrgSwitchPower1GetPropertyStatus(IntPtr aHandle, int* aValue);
         [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern void DvServiceUpnpOrgSwitchPower1EnableActionSetTarget(uint aHandle, CallbackSetTarget aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgSwitchPower1EnableActionSetTarget(IntPtr aHandle, CallbackSetTarget aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern void DvServiceUpnpOrgSwitchPower1EnableActionGetTarget(uint aHandle, CallbackGetTarget aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgSwitchPower1EnableActionGetTarget(IntPtr aHandle, CallbackGetTarget aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern void DvServiceUpnpOrgSwitchPower1EnableActionGetStatus(uint aHandle, CallbackGetStatus aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgSwitchPower1EnableActionGetStatus(IntPtr aHandle, CallbackGetStatus aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -28,7 +28,7 @@ namespace Zapp
         private unsafe delegate int CallbackGetTarget(IntPtr aPtr, uint aVersion, int* aRetTargetValue);
         private unsafe delegate int CallbackGetStatus(IntPtr aPtr, uint aVersion, int* aResultStatus);
 
-        private uint iHandle;
+        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackSetTarget iCallbackSetTarget;
         private CallbackGetTarget iCallbackGetTarget;
@@ -135,15 +135,15 @@ namespace Zapp
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvServiceUpnpOrgSwitchPower1Destroy(handle);
             if (iGch.IsAllocated)

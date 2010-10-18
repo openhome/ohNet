@@ -8,31 +8,31 @@ namespace Zapp
     public class DvServiceLinnCoUkVolkano1 : IDisposable
     {
         [DllImport("DvLinnCoUkVolkano1")]
-        static extern uint DvServiceLinnCoUkVolkano1Create(uint aDeviceHandle);
+        static extern IntPtr DvServiceLinnCoUkVolkano1Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvServiceLinnCoUkVolkano1Destroy(uint aHandle);
+        static extern void DvServiceLinnCoUkVolkano1Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvServiceLinnCoUkVolkano1EnableActionReboot(uint aHandle, CallbackReboot aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkVolkano1EnableActionReboot(IntPtr aHandle, CallbackReboot aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvServiceLinnCoUkVolkano1EnableActionBootMode(uint aHandle, CallbackBootMode aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkVolkano1EnableActionBootMode(IntPtr aHandle, CallbackBootMode aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvServiceLinnCoUkVolkano1EnableActionSetBootMode(uint aHandle, CallbackSetBootMode aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkVolkano1EnableActionSetBootMode(IntPtr aHandle, CallbackSetBootMode aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvServiceLinnCoUkVolkano1EnableActionBspType(uint aHandle, CallbackBspType aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkVolkano1EnableActionBspType(IntPtr aHandle, CallbackBspType aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvServiceLinnCoUkVolkano1EnableActionUglyName(uint aHandle, CallbackUglyName aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkVolkano1EnableActionUglyName(IntPtr aHandle, CallbackUglyName aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvServiceLinnCoUkVolkano1EnableActionMacAddress(uint aHandle, CallbackMacAddress aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkVolkano1EnableActionMacAddress(IntPtr aHandle, CallbackMacAddress aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvServiceLinnCoUkVolkano1EnableActionProductId(uint aHandle, CallbackProductId aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkVolkano1EnableActionProductId(IntPtr aHandle, CallbackProductId aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvServiceLinnCoUkVolkano1EnableActionBoardId(uint aHandle, CallbackBoardId aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkVolkano1EnableActionBoardId(IntPtr aHandle, CallbackBoardId aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvServiceLinnCoUkVolkano1EnableActionBoardType(uint aHandle, CallbackBoardType aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkVolkano1EnableActionBoardType(IntPtr aHandle, CallbackBoardType aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvServiceLinnCoUkVolkano1EnableActionMaxBoards(uint aHandle, CallbackMaxBoards aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkVolkano1EnableActionMaxBoards(IntPtr aHandle, CallbackMaxBoards aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvServiceLinnCoUkVolkano1EnableActionSoftwareVersion(uint aHandle, CallbackSoftwareVersion aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkVolkano1EnableActionSoftwareVersion(IntPtr aHandle, CallbackSoftwareVersion aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -48,7 +48,7 @@ namespace Zapp
         private unsafe delegate int CallbackMaxBoards(IntPtr aPtr, uint aVersion, uint* aaMaxBoards);
         private unsafe delegate int CallbackSoftwareVersion(IntPtr aPtr, uint aVersion, char** aaSoftwareVersion);
 
-        private uint iHandle;
+        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackReboot iCallbackReboot;
         private CallbackBootMode iCallbackBootMode;
@@ -321,15 +321,15 @@ namespace Zapp
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvServiceLinnCoUkVolkano1Destroy(handle);
             if (iGch.IsAllocated)

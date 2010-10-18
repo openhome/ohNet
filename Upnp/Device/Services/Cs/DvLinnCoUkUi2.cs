@@ -8,101 +8,101 @@ namespace Zapp
     public class DvServiceLinnCoUkUi2 : IDisposable
     {
         [DllImport("DvLinnCoUkUi2")]
-        static extern uint DvServiceLinnCoUkUi2Create(uint aDeviceHandle);
+        static extern IntPtr DvServiceLinnCoUkUi2Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2Destroy(uint aHandle);
+        static extern void DvServiceLinnCoUkUi2Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayBrightness(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayBrightness(IntPtr aHandle, uint aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayBrightness(uint aHandle, uint* aValue);
+        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayBrightness(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayBrightnessAuto(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayBrightnessAuto(IntPtr aHandle, int aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayBrightnessAuto(uint aHandle, int* aValue);
+        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayBrightnessAuto(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyInfraredCommands(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyInfraredCommands(IntPtr aHandle, char* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyInfraredCommands(uint aHandle, char** aValue);
+        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyInfraredCommands(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyInfraredTerminalCommands(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyInfraredTerminalCommands(IntPtr aHandle, char* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyInfraredTerminalCommands(uint aHandle, char** aValue);
+        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyInfraredTerminalCommands(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayUpsideDown(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayUpsideDown(IntPtr aHandle, int aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayUpsideDown(uint aHandle, int* aValue);
+        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayUpsideDown(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayScrollText(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayScrollText(IntPtr aHandle, int aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayScrollText(uint aHandle, int* aValue);
+        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayScrollText(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplaySleep(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplaySleep(IntPtr aHandle, int aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplaySleep(uint aHandle, int* aValue);
+        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplaySleep(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayLedOff(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayLedOff(IntPtr aHandle, int aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayLedOff(uint aHandle, int* aValue);
+        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayLedOff(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyTerminalInputCode(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyTerminalInputCode(IntPtr aHandle, uint aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyTerminalInputCode(uint aHandle, uint* aValue);
+        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyTerminalInputCode(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyTerminalInputName(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyTerminalInputName(IntPtr aHandle, char* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyTerminalInputName(uint aHandle, char** aValue);
+        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyTerminalInputName(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayPixels(uint aHandle, char* aValue, int aValueLen);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayPixels(IntPtr aHandle, char* aValue, int aValueLen);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayPixels(uint aHandle, char** aValue, int* aValueLen);
+        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayPixels(IntPtr aHandle, char** aValue, int* aValueLen);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionDisplayTestPattern(uint aHandle, CallbackDisplayTestPattern aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionDisplayTestPattern(IntPtr aHandle, CallbackDisplayTestPattern aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionDisplayFill(uint aHandle, CallbackDisplayFill aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionDisplayFill(IntPtr aHandle, CallbackDisplayFill aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionDisplayClear(uint aHandle, CallbackDisplayClear aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionDisplayClear(IntPtr aHandle, CallbackDisplayClear aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSetTestModeEnabled(uint aHandle, CallbackSetTestModeEnabled aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionSetTestModeEnabled(IntPtr aHandle, CallbackSetTestModeEnabled aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSimulateInfraredInput(uint aHandle, CallbackSimulateInfraredInput aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionSimulateInfraredInput(IntPtr aHandle, CallbackSimulateInfraredInput aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSimulateButtonInput(uint aHandle, CallbackSimulateButtonInput aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionSimulateButtonInput(IntPtr aHandle, CallbackSimulateButtonInput aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSimulateLightSensor(uint aHandle, CallbackSimulateLightSensor aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionSimulateLightSensor(IntPtr aHandle, CallbackSimulateLightSensor aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionGetLightSensorData(uint aHandle, CallbackGetLightSensorData aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionGetLightSensorData(IntPtr aHandle, CallbackGetLightSensorData aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSetDisplayBrightness(uint aHandle, CallbackSetDisplayBrightness aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionSetDisplayBrightness(IntPtr aHandle, CallbackSetDisplayBrightness aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSetDisplayBrightnessAuto(uint aHandle, CallbackSetDisplayBrightnessAuto aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionSetDisplayBrightnessAuto(IntPtr aHandle, CallbackSetDisplayBrightnessAuto aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSetInfraredCommands(uint aHandle, CallbackSetInfraredCommands aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionSetInfraredCommands(IntPtr aHandle, CallbackSetInfraredCommands aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionInfraredCommands(uint aHandle, CallbackInfraredCommands aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionInfraredCommands(IntPtr aHandle, CallbackInfraredCommands aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSetInfraredTerminalCommands(uint aHandle, CallbackSetInfraredTerminalCommands aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionSetInfraredTerminalCommands(IntPtr aHandle, CallbackSetInfraredTerminalCommands aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionInfraredTerminalCommands(uint aHandle, CallbackInfraredTerminalCommands aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionInfraredTerminalCommands(IntPtr aHandle, CallbackInfraredTerminalCommands aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionDisplayBrightness(uint aHandle, CallbackDisplayBrightness aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionDisplayBrightness(IntPtr aHandle, CallbackDisplayBrightness aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionDisplayBrightnessAuto(uint aHandle, CallbackDisplayBrightnessAuto aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionDisplayBrightnessAuto(IntPtr aHandle, CallbackDisplayBrightnessAuto aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionDisplayUpsideDown(uint aHandle, CallbackDisplayUpsideDown aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionDisplayUpsideDown(IntPtr aHandle, CallbackDisplayUpsideDown aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSetDisplayUpsideDown(uint aHandle, CallbackSetDisplayUpsideDown aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionSetDisplayUpsideDown(IntPtr aHandle, CallbackSetDisplayUpsideDown aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSetDisplayScrollText(uint aHandle, CallbackSetDisplayScrollText aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionSetDisplayScrollText(IntPtr aHandle, CallbackSetDisplayScrollText aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionDisplayScrollText(uint aHandle, CallbackDisplayScrollText aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionDisplayScrollText(IntPtr aHandle, CallbackDisplayScrollText aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSetDisplaySleep(uint aHandle, CallbackSetDisplaySleep aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionSetDisplaySleep(IntPtr aHandle, CallbackSetDisplaySleep aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionDisplaySleep(uint aHandle, CallbackDisplaySleep aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionDisplaySleep(IntPtr aHandle, CallbackDisplaySleep aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSetDisplayLedOff(uint aHandle, CallbackSetDisplayLedOff aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionSetDisplayLedOff(IntPtr aHandle, CallbackSetDisplayLedOff aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionDisplayLedOff(uint aHandle, CallbackDisplayLedOff aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkUi2EnableActionDisplayLedOff(IntPtr aHandle, CallbackDisplayLedOff aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -131,7 +131,7 @@ namespace Zapp
         private unsafe delegate int CallbackSetDisplayLedOff(IntPtr aPtr, uint aVersion, int aaOff);
         private unsafe delegate int CallbackDisplayLedOff(IntPtr aPtr, uint aVersion, int* aaOff);
 
-        private uint iHandle;
+        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackDisplayTestPattern iCallbackDisplayTestPattern;
         private CallbackDisplayFill iCallbackDisplayFill;
@@ -874,15 +874,15 @@ namespace Zapp
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvServiceLinnCoUkUi2Destroy(handle);
             if (iGch.IsAllocated)

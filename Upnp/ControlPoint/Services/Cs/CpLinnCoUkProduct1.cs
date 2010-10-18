@@ -8,41 +8,41 @@ namespace Zapp
     public class CpProxyLinnCoUkProduct1 : CpProxy, IDisposable
     {
         [DllImport("CpLinnCoUkProduct1")]
-        static extern uint CpProxyLinnCoUkProduct1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyLinnCoUkProduct1Create(IntPtr aDeviceHandle);
         [DllImport("CpLinnCoUkProduct1")]
-        static extern void CpProxyLinnCoUkProduct1Destroy(uint aHandle);
+        static extern void CpProxyLinnCoUkProduct1Destroy(IntPtr aHandle);
         [DllImport("CpLinnCoUkProduct1")]
-        static extern unsafe void CpProxyLinnCoUkProduct1SyncRoom(uint aHandle, char** aaRoom);
+        static extern unsafe void CpProxyLinnCoUkProduct1SyncRoom(IntPtr aHandle, char** aaRoom);
         [DllImport("CpLinnCoUkProduct1")]
-        static extern unsafe void CpProxyLinnCoUkProduct1BeginRoom(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct1BeginRoom(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct1")]
-        static extern unsafe int CpProxyLinnCoUkProduct1EndRoom(uint aHandle, uint aAsync, char** aaRoom);
+        static extern unsafe int CpProxyLinnCoUkProduct1EndRoom(IntPtr aHandle, IntPtr aAsync, char** aaRoom);
         [DllImport("CpLinnCoUkProduct1")]
-        static extern unsafe void CpProxyLinnCoUkProduct1SyncSetRoom(uint aHandle, char* aaRoom);
+        static extern unsafe void CpProxyLinnCoUkProduct1SyncSetRoom(IntPtr aHandle, char* aaRoom);
         [DllImport("CpLinnCoUkProduct1")]
-        static extern unsafe void CpProxyLinnCoUkProduct1BeginSetRoom(uint aHandle, char* aaRoom, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct1BeginSetRoom(IntPtr aHandle, char* aaRoom, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct1")]
-        static extern unsafe int CpProxyLinnCoUkProduct1EndSetRoom(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkProduct1EndSetRoom(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkProduct1")]
-        static extern unsafe void CpProxyLinnCoUkProduct1SyncStandby(uint aHandle, uint* aaStandby);
+        static extern unsafe void CpProxyLinnCoUkProduct1SyncStandby(IntPtr aHandle, uint* aaStandby);
         [DllImport("CpLinnCoUkProduct1")]
-        static extern unsafe void CpProxyLinnCoUkProduct1BeginStandby(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct1BeginStandby(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct1")]
-        static extern unsafe int CpProxyLinnCoUkProduct1EndStandby(uint aHandle, uint aAsync, uint* aaStandby);
+        static extern unsafe int CpProxyLinnCoUkProduct1EndStandby(IntPtr aHandle, IntPtr aAsync, uint* aaStandby);
         [DllImport("CpLinnCoUkProduct1")]
-        static extern unsafe void CpProxyLinnCoUkProduct1SyncSetStandby(uint aHandle, uint aaStandby);
+        static extern unsafe void CpProxyLinnCoUkProduct1SyncSetStandby(IntPtr aHandle, uint aaStandby);
         [DllImport("CpLinnCoUkProduct1")]
-        static extern unsafe void CpProxyLinnCoUkProduct1BeginSetStandby(uint aHandle, uint aaStandby, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct1BeginSetStandby(IntPtr aHandle, uint aaStandby, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct1")]
-        static extern unsafe int CpProxyLinnCoUkProduct1EndSetStandby(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkProduct1EndSetStandby(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkProduct1")]
-        static extern void CpProxyLinnCoUkProduct1SetPropertyRoomChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkProduct1SetPropertyRoomChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct1")]
-        static extern void CpProxyLinnCoUkProduct1SetPropertyStandbyChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkProduct1SetPropertyStandbyChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct1")]
-        static extern unsafe void CpProxyLinnCoUkProduct1PropertyRoom(uint aHandle, char** aRoom);
+        static extern unsafe void CpProxyLinnCoUkProduct1PropertyRoom(IntPtr aHandle, char** aRoom);
         [DllImport("CpLinnCoUkProduct1")]
-        static extern unsafe void CpProxyLinnCoUkProduct1PropertyStandby(uint aHandle, uint* aStandby);
+        static extern unsafe void CpProxyLinnCoUkProduct1PropertyStandby(IntPtr aHandle, uint* aStandby);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -75,7 +75,7 @@ namespace Zapp
             CpProxyLinnCoUkProduct1BeginRoom(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndRoom(uint aAsyncHandle, out string aaRoom)
+        public unsafe void EndRoom(IntPtr aAsyncHandle, out string aaRoom)
         {
 			char* aRoom;
 			{
@@ -106,7 +106,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)aRoom);
         }
 
-        public unsafe void EndSetRoom(uint aAsyncHandle)
+        public unsafe void EndSetRoom(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkProduct1EndSetRoom(iHandle, aAsyncHandle))
@@ -132,7 +132,7 @@ namespace Zapp
             CpProxyLinnCoUkProduct1BeginStandby(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndStandby(uint aAsyncHandle, out bool aaStandby)
+        public unsafe void EndStandby(IntPtr aAsyncHandle, out bool aaStandby)
         {
 			uint aStandby;
 			{
@@ -160,7 +160,7 @@ namespace Zapp
             CpProxyLinnCoUkProduct1BeginSetStandby(iHandle, aStandby, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetStandby(uint aAsyncHandle)
+        public unsafe void EndSetStandby(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkProduct1EndSetStandby(iHandle, aAsyncHandle))
@@ -227,15 +227,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             CpProxyLinnCoUkProduct1Destroy(handle);
             iGch.Free();

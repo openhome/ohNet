@@ -473,7 +473,7 @@ Tests: TestBuffer TestThread TestFifo TestQueue TestNetwork TestEcho TestTimer T
 
 Zapp.net.dll : $(objdir)Zapp.net.dll
 
-$(objdir)Zapp.net.dll:
+$(objdir)Zapp.net.dll: $(publiccsdir)CpDevice.cs $(publiccsdir)CpDeviceUpnp.cs $(publiccsdir)CpProxy.cs $(publiccsdir)DvDevice.cs $(publiccsdir)DvServiceErrors.cs $(publiccsdir)Zapp.cs
 	$(csharp) /unsafe /t:library /debug+\
 		/out:$(objdir)Zapp.net.dll \
 		$(publiccsdir)CpDevice.cs \

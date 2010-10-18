@@ -159,7 +159,7 @@ namespace Zapp
             iActionPollStop.Release();
         }
 
-        private void GetProtocolInfoComplete(uint aAsyncHandle)
+        private void GetProtocolInfoComplete(IntPtr aAsyncHandle)
         {
             if (DateTime.Now >= iActionPollStopTime)
             {

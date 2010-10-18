@@ -8,15 +8,15 @@ namespace Zapp
     public class DvServiceLinnCoUkDebug2 : IDisposable
     {
         [DllImport("DvLinnCoUkDebug2")]
-        static extern uint DvServiceLinnCoUkDebug2Create(uint aDeviceHandle);
+        static extern IntPtr DvServiceLinnCoUkDebug2Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkDebug2")]
-        static extern void DvServiceLinnCoUkDebug2Destroy(uint aHandle);
+        static extern void DvServiceLinnCoUkDebug2Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkDebug2")]
-        static extern void DvServiceLinnCoUkDebug2EnableActionSetDebugLevel(uint aHandle, CallbackSetDebugLevel aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDebug2EnableActionSetDebugLevel(IntPtr aHandle, CallbackSetDebugLevel aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDebug2")]
-        static extern void DvServiceLinnCoUkDebug2EnableActionDebugLevel(uint aHandle, CallbackDebugLevel aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDebug2EnableActionDebugLevel(IntPtr aHandle, CallbackDebugLevel aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDebug2")]
-        static extern void DvServiceLinnCoUkDebug2EnableActionMemWrite(uint aHandle, CallbackMemWrite aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDebug2EnableActionMemWrite(IntPtr aHandle, CallbackMemWrite aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -24,7 +24,7 @@ namespace Zapp
         private unsafe delegate int CallbackDebugLevel(IntPtr aPtr, uint aVersion, uint* aaDebugLevel);
         private unsafe delegate int CallbackMemWrite(IntPtr aPtr, uint aVersion, uint aaMemAddress, char* aaMemData, int aaMemDataLen);
 
-        private uint iHandle;
+        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackSetDebugLevel iCallbackSetDebugLevel;
         private CallbackDebugLevel iCallbackDebugLevel;
@@ -113,15 +113,15 @@ namespace Zapp
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvServiceLinnCoUkDebug2Destroy(handle);
             if (iGch.IsAllocated)

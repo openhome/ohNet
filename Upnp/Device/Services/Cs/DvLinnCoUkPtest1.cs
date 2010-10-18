@@ -8,15 +8,15 @@ namespace Zapp
     public class DvServiceLinnCoUkPtest1 : IDisposable
     {
         [DllImport("DvLinnCoUkPtest1")]
-        static extern uint DvServiceLinnCoUkPtest1Create(uint aDeviceHandle);
+        static extern IntPtr DvServiceLinnCoUkPtest1Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkPtest1")]
-        static extern void DvServiceLinnCoUkPtest1Destroy(uint aHandle);
+        static extern void DvServiceLinnCoUkPtest1Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkPtest1")]
-        static extern void DvServiceLinnCoUkPtest1EnableActionTestComPort(uint aHandle, CallbackTestComPort aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkPtest1EnableActionTestComPort(IntPtr aHandle, CallbackTestComPort aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPtest1")]
-        static extern void DvServiceLinnCoUkPtest1EnableActionLedsOn(uint aHandle, CallbackLedsOn aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkPtest1EnableActionLedsOn(IntPtr aHandle, CallbackLedsOn aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPtest1")]
-        static extern void DvServiceLinnCoUkPtest1EnableActionLedsOff(uint aHandle, CallbackLedsOff aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkPtest1EnableActionLedsOff(IntPtr aHandle, CallbackLedsOff aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -24,7 +24,7 @@ namespace Zapp
         private unsafe delegate int CallbackLedsOn(IntPtr aPtr, uint aVersion);
         private unsafe delegate int CallbackLedsOff(IntPtr aPtr, uint aVersion);
 
-        private uint iHandle;
+        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackTestComPort iCallbackTestComPort;
         private CallbackLedsOn iCallbackLedsOn;
@@ -112,15 +112,15 @@ namespace Zapp
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvServiceLinnCoUkPtest1Destroy(handle);
             if (iGch.IsAllocated)

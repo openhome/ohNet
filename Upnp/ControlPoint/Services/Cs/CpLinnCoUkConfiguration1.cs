@@ -8,35 +8,35 @@ namespace Zapp
     public class CpProxyLinnCoUkConfiguration1 : CpProxy, IDisposable
     {
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern uint CpProxyLinnCoUkConfiguration1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyLinnCoUkConfiguration1Create(IntPtr aDeviceHandle);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern void CpProxyLinnCoUkConfiguration1Destroy(uint aHandle);
+        static extern void CpProxyLinnCoUkConfiguration1Destroy(IntPtr aHandle);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe void CpProxyLinnCoUkConfiguration1SyncConfigurationXml(uint aHandle, char** aaConfigurationXml);
+        static extern unsafe void CpProxyLinnCoUkConfiguration1SyncConfigurationXml(IntPtr aHandle, char** aaConfigurationXml);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe void CpProxyLinnCoUkConfiguration1BeginConfigurationXml(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkConfiguration1BeginConfigurationXml(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe int CpProxyLinnCoUkConfiguration1EndConfigurationXml(uint aHandle, uint aAsync, char** aaConfigurationXml);
+        static extern unsafe int CpProxyLinnCoUkConfiguration1EndConfigurationXml(IntPtr aHandle, IntPtr aAsync, char** aaConfigurationXml);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe void CpProxyLinnCoUkConfiguration1SyncParameterXml(uint aHandle, char** aaParameterXml);
+        static extern unsafe void CpProxyLinnCoUkConfiguration1SyncParameterXml(IntPtr aHandle, char** aaParameterXml);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe void CpProxyLinnCoUkConfiguration1BeginParameterXml(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkConfiguration1BeginParameterXml(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe int CpProxyLinnCoUkConfiguration1EndParameterXml(uint aHandle, uint aAsync, char** aaParameterXml);
+        static extern unsafe int CpProxyLinnCoUkConfiguration1EndParameterXml(IntPtr aHandle, IntPtr aAsync, char** aaParameterXml);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe void CpProxyLinnCoUkConfiguration1SyncSetParameter(uint aHandle, char* aaTarget, char* aaName, char* aaValue);
+        static extern unsafe void CpProxyLinnCoUkConfiguration1SyncSetParameter(IntPtr aHandle, char* aaTarget, char* aaName, char* aaValue);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe void CpProxyLinnCoUkConfiguration1BeginSetParameter(uint aHandle, char* aaTarget, char* aaName, char* aaValue, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkConfiguration1BeginSetParameter(IntPtr aHandle, char* aaTarget, char* aaName, char* aaValue, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe int CpProxyLinnCoUkConfiguration1EndSetParameter(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkConfiguration1EndSetParameter(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern void CpProxyLinnCoUkConfiguration1SetPropertyConfigurationXmlChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkConfiguration1SetPropertyConfigurationXmlChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern void CpProxyLinnCoUkConfiguration1SetPropertyParameterXmlChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkConfiguration1SetPropertyParameterXmlChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe void CpProxyLinnCoUkConfiguration1PropertyConfigurationXml(uint aHandle, char** aConfigurationXml);
+        static extern unsafe void CpProxyLinnCoUkConfiguration1PropertyConfigurationXml(IntPtr aHandle, char** aConfigurationXml);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe void CpProxyLinnCoUkConfiguration1PropertyParameterXml(uint aHandle, char** aParameterXml);
+        static extern unsafe void CpProxyLinnCoUkConfiguration1PropertyParameterXml(IntPtr aHandle, char** aParameterXml);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -69,7 +69,7 @@ namespace Zapp
             CpProxyLinnCoUkConfiguration1BeginConfigurationXml(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndConfigurationXml(uint aAsyncHandle, out string aaConfigurationXml)
+        public unsafe void EndConfigurationXml(IntPtr aAsyncHandle, out string aaConfigurationXml)
         {
 			char* aConfigurationXml;
 			{
@@ -99,7 +99,7 @@ namespace Zapp
             CpProxyLinnCoUkConfiguration1BeginParameterXml(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndParameterXml(uint aAsyncHandle, out string aaParameterXml)
+        public unsafe void EndParameterXml(IntPtr aAsyncHandle, out string aaParameterXml)
         {
 			char* aParameterXml;
 			{
@@ -138,7 +138,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)aValue);
         }
 
-        public unsafe void EndSetParameter(uint aAsyncHandle)
+        public unsafe void EndSetParameter(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkConfiguration1EndSetParameter(iHandle, aAsyncHandle))
@@ -206,15 +206,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             CpProxyLinnCoUkConfiguration1Destroy(handle);
             iGch.Free();

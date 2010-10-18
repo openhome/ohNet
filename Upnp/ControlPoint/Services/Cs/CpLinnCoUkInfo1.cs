@@ -8,81 +8,81 @@ namespace Zapp
     public class CpProxyLinnCoUkInfo1 : CpProxy, IDisposable
     {
         [DllImport("CpLinnCoUkInfo1")]
-        static extern uint CpProxyLinnCoUkInfo1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyLinnCoUkInfo1Create(IntPtr aDeviceHandle);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1Destroy(uint aHandle);
+        static extern void CpProxyLinnCoUkInfo1Destroy(IntPtr aHandle);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1SyncCounters(uint aHandle, uint* aaTrackCount, uint* aaDetailsCount, uint* aaMetatextCount);
+        static extern unsafe void CpProxyLinnCoUkInfo1SyncCounters(IntPtr aHandle, uint* aaTrackCount, uint* aaDetailsCount, uint* aaMetatextCount);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1BeginCounters(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkInfo1BeginCounters(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe int CpProxyLinnCoUkInfo1EndCounters(uint aHandle, uint aAsync, uint* aaTrackCount, uint* aaDetailsCount, uint* aaMetatextCount);
+        static extern unsafe int CpProxyLinnCoUkInfo1EndCounters(IntPtr aHandle, IntPtr aAsync, uint* aaTrackCount, uint* aaDetailsCount, uint* aaMetatextCount);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1SyncTrack(uint aHandle, char** aaUri, char** aaMetadata);
+        static extern unsafe void CpProxyLinnCoUkInfo1SyncTrack(IntPtr aHandle, char** aaUri, char** aaMetadata);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1BeginTrack(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkInfo1BeginTrack(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe int CpProxyLinnCoUkInfo1EndTrack(uint aHandle, uint aAsync, char** aaUri, char** aaMetadata);
+        static extern unsafe int CpProxyLinnCoUkInfo1EndTrack(IntPtr aHandle, IntPtr aAsync, char** aaUri, char** aaMetadata);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1SyncDetails(uint aHandle, uint* aaDuration, uint* aaBitRate, uint* aaBitDepth, uint* aaSampleRate, uint* aaLossless, char** aaCodecName);
+        static extern unsafe void CpProxyLinnCoUkInfo1SyncDetails(IntPtr aHandle, uint* aaDuration, uint* aaBitRate, uint* aaBitDepth, uint* aaSampleRate, uint* aaLossless, char** aaCodecName);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1BeginDetails(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkInfo1BeginDetails(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe int CpProxyLinnCoUkInfo1EndDetails(uint aHandle, uint aAsync, uint* aaDuration, uint* aaBitRate, uint* aaBitDepth, uint* aaSampleRate, uint* aaLossless, char** aaCodecName);
+        static extern unsafe int CpProxyLinnCoUkInfo1EndDetails(IntPtr aHandle, IntPtr aAsync, uint* aaDuration, uint* aaBitRate, uint* aaBitDepth, uint* aaSampleRate, uint* aaLossless, char** aaCodecName);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1SyncMetatext(uint aHandle, char** aaMetatext);
+        static extern unsafe void CpProxyLinnCoUkInfo1SyncMetatext(IntPtr aHandle, char** aaMetatext);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1BeginMetatext(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkInfo1BeginMetatext(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe int CpProxyLinnCoUkInfo1EndMetatext(uint aHandle, uint aAsync, char** aaMetatext);
+        static extern unsafe int CpProxyLinnCoUkInfo1EndMetatext(IntPtr aHandle, IntPtr aAsync, char** aaMetatext);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyTrackCountChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkInfo1SetPropertyTrackCountChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyDetailsCountChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkInfo1SetPropertyDetailsCountChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyMetatextCountChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkInfo1SetPropertyMetatextCountChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyUriChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkInfo1SetPropertyUriChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyMetadataChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkInfo1SetPropertyMetadataChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyDurationChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkInfo1SetPropertyDurationChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyBitRateChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkInfo1SetPropertyBitRateChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyBitDepthChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkInfo1SetPropertyBitDepthChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertySampleRateChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkInfo1SetPropertySampleRateChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyLosslessChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkInfo1SetPropertyLosslessChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyCodecNameChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkInfo1SetPropertyCodecNameChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyMetatextChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkInfo1SetPropertyMetatextChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyTrackCount(uint aHandle, uint* aTrackCount);
+        static extern unsafe void CpProxyLinnCoUkInfo1PropertyTrackCount(IntPtr aHandle, uint* aTrackCount);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyDetailsCount(uint aHandle, uint* aDetailsCount);
+        static extern unsafe void CpProxyLinnCoUkInfo1PropertyDetailsCount(IntPtr aHandle, uint* aDetailsCount);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyMetatextCount(uint aHandle, uint* aMetatextCount);
+        static extern unsafe void CpProxyLinnCoUkInfo1PropertyMetatextCount(IntPtr aHandle, uint* aMetatextCount);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyUri(uint aHandle, char** aUri);
+        static extern unsafe void CpProxyLinnCoUkInfo1PropertyUri(IntPtr aHandle, char** aUri);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyMetadata(uint aHandle, char** aMetadata);
+        static extern unsafe void CpProxyLinnCoUkInfo1PropertyMetadata(IntPtr aHandle, char** aMetadata);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyDuration(uint aHandle, uint* aDuration);
+        static extern unsafe void CpProxyLinnCoUkInfo1PropertyDuration(IntPtr aHandle, uint* aDuration);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyBitRate(uint aHandle, uint* aBitRate);
+        static extern unsafe void CpProxyLinnCoUkInfo1PropertyBitRate(IntPtr aHandle, uint* aBitRate);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyBitDepth(uint aHandle, uint* aBitDepth);
+        static extern unsafe void CpProxyLinnCoUkInfo1PropertyBitDepth(IntPtr aHandle, uint* aBitDepth);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertySampleRate(uint aHandle, uint* aSampleRate);
+        static extern unsafe void CpProxyLinnCoUkInfo1PropertySampleRate(IntPtr aHandle, uint* aSampleRate);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyLossless(uint aHandle, uint* aLossless);
+        static extern unsafe void CpProxyLinnCoUkInfo1PropertyLossless(IntPtr aHandle, uint* aLossless);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyCodecName(uint aHandle, char** aCodecName);
+        static extern unsafe void CpProxyLinnCoUkInfo1PropertyCodecName(IntPtr aHandle, char** aCodecName);
         [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyMetatext(uint aHandle, char** aMetatext);
+        static extern unsafe void CpProxyLinnCoUkInfo1PropertyMetatext(IntPtr aHandle, char** aMetatext);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -135,7 +135,7 @@ namespace Zapp
             CpProxyLinnCoUkInfo1BeginCounters(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndCounters(uint aAsyncHandle, out uint aaTrackCount, out uint aaDetailsCount, out uint aaMetatextCount)
+        public unsafe void EndCounters(IntPtr aAsyncHandle, out uint aaTrackCount, out uint aaDetailsCount, out uint aaMetatextCount)
         {
 			fixed (uint* aTrackCount = &aaTrackCount)
 			fixed (uint* aDetailsCount = &aaDetailsCount)
@@ -168,7 +168,7 @@ namespace Zapp
             CpProxyLinnCoUkInfo1BeginTrack(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndTrack(uint aAsyncHandle, out string aaUri, out string aaMetadata)
+        public unsafe void EndTrack(IntPtr aAsyncHandle, out string aaUri, out string aaMetadata)
         {
 			char* aUri;
 			char* aMetadata;
@@ -207,7 +207,7 @@ namespace Zapp
             CpProxyLinnCoUkInfo1BeginDetails(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndDetails(uint aAsyncHandle, out uint aaDuration, out uint aaBitRate, out uint aaBitDepth, out uint aaSampleRate, out bool aaLossless, out string aaCodecName)
+        public unsafe void EndDetails(IntPtr aAsyncHandle, out uint aaDuration, out uint aaBitRate, out uint aaBitDepth, out uint aaSampleRate, out bool aaLossless, out string aaCodecName)
         {
 			uint aLossless;
 			char* aCodecName;
@@ -243,7 +243,7 @@ namespace Zapp
             CpProxyLinnCoUkInfo1BeginMetatext(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndMetatext(uint aAsyncHandle, out string aaMetatext)
+        public unsafe void EndMetatext(IntPtr aAsyncHandle, out string aaMetatext)
         {
 			char* aMetatext;
 			{
@@ -543,15 +543,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             CpProxyLinnCoUkInfo1Destroy(handle);
             iGch.Free();

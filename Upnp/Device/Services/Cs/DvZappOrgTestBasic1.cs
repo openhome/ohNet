@@ -8,61 +8,61 @@ namespace Zapp
     public class DvServiceZappOrgTestBasic1 : IDisposable
     {
         [DllImport("DvZappOrgTestBasic1")]
-        static extern uint DvServiceZappOrgTestBasic1Create(uint aDeviceHandle);
+        static extern IntPtr DvServiceZappOrgTestBasic1Create(IntPtr aDeviceHandle);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvServiceZappOrgTestBasic1Destroy(uint aHandle);
+        static extern void DvServiceZappOrgTestBasic1Destroy(IntPtr aHandle);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe int DvServiceZappOrgTestBasic1SetPropertyVarUint(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceZappOrgTestBasic1SetPropertyVarUint(IntPtr aHandle, uint aValue);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe void DvServiceZappOrgTestBasic1GetPropertyVarUint(uint aHandle, uint* aValue);
+        static extern unsafe void DvServiceZappOrgTestBasic1GetPropertyVarUint(IntPtr aHandle, uint* aValue);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe int DvServiceZappOrgTestBasic1SetPropertyVarInt(uint aHandle, int aValue);
+        static extern unsafe int DvServiceZappOrgTestBasic1SetPropertyVarInt(IntPtr aHandle, int aValue);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe void DvServiceZappOrgTestBasic1GetPropertyVarInt(uint aHandle, int* aValue);
+        static extern unsafe void DvServiceZappOrgTestBasic1GetPropertyVarInt(IntPtr aHandle, int* aValue);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe int DvServiceZappOrgTestBasic1SetPropertyVarBool(uint aHandle, int aValue);
+        static extern unsafe int DvServiceZappOrgTestBasic1SetPropertyVarBool(IntPtr aHandle, int aValue);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe void DvServiceZappOrgTestBasic1GetPropertyVarBool(uint aHandle, int* aValue);
+        static extern unsafe void DvServiceZappOrgTestBasic1GetPropertyVarBool(IntPtr aHandle, int* aValue);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe int DvServiceZappOrgTestBasic1SetPropertyVarStr(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceZappOrgTestBasic1SetPropertyVarStr(IntPtr aHandle, char* aValue);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe void DvServiceZappOrgTestBasic1GetPropertyVarStr(uint aHandle, char** aValue);
+        static extern unsafe void DvServiceZappOrgTestBasic1GetPropertyVarStr(IntPtr aHandle, char** aValue);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe int DvServiceZappOrgTestBasic1SetPropertyVarBin(uint aHandle, char* aValue, int aValueLen);
+        static extern unsafe int DvServiceZappOrgTestBasic1SetPropertyVarBin(IntPtr aHandle, char* aValue, int aValueLen);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe void DvServiceZappOrgTestBasic1GetPropertyVarBin(uint aHandle, char** aValue, int* aValueLen);
+        static extern unsafe void DvServiceZappOrgTestBasic1GetPropertyVarBin(IntPtr aHandle, char** aValue, int* aValueLen);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvServiceZappOrgTestBasic1EnableActionIncrement(uint aHandle, CallbackIncrement aCallback, IntPtr aPtr);
+        static extern void DvServiceZappOrgTestBasic1EnableActionIncrement(IntPtr aHandle, CallbackIncrement aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvServiceZappOrgTestBasic1EnableActionDecrement(uint aHandle, CallbackDecrement aCallback, IntPtr aPtr);
+        static extern void DvServiceZappOrgTestBasic1EnableActionDecrement(IntPtr aHandle, CallbackDecrement aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvServiceZappOrgTestBasic1EnableActionToggle(uint aHandle, CallbackToggle aCallback, IntPtr aPtr);
+        static extern void DvServiceZappOrgTestBasic1EnableActionToggle(IntPtr aHandle, CallbackToggle aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvServiceZappOrgTestBasic1EnableActionEchoString(uint aHandle, CallbackEchoString aCallback, IntPtr aPtr);
+        static extern void DvServiceZappOrgTestBasic1EnableActionEchoString(IntPtr aHandle, CallbackEchoString aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvServiceZappOrgTestBasic1EnableActionEchoBinary(uint aHandle, CallbackEchoBinary aCallback, IntPtr aPtr);
+        static extern void DvServiceZappOrgTestBasic1EnableActionEchoBinary(IntPtr aHandle, CallbackEchoBinary aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvServiceZappOrgTestBasic1EnableActionSetUint(uint aHandle, CallbackSetUint aCallback, IntPtr aPtr);
+        static extern void DvServiceZappOrgTestBasic1EnableActionSetUint(IntPtr aHandle, CallbackSetUint aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvServiceZappOrgTestBasic1EnableActionGetUint(uint aHandle, CallbackGetUint aCallback, IntPtr aPtr);
+        static extern void DvServiceZappOrgTestBasic1EnableActionGetUint(IntPtr aHandle, CallbackGetUint aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvServiceZappOrgTestBasic1EnableActionSetInt(uint aHandle, CallbackSetInt aCallback, IntPtr aPtr);
+        static extern void DvServiceZappOrgTestBasic1EnableActionSetInt(IntPtr aHandle, CallbackSetInt aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvServiceZappOrgTestBasic1EnableActionGetInt(uint aHandle, CallbackGetInt aCallback, IntPtr aPtr);
+        static extern void DvServiceZappOrgTestBasic1EnableActionGetInt(IntPtr aHandle, CallbackGetInt aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvServiceZappOrgTestBasic1EnableActionSetBool(uint aHandle, CallbackSetBool aCallback, IntPtr aPtr);
+        static extern void DvServiceZappOrgTestBasic1EnableActionSetBool(IntPtr aHandle, CallbackSetBool aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvServiceZappOrgTestBasic1EnableActionGetBool(uint aHandle, CallbackGetBool aCallback, IntPtr aPtr);
+        static extern void DvServiceZappOrgTestBasic1EnableActionGetBool(IntPtr aHandle, CallbackGetBool aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvServiceZappOrgTestBasic1EnableActionSetMultiple(uint aHandle, CallbackSetMultiple aCallback, IntPtr aPtr);
+        static extern void DvServiceZappOrgTestBasic1EnableActionSetMultiple(IntPtr aHandle, CallbackSetMultiple aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvServiceZappOrgTestBasic1EnableActionSetString(uint aHandle, CallbackSetString aCallback, IntPtr aPtr);
+        static extern void DvServiceZappOrgTestBasic1EnableActionSetString(IntPtr aHandle, CallbackSetString aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvServiceZappOrgTestBasic1EnableActionGetString(uint aHandle, CallbackGetString aCallback, IntPtr aPtr);
+        static extern void DvServiceZappOrgTestBasic1EnableActionGetString(IntPtr aHandle, CallbackGetString aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvServiceZappOrgTestBasic1EnableActionSetBinary(uint aHandle, CallbackSetBinary aCallback, IntPtr aPtr);
+        static extern void DvServiceZappOrgTestBasic1EnableActionSetBinary(IntPtr aHandle, CallbackSetBinary aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvServiceZappOrgTestBasic1EnableActionGetBinary(uint aHandle, CallbackGetBinary aCallback, IntPtr aPtr);
+        static extern void DvServiceZappOrgTestBasic1EnableActionGetBinary(IntPtr aHandle, CallbackGetBinary aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -83,7 +83,7 @@ namespace Zapp
         private unsafe delegate int CallbackSetBinary(IntPtr aPtr, uint aVersion, char* aValueBin, int aValueBinLen);
         private unsafe delegate int CallbackGetBinary(IntPtr aPtr, uint aVersion, char** aValueBin, int* aValueBinLen);
 
-        private uint iHandle;
+        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackIncrement iCallbackIncrement;
         private CallbackDecrement iCallbackDecrement;
@@ -559,15 +559,15 @@ namespace Zapp
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvServiceZappOrgTestBasic1Destroy(handle);
             if (iGch.IsAllocated)

@@ -8,27 +8,27 @@ namespace Zapp
     public class CpProxyLinnCoUkPtest1 : CpProxy, IDisposable
     {
         [DllImport("CpLinnCoUkPtest1")]
-        static extern uint CpProxyLinnCoUkPtest1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyLinnCoUkPtest1Create(IntPtr aDeviceHandle);
         [DllImport("CpLinnCoUkPtest1")]
-        static extern void CpProxyLinnCoUkPtest1Destroy(uint aHandle);
+        static extern void CpProxyLinnCoUkPtest1Destroy(IntPtr aHandle);
         [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe void CpProxyLinnCoUkPtest1SyncTestComPort(uint aHandle, uint aaPort, uint* aaResult);
+        static extern unsafe void CpProxyLinnCoUkPtest1SyncTestComPort(IntPtr aHandle, uint aaPort, uint* aaResult);
         [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe void CpProxyLinnCoUkPtest1BeginTestComPort(uint aHandle, uint aaPort, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPtest1BeginTestComPort(IntPtr aHandle, uint aaPort, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe int CpProxyLinnCoUkPtest1EndTestComPort(uint aHandle, uint aAsync, uint* aaResult);
+        static extern unsafe int CpProxyLinnCoUkPtest1EndTestComPort(IntPtr aHandle, IntPtr aAsync, uint* aaResult);
         [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe void CpProxyLinnCoUkPtest1SyncLedsOn(uint aHandle);
+        static extern unsafe void CpProxyLinnCoUkPtest1SyncLedsOn(IntPtr aHandle);
         [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe void CpProxyLinnCoUkPtest1BeginLedsOn(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPtest1BeginLedsOn(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe int CpProxyLinnCoUkPtest1EndLedsOn(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkPtest1EndLedsOn(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe void CpProxyLinnCoUkPtest1SyncLedsOff(uint aHandle);
+        static extern unsafe void CpProxyLinnCoUkPtest1SyncLedsOff(IntPtr aHandle);
         [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe void CpProxyLinnCoUkPtest1BeginLedsOff(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPtest1BeginLedsOff(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe int CpProxyLinnCoUkPtest1EndLedsOff(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkPtest1EndLedsOff(IntPtr aHandle, IntPtr aAsync);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -56,7 +56,7 @@ namespace Zapp
             CpProxyLinnCoUkPtest1BeginTestComPort(iHandle, aaPort, iActionComplete, ptr);
         }
 
-        public unsafe void EndTestComPort(uint aAsyncHandle, out bool aaResult)
+        public unsafe void EndTestComPort(IntPtr aAsyncHandle, out bool aaResult)
         {
 			uint aResult;
 			{
@@ -82,7 +82,7 @@ namespace Zapp
             CpProxyLinnCoUkPtest1BeginLedsOn(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndLedsOn(uint aAsyncHandle)
+        public unsafe void EndLedsOn(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkPtest1EndLedsOn(iHandle, aAsyncHandle))
@@ -106,7 +106,7 @@ namespace Zapp
             CpProxyLinnCoUkPtest1BeginLedsOff(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndLedsOff(uint aAsyncHandle)
+        public unsafe void EndLedsOff(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkPtest1EndLedsOff(iHandle, aAsyncHandle))
@@ -128,15 +128,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             CpProxyLinnCoUkPtest1Destroy(handle);
             iGch.Free();

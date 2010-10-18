@@ -59,33 +59,33 @@ namespace Zapp
     public class <#=className#> : CpProxy, IDisposable
     {
         [DllImport("<#=dllName#>")]
-        static extern uint <#=className#>Create(uint aDeviceHandle);
+        static extern <#=Handle#> <#=className#>Create(<#=Handle#> aDeviceHandle);
         [DllImport("<#=dllName#>")]
-        static extern void <#=className#>Destroy(uint aHandle);
+        static extern void <#=className#>Destroy(<#=Handle#> aHandle);
 <#  foreach (Method a in u.methods) #>
 <#  { #>
         [DllImport("<#=dllName#>")]
-        static extern unsafe void <#=className#>Sync<#=a.name#>(uint aHandle<#=ArgsCFull(a)#>);
+        static extern unsafe void <#=className#>Sync<#=a.name#>(<#=Handle#> aHandle<#=ArgsCFull(a)#>);
         [DllImport("<#=dllName#>")]
-        static extern unsafe void <#=className#>Begin<#=a.name#>(uint aHandle, <#=InArgsCFull(a, true)#>CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void <#=className#>Begin<#=a.name#>(<#=Handle#> aHandle, <#=InArgsCFull(a, true)#>CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("<#=dllName#>")]
-        static extern unsafe int <#=className#>End<#=a.name#>(uint aHandle, uint aAsync<#=OutArgsCFull(a, true)#>);
+        static extern unsafe int <#=className#>End<#=a.name#>(<#=Handle#> aHandle, <#=Handle#> aAsync<#=OutArgsCFull(a, true)#>);
 <#  } #>
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
         [DllImport("<#=dllName#>")]
-        static extern void <#=className#>SetProperty<#=s.name#>Changed(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void <#=className#>SetProperty<#=s.name#>Changed(<#=Handle#> aHandle, Callback aCallback, IntPtr aPtr);
 <#  } #>
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
         [DllImport("<#=dllName#>")]
 <#      if (s.type == "bin.base64") #>
 <#      { #>
-        static extern unsafe void <#=className#>Property<#=s.name#>(uint aHandle, <#=outargctype[s.type]#> a<#=s.name#>, uint* aLen);
+        static extern unsafe void <#=className#>Property<#=s.name#>(<#=Handle#> aHandle, <#=outargctype[s.type]#> a<#=s.name#>, uint* aLen);
 <#      } #>
 <#      else #>
 <#      { #>
-        static extern unsafe void <#=className#>Property<#=s.name#>(uint aHandle, <#=outargctype[s.type]#> a<#=s.name#>);
+        static extern unsafe void <#=className#>Property<#=s.name#>(<#=Handle#> aHandle, <#=outargctype[s.type]#> a<#=s.name#>);
 <#      } #>
 <#  } #>
         [DllImport("ZappUpnp")]
@@ -206,7 +206,7 @@ namespace Zapp
 <#      } #>
         }
 
-        public unsafe void End<#=a.name#>(uint aAsyncHandle<#=OutArgsFull(a, true)#>)
+        public unsafe void End<#=a.name#>(<#=Handle#> aAsyncHandle<#=OutArgsFull(a, true)#>)
         {
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
@@ -321,15 +321,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
+            <#=Handle#> handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             <#=className#>Destroy(handle);
             iGch.Free();
@@ -346,6 +346,9 @@ namespace Zapp
 }
 
 <#+
+
+const string Handle = "IntPtr";
+
 Dictionary<string,string> argtype = new Dictionary<string,string>();
 Dictionary<string,string> inargctype = new Dictionary<string,string>();
 Dictionary<string,string> outargctype = new Dictionary<string,string>();

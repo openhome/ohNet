@@ -8,51 +8,51 @@ namespace Zapp
     public class CpProxyUpnpOrgConnectionManager2 : CpProxy, IDisposable
     {
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern uint CpProxyUpnpOrgConnectionManager2Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyUpnpOrgConnectionManager2Create(IntPtr aDeviceHandle);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern void CpProxyUpnpOrgConnectionManager2Destroy(uint aHandle);
+        static extern void CpProxyUpnpOrgConnectionManager2Destroy(IntPtr aHandle);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2SyncGetProtocolInfo(uint aHandle, char** aSource, char** aSink);
+        static extern unsafe void CpProxyUpnpOrgConnectionManager2SyncGetProtocolInfo(IntPtr aHandle, char** aSource, char** aSink);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2BeginGetProtocolInfo(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgConnectionManager2BeginGetProtocolInfo(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe int CpProxyUpnpOrgConnectionManager2EndGetProtocolInfo(uint aHandle, uint aAsync, char** aSource, char** aSink);
+        static extern unsafe int CpProxyUpnpOrgConnectionManager2EndGetProtocolInfo(IntPtr aHandle, IntPtr aAsync, char** aSource, char** aSink);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2SyncPrepareForConnection(uint aHandle, char* aRemoteProtocolInfo, char* aPeerConnectionManager, int aPeerConnectionID, char* aDirection, int* aConnectionID, int* aAVTransportID, int* aRcsID);
+        static extern unsafe void CpProxyUpnpOrgConnectionManager2SyncPrepareForConnection(IntPtr aHandle, char* aRemoteProtocolInfo, char* aPeerConnectionManager, int aPeerConnectionID, char* aDirection, int* aConnectionID, int* aAVTransportID, int* aRcsID);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2BeginPrepareForConnection(uint aHandle, char* aRemoteProtocolInfo, char* aPeerConnectionManager, int aPeerConnectionID, char* aDirection, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgConnectionManager2BeginPrepareForConnection(IntPtr aHandle, char* aRemoteProtocolInfo, char* aPeerConnectionManager, int aPeerConnectionID, char* aDirection, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe int CpProxyUpnpOrgConnectionManager2EndPrepareForConnection(uint aHandle, uint aAsync, int* aConnectionID, int* aAVTransportID, int* aRcsID);
+        static extern unsafe int CpProxyUpnpOrgConnectionManager2EndPrepareForConnection(IntPtr aHandle, IntPtr aAsync, int* aConnectionID, int* aAVTransportID, int* aRcsID);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2SyncConnectionComplete(uint aHandle, int aConnectionID);
+        static extern unsafe void CpProxyUpnpOrgConnectionManager2SyncConnectionComplete(IntPtr aHandle, int aConnectionID);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2BeginConnectionComplete(uint aHandle, int aConnectionID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgConnectionManager2BeginConnectionComplete(IntPtr aHandle, int aConnectionID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe int CpProxyUpnpOrgConnectionManager2EndConnectionComplete(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgConnectionManager2EndConnectionComplete(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2SyncGetCurrentConnectionIDs(uint aHandle, char** aConnectionIDs);
+        static extern unsafe void CpProxyUpnpOrgConnectionManager2SyncGetCurrentConnectionIDs(IntPtr aHandle, char** aConnectionIDs);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2BeginGetCurrentConnectionIDs(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgConnectionManager2BeginGetCurrentConnectionIDs(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe int CpProxyUpnpOrgConnectionManager2EndGetCurrentConnectionIDs(uint aHandle, uint aAsync, char** aConnectionIDs);
+        static extern unsafe int CpProxyUpnpOrgConnectionManager2EndGetCurrentConnectionIDs(IntPtr aHandle, IntPtr aAsync, char** aConnectionIDs);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2SyncGetCurrentConnectionInfo(uint aHandle, int aConnectionID, int* aRcsID, int* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int* aPeerConnectionID, char** aDirection, char** aStatus);
+        static extern unsafe void CpProxyUpnpOrgConnectionManager2SyncGetCurrentConnectionInfo(IntPtr aHandle, int aConnectionID, int* aRcsID, int* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int* aPeerConnectionID, char** aDirection, char** aStatus);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2BeginGetCurrentConnectionInfo(uint aHandle, int aConnectionID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgConnectionManager2BeginGetCurrentConnectionInfo(IntPtr aHandle, int aConnectionID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe int CpProxyUpnpOrgConnectionManager2EndGetCurrentConnectionInfo(uint aHandle, uint aAsync, int* aRcsID, int* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int* aPeerConnectionID, char** aDirection, char** aStatus);
+        static extern unsafe int CpProxyUpnpOrgConnectionManager2EndGetCurrentConnectionInfo(IntPtr aHandle, IntPtr aAsync, int* aRcsID, int* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int* aPeerConnectionID, char** aDirection, char** aStatus);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern void CpProxyUpnpOrgConnectionManager2SetPropertySourceProtocolInfoChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyUpnpOrgConnectionManager2SetPropertySourceProtocolInfoChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern void CpProxyUpnpOrgConnectionManager2SetPropertySinkProtocolInfoChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyUpnpOrgConnectionManager2SetPropertySinkProtocolInfoChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern void CpProxyUpnpOrgConnectionManager2SetPropertyCurrentConnectionIDsChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyUpnpOrgConnectionManager2SetPropertyCurrentConnectionIDsChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2PropertySourceProtocolInfo(uint aHandle, char** aSourceProtocolInfo);
+        static extern unsafe void CpProxyUpnpOrgConnectionManager2PropertySourceProtocolInfo(IntPtr aHandle, char** aSourceProtocolInfo);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2PropertySinkProtocolInfo(uint aHandle, char** aSinkProtocolInfo);
+        static extern unsafe void CpProxyUpnpOrgConnectionManager2PropertySinkProtocolInfo(IntPtr aHandle, char** aSinkProtocolInfo);
         [DllImport("CpUpnpOrgConnectionManager2")]
-        static extern unsafe void CpProxyUpnpOrgConnectionManager2PropertyCurrentConnectionIDs(uint aHandle, char** aCurrentConnectionIDs);
+        static extern unsafe void CpProxyUpnpOrgConnectionManager2PropertyCurrentConnectionIDs(IntPtr aHandle, char** aCurrentConnectionIDs);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -90,7 +90,7 @@ namespace Zapp
             CpProxyUpnpOrgConnectionManager2BeginGetProtocolInfo(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetProtocolInfo(uint aAsyncHandle, out string aSource, out string aSink)
+        public unsafe void EndGetProtocolInfo(IntPtr aAsyncHandle, out string aSource, out string aSink)
         {
 			char* source;
 			char* sink;
@@ -135,7 +135,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)direction);
         }
 
-        public unsafe void EndPrepareForConnection(uint aAsyncHandle, out int aConnectionID, out int aAVTransportID, out int aRcsID)
+        public unsafe void EndPrepareForConnection(IntPtr aAsyncHandle, out int aConnectionID, out int aAVTransportID, out int aRcsID)
         {
 			fixed (int* connectionID = &aConnectionID)
 			fixed (int* aVTransportID = &aAVTransportID)
@@ -162,7 +162,7 @@ namespace Zapp
             CpProxyUpnpOrgConnectionManager2BeginConnectionComplete(iHandle, aConnectionID, iActionComplete, ptr);
         }
 
-        public unsafe void EndConnectionComplete(uint aAsyncHandle)
+        public unsafe void EndConnectionComplete(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgConnectionManager2EndConnectionComplete(iHandle, aAsyncHandle))
@@ -189,7 +189,7 @@ namespace Zapp
             CpProxyUpnpOrgConnectionManager2BeginGetCurrentConnectionIDs(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetCurrentConnectionIDs(uint aAsyncHandle, out string aConnectionIDs)
+        public unsafe void EndGetCurrentConnectionIDs(IntPtr aAsyncHandle, out string aConnectionIDs)
         {
 			char* connectionIDs;
 			{
@@ -231,7 +231,7 @@ namespace Zapp
             CpProxyUpnpOrgConnectionManager2BeginGetCurrentConnectionInfo(iHandle, aConnectionID, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetCurrentConnectionInfo(uint aAsyncHandle, out int aRcsID, out int aAVTransportID, out string aProtocolInfo, out string aPeerConnectionManager, out int aPeerConnectionID, out string aDirection, out string aStatus)
+        public unsafe void EndGetCurrentConnectionInfo(IntPtr aAsyncHandle, out int aRcsID, out int aAVTransportID, out string aProtocolInfo, out string aPeerConnectionManager, out int aPeerConnectionID, out string aDirection, out string aStatus)
         {
 			char* protocolInfo;
 			char* peerConnectionManager;
@@ -337,15 +337,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             CpProxyUpnpOrgConnectionManager2Destroy(handle);
             iGch.Free();

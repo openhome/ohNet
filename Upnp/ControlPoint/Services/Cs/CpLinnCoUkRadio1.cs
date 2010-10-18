@@ -8,133 +8,133 @@ namespace Zapp
     public class CpProxyLinnCoUkRadio1 : CpProxy, IDisposable
     {
         [DllImport("CpLinnCoUkRadio1")]
-        static extern uint CpProxyLinnCoUkRadio1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyLinnCoUkRadio1Create(IntPtr aDeviceHandle);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern void CpProxyLinnCoUkRadio1Destroy(uint aHandle);
+        static extern void CpProxyLinnCoUkRadio1Destroy(IntPtr aHandle);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncPlay(uint aHandle);
+        static extern unsafe void CpProxyLinnCoUkRadio1SyncPlay(IntPtr aHandle);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginPlay(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkRadio1BeginPlay(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndPlay(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkRadio1EndPlay(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncPause(uint aHandle);
+        static extern unsafe void CpProxyLinnCoUkRadio1SyncPause(IntPtr aHandle);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginPause(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkRadio1BeginPause(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndPause(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkRadio1EndPause(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncStop(uint aHandle);
+        static extern unsafe void CpProxyLinnCoUkRadio1SyncStop(IntPtr aHandle);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginStop(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkRadio1BeginStop(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndStop(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkRadio1EndStop(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncSeekSecondAbsolute(uint aHandle, uint aaSecond);
+        static extern unsafe void CpProxyLinnCoUkRadio1SyncSeekSecondAbsolute(IntPtr aHandle, uint aaSecond);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginSeekSecondAbsolute(uint aHandle, uint aaSecond, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkRadio1BeginSeekSecondAbsolute(IntPtr aHandle, uint aaSecond, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndSeekSecondAbsolute(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkRadio1EndSeekSecondAbsolute(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncSeekSecondRelative(uint aHandle, int aaSecond);
+        static extern unsafe void CpProxyLinnCoUkRadio1SyncSeekSecondRelative(IntPtr aHandle, int aaSecond);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginSeekSecondRelative(uint aHandle, int aaSecond, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkRadio1BeginSeekSecondRelative(IntPtr aHandle, int aaSecond, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndSeekSecondRelative(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkRadio1EndSeekSecondRelative(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncChannel(uint aHandle, char** aaUri, char** aaMetadata);
+        static extern unsafe void CpProxyLinnCoUkRadio1SyncChannel(IntPtr aHandle, char** aaUri, char** aaMetadata);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginChannel(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkRadio1BeginChannel(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndChannel(uint aHandle, uint aAsync, char** aaUri, char** aaMetadata);
+        static extern unsafe int CpProxyLinnCoUkRadio1EndChannel(IntPtr aHandle, IntPtr aAsync, char** aaUri, char** aaMetadata);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncSetChannel(uint aHandle, char* aaUri, char* aaMetadata);
+        static extern unsafe void CpProxyLinnCoUkRadio1SyncSetChannel(IntPtr aHandle, char* aaUri, char* aaMetadata);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginSetChannel(uint aHandle, char* aaUri, char* aaMetadata, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkRadio1BeginSetChannel(IntPtr aHandle, char* aaUri, char* aaMetadata, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndSetChannel(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkRadio1EndSetChannel(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncProtocolInfo(uint aHandle, char** aaInfo);
+        static extern unsafe void CpProxyLinnCoUkRadio1SyncProtocolInfo(IntPtr aHandle, char** aaInfo);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginProtocolInfo(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkRadio1BeginProtocolInfo(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndProtocolInfo(uint aHandle, uint aAsync, char** aaInfo);
+        static extern unsafe int CpProxyLinnCoUkRadio1EndProtocolInfo(IntPtr aHandle, IntPtr aAsync, char** aaInfo);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncTransportState(uint aHandle, char** aaState);
+        static extern unsafe void CpProxyLinnCoUkRadio1SyncTransportState(IntPtr aHandle, char** aaState);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginTransportState(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkRadio1BeginTransportState(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndTransportState(uint aHandle, uint aAsync, char** aaState);
+        static extern unsafe int CpProxyLinnCoUkRadio1EndTransportState(IntPtr aHandle, IntPtr aAsync, char** aaState);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncId(uint aHandle, uint* aaId);
+        static extern unsafe void CpProxyLinnCoUkRadio1SyncId(IntPtr aHandle, uint* aaId);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginId(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkRadio1BeginId(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndId(uint aHandle, uint aAsync, uint* aaId);
+        static extern unsafe int CpProxyLinnCoUkRadio1EndId(IntPtr aHandle, IntPtr aAsync, uint* aaId);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncSetId(uint aHandle, uint aaId, char* aaUri);
+        static extern unsafe void CpProxyLinnCoUkRadio1SyncSetId(IntPtr aHandle, uint aaId, char* aaUri);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginSetId(uint aHandle, uint aaId, char* aaUri, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkRadio1BeginSetId(IntPtr aHandle, uint aaId, char* aaUri, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndSetId(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkRadio1EndSetId(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncRead(uint aHandle, uint aaId, char** aaMetadata);
+        static extern unsafe void CpProxyLinnCoUkRadio1SyncRead(IntPtr aHandle, uint aaId, char** aaMetadata);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginRead(uint aHandle, uint aaId, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkRadio1BeginRead(IntPtr aHandle, uint aaId, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndRead(uint aHandle, uint aAsync, char** aaMetadata);
+        static extern unsafe int CpProxyLinnCoUkRadio1EndRead(IntPtr aHandle, IntPtr aAsync, char** aaMetadata);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncReadList(uint aHandle, char* aaIdList, char** aaMetadataList);
+        static extern unsafe void CpProxyLinnCoUkRadio1SyncReadList(IntPtr aHandle, char* aaIdList, char** aaMetadataList);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginReadList(uint aHandle, char* aaIdList, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkRadio1BeginReadList(IntPtr aHandle, char* aaIdList, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndReadList(uint aHandle, uint aAsync, char** aaMetadataList);
+        static extern unsafe int CpProxyLinnCoUkRadio1EndReadList(IntPtr aHandle, IntPtr aAsync, char** aaMetadataList);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncIdArray(uint aHandle, uint* aaIdArrayToken, char** aaIdArray, uint* aaIdArrayLen);
+        static extern unsafe void CpProxyLinnCoUkRadio1SyncIdArray(IntPtr aHandle, uint* aaIdArrayToken, char** aaIdArray, uint* aaIdArrayLen);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginIdArray(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkRadio1BeginIdArray(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndIdArray(uint aHandle, uint aAsync, uint* aaIdArrayToken, char** aaIdArray, uint* aaIdArrayLen);
+        static extern unsafe int CpProxyLinnCoUkRadio1EndIdArray(IntPtr aHandle, IntPtr aAsync, uint* aaIdArrayToken, char** aaIdArray, uint* aaIdArrayLen);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncIdArrayChanged(uint aHandle, uint aaIdArrayToken, uint* aaIdArrayChanged);
+        static extern unsafe void CpProxyLinnCoUkRadio1SyncIdArrayChanged(IntPtr aHandle, uint aaIdArrayToken, uint* aaIdArrayChanged);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginIdArrayChanged(uint aHandle, uint aaIdArrayToken, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkRadio1BeginIdArrayChanged(IntPtr aHandle, uint aaIdArrayToken, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndIdArrayChanged(uint aHandle, uint aAsync, uint* aaIdArrayChanged);
+        static extern unsafe int CpProxyLinnCoUkRadio1EndIdArrayChanged(IntPtr aHandle, IntPtr aAsync, uint* aaIdArrayChanged);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1SyncIdsMax(uint aHandle, uint* aaIdsMax);
+        static extern unsafe void CpProxyLinnCoUkRadio1SyncIdsMax(IntPtr aHandle, uint* aaIdsMax);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1BeginIdsMax(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkRadio1BeginIdsMax(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe int CpProxyLinnCoUkRadio1EndIdsMax(uint aHandle, uint aAsync, uint* aaIdsMax);
+        static extern unsafe int CpProxyLinnCoUkRadio1EndIdsMax(IntPtr aHandle, IntPtr aAsync, uint* aaIdsMax);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern void CpProxyLinnCoUkRadio1SetPropertyChannelUriChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkRadio1SetPropertyChannelUriChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern void CpProxyLinnCoUkRadio1SetPropertyChannelMetadataChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkRadio1SetPropertyChannelMetadataChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern void CpProxyLinnCoUkRadio1SetPropertyTransportStateChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkRadio1SetPropertyTransportStateChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern void CpProxyLinnCoUkRadio1SetPropertyProtocolInfoChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkRadio1SetPropertyProtocolInfoChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern void CpProxyLinnCoUkRadio1SetPropertyIdChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkRadio1SetPropertyIdChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern void CpProxyLinnCoUkRadio1SetPropertyIdArrayChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkRadio1SetPropertyIdArrayChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern void CpProxyLinnCoUkRadio1SetPropertyIdsMaxChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkRadio1SetPropertyIdsMaxChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1PropertyChannelUri(uint aHandle, char** aChannelUri);
+        static extern unsafe void CpProxyLinnCoUkRadio1PropertyChannelUri(IntPtr aHandle, char** aChannelUri);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1PropertyChannelMetadata(uint aHandle, char** aChannelMetadata);
+        static extern unsafe void CpProxyLinnCoUkRadio1PropertyChannelMetadata(IntPtr aHandle, char** aChannelMetadata);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1PropertyTransportState(uint aHandle, char** aTransportState);
+        static extern unsafe void CpProxyLinnCoUkRadio1PropertyTransportState(IntPtr aHandle, char** aTransportState);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1PropertyProtocolInfo(uint aHandle, char** aProtocolInfo);
+        static extern unsafe void CpProxyLinnCoUkRadio1PropertyProtocolInfo(IntPtr aHandle, char** aProtocolInfo);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1PropertyId(uint aHandle, uint* aId);
+        static extern unsafe void CpProxyLinnCoUkRadio1PropertyId(IntPtr aHandle, uint* aId);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1PropertyIdArray(uint aHandle, char** aIdArray, uint* aLen);
+        static extern unsafe void CpProxyLinnCoUkRadio1PropertyIdArray(IntPtr aHandle, char** aIdArray, uint* aLen);
         [DllImport("CpLinnCoUkRadio1")]
-        static extern unsafe void CpProxyLinnCoUkRadio1PropertyIdsMax(uint aHandle, uint* aIdsMax);
+        static extern unsafe void CpProxyLinnCoUkRadio1PropertyIdsMax(IntPtr aHandle, uint* aIdsMax);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -174,7 +174,7 @@ namespace Zapp
             CpProxyLinnCoUkRadio1BeginPlay(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndPlay(uint aAsyncHandle)
+        public unsafe void EndPlay(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkRadio1EndPlay(iHandle, aAsyncHandle))
@@ -198,7 +198,7 @@ namespace Zapp
             CpProxyLinnCoUkRadio1BeginPause(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndPause(uint aAsyncHandle)
+        public unsafe void EndPause(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkRadio1EndPause(iHandle, aAsyncHandle))
@@ -222,7 +222,7 @@ namespace Zapp
             CpProxyLinnCoUkRadio1BeginStop(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndStop(uint aAsyncHandle)
+        public unsafe void EndStop(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkRadio1EndStop(iHandle, aAsyncHandle))
@@ -246,7 +246,7 @@ namespace Zapp
             CpProxyLinnCoUkRadio1BeginSeekSecondAbsolute(iHandle, aaSecond, iActionComplete, ptr);
         }
 
-        public unsafe void EndSeekSecondAbsolute(uint aAsyncHandle)
+        public unsafe void EndSeekSecondAbsolute(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkRadio1EndSeekSecondAbsolute(iHandle, aAsyncHandle))
@@ -270,7 +270,7 @@ namespace Zapp
             CpProxyLinnCoUkRadio1BeginSeekSecondRelative(iHandle, aaSecond, iActionComplete, ptr);
         }
 
-        public unsafe void EndSeekSecondRelative(uint aAsyncHandle)
+        public unsafe void EndSeekSecondRelative(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkRadio1EndSeekSecondRelative(iHandle, aAsyncHandle))
@@ -300,7 +300,7 @@ namespace Zapp
             CpProxyLinnCoUkRadio1BeginChannel(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndChannel(uint aAsyncHandle, out string aaUri, out string aaMetadata)
+        public unsafe void EndChannel(IntPtr aAsyncHandle, out string aaUri, out string aaMetadata)
         {
 			char* aUri;
 			char* aMetadata;
@@ -338,7 +338,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)aMetadata);
         }
 
-        public unsafe void EndSetChannel(uint aAsyncHandle)
+        public unsafe void EndSetChannel(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkRadio1EndSetChannel(iHandle, aAsyncHandle))
@@ -365,7 +365,7 @@ namespace Zapp
             CpProxyLinnCoUkRadio1BeginProtocolInfo(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndProtocolInfo(uint aAsyncHandle, out string aaInfo)
+        public unsafe void EndProtocolInfo(IntPtr aAsyncHandle, out string aaInfo)
         {
 			char* aInfo;
 			{
@@ -395,7 +395,7 @@ namespace Zapp
             CpProxyLinnCoUkRadio1BeginTransportState(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndTransportState(uint aAsyncHandle, out string aaState)
+        public unsafe void EndTransportState(IntPtr aAsyncHandle, out string aaState)
         {
 			char* aState;
 			{
@@ -423,7 +423,7 @@ namespace Zapp
             CpProxyLinnCoUkRadio1BeginId(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndId(uint aAsyncHandle, out uint aaId)
+        public unsafe void EndId(IntPtr aAsyncHandle, out uint aaId)
         {
 			fixed (uint* aId = &aaId)
 			{
@@ -452,7 +452,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)aUri);
         }
 
-        public unsafe void EndSetId(uint aAsyncHandle)
+        public unsafe void EndSetId(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkRadio1EndSetId(iHandle, aAsyncHandle))
@@ -479,7 +479,7 @@ namespace Zapp
             CpProxyLinnCoUkRadio1BeginRead(iHandle, aaId, iActionComplete, ptr);
         }
 
-        public unsafe void EndRead(uint aAsyncHandle, out string aaMetadata)
+        public unsafe void EndRead(IntPtr aAsyncHandle, out string aaMetadata)
         {
 			char* aMetadata;
 			{
@@ -513,7 +513,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)aIdList);
         }
 
-        public unsafe void EndReadList(uint aAsyncHandle, out string aaMetadataList)
+        public unsafe void EndReadList(IntPtr aAsyncHandle, out string aaMetadataList)
         {
 			char* aMetadataList;
 			{
@@ -545,7 +545,7 @@ namespace Zapp
             CpProxyLinnCoUkRadio1BeginIdArray(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndIdArray(uint aAsyncHandle, out uint aaIdArrayToken, out string aaIdArray)
+        public unsafe void EndIdArray(IntPtr aAsyncHandle, out uint aaIdArrayToken, out string aaIdArray)
         {
 			char* aIdArray;
 			uint aIdArrayLen;
@@ -576,7 +576,7 @@ namespace Zapp
             CpProxyLinnCoUkRadio1BeginIdArrayChanged(iHandle, aaIdArrayToken, iActionComplete, ptr);
         }
 
-        public unsafe void EndIdArrayChanged(uint aAsyncHandle, out bool aaIdArrayChanged)
+        public unsafe void EndIdArrayChanged(IntPtr aAsyncHandle, out bool aaIdArrayChanged)
         {
 			uint aIdArrayChanged;
 			{
@@ -603,7 +603,7 @@ namespace Zapp
             CpProxyLinnCoUkRadio1BeginIdsMax(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndIdsMax(uint aAsyncHandle, out uint aaIdsMax)
+        public unsafe void EndIdsMax(IntPtr aAsyncHandle, out uint aaIdsMax)
         {
 			fixed (uint* aIdsMax = &aaIdsMax)
 			{
@@ -788,15 +788,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             CpProxyLinnCoUkRadio1Destroy(handle);
             iGch.Free();

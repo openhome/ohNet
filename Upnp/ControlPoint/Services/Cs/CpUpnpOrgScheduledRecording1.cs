@@ -8,121 +8,121 @@ namespace Zapp
     public class CpProxyUpnpOrgScheduledRecording1 : CpProxy, IDisposable
     {
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern uint CpProxyUpnpOrgScheduledRecording1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyUpnpOrgScheduledRecording1Create(IntPtr aDeviceHandle);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern void CpProxyUpnpOrgScheduledRecording1Destroy(uint aHandle);
+        static extern void CpProxyUpnpOrgScheduledRecording1Destroy(IntPtr aHandle);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetSortCapabilities(uint aHandle, char** aSortCaps, uint* aSortLevelCap);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetSortCapabilities(IntPtr aHandle, char** aSortCaps, uint* aSortLevelCap);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetSortCapabilities(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetSortCapabilities(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetSortCapabilities(uint aHandle, uint aAsync, char** aSortCaps, uint* aSortLevelCap);
+        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetSortCapabilities(IntPtr aHandle, IntPtr aAsync, char** aSortCaps, uint* aSortLevelCap);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetPropertyList(uint aHandle, char* aDataTypeID, char** aPropertyList);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetPropertyList(IntPtr aHandle, char* aDataTypeID, char** aPropertyList);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetPropertyList(uint aHandle, char* aDataTypeID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetPropertyList(IntPtr aHandle, char* aDataTypeID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetPropertyList(uint aHandle, uint aAsync, char** aPropertyList);
+        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetPropertyList(IntPtr aHandle, IntPtr aAsync, char** aPropertyList);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetAllowedValues(uint aHandle, char* aDataTypeID, char* aFilter, char** aPropertyInfo);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetAllowedValues(IntPtr aHandle, char* aDataTypeID, char* aFilter, char** aPropertyInfo);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetAllowedValues(uint aHandle, char* aDataTypeID, char* aFilter, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetAllowedValues(IntPtr aHandle, char* aDataTypeID, char* aFilter, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetAllowedValues(uint aHandle, uint aAsync, char** aPropertyInfo);
+        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetAllowedValues(IntPtr aHandle, IntPtr aAsync, char** aPropertyInfo);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetStateUpdateID(uint aHandle, uint* aId);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetStateUpdateID(IntPtr aHandle, uint* aId);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetStateUpdateID(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetStateUpdateID(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetStateUpdateID(uint aHandle, uint aAsync, uint* aId);
+        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetStateUpdateID(IntPtr aHandle, IntPtr aAsync, uint* aId);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncBrowseRecordSchedules(uint aHandle, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncBrowseRecordSchedules(IntPtr aHandle, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginBrowseRecordSchedules(uint aHandle, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginBrowseRecordSchedules(IntPtr aHandle, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndBrowseRecordSchedules(uint aHandle, uint aAsync, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
+        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndBrowseRecordSchedules(IntPtr aHandle, IntPtr aAsync, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncBrowseRecordTasks(uint aHandle, char* aRecordScheduleID, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncBrowseRecordTasks(IntPtr aHandle, char* aRecordScheduleID, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginBrowseRecordTasks(uint aHandle, char* aRecordScheduleID, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginBrowseRecordTasks(IntPtr aHandle, char* aRecordScheduleID, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndBrowseRecordTasks(uint aHandle, uint aAsync, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
+        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndBrowseRecordTasks(IntPtr aHandle, IntPtr aAsync, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncCreateRecordSchedule(uint aHandle, char* aElements, char** aRecordScheduleID, char** aResult, uint* aUpdateID);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncCreateRecordSchedule(IntPtr aHandle, char* aElements, char** aRecordScheduleID, char** aResult, uint* aUpdateID);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginCreateRecordSchedule(uint aHandle, char* aElements, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginCreateRecordSchedule(IntPtr aHandle, char* aElements, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndCreateRecordSchedule(uint aHandle, uint aAsync, char** aRecordScheduleID, char** aResult, uint* aUpdateID);
+        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndCreateRecordSchedule(IntPtr aHandle, IntPtr aAsync, char** aRecordScheduleID, char** aResult, uint* aUpdateID);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncDeleteRecordSchedule(uint aHandle, char* aRecordScheduleID);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncDeleteRecordSchedule(IntPtr aHandle, char* aRecordScheduleID);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginDeleteRecordSchedule(uint aHandle, char* aRecordScheduleID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginDeleteRecordSchedule(IntPtr aHandle, char* aRecordScheduleID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndDeleteRecordSchedule(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndDeleteRecordSchedule(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetRecordSchedule(uint aHandle, char* aRecordScheduleID, char* aFilter, char** aResult, uint* aUpdateID);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetRecordSchedule(IntPtr aHandle, char* aRecordScheduleID, char* aFilter, char** aResult, uint* aUpdateID);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetRecordSchedule(uint aHandle, char* aRecordScheduleID, char* aFilter, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetRecordSchedule(IntPtr aHandle, char* aRecordScheduleID, char* aFilter, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetRecordSchedule(uint aHandle, uint aAsync, char** aResult, uint* aUpdateID);
+        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetRecordSchedule(IntPtr aHandle, IntPtr aAsync, char** aResult, uint* aUpdateID);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncEnableRecordSchedule(uint aHandle, char* aRecordScheduleID);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncEnableRecordSchedule(IntPtr aHandle, char* aRecordScheduleID);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginEnableRecordSchedule(uint aHandle, char* aRecordScheduleID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginEnableRecordSchedule(IntPtr aHandle, char* aRecordScheduleID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndEnableRecordSchedule(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndEnableRecordSchedule(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncDisableRecordSchedule(uint aHandle, char* aRecordScheduleID);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncDisableRecordSchedule(IntPtr aHandle, char* aRecordScheduleID);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginDisableRecordSchedule(uint aHandle, char* aRecordScheduleID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginDisableRecordSchedule(IntPtr aHandle, char* aRecordScheduleID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndDisableRecordSchedule(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndDisableRecordSchedule(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncDeleteRecordTask(uint aHandle, char* aRecordTaskID);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncDeleteRecordTask(IntPtr aHandle, char* aRecordTaskID);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginDeleteRecordTask(uint aHandle, char* aRecordTaskID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginDeleteRecordTask(IntPtr aHandle, char* aRecordTaskID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndDeleteRecordTask(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndDeleteRecordTask(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetRecordTask(uint aHandle, char* aRecordTaskID, char* aFilter, char** aResult, uint* aUpdateID);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetRecordTask(IntPtr aHandle, char* aRecordTaskID, char* aFilter, char** aResult, uint* aUpdateID);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetRecordTask(uint aHandle, char* aRecordTaskID, char* aFilter, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetRecordTask(IntPtr aHandle, char* aRecordTaskID, char* aFilter, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetRecordTask(uint aHandle, uint aAsync, char** aResult, uint* aUpdateID);
+        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetRecordTask(IntPtr aHandle, IntPtr aAsync, char** aResult, uint* aUpdateID);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncEnableRecordTask(uint aHandle, char* aRecordTaskID);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncEnableRecordTask(IntPtr aHandle, char* aRecordTaskID);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginEnableRecordTask(uint aHandle, char* aRecordTaskID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginEnableRecordTask(IntPtr aHandle, char* aRecordTaskID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndEnableRecordTask(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndEnableRecordTask(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncDisableRecordTask(uint aHandle, char* aRecordTaskID);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncDisableRecordTask(IntPtr aHandle, char* aRecordTaskID);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginDisableRecordTask(uint aHandle, char* aRecordTaskID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginDisableRecordTask(IntPtr aHandle, char* aRecordTaskID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndDisableRecordTask(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndDisableRecordTask(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncResetRecordTask(uint aHandle, char* aRecordTaskID);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncResetRecordTask(IntPtr aHandle, char* aRecordTaskID);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginResetRecordTask(uint aHandle, char* aRecordTaskID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginResetRecordTask(IntPtr aHandle, char* aRecordTaskID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndResetRecordTask(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndResetRecordTask(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetRecordScheduleConflicts(uint aHandle, char* aRecordScheduleID, char** aRecordScheduleConflictIDList, uint* aUpdateID);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetRecordScheduleConflicts(IntPtr aHandle, char* aRecordScheduleID, char** aRecordScheduleConflictIDList, uint* aUpdateID);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetRecordScheduleConflicts(uint aHandle, char* aRecordScheduleID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetRecordScheduleConflicts(IntPtr aHandle, char* aRecordScheduleID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetRecordScheduleConflicts(uint aHandle, uint aAsync, char** aRecordScheduleConflictIDList, uint* aUpdateID);
+        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetRecordScheduleConflicts(IntPtr aHandle, IntPtr aAsync, char** aRecordScheduleConflictIDList, uint* aUpdateID);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetRecordTaskConflicts(uint aHandle, char* aRecordTaskID, char** aRecordTaskConflictIDList, uint* aUpdateID);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetRecordTaskConflicts(IntPtr aHandle, char* aRecordTaskID, char** aRecordTaskConflictIDList, uint* aUpdateID);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetRecordTaskConflicts(uint aHandle, char* aRecordTaskID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetRecordTaskConflicts(IntPtr aHandle, char* aRecordTaskID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetRecordTaskConflicts(uint aHandle, uint aAsync, char** aRecordTaskConflictIDList, uint* aUpdateID);
+        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetRecordTaskConflicts(IntPtr aHandle, IntPtr aAsync, char** aRecordTaskConflictIDList, uint* aUpdateID);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern void CpProxyUpnpOrgScheduledRecording1SetPropertyLastChangeChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyUpnpOrgScheduledRecording1SetPropertyLastChangeChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1PropertyLastChange(uint aHandle, char** aLastChange);
+        static extern unsafe void CpProxyUpnpOrgScheduledRecording1PropertyLastChange(IntPtr aHandle, char** aLastChange);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -154,7 +154,7 @@ namespace Zapp
             CpProxyUpnpOrgScheduledRecording1BeginGetSortCapabilities(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetSortCapabilities(uint aAsyncHandle, out string aSortCaps, out uint aSortLevelCap)
+        public unsafe void EndGetSortCapabilities(IntPtr aAsyncHandle, out string aSortCaps, out uint aSortLevelCap)
         {
 			char* sortCaps;
 			fixed (uint* sortLevelCap = &aSortLevelCap)
@@ -189,7 +189,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)dataTypeID);
         }
 
-        public unsafe void EndGetPropertyList(uint aAsyncHandle, out string aPropertyList)
+        public unsafe void EndGetPropertyList(IntPtr aAsyncHandle, out string aPropertyList)
         {
 			char* propertyList;
 			{
@@ -227,7 +227,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)filter);
         }
 
-        public unsafe void EndGetAllowedValues(uint aAsyncHandle, out string aPropertyInfo)
+        public unsafe void EndGetAllowedValues(IntPtr aAsyncHandle, out string aPropertyInfo)
         {
 			char* propertyInfo;
 			{
@@ -255,7 +255,7 @@ namespace Zapp
             CpProxyUpnpOrgScheduledRecording1BeginGetStateUpdateID(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetStateUpdateID(uint aAsyncHandle, out uint aId)
+        public unsafe void EndGetStateUpdateID(IntPtr aAsyncHandle, out uint aId)
         {
 			fixed (uint* id = &aId)
 			{
@@ -294,7 +294,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)sortCriteria);
         }
 
-        public unsafe void EndBrowseRecordSchedules(uint aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
+        public unsafe void EndBrowseRecordSchedules(IntPtr aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
 			char* result;
 			fixed (uint* numberReturned = &aNumberReturned)
@@ -342,7 +342,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)sortCriteria);
         }
 
-        public unsafe void EndBrowseRecordTasks(uint aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
+        public unsafe void EndBrowseRecordTasks(IntPtr aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
 			char* result;
 			fixed (uint* numberReturned = &aNumberReturned)
@@ -383,7 +383,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)elements);
         }
 
-        public unsafe void EndCreateRecordSchedule(uint aAsyncHandle, out string aRecordScheduleID, out string aResult, out uint aUpdateID)
+        public unsafe void EndCreateRecordSchedule(IntPtr aAsyncHandle, out string aRecordScheduleID, out string aResult, out uint aUpdateID)
         {
 			char* recordScheduleID;
 			char* result;
@@ -418,7 +418,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)recordScheduleID);
         }
 
-        public unsafe void EndDeleteRecordSchedule(uint aAsyncHandle)
+        public unsafe void EndDeleteRecordSchedule(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgScheduledRecording1EndDeleteRecordSchedule(iHandle, aAsyncHandle))
@@ -454,7 +454,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)filter);
         }
 
-        public unsafe void EndGetRecordSchedule(uint aAsyncHandle, out string aResult, out uint aUpdateID)
+        public unsafe void EndGetRecordSchedule(IntPtr aAsyncHandle, out string aResult, out uint aUpdateID)
         {
 			char* result;
 			fixed (uint* updateID = &aUpdateID)
@@ -486,7 +486,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)recordScheduleID);
         }
 
-        public unsafe void EndEnableRecordSchedule(uint aAsyncHandle)
+        public unsafe void EndEnableRecordSchedule(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgScheduledRecording1EndEnableRecordSchedule(iHandle, aAsyncHandle))
@@ -514,7 +514,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)recordScheduleID);
         }
 
-        public unsafe void EndDisableRecordSchedule(uint aAsyncHandle)
+        public unsafe void EndDisableRecordSchedule(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgScheduledRecording1EndDisableRecordSchedule(iHandle, aAsyncHandle))
@@ -542,7 +542,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)recordTaskID);
         }
 
-        public unsafe void EndDeleteRecordTask(uint aAsyncHandle)
+        public unsafe void EndDeleteRecordTask(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgScheduledRecording1EndDeleteRecordTask(iHandle, aAsyncHandle))
@@ -578,7 +578,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)filter);
         }
 
-        public unsafe void EndGetRecordTask(uint aAsyncHandle, out string aResult, out uint aUpdateID)
+        public unsafe void EndGetRecordTask(IntPtr aAsyncHandle, out string aResult, out uint aUpdateID)
         {
 			char* result;
 			fixed (uint* updateID = &aUpdateID)
@@ -610,7 +610,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)recordTaskID);
         }
 
-        public unsafe void EndEnableRecordTask(uint aAsyncHandle)
+        public unsafe void EndEnableRecordTask(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgScheduledRecording1EndEnableRecordTask(iHandle, aAsyncHandle))
@@ -638,7 +638,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)recordTaskID);
         }
 
-        public unsafe void EndDisableRecordTask(uint aAsyncHandle)
+        public unsafe void EndDisableRecordTask(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgScheduledRecording1EndDisableRecordTask(iHandle, aAsyncHandle))
@@ -666,7 +666,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)recordTaskID);
         }
 
-        public unsafe void EndResetRecordTask(uint aAsyncHandle)
+        public unsafe void EndResetRecordTask(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgScheduledRecording1EndResetRecordTask(iHandle, aAsyncHandle))
@@ -698,7 +698,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)recordScheduleID);
         }
 
-        public unsafe void EndGetRecordScheduleConflicts(uint aAsyncHandle, out string aRecordScheduleConflictIDList, out uint aUpdateID)
+        public unsafe void EndGetRecordScheduleConflicts(IntPtr aAsyncHandle, out string aRecordScheduleConflictIDList, out uint aUpdateID)
         {
 			char* recordScheduleConflictIDList;
 			fixed (uint* updateID = &aUpdateID)
@@ -734,7 +734,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)recordTaskID);
         }
 
-        public unsafe void EndGetRecordTaskConflicts(uint aAsyncHandle, out string aRecordTaskConflictIDList, out uint aUpdateID)
+        public unsafe void EndGetRecordTaskConflicts(IntPtr aAsyncHandle, out string aRecordTaskConflictIDList, out uint aUpdateID)
         {
 			char* recordTaskConflictIDList;
 			fixed (uint* updateID = &aUpdateID)
@@ -783,15 +783,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             CpProxyUpnpOrgScheduledRecording1Destroy(handle);
             iGch.Free();

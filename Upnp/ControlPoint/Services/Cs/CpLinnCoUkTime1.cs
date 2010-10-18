@@ -8,27 +8,27 @@ namespace Zapp
     public class CpProxyLinnCoUkTime1 : CpProxy, IDisposable
     {
         [DllImport("CpLinnCoUkTime1")]
-        static extern uint CpProxyLinnCoUkTime1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyLinnCoUkTime1Create(IntPtr aDeviceHandle);
         [DllImport("CpLinnCoUkTime1")]
-        static extern void CpProxyLinnCoUkTime1Destroy(uint aHandle);
+        static extern void CpProxyLinnCoUkTime1Destroy(IntPtr aHandle);
         [DllImport("CpLinnCoUkTime1")]
-        static extern unsafe void CpProxyLinnCoUkTime1SyncTime(uint aHandle, uint* aaTrackCount, uint* aaDuration, uint* aaSeconds);
+        static extern unsafe void CpProxyLinnCoUkTime1SyncTime(IntPtr aHandle, uint* aaTrackCount, uint* aaDuration, uint* aaSeconds);
         [DllImport("CpLinnCoUkTime1")]
-        static extern unsafe void CpProxyLinnCoUkTime1BeginTime(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkTime1BeginTime(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkTime1")]
-        static extern unsafe int CpProxyLinnCoUkTime1EndTime(uint aHandle, uint aAsync, uint* aaTrackCount, uint* aaDuration, uint* aaSeconds);
+        static extern unsafe int CpProxyLinnCoUkTime1EndTime(IntPtr aHandle, IntPtr aAsync, uint* aaTrackCount, uint* aaDuration, uint* aaSeconds);
         [DllImport("CpLinnCoUkTime1")]
-        static extern void CpProxyLinnCoUkTime1SetPropertyTrackCountChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkTime1SetPropertyTrackCountChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkTime1")]
-        static extern void CpProxyLinnCoUkTime1SetPropertyDurationChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkTime1SetPropertyDurationChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkTime1")]
-        static extern void CpProxyLinnCoUkTime1SetPropertySecondsChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkTime1SetPropertySecondsChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkTime1")]
-        static extern unsafe void CpProxyLinnCoUkTime1PropertyTrackCount(uint aHandle, uint* aTrackCount);
+        static extern unsafe void CpProxyLinnCoUkTime1PropertyTrackCount(IntPtr aHandle, uint* aTrackCount);
         [DllImport("CpLinnCoUkTime1")]
-        static extern unsafe void CpProxyLinnCoUkTime1PropertyDuration(uint aHandle, uint* aDuration);
+        static extern unsafe void CpProxyLinnCoUkTime1PropertyDuration(IntPtr aHandle, uint* aDuration);
         [DllImport("CpLinnCoUkTime1")]
-        static extern unsafe void CpProxyLinnCoUkTime1PropertySeconds(uint aHandle, uint* aSeconds);
+        static extern unsafe void CpProxyLinnCoUkTime1PropertySeconds(IntPtr aHandle, uint* aSeconds);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -63,7 +63,7 @@ namespace Zapp
             CpProxyLinnCoUkTime1BeginTime(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndTime(uint aAsyncHandle, out uint aaTrackCount, out uint aaDuration, out uint aaSeconds)
+        public unsafe void EndTime(IntPtr aAsyncHandle, out uint aaTrackCount, out uint aaDuration, out uint aaSeconds)
         {
 			fixed (uint* aTrackCount = &aaTrackCount)
 			fixed (uint* aDuration = &aaDuration)
@@ -157,15 +157,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             CpProxyLinnCoUkTime1Destroy(handle);
             iGch.Free();

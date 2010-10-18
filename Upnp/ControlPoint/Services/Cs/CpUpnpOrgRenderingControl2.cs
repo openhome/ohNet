@@ -8,235 +8,235 @@ namespace Zapp
     public class CpProxyUpnpOrgRenderingControl2 : CpProxy, IDisposable
     {
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern uint CpProxyUpnpOrgRenderingControl2Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyUpnpOrgRenderingControl2Create(IntPtr aDeviceHandle);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern void CpProxyUpnpOrgRenderingControl2Destroy(uint aHandle);
+        static extern void CpProxyUpnpOrgRenderingControl2Destroy(IntPtr aHandle);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncListPresets(uint aHandle, uint aInstanceID, char** aCurrentPresetNameList);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncListPresets(IntPtr aHandle, uint aInstanceID, char** aCurrentPresetNameList);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginListPresets(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginListPresets(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndListPresets(uint aHandle, uint aAsync, char** aCurrentPresetNameList);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndListPresets(IntPtr aHandle, IntPtr aAsync, char** aCurrentPresetNameList);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSelectPreset(uint aHandle, uint aInstanceID, char* aPresetName);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSelectPreset(IntPtr aHandle, uint aInstanceID, char* aPresetName);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSelectPreset(uint aHandle, uint aInstanceID, char* aPresetName, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSelectPreset(IntPtr aHandle, uint aInstanceID, char* aPresetName, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSelectPreset(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSelectPreset(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetBrightness(uint aHandle, uint aInstanceID, uint* aCurrentBrightness);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetBrightness(IntPtr aHandle, uint aInstanceID, uint* aCurrentBrightness);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetBrightness(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetBrightness(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetBrightness(uint aHandle, uint aAsync, uint* aCurrentBrightness);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetBrightness(IntPtr aHandle, IntPtr aAsync, uint* aCurrentBrightness);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetBrightness(uint aHandle, uint aInstanceID, uint aDesiredBrightness);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetBrightness(IntPtr aHandle, uint aInstanceID, uint aDesiredBrightness);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetBrightness(uint aHandle, uint aInstanceID, uint aDesiredBrightness, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetBrightness(IntPtr aHandle, uint aInstanceID, uint aDesiredBrightness, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetBrightness(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetBrightness(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetContrast(uint aHandle, uint aInstanceID, uint* aCurrentContrast);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetContrast(IntPtr aHandle, uint aInstanceID, uint* aCurrentContrast);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetContrast(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetContrast(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetContrast(uint aHandle, uint aAsync, uint* aCurrentContrast);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetContrast(IntPtr aHandle, IntPtr aAsync, uint* aCurrentContrast);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetContrast(uint aHandle, uint aInstanceID, uint aDesiredContrast);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetContrast(IntPtr aHandle, uint aInstanceID, uint aDesiredContrast);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetContrast(uint aHandle, uint aInstanceID, uint aDesiredContrast, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetContrast(IntPtr aHandle, uint aInstanceID, uint aDesiredContrast, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetContrast(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetContrast(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetSharpness(uint aHandle, uint aInstanceID, uint* aCurrentSharpness);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetSharpness(IntPtr aHandle, uint aInstanceID, uint* aCurrentSharpness);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetSharpness(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetSharpness(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetSharpness(uint aHandle, uint aAsync, uint* aCurrentSharpness);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetSharpness(IntPtr aHandle, IntPtr aAsync, uint* aCurrentSharpness);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetSharpness(uint aHandle, uint aInstanceID, uint aDesiredSharpness);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetSharpness(IntPtr aHandle, uint aInstanceID, uint aDesiredSharpness);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetSharpness(uint aHandle, uint aInstanceID, uint aDesiredSharpness, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetSharpness(IntPtr aHandle, uint aInstanceID, uint aDesiredSharpness, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetSharpness(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetSharpness(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetRedVideoGain(uint aHandle, uint aInstanceID, uint* aCurrentRedVideoGain);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetRedVideoGain(IntPtr aHandle, uint aInstanceID, uint* aCurrentRedVideoGain);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetRedVideoGain(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetRedVideoGain(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetRedVideoGain(uint aHandle, uint aAsync, uint* aCurrentRedVideoGain);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetRedVideoGain(IntPtr aHandle, IntPtr aAsync, uint* aCurrentRedVideoGain);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetRedVideoGain(uint aHandle, uint aInstanceID, uint aDesiredRedVideoGain);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetRedVideoGain(IntPtr aHandle, uint aInstanceID, uint aDesiredRedVideoGain);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetRedVideoGain(uint aHandle, uint aInstanceID, uint aDesiredRedVideoGain, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetRedVideoGain(IntPtr aHandle, uint aInstanceID, uint aDesiredRedVideoGain, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetRedVideoGain(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetRedVideoGain(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetGreenVideoGain(uint aHandle, uint aInstanceID, uint* aCurrentGreenVideoGain);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetGreenVideoGain(IntPtr aHandle, uint aInstanceID, uint* aCurrentGreenVideoGain);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetGreenVideoGain(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetGreenVideoGain(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetGreenVideoGain(uint aHandle, uint aAsync, uint* aCurrentGreenVideoGain);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetGreenVideoGain(IntPtr aHandle, IntPtr aAsync, uint* aCurrentGreenVideoGain);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetGreenVideoGain(uint aHandle, uint aInstanceID, uint aDesiredGreenVideoGain);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetGreenVideoGain(IntPtr aHandle, uint aInstanceID, uint aDesiredGreenVideoGain);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetGreenVideoGain(uint aHandle, uint aInstanceID, uint aDesiredGreenVideoGain, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetGreenVideoGain(IntPtr aHandle, uint aInstanceID, uint aDesiredGreenVideoGain, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetGreenVideoGain(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetGreenVideoGain(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetBlueVideoGain(uint aHandle, uint aInstanceID, uint* aCurrentBlueVideoGain);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetBlueVideoGain(IntPtr aHandle, uint aInstanceID, uint* aCurrentBlueVideoGain);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetBlueVideoGain(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetBlueVideoGain(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetBlueVideoGain(uint aHandle, uint aAsync, uint* aCurrentBlueVideoGain);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetBlueVideoGain(IntPtr aHandle, IntPtr aAsync, uint* aCurrentBlueVideoGain);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetBlueVideoGain(uint aHandle, uint aInstanceID, uint aDesiredBlueVideoGain);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetBlueVideoGain(IntPtr aHandle, uint aInstanceID, uint aDesiredBlueVideoGain);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetBlueVideoGain(uint aHandle, uint aInstanceID, uint aDesiredBlueVideoGain, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetBlueVideoGain(IntPtr aHandle, uint aInstanceID, uint aDesiredBlueVideoGain, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetBlueVideoGain(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetBlueVideoGain(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetRedVideoBlackLevel(uint aHandle, uint aInstanceID, uint* aCurrentRedVideoBlackLevel);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetRedVideoBlackLevel(IntPtr aHandle, uint aInstanceID, uint* aCurrentRedVideoBlackLevel);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetRedVideoBlackLevel(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetRedVideoBlackLevel(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetRedVideoBlackLevel(uint aHandle, uint aAsync, uint* aCurrentRedVideoBlackLevel);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetRedVideoBlackLevel(IntPtr aHandle, IntPtr aAsync, uint* aCurrentRedVideoBlackLevel);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetRedVideoBlackLevel(uint aHandle, uint aInstanceID, uint aDesiredRedVideoBlackLevel);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetRedVideoBlackLevel(IntPtr aHandle, uint aInstanceID, uint aDesiredRedVideoBlackLevel);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetRedVideoBlackLevel(uint aHandle, uint aInstanceID, uint aDesiredRedVideoBlackLevel, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetRedVideoBlackLevel(IntPtr aHandle, uint aInstanceID, uint aDesiredRedVideoBlackLevel, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetRedVideoBlackLevel(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetRedVideoBlackLevel(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetGreenVideoBlackLevel(uint aHandle, uint aInstanceID, uint* aCurrentGreenVideoBlackLevel);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetGreenVideoBlackLevel(IntPtr aHandle, uint aInstanceID, uint* aCurrentGreenVideoBlackLevel);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetGreenVideoBlackLevel(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetGreenVideoBlackLevel(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetGreenVideoBlackLevel(uint aHandle, uint aAsync, uint* aCurrentGreenVideoBlackLevel);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetGreenVideoBlackLevel(IntPtr aHandle, IntPtr aAsync, uint* aCurrentGreenVideoBlackLevel);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetGreenVideoBlackLevel(uint aHandle, uint aInstanceID, uint aDesiredGreenVideoBlackLevel);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetGreenVideoBlackLevel(IntPtr aHandle, uint aInstanceID, uint aDesiredGreenVideoBlackLevel);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetGreenVideoBlackLevel(uint aHandle, uint aInstanceID, uint aDesiredGreenVideoBlackLevel, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetGreenVideoBlackLevel(IntPtr aHandle, uint aInstanceID, uint aDesiredGreenVideoBlackLevel, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetGreenVideoBlackLevel(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetGreenVideoBlackLevel(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetBlueVideoBlackLevel(uint aHandle, uint aInstanceID, uint* aCurrentBlueVideoBlackLevel);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetBlueVideoBlackLevel(IntPtr aHandle, uint aInstanceID, uint* aCurrentBlueVideoBlackLevel);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetBlueVideoBlackLevel(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetBlueVideoBlackLevel(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetBlueVideoBlackLevel(uint aHandle, uint aAsync, uint* aCurrentBlueVideoBlackLevel);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetBlueVideoBlackLevel(IntPtr aHandle, IntPtr aAsync, uint* aCurrentBlueVideoBlackLevel);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetBlueVideoBlackLevel(uint aHandle, uint aInstanceID, uint aDesiredBlueVideoBlackLevel);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetBlueVideoBlackLevel(IntPtr aHandle, uint aInstanceID, uint aDesiredBlueVideoBlackLevel);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetBlueVideoBlackLevel(uint aHandle, uint aInstanceID, uint aDesiredBlueVideoBlackLevel, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetBlueVideoBlackLevel(IntPtr aHandle, uint aInstanceID, uint aDesiredBlueVideoBlackLevel, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetBlueVideoBlackLevel(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetBlueVideoBlackLevel(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetColorTemperature(uint aHandle, uint aInstanceID, uint* aCurrentColorTemperature);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetColorTemperature(IntPtr aHandle, uint aInstanceID, uint* aCurrentColorTemperature);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetColorTemperature(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetColorTemperature(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetColorTemperature(uint aHandle, uint aAsync, uint* aCurrentColorTemperature);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetColorTemperature(IntPtr aHandle, IntPtr aAsync, uint* aCurrentColorTemperature);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetColorTemperature(uint aHandle, uint aInstanceID, uint aDesiredColorTemperature);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetColorTemperature(IntPtr aHandle, uint aInstanceID, uint aDesiredColorTemperature);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetColorTemperature(uint aHandle, uint aInstanceID, uint aDesiredColorTemperature, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetColorTemperature(IntPtr aHandle, uint aInstanceID, uint aDesiredColorTemperature, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetColorTemperature(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetColorTemperature(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetHorizontalKeystone(uint aHandle, uint aInstanceID, int* aCurrentHorizontalKeystone);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetHorizontalKeystone(IntPtr aHandle, uint aInstanceID, int* aCurrentHorizontalKeystone);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetHorizontalKeystone(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetHorizontalKeystone(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetHorizontalKeystone(uint aHandle, uint aAsync, int* aCurrentHorizontalKeystone);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetHorizontalKeystone(IntPtr aHandle, IntPtr aAsync, int* aCurrentHorizontalKeystone);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetHorizontalKeystone(uint aHandle, uint aInstanceID, int aDesiredHorizontalKeystone);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetHorizontalKeystone(IntPtr aHandle, uint aInstanceID, int aDesiredHorizontalKeystone);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetHorizontalKeystone(uint aHandle, uint aInstanceID, int aDesiredHorizontalKeystone, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetHorizontalKeystone(IntPtr aHandle, uint aInstanceID, int aDesiredHorizontalKeystone, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetHorizontalKeystone(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetHorizontalKeystone(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetVerticalKeystone(uint aHandle, uint aInstanceID, int* aCurrentVerticalKeystone);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetVerticalKeystone(IntPtr aHandle, uint aInstanceID, int* aCurrentVerticalKeystone);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetVerticalKeystone(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetVerticalKeystone(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetVerticalKeystone(uint aHandle, uint aAsync, int* aCurrentVerticalKeystone);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetVerticalKeystone(IntPtr aHandle, IntPtr aAsync, int* aCurrentVerticalKeystone);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetVerticalKeystone(uint aHandle, uint aInstanceID, int aDesiredVerticalKeystone);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetVerticalKeystone(IntPtr aHandle, uint aInstanceID, int aDesiredVerticalKeystone);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetVerticalKeystone(uint aHandle, uint aInstanceID, int aDesiredVerticalKeystone, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetVerticalKeystone(IntPtr aHandle, uint aInstanceID, int aDesiredVerticalKeystone, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetVerticalKeystone(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetVerticalKeystone(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetMute(uint aHandle, uint aInstanceID, char* aChannel, uint* aCurrentMute);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetMute(IntPtr aHandle, uint aInstanceID, char* aChannel, uint* aCurrentMute);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetMute(uint aHandle, uint aInstanceID, char* aChannel, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetMute(IntPtr aHandle, uint aInstanceID, char* aChannel, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetMute(uint aHandle, uint aAsync, uint* aCurrentMute);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetMute(IntPtr aHandle, IntPtr aAsync, uint* aCurrentMute);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetMute(uint aHandle, uint aInstanceID, char* aChannel, uint aDesiredMute);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetMute(IntPtr aHandle, uint aInstanceID, char* aChannel, uint aDesiredMute);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetMute(uint aHandle, uint aInstanceID, char* aChannel, uint aDesiredMute, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetMute(IntPtr aHandle, uint aInstanceID, char* aChannel, uint aDesiredMute, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetMute(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetMute(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetVolume(uint aHandle, uint aInstanceID, char* aChannel, uint* aCurrentVolume);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetVolume(IntPtr aHandle, uint aInstanceID, char* aChannel, uint* aCurrentVolume);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetVolume(uint aHandle, uint aInstanceID, char* aChannel, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetVolume(IntPtr aHandle, uint aInstanceID, char* aChannel, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetVolume(uint aHandle, uint aAsync, uint* aCurrentVolume);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetVolume(IntPtr aHandle, IntPtr aAsync, uint* aCurrentVolume);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetVolume(uint aHandle, uint aInstanceID, char* aChannel, uint aDesiredVolume);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetVolume(IntPtr aHandle, uint aInstanceID, char* aChannel, uint aDesiredVolume);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetVolume(uint aHandle, uint aInstanceID, char* aChannel, uint aDesiredVolume, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetVolume(IntPtr aHandle, uint aInstanceID, char* aChannel, uint aDesiredVolume, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetVolume(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetVolume(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetVolumeDB(uint aHandle, uint aInstanceID, char* aChannel, int* aCurrentVolume);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetVolumeDB(IntPtr aHandle, uint aInstanceID, char* aChannel, int* aCurrentVolume);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetVolumeDB(uint aHandle, uint aInstanceID, char* aChannel, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetVolumeDB(IntPtr aHandle, uint aInstanceID, char* aChannel, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetVolumeDB(uint aHandle, uint aAsync, int* aCurrentVolume);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetVolumeDB(IntPtr aHandle, IntPtr aAsync, int* aCurrentVolume);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetVolumeDB(uint aHandle, uint aInstanceID, char* aChannel, int aDesiredVolume);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetVolumeDB(IntPtr aHandle, uint aInstanceID, char* aChannel, int aDesiredVolume);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetVolumeDB(uint aHandle, uint aInstanceID, char* aChannel, int aDesiredVolume, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetVolumeDB(IntPtr aHandle, uint aInstanceID, char* aChannel, int aDesiredVolume, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetVolumeDB(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetVolumeDB(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetVolumeDBRange(uint aHandle, uint aInstanceID, char* aChannel, int* aMinValue, int* aMaxValue);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetVolumeDBRange(IntPtr aHandle, uint aInstanceID, char* aChannel, int* aMinValue, int* aMaxValue);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetVolumeDBRange(uint aHandle, uint aInstanceID, char* aChannel, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetVolumeDBRange(IntPtr aHandle, uint aInstanceID, char* aChannel, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetVolumeDBRange(uint aHandle, uint aAsync, int* aMinValue, int* aMaxValue);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetVolumeDBRange(IntPtr aHandle, IntPtr aAsync, int* aMinValue, int* aMaxValue);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetLoudness(uint aHandle, uint aInstanceID, char* aChannel, uint* aCurrentLoudness);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetLoudness(IntPtr aHandle, uint aInstanceID, char* aChannel, uint* aCurrentLoudness);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetLoudness(uint aHandle, uint aInstanceID, char* aChannel, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetLoudness(IntPtr aHandle, uint aInstanceID, char* aChannel, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetLoudness(uint aHandle, uint aAsync, uint* aCurrentLoudness);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetLoudness(IntPtr aHandle, IntPtr aAsync, uint* aCurrentLoudness);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetLoudness(uint aHandle, uint aInstanceID, char* aChannel, uint aDesiredLoudness);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetLoudness(IntPtr aHandle, uint aInstanceID, char* aChannel, uint aDesiredLoudness);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetLoudness(uint aHandle, uint aInstanceID, char* aChannel, uint aDesiredLoudness, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetLoudness(IntPtr aHandle, uint aInstanceID, char* aChannel, uint aDesiredLoudness, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetLoudness(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetLoudness(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetStateVariables(uint aHandle, uint aInstanceID, char* aStateVariableList, char** aStateVariableValuePairs);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetStateVariables(IntPtr aHandle, uint aInstanceID, char* aStateVariableList, char** aStateVariableValuePairs);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetStateVariables(uint aHandle, uint aInstanceID, char* aStateVariableList, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetStateVariables(IntPtr aHandle, uint aInstanceID, char* aStateVariableList, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetStateVariables(uint aHandle, uint aAsync, char** aStateVariableValuePairs);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetStateVariables(IntPtr aHandle, IntPtr aAsync, char** aStateVariableValuePairs);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetStateVariables(uint aHandle, uint aInstanceID, char* aRenderingControlUDN, char* aServiceType, char* aServiceId, char* aStateVariableValuePairs, char** aStateVariableList);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetStateVariables(IntPtr aHandle, uint aInstanceID, char* aRenderingControlUDN, char* aServiceType, char* aServiceId, char* aStateVariableValuePairs, char** aStateVariableList);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetStateVariables(uint aHandle, uint aInstanceID, char* aRenderingControlUDN, char* aServiceType, char* aServiceId, char* aStateVariableValuePairs, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetStateVariables(IntPtr aHandle, uint aInstanceID, char* aRenderingControlUDN, char* aServiceType, char* aServiceId, char* aStateVariableValuePairs, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetStateVariables(uint aHandle, uint aAsync, char** aStateVariableList);
+        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetStateVariables(IntPtr aHandle, IntPtr aAsync, char** aStateVariableList);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern void CpProxyUpnpOrgRenderingControl2SetPropertyLastChangeChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyUpnpOrgRenderingControl2SetPropertyLastChangeChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2PropertyLastChange(uint aHandle, char** aLastChange);
+        static extern unsafe void CpProxyUpnpOrgRenderingControl2PropertyLastChange(IntPtr aHandle, char** aLastChange);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -267,7 +267,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginListPresets(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
-        public unsafe void EndListPresets(uint aAsyncHandle, out string aCurrentPresetNameList)
+        public unsafe void EndListPresets(IntPtr aAsyncHandle, out string aCurrentPresetNameList)
         {
 			char* currentPresetNameList;
 			{
@@ -298,7 +298,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)presetName);
         }
 
-        public unsafe void EndSelectPreset(uint aAsyncHandle)
+        public unsafe void EndSelectPreset(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgRenderingControl2EndSelectPreset(iHandle, aAsyncHandle))
@@ -323,7 +323,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginGetBrightness(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetBrightness(uint aAsyncHandle, out uint aCurrentBrightness)
+        public unsafe void EndGetBrightness(IntPtr aAsyncHandle, out uint aCurrentBrightness)
         {
 			fixed (uint* currentBrightness = &aCurrentBrightness)
 			{
@@ -348,7 +348,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginSetBrightness(iHandle, aInstanceID, aDesiredBrightness, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetBrightness(uint aAsyncHandle)
+        public unsafe void EndSetBrightness(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgRenderingControl2EndSetBrightness(iHandle, aAsyncHandle))
@@ -373,7 +373,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginGetContrast(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetContrast(uint aAsyncHandle, out uint aCurrentContrast)
+        public unsafe void EndGetContrast(IntPtr aAsyncHandle, out uint aCurrentContrast)
         {
 			fixed (uint* currentContrast = &aCurrentContrast)
 			{
@@ -398,7 +398,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginSetContrast(iHandle, aInstanceID, aDesiredContrast, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetContrast(uint aAsyncHandle)
+        public unsafe void EndSetContrast(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgRenderingControl2EndSetContrast(iHandle, aAsyncHandle))
@@ -423,7 +423,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginGetSharpness(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetSharpness(uint aAsyncHandle, out uint aCurrentSharpness)
+        public unsafe void EndGetSharpness(IntPtr aAsyncHandle, out uint aCurrentSharpness)
         {
 			fixed (uint* currentSharpness = &aCurrentSharpness)
 			{
@@ -448,7 +448,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginSetSharpness(iHandle, aInstanceID, aDesiredSharpness, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetSharpness(uint aAsyncHandle)
+        public unsafe void EndSetSharpness(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgRenderingControl2EndSetSharpness(iHandle, aAsyncHandle))
@@ -473,7 +473,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginGetRedVideoGain(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetRedVideoGain(uint aAsyncHandle, out uint aCurrentRedVideoGain)
+        public unsafe void EndGetRedVideoGain(IntPtr aAsyncHandle, out uint aCurrentRedVideoGain)
         {
 			fixed (uint* currentRedVideoGain = &aCurrentRedVideoGain)
 			{
@@ -498,7 +498,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginSetRedVideoGain(iHandle, aInstanceID, aDesiredRedVideoGain, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetRedVideoGain(uint aAsyncHandle)
+        public unsafe void EndSetRedVideoGain(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgRenderingControl2EndSetRedVideoGain(iHandle, aAsyncHandle))
@@ -523,7 +523,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginGetGreenVideoGain(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetGreenVideoGain(uint aAsyncHandle, out uint aCurrentGreenVideoGain)
+        public unsafe void EndGetGreenVideoGain(IntPtr aAsyncHandle, out uint aCurrentGreenVideoGain)
         {
 			fixed (uint* currentGreenVideoGain = &aCurrentGreenVideoGain)
 			{
@@ -548,7 +548,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginSetGreenVideoGain(iHandle, aInstanceID, aDesiredGreenVideoGain, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetGreenVideoGain(uint aAsyncHandle)
+        public unsafe void EndSetGreenVideoGain(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgRenderingControl2EndSetGreenVideoGain(iHandle, aAsyncHandle))
@@ -573,7 +573,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginGetBlueVideoGain(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetBlueVideoGain(uint aAsyncHandle, out uint aCurrentBlueVideoGain)
+        public unsafe void EndGetBlueVideoGain(IntPtr aAsyncHandle, out uint aCurrentBlueVideoGain)
         {
 			fixed (uint* currentBlueVideoGain = &aCurrentBlueVideoGain)
 			{
@@ -598,7 +598,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginSetBlueVideoGain(iHandle, aInstanceID, aDesiredBlueVideoGain, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetBlueVideoGain(uint aAsyncHandle)
+        public unsafe void EndSetBlueVideoGain(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgRenderingControl2EndSetBlueVideoGain(iHandle, aAsyncHandle))
@@ -623,7 +623,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginGetRedVideoBlackLevel(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetRedVideoBlackLevel(uint aAsyncHandle, out uint aCurrentRedVideoBlackLevel)
+        public unsafe void EndGetRedVideoBlackLevel(IntPtr aAsyncHandle, out uint aCurrentRedVideoBlackLevel)
         {
 			fixed (uint* currentRedVideoBlackLevel = &aCurrentRedVideoBlackLevel)
 			{
@@ -648,7 +648,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginSetRedVideoBlackLevel(iHandle, aInstanceID, aDesiredRedVideoBlackLevel, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetRedVideoBlackLevel(uint aAsyncHandle)
+        public unsafe void EndSetRedVideoBlackLevel(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgRenderingControl2EndSetRedVideoBlackLevel(iHandle, aAsyncHandle))
@@ -673,7 +673,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginGetGreenVideoBlackLevel(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetGreenVideoBlackLevel(uint aAsyncHandle, out uint aCurrentGreenVideoBlackLevel)
+        public unsafe void EndGetGreenVideoBlackLevel(IntPtr aAsyncHandle, out uint aCurrentGreenVideoBlackLevel)
         {
 			fixed (uint* currentGreenVideoBlackLevel = &aCurrentGreenVideoBlackLevel)
 			{
@@ -698,7 +698,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginSetGreenVideoBlackLevel(iHandle, aInstanceID, aDesiredGreenVideoBlackLevel, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetGreenVideoBlackLevel(uint aAsyncHandle)
+        public unsafe void EndSetGreenVideoBlackLevel(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgRenderingControl2EndSetGreenVideoBlackLevel(iHandle, aAsyncHandle))
@@ -723,7 +723,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginGetBlueVideoBlackLevel(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetBlueVideoBlackLevel(uint aAsyncHandle, out uint aCurrentBlueVideoBlackLevel)
+        public unsafe void EndGetBlueVideoBlackLevel(IntPtr aAsyncHandle, out uint aCurrentBlueVideoBlackLevel)
         {
 			fixed (uint* currentBlueVideoBlackLevel = &aCurrentBlueVideoBlackLevel)
 			{
@@ -748,7 +748,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginSetBlueVideoBlackLevel(iHandle, aInstanceID, aDesiredBlueVideoBlackLevel, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetBlueVideoBlackLevel(uint aAsyncHandle)
+        public unsafe void EndSetBlueVideoBlackLevel(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgRenderingControl2EndSetBlueVideoBlackLevel(iHandle, aAsyncHandle))
@@ -773,7 +773,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginGetColorTemperature(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetColorTemperature(uint aAsyncHandle, out uint aCurrentColorTemperature)
+        public unsafe void EndGetColorTemperature(IntPtr aAsyncHandle, out uint aCurrentColorTemperature)
         {
 			fixed (uint* currentColorTemperature = &aCurrentColorTemperature)
 			{
@@ -798,7 +798,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginSetColorTemperature(iHandle, aInstanceID, aDesiredColorTemperature, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetColorTemperature(uint aAsyncHandle)
+        public unsafe void EndSetColorTemperature(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgRenderingControl2EndSetColorTemperature(iHandle, aAsyncHandle))
@@ -823,7 +823,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginGetHorizontalKeystone(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetHorizontalKeystone(uint aAsyncHandle, out int aCurrentHorizontalKeystone)
+        public unsafe void EndGetHorizontalKeystone(IntPtr aAsyncHandle, out int aCurrentHorizontalKeystone)
         {
 			fixed (int* currentHorizontalKeystone = &aCurrentHorizontalKeystone)
 			{
@@ -848,7 +848,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginSetHorizontalKeystone(iHandle, aInstanceID, aDesiredHorizontalKeystone, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetHorizontalKeystone(uint aAsyncHandle)
+        public unsafe void EndSetHorizontalKeystone(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgRenderingControl2EndSetHorizontalKeystone(iHandle, aAsyncHandle))
@@ -873,7 +873,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginGetVerticalKeystone(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetVerticalKeystone(uint aAsyncHandle, out int aCurrentVerticalKeystone)
+        public unsafe void EndGetVerticalKeystone(IntPtr aAsyncHandle, out int aCurrentVerticalKeystone)
         {
 			fixed (int* currentVerticalKeystone = &aCurrentVerticalKeystone)
 			{
@@ -898,7 +898,7 @@ namespace Zapp
             CpProxyUpnpOrgRenderingControl2BeginSetVerticalKeystone(iHandle, aInstanceID, aDesiredVerticalKeystone, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetVerticalKeystone(uint aAsyncHandle)
+        public unsafe void EndSetVerticalKeystone(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgRenderingControl2EndSetVerticalKeystone(iHandle, aAsyncHandle))
@@ -928,7 +928,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
-        public unsafe void EndGetMute(uint aAsyncHandle, out bool aCurrentMute)
+        public unsafe void EndGetMute(IntPtr aAsyncHandle, out bool aCurrentMute)
         {
 			uint currentMute;
 			{
@@ -960,7 +960,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
-        public unsafe void EndSetMute(uint aAsyncHandle)
+        public unsafe void EndSetMute(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgRenderingControl2EndSetMute(iHandle, aAsyncHandle))
@@ -989,7 +989,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
-        public unsafe void EndGetVolume(uint aAsyncHandle, out uint aCurrentVolume)
+        public unsafe void EndGetVolume(IntPtr aAsyncHandle, out uint aCurrentVolume)
         {
 			fixed (uint* currentVolume = &aCurrentVolume)
 			{
@@ -1018,7 +1018,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
-        public unsafe void EndSetVolume(uint aAsyncHandle)
+        public unsafe void EndSetVolume(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgRenderingControl2EndSetVolume(iHandle, aAsyncHandle))
@@ -1047,7 +1047,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
-        public unsafe void EndGetVolumeDB(uint aAsyncHandle, out int aCurrentVolume)
+        public unsafe void EndGetVolumeDB(IntPtr aAsyncHandle, out int aCurrentVolume)
         {
 			fixed (int* currentVolume = &aCurrentVolume)
 			{
@@ -1076,7 +1076,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
-        public unsafe void EndSetVolumeDB(uint aAsyncHandle)
+        public unsafe void EndSetVolumeDB(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgRenderingControl2EndSetVolumeDB(iHandle, aAsyncHandle))
@@ -1106,7 +1106,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
-        public unsafe void EndGetVolumeDBRange(uint aAsyncHandle, out int aMinValue, out int aMaxValue)
+        public unsafe void EndGetVolumeDBRange(IntPtr aAsyncHandle, out int aMinValue, out int aMaxValue)
         {
 			fixed (int* minValue = &aMinValue)
 			fixed (int* maxValue = &aMaxValue)
@@ -1138,7 +1138,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
-        public unsafe void EndGetLoudness(uint aAsyncHandle, out bool aCurrentLoudness)
+        public unsafe void EndGetLoudness(IntPtr aAsyncHandle, out bool aCurrentLoudness)
         {
 			uint currentLoudness;
 			{
@@ -1170,7 +1170,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
-        public unsafe void EndSetLoudness(uint aAsyncHandle)
+        public unsafe void EndSetLoudness(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgRenderingControl2EndSetLoudness(iHandle, aAsyncHandle))
@@ -1201,7 +1201,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)stateVariableList);
         }
 
-        public unsafe void EndGetStateVariables(uint aAsyncHandle, out string aStateVariableValuePairs)
+        public unsafe void EndGetStateVariables(IntPtr aAsyncHandle, out string aStateVariableValuePairs)
         {
 			char* stateVariableValuePairs;
 			{
@@ -1247,7 +1247,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)stateVariableValuePairs);
         }
 
-        public unsafe void EndSetStateVariables(uint aAsyncHandle, out string aStateVariableList)
+        public unsafe void EndSetStateVariables(IntPtr aAsyncHandle, out string aStateVariableList)
         {
 			char* stateVariableList;
 			{
@@ -1295,15 +1295,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             CpProxyUpnpOrgRenderingControl2Destroy(handle);
             iGch.Free();

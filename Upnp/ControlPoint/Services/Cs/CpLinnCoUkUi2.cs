@@ -8,197 +8,197 @@ namespace Zapp
     public class CpProxyLinnCoUkUi2 : CpProxy, IDisposable
     {
         [DllImport("CpLinnCoUkUi2")]
-        static extern uint CpProxyLinnCoUkUi2Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyLinnCoUkUi2Create(IntPtr aDeviceHandle);
         [DllImport("CpLinnCoUkUi2")]
-        static extern void CpProxyLinnCoUkUi2Destroy(uint aHandle);
+        static extern void CpProxyLinnCoUkUi2Destroy(IntPtr aHandle);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncDisplayTestPattern(uint aHandle, int aaTestPattern);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncDisplayTestPattern(IntPtr aHandle, int aaTestPattern);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginDisplayTestPattern(uint aHandle, int aaTestPattern, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginDisplayTestPattern(IntPtr aHandle, int aaTestPattern, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndDisplayTestPattern(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkUi2EndDisplayTestPattern(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncDisplayFill(uint aHandle);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncDisplayFill(IntPtr aHandle);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginDisplayFill(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginDisplayFill(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndDisplayFill(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkUi2EndDisplayFill(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncDisplayClear(uint aHandle);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncDisplayClear(IntPtr aHandle);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginDisplayClear(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginDisplayClear(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndDisplayClear(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkUi2EndDisplayClear(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncSetTestModeEnabled(uint aHandle, uint aaEnabled);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncSetTestModeEnabled(IntPtr aHandle, uint aaEnabled);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginSetTestModeEnabled(uint aHandle, uint aaEnabled, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginSetTestModeEnabled(IntPtr aHandle, uint aaEnabled, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndSetTestModeEnabled(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkUi2EndSetTestModeEnabled(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncSimulateInfraredInput(uint aHandle, uint aaCode);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncSimulateInfraredInput(IntPtr aHandle, uint aaCode);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginSimulateInfraredInput(uint aHandle, uint aaCode, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginSimulateInfraredInput(IntPtr aHandle, uint aaCode, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndSimulateInfraredInput(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkUi2EndSimulateInfraredInput(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncSimulateButtonInput(uint aHandle, uint aaCode);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncSimulateButtonInput(IntPtr aHandle, uint aaCode);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginSimulateButtonInput(uint aHandle, uint aaCode, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginSimulateButtonInput(IntPtr aHandle, uint aaCode, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndSimulateButtonInput(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkUi2EndSimulateButtonInput(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncSimulateLightSensor(uint aHandle, uint aaLightLevel);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncSimulateLightSensor(IntPtr aHandle, uint aaLightLevel);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginSimulateLightSensor(uint aHandle, uint aaLightLevel, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginSimulateLightSensor(IntPtr aHandle, uint aaLightLevel, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndSimulateLightSensor(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkUi2EndSimulateLightSensor(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncGetLightSensorData(uint aHandle, uint* aaLightLevel);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncGetLightSensorData(IntPtr aHandle, uint* aaLightLevel);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginGetLightSensorData(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginGetLightSensorData(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndGetLightSensorData(uint aHandle, uint aAsync, uint* aaLightLevel);
+        static extern unsafe int CpProxyLinnCoUkUi2EndGetLightSensorData(IntPtr aHandle, IntPtr aAsync, uint* aaLightLevel);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncSetDisplayBrightness(uint aHandle, uint aaBrightness);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncSetDisplayBrightness(IntPtr aHandle, uint aaBrightness);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginSetDisplayBrightness(uint aHandle, uint aaBrightness, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginSetDisplayBrightness(IntPtr aHandle, uint aaBrightness, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndSetDisplayBrightness(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkUi2EndSetDisplayBrightness(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncSetDisplayBrightnessAuto(uint aHandle, uint aaBrightnessAuto);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncSetDisplayBrightnessAuto(IntPtr aHandle, uint aaBrightnessAuto);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginSetDisplayBrightnessAuto(uint aHandle, uint aaBrightnessAuto, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginSetDisplayBrightnessAuto(IntPtr aHandle, uint aaBrightnessAuto, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndSetDisplayBrightnessAuto(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkUi2EndSetDisplayBrightnessAuto(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncSetInfraredCommands(uint aHandle, char* aaCommands);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncSetInfraredCommands(IntPtr aHandle, char* aaCommands);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginSetInfraredCommands(uint aHandle, char* aaCommands, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginSetInfraredCommands(IntPtr aHandle, char* aaCommands, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndSetInfraredCommands(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkUi2EndSetInfraredCommands(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncInfraredCommands(uint aHandle, char** aaCommands);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncInfraredCommands(IntPtr aHandle, char** aaCommands);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginInfraredCommands(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginInfraredCommands(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndInfraredCommands(uint aHandle, uint aAsync, char** aaCommands);
+        static extern unsafe int CpProxyLinnCoUkUi2EndInfraredCommands(IntPtr aHandle, IntPtr aAsync, char** aaCommands);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncSetInfraredTerminalCommands(uint aHandle, char* aaCommands);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncSetInfraredTerminalCommands(IntPtr aHandle, char* aaCommands);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginSetInfraredTerminalCommands(uint aHandle, char* aaCommands, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginSetInfraredTerminalCommands(IntPtr aHandle, char* aaCommands, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndSetInfraredTerminalCommands(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkUi2EndSetInfraredTerminalCommands(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncInfraredTerminalCommands(uint aHandle, char** aaCommands);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncInfraredTerminalCommands(IntPtr aHandle, char** aaCommands);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginInfraredTerminalCommands(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginInfraredTerminalCommands(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndInfraredTerminalCommands(uint aHandle, uint aAsync, char** aaCommands);
+        static extern unsafe int CpProxyLinnCoUkUi2EndInfraredTerminalCommands(IntPtr aHandle, IntPtr aAsync, char** aaCommands);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncDisplayBrightness(uint aHandle, uint* aaBrightness);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncDisplayBrightness(IntPtr aHandle, uint* aaBrightness);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginDisplayBrightness(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginDisplayBrightness(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndDisplayBrightness(uint aHandle, uint aAsync, uint* aaBrightness);
+        static extern unsafe int CpProxyLinnCoUkUi2EndDisplayBrightness(IntPtr aHandle, IntPtr aAsync, uint* aaBrightness);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncDisplayBrightnessAuto(uint aHandle, uint* aaBrightnessAuto);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncDisplayBrightnessAuto(IntPtr aHandle, uint* aaBrightnessAuto);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginDisplayBrightnessAuto(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginDisplayBrightnessAuto(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndDisplayBrightnessAuto(uint aHandle, uint aAsync, uint* aaBrightnessAuto);
+        static extern unsafe int CpProxyLinnCoUkUi2EndDisplayBrightnessAuto(IntPtr aHandle, IntPtr aAsync, uint* aaBrightnessAuto);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncDisplayUpsideDown(uint aHandle, uint* aaUpsideDown);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncDisplayUpsideDown(IntPtr aHandle, uint* aaUpsideDown);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginDisplayUpsideDown(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginDisplayUpsideDown(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndDisplayUpsideDown(uint aHandle, uint aAsync, uint* aaUpsideDown);
+        static extern unsafe int CpProxyLinnCoUkUi2EndDisplayUpsideDown(IntPtr aHandle, IntPtr aAsync, uint* aaUpsideDown);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncSetDisplayUpsideDown(uint aHandle, uint aaUpsideDown);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncSetDisplayUpsideDown(IntPtr aHandle, uint aaUpsideDown);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginSetDisplayUpsideDown(uint aHandle, uint aaUpsideDown, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginSetDisplayUpsideDown(IntPtr aHandle, uint aaUpsideDown, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndSetDisplayUpsideDown(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkUi2EndSetDisplayUpsideDown(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncSetDisplayScrollText(uint aHandle, uint aaDisplayScrollText);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncSetDisplayScrollText(IntPtr aHandle, uint aaDisplayScrollText);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginSetDisplayScrollText(uint aHandle, uint aaDisplayScrollText, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginSetDisplayScrollText(IntPtr aHandle, uint aaDisplayScrollText, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndSetDisplayScrollText(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkUi2EndSetDisplayScrollText(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncDisplayScrollText(uint aHandle, uint* aaDisplayScrollTextEnabled);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncDisplayScrollText(IntPtr aHandle, uint* aaDisplayScrollTextEnabled);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginDisplayScrollText(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginDisplayScrollText(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndDisplayScrollText(uint aHandle, uint aAsync, uint* aaDisplayScrollTextEnabled);
+        static extern unsafe int CpProxyLinnCoUkUi2EndDisplayScrollText(IntPtr aHandle, IntPtr aAsync, uint* aaDisplayScrollTextEnabled);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncSetDisplaySleep(uint aHandle, uint aaEnabled);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncSetDisplaySleep(IntPtr aHandle, uint aaEnabled);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginSetDisplaySleep(uint aHandle, uint aaEnabled, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginSetDisplaySleep(IntPtr aHandle, uint aaEnabled, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndSetDisplaySleep(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkUi2EndSetDisplaySleep(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncDisplaySleep(uint aHandle, uint* aaEnabled);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncDisplaySleep(IntPtr aHandle, uint* aaEnabled);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginDisplaySleep(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginDisplaySleep(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndDisplaySleep(uint aHandle, uint aAsync, uint* aaEnabled);
+        static extern unsafe int CpProxyLinnCoUkUi2EndDisplaySleep(IntPtr aHandle, IntPtr aAsync, uint* aaEnabled);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncSetDisplayLedOff(uint aHandle, uint aaOff);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncSetDisplayLedOff(IntPtr aHandle, uint aaOff);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginSetDisplayLedOff(uint aHandle, uint aaOff, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginSetDisplayLedOff(IntPtr aHandle, uint aaOff, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndSetDisplayLedOff(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkUi2EndSetDisplayLedOff(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2SyncDisplayLedOff(uint aHandle, uint* aaOff);
+        static extern unsafe void CpProxyLinnCoUkUi2SyncDisplayLedOff(IntPtr aHandle, uint* aaOff);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2BeginDisplayLedOff(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkUi2BeginDisplayLedOff(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe int CpProxyLinnCoUkUi2EndDisplayLedOff(uint aHandle, uint aAsync, uint* aaOff);
+        static extern unsafe int CpProxyLinnCoUkUi2EndDisplayLedOff(IntPtr aHandle, IntPtr aAsync, uint* aaOff);
         [DllImport("CpLinnCoUkUi2")]
-        static extern void CpProxyLinnCoUkUi2SetPropertyDisplayBrightnessChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkUi2SetPropertyDisplayBrightnessChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern void CpProxyLinnCoUkUi2SetPropertyDisplayBrightnessAutoChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkUi2SetPropertyDisplayBrightnessAutoChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern void CpProxyLinnCoUkUi2SetPropertyInfraredCommandsChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkUi2SetPropertyInfraredCommandsChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern void CpProxyLinnCoUkUi2SetPropertyInfraredTerminalCommandsChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkUi2SetPropertyInfraredTerminalCommandsChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern void CpProxyLinnCoUkUi2SetPropertyDisplayUpsideDownChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkUi2SetPropertyDisplayUpsideDownChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern void CpProxyLinnCoUkUi2SetPropertyDisplayScrollTextChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkUi2SetPropertyDisplayScrollTextChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern void CpProxyLinnCoUkUi2SetPropertyDisplaySleepChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkUi2SetPropertyDisplaySleepChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern void CpProxyLinnCoUkUi2SetPropertyDisplayLedOffChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkUi2SetPropertyDisplayLedOffChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern void CpProxyLinnCoUkUi2SetPropertyTerminalInputCodeChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkUi2SetPropertyTerminalInputCodeChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern void CpProxyLinnCoUkUi2SetPropertyTerminalInputNameChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkUi2SetPropertyTerminalInputNameChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern void CpProxyLinnCoUkUi2SetPropertyDisplayPixelsChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkUi2SetPropertyDisplayPixelsChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2PropertyDisplayBrightness(uint aHandle, uint* aDisplayBrightness);
+        static extern unsafe void CpProxyLinnCoUkUi2PropertyDisplayBrightness(IntPtr aHandle, uint* aDisplayBrightness);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2PropertyDisplayBrightnessAuto(uint aHandle, uint* aDisplayBrightnessAuto);
+        static extern unsafe void CpProxyLinnCoUkUi2PropertyDisplayBrightnessAuto(IntPtr aHandle, uint* aDisplayBrightnessAuto);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2PropertyInfraredCommands(uint aHandle, char** aInfraredCommands);
+        static extern unsafe void CpProxyLinnCoUkUi2PropertyInfraredCommands(IntPtr aHandle, char** aInfraredCommands);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2PropertyInfraredTerminalCommands(uint aHandle, char** aInfraredTerminalCommands);
+        static extern unsafe void CpProxyLinnCoUkUi2PropertyInfraredTerminalCommands(IntPtr aHandle, char** aInfraredTerminalCommands);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2PropertyDisplayUpsideDown(uint aHandle, uint* aDisplayUpsideDown);
+        static extern unsafe void CpProxyLinnCoUkUi2PropertyDisplayUpsideDown(IntPtr aHandle, uint* aDisplayUpsideDown);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2PropertyDisplayScrollText(uint aHandle, uint* aDisplayScrollText);
+        static extern unsafe void CpProxyLinnCoUkUi2PropertyDisplayScrollText(IntPtr aHandle, uint* aDisplayScrollText);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2PropertyDisplaySleep(uint aHandle, uint* aDisplaySleep);
+        static extern unsafe void CpProxyLinnCoUkUi2PropertyDisplaySleep(IntPtr aHandle, uint* aDisplaySleep);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2PropertyDisplayLedOff(uint aHandle, uint* aDisplayLedOff);
+        static extern unsafe void CpProxyLinnCoUkUi2PropertyDisplayLedOff(IntPtr aHandle, uint* aDisplayLedOff);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2PropertyTerminalInputCode(uint aHandle, uint* aTerminalInputCode);
+        static extern unsafe void CpProxyLinnCoUkUi2PropertyTerminalInputCode(IntPtr aHandle, uint* aTerminalInputCode);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2PropertyTerminalInputName(uint aHandle, char** aTerminalInputName);
+        static extern unsafe void CpProxyLinnCoUkUi2PropertyTerminalInputName(IntPtr aHandle, char** aTerminalInputName);
         [DllImport("CpLinnCoUkUi2")]
-        static extern unsafe void CpProxyLinnCoUkUi2PropertyDisplayPixels(uint aHandle, char** aDisplayPixels, uint* aLen);
+        static extern unsafe void CpProxyLinnCoUkUi2PropertyDisplayPixels(IntPtr aHandle, char** aDisplayPixels, uint* aLen);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -246,7 +246,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginDisplayTestPattern(iHandle, aaTestPattern, iActionComplete, ptr);
         }
 
-        public unsafe void EndDisplayTestPattern(uint aAsyncHandle)
+        public unsafe void EndDisplayTestPattern(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkUi2EndDisplayTestPattern(iHandle, aAsyncHandle))
@@ -270,7 +270,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginDisplayFill(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndDisplayFill(uint aAsyncHandle)
+        public unsafe void EndDisplayFill(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkUi2EndDisplayFill(iHandle, aAsyncHandle))
@@ -294,7 +294,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginDisplayClear(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndDisplayClear(uint aAsyncHandle)
+        public unsafe void EndDisplayClear(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkUi2EndDisplayClear(iHandle, aAsyncHandle))
@@ -320,7 +320,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginSetTestModeEnabled(iHandle, aEnabled, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetTestModeEnabled(uint aAsyncHandle)
+        public unsafe void EndSetTestModeEnabled(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkUi2EndSetTestModeEnabled(iHandle, aAsyncHandle))
@@ -344,7 +344,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginSimulateInfraredInput(iHandle, aaCode, iActionComplete, ptr);
         }
 
-        public unsafe void EndSimulateInfraredInput(uint aAsyncHandle)
+        public unsafe void EndSimulateInfraredInput(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkUi2EndSimulateInfraredInput(iHandle, aAsyncHandle))
@@ -368,7 +368,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginSimulateButtonInput(iHandle, aaCode, iActionComplete, ptr);
         }
 
-        public unsafe void EndSimulateButtonInput(uint aAsyncHandle)
+        public unsafe void EndSimulateButtonInput(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkUi2EndSimulateButtonInput(iHandle, aAsyncHandle))
@@ -392,7 +392,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginSimulateLightSensor(iHandle, aaLightLevel, iActionComplete, ptr);
         }
 
-        public unsafe void EndSimulateLightSensor(uint aAsyncHandle)
+        public unsafe void EndSimulateLightSensor(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkUi2EndSimulateLightSensor(iHandle, aAsyncHandle))
@@ -417,7 +417,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginGetLightSensorData(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetLightSensorData(uint aAsyncHandle, out uint aaLightLevel)
+        public unsafe void EndGetLightSensorData(IntPtr aAsyncHandle, out uint aaLightLevel)
         {
 			fixed (uint* aLightLevel = &aaLightLevel)
 			{
@@ -442,7 +442,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginSetDisplayBrightness(iHandle, aaBrightness, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetDisplayBrightness(uint aAsyncHandle)
+        public unsafe void EndSetDisplayBrightness(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkUi2EndSetDisplayBrightness(iHandle, aAsyncHandle))
@@ -468,7 +468,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginSetDisplayBrightnessAuto(iHandle, aBrightnessAuto, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetDisplayBrightnessAuto(uint aAsyncHandle)
+        public unsafe void EndSetDisplayBrightnessAuto(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkUi2EndSetDisplayBrightnessAuto(iHandle, aAsyncHandle))
@@ -496,7 +496,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)aCommands);
         }
 
-        public unsafe void EndSetInfraredCommands(uint aAsyncHandle)
+        public unsafe void EndSetInfraredCommands(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkUi2EndSetInfraredCommands(iHandle, aAsyncHandle))
@@ -523,7 +523,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginInfraredCommands(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndInfraredCommands(uint aAsyncHandle, out string aaCommands)
+        public unsafe void EndInfraredCommands(IntPtr aAsyncHandle, out string aaCommands)
         {
 			char* aCommands;
 			{
@@ -554,7 +554,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)aCommands);
         }
 
-        public unsafe void EndSetInfraredTerminalCommands(uint aAsyncHandle)
+        public unsafe void EndSetInfraredTerminalCommands(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkUi2EndSetInfraredTerminalCommands(iHandle, aAsyncHandle))
@@ -581,7 +581,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginInfraredTerminalCommands(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndInfraredTerminalCommands(uint aAsyncHandle, out string aaCommands)
+        public unsafe void EndInfraredTerminalCommands(IntPtr aAsyncHandle, out string aaCommands)
         {
 			char* aCommands;
 			{
@@ -609,7 +609,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginDisplayBrightness(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndDisplayBrightness(uint aAsyncHandle, out uint aaBrightness)
+        public unsafe void EndDisplayBrightness(IntPtr aAsyncHandle, out uint aaBrightness)
         {
 			fixed (uint* aBrightness = &aaBrightness)
 			{
@@ -636,7 +636,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginDisplayBrightnessAuto(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndDisplayBrightnessAuto(uint aAsyncHandle, out bool aaBrightnessAuto)
+        public unsafe void EndDisplayBrightnessAuto(IntPtr aAsyncHandle, out bool aaBrightnessAuto)
         {
 			uint aBrightnessAuto;
 			{
@@ -664,7 +664,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginDisplayUpsideDown(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndDisplayUpsideDown(uint aAsyncHandle, out bool aaUpsideDown)
+        public unsafe void EndDisplayUpsideDown(IntPtr aAsyncHandle, out bool aaUpsideDown)
         {
 			uint aUpsideDown;
 			{
@@ -692,7 +692,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginSetDisplayUpsideDown(iHandle, aUpsideDown, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetDisplayUpsideDown(uint aAsyncHandle)
+        public unsafe void EndSetDisplayUpsideDown(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkUi2EndSetDisplayUpsideDown(iHandle, aAsyncHandle))
@@ -718,7 +718,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginSetDisplayScrollText(iHandle, aDisplayScrollText, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetDisplayScrollText(uint aAsyncHandle)
+        public unsafe void EndSetDisplayScrollText(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkUi2EndSetDisplayScrollText(iHandle, aAsyncHandle))
@@ -744,7 +744,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginDisplayScrollText(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndDisplayScrollText(uint aAsyncHandle, out bool aaDisplayScrollTextEnabled)
+        public unsafe void EndDisplayScrollText(IntPtr aAsyncHandle, out bool aaDisplayScrollTextEnabled)
         {
 			uint aDisplayScrollTextEnabled;
 			{
@@ -772,7 +772,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginSetDisplaySleep(iHandle, aEnabled, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetDisplaySleep(uint aAsyncHandle)
+        public unsafe void EndSetDisplaySleep(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkUi2EndSetDisplaySleep(iHandle, aAsyncHandle))
@@ -798,7 +798,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginDisplaySleep(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndDisplaySleep(uint aAsyncHandle, out bool aaEnabled)
+        public unsafe void EndDisplaySleep(IntPtr aAsyncHandle, out bool aaEnabled)
         {
 			uint aEnabled;
 			{
@@ -826,7 +826,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginSetDisplayLedOff(iHandle, aOff, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetDisplayLedOff(uint aAsyncHandle)
+        public unsafe void EndSetDisplayLedOff(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkUi2EndSetDisplayLedOff(iHandle, aAsyncHandle))
@@ -852,7 +852,7 @@ namespace Zapp
             CpProxyLinnCoUkUi2BeginDisplayLedOff(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndDisplayLedOff(uint aAsyncHandle, out bool aaOff)
+        public unsafe void EndDisplayLedOff(IntPtr aAsyncHandle, out bool aaOff)
         {
 			uint aOff;
 			{
@@ -1125,15 +1125,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             CpProxyLinnCoUkUi2Destroy(handle);
             iGch.Free();

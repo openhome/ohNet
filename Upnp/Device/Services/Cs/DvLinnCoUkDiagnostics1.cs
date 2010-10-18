@@ -8,39 +8,39 @@ namespace Zapp
     public class DvServiceLinnCoUkDiagnostics1 : IDisposable
     {
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern uint DvServiceLinnCoUkDiagnostics1Create(uint aDeviceHandle);
+        static extern IntPtr DvServiceLinnCoUkDiagnostics1Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1Destroy(uint aHandle);
+        static extern void DvServiceLinnCoUkDiagnostics1Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern unsafe int DvServiceLinnCoUkDiagnostics1SetPropertyaStateVariable(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkDiagnostics1SetPropertyaStateVariable(IntPtr aHandle, uint aValue);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern unsafe void DvServiceLinnCoUkDiagnostics1GetPropertyaStateVariable(uint aHandle, uint* aValue);
+        static extern unsafe void DvServiceLinnCoUkDiagnostics1GetPropertyaStateVariable(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionEcho(uint aHandle, CallbackEcho aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDiagnostics1EnableActionEcho(IntPtr aHandle, CallbackEcho aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionElfFile(uint aHandle, CallbackElfFile aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDiagnostics1EnableActionElfFile(IntPtr aHandle, CallbackElfFile aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionElfFingerprint(uint aHandle, CallbackElfFingerprint aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDiagnostics1EnableActionElfFingerprint(IntPtr aHandle, CallbackElfFingerprint aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionCrashDataStatus(uint aHandle, CallbackCrashDataStatus aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDiagnostics1EnableActionCrashDataStatus(IntPtr aHandle, CallbackCrashDataStatus aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionCrashDataFetch(uint aHandle, CallbackCrashDataFetch aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDiagnostics1EnableActionCrashDataFetch(IntPtr aHandle, CallbackCrashDataFetch aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionCrashDataClear(uint aHandle, CallbackCrashDataClear aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDiagnostics1EnableActionCrashDataClear(IntPtr aHandle, CallbackCrashDataClear aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionSysLog(uint aHandle, CallbackSysLog aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDiagnostics1EnableActionSysLog(IntPtr aHandle, CallbackSysLog aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionDiagnostic(uint aHandle, CallbackDiagnostic aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDiagnostics1EnableActionDiagnostic(IntPtr aHandle, CallbackDiagnostic aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionStateVariable(uint aHandle, CallbackStateVariable aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDiagnostics1EnableActionStateVariable(IntPtr aHandle, CallbackStateVariable aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionSetStateVariable(uint aHandle, CallbackSetStateVariable aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDiagnostics1EnableActionSetStateVariable(IntPtr aHandle, CallbackSetStateVariable aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionStateVariablePeriod(uint aHandle, CallbackStateVariablePeriod aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDiagnostics1EnableActionStateVariablePeriod(IntPtr aHandle, CallbackStateVariablePeriod aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionSetStateVariablePeriod(uint aHandle, CallbackSetStateVariablePeriod aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDiagnostics1EnableActionSetStateVariablePeriod(IntPtr aHandle, CallbackSetStateVariablePeriod aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionReboot(uint aHandle, CallbackReboot aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDiagnostics1EnableActionReboot(IntPtr aHandle, CallbackReboot aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -58,7 +58,7 @@ namespace Zapp
         private unsafe delegate int CallbackSetStateVariablePeriod(IntPtr aPtr, uint aVersion, uint aaPeriod);
         private unsafe delegate int CallbackReboot(IntPtr aPtr, uint aVersion, uint aaDelay);
 
-        private uint iHandle;
+        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackEcho iCallbackEcho;
         private CallbackElfFile iCallbackElfFile;
@@ -392,15 +392,15 @@ namespace Zapp
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvServiceLinnCoUkDiagnostics1Destroy(handle);
             if (iGch.IsAllocated)

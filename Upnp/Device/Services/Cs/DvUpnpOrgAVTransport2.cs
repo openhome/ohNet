@@ -8,59 +8,59 @@ namespace Zapp
     public class DvServiceUpnpOrgAVTransport2 : IDisposable
     {
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern uint DvServiceUpnpOrgAVTransport2Create(uint aDeviceHandle);
+        static extern IntPtr DvServiceUpnpOrgAVTransport2Create(IntPtr aDeviceHandle);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2Destroy(uint aHandle);
+        static extern void DvServiceUpnpOrgAVTransport2Destroy(IntPtr aHandle);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern unsafe int DvServiceUpnpOrgAVTransport2SetPropertyLastChange(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceUpnpOrgAVTransport2SetPropertyLastChange(IntPtr aHandle, char* aValue);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern unsafe void DvServiceUpnpOrgAVTransport2GetPropertyLastChange(uint aHandle, char** aValue);
+        static extern unsafe void DvServiceUpnpOrgAVTransport2GetPropertyLastChange(IntPtr aHandle, char** aValue);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern unsafe int DvServiceUpnpOrgAVTransport2SetPropertyDRMState(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceUpnpOrgAVTransport2SetPropertyDRMState(IntPtr aHandle, char* aValue);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern unsafe void DvServiceUpnpOrgAVTransport2GetPropertyDRMState(uint aHandle, char** aValue);
+        static extern unsafe void DvServiceUpnpOrgAVTransport2GetPropertyDRMState(IntPtr aHandle, char** aValue);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2EnableActionSetAVTransportURI(uint aHandle, CallbackSetAVTransportURI aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgAVTransport2EnableActionSetAVTransportURI(IntPtr aHandle, CallbackSetAVTransportURI aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2EnableActionSetNextAVTransportURI(uint aHandle, CallbackSetNextAVTransportURI aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgAVTransport2EnableActionSetNextAVTransportURI(IntPtr aHandle, CallbackSetNextAVTransportURI aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2EnableActionGetMediaInfo(uint aHandle, CallbackGetMediaInfo aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgAVTransport2EnableActionGetMediaInfo(IntPtr aHandle, CallbackGetMediaInfo aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2EnableActionGetMediaInfo_Ext(uint aHandle, CallbackGetMediaInfo_Ext aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgAVTransport2EnableActionGetMediaInfo_Ext(IntPtr aHandle, CallbackGetMediaInfo_Ext aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2EnableActionGetTransportInfo(uint aHandle, CallbackGetTransportInfo aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgAVTransport2EnableActionGetTransportInfo(IntPtr aHandle, CallbackGetTransportInfo aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2EnableActionGetPositionInfo(uint aHandle, CallbackGetPositionInfo aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgAVTransport2EnableActionGetPositionInfo(IntPtr aHandle, CallbackGetPositionInfo aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2EnableActionGetDeviceCapabilities(uint aHandle, CallbackGetDeviceCapabilities aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgAVTransport2EnableActionGetDeviceCapabilities(IntPtr aHandle, CallbackGetDeviceCapabilities aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2EnableActionGetTransportSettings(uint aHandle, CallbackGetTransportSettings aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgAVTransport2EnableActionGetTransportSettings(IntPtr aHandle, CallbackGetTransportSettings aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2EnableActionStop(uint aHandle, CallbackStop aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgAVTransport2EnableActionStop(IntPtr aHandle, CallbackStop aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2EnableActionPlay(uint aHandle, CallbackPlay aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgAVTransport2EnableActionPlay(IntPtr aHandle, CallbackPlay aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2EnableActionPause(uint aHandle, CallbackPause aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgAVTransport2EnableActionPause(IntPtr aHandle, CallbackPause aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2EnableActionRecord(uint aHandle, CallbackRecord aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgAVTransport2EnableActionRecord(IntPtr aHandle, CallbackRecord aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2EnableActionSeek(uint aHandle, CallbackSeek aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgAVTransport2EnableActionSeek(IntPtr aHandle, CallbackSeek aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2EnableActionNext(uint aHandle, CallbackNext aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgAVTransport2EnableActionNext(IntPtr aHandle, CallbackNext aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2EnableActionPrevious(uint aHandle, CallbackPrevious aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgAVTransport2EnableActionPrevious(IntPtr aHandle, CallbackPrevious aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2EnableActionSetPlayMode(uint aHandle, CallbackSetPlayMode aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgAVTransport2EnableActionSetPlayMode(IntPtr aHandle, CallbackSetPlayMode aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2EnableActionSetRecordQualityMode(uint aHandle, CallbackSetRecordQualityMode aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgAVTransport2EnableActionSetRecordQualityMode(IntPtr aHandle, CallbackSetRecordQualityMode aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2EnableActionGetCurrentTransportActions(uint aHandle, CallbackGetCurrentTransportActions aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgAVTransport2EnableActionGetCurrentTransportActions(IntPtr aHandle, CallbackGetCurrentTransportActions aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2EnableActionGetDRMState(uint aHandle, CallbackGetDRMState aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgAVTransport2EnableActionGetDRMState(IntPtr aHandle, CallbackGetDRMState aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2EnableActionGetStateVariables(uint aHandle, CallbackGetStateVariables aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgAVTransport2EnableActionGetStateVariables(IntPtr aHandle, CallbackGetStateVariables aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern void DvServiceUpnpOrgAVTransport2EnableActionSetStateVariables(uint aHandle, CallbackSetStateVariables aCallback, IntPtr aPtr);
+        static extern void DvServiceUpnpOrgAVTransport2EnableActionSetStateVariables(IntPtr aHandle, CallbackSetStateVariables aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -86,7 +86,7 @@ namespace Zapp
         private unsafe delegate int CallbackGetStateVariables(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aStateVariableList, char** aStateVariableValuePairs);
         private unsafe delegate int CallbackSetStateVariables(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aAVTransportUDN, char* aServiceType, char* aServiceId, char* aStateVariableValuePairs, char** aStateVariableList);
 
-        private uint iHandle;
+        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackSetAVTransportURI iCallbackSetAVTransportURI;
         private CallbackSetNextAVTransportURI iCallbackSetNextAVTransportURI;
@@ -680,15 +680,15 @@ namespace Zapp
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvServiceUpnpOrgAVTransport2Destroy(handle);
             if (iGch.IsAllocated)

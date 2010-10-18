@@ -8,155 +8,155 @@ namespace Zapp
     public class CpProxyUpnpOrgDimming1 : CpProxy, IDisposable
     {
         [DllImport("CpUpnpOrgDimming1")]
-        static extern uint CpProxyUpnpOrgDimming1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyUpnpOrgDimming1Create(IntPtr aDeviceHandle);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern void CpProxyUpnpOrgDimming1Destroy(uint aHandle);
+        static extern void CpProxyUpnpOrgDimming1Destroy(IntPtr aHandle);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1SyncSetLoadLevelTarget(uint aHandle, uint anewLoadlevelTarget);
+        static extern unsafe void CpProxyUpnpOrgDimming1SyncSetLoadLevelTarget(IntPtr aHandle, uint anewLoadlevelTarget);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1BeginSetLoadLevelTarget(uint aHandle, uint anewLoadlevelTarget, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgDimming1BeginSetLoadLevelTarget(IntPtr aHandle, uint anewLoadlevelTarget, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe int CpProxyUpnpOrgDimming1EndSetLoadLevelTarget(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgDimming1EndSetLoadLevelTarget(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1SyncGetLoadLevelTarget(uint aHandle, uint* aGetLoadlevelTarget);
+        static extern unsafe void CpProxyUpnpOrgDimming1SyncGetLoadLevelTarget(IntPtr aHandle, uint* aGetLoadlevelTarget);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1BeginGetLoadLevelTarget(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgDimming1BeginGetLoadLevelTarget(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe int CpProxyUpnpOrgDimming1EndGetLoadLevelTarget(uint aHandle, uint aAsync, uint* aGetLoadlevelTarget);
+        static extern unsafe int CpProxyUpnpOrgDimming1EndGetLoadLevelTarget(IntPtr aHandle, IntPtr aAsync, uint* aGetLoadlevelTarget);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1SyncGetLoadLevelStatus(uint aHandle, uint* aretLoadlevelStatus);
+        static extern unsafe void CpProxyUpnpOrgDimming1SyncGetLoadLevelStatus(IntPtr aHandle, uint* aretLoadlevelStatus);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1BeginGetLoadLevelStatus(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgDimming1BeginGetLoadLevelStatus(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe int CpProxyUpnpOrgDimming1EndGetLoadLevelStatus(uint aHandle, uint aAsync, uint* aretLoadlevelStatus);
+        static extern unsafe int CpProxyUpnpOrgDimming1EndGetLoadLevelStatus(IntPtr aHandle, IntPtr aAsync, uint* aretLoadlevelStatus);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1SyncSetOnEffectLevel(uint aHandle, uint anewOnEffectLevel);
+        static extern unsafe void CpProxyUpnpOrgDimming1SyncSetOnEffectLevel(IntPtr aHandle, uint anewOnEffectLevel);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1BeginSetOnEffectLevel(uint aHandle, uint anewOnEffectLevel, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgDimming1BeginSetOnEffectLevel(IntPtr aHandle, uint anewOnEffectLevel, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe int CpProxyUpnpOrgDimming1EndSetOnEffectLevel(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgDimming1EndSetOnEffectLevel(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1SyncSetOnEffect(uint aHandle, char* anewOnEffect);
+        static extern unsafe void CpProxyUpnpOrgDimming1SyncSetOnEffect(IntPtr aHandle, char* anewOnEffect);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1BeginSetOnEffect(uint aHandle, char* anewOnEffect, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgDimming1BeginSetOnEffect(IntPtr aHandle, char* anewOnEffect, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe int CpProxyUpnpOrgDimming1EndSetOnEffect(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgDimming1EndSetOnEffect(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1SyncGetOnEffectParameters(uint aHandle, char** aretOnEffect, uint* aretOnEffectLevel);
+        static extern unsafe void CpProxyUpnpOrgDimming1SyncGetOnEffectParameters(IntPtr aHandle, char** aretOnEffect, uint* aretOnEffectLevel);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1BeginGetOnEffectParameters(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgDimming1BeginGetOnEffectParameters(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe int CpProxyUpnpOrgDimming1EndGetOnEffectParameters(uint aHandle, uint aAsync, char** aretOnEffect, uint* aretOnEffectLevel);
+        static extern unsafe int CpProxyUpnpOrgDimming1EndGetOnEffectParameters(IntPtr aHandle, IntPtr aAsync, char** aretOnEffect, uint* aretOnEffectLevel);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1SyncStepUp(uint aHandle);
+        static extern unsafe void CpProxyUpnpOrgDimming1SyncStepUp(IntPtr aHandle);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1BeginStepUp(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgDimming1BeginStepUp(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe int CpProxyUpnpOrgDimming1EndStepUp(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgDimming1EndStepUp(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1SyncStepDown(uint aHandle);
+        static extern unsafe void CpProxyUpnpOrgDimming1SyncStepDown(IntPtr aHandle);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1BeginStepDown(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgDimming1BeginStepDown(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe int CpProxyUpnpOrgDimming1EndStepDown(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgDimming1EndStepDown(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1SyncStartRampUp(uint aHandle);
+        static extern unsafe void CpProxyUpnpOrgDimming1SyncStartRampUp(IntPtr aHandle);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1BeginStartRampUp(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgDimming1BeginStartRampUp(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe int CpProxyUpnpOrgDimming1EndStartRampUp(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgDimming1EndStartRampUp(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1SyncStartRampDown(uint aHandle);
+        static extern unsafe void CpProxyUpnpOrgDimming1SyncStartRampDown(IntPtr aHandle);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1BeginStartRampDown(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgDimming1BeginStartRampDown(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe int CpProxyUpnpOrgDimming1EndStartRampDown(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgDimming1EndStartRampDown(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1SyncStopRamp(uint aHandle);
+        static extern unsafe void CpProxyUpnpOrgDimming1SyncStopRamp(IntPtr aHandle);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1BeginStopRamp(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgDimming1BeginStopRamp(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe int CpProxyUpnpOrgDimming1EndStopRamp(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgDimming1EndStopRamp(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1SyncStartRampToLevel(uint aHandle, uint anewLoadLevelTarget, uint anewRampTime);
+        static extern unsafe void CpProxyUpnpOrgDimming1SyncStartRampToLevel(IntPtr aHandle, uint anewLoadLevelTarget, uint anewRampTime);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1BeginStartRampToLevel(uint aHandle, uint anewLoadLevelTarget, uint anewRampTime, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgDimming1BeginStartRampToLevel(IntPtr aHandle, uint anewLoadLevelTarget, uint anewRampTime, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe int CpProxyUpnpOrgDimming1EndStartRampToLevel(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgDimming1EndStartRampToLevel(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1SyncSetStepDelta(uint aHandle, uint anewStepDelta);
+        static extern unsafe void CpProxyUpnpOrgDimming1SyncSetStepDelta(IntPtr aHandle, uint anewStepDelta);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1BeginSetStepDelta(uint aHandle, uint anewStepDelta, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgDimming1BeginSetStepDelta(IntPtr aHandle, uint anewStepDelta, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe int CpProxyUpnpOrgDimming1EndSetStepDelta(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgDimming1EndSetStepDelta(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1SyncGetStepDelta(uint aHandle, uint* aretStepDelta);
+        static extern unsafe void CpProxyUpnpOrgDimming1SyncGetStepDelta(IntPtr aHandle, uint* aretStepDelta);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1BeginGetStepDelta(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgDimming1BeginGetStepDelta(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe int CpProxyUpnpOrgDimming1EndGetStepDelta(uint aHandle, uint aAsync, uint* aretStepDelta);
+        static extern unsafe int CpProxyUpnpOrgDimming1EndGetStepDelta(IntPtr aHandle, IntPtr aAsync, uint* aretStepDelta);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1SyncSetRampRate(uint aHandle, uint anewRampRate);
+        static extern unsafe void CpProxyUpnpOrgDimming1SyncSetRampRate(IntPtr aHandle, uint anewRampRate);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1BeginSetRampRate(uint aHandle, uint anewRampRate, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgDimming1BeginSetRampRate(IntPtr aHandle, uint anewRampRate, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe int CpProxyUpnpOrgDimming1EndSetRampRate(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgDimming1EndSetRampRate(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1SyncGetRampRate(uint aHandle, uint* aretRampRate);
+        static extern unsafe void CpProxyUpnpOrgDimming1SyncGetRampRate(IntPtr aHandle, uint* aretRampRate);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1BeginGetRampRate(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgDimming1BeginGetRampRate(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe int CpProxyUpnpOrgDimming1EndGetRampRate(uint aHandle, uint aAsync, uint* aretRampRate);
+        static extern unsafe int CpProxyUpnpOrgDimming1EndGetRampRate(IntPtr aHandle, IntPtr aAsync, uint* aretRampRate);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1SyncPauseRamp(uint aHandle);
+        static extern unsafe void CpProxyUpnpOrgDimming1SyncPauseRamp(IntPtr aHandle);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1BeginPauseRamp(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgDimming1BeginPauseRamp(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe int CpProxyUpnpOrgDimming1EndPauseRamp(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgDimming1EndPauseRamp(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1SyncResumeRamp(uint aHandle);
+        static extern unsafe void CpProxyUpnpOrgDimming1SyncResumeRamp(IntPtr aHandle);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1BeginResumeRamp(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgDimming1BeginResumeRamp(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe int CpProxyUpnpOrgDimming1EndResumeRamp(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgDimming1EndResumeRamp(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1SyncGetIsRamping(uint aHandle, uint* aretIsRamping);
+        static extern unsafe void CpProxyUpnpOrgDimming1SyncGetIsRamping(IntPtr aHandle, uint* aretIsRamping);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1BeginGetIsRamping(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgDimming1BeginGetIsRamping(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe int CpProxyUpnpOrgDimming1EndGetIsRamping(uint aHandle, uint aAsync, uint* aretIsRamping);
+        static extern unsafe int CpProxyUpnpOrgDimming1EndGetIsRamping(IntPtr aHandle, IntPtr aAsync, uint* aretIsRamping);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1SyncGetRampPaused(uint aHandle, uint* aretRampPaused);
+        static extern unsafe void CpProxyUpnpOrgDimming1SyncGetRampPaused(IntPtr aHandle, uint* aretRampPaused);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1BeginGetRampPaused(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgDimming1BeginGetRampPaused(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe int CpProxyUpnpOrgDimming1EndGetRampPaused(uint aHandle, uint aAsync, uint* aretRampPaused);
+        static extern unsafe int CpProxyUpnpOrgDimming1EndGetRampPaused(IntPtr aHandle, IntPtr aAsync, uint* aretRampPaused);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1SyncGetRampTime(uint aHandle, uint* aretRampTime);
+        static extern unsafe void CpProxyUpnpOrgDimming1SyncGetRampTime(IntPtr aHandle, uint* aretRampTime);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1BeginGetRampTime(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgDimming1BeginGetRampTime(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe int CpProxyUpnpOrgDimming1EndGetRampTime(uint aHandle, uint aAsync, uint* aretRampTime);
+        static extern unsafe int CpProxyUpnpOrgDimming1EndGetRampTime(IntPtr aHandle, IntPtr aAsync, uint* aretRampTime);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern void CpProxyUpnpOrgDimming1SetPropertyLoadLevelStatusChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyUpnpOrgDimming1SetPropertyLoadLevelStatusChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern void CpProxyUpnpOrgDimming1SetPropertyStepDeltaChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyUpnpOrgDimming1SetPropertyStepDeltaChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern void CpProxyUpnpOrgDimming1SetPropertyRampRateChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyUpnpOrgDimming1SetPropertyRampRateChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern void CpProxyUpnpOrgDimming1SetPropertyIsRampingChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyUpnpOrgDimming1SetPropertyIsRampingChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern void CpProxyUpnpOrgDimming1SetPropertyRampPausedChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyUpnpOrgDimming1SetPropertyRampPausedChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1PropertyLoadLevelStatus(uint aHandle, uint* aLoadLevelStatus);
+        static extern unsafe void CpProxyUpnpOrgDimming1PropertyLoadLevelStatus(IntPtr aHandle, uint* aLoadLevelStatus);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1PropertyStepDelta(uint aHandle, uint* aStepDelta);
+        static extern unsafe void CpProxyUpnpOrgDimming1PropertyStepDelta(IntPtr aHandle, uint* aStepDelta);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1PropertyRampRate(uint aHandle, uint* aRampRate);
+        static extern unsafe void CpProxyUpnpOrgDimming1PropertyRampRate(IntPtr aHandle, uint* aRampRate);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1PropertyIsRamping(uint aHandle, uint* aIsRamping);
+        static extern unsafe void CpProxyUpnpOrgDimming1PropertyIsRamping(IntPtr aHandle, uint* aIsRamping);
         [DllImport("CpUpnpOrgDimming1")]
-        static extern unsafe void CpProxyUpnpOrgDimming1PropertyRampPaused(uint aHandle, uint* aRampPaused);
+        static extern unsafe void CpProxyUpnpOrgDimming1PropertyRampPaused(IntPtr aHandle, uint* aRampPaused);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -192,7 +192,7 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginSetLoadLevelTarget(iHandle, anewLoadlevelTarget, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetLoadLevelTarget(uint aAsyncHandle)
+        public unsafe void EndSetLoadLevelTarget(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgDimming1EndSetLoadLevelTarget(iHandle, aAsyncHandle))
@@ -217,7 +217,7 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginGetLoadLevelTarget(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetLoadLevelTarget(uint aAsyncHandle, out uint aGetLoadlevelTarget)
+        public unsafe void EndGetLoadLevelTarget(IntPtr aAsyncHandle, out uint aGetLoadlevelTarget)
         {
 			fixed (uint* getLoadlevelTarget = &aGetLoadlevelTarget)
 			{
@@ -243,7 +243,7 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginGetLoadLevelStatus(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetLoadLevelStatus(uint aAsyncHandle, out uint aretLoadlevelStatus)
+        public unsafe void EndGetLoadLevelStatus(IntPtr aAsyncHandle, out uint aretLoadlevelStatus)
         {
 			fixed (uint* retLoadlevelStatus = &aretLoadlevelStatus)
 			{
@@ -268,7 +268,7 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginSetOnEffectLevel(iHandle, anewOnEffectLevel, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetOnEffectLevel(uint aAsyncHandle)
+        public unsafe void EndSetOnEffectLevel(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgDimming1EndSetOnEffectLevel(iHandle, aAsyncHandle))
@@ -296,7 +296,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)newOnEffect);
         }
 
-        public unsafe void EndSetOnEffect(uint aAsyncHandle)
+        public unsafe void EndSetOnEffect(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgDimming1EndSetOnEffect(iHandle, aAsyncHandle))
@@ -324,7 +324,7 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginGetOnEffectParameters(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetOnEffectParameters(uint aAsyncHandle, out string aretOnEffect, out uint aretOnEffectLevel)
+        public unsafe void EndGetOnEffectParameters(IntPtr aAsyncHandle, out string aretOnEffect, out uint aretOnEffectLevel)
         {
 			char* retOnEffect;
 			fixed (uint* retOnEffectLevel = &aretOnEffectLevel)
@@ -352,7 +352,7 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginStepUp(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndStepUp(uint aAsyncHandle)
+        public unsafe void EndStepUp(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgDimming1EndStepUp(iHandle, aAsyncHandle))
@@ -376,7 +376,7 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginStepDown(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndStepDown(uint aAsyncHandle)
+        public unsafe void EndStepDown(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgDimming1EndStepDown(iHandle, aAsyncHandle))
@@ -400,7 +400,7 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginStartRampUp(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndStartRampUp(uint aAsyncHandle)
+        public unsafe void EndStartRampUp(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgDimming1EndStartRampUp(iHandle, aAsyncHandle))
@@ -424,7 +424,7 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginStartRampDown(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndStartRampDown(uint aAsyncHandle)
+        public unsafe void EndStartRampDown(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgDimming1EndStartRampDown(iHandle, aAsyncHandle))
@@ -448,7 +448,7 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginStopRamp(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndStopRamp(uint aAsyncHandle)
+        public unsafe void EndStopRamp(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgDimming1EndStopRamp(iHandle, aAsyncHandle))
@@ -472,7 +472,7 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginStartRampToLevel(iHandle, anewLoadLevelTarget, anewRampTime, iActionComplete, ptr);
         }
 
-        public unsafe void EndStartRampToLevel(uint aAsyncHandle)
+        public unsafe void EndStartRampToLevel(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgDimming1EndStartRampToLevel(iHandle, aAsyncHandle))
@@ -496,7 +496,7 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginSetStepDelta(iHandle, anewStepDelta, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetStepDelta(uint aAsyncHandle)
+        public unsafe void EndSetStepDelta(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgDimming1EndSetStepDelta(iHandle, aAsyncHandle))
@@ -521,7 +521,7 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginGetStepDelta(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetStepDelta(uint aAsyncHandle, out uint aretStepDelta)
+        public unsafe void EndGetStepDelta(IntPtr aAsyncHandle, out uint aretStepDelta)
         {
 			fixed (uint* retStepDelta = &aretStepDelta)
 			{
@@ -546,7 +546,7 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginSetRampRate(iHandle, anewRampRate, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetRampRate(uint aAsyncHandle)
+        public unsafe void EndSetRampRate(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgDimming1EndSetRampRate(iHandle, aAsyncHandle))
@@ -571,7 +571,7 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginGetRampRate(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetRampRate(uint aAsyncHandle, out uint aretRampRate)
+        public unsafe void EndGetRampRate(IntPtr aAsyncHandle, out uint aretRampRate)
         {
 			fixed (uint* retRampRate = &aretRampRate)
 			{
@@ -596,7 +596,7 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginPauseRamp(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndPauseRamp(uint aAsyncHandle)
+        public unsafe void EndPauseRamp(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgDimming1EndPauseRamp(iHandle, aAsyncHandle))
@@ -620,7 +620,7 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginResumeRamp(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndResumeRamp(uint aAsyncHandle)
+        public unsafe void EndResumeRamp(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyUpnpOrgDimming1EndResumeRamp(iHandle, aAsyncHandle))
@@ -646,7 +646,7 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginGetIsRamping(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetIsRamping(uint aAsyncHandle, out bool aretIsRamping)
+        public unsafe void EndGetIsRamping(IntPtr aAsyncHandle, out bool aretIsRamping)
         {
 			uint retIsRamping;
 			{
@@ -674,7 +674,7 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginGetRampPaused(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetRampPaused(uint aAsyncHandle, out bool aretRampPaused)
+        public unsafe void EndGetRampPaused(IntPtr aAsyncHandle, out bool aretRampPaused)
         {
 			uint retRampPaused;
 			{
@@ -701,7 +701,7 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginGetRampTime(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndGetRampTime(uint aAsyncHandle, out uint aretRampTime)
+        public unsafe void EndGetRampTime(IntPtr aAsyncHandle, out uint aretRampTime)
         {
 			fixed (uint* retRampTime = &aretRampTime)
 			{
@@ -837,15 +837,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             CpProxyUpnpOrgDimming1Destroy(handle);
             iGch.Free();

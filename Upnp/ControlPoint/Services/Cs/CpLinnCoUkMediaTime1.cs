@@ -8,19 +8,19 @@ namespace Zapp
     public class CpProxyLinnCoUkMediaTime1 : CpProxy, IDisposable
     {
         [DllImport("CpLinnCoUkMediaTime1")]
-        static extern uint CpProxyLinnCoUkMediaTime1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyLinnCoUkMediaTime1Create(IntPtr aDeviceHandle);
         [DllImport("CpLinnCoUkMediaTime1")]
-        static extern void CpProxyLinnCoUkMediaTime1Destroy(uint aHandle);
+        static extern void CpProxyLinnCoUkMediaTime1Destroy(IntPtr aHandle);
         [DllImport("CpLinnCoUkMediaTime1")]
-        static extern unsafe void CpProxyLinnCoUkMediaTime1SyncSeconds(uint aHandle, uint* aaSeconds);
+        static extern unsafe void CpProxyLinnCoUkMediaTime1SyncSeconds(IntPtr aHandle, uint* aaSeconds);
         [DllImport("CpLinnCoUkMediaTime1")]
-        static extern unsafe void CpProxyLinnCoUkMediaTime1BeginSeconds(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkMediaTime1BeginSeconds(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkMediaTime1")]
-        static extern unsafe int CpProxyLinnCoUkMediaTime1EndSeconds(uint aHandle, uint aAsync, uint* aaSeconds);
+        static extern unsafe int CpProxyLinnCoUkMediaTime1EndSeconds(IntPtr aHandle, IntPtr aAsync, uint* aaSeconds);
         [DllImport("CpLinnCoUkMediaTime1")]
-        static extern void CpProxyLinnCoUkMediaTime1SetPropertySecondsChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkMediaTime1SetPropertySecondsChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkMediaTime1")]
-        static extern unsafe void CpProxyLinnCoUkMediaTime1PropertySeconds(uint aHandle, uint* aSeconds);
+        static extern unsafe void CpProxyLinnCoUkMediaTime1PropertySeconds(IntPtr aHandle, uint* aSeconds);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -49,7 +49,7 @@ namespace Zapp
             CpProxyLinnCoUkMediaTime1BeginSeconds(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndSeconds(uint aAsyncHandle, out uint aaSeconds)
+        public unsafe void EndSeconds(IntPtr aAsyncHandle, out uint aaSeconds)
         {
 			fixed (uint* aSeconds = &aaSeconds)
 			{
@@ -95,15 +95,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             CpProxyLinnCoUkMediaTime1Destroy(handle);
             iGch.Free();

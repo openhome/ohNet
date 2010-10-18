@@ -56,25 +56,25 @@ namespace Zapp
     public class DvDevice : IDisposable
     {
         [DllImport("ZappUpnp")]
-        static extern unsafe uint DvDeviceCreateNoResources(char* aUdn);
+        static extern unsafe IntPtr DvDeviceCreateNoResources(char* aUdn);
         [DllImport("ZappUpnp")]
-        static extern unsafe uint DvDeviceCreate(char* aUdn, CallbackResourceManager aResourceManager, IntPtr aPtr);
+        static extern unsafe IntPtr DvDeviceCreate(char* aUdn, CallbackResourceManager aResourceManager, IntPtr aPtr);
         [DllImport("ZappUpnp")]
-        static extern void DvDeviceDestroy(uint aDevice);
+        static extern void DvDeviceDestroy(IntPtr aDevice);
         [DllImport("ZappUpnp")]
-        static extern unsafe char* DvDeviceUdn(uint aDevice);
+        static extern unsafe char* DvDeviceUdn(IntPtr aDevice);
         [DllImport("ZappUpnp")]
-        static extern int DvDeviceEnabled(uint aDevice);
+        static extern int DvDeviceEnabled(IntPtr aDevice);
         [DllImport("ZappUpnp")]
-        static extern void DvDeviceSetEnabled(uint aDevice);
+        static extern void DvDeviceSetEnabled(IntPtr aDevice);
         [DllImport("ZappUpnp")]
-        static extern unsafe void DvDeviceSetDisabled(uint aDevice, DisableCompleted aCompleted, IntPtr aPtr);
+        static extern unsafe void DvDeviceSetDisabled(IntPtr aDevice, DisableCompleted aCompleted, IntPtr aPtr);
         [DllImport("ZappUpnp")]
-        static extern unsafe void DvDeviceGetAttribute(uint aDevice, char* aKey, char** aValue);
+        static extern unsafe void DvDeviceGetAttribute(IntPtr aDevice, char* aKey, char** aValue);
         [DllImport("ZappUpnp")]
-        static extern unsafe void DvDeviceSetAttribute(uint aDevice, char* aKey, char* aValue);
+        static extern unsafe void DvDeviceSetAttribute(IntPtr aDevice, char* aKey, char* aValue);
         [DllImport("ZappUpnp")]
-        static extern unsafe void DvDeviceSetXmlExtension(uint aDevice, char* aXml);
+        static extern unsafe void DvDeviceSetXmlExtension(IntPtr aDevice, char* aXml);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -88,7 +88,7 @@ namespace Zapp
                                                              CallbackWriteResource aWriteResource,
                                                              CallbackWriteResourceEnd aWriteEnd);
 
-        private uint iHandle;
+        private IntPtr iHandle;
         private GCHandle iGch;
         private IResourceManager iResourceManager;
 
@@ -183,7 +183,7 @@ namespace Zapp
             Marshal.FreeHGlobal((IntPtr)xml);
         }
 
-        public uint Handle()
+        public IntPtr Handle()
         {
             return iHandle;
         }
@@ -201,15 +201,15 @@ namespace Zapp
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvDeviceDestroy(handle);
             if (iGch.IsAllocated)

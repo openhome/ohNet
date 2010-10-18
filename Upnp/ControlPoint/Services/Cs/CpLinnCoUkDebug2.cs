@@ -8,27 +8,27 @@ namespace Zapp
     public class CpProxyLinnCoUkDebug2 : CpProxy, IDisposable
     {
         [DllImport("CpLinnCoUkDebug2")]
-        static extern uint CpProxyLinnCoUkDebug2Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyLinnCoUkDebug2Create(IntPtr aDeviceHandle);
         [DllImport("CpLinnCoUkDebug2")]
-        static extern void CpProxyLinnCoUkDebug2Destroy(uint aHandle);
+        static extern void CpProxyLinnCoUkDebug2Destroy(IntPtr aHandle);
         [DllImport("CpLinnCoUkDebug2")]
-        static extern unsafe void CpProxyLinnCoUkDebug2SyncSetDebugLevel(uint aHandle, uint aaDebugLevel);
+        static extern unsafe void CpProxyLinnCoUkDebug2SyncSetDebugLevel(IntPtr aHandle, uint aaDebugLevel);
         [DllImport("CpLinnCoUkDebug2")]
-        static extern unsafe void CpProxyLinnCoUkDebug2BeginSetDebugLevel(uint aHandle, uint aaDebugLevel, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDebug2BeginSetDebugLevel(IntPtr aHandle, uint aaDebugLevel, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDebug2")]
-        static extern unsafe int CpProxyLinnCoUkDebug2EndSetDebugLevel(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkDebug2EndSetDebugLevel(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkDebug2")]
-        static extern unsafe void CpProxyLinnCoUkDebug2SyncDebugLevel(uint aHandle, uint* aaDebugLevel);
+        static extern unsafe void CpProxyLinnCoUkDebug2SyncDebugLevel(IntPtr aHandle, uint* aaDebugLevel);
         [DllImport("CpLinnCoUkDebug2")]
-        static extern unsafe void CpProxyLinnCoUkDebug2BeginDebugLevel(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDebug2BeginDebugLevel(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDebug2")]
-        static extern unsafe int CpProxyLinnCoUkDebug2EndDebugLevel(uint aHandle, uint aAsync, uint* aaDebugLevel);
+        static extern unsafe int CpProxyLinnCoUkDebug2EndDebugLevel(IntPtr aHandle, IntPtr aAsync, uint* aaDebugLevel);
         [DllImport("CpLinnCoUkDebug2")]
-        static extern unsafe void CpProxyLinnCoUkDebug2SyncMemWrite(uint aHandle, uint aaMemAddress, char* aaMemData, uint aaMemDataLen);
+        static extern unsafe void CpProxyLinnCoUkDebug2SyncMemWrite(IntPtr aHandle, uint aaMemAddress, char* aaMemData, uint aaMemDataLen);
         [DllImport("CpLinnCoUkDebug2")]
-        static extern unsafe void CpProxyLinnCoUkDebug2BeginMemWrite(uint aHandle, uint aaMemAddress, char* aaMemData, uint aaMemDataLen, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDebug2BeginMemWrite(IntPtr aHandle, uint aaMemAddress, char* aaMemData, uint aaMemDataLen, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDebug2")]
-        static extern unsafe int CpProxyLinnCoUkDebug2EndMemWrite(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkDebug2EndMemWrite(IntPtr aHandle, IntPtr aAsync);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -54,7 +54,7 @@ namespace Zapp
             CpProxyLinnCoUkDebug2BeginSetDebugLevel(iHandle, aaDebugLevel, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetDebugLevel(uint aAsyncHandle)
+        public unsafe void EndSetDebugLevel(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkDebug2EndSetDebugLevel(iHandle, aAsyncHandle))
@@ -79,7 +79,7 @@ namespace Zapp
             CpProxyLinnCoUkDebug2BeginDebugLevel(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndDebugLevel(uint aAsyncHandle, out uint aaDebugLevel)
+        public unsafe void EndDebugLevel(IntPtr aAsyncHandle, out uint aaDebugLevel)
         {
 			fixed (uint* aDebugLevel = &aaDebugLevel)
 			{
@@ -110,7 +110,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)aMemData);
         }
 
-        public unsafe void EndMemWrite(uint aAsyncHandle)
+        public unsafe void EndMemWrite(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkDebug2EndMemWrite(iHandle, aAsyncHandle))
@@ -132,15 +132,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             CpProxyLinnCoUkDebug2Destroy(handle);
             iGch.Free();

@@ -8,71 +8,71 @@ namespace Zapp
     public class CpProxyLinnCoUkDelay1 : CpProxy, IDisposable
     {
         [DllImport("CpLinnCoUkDelay1")]
-        static extern uint CpProxyLinnCoUkDelay1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyLinnCoUkDelay1Create(IntPtr aDeviceHandle);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern void CpProxyLinnCoUkDelay1Destroy(uint aHandle);
+        static extern void CpProxyLinnCoUkDelay1Destroy(IntPtr aHandle);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe void CpProxyLinnCoUkDelay1SyncPresetXml(uint aHandle, char** aaPresetXml);
+        static extern unsafe void CpProxyLinnCoUkDelay1SyncPresetXml(IntPtr aHandle, char** aaPresetXml);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe void CpProxyLinnCoUkDelay1BeginPresetXml(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDelay1BeginPresetXml(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe int CpProxyLinnCoUkDelay1EndPresetXml(uint aHandle, uint aAsync, char** aaPresetXml);
+        static extern unsafe int CpProxyLinnCoUkDelay1EndPresetXml(IntPtr aHandle, IntPtr aAsync, char** aaPresetXml);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe void CpProxyLinnCoUkDelay1SyncPresetIndex(uint aHandle, uint* aaIndex);
+        static extern unsafe void CpProxyLinnCoUkDelay1SyncPresetIndex(IntPtr aHandle, uint* aaIndex);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe void CpProxyLinnCoUkDelay1BeginPresetIndex(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDelay1BeginPresetIndex(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe int CpProxyLinnCoUkDelay1EndPresetIndex(uint aHandle, uint aAsync, uint* aaIndex);
+        static extern unsafe int CpProxyLinnCoUkDelay1EndPresetIndex(IntPtr aHandle, IntPtr aAsync, uint* aaIndex);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe void CpProxyLinnCoUkDelay1SyncSetPresetIndex(uint aHandle, uint aaIndex);
+        static extern unsafe void CpProxyLinnCoUkDelay1SyncSetPresetIndex(IntPtr aHandle, uint aaIndex);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe void CpProxyLinnCoUkDelay1BeginSetPresetIndex(uint aHandle, uint aaIndex, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDelay1BeginSetPresetIndex(IntPtr aHandle, uint aaIndex, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe int CpProxyLinnCoUkDelay1EndSetPresetIndex(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkDelay1EndSetPresetIndex(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe void CpProxyLinnCoUkDelay1SyncSetPresetDelay(uint aHandle, uint aaIndex, uint aaDelay);
+        static extern unsafe void CpProxyLinnCoUkDelay1SyncSetPresetDelay(IntPtr aHandle, uint aaIndex, uint aaDelay);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe void CpProxyLinnCoUkDelay1BeginSetPresetDelay(uint aHandle, uint aaIndex, uint aaDelay, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDelay1BeginSetPresetDelay(IntPtr aHandle, uint aaIndex, uint aaDelay, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe int CpProxyLinnCoUkDelay1EndSetPresetDelay(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkDelay1EndSetPresetDelay(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe void CpProxyLinnCoUkDelay1SyncSetPresetVisible(uint aHandle, uint aaIndex, uint aaVisible);
+        static extern unsafe void CpProxyLinnCoUkDelay1SyncSetPresetVisible(IntPtr aHandle, uint aaIndex, uint aaVisible);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe void CpProxyLinnCoUkDelay1BeginSetPresetVisible(uint aHandle, uint aaIndex, uint aaVisible, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDelay1BeginSetPresetVisible(IntPtr aHandle, uint aaIndex, uint aaVisible, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe int CpProxyLinnCoUkDelay1EndSetPresetVisible(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkDelay1EndSetPresetVisible(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe void CpProxyLinnCoUkDelay1SyncSetPresetName(uint aHandle, uint aaIndex, char* aaName);
+        static extern unsafe void CpProxyLinnCoUkDelay1SyncSetPresetName(IntPtr aHandle, uint aaIndex, char* aaName);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe void CpProxyLinnCoUkDelay1BeginSetPresetName(uint aHandle, uint aaIndex, char* aaName, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDelay1BeginSetPresetName(IntPtr aHandle, uint aaIndex, char* aaName, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe int CpProxyLinnCoUkDelay1EndSetPresetName(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkDelay1EndSetPresetName(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe void CpProxyLinnCoUkDelay1SyncDelayMinimum(uint aHandle, uint* aaDelay);
+        static extern unsafe void CpProxyLinnCoUkDelay1SyncDelayMinimum(IntPtr aHandle, uint* aaDelay);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe void CpProxyLinnCoUkDelay1BeginDelayMinimum(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDelay1BeginDelayMinimum(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe int CpProxyLinnCoUkDelay1EndDelayMinimum(uint aHandle, uint aAsync, uint* aaDelay);
+        static extern unsafe int CpProxyLinnCoUkDelay1EndDelayMinimum(IntPtr aHandle, IntPtr aAsync, uint* aaDelay);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe void CpProxyLinnCoUkDelay1SyncDelayMaximum(uint aHandle, uint* aaDelay);
+        static extern unsafe void CpProxyLinnCoUkDelay1SyncDelayMaximum(IntPtr aHandle, uint* aaDelay);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe void CpProxyLinnCoUkDelay1BeginDelayMaximum(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDelay1BeginDelayMaximum(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe int CpProxyLinnCoUkDelay1EndDelayMaximum(uint aHandle, uint aAsync, uint* aaDelay);
+        static extern unsafe int CpProxyLinnCoUkDelay1EndDelayMaximum(IntPtr aHandle, IntPtr aAsync, uint* aaDelay);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe void CpProxyLinnCoUkDelay1SyncPresetCount(uint aHandle, uint* aaCount);
+        static extern unsafe void CpProxyLinnCoUkDelay1SyncPresetCount(IntPtr aHandle, uint* aaCount);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe void CpProxyLinnCoUkDelay1BeginPresetCount(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDelay1BeginPresetCount(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe int CpProxyLinnCoUkDelay1EndPresetCount(uint aHandle, uint aAsync, uint* aaCount);
+        static extern unsafe int CpProxyLinnCoUkDelay1EndPresetCount(IntPtr aHandle, IntPtr aAsync, uint* aaCount);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern void CpProxyLinnCoUkDelay1SetPropertyPresetXmlChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkDelay1SetPropertyPresetXmlChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern void CpProxyLinnCoUkDelay1SetPropertyPresetIndexChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkDelay1SetPropertyPresetIndexChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe void CpProxyLinnCoUkDelay1PropertyPresetXml(uint aHandle, char** aPresetXml);
+        static extern unsafe void CpProxyLinnCoUkDelay1PropertyPresetXml(IntPtr aHandle, char** aPresetXml);
         [DllImport("CpLinnCoUkDelay1")]
-        static extern unsafe void CpProxyLinnCoUkDelay1PropertyPresetIndex(uint aHandle, uint* aPresetIndex);
+        static extern unsafe void CpProxyLinnCoUkDelay1PropertyPresetIndex(IntPtr aHandle, uint* aPresetIndex);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -105,7 +105,7 @@ namespace Zapp
             CpProxyLinnCoUkDelay1BeginPresetXml(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndPresetXml(uint aAsyncHandle, out string aaPresetXml)
+        public unsafe void EndPresetXml(IntPtr aAsyncHandle, out string aaPresetXml)
         {
 			char* aPresetXml;
 			{
@@ -133,7 +133,7 @@ namespace Zapp
             CpProxyLinnCoUkDelay1BeginPresetIndex(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndPresetIndex(uint aAsyncHandle, out uint aaIndex)
+        public unsafe void EndPresetIndex(IntPtr aAsyncHandle, out uint aaIndex)
         {
 			fixed (uint* aIndex = &aaIndex)
 			{
@@ -158,7 +158,7 @@ namespace Zapp
             CpProxyLinnCoUkDelay1BeginSetPresetIndex(iHandle, aaIndex, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetPresetIndex(uint aAsyncHandle)
+        public unsafe void EndSetPresetIndex(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkDelay1EndSetPresetIndex(iHandle, aAsyncHandle))
@@ -182,7 +182,7 @@ namespace Zapp
             CpProxyLinnCoUkDelay1BeginSetPresetDelay(iHandle, aaIndex, aaDelay, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetPresetDelay(uint aAsyncHandle)
+        public unsafe void EndSetPresetDelay(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkDelay1EndSetPresetDelay(iHandle, aAsyncHandle))
@@ -208,7 +208,7 @@ namespace Zapp
             CpProxyLinnCoUkDelay1BeginSetPresetVisible(iHandle, aaIndex, aVisible, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetPresetVisible(uint aAsyncHandle)
+        public unsafe void EndSetPresetVisible(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkDelay1EndSetPresetVisible(iHandle, aAsyncHandle))
@@ -236,7 +236,7 @@ namespace Zapp
 			Marshal.FreeHGlobal((IntPtr)aName);
         }
 
-        public unsafe void EndSetPresetName(uint aAsyncHandle)
+        public unsafe void EndSetPresetName(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkDelay1EndSetPresetName(iHandle, aAsyncHandle))
@@ -261,7 +261,7 @@ namespace Zapp
             CpProxyLinnCoUkDelay1BeginDelayMinimum(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndDelayMinimum(uint aAsyncHandle, out uint aaDelay)
+        public unsafe void EndDelayMinimum(IntPtr aAsyncHandle, out uint aaDelay)
         {
 			fixed (uint* aDelay = &aaDelay)
 			{
@@ -287,7 +287,7 @@ namespace Zapp
             CpProxyLinnCoUkDelay1BeginDelayMaximum(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndDelayMaximum(uint aAsyncHandle, out uint aaDelay)
+        public unsafe void EndDelayMaximum(IntPtr aAsyncHandle, out uint aaDelay)
         {
 			fixed (uint* aDelay = &aaDelay)
 			{
@@ -313,7 +313,7 @@ namespace Zapp
             CpProxyLinnCoUkDelay1BeginPresetCount(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndPresetCount(uint aAsyncHandle, out uint aaCount)
+        public unsafe void EndPresetCount(IntPtr aAsyncHandle, out uint aaCount)
         {
 			fixed (uint* aCount = &aaCount)
 			{
@@ -382,15 +382,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             CpProxyLinnCoUkDelay1Destroy(handle);
             iGch.Free();

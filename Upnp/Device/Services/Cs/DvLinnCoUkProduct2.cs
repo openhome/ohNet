@@ -8,49 +8,49 @@ namespace Zapp
     public class DvServiceLinnCoUkProduct2 : IDisposable
     {
         [DllImport("DvLinnCoUkProduct2")]
-        static extern uint DvServiceLinnCoUkProduct2Create(uint aDeviceHandle);
+        static extern IntPtr DvServiceLinnCoUkProduct2Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern void DvServiceLinnCoUkProduct2Destroy(uint aHandle);
+        static extern void DvServiceLinnCoUkProduct2Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern unsafe int DvServiceLinnCoUkProduct2SetPropertyProductName(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkProduct2SetPropertyProductName(IntPtr aHandle, char* aValue);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern unsafe void DvServiceLinnCoUkProduct2GetPropertyProductName(uint aHandle, char** aValue);
+        static extern unsafe void DvServiceLinnCoUkProduct2GetPropertyProductName(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern unsafe int DvServiceLinnCoUkProduct2SetPropertyProductRoom(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkProduct2SetPropertyProductRoom(IntPtr aHandle, char* aValue);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern unsafe void DvServiceLinnCoUkProduct2GetPropertyProductRoom(uint aHandle, char** aValue);
+        static extern unsafe void DvServiceLinnCoUkProduct2GetPropertyProductRoom(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern unsafe int DvServiceLinnCoUkProduct2SetPropertyProductStandby(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkProduct2SetPropertyProductStandby(IntPtr aHandle, int aValue);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern unsafe void DvServiceLinnCoUkProduct2GetPropertyProductStandby(uint aHandle, int* aValue);
+        static extern unsafe void DvServiceLinnCoUkProduct2GetPropertyProductStandby(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern unsafe int DvServiceLinnCoUkProduct2SetPropertyProductSourceIndex(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkProduct2SetPropertyProductSourceIndex(IntPtr aHandle, uint aValue);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern unsafe void DvServiceLinnCoUkProduct2GetPropertyProductSourceIndex(uint aHandle, uint* aValue);
+        static extern unsafe void DvServiceLinnCoUkProduct2GetPropertyProductSourceIndex(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern void DvServiceLinnCoUkProduct2EnableActionType(uint aHandle, CallbackType aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProduct2EnableActionType(IntPtr aHandle, CallbackType aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern void DvServiceLinnCoUkProduct2EnableActionModel(uint aHandle, CallbackModel aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProduct2EnableActionModel(IntPtr aHandle, CallbackModel aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern void DvServiceLinnCoUkProduct2EnableActionName(uint aHandle, CallbackName aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProduct2EnableActionName(IntPtr aHandle, CallbackName aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern void DvServiceLinnCoUkProduct2EnableActionSetName(uint aHandle, CallbackSetName aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProduct2EnableActionSetName(IntPtr aHandle, CallbackSetName aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern void DvServiceLinnCoUkProduct2EnableActionRoom(uint aHandle, CallbackRoom aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProduct2EnableActionRoom(IntPtr aHandle, CallbackRoom aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern void DvServiceLinnCoUkProduct2EnableActionSetRoom(uint aHandle, CallbackSetRoom aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProduct2EnableActionSetRoom(IntPtr aHandle, CallbackSetRoom aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern void DvServiceLinnCoUkProduct2EnableActionStandby(uint aHandle, CallbackStandby aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProduct2EnableActionStandby(IntPtr aHandle, CallbackStandby aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern void DvServiceLinnCoUkProduct2EnableActionSetStandby(uint aHandle, CallbackSetStandby aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProduct2EnableActionSetStandby(IntPtr aHandle, CallbackSetStandby aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern void DvServiceLinnCoUkProduct2EnableActionSourceCount(uint aHandle, CallbackSourceCount aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProduct2EnableActionSourceCount(IntPtr aHandle, CallbackSourceCount aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern void DvServiceLinnCoUkProduct2EnableActionSourceIndex(uint aHandle, CallbackSourceIndex aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProduct2EnableActionSourceIndex(IntPtr aHandle, CallbackSourceIndex aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern void DvServiceLinnCoUkProduct2EnableActionSetSourceIndex(uint aHandle, CallbackSetSourceIndex aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProduct2EnableActionSetSourceIndex(IntPtr aHandle, CallbackSetSourceIndex aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern void DvServiceLinnCoUkProduct2EnableActionSourceType(uint aHandle, CallbackSourceType aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProduct2EnableActionSourceType(IntPtr aHandle, CallbackSourceType aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -67,7 +67,7 @@ namespace Zapp
         private unsafe delegate int CallbackSetSourceIndex(IntPtr aPtr, uint aVersion, uint aaSourceIndex);
         private unsafe delegate int CallbackSourceType(IntPtr aPtr, uint aVersion, uint aaSourceIndex, char** aaSourceType);
 
-        private uint iHandle;
+        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackType iCallbackType;
         private CallbackModel iCallbackModel;
@@ -431,15 +431,15 @@ namespace Zapp
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvServiceLinnCoUkProduct2Destroy(handle);
             if (iGch.IsAllocated)

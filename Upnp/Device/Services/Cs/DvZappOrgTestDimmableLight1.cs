@@ -8,20 +8,20 @@ namespace Zapp
     public class DvServiceZappOrgTestDimmableLight1 : IDisposable
     {
         [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern uint DvServiceZappOrgTestDimmableLight1Create(uint aDeviceHandle);
+        static extern IntPtr DvServiceZappOrgTestDimmableLight1Create(IntPtr aDeviceHandle);
         [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern void DvServiceZappOrgTestDimmableLight1Destroy(uint aHandle);
+        static extern void DvServiceZappOrgTestDimmableLight1Destroy(IntPtr aHandle);
         [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern void DvServiceZappOrgTestDimmableLight1EnableActionGetLevel(uint aHandle, CallbackGetLevel aCallback, IntPtr aPtr);
+        static extern void DvServiceZappOrgTestDimmableLight1EnableActionGetLevel(IntPtr aHandle, CallbackGetLevel aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern void DvServiceZappOrgTestDimmableLight1EnableActionSetLevel(uint aHandle, CallbackSetLevel aCallback, IntPtr aPtr);
+        static extern void DvServiceZappOrgTestDimmableLight1EnableActionSetLevel(IntPtr aHandle, CallbackSetLevel aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
         private unsafe delegate int CallbackGetLevel(IntPtr aPtr, uint aVersion, uint* aLevel);
         private unsafe delegate int CallbackSetLevel(IntPtr aPtr, uint aVersion, uint aLevel);
 
-        private uint iHandle;
+        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackGetLevel iCallbackGetLevel;
         private CallbackSetLevel iCallbackSetLevel;
@@ -88,15 +88,15 @@ namespace Zapp
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvServiceZappOrgTestDimmableLight1Destroy(handle);
             if (iGch.IsAllocated)

@@ -8,45 +8,45 @@ namespace Zapp
     public class DvServiceLinnCoUkProxyManager1 : IDisposable
     {
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern uint DvServiceLinnCoUkProxyManager1Create(uint aDeviceHandle);
+        static extern IntPtr DvServiceLinnCoUkProxyManager1Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvServiceLinnCoUkProxyManager1Destroy(uint aHandle);
+        static extern void DvServiceLinnCoUkProxyManager1Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern unsafe int DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductConnected(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductConnected(IntPtr aHandle, char* aValue);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern unsafe void DvServiceLinnCoUkProxyManager1GetPropertyKontrolProductConnected(uint aHandle, char** aValue);
+        static extern unsafe void DvServiceLinnCoUkProxyManager1GetPropertyKontrolProductConnected(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern unsafe int DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductComPort(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductComPort(IntPtr aHandle, uint aValue);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern unsafe void DvServiceLinnCoUkProxyManager1GetPropertyKontrolProductComPort(uint aHandle, uint* aValue);
+        static extern unsafe void DvServiceLinnCoUkProxyManager1GetPropertyKontrolProductComPort(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern unsafe int DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerConnected(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerConnected(IntPtr aHandle, char* aValue);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern unsafe void DvServiceLinnCoUkProxyManager1GetPropertyDiscPlayerConnected(uint aHandle, char** aValue);
+        static extern unsafe void DvServiceLinnCoUkProxyManager1GetPropertyDiscPlayerConnected(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern unsafe int DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerComPort(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerComPort(IntPtr aHandle, uint aValue);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern unsafe void DvServiceLinnCoUkProxyManager1GetPropertyDiscPlayerComPort(uint aHandle, uint* aValue);
+        static extern unsafe void DvServiceLinnCoUkProxyManager1GetPropertyDiscPlayerComPort(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvServiceLinnCoUkProxyManager1EnableActionKontrolProductConnected(uint aHandle, CallbackKontrolProductConnected aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProxyManager1EnableActionKontrolProductConnected(IntPtr aHandle, CallbackKontrolProductConnected aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvServiceLinnCoUkProxyManager1EnableActionSetKontrolProductConnected(uint aHandle, CallbackSetKontrolProductConnected aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProxyManager1EnableActionSetKontrolProductConnected(IntPtr aHandle, CallbackSetKontrolProductConnected aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvServiceLinnCoUkProxyManager1EnableActionKontrolProductComPort(uint aHandle, CallbackKontrolProductComPort aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProxyManager1EnableActionKontrolProductComPort(IntPtr aHandle, CallbackKontrolProductComPort aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvServiceLinnCoUkProxyManager1EnableActionSetKontrolProductComPort(uint aHandle, CallbackSetKontrolProductComPort aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProxyManager1EnableActionSetKontrolProductComPort(IntPtr aHandle, CallbackSetKontrolProductComPort aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvServiceLinnCoUkProxyManager1EnableActionDiscPlayerConnected(uint aHandle, CallbackDiscPlayerConnected aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProxyManager1EnableActionDiscPlayerConnected(IntPtr aHandle, CallbackDiscPlayerConnected aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvServiceLinnCoUkProxyManager1EnableActionSetDiscPlayerConnected(uint aHandle, CallbackSetDiscPlayerConnected aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProxyManager1EnableActionSetDiscPlayerConnected(IntPtr aHandle, CallbackSetDiscPlayerConnected aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvServiceLinnCoUkProxyManager1EnableActionDiscPlayerComPort(uint aHandle, CallbackDiscPlayerComPort aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProxyManager1EnableActionDiscPlayerComPort(IntPtr aHandle, CallbackDiscPlayerComPort aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvServiceLinnCoUkProxyManager1EnableActionSetDiscPlayerComPort(uint aHandle, CallbackSetDiscPlayerComPort aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProxyManager1EnableActionSetDiscPlayerComPort(IntPtr aHandle, CallbackSetDiscPlayerComPort aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvServiceLinnCoUkProxyManager1EnableActionTestKontrolProductConnection(uint aHandle, CallbackTestKontrolProductConnection aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProxyManager1EnableActionTestKontrolProductConnection(IntPtr aHandle, CallbackTestKontrolProductConnection aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvServiceLinnCoUkProxyManager1EnableActionTestDiscPlayerConnection(uint aHandle, CallbackTestDiscPlayerConnection aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkProxyManager1EnableActionTestDiscPlayerConnection(IntPtr aHandle, CallbackTestDiscPlayerConnection aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -61,7 +61,7 @@ namespace Zapp
         private unsafe delegate int CallbackTestKontrolProductConnection(IntPtr aPtr, uint aVersion, int* aaResult);
         private unsafe delegate int CallbackTestDiscPlayerConnection(IntPtr aPtr, uint aVersion, int* aaResult);
 
-        private uint iHandle;
+        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackKontrolProductConnected iCallbackKontrolProductConnected;
         private CallbackSetKontrolProductConnected iCallbackSetKontrolProductConnected;
@@ -378,15 +378,15 @@ namespace Zapp
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvServiceLinnCoUkProxyManager1Destroy(handle);
             if (iGch.IsAllocated)

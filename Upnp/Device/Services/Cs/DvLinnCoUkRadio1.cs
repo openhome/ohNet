@@ -8,69 +8,69 @@ namespace Zapp
     public class DvServiceLinnCoUkRadio1 : IDisposable
     {
         [DllImport("DvLinnCoUkRadio1")]
-        static extern uint DvServiceLinnCoUkRadio1Create(uint aDeviceHandle);
+        static extern IntPtr DvServiceLinnCoUkRadio1Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvServiceLinnCoUkRadio1Destroy(uint aHandle);
+        static extern void DvServiceLinnCoUkRadio1Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyChannelUri(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyChannelUri(IntPtr aHandle, char* aValue);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe void DvServiceLinnCoUkRadio1GetPropertyChannelUri(uint aHandle, char** aValue);
+        static extern unsafe void DvServiceLinnCoUkRadio1GetPropertyChannelUri(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyChannelMetadata(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyChannelMetadata(IntPtr aHandle, char* aValue);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe void DvServiceLinnCoUkRadio1GetPropertyChannelMetadata(uint aHandle, char** aValue);
+        static extern unsafe void DvServiceLinnCoUkRadio1GetPropertyChannelMetadata(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyTransportState(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyTransportState(IntPtr aHandle, char* aValue);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe void DvServiceLinnCoUkRadio1GetPropertyTransportState(uint aHandle, char** aValue);
+        static extern unsafe void DvServiceLinnCoUkRadio1GetPropertyTransportState(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyProtocolInfo(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyProtocolInfo(IntPtr aHandle, char* aValue);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe void DvServiceLinnCoUkRadio1GetPropertyProtocolInfo(uint aHandle, char** aValue);
+        static extern unsafe void DvServiceLinnCoUkRadio1GetPropertyProtocolInfo(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyId(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyId(IntPtr aHandle, uint aValue);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe void DvServiceLinnCoUkRadio1GetPropertyId(uint aHandle, uint* aValue);
+        static extern unsafe void DvServiceLinnCoUkRadio1GetPropertyId(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyIdArray(uint aHandle, char* aValue, int aValueLen);
+        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyIdArray(IntPtr aHandle, char* aValue, int aValueLen);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe void DvServiceLinnCoUkRadio1GetPropertyIdArray(uint aHandle, char** aValue, int* aValueLen);
+        static extern unsafe void DvServiceLinnCoUkRadio1GetPropertyIdArray(IntPtr aHandle, char** aValue, int* aValueLen);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyIdsMax(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyIdsMax(IntPtr aHandle, uint aValue);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe void DvServiceLinnCoUkRadio1GetPropertyIdsMax(uint aHandle, uint* aValue);
+        static extern unsafe void DvServiceLinnCoUkRadio1GetPropertyIdsMax(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvServiceLinnCoUkRadio1EnableActionPlay(uint aHandle, CallbackPlay aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkRadio1EnableActionPlay(IntPtr aHandle, CallbackPlay aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvServiceLinnCoUkRadio1EnableActionPause(uint aHandle, CallbackPause aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkRadio1EnableActionPause(IntPtr aHandle, CallbackPause aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvServiceLinnCoUkRadio1EnableActionStop(uint aHandle, CallbackStop aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkRadio1EnableActionStop(IntPtr aHandle, CallbackStop aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvServiceLinnCoUkRadio1EnableActionSeekSecondAbsolute(uint aHandle, CallbackSeekSecondAbsolute aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkRadio1EnableActionSeekSecondAbsolute(IntPtr aHandle, CallbackSeekSecondAbsolute aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvServiceLinnCoUkRadio1EnableActionSeekSecondRelative(uint aHandle, CallbackSeekSecondRelative aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkRadio1EnableActionSeekSecondRelative(IntPtr aHandle, CallbackSeekSecondRelative aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvServiceLinnCoUkRadio1EnableActionChannel(uint aHandle, CallbackChannel aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkRadio1EnableActionChannel(IntPtr aHandle, CallbackChannel aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvServiceLinnCoUkRadio1EnableActionSetChannel(uint aHandle, CallbackSetChannel aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkRadio1EnableActionSetChannel(IntPtr aHandle, CallbackSetChannel aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvServiceLinnCoUkRadio1EnableActionProtocolInfo(uint aHandle, CallbackProtocolInfo aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkRadio1EnableActionProtocolInfo(IntPtr aHandle, CallbackProtocolInfo aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvServiceLinnCoUkRadio1EnableActionTransportState(uint aHandle, CallbackTransportState aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkRadio1EnableActionTransportState(IntPtr aHandle, CallbackTransportState aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvServiceLinnCoUkRadio1EnableActionId(uint aHandle, CallbackId aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkRadio1EnableActionId(IntPtr aHandle, CallbackId aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvServiceLinnCoUkRadio1EnableActionSetId(uint aHandle, CallbackSetId aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkRadio1EnableActionSetId(IntPtr aHandle, CallbackSetId aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvServiceLinnCoUkRadio1EnableActionRead(uint aHandle, CallbackRead aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkRadio1EnableActionRead(IntPtr aHandle, CallbackRead aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvServiceLinnCoUkRadio1EnableActionReadList(uint aHandle, CallbackReadList aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkRadio1EnableActionReadList(IntPtr aHandle, CallbackReadList aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvServiceLinnCoUkRadio1EnableActionIdArray(uint aHandle, CallbackIdArray aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkRadio1EnableActionIdArray(IntPtr aHandle, CallbackIdArray aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvServiceLinnCoUkRadio1EnableActionIdArrayChanged(uint aHandle, CallbackIdArrayChanged aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkRadio1EnableActionIdArrayChanged(IntPtr aHandle, CallbackIdArrayChanged aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvServiceLinnCoUkRadio1EnableActionIdsMax(uint aHandle, CallbackIdsMax aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkRadio1EnableActionIdsMax(IntPtr aHandle, CallbackIdsMax aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -91,7 +91,7 @@ namespace Zapp
         private unsafe delegate int CallbackIdArrayChanged(IntPtr aPtr, uint aVersion, uint aaIdArrayToken, int* aaIdArrayChanged);
         private unsafe delegate int CallbackIdsMax(IntPtr aPtr, uint aVersion, uint* aaIdsMax);
 
-        private uint iHandle;
+        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackPlay iCallbackPlay;
         private CallbackPause iCallbackPause;
@@ -606,15 +606,15 @@ namespace Zapp
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvServiceLinnCoUkRadio1Destroy(handle);
             if (iGch.IsAllocated)

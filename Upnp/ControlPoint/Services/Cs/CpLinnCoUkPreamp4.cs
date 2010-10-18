@@ -8,117 +8,117 @@ namespace Zapp
     public class CpProxyLinnCoUkPreamp4 : CpProxy, IDisposable
     {
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern uint CpProxyLinnCoUkPreamp4Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyLinnCoUkPreamp4Create(IntPtr aDeviceHandle);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern void CpProxyLinnCoUkPreamp4Destroy(uint aHandle);
+        static extern void CpProxyLinnCoUkPreamp4Destroy(IntPtr aHandle);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncVolumeInc(uint aHandle);
+        static extern unsafe void CpProxyLinnCoUkPreamp4SyncVolumeInc(IntPtr aHandle);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginVolumeInc(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPreamp4BeginVolumeInc(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndVolumeInc(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkPreamp4EndVolumeInc(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncVolumeDec(uint aHandle);
+        static extern unsafe void CpProxyLinnCoUkPreamp4SyncVolumeDec(IntPtr aHandle);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginVolumeDec(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPreamp4BeginVolumeDec(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndVolumeDec(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkPreamp4EndVolumeDec(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncSetVolume(uint aHandle, uint aaVolume);
+        static extern unsafe void CpProxyLinnCoUkPreamp4SyncSetVolume(IntPtr aHandle, uint aaVolume);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginSetVolume(uint aHandle, uint aaVolume, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPreamp4BeginSetVolume(IntPtr aHandle, uint aaVolume, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndSetVolume(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkPreamp4EndSetVolume(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncVolume(uint aHandle, uint* aaVolume);
+        static extern unsafe void CpProxyLinnCoUkPreamp4SyncVolume(IntPtr aHandle, uint* aaVolume);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginVolume(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPreamp4BeginVolume(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndVolume(uint aHandle, uint aAsync, uint* aaVolume);
+        static extern unsafe int CpProxyLinnCoUkPreamp4EndVolume(IntPtr aHandle, IntPtr aAsync, uint* aaVolume);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncSetMute(uint aHandle, uint aaMute);
+        static extern unsafe void CpProxyLinnCoUkPreamp4SyncSetMute(IntPtr aHandle, uint aaMute);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginSetMute(uint aHandle, uint aaMute, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPreamp4BeginSetMute(IntPtr aHandle, uint aaMute, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndSetMute(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkPreamp4EndSetMute(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncMute(uint aHandle, uint* aaMute);
+        static extern unsafe void CpProxyLinnCoUkPreamp4SyncMute(IntPtr aHandle, uint* aaMute);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginMute(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPreamp4BeginMute(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndMute(uint aHandle, uint aAsync, uint* aaMute);
+        static extern unsafe int CpProxyLinnCoUkPreamp4EndMute(IntPtr aHandle, IntPtr aAsync, uint* aaMute);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncSetBalance(uint aHandle, int aaBalance);
+        static extern unsafe void CpProxyLinnCoUkPreamp4SyncSetBalance(IntPtr aHandle, int aaBalance);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginSetBalance(uint aHandle, int aaBalance, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPreamp4BeginSetBalance(IntPtr aHandle, int aaBalance, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndSetBalance(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkPreamp4EndSetBalance(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncBalance(uint aHandle, int* aaBalance);
+        static extern unsafe void CpProxyLinnCoUkPreamp4SyncBalance(IntPtr aHandle, int* aaBalance);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginBalance(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPreamp4BeginBalance(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndBalance(uint aHandle, uint aAsync, int* aaBalance);
+        static extern unsafe int CpProxyLinnCoUkPreamp4EndBalance(IntPtr aHandle, IntPtr aAsync, int* aaBalance);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncSetVolumeLimit(uint aHandle, uint aaVolumeLimit);
+        static extern unsafe void CpProxyLinnCoUkPreamp4SyncSetVolumeLimit(IntPtr aHandle, uint aaVolumeLimit);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginSetVolumeLimit(uint aHandle, uint aaVolumeLimit, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPreamp4BeginSetVolumeLimit(IntPtr aHandle, uint aaVolumeLimit, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndSetVolumeLimit(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkPreamp4EndSetVolumeLimit(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncVolumeLimit(uint aHandle, uint* aaVolumeLimit);
+        static extern unsafe void CpProxyLinnCoUkPreamp4SyncVolumeLimit(IntPtr aHandle, uint* aaVolumeLimit);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginVolumeLimit(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPreamp4BeginVolumeLimit(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndVolumeLimit(uint aHandle, uint aAsync, uint* aaVolumeLimit);
+        static extern unsafe int CpProxyLinnCoUkPreamp4EndVolumeLimit(IntPtr aHandle, IntPtr aAsync, uint* aaVolumeLimit);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncSetStartupVolume(uint aHandle, uint aaStartupVolume);
+        static extern unsafe void CpProxyLinnCoUkPreamp4SyncSetStartupVolume(IntPtr aHandle, uint aaStartupVolume);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginSetStartupVolume(uint aHandle, uint aaStartupVolume, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPreamp4BeginSetStartupVolume(IntPtr aHandle, uint aaStartupVolume, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndSetStartupVolume(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkPreamp4EndSetStartupVolume(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncStartupVolume(uint aHandle, uint* aaStartupVolume);
+        static extern unsafe void CpProxyLinnCoUkPreamp4SyncStartupVolume(IntPtr aHandle, uint* aaStartupVolume);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginStartupVolume(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPreamp4BeginStartupVolume(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndStartupVolume(uint aHandle, uint aAsync, uint* aaStartupVolume);
+        static extern unsafe int CpProxyLinnCoUkPreamp4EndStartupVolume(IntPtr aHandle, IntPtr aAsync, uint* aaStartupVolume);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncSetStartupVolumeEnabled(uint aHandle, uint aaStartupVolumeEnabled);
+        static extern unsafe void CpProxyLinnCoUkPreamp4SyncSetStartupVolumeEnabled(IntPtr aHandle, uint aaStartupVolumeEnabled);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginSetStartupVolumeEnabled(uint aHandle, uint aaStartupVolumeEnabled, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPreamp4BeginSetStartupVolumeEnabled(IntPtr aHandle, uint aaStartupVolumeEnabled, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndSetStartupVolumeEnabled(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkPreamp4EndSetStartupVolumeEnabled(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4SyncStartupVolumeEnabled(uint aHandle, uint* aaStartupVolumeEnabled);
+        static extern unsafe void CpProxyLinnCoUkPreamp4SyncStartupVolumeEnabled(IntPtr aHandle, uint* aaStartupVolumeEnabled);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4BeginStartupVolumeEnabled(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPreamp4BeginStartupVolumeEnabled(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe int CpProxyLinnCoUkPreamp4EndStartupVolumeEnabled(uint aHandle, uint aAsync, uint* aaStartupVolumeEnabled);
+        static extern unsafe int CpProxyLinnCoUkPreamp4EndStartupVolumeEnabled(IntPtr aHandle, IntPtr aAsync, uint* aaStartupVolumeEnabled);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern void CpProxyLinnCoUkPreamp4SetPropertyVolumeChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkPreamp4SetPropertyVolumeChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern void CpProxyLinnCoUkPreamp4SetPropertyMuteChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkPreamp4SetPropertyMuteChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern void CpProxyLinnCoUkPreamp4SetPropertyBalanceChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkPreamp4SetPropertyBalanceChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern void CpProxyLinnCoUkPreamp4SetPropertyVolumeLimitChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkPreamp4SetPropertyVolumeLimitChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern void CpProxyLinnCoUkPreamp4SetPropertyStartupVolumeChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkPreamp4SetPropertyStartupVolumeChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern void CpProxyLinnCoUkPreamp4SetPropertyStartupVolumeEnabledChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkPreamp4SetPropertyStartupVolumeEnabledChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4PropertyVolume(uint aHandle, uint* aVolume);
+        static extern unsafe void CpProxyLinnCoUkPreamp4PropertyVolume(IntPtr aHandle, uint* aVolume);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4PropertyMute(uint aHandle, uint* aMute);
+        static extern unsafe void CpProxyLinnCoUkPreamp4PropertyMute(IntPtr aHandle, uint* aMute);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4PropertyBalance(uint aHandle, int* aBalance);
+        static extern unsafe void CpProxyLinnCoUkPreamp4PropertyBalance(IntPtr aHandle, int* aBalance);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4PropertyVolumeLimit(uint aHandle, uint* aVolumeLimit);
+        static extern unsafe void CpProxyLinnCoUkPreamp4PropertyVolumeLimit(IntPtr aHandle, uint* aVolumeLimit);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4PropertyStartupVolume(uint aHandle, uint* aStartupVolume);
+        static extern unsafe void CpProxyLinnCoUkPreamp4PropertyStartupVolume(IntPtr aHandle, uint* aStartupVolume);
         [DllImport("CpLinnCoUkPreamp4")]
-        static extern unsafe void CpProxyLinnCoUkPreamp4PropertyStartupVolumeEnabled(uint aHandle, uint* aStartupVolumeEnabled);
+        static extern unsafe void CpProxyLinnCoUkPreamp4PropertyStartupVolumeEnabled(IntPtr aHandle, uint* aStartupVolumeEnabled);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -156,7 +156,7 @@ namespace Zapp
             CpProxyLinnCoUkPreamp4BeginVolumeInc(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndVolumeInc(uint aAsyncHandle)
+        public unsafe void EndVolumeInc(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkPreamp4EndVolumeInc(iHandle, aAsyncHandle))
@@ -180,7 +180,7 @@ namespace Zapp
             CpProxyLinnCoUkPreamp4BeginVolumeDec(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndVolumeDec(uint aAsyncHandle)
+        public unsafe void EndVolumeDec(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkPreamp4EndVolumeDec(iHandle, aAsyncHandle))
@@ -204,7 +204,7 @@ namespace Zapp
             CpProxyLinnCoUkPreamp4BeginSetVolume(iHandle, aaVolume, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetVolume(uint aAsyncHandle)
+        public unsafe void EndSetVolume(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkPreamp4EndSetVolume(iHandle, aAsyncHandle))
@@ -229,7 +229,7 @@ namespace Zapp
             CpProxyLinnCoUkPreamp4BeginVolume(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndVolume(uint aAsyncHandle, out uint aaVolume)
+        public unsafe void EndVolume(IntPtr aAsyncHandle, out uint aaVolume)
         {
 			fixed (uint* aVolume = &aaVolume)
 			{
@@ -256,7 +256,7 @@ namespace Zapp
             CpProxyLinnCoUkPreamp4BeginSetMute(iHandle, aMute, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetMute(uint aAsyncHandle)
+        public unsafe void EndSetMute(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkPreamp4EndSetMute(iHandle, aAsyncHandle))
@@ -282,7 +282,7 @@ namespace Zapp
             CpProxyLinnCoUkPreamp4BeginMute(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndMute(uint aAsyncHandle, out bool aaMute)
+        public unsafe void EndMute(IntPtr aAsyncHandle, out bool aaMute)
         {
 			uint aMute;
 			{
@@ -308,7 +308,7 @@ namespace Zapp
             CpProxyLinnCoUkPreamp4BeginSetBalance(iHandle, aaBalance, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetBalance(uint aAsyncHandle)
+        public unsafe void EndSetBalance(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkPreamp4EndSetBalance(iHandle, aAsyncHandle))
@@ -333,7 +333,7 @@ namespace Zapp
             CpProxyLinnCoUkPreamp4BeginBalance(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndBalance(uint aAsyncHandle, out int aaBalance)
+        public unsafe void EndBalance(IntPtr aAsyncHandle, out int aaBalance)
         {
 			fixed (int* aBalance = &aaBalance)
 			{
@@ -358,7 +358,7 @@ namespace Zapp
             CpProxyLinnCoUkPreamp4BeginSetVolumeLimit(iHandle, aaVolumeLimit, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetVolumeLimit(uint aAsyncHandle)
+        public unsafe void EndSetVolumeLimit(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkPreamp4EndSetVolumeLimit(iHandle, aAsyncHandle))
@@ -383,7 +383,7 @@ namespace Zapp
             CpProxyLinnCoUkPreamp4BeginVolumeLimit(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndVolumeLimit(uint aAsyncHandle, out uint aaVolumeLimit)
+        public unsafe void EndVolumeLimit(IntPtr aAsyncHandle, out uint aaVolumeLimit)
         {
 			fixed (uint* aVolumeLimit = &aaVolumeLimit)
 			{
@@ -408,7 +408,7 @@ namespace Zapp
             CpProxyLinnCoUkPreamp4BeginSetStartupVolume(iHandle, aaStartupVolume, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetStartupVolume(uint aAsyncHandle)
+        public unsafe void EndSetStartupVolume(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkPreamp4EndSetStartupVolume(iHandle, aAsyncHandle))
@@ -433,7 +433,7 @@ namespace Zapp
             CpProxyLinnCoUkPreamp4BeginStartupVolume(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndStartupVolume(uint aAsyncHandle, out uint aaStartupVolume)
+        public unsafe void EndStartupVolume(IntPtr aAsyncHandle, out uint aaStartupVolume)
         {
 			fixed (uint* aStartupVolume = &aaStartupVolume)
 			{
@@ -460,7 +460,7 @@ namespace Zapp
             CpProxyLinnCoUkPreamp4BeginSetStartupVolumeEnabled(iHandle, aStartupVolumeEnabled, iActionComplete, ptr);
         }
 
-        public unsafe void EndSetStartupVolumeEnabled(uint aAsyncHandle)
+        public unsafe void EndSetStartupVolumeEnabled(IntPtr aAsyncHandle)
         {
 			{
 				if (0 != CpProxyLinnCoUkPreamp4EndSetStartupVolumeEnabled(iHandle, aAsyncHandle))
@@ -486,7 +486,7 @@ namespace Zapp
             CpProxyLinnCoUkPreamp4BeginStartupVolumeEnabled(iHandle, iActionComplete, ptr);
         }
 
-        public unsafe void EndStartupVolumeEnabled(uint aAsyncHandle, out bool aaStartupVolumeEnabled)
+        public unsafe void EndStartupVolumeEnabled(IntPtr aAsyncHandle, out bool aaStartupVolumeEnabled)
         {
 			uint aStartupVolumeEnabled;
 			{
@@ -646,15 +646,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             CpProxyLinnCoUkPreamp4Destroy(handle);
             iGch.Free();

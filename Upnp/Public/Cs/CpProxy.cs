@@ -12,20 +12,20 @@ namespace Zapp
     public class CpProxy
     {
         [DllImport("ZappUpnp")]
-        static extern void CpProxyCSubscribe(uint aHandle);
+        static extern void CpProxyCSubscribe(IntPtr aHandle);
         [DllImport("ZappUpnp")]
-        static extern void CpProxyCUnsubscribe(uint aHandle);
+        static extern void CpProxyCUnsubscribe(IntPtr aHandle);
         [DllImport("ZappUpnp")]
-        static extern void CpProxyCSetPropertyChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyCSetPropertyChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
-        static extern void CpProxyCSetPropertyInitialEvent(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyCSetPropertyInitialEvent(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
 
         public delegate void CallbackPropertyChanged();
-        public delegate void CallbackAsyncComplete(uint aAsyncHandle);
-        protected delegate void CallbackActionComplete(IntPtr aPtr, uint aAsyncHandle);
+        public delegate void CallbackAsyncComplete(IntPtr aAsyncHandle);
+        protected delegate void CallbackActionComplete(IntPtr aPtr, IntPtr aAsyncHandle);
         protected delegate void Callback(IntPtr aPtr);
         
-        protected uint iHandle;
+        protected IntPtr iHandle;
         protected CallbackActionComplete iActionComplete;
         private GCHandle iGchProxy;
         private CallbackPropertyChanged iPropertyChanged;
@@ -65,7 +65,7 @@ namespace Zapp
             iActionComplete = new CallbackActionComplete(ActionComplete);
         }
         
-        protected void ActionComplete(IntPtr aPtr, uint aAsyncHandle)
+        protected void ActionComplete(IntPtr aPtr, IntPtr aAsyncHandle)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             CallbackAsyncComplete cb = (CallbackAsyncComplete)gch.Target;

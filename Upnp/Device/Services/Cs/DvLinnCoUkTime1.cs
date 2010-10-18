@@ -8,29 +8,29 @@ namespace Zapp
     public class DvServiceLinnCoUkTime1 : IDisposable
     {
         [DllImport("DvLinnCoUkTime1")]
-        static extern uint DvServiceLinnCoUkTime1Create(uint aDeviceHandle);
+        static extern IntPtr DvServiceLinnCoUkTime1Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkTime1")]
-        static extern void DvServiceLinnCoUkTime1Destroy(uint aHandle);
+        static extern void DvServiceLinnCoUkTime1Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe int DvServiceLinnCoUkTime1SetPropertyTrackCount(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkTime1SetPropertyTrackCount(IntPtr aHandle, uint aValue);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe void DvServiceLinnCoUkTime1GetPropertyTrackCount(uint aHandle, uint* aValue);
+        static extern unsafe void DvServiceLinnCoUkTime1GetPropertyTrackCount(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe int DvServiceLinnCoUkTime1SetPropertyDuration(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkTime1SetPropertyDuration(IntPtr aHandle, uint aValue);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe void DvServiceLinnCoUkTime1GetPropertyDuration(uint aHandle, uint* aValue);
+        static extern unsafe void DvServiceLinnCoUkTime1GetPropertyDuration(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe int DvServiceLinnCoUkTime1SetPropertySeconds(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkTime1SetPropertySeconds(IntPtr aHandle, uint aValue);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe void DvServiceLinnCoUkTime1GetPropertySeconds(uint aHandle, uint* aValue);
+        static extern unsafe void DvServiceLinnCoUkTime1GetPropertySeconds(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkTime1")]
-        static extern void DvServiceLinnCoUkTime1EnableActionTime(uint aHandle, CallbackTime aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkTime1EnableActionTime(IntPtr aHandle, CallbackTime aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
         private unsafe delegate int CallbackTime(IntPtr aPtr, uint aVersion, uint* aaTrackCount, uint* aaDuration, uint* aaSeconds);
 
-        private uint iHandle;
+        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackTime iCallbackTime;
 
@@ -128,15 +128,15 @@ namespace Zapp
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvServiceLinnCoUkTime1Destroy(handle);
             if (iGch.IsAllocated)

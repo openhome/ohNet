@@ -8,35 +8,35 @@ namespace Zapp
     public class DvServiceLinnCoUkDelay1 : IDisposable
     {
         [DllImport("DvLinnCoUkDelay1")]
-        static extern uint DvServiceLinnCoUkDelay1Create(uint aDeviceHandle);
+        static extern IntPtr DvServiceLinnCoUkDelay1Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkDelay1")]
-        static extern void DvServiceLinnCoUkDelay1Destroy(uint aHandle);
+        static extern void DvServiceLinnCoUkDelay1Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkDelay1")]
-        static extern unsafe int DvServiceLinnCoUkDelay1SetPropertyPresetXml(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkDelay1SetPropertyPresetXml(IntPtr aHandle, char* aValue);
         [DllImport("DvLinnCoUkDelay1")]
-        static extern unsafe void DvServiceLinnCoUkDelay1GetPropertyPresetXml(uint aHandle, char** aValue);
+        static extern unsafe void DvServiceLinnCoUkDelay1GetPropertyPresetXml(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkDelay1")]
-        static extern unsafe int DvServiceLinnCoUkDelay1SetPropertyPresetIndex(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkDelay1SetPropertyPresetIndex(IntPtr aHandle, uint aValue);
         [DllImport("DvLinnCoUkDelay1")]
-        static extern unsafe void DvServiceLinnCoUkDelay1GetPropertyPresetIndex(uint aHandle, uint* aValue);
+        static extern unsafe void DvServiceLinnCoUkDelay1GetPropertyPresetIndex(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkDelay1")]
-        static extern void DvServiceLinnCoUkDelay1EnableActionPresetXml(uint aHandle, CallbackPresetXml aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDelay1EnableActionPresetXml(IntPtr aHandle, CallbackPresetXml aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDelay1")]
-        static extern void DvServiceLinnCoUkDelay1EnableActionPresetIndex(uint aHandle, CallbackPresetIndex aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDelay1EnableActionPresetIndex(IntPtr aHandle, CallbackPresetIndex aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDelay1")]
-        static extern void DvServiceLinnCoUkDelay1EnableActionSetPresetIndex(uint aHandle, CallbackSetPresetIndex aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDelay1EnableActionSetPresetIndex(IntPtr aHandle, CallbackSetPresetIndex aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDelay1")]
-        static extern void DvServiceLinnCoUkDelay1EnableActionSetPresetDelay(uint aHandle, CallbackSetPresetDelay aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDelay1EnableActionSetPresetDelay(IntPtr aHandle, CallbackSetPresetDelay aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDelay1")]
-        static extern void DvServiceLinnCoUkDelay1EnableActionSetPresetVisible(uint aHandle, CallbackSetPresetVisible aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDelay1EnableActionSetPresetVisible(IntPtr aHandle, CallbackSetPresetVisible aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDelay1")]
-        static extern void DvServiceLinnCoUkDelay1EnableActionSetPresetName(uint aHandle, CallbackSetPresetName aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDelay1EnableActionSetPresetName(IntPtr aHandle, CallbackSetPresetName aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDelay1")]
-        static extern void DvServiceLinnCoUkDelay1EnableActionDelayMinimum(uint aHandle, CallbackDelayMinimum aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDelay1EnableActionDelayMinimum(IntPtr aHandle, CallbackDelayMinimum aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDelay1")]
-        static extern void DvServiceLinnCoUkDelay1EnableActionDelayMaximum(uint aHandle, CallbackDelayMaximum aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDelay1EnableActionDelayMaximum(IntPtr aHandle, CallbackDelayMaximum aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDelay1")]
-        static extern void DvServiceLinnCoUkDelay1EnableActionPresetCount(uint aHandle, CallbackPresetCount aCallback, IntPtr aPtr);
+        static extern void DvServiceLinnCoUkDelay1EnableActionPresetCount(IntPtr aHandle, CallbackPresetCount aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -50,7 +50,7 @@ namespace Zapp
         private unsafe delegate int CallbackDelayMaximum(IntPtr aPtr, uint aVersion, uint* aaDelay);
         private unsafe delegate int CallbackPresetCount(IntPtr aPtr, uint aVersion, uint* aaCount);
 
-        private uint iHandle;
+        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackPresetXml iCallbackPresetXml;
         private CallbackPresetIndex iCallbackPresetIndex;
@@ -309,15 +309,15 @@ namespace Zapp
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvServiceLinnCoUkDelay1Destroy(handle);
             if (iGch.IsAllocated)

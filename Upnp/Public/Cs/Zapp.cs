@@ -6,67 +6,67 @@ namespace Zapp
     public class InitParams :IDisposable
     {
         [DllImport ("ZappUpnp")]
-        static extern uint ZappInitParamsCreate();
+        static extern IntPtr ZappInitParamsCreate();
         [DllImport ("ZappUpnp")]
-        static extern void ZappInitParamsDestroy(uint aParams);
+        static extern void ZappInitParamsDestroy(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetLogOutput(uint aParams, ZappCallbackMsg aCallback, IntPtr aPtr);
+        static extern void ZappInitParamsSetLogOutput(IntPtr aParams, ZappCallbackMsg aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetFatalErrorHandler(uint aParams, ZappCallbackMsg aCallback, IntPtr aPtr);
+        static extern void ZappInitParamsSetFatalErrorHandler(IntPtr aParams, ZappCallbackMsg aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetAsyncBeginHandler(uint aParams, ZappCallbackAsync aCallback, IntPtr aPtr);
+        static extern void ZappInitParamsSetAsyncBeginHandler(IntPtr aParams, ZappCallbackAsync aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetAsyncEndHandler(uint aParams, ZappCallbackAsync aCallback, IntPtr aPtr);
+        static extern void ZappInitParamsSetAsyncEndHandler(IntPtr aParams, ZappCallbackAsync aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetAsyncErrorHandler(uint aParams, ZappCallbackAsync aCallback, IntPtr aPtr);
+        static extern void ZappInitParamsSetAsyncErrorHandler(IntPtr aParams, ZappCallbackAsync aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetDefaultSubnet(uint aParams, uint aSubnet);
+        static extern void ZappInitParamsSetDefaultSubnet(IntPtr aParams, uint aSubnet);
         [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetSubnetChangedListener(uint aParams, ZappCallback aCallback, IntPtr aPtr);
+        static extern void ZappInitParamsSetSubnetChangedListener(IntPtr aParams, ZappCallback aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetTcpConnectTimeout(uint aParams, uint aTimeoutMs);
+        static extern void ZappInitParamsSetTcpConnectTimeout(IntPtr aParams, uint aTimeoutMs);
         [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetMsearchTime(uint aParams, uint aSecs);
+        static extern void ZappInitParamsSetMsearchTime(IntPtr aParams, uint aSecs);
         [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetMsearchTtl(uint aParams, uint aTtl);
+        static extern void ZappInitParamsSetMsearchTtl(IntPtr aParams, uint aTtl);
         [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetNumEventSessionThreads(uint aParams, uint aNumThreads);
+        static extern void ZappInitParamsSetNumEventSessionThreads(IntPtr aParams, uint aNumThreads);
         [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetNumXmlFetcherThreads(uint aParams, uint aNumThreads);
+        static extern void ZappInitParamsSetNumXmlFetcherThreads(IntPtr aParams, uint aNumThreads);
         [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetNumActionInvokerThreads(uint aParams, uint aNumThreads);
+        static extern void ZappInitParamsSetNumActionInvokerThreads(IntPtr aParams, uint aNumThreads);
         [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetNumInvocations(uint aParams, uint aNumInvocations);
+        static extern void ZappInitParamsSetNumInvocations(IntPtr aParams, uint aNumInvocations);
         [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetNumSubscriberThreads(uint aParams, uint aNumThreads);
+        static extern void ZappInitParamsSetNumSubscriberThreads(IntPtr aParams, uint aNumThreads);
         [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetPendingSubscriptionTimeout(uint aParams, uint aTimeoutMs);
+        static extern void ZappInitParamsSetPendingSubscriptionTimeout(IntPtr aParams, uint aTimeoutMs);
         [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetDvMaxUpdateTime(uint aParams, uint aSecs);
+        static extern void ZappInitParamsSetDvMaxUpdateTime(IntPtr aParams, uint aSecs);
         [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetDvNumPublisherThreads(uint aParams, uint aNumThreads);
+        static extern void ZappInitParamsSetDvNumPublisherThreads(IntPtr aParams, uint aNumThreads);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsTcpConnectTimeoutMs(uint aParams);
+        static extern int ZappInitParamsTcpConnectTimeoutMs(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsMsearchTimeSecs(uint aParams);
+        static extern int ZappInitParamsMsearchTimeSecs(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsMsearchTtl(uint aParams);
+        static extern int ZappInitParamsMsearchTtl(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsNumEventSessionThreads(uint aParams);
+        static extern int ZappInitParamsNumEventSessionThreads(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsNumXmlFetcherThreads(uint aParams);
+        static extern int ZappInitParamsNumXmlFetcherThreads(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsNumActionInvokerThreads(uint aParams);
+        static extern int ZappInitParamsNumActionInvokerThreads(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsNumInvocations(uint aParams);
+        static extern int ZappInitParamsNumInvocations(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsNumSubscriberThreads(uint aParams);
+        static extern int ZappInitParamsNumSubscriberThreads(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsPendingSubscriptionTimeoutMs(uint aParams);
+        static extern int ZappInitParamsPendingSubscriptionTimeoutMs(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsDvMaxUpdateTimeSecs(uint aParams);
+        static extern int ZappInitParamsDvMaxUpdateTimeSecs(IntPtr aParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappInitParamsDvNumPublisherThreads(uint aParams);
+        static extern int ZappInitParamsDvNumPublisherThreads(IntPtr aParams);
 
         public InitParams()
         {
@@ -239,7 +239,7 @@ namespace Zapp
             }
         }
 
-        public uint Handle
+        public IntPtr Handle
         {
             get
             {
@@ -247,21 +247,21 @@ namespace Zapp
             }
         }
 
-        private uint iHandle;
+        private IntPtr iHandle;
         protected GCHandle iGch;
         private bool iDisposed = false;
 
         public delegate void ZappCallback(IntPtr aPtr);
         public delegate void ZappCallbackMsg(IntPtr aPtr, string aMsg);
-        public delegate void ZappCallbackAsync(IntPtr aPtr, uint aAsyncHandle);
+        public delegate void ZappCallbackAsync(IntPtr aPtr, IntPtr aAsyncHandle);
     }
 
     public class Library
     {
         [DllImport ("ZappUpnp")]
-        static extern int ZappLibraryInitialise(uint aInitParams);
+        static extern int ZappLibraryInitialise(IntPtr aInitParams);
         [DllImport("ZappUpnp")]
-        static extern int ZappLibraryInitialiseMinimal(uint aInitParams);
+        static extern int ZappLibraryInitialiseMinimal(IntPtr aInitParams);
         [DllImport ("ZappUpnp")]
         static extern void ZappLibraryStartCp();
         [DllImport ("ZappUpnp")]
@@ -273,25 +273,25 @@ namespace Zapp
         [DllImport("ZappUpnp")]
         static extern void ZappFree(IntPtr aPtr);
         [DllImport("ZappUpnp")]
-        static extern uint ZappNetworkInterfaceAddress(uint aNif);
+        static extern uint ZappNetworkInterfaceAddress(IntPtr aNif);
         [DllImport("ZappUpnp")]
-        static extern uint ZappNetworkInterfaceSubnet(uint aNif);
+        static extern uint ZappNetworkInterfaceSubnet(IntPtr aNif);
         [DllImport("ZappUpnp", CallingConvention = CallingConvention.StdCall, EntryPoint = "ZappNetworkInterfaceName", ExactSpelling = false)]
-        static extern IntPtr ZappNetworkInterfaceName(uint aNif);
+        static extern IntPtr ZappNetworkInterfaceName(IntPtr aNif);
         [DllImport("ZappUpnp")]
-        static extern uint ZappSubnetListCreate();
+        static extern IntPtr ZappSubnetListCreate();
         [DllImport("ZappUpnp")]
-        static extern uint ZappSubnetListSize(uint aList);
+        static extern uint ZappSubnetListSize(IntPtr aList);
         [DllImport("ZappUpnp")]
-        static extern uint ZappSubnetAt(uint aList, uint aIndex);
+        static extern uint ZappSubnetAt(IntPtr aList, uint aIndex);
         [DllImport("ZappUpnp")]
-        static extern void ZappSubnetListDestroy(uint aList);
+        static extern void ZappSubnetListDestroy(IntPtr aList);
         [DllImport("ZappUpnp")]
         static extern void ZappSetCurrentSubnet(uint aSubnet);
         [DllImport("ZappUpnp")]
         static extern void ZappSetDefaultSubnet();
         [DllImport("ZappUpnp")]
-        static extern void ZappInitParamsSetFreeExternalCallback(uint aParams, CallbackFreeMemory aCallback);
+        static extern void ZappInitParamsSetFreeExternalCallback(IntPtr aParams, CallbackFreeMemory aCallback);
 
         private delegate void CallbackFreeMemory(IntPtr aPtr);
 
@@ -304,7 +304,7 @@ namespace Zapp
             ZappLibraryInitialise(aParams.Handle);
         }
 
-        public int InitialiseMinimal(uint aInitParams)
+        public int InitialiseMinimal(IntPtr aInitParams)
         {
             return ZappLibraryInitialiseMinimal(aInitParams);
         }
@@ -334,37 +334,37 @@ namespace Zapp
             ZappFree(aPtr);
         }
 
-        public uint NetworkInterfaceAddress(uint aNif)
+        public uint NetworkInterfaceAddress(IntPtr aNif)
         {
             return ZappNetworkInterfaceAddress(aNif);
         }
 
-        public uint NetworkInterfaceSubnet(uint aNif)
+        public uint NetworkInterfaceSubnet(IntPtr aNif)
         {
             return ZappNetworkInterfaceSubnet(aNif);
         }
 
-        public IntPtr NetworkInterfaceName(uint aNif)
+        public IntPtr NetworkInterfaceName(IntPtr aNif)
         {
             return ZappNetworkInterfaceName(aNif);
         }
 
-        public uint SubnetListCreate()
+        public IntPtr SubnetListCreate()
         {
             return ZappSubnetListCreate();
         }
 
-        public uint SubnetListSize(uint aList)
+        public uint SubnetListSize(IntPtr aList)
         {
             return ZappSubnetListSize(aList);
         }
 
-        public uint SubnetAt(uint aList, uint aIndex)
+        public uint SubnetAt(IntPtr aList, uint aIndex)
         {
             return ZappSubnetAt(aList, aIndex);
         }
 
-        public void SubnetListDestroy(uint aList)
+        public void SubnetListDestroy(IntPtr aList)
         {
             ZappSubnetListDestroy(aList);
         }
