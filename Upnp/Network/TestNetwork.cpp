@@ -615,11 +615,15 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces();
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
     TIpAddress addr = (*ifs)[adapter.Value()]->Address();
+    for (TUint i=0; i<ifs->size(); i++) {
+        delete (*ifs)[i];
+    }
+    delete ifs;
     Print("Using network interface %d.%d.%d.%d\n", addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
     MainTestThread th(addr);
     th.Start();
     th.Wait();
-    delete ifs;
 
+    delete aInitParams;
     UpnpLibrary::Close();
 }
