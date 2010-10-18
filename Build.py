@@ -5,7 +5,7 @@ import subprocess
 
 if os.environ.get('label') == 'arm':
 	if sys.platform == 'linux2':
-                os.environ['PATH'] = "/usr/local/arm-2010q1/bin:"+ os.environ['PATH']
+        	os.environ['PATH'] = "/usr/local/arm-2010q1/bin:"+ os.environ['PATH']
 		os.environ['CROSS_COMPILE'] = 'arm-none-linux-gnueabi-'
 
 if os.environ.get('module') == 'upnp':
@@ -13,6 +13,10 @@ if os.environ.get('module') == 'upnp':
         if sys.platform == 'linux2':
                 print "linux 2"
                 buildCmd = 'cd Upnp && python AllTests.py'
+
+		if os.environ.get('label') == 'arm':
+			buildCmd = 'cd Upnp && python AllTests.py -b'
+
 
         elif sys.platform == 'win32':
                 print "windows"

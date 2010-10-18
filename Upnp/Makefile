@@ -52,6 +52,8 @@ include Generated/GenerateSourceFiles.mak
 include Generated/Proxies.mak
 include Generated/Devices.mak
 
+include UserTargets.mak
+
 # Following macros must be provided by each file which wraps Common.mak
 
 make_obj_dir:

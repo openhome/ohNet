@@ -42,26 +42,25 @@ include T4Windows.mak
 # Actual building of code is shared between platforms
 include Common.mak
 
-
-
 !if exist (Generated\GenerateSourceFiles.mak)
 !include Generated\GenerateSourceFiles.mak
 !else
-!message Note: Generated\GenerateSourceFiles.mak does not yet exist. Try "make depend".
+!message Note: Generated\GenerateSourceFiles.mak does not yet exist. Try "make generate-makefiles".
 !endif
 
 !if exist (Generated\Proxies.mak)
 !include Generated\Proxies.mak
 !else
-!message Note: Generated\Proxies.mak does not yet exist. Try "make depend".
+!message Note: Generated\Proxies.mak does not yet exist. Try "make generate-makefiles".
 !endif
 
 !if exist (Generated\Devices.mak)
 !include Generated\Devices.mak
 !else
-!message Note: Generated\Devices.mak does not yet exist. Try "make depend".
+!message Note: Generated\Devices.mak does not yet exist. Try "make generate-makefiles".
 !endif
 
+include UserTargets.mak
 
 # Following macros must be provided by each file which wraps Common.mak
 

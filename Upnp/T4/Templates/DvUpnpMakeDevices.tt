@@ -26,6 +26,18 @@ headers_device = $(inc_build)/Cpp/ZappTypes.h \
                 $(inc_build)/Service.h \
                 $(inc_build)/FunctorDvInvocation.h
 
+device_dotnet_assemblies = \
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+		Dv<#=FilePrefixTypeAndVersion(s)#>.net.dll \
+<#  } #>
+
+device_dotnet_assemblies_with_path = \
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+		$(objdir)Dv<#=FilePrefixTypeAndVersion(s)#>.net.dll \
+<#  } #>
+
 devices : upnp_core $(objects_devices)
 	$(ar)ZappDevices.$(libext) $(objects_devices)
 <#  foreach (Service s in u.iServices) #>
@@ -52,7 +64,26 @@ $(objdir)$(dllprefix)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(dllext) :
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(dllext) $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) $(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext)
 <#  } #>
 
+
+# Device assemblies for .NET:
+
+DvDeviceDotNetAssemblies: $(device_dotnet_assemblies_with_path)
+
+<# foreach (Service s in u.iServices) #>
+<# { #>
+$(objdir)Dv<#=FilePrefixTypeAndVersion(s)#>.net.dll: $(objdir)Zapp.net.dll $(deviceCs)Dv<#=FilePrefixTypeAndVersion(s)#>.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)Dv<#=FilePrefixTypeAndVersion(s)#>.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)Dv<#=FilePrefixTypeAndVersion(s)#>.cs
+<# } #>
+
+
 <#+
+string FilePrefixTypeAndVersion(Service s)
+{
+    return FilePrefix(s) + s.iType.ToString() + s.iVersion.ToString();
+}
 string FilePrefix(Service s)
 {
     string prefix = "";

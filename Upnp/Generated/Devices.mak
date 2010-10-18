@@ -120,6 +120,82 @@ headers_device = $(inc_build)/Cpp/ZappTypes.h \
                 $(inc_build)/Service.h \
                 $(inc_build)/FunctorDvInvocation.h
 
+device_dotnet_assemblies = \
+		DvUpnpOrgAVTransport1.net.dll \
+		DvUpnpOrgAVTransport2.net.dll \
+		DvUpnpOrgConnectionManager1.net.dll \
+		DvUpnpOrgConnectionManager2.net.dll \
+		DvUpnpOrgContentDirectory1.net.dll \
+		DvUpnpOrgContentDirectory2.net.dll \
+		DvUpnpOrgContentDirectory3.net.dll \
+		DvUpnpOrgRenderingControl1.net.dll \
+		DvUpnpOrgRenderingControl2.net.dll \
+		DvUpnpOrgScheduledRecording1.net.dll \
+		DvUpnpOrgScheduledRecording2.net.dll \
+		DvUpnpOrgSwitchPower1.net.dll \
+		DvUpnpOrgDimming1.net.dll \
+		DvLinnCoUkComponent1.net.dll \
+		DvLinnCoUkConfiguration1.net.dll \
+		DvLinnCoUkDebug2.net.dll \
+		DvLinnCoUkDelay1.net.dll \
+		DvLinnCoUkDiagnostics1.net.dll \
+		DvLinnCoUkDs1.net.dll \
+		DvLinnCoUkInfo1.net.dll \
+		DvLinnCoUkJukebox1.net.dll \
+		DvLinnCoUkMediaTime1.net.dll \
+		DvLinnCoUkPlaylist1.net.dll \
+		DvLinnCoUkPreamp4.net.dll \
+		DvLinnCoUkProduct1.net.dll \
+		DvLinnCoUkProduct2.net.dll \
+		DvLinnCoUkProduct3.net.dll \
+		DvLinnCoUkProxyManager1.net.dll \
+		DvLinnCoUkPtest1.net.dll \
+		DvLinnCoUkRadio1.net.dll \
+		DvLinnCoUkTime1.net.dll \
+		DvLinnCoUkUi2.net.dll \
+		DvLinnCoUkVolkano1.net.dll \
+		DvZappOrgTestBasic1.net.dll \
+		DvZappOrgTestLights1.net.dll \
+		DvZappOrgTestDimmableLight1.net.dll \
+
+device_dotnet_assemblies_with_path = \
+		$(objdir)DvUpnpOrgAVTransport1.net.dll \
+		$(objdir)DvUpnpOrgAVTransport2.net.dll \
+		$(objdir)DvUpnpOrgConnectionManager1.net.dll \
+		$(objdir)DvUpnpOrgConnectionManager2.net.dll \
+		$(objdir)DvUpnpOrgContentDirectory1.net.dll \
+		$(objdir)DvUpnpOrgContentDirectory2.net.dll \
+		$(objdir)DvUpnpOrgContentDirectory3.net.dll \
+		$(objdir)DvUpnpOrgRenderingControl1.net.dll \
+		$(objdir)DvUpnpOrgRenderingControl2.net.dll \
+		$(objdir)DvUpnpOrgScheduledRecording1.net.dll \
+		$(objdir)DvUpnpOrgScheduledRecording2.net.dll \
+		$(objdir)DvUpnpOrgSwitchPower1.net.dll \
+		$(objdir)DvUpnpOrgDimming1.net.dll \
+		$(objdir)DvLinnCoUkComponent1.net.dll \
+		$(objdir)DvLinnCoUkConfiguration1.net.dll \
+		$(objdir)DvLinnCoUkDebug2.net.dll \
+		$(objdir)DvLinnCoUkDelay1.net.dll \
+		$(objdir)DvLinnCoUkDiagnostics1.net.dll \
+		$(objdir)DvLinnCoUkDs1.net.dll \
+		$(objdir)DvLinnCoUkInfo1.net.dll \
+		$(objdir)DvLinnCoUkJukebox1.net.dll \
+		$(objdir)DvLinnCoUkMediaTime1.net.dll \
+		$(objdir)DvLinnCoUkPlaylist1.net.dll \
+		$(objdir)DvLinnCoUkPreamp4.net.dll \
+		$(objdir)DvLinnCoUkProduct1.net.dll \
+		$(objdir)DvLinnCoUkProduct2.net.dll \
+		$(objdir)DvLinnCoUkProduct3.net.dll \
+		$(objdir)DvLinnCoUkProxyManager1.net.dll \
+		$(objdir)DvLinnCoUkPtest1.net.dll \
+		$(objdir)DvLinnCoUkRadio1.net.dll \
+		$(objdir)DvLinnCoUkTime1.net.dll \
+		$(objdir)DvLinnCoUkUi2.net.dll \
+		$(objdir)DvLinnCoUkVolkano1.net.dll \
+		$(objdir)DvZappOrgTestBasic1.net.dll \
+		$(objdir)DvZappOrgTestLights1.net.dll \
+		$(objdir)DvZappOrgTestDimmableLight1.net.dll \
+
 devices : upnp_core $(objects_devices)
 	$(ar)ZappDevices.$(libext) $(objects_devices)
 $(objdir)DvUpnpOrgAVTransport1.$(objext) : $(deviceSrcCppCore)DvUpnpOrgAVTransport1.cpp $(headers_device)
@@ -486,4 +562,191 @@ $(objdir)$(dllprefix)DvZappOrgTestLights1.$(dllext) : ZappUpnpDll $(objdir)DvZap
 DvZappOrgTestDimmableLight1Dll: $(objdir)$(dllprefix)DvZappOrgTestDimmableLight1.$(dllext) 
 $(objdir)$(dllprefix)DvZappOrgTestDimmableLight1.$(dllext) : ZappUpnpDll $(objdir)DvZappOrgTestDimmableLight1C.$(objext) $(objdir)DvZappOrgTestDimmableLight1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)DvZappOrgTestDimmableLight1.$(dllext) $(objdir)DvZappOrgTestDimmableLight1C.$(objext) $(objdir)DvZappOrgTestDimmableLight1.$(objext)
+
+
+# Device assemblies for .NET:
+
+DvDeviceDotNetAssemblies: $(device_dotnet_assemblies_with_path)
+
+$(objdir)DvUpnpOrgAVTransport1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgAVTransport1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvUpnpOrgAVTransport1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvUpnpOrgAVTransport1.cs
+$(objdir)DvUpnpOrgAVTransport2.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgAVTransport2.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvUpnpOrgAVTransport2.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvUpnpOrgAVTransport2.cs
+$(objdir)DvUpnpOrgConnectionManager1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgConnectionManager1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvUpnpOrgConnectionManager1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvUpnpOrgConnectionManager1.cs
+$(objdir)DvUpnpOrgConnectionManager2.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgConnectionManager2.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvUpnpOrgConnectionManager2.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvUpnpOrgConnectionManager2.cs
+$(objdir)DvUpnpOrgContentDirectory1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgContentDirectory1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvUpnpOrgContentDirectory1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvUpnpOrgContentDirectory1.cs
+$(objdir)DvUpnpOrgContentDirectory2.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgContentDirectory2.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvUpnpOrgContentDirectory2.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvUpnpOrgContentDirectory2.cs
+$(objdir)DvUpnpOrgContentDirectory3.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgContentDirectory3.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvUpnpOrgContentDirectory3.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvUpnpOrgContentDirectory3.cs
+$(objdir)DvUpnpOrgRenderingControl1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgRenderingControl1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvUpnpOrgRenderingControl1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvUpnpOrgRenderingControl1.cs
+$(objdir)DvUpnpOrgRenderingControl2.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgRenderingControl2.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvUpnpOrgRenderingControl2.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvUpnpOrgRenderingControl2.cs
+$(objdir)DvUpnpOrgScheduledRecording1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgScheduledRecording1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvUpnpOrgScheduledRecording1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvUpnpOrgScheduledRecording1.cs
+$(objdir)DvUpnpOrgScheduledRecording2.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgScheduledRecording2.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvUpnpOrgScheduledRecording2.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvUpnpOrgScheduledRecording2.cs
+$(objdir)DvUpnpOrgSwitchPower1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgSwitchPower1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvUpnpOrgSwitchPower1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvUpnpOrgSwitchPower1.cs
+$(objdir)DvUpnpOrgDimming1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvUpnpOrgDimming1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvUpnpOrgDimming1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvUpnpOrgDimming1.cs
+$(objdir)DvLinnCoUkComponent1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkComponent1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvLinnCoUkComponent1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvLinnCoUkComponent1.cs
+$(objdir)DvLinnCoUkConfiguration1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkConfiguration1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvLinnCoUkConfiguration1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvLinnCoUkConfiguration1.cs
+$(objdir)DvLinnCoUkDebug2.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkDebug2.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvLinnCoUkDebug2.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvLinnCoUkDebug2.cs
+$(objdir)DvLinnCoUkDelay1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkDelay1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvLinnCoUkDelay1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvLinnCoUkDelay1.cs
+$(objdir)DvLinnCoUkDiagnostics1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkDiagnostics1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvLinnCoUkDiagnostics1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvLinnCoUkDiagnostics1.cs
+$(objdir)DvLinnCoUkDs1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkDs1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvLinnCoUkDs1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvLinnCoUkDs1.cs
+$(objdir)DvLinnCoUkInfo1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkInfo1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvLinnCoUkInfo1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvLinnCoUkInfo1.cs
+$(objdir)DvLinnCoUkJukebox1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkJukebox1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvLinnCoUkJukebox1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvLinnCoUkJukebox1.cs
+$(objdir)DvLinnCoUkMediaTime1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkMediaTime1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvLinnCoUkMediaTime1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvLinnCoUkMediaTime1.cs
+$(objdir)DvLinnCoUkPlaylist1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkPlaylist1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvLinnCoUkPlaylist1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvLinnCoUkPlaylist1.cs
+$(objdir)DvLinnCoUkPreamp4.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkPreamp4.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvLinnCoUkPreamp4.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvLinnCoUkPreamp4.cs
+$(objdir)DvLinnCoUkProduct1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkProduct1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvLinnCoUkProduct1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvLinnCoUkProduct1.cs
+$(objdir)DvLinnCoUkProduct2.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkProduct2.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvLinnCoUkProduct2.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvLinnCoUkProduct2.cs
+$(objdir)DvLinnCoUkProduct3.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkProduct3.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvLinnCoUkProduct3.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvLinnCoUkProduct3.cs
+$(objdir)DvLinnCoUkProxyManager1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkProxyManager1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvLinnCoUkProxyManager1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvLinnCoUkProxyManager1.cs
+$(objdir)DvLinnCoUkPtest1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkPtest1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvLinnCoUkPtest1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvLinnCoUkPtest1.cs
+$(objdir)DvLinnCoUkRadio1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkRadio1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvLinnCoUkRadio1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvLinnCoUkRadio1.cs
+$(objdir)DvLinnCoUkTime1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkTime1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvLinnCoUkTime1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvLinnCoUkTime1.cs
+$(objdir)DvLinnCoUkUi2.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkUi2.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvLinnCoUkUi2.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvLinnCoUkUi2.cs
+$(objdir)DvLinnCoUkVolkano1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvLinnCoUkVolkano1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvLinnCoUkVolkano1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvLinnCoUkVolkano1.cs
+$(objdir)DvZappOrgTestBasic1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvZappOrgTestBasic1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvZappOrgTestBasic1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvZappOrgTestBasic1.cs
+$(objdir)DvZappOrgTestLights1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvZappOrgTestLights1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvZappOrgTestLights1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvZappOrgTestLights1.cs
+$(objdir)DvZappOrgTestDimmableLight1.net.dll: $(objdir)Zapp.net.dll $(deviceCs)DvZappOrgTestDimmableLight1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)DvZappOrgTestDimmableLight1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(deviceCs)DvZappOrgTestDimmableLight1.cs
+
 
