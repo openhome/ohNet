@@ -122,6 +122,9 @@ const Brn SuiteMsearch::kNameDummy("Dummy");
 
 static TBool DeviceTypeMatches(const TChar* aType1, const TChar* aType2)
 {
+    if (aType1 == NULL || aType2 == NULL) {
+        return false;
+    }
     return (0 == strcmp(aType1, aType2));
 }
 
@@ -319,15 +322,14 @@ void CpListenerMsearch::Reset()
     iService = 0;
     iUdnsReceived = 0;
     
-    delete iDev1Type;
+    free(iDev1Type);
     iDev1Type = NULL;
-    delete iDev2Type;
+    free(iDev2Type);
     iDev2Type = NULL;
-    delete iDev21Type;
+    free(iDev21Type);
     iDev21Type = NULL;
-    TUint i;
-    for (i=0; i<iServices.size(); i++) {
-        delete iServices[i];
+    for (TUint i=0; i<iServices.size(); i++) {
+        free(iServices[i]);
     }
     iServices.clear();
     iLock.Signal();
@@ -344,7 +346,7 @@ TBool CpListenerMsearch::LogUdn(const Brx& aUuid, const Brx& aLocation)
         Print("Discarding advertisement from ");
         Print(aUuid);
         TIpAddress addr = endpt.Address();
-        Print(" at %u.%u.%u.%u:%u\n", (addr>>24), ((addr>>16)&0xff), ((addr>>8)&0xff), addr&0xff, endpt.Port());
+        Print(" at %u.%u.%u.%u:%u\n", addr&0xff, ((addr>>8)&0xff), ((addr>>16)&0xff), (addr>>24), endpt.Port());
         return false;
     }
 
@@ -482,9 +484,13 @@ void SuiteMsearch::Test()
     device->AddService(new DviService("upnp.org", "service1", 1));
     device->AddService(new DviService("linn.co.uk", "service2", 3));
     device->AddService(new DviService("upnp.org", "service3", 1));
-    TEST_THROWS(device->AddService(new DviService("upnp.org", "service1", 1)), AssertionFailed);
+    DviService* service = new DviService("upnp.org", "service1", 1);
+    TEST_THROWS(device->AddService(service), AssertionFailed);
+    service->RemoveRef();
     device->SetEnabled();
-    TEST_THROWS(device->AddService(new DviService("upnp.org", "service4", 1)), AssertionFailed);
+    service = new DviService("upnp.org", "service4", 1);
+    TEST_THROWS(device->AddService(service), AssertionFailed);
+    service->RemoveRef();
 
     device = new DviDevice(gNameDevice2);
     iDevices[1] = device;
@@ -502,7 +508,9 @@ void SuiteMsearch::Test()
     device->AddService(new DviService("upnp.org", "service1", 1));
     device->AddService(new DviService("linn.co.uk", "service6", 1));
     device->AddService(new DviService("linn.co.uk", "service2", 3));
-    TEST_THROWS(device->AddService(new DviService("linn.co.uk", "service5", 1)), AssertionFailed);
+    service = new DviService("linn.co.uk", "service5", 1);
+    TEST_THROWS(device->AddService(service), AssertionFailed);
+    service->RemoveRef();
     iDevices[1]->SetEnabled();
     device->SetEnabled();
     device = new DviDevice(kNameDummy);

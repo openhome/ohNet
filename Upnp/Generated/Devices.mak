@@ -1,6 +1,6 @@
 # Auto-generated file.  DO NOT EDIT DIRECTLY
 # Update CpUpnpMakeProxies.tt and run
-#    [n]make -s -f T4[Linux|Windows].mak UpnpServiceMakeGen
+#    make generate-makefiles
 # to apply any updates
 
 objects_devices = \
