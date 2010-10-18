@@ -211,6 +211,13 @@ void DvServiceZappOrgTestBasic1Cpp::EnableActionGetBinary()
     iService->AddAction(action, functor);
 }
 
+void DvServiceZappOrgTestBasic1Cpp::EnableActionToggleBool()
+{
+    Zapp::Action* action = new Zapp::Action("ToggleBool");
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestBasic1Cpp::DoToggleBool);
+    iService->AddAction(action, functor);
+}
+
 void DvServiceZappOrgTestBasic1Cpp::DoIncrement(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
@@ -414,6 +421,15 @@ void DvServiceZappOrgTestBasic1Cpp::DoGetBinary(IDvInvocation& aInvocation, TUin
 	aInvocation.InvocationWriteEnd();
 }
 
+void DvServiceZappOrgTestBasic1Cpp::DoToggleBool(IDvInvocation& aInvocation, TUint aVersion)
+{
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    ToggleBool(aVersion);
+	aInvocation.InvocationWriteStart();
+	aInvocation.InvocationWriteEnd();
+}
+
 void DvServiceZappOrgTestBasic1Cpp::Increment(uint32_t /*aVersion*/, uint32_t /*aValue*/, uint32_t& /*aResult*/)
 {
     ASSERTS();
@@ -490,6 +506,11 @@ void DvServiceZappOrgTestBasic1Cpp::SetBinary(uint32_t /*aVersion*/, const std::
 }
 
 void DvServiceZappOrgTestBasic1Cpp::GetBinary(uint32_t /*aVersion*/, std::string& /*aValueBin*/)
+{
+    ASSERTS();
+}
+
+void DvServiceZappOrgTestBasic1Cpp::ToggleBool(uint32_t /*aVersion*/)
 {
     ASSERTS();
 }

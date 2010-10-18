@@ -207,6 +207,13 @@ void DvServiceZappOrgTestBasic1::EnableActionGetBinary()
     iService->AddAction(action, functor);
 }
 
+void DvServiceZappOrgTestBasic1::EnableActionToggleBool()
+{
+    Zapp::Action* action = new Zapp::Action("ToggleBool");
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestBasic1::DoToggleBool);
+    iService->AddAction(action, functor);
+}
+
 void DvServiceZappOrgTestBasic1::DoIncrement(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
@@ -362,6 +369,14 @@ void DvServiceZappOrgTestBasic1::DoGetBinary(IDvInvocation& aInvocation, TUint a
     GetBinary(resp, aVersion, respValueBin);
 }
 
+void DvServiceZappOrgTestBasic1::DoToggleBool(IDvInvocation& aInvocation, TUint aVersion)
+{
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
+    ToggleBool(resp, aVersion);
+}
+
 void DvServiceZappOrgTestBasic1::Increment(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aValue*/, IInvocationResponseUint& /*aResult*/)
 {
     ASSERTS();
@@ -438,6 +453,11 @@ void DvServiceZappOrgTestBasic1::SetBinary(IInvocationResponse& /*aResponse*/, T
 }
 
 void DvServiceZappOrgTestBasic1::GetBinary(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseBinary& /*aValueBin*/)
+{
+    ASSERTS();
+}
+
+void DvServiceZappOrgTestBasic1::ToggleBool(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/)
 {
     ASSERTS();
 }
