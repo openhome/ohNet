@@ -63,6 +63,8 @@ namespace Zapp
         static extern void DvServiceZappOrgTestBasic1EnableActionSetBinary(uint aHandle, CallbackSetBinary aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestBasic1")]
         static extern void DvServiceZappOrgTestBasic1EnableActionGetBinary(uint aHandle, CallbackGetBinary aCallback, IntPtr aPtr);
+        [DllImport("DvZappOrgTestBasic1")]
+        static extern void DvServiceZappOrgTestBasic1EnableActionToggleBool(uint aHandle, CallbackToggleBool aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -82,6 +84,7 @@ namespace Zapp
         private unsafe delegate int CallbackGetString(IntPtr aPtr, uint aVersion, char** aValueStr);
         private unsafe delegate int CallbackSetBinary(IntPtr aPtr, uint aVersion, char* aValueBin, int aValueBinLen);
         private unsafe delegate int CallbackGetBinary(IntPtr aPtr, uint aVersion, char** aValueBin, int* aValueBinLen);
+        private unsafe delegate int CallbackToggleBool(IntPtr aPtr, uint aVersion);
 
         private uint iHandle;
         private GCHandle iGch;
@@ -101,6 +104,7 @@ namespace Zapp
         private CallbackGetString iCallbackGetString;
         private CallbackSetBinary iCallbackSetBinary;
         private CallbackGetBinary iCallbackGetBinary;
+        private CallbackToggleBool iCallbackToggleBool;
 
         public DvServiceZappOrgTestBasic1(DvDevice aDevice)
         {
@@ -308,6 +312,13 @@ namespace Zapp
             DvServiceZappOrgTestBasic1EnableActionGetBinary(iHandle, iCallbackGetBinary, ptr);
         }
 
+        protected unsafe void EnableActionToggleBool()
+        {
+            iCallbackToggleBool = new CallbackToggleBool(DoToggleBool);
+            IntPtr ptr = GCHandle.ToIntPtr(iGch);
+            DvServiceZappOrgTestBasic1EnableActionToggleBool(iHandle, iCallbackToggleBool, ptr);
+        }
+
         protected virtual void Increment(uint aVersion, uint aValue, out uint aResult)
         {
             throw (new ActionDisabledError());
@@ -384,6 +395,11 @@ namespace Zapp
         }
 
         protected virtual void GetBinary(uint aVersion, out string aValueBin)
+        {
+            throw (new ActionDisabledError());
+        }
+
+        protected virtual void ToggleBool(uint aVersion)
         {
             throw (new ActionDisabledError());
         }
@@ -542,6 +558,14 @@ namespace Zapp
             self.GetBinary(aVersion, out valueBin);
             *aValueBin = (char*)Marshal.StringToHGlobalAnsi(valueBin).ToPointer();
             *aValueBinLen = valueBin.Length;
+            return 0;
+        }
+
+        private static unsafe int DoToggleBool(IntPtr aPtr, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvServiceZappOrgTestBasic1 self = (DvServiceZappOrgTestBasic1)gch.Target;
+            self.ToggleBool(aVersion);
             return 0;
         }
 

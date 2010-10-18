@@ -30,11 +30,12 @@ public:
     void WriteChanges();
     const Endpoint& Subscriber() const;
     const Brx& Sid() const;
+    TBool PropertiesInitialised() const;
 private:
     ~DviSubscription();
     void Expired();
 private:
-    Mutex iLock;
+    mutable Mutex iLock;
     TUint iRefCount;
     DviDevice& iDevice;
     IPropertyWriterFactory& iWriterFactory;

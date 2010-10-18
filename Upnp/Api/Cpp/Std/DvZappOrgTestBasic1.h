@@ -52,6 +52,7 @@ protected:
     void EnableActionGetString();
     void EnableActionSetBinary();
     void EnableActionGetBinary();
+    void EnableActionToggleBool();
 private:
     virtual void Increment(uint32_t aVersion, uint32_t aValue, uint32_t& aResult);
     virtual void Decrement(uint32_t aVersion, int32_t aValue, int32_t& aResult);
@@ -69,6 +70,7 @@ private:
     virtual void GetString(uint32_t aVersion, std::string& aValueStr);
     virtual void SetBinary(uint32_t aVersion, const std::string& aValueBin);
     virtual void GetBinary(uint32_t aVersion, std::string& aValueBin);
+    virtual void ToggleBool(uint32_t aVersion);
 private:
     DvServiceZappOrgTestBasic1Cpp();
     void DoIncrement(IDvInvocation& aInvocation, uint32_t aVersion);
@@ -87,6 +89,7 @@ private:
     void DoGetString(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoSetBinary(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoGetBinary(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoToggleBool(IDvInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyUint* iPropertyVarUint;
     PropertyInt* iPropertyVarInt;

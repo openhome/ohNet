@@ -8,7 +8,7 @@
 #>
 # Auto-generated file.  DO NOT EDIT DIRECTLY
 # Update CpUpnpMakeProxies.tt and run
-#    [n]make -s -f T4[Linux|Windows].mak UpnpServiceMakeGen
+#    make generate-makefiles
 # to apply any updates
 
 objects_proxies = \
@@ -49,11 +49,11 @@ proxies : upnp_core $(objects_proxies)
 	$(ar)ZappProxies.$(libext) $(objects_proxies)
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-$(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) : $(proxySrcCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp $(headers_proxy)
+$(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) : $(proxySrcCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp $(headers_proxy) $(inc_build)/Cpp/Core/Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
 	$(compiler)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) -c $(cflags) $(includes) $(proxySrcCppCore)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp
-$(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) : $(proxySrcC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp $(headers_proxy)
+$(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) : $(proxySrcC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp $(headers_proxy) $(inc_build)/C/Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
 	$(compiler)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) -c $(cflags) $(includes) $(proxySrcC)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp
-$(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) : $(proxySrcCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp $(headers_proxy)
+$(objdir)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) : $(proxySrcCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp $(headers_proxy) $(inc_build)/Cpp/Std/Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
 	$(compiler)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) -c $(cflags) $(includes) $(proxySrcCppStd)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp
 <#  } #>
 
