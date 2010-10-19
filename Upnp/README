@@ -31,7 +31,7 @@ On Linux, in the UPnP directory, run:
 Installing
 ----------
 
-See INSTALL.
+See "INSTALL.txt".
 
 Directories
 -----------
@@ -95,10 +95,10 @@ generate-makefiles
 	the makefiles have been changed.
 
 install
-	See INSTALL.
+	See "INSTALL.txt".
 
 uninstall
-	See INSTALL.
+	See "INSTALL.txt".
 
 clean
 	Removes files from Build/Obj/$platform/ and Build/Include/
