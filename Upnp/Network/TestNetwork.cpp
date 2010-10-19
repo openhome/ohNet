@@ -19,20 +19,13 @@ public:
         : iSemaphore("TSTS", 0)
         , iTestStarted("TSS2", 0)
         , iControllerSem(aControllerSem)
-        , iCleanExit(true)
     {
-    }
-
-    ~TestServerSession()
-    {
-        ASSERT(iCleanExit);
     }
 
     void Run()
     {
         LOG(kNetwork, ">TestServerSession::Run\n");
         TBool exit = false;
-        iCleanExit = false;
         while (!exit) {
             LOG(kNetwork, "TestServerSession::Run waiting on semaphore\n");
             iSemaphore.Wait();
@@ -61,7 +54,6 @@ public:
             iControllerSem.Signal();
         }
         LOG(kNetwork, "<TestServerSession::Run\n");
-        iCleanExit = true;
     }
 
     void Close()
@@ -92,7 +84,6 @@ private:
     Bws<64> iBuffer;
     TUint iTest;
     TBool iTestDone;
-    TBool iCleanExit;
 };
 
 
@@ -218,14 +209,14 @@ void SuiteSocketServer::Test()
     Bws<26> rx;
     Bws<26> tx("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
-    SocketTcpServer server("TSSX", 1999, iInterface);
+    SocketTcpServer server("TSSX", 0, iInterface);
     Log::Print("Server created\n");
     server.Add("TSS1", new TcpSessionEcho());
     Log::Print("Session 1 added\n");
 
     // Two clients serially accessing one session
 
-    Endpoint endpoint = Endpoint(1999, iInterface);
+    Endpoint endpoint = Endpoint(server.Port(), iInterface);
 
     SocketTcpClient client1;
     client1.Open();
@@ -391,7 +382,7 @@ void SuiteTcpServerShutdown::Test()
     SocketTcpServer *server;
 
     // server thread priority > main thread priority - no sessions open
-    server = new SocketTcpServer("TSSX", 1998, iInterface, kPriorityNormal + kPriorityMore);
+    server = new SocketTcpServer("TSSX", 0, iInterface, kPriorityNormal + kPriorityMore);
     server->Add("TSS1", new TcpSessionTest());
     server->Add("TSS2", new TcpSessionTest());
     delete server;
@@ -403,7 +394,7 @@ void SuiteTcpServerShutdown::Test()
         return;
     }
 
-    server = new SocketTcpServer("TSSX", 1997, iInterface, kPriorityNormal + kPriorityLess);
+    server = new SocketTcpServer("TSSX", 0, iInterface, kPriorityNormal + kPriorityLess);
     server->Add("TSS1", new TcpSessionTest());
     server->Add("TSS2", new TcpSessionTest());
     delete server;
@@ -411,7 +402,7 @@ void SuiteTcpServerShutdown::Test()
     TEST(1==1);
 
     // server thread priority == main thread priority - no sessions open
-    server = new SocketTcpServer("TSSX", 1996, iInterface, kPriorityNormal);
+    server = new SocketTcpServer("TSSX", 0, iInterface, kPriorityNormal);
     server->Add("TSS1", new TcpSessionTest());
     server->Add("TSS2", new TcpSessionTest());
     delete server;
@@ -420,7 +411,7 @@ void SuiteTcpServerShutdown::Test()
 
 
     // server thread priority > main thread priority - one session open
-    server = new SocketTcpServer("TSSX", 1995, iInterface, kPriorityNormal + kPriorityMore);
+    server = new SocketTcpServer("TSSX", 0, iInterface, kPriorityNormal + kPriorityMore);
     server->Add("TSS1", new TcpSessionTest());
     server->Add("TSS2", new TcpSessionTest());
 
@@ -433,24 +424,24 @@ void SuiteTcpServerShutdown::Test()
     TEST(1==1);
 
     // server thread priority < main thread priority - one session open
-    server = new SocketTcpServer("TSSX", 1994, iInterface, kPriorityNormal + kPriorityLess);
+    server = new SocketTcpServer("TSSX", 0, iInterface, kPriorityNormal + kPriorityLess);
     server->Add("TSS1", new TcpSessionTest());
     server->Add("TSS2", new TcpSessionTest());
     SocketTcpClient client2;
     client2.Open();
-    client2.Connect(Endpoint(1994, iInterface), 1000);
+    client2.Connect(Endpoint(server->Port(), iInterface), 1000);
     delete server;
     Thread::Sleep(500);
     client2.Close();
     TEST(1==1);
 
     // server thread priority == main thread priority - one session open
-    server = new SocketTcpServer("TSSX", 1993, iInterface, kPriorityNormal);
+    server = new SocketTcpServer("TSSX", 0, iInterface, kPriorityNormal);
     server->Add("TSS1", new TcpSessionTest());
     server->Add("TSS2", new TcpSessionTest());
     SocketTcpClient client3;
     client3.Open();
-    client3.Connect(Endpoint(1993, iInterface), 1000);
+    client3.Connect(Endpoint(server->Port(), iInterface), 1000);
     delete server;
     Thread::Sleep(500);
     client3.Close();
