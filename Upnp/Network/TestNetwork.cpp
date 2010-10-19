@@ -19,6 +19,7 @@ public:
         : iSemaphore("TSTS", 0)
         , iTestStarted("TSS2", 0)
         , iControllerSem(aControllerSem)
+        , iCleanExit(true)
     {
     }
 
@@ -147,7 +148,7 @@ void SuiteTcpClient::Test()
     TEST(session->TestDone() == true);
     TEST(session->Buffer() == Brn("abcdefghijklmnopabcdefghij"));
     session->Close();
-    (void)sem.Clear();
+    sem.Wait();
 
     client.Open();
     client.Connect(Endpoint(port, iInterface), 1000);
@@ -598,7 +599,7 @@ private:
 
 void MainTestThread::Run()
 {
-//    Debug::SetLevel(Debug::kNetwork);
+//    Debug::SetLevel(Debug::kError);
     Runner runner("Network System");
     runner.Add(new SuiteTcpClient(iInterface));
     runner.Add(new SuiteSocketServer(iInterface));
