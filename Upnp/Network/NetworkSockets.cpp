@@ -605,8 +605,8 @@ void SocketUdpMulticast::Construct()
     Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
     // Windows expects us to bind to the multicast port but not the address
     // linux doesn't seem to care
-    TUint port = iEndpoint.Port();
-	SocketBind(iHandle, port, 0);
+    iPort = iEndpoint.Port();
+	SocketBind(iHandle, iPort, 0);
     Zapp::Os::NetworkSocketMulticastAddMembership(iHandle, iEndpoint.Address(), iInterface);
 }
 

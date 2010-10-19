@@ -108,6 +108,12 @@ namespace Zapp
         [DllImport("CpZappOrgTestBasic1")]
         static extern unsafe int CpProxyZappOrgTestBasic1EndGetBinary(uint aHandle, uint aAsync, char** aValueBin, uint* aValueBinLen);
         [DllImport("CpZappOrgTestBasic1")]
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncToggleBool(uint aHandle);
+        [DllImport("CpZappOrgTestBasic1")]
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginToggleBool(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        [DllImport("CpZappOrgTestBasic1")]
+        static extern unsafe int CpProxyZappOrgTestBasic1EndToggleBool(uint aHandle, uint aAsync);
+        [DllImport("CpZappOrgTestBasic1")]
         static extern void CpProxyZappOrgTestBasic1SetPropertyVarUintChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
         static extern void CpProxyZappOrgTestBasic1SetPropertyVarIntChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
@@ -600,6 +606,30 @@ namespace Zapp
 			}
             aValueBin = Marshal.PtrToStringAnsi((IntPtr)valueBin, (int)valueBinLen);
             ZappFree(valueBin);
+        }
+
+        public unsafe void SyncToggleBool()
+        {
+			{
+				CpProxyZappOrgTestBasic1SyncToggleBool(iHandle);
+			}
+        }
+
+        public unsafe void BeginToggleBool(CallbackAsyncComplete aCallback)
+        {
+            GCHandle gch = GCHandle.Alloc(aCallback);
+            IntPtr ptr = GCHandle.ToIntPtr(gch);
+            CpProxyZappOrgTestBasic1BeginToggleBool(iHandle, iActionComplete, ptr);
+        }
+
+        public unsafe void EndToggleBool(uint aAsyncHandle)
+        {
+			{
+				if (0 != CpProxyZappOrgTestBasic1EndToggleBool(iHandle, aAsyncHandle))
+				{
+					throw(new ProxyError());
+				}
+			}
         }
 
         public void SetPropertyVarUintChanged(CallbackPropertyChanged aVarUintChanged)

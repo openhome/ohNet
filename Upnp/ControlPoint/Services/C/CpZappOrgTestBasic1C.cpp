@@ -569,6 +569,37 @@ int32_t CpProxyZappOrgTestBasic1EndGetBinary(THandle aHandle, ZappHandleAsync aA
     return err;
 }
 
+void CpProxyZappOrgTestBasic1SyncToggleBool(THandle aHandle)
+{
+    CpProxyZappOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyZappOrgTestBasic1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    proxyC->Proxy()->SyncToggleBool();
+}
+
+void CpProxyZappOrgTestBasic1BeginToggleBool(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+{
+    CpProxyZappOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyZappOrgTestBasic1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    proxyC->Proxy()->BeginToggleBool(functor);
+}
+
+int32_t CpProxyZappOrgTestBasic1EndToggleBool(THandle aHandle, ZappHandleAsync aAsync)
+{
+    int32_t err = 0;
+    CpProxyZappOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyZappOrgTestBasic1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    ASSERT(async != NULL);
+    try {
+        proxyC->Proxy()->EndToggleBool(*async);
+    }
+    catch(...) {
+        err = -1;
+    }
+    return err;
+}
+
 void CpProxyZappOrgTestBasic1SetPropertyVarUintChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
     CpProxyZappOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyZappOrgTestBasic1C*>(aHandle);

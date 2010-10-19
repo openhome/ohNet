@@ -27,6 +27,7 @@ public:
     void EnableActionGetString(CallbackTestBasic1GetString aCallback, void* aPtr);
     void EnableActionSetBinary(CallbackTestBasic1SetBinary aCallback, void* aPtr);
     void EnableActionGetBinary(CallbackTestBasic1GetBinary aCallback, void* aPtr);
+    void EnableActionToggleBool(CallbackTestBasic1ToggleBool aCallback, void* aPtr);
 private:
     void Increment(IInvocationResponse& aResponse, TUint aVersion, TUint aValue, IInvocationResponseUint& aResult);
     void Decrement(IInvocationResponse& aResponse, TUint aVersion, TInt aValue, IInvocationResponseInt& aResult);
@@ -44,6 +45,7 @@ private:
     void GetString(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValueStr);
     void SetBinary(IInvocationResponse& aResponse, TUint aVersion, const Brx& aValueBin);
     void GetBinary(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBinary& aValueBin);
+    void ToggleBool(IInvocationResponse& aResponse, TUint aVersion);
 private:
     CallbackTestBasic1Increment iCallbackIncrement;
     void* iPtrIncrement;
@@ -77,6 +79,8 @@ private:
     void* iPtrSetBinary;
     CallbackTestBasic1GetBinary iCallbackGetBinary;
     void* iPtrGetBinary;
+    CallbackTestBasic1ToggleBool iCallbackToggleBool;
+    void* iPtrToggleBool;
 };
 
 DvServiceZappOrgTestBasic1C::DvServiceZappOrgTestBasic1C(DvDevice& aDevice)
@@ -194,6 +198,13 @@ void DvServiceZappOrgTestBasic1C::EnableActionGetBinary(CallbackTestBasic1GetBin
     iCallbackGetBinary = aCallback;
     iPtrGetBinary = aPtr;
     DvServiceZappOrgTestBasic1::EnableActionGetBinary();
+}
+
+void DvServiceZappOrgTestBasic1C::EnableActionToggleBool(CallbackTestBasic1ToggleBool aCallback, void* aPtr)
+{
+    iCallbackToggleBool = aCallback;
+    iPtrToggleBool = aPtr;
+    DvServiceZappOrgTestBasic1::EnableActionToggleBool();
 }
 
 void DvServiceZappOrgTestBasic1C::Increment(IInvocationResponse& aResponse, TUint aVersion, TUint aValue, IInvocationResponseUint& aResult)
@@ -408,6 +419,17 @@ void DvServiceZappOrgTestBasic1C::GetBinary(IInvocationResponse& aResponse, TUin
     aResponse.End();
 }
 
+void DvServiceZappOrgTestBasic1C::ToggleBool(IInvocationResponse& aResponse, TUint aVersion)
+{
+    ASSERT(iCallbackToggleBool != NULL);
+    if (0 != iCallbackToggleBool(iPtrToggleBool, aVersion)) {
+        aResponse.Error(502, Brn("Action failed"));
+        return;
+    }
+    aResponse.Start();
+    aResponse.End();
+}
+
 
 
 THandle DvServiceZappOrgTestBasic1Create(DvDeviceC aDevice)
@@ -498,6 +520,11 @@ void DvServiceZappOrgTestBasic1EnableActionSetBinary(THandle aService, CallbackT
 void DvServiceZappOrgTestBasic1EnableActionGetBinary(THandle aService, CallbackTestBasic1GetBinary aCallback, void* aPtr)
 {
     reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->EnableActionGetBinary(aCallback, aPtr);
+}
+
+void DvServiceZappOrgTestBasic1EnableActionToggleBool(THandle aService, CallbackTestBasic1ToggleBool aCallback, void* aPtr)
+{
+    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->EnableActionToggleBool(aCallback, aPtr);
 }
 
 int32_t DvServiceZappOrgTestBasic1SetPropertyVarUint(THandle aService, uint32_t aValue)

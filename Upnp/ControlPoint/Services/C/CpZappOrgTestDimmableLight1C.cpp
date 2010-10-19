@@ -93,3 +93,18 @@ int32_t CpProxyZappOrgTestDimmableLight1EndSetLevel(THandle aHandle, ZappHandleA
     return err;
 }
 
+void CpProxyZappOrgTestDimmableLight1SetPropertyA_ARG_LevelChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
+{
+    CpProxyZappOrgTestDimmableLight1C* proxyC = reinterpret_cast<CpProxyZappOrgTestDimmableLight1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    Functor functor = MakeFunctor(aPtr, aCallback);
+    proxyC->Proxy()->SetPropertyA_ARG_LevelChanged(functor);
+}
+
+void CpProxyZappOrgTestDimmableLight1PropertyA_ARG_Level(THandle aHandle, uint32_t* aA_ARG_Level)
+{
+    CpProxyZappOrgTestDimmableLight1C* proxyC = reinterpret_cast<CpProxyZappOrgTestDimmableLight1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    proxyC->Proxy()->PropertyA_ARG_Level(*aA_ARG_Level);
+}
+

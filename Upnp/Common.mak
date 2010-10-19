@@ -497,6 +497,23 @@ $(objdir)TestProxyCs.exe: \
 		/reference:$(objdir)Zapp.net.dll \
 		/reference:$(objdir)CpUpnpOrgConnectionManager1.net.dll \
 		$(publiccsdir)TestProxy.cs \
+
+TestDeviceCs: $(objdir)TestDeviceCs.exe
+
+$(objdir)TestDeviceCs.exe: \
+	ZappUpnpDll \
+	CpUpnpOrgConnectionManager1Dll \
+	$(objdir)Zapp.net.dll \
+	$(publiccsdir)TestDvDevice.cs \
+	$(objdir)DvZappOrgTestBasic1.net.dll \
+	$(objdir)CpZappOrgTestBasic1.net.dll
+	$(csharp) /unsafe /t:exe /debug+ \
+		/out:$(objdir)TestDeviceCs.exe \
+		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)DvZappOrgTestBasic1.net.dll \
+		/reference:$(objdir)CpZappOrgTestBasic1.net.dll \
+		$(publiccsdir)TestDvDevice.cs
+
 		
 
 

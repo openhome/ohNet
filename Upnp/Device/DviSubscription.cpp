@@ -139,6 +139,21 @@ const Brx& DviSubscription::Sid() const
     return iSid;
 }
 
+TBool DviSubscription::PropertiesInitialised() const
+{
+    TBool initialised = true;
+    iLock.Wait();
+    const DviService::VectorProperties& properties = iService->Properties();
+	for (TUint i=0; i<properties.size(); i++) {
+		if (properties[i] == 0) {
+            initialised = false;
+            break;
+        }
+    }
+    iLock.Signal();
+    return initialised;
+}
+
 DviSubscription::~DviSubscription()
 {
     delete iTimer;
@@ -292,6 +307,7 @@ void DviSubscriptionManager::QueueUpdate(DviSubscription& aSubscription)
     DviSubscriptionManager& self = DviSubscriptionManager::Self();
     self.iLock.Wait();
     self.iList.push_back(&aSubscription);
+    ASSERT(aSubscription.PropertiesInitialised());
     aSubscription.AddRef();
     self.Signal();
     self.iLock.Signal();

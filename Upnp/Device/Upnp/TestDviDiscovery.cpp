@@ -30,6 +30,7 @@ private:
     void SsdpNotifyDeviceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion);
     void SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion);
 private:
+    Mutex iLock;
     TUint iTotal;
 };
 
@@ -60,6 +61,7 @@ private:
     void SsdpNotifyDeviceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion);
     void SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion);
 private:
+    Mutex iLock;
     TUint iTotal;
     TUint iRoot;
     TUint iUdn;
@@ -120,6 +122,9 @@ const Brn SuiteMsearch::kNameDummy("Dummy");
 
 static TBool DeviceTypeMatches(const TChar* aType1, const TChar* aType2)
 {
+    if (aType1 == NULL || aType2 == NULL) {
+        return false;
+    }
     return (0 == strcmp(aType1, aType2));
 }
 
@@ -137,14 +142,17 @@ static TBool ServiceVectorContainsType(const std::vector<TChar*>& aVector, const
 // CpListenerBasic
 
 CpListenerBasic::CpListenerBasic()
-    : iTotal(0)
+    : iLock("LBMX")
+    , iTotal(0)
 {
 }
 
 TBool CpListenerBasic::LogAdd(const Brx& aUuid)
 {
     if (aUuid == SuiteAlive::gNameDevice1) {
+        iLock.Wait();
         iTotal++;
+        iLock.Signal();
         return true;
     }
     return false;
@@ -153,8 +161,10 @@ TBool CpListenerBasic::LogAdd(const Brx& aUuid)
 TBool CpListenerBasic::LogRemove(const Brx& aUuid)
 {
     if (aUuid == SuiteAlive::gNameDevice1) {
+        iLock.Wait();
         ASSERT(iTotal != 0);
         iTotal--;
+        iLock.Signal();
         return true;
     }
     return false;
@@ -286,6 +296,7 @@ void SuiteAlive::Disabled()
 // CpListenerMsearch
 
 CpListenerMsearch::CpListenerMsearch()
+    : iLock("LMMX")
 {
     iDev1Type = iDev2Type = iDev21Type = NULL;
     Reset();
@@ -303,6 +314,7 @@ TUint CpListenerMsearch::Udns() const
 
 void CpListenerMsearch::Reset()
 {
+    iLock.Wait();
     iTotal = 0;
     iRoot = 0;
     iUdn = 0;
@@ -310,17 +322,17 @@ void CpListenerMsearch::Reset()
     iService = 0;
     iUdnsReceived = 0;
     
-    delete iDev1Type;
+    free(iDev1Type);
     iDev1Type = NULL;
-    delete iDev2Type;
+    free(iDev2Type);
     iDev2Type = NULL;
-    delete iDev21Type;
+    free(iDev21Type);
     iDev21Type = NULL;
-    TUint i;
-    for (i=0; i<iServices.size(); i++) {
-        delete iServices[i];
+    for (TUint i=0; i<iServices.size(); i++) {
+        free(iServices[i]);
     }
     iServices.clear();
+    iLock.Signal();
 }
 
 TBool CpListenerMsearch::LogUdn(const Brx& aUuid, const Brx& aLocation)
@@ -331,6 +343,12 @@ TBool CpListenerMsearch::LogUdn(const Brx& aUuid, const Brx& aLocation)
     TBool correctSubnet = nif->ContainsAddress(endpt.Address());
     delete nif;
     if (!correctSubnet) {
+#if 0
+        Print("Discarding advertisement from ");
+        Print(aUuid);
+        TIpAddress addr = endpt.Address();
+        Print(" at %u.%u.%u.%u:%u\n", addr&0xff, ((addr>>8)&0xff), ((addr>>16)&0xff), (addr>>24), endpt.Port());
+#endif
         return false;
     }
 
@@ -372,18 +390,24 @@ TChar* CpListenerMsearch::CreateTypeString(const Brx& aDomain, const Brx& aType,
 
 void CpListenerMsearch::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocation, TUint /*aMaxAge*/)
 {
+    AutoMutex a(iLock);
     if (LogUdn(aUuid, aLocation)) {
         iRoot++;
+        Print("Received root alive from ");
+        Print(aUuid);
+        Print("\n");
     }
 }
 
 void CpListenerMsearch::SsdpNotifyUuidAlive(const Brx& aUuid, const Brx& aLocation, TUint /*aMaxAge*/)
 {
+    AutoMutex a(iLock);
     (void)LogUdn(aUuid, aLocation);
 }
 
 void CpListenerMsearch::SsdpNotifyDeviceTypeAlive(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion, const Brx& aLocation, TUint /*aMaxAge*/)
 {
+    AutoMutex a(iLock);
     if (LogUdn(aUuid, aLocation)) {
         iDevice++;
         TChar* type = CreateTypeString(aDomain, aType, aVersion);
@@ -404,6 +428,7 @@ void CpListenerMsearch::SsdpNotifyDeviceTypeAlive(const Brx& aUuid, const Brx& a
 
 void CpListenerMsearch::SsdpNotifyServiceTypeAlive(const Brx& aUuid, const Brx& aDomain, const Brx& aType, TUint aVersion, const Brx& aLocation, TUint /*aMaxAge*/)
 {
+    AutoMutex a(iLock);
     if (LogUdn(aUuid, aLocation)) {
         iService++;
         TChar* type = CreateTypeString(aDomain, aType, aVersion);
@@ -436,7 +461,6 @@ SuiteMsearch::SuiteMsearch()
     RandomiseUdn(gNameDevice1);
     RandomiseUdn(gNameDevice2);
     RandomiseUdn(gNameDevice2Embedded1);
-    Stack::InitParams().SetMsearchTime(1);
     iBlocker = new Blocker;
     iListener = new CpListenerMsearch;
     NetworkInterface* nif = Stack::NetworkInterfaceList().CurrentInterface();
@@ -464,9 +488,13 @@ void SuiteMsearch::Test()
     device->AddService(new DviService("upnp.org", "service1", 1));
     device->AddService(new DviService("linn.co.uk", "service2", 3));
     device->AddService(new DviService("upnp.org", "service3", 1));
-    TEST_THROWS(device->AddService(new DviService("upnp.org", "service1", 1)), AssertionFailed);
+    DviService* service = new DviService("upnp.org", "service1", 1);
+    TEST_THROWS(device->AddService(service), AssertionFailed);
+    service->RemoveRef();
     device->SetEnabled();
-    TEST_THROWS(device->AddService(new DviService("upnp.org", "service4", 1)), AssertionFailed);
+    service = new DviService("upnp.org", "service4", 1);
+    TEST_THROWS(device->AddService(service), AssertionFailed);
+    service->RemoveRef();
 
     device = new DviDevice(gNameDevice2);
     iDevices[1] = device;
@@ -484,7 +512,9 @@ void SuiteMsearch::Test()
     device->AddService(new DviService("upnp.org", "service1", 1));
     device->AddService(new DviService("linn.co.uk", "service6", 1));
     device->AddService(new DviService("linn.co.uk", "service2", 3));
-    TEST_THROWS(device->AddService(new DviService("linn.co.uk", "service5", 1)), AssertionFailed);
+    service = new DviService("linn.co.uk", "service5", 1);
+    TEST_THROWS(device->AddService(service), AssertionFailed);
+    service->RemoveRef();
     iDevices[1]->SetEnabled();
     device->SetEnabled();
     device = new DviDevice(kNameDummy);

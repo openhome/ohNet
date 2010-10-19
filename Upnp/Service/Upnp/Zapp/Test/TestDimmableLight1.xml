@@ -2,7 +2,7 @@
     <serviceStateTable>
         <stateVariable>
             <name>A_ARG_Level</name>
-            <sendEventsAttribute>no</sendEventsAttribute>
+            <sendEventsAttribute>yes</sendEventsAttribute>
             <dataType>ui4</dataType>
         </stateVariable>
     </serviceStateTable>

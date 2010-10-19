@@ -272,5 +272,9 @@
                 </argument>
             </argumentList>
         </action>
+        <action>
+            <name>ToggleBool</name>
+            <Optional/>
+        </action>
     </actionList>
 </scpd>

@@ -351,6 +351,26 @@ void SyncGetBinaryZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 }
 
 
+class SyncToggleBoolZappOrgTestBasic1Cpp : public SyncProxyAction
+{
+public:
+    SyncToggleBoolZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyZappOrgTestBasic1Cpp& iService;
+};
+
+SyncToggleBoolZappOrgTestBasic1Cpp::SyncToggleBoolZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService)
+    : iService(aService)
+{
+}
+
+void SyncToggleBoolZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
+{
+    iService.EndToggleBool(aAsync);
+}
+
+
 CpProxyZappOrgTestBasic1Cpp::CpProxyZappOrgTestBasic1Cpp(CpDeviceCpp& aDevice)
     : CpProxy("zapp-org", "TestBasic", 1, aDevice.Device())
 {
@@ -434,6 +454,8 @@ CpProxyZappOrgTestBasic1Cpp::CpProxyZappOrgTestBasic1Cpp(CpDeviceCpp& aDevice)
     param = new Zapp::ParameterBinary("ValueBin");
     iActionGetBinary->AddOutputParameter(param);
 
+    iActionToggleBool = new Action("ToggleBool");
+
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyZappOrgTestBasic1Cpp::VarUintPropertyChanged);
     iVarUint = new PropertyUint("VarUint", functor);
@@ -471,6 +493,7 @@ CpProxyZappOrgTestBasic1Cpp::~CpProxyZappOrgTestBasic1Cpp()
     delete iActionGetString;
     delete iActionSetBinary;
     delete iActionGetBinary;
+    delete iActionToggleBool;
 }
 
 void CpProxyZappOrgTestBasic1Cpp::SyncIncrement(uint32_t aValue, uint32_t& aResult)
@@ -963,6 +986,30 @@ void CpProxyZappOrgTestBasic1Cpp::EndGetBinary(IAsync& aAsync, std::string& aVal
     {
         const Brx& val = ((ArgumentString*)invocation.OutputArguments()[index++])->Value();
         aValueBin.assign((const char*)val.Ptr(), val.Bytes());
+    }
+}
+
+void CpProxyZappOrgTestBasic1Cpp::SyncToggleBool()
+{
+    SyncToggleBoolZappOrgTestBasic1Cpp sync(*this);
+    BeginToggleBool(sync.Functor());
+    sync.Wait();
+}
+
+void CpProxyZappOrgTestBasic1Cpp::BeginToggleBool(FunctorAsync& aFunctor)
+{
+    Invocation* invocation = iService->Invocation(*iActionToggleBool, aFunctor);
+    invocation->Invoke();
+}
+
+void CpProxyZappOrgTestBasic1Cpp::EndToggleBool(IAsync& aAsync)
+{
+    ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
+    Invocation& invocation = (Invocation&)aAsync;
+    ASSERT(invocation.Action().Name() == Brn("ToggleBool"));
+
+    if (invocation.Error()) {
+        THROW(ProxyError);
     }
 }
 

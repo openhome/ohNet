@@ -15,8 +15,10 @@ using namespace Zapp::TestFramework;
 class TestServerSession : public SocketTcpSession
 {
 public:
-    TestServerSession()
-        : iSemaphore("TSTS", 0), iTestStarted("TSS2", 0)
+    TestServerSession(Semaphore& aControllerSem)
+        : iSemaphore("TSTS", 0)
+        , iTestStarted("TSS2", 0)
+        , iControllerSem(aControllerSem)
     {
     }
 
@@ -49,6 +51,7 @@ public:
                 break;
             }
             iTestDone = true;
+            iControllerSem.Signal();
         }
         LOG(kNetwork, "<TestServerSession::Run\n");
     }
@@ -76,6 +79,7 @@ public:
 private:
     Semaphore iSemaphore;
     Semaphore iTestStarted;
+    Semaphore& iControllerSem;
     TUint iBytes;
     Bws<64> iBuffer;
     TUint iTest;
@@ -94,13 +98,15 @@ private:
 
 void SuiteTcpClient::Test()
 {
-    SocketTcpServer server("TSSV", 1234, iInterface);
-    TestServerSession* session = new TestServerSession();
+    Semaphore sem("TCPS", 0);
+    SocketTcpServer server("TSSV", 0, iInterface);
+    const TUint port = server.Port();
+    TestServerSession* session = new TestServerSession(sem);
     server.Add("TSS1", session);
 
     SocketTcpClient client;
     client.Open();
-    client.Connect(Endpoint(1234, iInterface), 1000);
+    client.Connect(Endpoint(port, iInterface), 1000);
 
     // Test 1 - test Receive(Bwx& , TUint ) interface
     session->StartTest(1,32);
@@ -111,7 +117,7 @@ void SuiteTcpClient::Test()
     TEST(session->TestDone() == false);
     // send 16 bytes
     client.Write(Brn("abcdefghijklmnop"));
-    Thread::Sleep(500);
+    sem.Wait();
     TEST(session->TestDone() == true);
     TEST(session->Buffer() == Brn("abcdefghijklmnopabcdefghijklmnop"));
 
@@ -129,20 +135,21 @@ void SuiteTcpClient::Test()
     TEST(session->TestDone() == false);
     // close the sending socket
     client.Close();
-    Thread::Sleep(500);
+    sem.Wait();
     TEST(session->TestDone() == true);
     TEST(session->Buffer() == Brn("abcdefghijklmnopabcdefghij"));
     session->Close();
+    sem.Wait();
 
     client.Open();
-    client.Connect(Endpoint(1234, iInterface), 1000);
+    client.Connect(Endpoint(port, iInterface), 1000);
 
     // Test 3 - test Receive(Bwx& ) interface - start the Receive before the send
     session->StartTest(3);
     TEST(session->TestDone() == false);
     // send 16 bytes
     client.Write(Brn("abcdefghijklmnop"));
-    Thread::Sleep(500);
+    sem.Wait();
     TEST(session->TestDone() == true);
     TEST(session->Buffer() == Brn("abcdefghijklmnop"));
 
@@ -153,7 +160,7 @@ void SuiteTcpClient::Test()
     Thread::Sleep(500);
     // signal the receive
     session->StartTest(3);
-    Thread::Sleep(10); // short sleep to avoid dependency on session running in a higher priority thread
+    sem.Wait();
     TEST(session->TestDone() == true);
     TEST(session->Buffer() == Brn("abcdefghijklmnopabcdefghijklmnop"));
 
@@ -162,7 +169,7 @@ void SuiteTcpClient::Test()
     TEST(session->TestDone() == false);
     // close the sending socket
     client.Close();
-    Thread::Sleep(500);
+    sem.Wait(500);
     TEST(session->TestDone() == true);
     TEST(session->Buffer() == Brx::Empty());
     session->Close();
@@ -202,14 +209,14 @@ void SuiteSocketServer::Test()
     Bws<26> rx;
     Bws<26> tx("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
-    SocketTcpServer server("TSSX", 1999, iInterface);
+    SocketTcpServer server("TSSX", 0, iInterface);
     Log::Print("Server created\n");
     server.Add("TSS1", new TcpSessionEcho());
     Log::Print("Session 1 added\n");
 
     // Two clients serially accessing one session
 
-    Endpoint endpoint = Endpoint(1999, iInterface);
+    Endpoint endpoint = Endpoint(server.Port(), iInterface);
 
     SocketTcpClient client1;
     client1.Open();
@@ -375,7 +382,7 @@ void SuiteTcpServerShutdown::Test()
     SocketTcpServer *server;
 
     // server thread priority > main thread priority - no sessions open
-    server = new SocketTcpServer("TSSX", 1998, iInterface, kPriorityNormal + kPriorityMore);
+    server = new SocketTcpServer("TSSX", 0, iInterface, kPriorityNormal + kPriorityMore);
     server->Add("TSS1", new TcpSessionTest());
     server->Add("TSS2", new TcpSessionTest());
     delete server;
@@ -387,7 +394,7 @@ void SuiteTcpServerShutdown::Test()
         return;
     }
 
-    server = new SocketTcpServer("TSSX", 1997, iInterface, kPriorityNormal + kPriorityLess);
+    server = new SocketTcpServer("TSSX", 0, iInterface, kPriorityNormal + kPriorityLess);
     server->Add("TSS1", new TcpSessionTest());
     server->Add("TSS2", new TcpSessionTest());
     delete server;
@@ -395,7 +402,7 @@ void SuiteTcpServerShutdown::Test()
     TEST(1==1);
 
     // server thread priority == main thread priority - no sessions open
-    server = new SocketTcpServer("TSSX", 1996, iInterface, kPriorityNormal);
+    server = new SocketTcpServer("TSSX", 0, iInterface, kPriorityNormal);
     server->Add("TSS1", new TcpSessionTest());
     server->Add("TSS2", new TcpSessionTest());
     delete server;
@@ -404,7 +411,7 @@ void SuiteTcpServerShutdown::Test()
 
 
     // server thread priority > main thread priority - one session open
-    server = new SocketTcpServer("TSSX", 1995, iInterface, kPriorityNormal + kPriorityMore);
+    server = new SocketTcpServer("TSSX", 0, iInterface, kPriorityNormal + kPriorityMore);
     server->Add("TSS1", new TcpSessionTest());
     server->Add("TSS2", new TcpSessionTest());
 
@@ -417,24 +424,24 @@ void SuiteTcpServerShutdown::Test()
     TEST(1==1);
 
     // server thread priority < main thread priority - one session open
-    server = new SocketTcpServer("TSSX", 1994, iInterface, kPriorityNormal + kPriorityLess);
+    server = new SocketTcpServer("TSSX", 0, iInterface, kPriorityNormal + kPriorityLess);
     server->Add("TSS1", new TcpSessionTest());
     server->Add("TSS2", new TcpSessionTest());
     SocketTcpClient client2;
     client2.Open();
-    client2.Connect(Endpoint(1994, iInterface), 1000);
+    client2.Connect(Endpoint(server->Port(), iInterface), 1000);
     delete server;
     Thread::Sleep(500);
     client2.Close();
     TEST(1==1);
 
     // server thread priority == main thread priority - one session open
-    server = new SocketTcpServer("TSSX", 1993, iInterface, kPriorityNormal);
+    server = new SocketTcpServer("TSSX", 0, iInterface, kPriorityNormal);
     server->Add("TSS1", new TcpSessionTest());
     server->Add("TSS2", new TcpSessionTest());
     SocketTcpClient client3;
     client3.Open();
-    client3.Connect(Endpoint(1993, iInterface), 1000);
+    client3.Connect(Endpoint(server->Port(), iInterface), 1000);
     delete server;
     Thread::Sleep(500);
     client3.Close();
@@ -473,6 +480,8 @@ private:
     Semaphore iReceiver;
     ThreadFunctor* iThread0;
     ThreadFunctor* iThread1;
+    TUint iPort;
+    Mutex iPortLock;
 
     static const TUint kBufBytes = 1004;
     static const TUint kMsgBytes = 1000;
@@ -485,6 +494,8 @@ SuiteMulticast::SuiteMulticast() :
     Suite("Multicast Tests")
     , iSender("MCTS", 0)
     , iReceiver("MCTR", 0)
+    , iPort(0)
+    , iPortLock("MPRT")
     , iExp(kBufBytes)
 {
     iThread0 = new ThreadFunctor("MUL1", MakeFunctor(*this, &SuiteMulticast::Receiver));
@@ -511,7 +522,7 @@ void SuiteMulticast::Test()
     iSender.Wait();
     iSender.Wait();
 
-    SocketUdpClient send(Endpoint(kMulticastPort, kMulticastAddress), 1);
+    SocketUdpClient send(Endpoint(iPort, kMulticastAddress), 1);
 
     Bwn buf(iExp);
     TUint i;
@@ -551,7 +562,10 @@ void SuiteMulticast::Test()
 
 void SuiteMulticast::Receiver()
 {
-    SocketUdpMulticast recv(Endpoint(kMulticastPort, kMulticastAddress), 1);
+    iPortLock.Wait();
+    SocketUdpMulticast recv(Endpoint(iPort, kMulticastAddress), 1);
+    iPort = recv.Port();
+    iPortLock.Signal();
 
     iSender.Signal(); // signal ready to begin receiving
 
@@ -583,7 +597,7 @@ private:
 
 void MainTestThread::Run()
 {
-//    Debug::SetLevel(Debug::kNetwork);
+//    Debug::SetLevel(Debug::kError);
     Runner runner("Network System");
     runner.Add(new SuiteTcpClient(iInterface));
     runner.Add(new SuiteSocketServer(iInterface));
@@ -608,11 +622,15 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces();
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
     TIpAddress addr = (*ifs)[adapter.Value()]->Address();
+    for (TUint i=0; i<ifs->size(); i++) {
+        delete (*ifs)[i];
+    }
+    delete ifs;
     Print("Using network interface %d.%d.%d.%d\n", addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
     MainTestThread th(addr);
     th.Start();
     th.Wait();
-    delete ifs;
 
+    delete aInitParams;
     UpnpLibrary::Close();
 }
