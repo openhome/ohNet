@@ -480,6 +480,8 @@ private:
     Semaphore iReceiver;
     ThreadFunctor* iThread0;
     ThreadFunctor* iThread1;
+    TUint iPort;
+    Mutex iPortLock;
 
     static const TUint kBufBytes = 1004;
     static const TUint kMsgBytes = 1000;
@@ -492,6 +494,8 @@ SuiteMulticast::SuiteMulticast() :
     Suite("Multicast Tests")
     , iSender("MCTS", 0)
     , iReceiver("MCTR", 0)
+    , iPort(0)
+    , iPortLock("MPRT")
     , iExp(kBufBytes)
 {
     iThread0 = new ThreadFunctor("MUL1", MakeFunctor(*this, &SuiteMulticast::Receiver));
@@ -518,7 +522,7 @@ void SuiteMulticast::Test()
     iSender.Wait();
     iSender.Wait();
 
-    SocketUdpClient send(Endpoint(kMulticastPort, kMulticastAddress), 1);
+    SocketUdpClient send(Endpoint(iPort, kMulticastAddress), 1);
 
     Bwn buf(iExp);
     TUint i;
@@ -558,7 +562,10 @@ void SuiteMulticast::Test()
 
 void SuiteMulticast::Receiver()
 {
-    SocketUdpMulticast recv(Endpoint(kMulticastPort, kMulticastAddress), 1);
+    iPortLock.Wait();
+    SocketUdpMulticast recv(Endpoint(iPort, kMulticastAddress), 1);
+    iPort = recv.Port();
+    iPortLock.Signal();
 
     iSender.Signal(); // signal ready to begin receiving
 
