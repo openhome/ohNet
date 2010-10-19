@@ -27,9 +27,9 @@ Option::Option(const TChar* aShortName, const TChar* aLongName, const TChar* aHe
 
 Option::~Option()
 {
-    delete iShortName;
-    delete iLongName;
-    delete iHelpText;
+    delete[] iShortName;
+    delete[] iLongName;
+    delete[] iHelpText;
 }
 
 TBool Option::Match(const TChar* aName) const

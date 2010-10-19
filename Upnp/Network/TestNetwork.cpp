@@ -15,15 +15,24 @@ using namespace Zapp::TestFramework;
 class TestServerSession : public SocketTcpSession
 {
 public:
-    TestServerSession()
-        : iSemaphore("TSTS", 0), iTestStarted("TSS2", 0)
+    TestServerSession(Semaphore& aControllerSem)
+        : iSemaphore("TSTS", 0)
+        , iTestStarted("TSS2", 0)
+        , iControllerSem(aControllerSem)
+        , iCleanExit(true)
     {
+    }
+
+    ~TestServerSession()
+    {
+        ASSERT(iCleanExit);
     }
 
     void Run()
     {
         LOG(kNetwork, ">TestServerSession::Run\n");
         TBool exit = false;
+        iCleanExit = false;
         while (!exit) {
             LOG(kNetwork, "TestServerSession::Run waiting on semaphore\n");
             iSemaphore.Wait();
@@ -49,8 +58,10 @@ public:
                 break;
             }
             iTestDone = true;
+            iControllerSem.Signal();
         }
         LOG(kNetwork, "<TestServerSession::Run\n");
+        iCleanExit = true;
     }
 
     void Close()
@@ -76,10 +87,12 @@ public:
 private:
     Semaphore iSemaphore;
     Semaphore iTestStarted;
+    Semaphore& iControllerSem;
     TUint iBytes;
     Bws<64> iBuffer;
     TUint iTest;
     TBool iTestDone;
+    TBool iCleanExit;
 };
 
 
@@ -94,13 +107,15 @@ private:
 
 void SuiteTcpClient::Test()
 {
-    SocketTcpServer server("TSSV", 1234, iInterface);
-    TestServerSession* session = new TestServerSession();
+    Semaphore sem("TCPS", 0);
+    SocketTcpServer server("TSSV", 0, iInterface);
+    const TUint port = server.Port();
+    TestServerSession* session = new TestServerSession(sem);
     server.Add("TSS1", session);
 
     SocketTcpClient client;
     client.Open();
-    client.Connect(Endpoint(1234, iInterface), 1000);
+    client.Connect(Endpoint(port, iInterface), 1000);
 
     // Test 1 - test Receive(Bwx& , TUint ) interface
     session->StartTest(1,32);
@@ -111,7 +126,7 @@ void SuiteTcpClient::Test()
     TEST(session->TestDone() == false);
     // send 16 bytes
     client.Write(Brn("abcdefghijklmnop"));
-    Thread::Sleep(500);
+    sem.Wait();
     TEST(session->TestDone() == true);
     TEST(session->Buffer() == Brn("abcdefghijklmnopabcdefghijklmnop"));
 
@@ -129,20 +144,21 @@ void SuiteTcpClient::Test()
     TEST(session->TestDone() == false);
     // close the sending socket
     client.Close();
-    Thread::Sleep(500);
+    sem.Wait();
     TEST(session->TestDone() == true);
     TEST(session->Buffer() == Brn("abcdefghijklmnopabcdefghij"));
     session->Close();
+    sem.Wait();
 
     client.Open();
-    client.Connect(Endpoint(1234, iInterface), 1000);
+    client.Connect(Endpoint(port, iInterface), 1000);
 
     // Test 3 - test Receive(Bwx& ) interface - start the Receive before the send
     session->StartTest(3);
     TEST(session->TestDone() == false);
     // send 16 bytes
     client.Write(Brn("abcdefghijklmnop"));
-    Thread::Sleep(500);
+    sem.Wait();
     TEST(session->TestDone() == true);
     TEST(session->Buffer() == Brn("abcdefghijklmnop"));
 
@@ -153,7 +169,7 @@ void SuiteTcpClient::Test()
     Thread::Sleep(500);
     // signal the receive
     session->StartTest(3);
-    Thread::Sleep(10); // short sleep to avoid dependency on session running in a higher priority thread
+    sem.Wait();
     TEST(session->TestDone() == true);
     TEST(session->Buffer() == Brn("abcdefghijklmnopabcdefghijklmnop"));
 
@@ -162,7 +178,7 @@ void SuiteTcpClient::Test()
     TEST(session->TestDone() == false);
     // close the sending socket
     client.Close();
-    Thread::Sleep(500);
+    sem.Wait(500);
     TEST(session->TestDone() == true);
     TEST(session->Buffer() == Brx::Empty());
     session->Close();
@@ -583,7 +599,7 @@ private:
 
 void MainTestThread::Run()
 {
-//    Debug::SetLevel(Debug::kNetwork);
+//    Debug::SetLevel(Debug::kError);
     Runner runner("Network System");
     runner.Add(new SuiteTcpClient(iInterface));
     runner.Add(new SuiteSocketServer(iInterface));
@@ -608,11 +624,15 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces();
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
     TIpAddress addr = (*ifs)[adapter.Value()]->Address();
+    for (TUint i=0; i<ifs->size(); i++) {
+        delete (*ifs)[i];
+    }
+    delete ifs;
     Print("Using network interface %d.%d.%d.%d\n", addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
     MainTestThread th(addr);
     th.Start();
     th.Wait();
-    delete ifs;
 
+    delete aInitParams;
     UpnpLibrary::Close();
 }

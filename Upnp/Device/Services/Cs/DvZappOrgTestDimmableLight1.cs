@@ -12,6 +12,10 @@ namespace Zapp
         [DllImport("DvZappOrgTestDimmableLight1")]
         static extern void DvServiceZappOrgTestDimmableLight1Destroy(uint aHandle);
         [DllImport("DvZappOrgTestDimmableLight1")]
+        static extern unsafe int DvServiceZappOrgTestDimmableLight1SetPropertyA_ARG_Level(uint aHandle, uint aValue);
+        [DllImport("DvZappOrgTestDimmableLight1")]
+        static extern unsafe void DvServiceZappOrgTestDimmableLight1GetPropertyA_ARG_Level(uint aHandle, uint* aValue);
+        [DllImport("DvZappOrgTestDimmableLight1")]
         static extern void DvServiceZappOrgTestDimmableLight1EnableActionGetLevel(uint aHandle, CallbackGetLevel aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestDimmableLight1")]
         static extern void DvServiceZappOrgTestDimmableLight1EnableActionSetLevel(uint aHandle, CallbackSetLevel aCallback, IntPtr aPtr);
@@ -30,6 +34,22 @@ namespace Zapp
         {
             iHandle = DvServiceZappOrgTestDimmableLight1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
+        }
+
+        public unsafe void SetPropertyA_ARG_Level(uint aValue)
+        {
+            if (0 != DvServiceZappOrgTestDimmableLight1SetPropertyA_ARG_Level(iHandle, aValue))
+            {
+                throw(new PropertyUpdateError());
+            }
+        }
+
+        public unsafe void GetPropertyA_ARG_Level(out uint aValue)
+        {
+            fixed (uint* value = &aValue)
+			{
+                DvServiceZappOrgTestDimmableLight1GetPropertyA_ARG_Level(iHandle, value);
+            }
         }
 
         protected unsafe void EnableActionGetLevel()
