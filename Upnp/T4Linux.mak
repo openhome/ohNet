@@ -57,9 +57,11 @@ $(toolsDir)TextTransform.exe : $(toolsDir)Mono.TextTemplating.dll $(exesources)
 	gmcs /t:exe -out:$(toolsDir)TextTransform.exe /r:$(toolsDir)Mono.TextTemplating.dll $(exesources)
 
 $(toolsDir)UpnpServiceDescription.xsd : T4/UpnpServiceXml/UpnpServiceDescription.xsd
+	@mkdir -p $(toolsDir)
 	cp -u T4/UpnpServiceXml/UpnpServiceDescription.xsd $(toolsDir)
 
 $(toolsDir)UpnpServiceTemplate.xsd : T4/UpnpServiceXml/UpnpServiceTemplate.xsd
+	@mkdir -p $(toolsDir)
 	cp -u T4/UpnpServiceXml/UpnpServiceTemplate.xsd $(toolsDir)
 
 xmlsources = 	T4/UpnpServiceXml/AssemblyInfo.cs \

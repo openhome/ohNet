@@ -55,9 +55,11 @@ $(toolsDir)TextTransform.exe : $(toolsDir)Mono.TextTemplating.dll $(exesources)
 	csc /nologo /t:exe -out:$(toolsDir)TextTransform.exe /r:$(toolsDir)Mono.TextTemplating.dll $(exesources)
 
 $(toolsDir)UpnpServiceDescription.xsd : T4\\UpnpServiceXml\\UpnpServiceDescription.xsd
+	@if not exist $(toolsDir) mkdir $(toolsDir)
 	copy /y T4\\UpnpServiceXml\\UpnpServiceDescription.xsd $(toolsDir)
 
 $(toolsDir)UpnpServiceTemplate.xsd : T4\\UpnpServiceXml\\UpnpServiceTemplate.xsd
+	@if not exist $(toolsDir) mkdir $(toolsDir)
 	copy /y T4\\UpnpServiceXml\\UpnpServiceTemplate.xsd $(toolsDir)
 
 
