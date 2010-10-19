@@ -33,223 +33,222 @@ using Microsoft.VisualStudio.TextTemplating;
 
 namespace Mono.TextTemplating
 {
-	
-	
-	public class TemplateGenerator : MarshalByRefObject, ITextTemplatingEngineHost
-	{
-		//re-usable
-		Engine engine;
-		
-		//per-run variables
-		string inputFile, outputFile;
-		Encoding encoding;
-		
-		//host fields
-		CompilerErrorCollection errors = new CompilerErrorCollection ();
-		List<string> refs = new List<string> ();
-		List<string> imports = new List<string> ();
-		List<string> includePaths = new List<string> ();
-		List<string> referencePaths = new List<string> ();
-		List<string> directiveProcessors = new List<string> ();
-		Dictionary<string, string> processorValues = new Dictionary<string, string> ();
-		
-		//host properties for consumers to access
-		public CompilerErrorCollection Errors { get { return errors; } }
-		public List<string> Refs { get { return refs; } }
-		public List<string> Imports { get { return imports; } }
-		public List<string> IncludePaths { get { return includePaths; } }
-		public List<string> ReferencePaths { get { return referencePaths; } }
-		public List<string> DirectiveProcessors { get { return directiveProcessors; } }
-		public IDictionary<string, string> ProcessorValues { get { return processorValues; } }
-		public string OutputFile { get { return outputFile; } }
-		
-		public TemplateGenerator ()
-		{
-			Refs.Add (typeof (TextTransformation).Assembly.Location);
-		}
-		
-		public CompiledTemplate CompileTemplate (string content)
-		{
-			if (String.IsNullOrEmpty (content))
-				throw new ArgumentNullException ("content");
+    
+    
+    public class TemplateGenerator : MarshalByRefObject, ITextTemplatingEngineHost
+    {
+        //re-usable
+        Engine engine;
+        
+        //per-run variables
+        string inputFile, outputFile;
+        Encoding encoding;
+        
+        //host fields
+        CompilerErrorCollection errors = new CompilerErrorCollection ();
+        List<string> refs = new List<string> ();
+        List<string> imports = new List<string> ();
+        List<string> includePaths = new List<string> ();
+        List<string> referencePaths = new List<string> ();
+        List<string> directiveProcessors = new List<string> ();
+        Dictionary<string, string> processorValues = new Dictionary<string, string> ();
+        
+        //host properties for consumers to access
+        public CompilerErrorCollection Errors { get { return errors; } }
+        public List<string> Refs { get { return refs; } }
+        public List<string> Imports { get { return imports; } }
+        public List<string> IncludePaths { get { return includePaths; } }
+        public List<string> ReferencePaths { get { return referencePaths; } }
+        public List<string> DirectiveProcessors { get { return directiveProcessors; } }
+        public IDictionary<string, string> ProcessorValues { get { return processorValues; } }
+        public string OutputFile { get { return outputFile; } }
+        
+        public TemplateGenerator ()
+        {
+            Refs.Add (typeof (TextTransformation).Assembly.Location);
+        }
+        
+        public CompiledTemplate CompileTemplate (string content)
+        {
+            if (String.IsNullOrEmpty (content))
+                throw new ArgumentNullException ("content");
 
-			errors.Clear ();
-			encoding = Encoding.UTF8;
-			
-			AppDomain appdomain = ProvideTemplatingAppDomain (content);
-			TemplatingEngine engine;
-			if (appdomain != null) {
-				engine = (TemplatingEngine)
-				appdomain.CreateInstanceAndUnwrap (typeof (TemplatingEngine).Assembly.FullName,
-				                                   typeof (TemplatingEngine).FullName);
-			} else {
-				engine = new TemplatingEngine ();
-			}
+            errors.Clear ();
+            encoding = Encoding.UTF8;
+            
+            AppDomain appdomain = ProvideTemplatingAppDomain (content);
+            TemplatingEngine engine;
+            if (appdomain != null) {
+                engine = (TemplatingEngine)
+                appdomain.CreateInstanceAndUnwrap (typeof (TemplatingEngine).Assembly.FullName,
+                                                   typeof (TemplatingEngine).FullName);
+            } else {
+                engine = new TemplatingEngine ();
+            }
 
-			return engine.CompileTemplate (content, this);
-		}
-		
-		protected Engine Engine {
-			get {
-				if (engine == null)
-					engine = new Engine ();
-				return engine;
-			}
-		}
-		
-		public bool ProcessTemplate (string inputFile, string outputFile)
-		{
-			if (String.IsNullOrEmpty (inputFile))
-				throw new ArgumentNullException ("inputFile");
-			if (String.IsNullOrEmpty (outputFile))
-				throw new ArgumentNullException ("outputFile");
-			
-			string content;
-			try {
-				content = File.ReadAllText (inputFile);
-			} catch (IOException ex) {
-				errors.Clear ();
-				AddError ("Could not read input file '" + inputFile + "':\n" + ex.ToString ());
-				return false;
-			}
-			
-			string output;
-			ProcessTemplate (inputFile, content, ref outputFile, out output);
-			
-			try {
-				if (!errors.HasErrors)
-					File.WriteAllText (outputFile, output, encoding);
-			} catch (IOException ex) {
-				AddError ("Could not read input file '" + inputFile + "':\n" + ex.ToString ());
-			}
-			
-			return !errors.HasErrors;
-		}
-		
-		public bool ProcessTemplate (string inputFileName, string inputContent, ref string outputFileName, out string outputContent)
-		{
-			errors.Clear ();
-			encoding = Encoding.ASCII;
-			
-			this.outputFile = outputFileName;
-			this.inputFile = inputFileName;
-			outputContent = Engine.ProcessTemplate (inputContent, this);
-			outputFileName = this.outputFile;
-			
-			return !errors.HasErrors;
-		}
-		
-		CompilerError AddError (string error)
-		{
-			CompilerError err = new CompilerError ();
-			err.ErrorText = error;
-			Errors.Add (err);
-			return err;
-		}
-		
-		#region Virtual members
-		
-		public virtual object GetHostOption (string optionName)
-		{
-			return null;
-		}
-		
-		public virtual AppDomain ProvideTemplatingAppDomain (string content)
-		{
-			return null;
-		}
-		
-		protected virtual string ResolveAssemblyReference (string assemblyReference)
-		{
-			//FIXME: implement
-			return assemblyReference;
-		}
-		
-		#endregion
-		
-		#region Explicit ITextTemplatingEngineHost implementation
-		
-		bool ITextTemplatingEngineHost.LoadIncludeText (string requestFileName, out string content, out string location)
-		{
-			content = "";
-			location = null;
-			
-			if (Path.IsPathRooted (requestFileName)) {
-				location = requestFileName;
-			} else {
-				foreach (string path in includePaths) {
-					string f = Path.Combine (path, requestFileName);
-					if (File.Exists (f)) {
-						location = f;
-						break;
-					}
-				}
-			}
-			
-			if (location == null)
-				return false;
-			
-			try {
-				content = System.IO.File.ReadAllText (location);
-				return true;
-			} catch (IOException ex) {
-				AddError ("Could not read included file '" + location +  "':\n" + ex.ToString ());
-			}
-			return false;
-		}
-		
-		void ITextTemplatingEngineHost.LogErrors (CompilerErrorCollection errors)
-		{
-			this.errors.AddRange (errors);
-		}
-		
-		string ITextTemplatingEngineHost.ResolveAssemblyReference (string assemblyReference)
-		{
-			return ResolveAssemblyReference (assemblyReference);
-		}
-		
-		Type ITextTemplatingEngineHost.ResolveDirectiveProcessor (string processorName)
-		{
-			throw new NotImplementedException();
-		}
-		
-		string ITextTemplatingEngineHost.ResolveParameterValue (string directiveId, string processorName, string parameterName)
-		{
-			throw new NotImplementedException();
-		}
-		
-		string ITextTemplatingEngineHost.ResolvePath (string path)
-		{
-			throw new NotImplementedException();
-		}
-		
-		void ITextTemplatingEngineHost.SetFileExtension (string extension)
-		{
-			extension = extension.TrimStart ('.');
-			if (Path.HasExtension (outputFile)) {
-				outputFile = Path.ChangeExtension (outputFile, extension);
-			} else {
-				outputFile = outputFile + "." + extension;
-			}
-		}
-		
-		void ITextTemplatingEngineHost.SetOutputEncoding (System.Text.Encoding encoding, bool fromOutputDirective)
-		{
-			this.encoding = encoding;
-		}
-		
-		IList<string> ITextTemplatingEngineHost.StandardAssemblyReferences {
-			get { return refs; }
-		}
-		
-		IList<string> ITextTemplatingEngineHost.StandardImports {
-			get { return imports; }
-		}
-		
-		string ITextTemplatingEngineHost.TemplateFile {
-			get { return inputFile; }
-		}
-		
-		#endregion
-	}
+            return engine.CompileTemplate (content, this);
+        }
+        
+        protected Engine Engine {
+            get {
+                if (engine == null)
+                    engine = new Engine ();
+                return engine;
+            }
+        }
+        
+        public bool ProcessTemplate (string inputFile, string outputFile)
+        {
+            if (String.IsNullOrEmpty (inputFile))
+                throw new ArgumentNullException ("inputFile");
+            if (String.IsNullOrEmpty (outputFile))
+                throw new ArgumentNullException ("outputFile");
+            
+            string content;
+            try {
+                content = File.ReadAllText (inputFile);
+            } catch (IOException ex) {
+                errors.Clear ();
+                AddError ("Could not read input file '" + inputFile + "':\n" + ex.ToString ());
+                return false;
+            }
+            
+            string output;
+            ProcessTemplate (inputFile, content, ref outputFile, out output);
+            
+            try {
+                if (!errors.HasErrors)
+                    File.WriteAllText (outputFile, output, encoding);
+            } catch (IOException ex) {
+                AddError ("Could not read input file '" + inputFile + "':\n" + ex.ToString ());
+            }
+            
+            return !errors.HasErrors;
+        }
+        
+        public bool ProcessTemplate (string inputFileName, string inputContent, ref string outputFileName, out string outputContent)
+        {
+            errors.Clear ();
+            encoding = Encoding.ASCII;
+            
+            this.outputFile = outputFileName;
+            this.inputFile = inputFileName;
+            outputContent = Engine.ProcessTemplate (inputContent, this);
+            outputFileName = this.outputFile;
+            
+            return !errors.HasErrors;
+        }
+        
+        CompilerError AddError (string error)
+        {
+            CompilerError err = new CompilerError ();
+            err.ErrorText = error;
+            Errors.Add (err);
+            return err;
+        }
+        
+        #region Virtual members
+        
+        public virtual object GetHostOption (string optionName)
+        {
+            return null;
+        }
+        
+        public virtual AppDomain ProvideTemplatingAppDomain (string content)
+        {
+            return null;
+        }
+        
+        protected virtual string ResolveAssemblyReference (string assemblyReference)
+        {
+            // Finds assembly in the same directory as TextTransform before attempting
+            // the standard assembly loading strategy
+            
+            string assemblyFilename = Path.GetFileName(assemblyReference);
+            string myLocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            string myDirectory = Path.GetDirectoryName(myLocation);
+            string assembly = Path.Combine(myDirectory, assemblyFilename);
+            
+            if (File.Exists(assembly))
+            {
+                return (assembly);
+            }
+            
+            return (assemblyReference);
+        }
+        
+        #endregion
+        
+        #region Explicit ITextTemplatingEngineHost implementation
+        
+        bool ITextTemplatingEngineHost.LoadIncludeText (string requestFileName, out string content, out string location)
+        {
+            location = Path.Combine(Path.GetDirectoryName(inputFile), requestFileName);
+            
+            try {
+                content = System.IO.File.ReadAllText (location);
+                return true;
+            }
+            catch (IOException ex) {
+                AddError ("Could not read included file '" + location +  "':\n" + ex.ToString ());
+            }
+
+            content = "";
+            return false;
+        }
+        
+        void ITextTemplatingEngineHost.LogErrors (CompilerErrorCollection errors)
+        {
+            this.errors.AddRange (errors);
+        }
+        
+        string ITextTemplatingEngineHost.ResolveAssemblyReference (string assemblyReference)
+        {
+            return ResolveAssemblyReference (assemblyReference);
+        }
+        
+        Type ITextTemplatingEngineHost.ResolveDirectiveProcessor (string processorName)
+        {
+            throw new NotImplementedException();
+        }
+        
+        string ITextTemplatingEngineHost.ResolveParameterValue (string directiveId, string processorName, string parameterName)
+        {
+            throw new NotImplementedException();
+        }
+        
+        string ITextTemplatingEngineHost.ResolvePath (string path)
+        {
+            throw new NotImplementedException();
+        }
+        
+        void ITextTemplatingEngineHost.SetFileExtension (string extension)
+        {
+            extension = extension.TrimStart ('.');
+            if (Path.HasExtension (outputFile)) {
+                outputFile = Path.ChangeExtension (outputFile, extension);
+            } else {
+                outputFile = outputFile + "." + extension;
+            }
+        }
+        
+        void ITextTemplatingEngineHost.SetOutputEncoding (System.Text.Encoding encoding, bool fromOutputDirective)
+        {
+            this.encoding = encoding;
+        }
+        
+        IList<string> ITextTemplatingEngineHost.StandardAssemblyReferences {
+            get { return refs; }
+        }
+        
+        IList<string> ITextTemplatingEngineHost.StandardImports {
+            get { return imports; }
+        }
+        
+        string ITextTemplatingEngineHost.TemplateFile {
+            get { return inputFile; }
+        }
+        
+        #endregion
+    }
 }
