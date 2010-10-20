@@ -84,7 +84,7 @@ for arg in sys.argv[1:]:
         gFullTests = 1
     elif arg == '-i' or arg == '--incremental':
         gIncremental = 1
-    elif arg == '-s' or arg == '--silent'
+    elif arg == '-s' or arg == '--silent':
         gSilent = 1
     elif arg == '-vg' or arg == '--valgrind':
         gValgrind = 1
