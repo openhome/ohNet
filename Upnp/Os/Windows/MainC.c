@@ -17,6 +17,10 @@ extern void ZappTestRunner(ZappHandleInitParams aInitParams);
 
 int __cdecl main(int argc, char* argv[])
 {
+    char* abortOnFailure = getenv("ABORT_ON_FAILURE");
+    if (abortOnFailure != NULL && strcmp(abortOnFailure, "1") == 0) {
+        _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
+    }
     ZappHandleInitParams initParams = ZappInitParamsCreate();
     argc = argc;
     argv = argv;
