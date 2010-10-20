@@ -3,7 +3,7 @@
 
 # Macros used by T4.mak
 
-toolsDir = Build/Tools/
+toolsDir = Build/Posix/Tools/
 t4 = $(toolsDir)TextTransform.exe
 upnpServiceXml = $(toolsDir)UpnpServiceXml.dll
 upnpServiceMake = $(toolsDir)UpnpServiceMake.dll
