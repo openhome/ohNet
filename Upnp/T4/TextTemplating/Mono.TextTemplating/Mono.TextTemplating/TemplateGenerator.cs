@@ -224,7 +224,7 @@ namespace Mono.TextTemplating
         
         void ITextTemplatingEngineHost.SetFileExtension (string extension)
         {
-            extension = extension.TrimStart ('.');
+            extension = extension.TrimStart('.');
             if (Path.HasExtension (outputFile)) {
                 outputFile = Path.ChangeExtension (outputFile, extension);
             } else {
