@@ -33,6 +33,8 @@ if os.environ.get('module') == 'zappSpyGUI':
                 print "windows"
                 buildCmd = 'call vcvarsall.bat && cd ZappVs2010 && MSBuild.exe Zapp.sln'
 
+		if os.environ.get('label') == 'windows-x64':
+			buildCmd = "call vcvarsall.bat amd64 && cd ZappVs2010 && MSBuild.exe Zapp.sln"
 
 ret = subprocess.call(buildCmd, shell=True)
 if ret != 0:
