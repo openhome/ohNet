@@ -70,12 +70,12 @@ def runTestsValgrind():
             print '\t' + fail
         sys.exit(-1)
 
-os.environ["ABORT_ON_FAILURE"] = "1"
 gStartTime = time.strftime('%H:%M:%S')
 gBuildsCompleteTime = ''
 gBuildOnly = 0
 gFullTests = 0
 gIncremental = 0
+gSilent = 0
 gValgrind = 0
 for arg in sys.argv[1:]:
     if arg == '-b' or arg == '--buildonly':
@@ -84,6 +84,8 @@ for arg in sys.argv[1:]:
         gFullTests = 1
     elif arg == '-i' or arg == '--incremental':
         gIncremental = 1
+    elif arg == '-s' or arg == '--silent'
+        gSilent = 1
     elif arg == '-vg' or arg == '--valgrind':
         gValgrind = 1
         if os.name == 'nt':
@@ -92,6 +94,10 @@ for arg in sys.argv[1:]:
     else:
         print 'Unrecognised argument - ' + arg
         sys.exit(1)
+if gSilent == 0:
+    os.environ["ABORT_ON_FAILURE"] = "1"
+else:
+    os.environ["NO_ERROR_DIALOGS"] = "1"
 
 class TestCase(object):
     def __init__(self, name, args, quick=False, native=True):
