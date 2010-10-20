@@ -604,5 +604,6 @@ void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Initi
     runner.Add(new SuiteBrh());
     runner.Run();
 
+    delete aInitParams;
     UpnpLibrary::Close();
 }

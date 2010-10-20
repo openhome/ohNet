@@ -1010,9 +1010,6 @@ void DeviceMsgScheduler::Next(TUint aIndex)
     switch (aIndex)
     {
     case 0:
-        Log::Print("Sending notification for ");
-        Log::Print(iDevice.Udn());
-        Log::Print("\n");
         iNotifier->SsdpNotifyRoot(iDevice.Udn(), iUri);
         break;
     case 1:

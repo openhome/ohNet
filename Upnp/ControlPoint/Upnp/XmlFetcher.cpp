@@ -129,8 +129,10 @@ Bwh& XmlFetch::Xml(IAsync& aAsync)
 
 XmlFetch::XmlFetch()
     : iUri(NULL)
+    , iSequenceNumber(0)
     , iLock("XMLM")
     , iInterrupted(false)
+    , iSocket(NULL)
 {
 }
 

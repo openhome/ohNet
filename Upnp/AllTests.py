@@ -46,6 +46,7 @@ def runTestsValgrind():
     if os.path.exists(outputDir):
         shutil.rmtree(outputDir)
     os.mkdir(outputDir)
+    failed = []
     testsToRun = [test for test in gAllTests if test.quick and test.native]
     if gFullTests == 1:
         testsToRun = [test for test in gAllTests if test.native]
@@ -54,6 +55,7 @@ def runTestsValgrind():
         cmdLine = []
         cmdLine.append('valgrind')
         cmdLine.append('--leak-check=yes')
+        cmdLine.append('--suppressions=ValgrindSuppressions.txt')
         cmdLine.append('--xml=yes')
         cmdLine.append('--xml-file=' + os.path.join(outputDir, test.name) + '.xml')
         cmdLine.append(test.Path())
@@ -61,8 +63,12 @@ def runTestsValgrind():
             cmdLine.append(arg)
         ret = subprocess.call(cmdLine)
         if ret != 0:
-            print '\nTest ' + test.name + ' failed, aborting'
-            sys.exit(ret)
+            failed.append(test.name)
+    if len(failed) > 0:
+        print '\nERROR, the following tests failed:'
+        for fail in failed:
+            print '\t' + fail
+        sys.exit(-1)
 
 os.environ["ABORT_ON_FAILURE"] = "1"
 gStartTime = time.strftime('%H:%M:%S')
