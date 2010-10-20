@@ -54,6 +54,7 @@ def runTestsValgrind():
         cmdLine = []
         cmdLine.append('valgrind')
         cmdLine.append('--leak-check=yes')
+        cmdLine.append('--suppressions=ValgrindSuppressions.txt')
         cmdLine.append('--xml=yes')
         cmdLine.append('--xml-file=' + os.path.join(outputDir, test.name) + '.xml')
         cmdLine.append(test.Path())

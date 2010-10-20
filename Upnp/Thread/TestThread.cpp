@@ -688,5 +688,6 @@ void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Initi
     th.Start();
     th.Wait();
 
+    delete aInitParams;
     UpnpLibrary::Close();
 }
