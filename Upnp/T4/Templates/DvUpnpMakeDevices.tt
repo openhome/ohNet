@@ -1,4 +1,4 @@
-<#@ assembly name="Build/Tools/UpnpServiceMake.dll" #>
+<#@ assembly name="UpnpServiceMake.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="Linn.Xml.UpnpServiceXml" #>

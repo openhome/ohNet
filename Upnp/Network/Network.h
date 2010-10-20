@@ -180,6 +180,7 @@ public:
     Endpoint Receive(Bwx& aBuffer);
 protected:
     Endpoint iEndpoint; // multicast address/port
+    TUint iPort;
 };
 
 // multicast receiver
@@ -190,6 +191,7 @@ public:
     SocketUdpMulticast(const Endpoint& aEndpoint, TUint aTtl); // deprecated
     SocketUdpMulticast(const Endpoint& aEndpoint, TUint aTtl, TIpAddress aInterface);
     ~SocketUdpMulticast();
+    TUint Port() const { return iPort; }
 private:
     void Construct();
 private:
