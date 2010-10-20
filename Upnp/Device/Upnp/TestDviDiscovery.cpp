@@ -393,9 +393,6 @@ void CpListenerMsearch::SsdpNotifyRootAlive(const Brx& aUuid, const Brx& aLocati
     AutoMutex a(iLock);
     if (LogUdn(aUuid, aLocation)) {
         iRoot++;
-        Print("Received root alive from ");
-        Print(aUuid);
-        Print("\n");
     }
 }
 
@@ -698,7 +695,7 @@ void SuiteMsearch::TestMsearchServiceType()
 
 void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
 {
-    aInitParams->SetMsearchTime(1);
+    aInitParams->SetMsearchTime(3); // higher time to give valgrind tests a hope of completing
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartDv();
 
