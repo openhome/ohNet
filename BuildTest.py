@@ -25,9 +25,6 @@ def getToolEnvironment():
                 tool = 'call vcvarsall.bat amd64'
                 ostype = 'Windows'
 
-        else:
-                sys.exit("Cannot detect Environment")
-
         return tool, ostype
 
 
@@ -41,10 +38,11 @@ def getModule():
         if os.environ.get('module') == 'zappSpyGUI':
                         module = 'zappSpyGUI'
                         cmd = 'cd ../ZappVs2010 && MSBuild.exe Zapp.sln'
-                        nightlyArgs = ''
+                        nightlyArgs = ' -f'
 
-        else:
-                sys.exit("Cannot determine Module")
+		
+	if os.environ.get('nightly') != 'true':
+			nightlyArgs = ''
 
         return module, cmd, nightlyArgs
 
