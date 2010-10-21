@@ -32,12 +32,12 @@ def getToolEnvironment():
 def getModule():
         if os.environ.get('module') == 'upnp':
                         module = 'upnp'
-                        cmd = 'python AllTests.py -s'
+                        cmd = 'cd upnp && python AllTests.py -s'
                         nightlyArgs = ' -f -vg'
 
         if os.environ.get('module') == 'zappSpyGUI':
                         module = 'zappSpyGUI'
-                        cmd = 'cd ../ZappVs2010 && MSBuild.exe Zapp.sln'
+                        cmd = 'cd ZappVs2010 && MSBuild.exe Zapp.sln'
                         nightlyArgs = ' -f'
 
 		
@@ -54,7 +54,7 @@ Module = getModule()
 def Build(tool, ostype, module, cmd, args):
 
         buildCmd = []
-        buildCmd.append(tool + ' && ' + 'cd ' + module + ' && ' + cmd + args)
+        buildCmd.append(tool + ' && ' + cmd + args)
         print buildCmd
         ret = subprocess.call(buildCmd, shell=True)
         if ret != 0:
