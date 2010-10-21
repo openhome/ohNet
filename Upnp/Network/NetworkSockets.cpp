@@ -522,6 +522,7 @@ SocketTcpSession::~SocketTcpSession()
 
 SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint)
     : iEndpoint(aEndpoint)
+    , iPort(0)
 {
     LOGF(kNetwork, "> SocketUdpClient::SocketUdpClient\n");
     iHandle = SocketCreate(eSocketTypeDatagram);
@@ -531,6 +532,7 @@ SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint)
 
 SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint, TUint aTtl)
     : iEndpoint(aEndpoint)
+    , iPort(0)
 {
     LOGF(kNetwork, "> SocketUdpClient::SocketUdpClient aTtl=%d\n", aTtl);
     iHandle = SocketCreate(eSocketTypeDatagram);
@@ -540,13 +542,13 @@ SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint, TUint aTtl)
 
 SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint, TUint aTtl, TIpAddress aInterface)
     : iEndpoint(aEndpoint)
+    , iPort(0)
 {
     LOGF(kNetwork, "> SocketUdpClient::SocketUdpClient aTtl=%d\n", aTtl);
     iHandle = SocketCreate(eSocketTypeDatagram);
     Zapp::Os::NetworkSocketSetMulticastTtl(iHandle, (TByte)aTtl);
     Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
-    TUint port = 0;
-	SocketBind(iHandle, port, aInterface);
+	SocketBind(iHandle, iPort, aInterface);
     LOGF(kNetwork, "< SocketUdpClient::SocketUdpClient H = %d\n", iHandle);
 }
 

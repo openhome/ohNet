@@ -178,6 +178,7 @@ public:
     ~SocketUdpClient();
     void Send(const Brx& aBuffer);
     Endpoint Receive(Bwx& aBuffer);
+    TUint Port() const { return iPort; }
 protected:
     Endpoint iEndpoint; // multicast address/port
     TUint iPort;
@@ -191,7 +192,6 @@ public:
     SocketUdpMulticast(const Endpoint& aEndpoint, TUint aTtl); // deprecated
     SocketUdpMulticast(const Endpoint& aEndpoint, TUint aTtl, TIpAddress aInterface);
     ~SocketUdpMulticast();
-    TUint Port() const { return iPort; }
 private:
     void Construct();
 private:
