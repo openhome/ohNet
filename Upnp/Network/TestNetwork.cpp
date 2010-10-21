@@ -467,6 +467,14 @@ void SuiteEndpoint::Test()
 const TUint kMulticastPort = 2000;
 const Brn kMulticastAddress("239.252.0.0");
 
+static void AppendUint32(Bwx& aBuf, TUint aNum)
+{
+    TUint bytes = aBuf.Bytes();
+    ASSERT(bytes + sizeof(TUint32) <= aBuf.MaxBytes());
+    memcpy(const_cast<TByte*>(aBuf.Ptr()+bytes), &aNum, sizeof(TUint32));
+    aBuf.SetBytes(bytes + sizeof(TUint32));
+}
+
 class SuiteMulticast : public Suite
 {
 public:
@@ -502,9 +510,9 @@ SuiteMulticast::SuiteMulticast() :
     iThread1 = new ThreadFunctor("MUL2", MakeFunctor(*this, &SuiteMulticast::Receiver));
 
     TUint i;
-    iExp.AppendUint32(0); //save space for count
+    AppendUint32(iExp, 0); //save space for count
     for( i=0; i < kMsgBytes/4; i++) { //prefill iExp with expected values
-        iExp.AppendUint32(i);
+        AppendUint32(iExp, i);
     }
 }
 
@@ -528,7 +536,7 @@ void SuiteMulticast::Test()
     TUint i;
     for( i=0; i < kMsgBytes; i++) {
         buf.SetBytes(0);
-        buf.AppendUint32(i); //num of bytes in this message
+        AppendUint32(buf, i); //num of bytes in this message
         buf.SetBytes(i + sizeof(TUint)); //use prefilled values
         send.Send(buf);
         // assume that a delay of 500ms without response implies that the message wasn't delivered
@@ -548,7 +556,7 @@ void SuiteMulticast::Test()
     }
 
     buf.SetBytes(0);
-    buf.AppendUint32(kQuit);
+    AppendUint32(buf, kQuit);
     send.Send(buf);
 
     try {
@@ -573,7 +581,7 @@ void SuiteMulticast::Receiver()
     Brn exp = iExp.Split(4);
     while(1) {
         recv.Receive(buf);
-        TUint num = Arch::BigEndian4(*((TUint32*)(buf.Ptr())));
+        TUint num = *((TUint32*)buf.Ptr());
         if(num == kQuit) {
             break;
         }
