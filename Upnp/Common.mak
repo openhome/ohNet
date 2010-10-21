@@ -39,7 +39,7 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)Http.$(objext) \
     		   $(objdir)Maths.$(objext) \
     		   $(objdir)NetworkInterfaceList.$(objext) \
-    		   $(objdir)NetworkSockets.$(objext) \
+    		   $(objdir)Network.$(objext) \
     		   $(objdir)Parser.$(objext) \
     		   $(objdir)Printer.$(objext) \
     		   $(objdir)ProtocolUpnp.$(objext) \
@@ -220,8 +220,8 @@ $(objdir)Maths.$(objext) : Utils/Maths.cpp $(headers)
 	$(compiler)Maths.$(objext) -c $(cflags) $(includes) Utils/Maths.cpp
 $(objdir)NetworkInterfaceList.$(objext) : Network/NetworkInterfaceList.cpp $(headers)
 	$(compiler)NetworkInterfaceList.$(objext) -c $(cflags) $(includes) Network/NetworkInterfaceList.cpp
-$(objdir)NetworkSockets.$(objext) : Network/NetworkSockets.cpp $(headers)
-	$(compiler)NetworkSockets.$(objext) -c $(cflags) $(includes) Network/NetworkSockets.cpp
+$(objdir)Network.$(objext) : Network/Network.cpp $(headers)
+	$(compiler)Network.$(objext) -c $(cflags) $(includes) Network/Network.cpp
 $(objdir)Parser.$(objext) : Utils/Parser.cpp $(headers)
 	$(compiler)Parser.$(objext) -c $(cflags) $(includes) Utils/Parser.cpp
 $(objdir)Printer.$(objext) : Utils/Printer.cpp $(headers)
