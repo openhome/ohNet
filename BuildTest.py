@@ -32,7 +32,7 @@ def getToolEnvironment():
 def getModule():
         if os.environ.get('module') == 'upnp':
                         module = 'upnp'
-                        cmd = 'cd upnp && python AllTests.py -s'
+                        cmd = 'cd Upnp && python AllTests.py -s'
                         nightlyArgs = ' -f -vg'
 
         if os.environ.get('module') == 'zappSpyGUI':
