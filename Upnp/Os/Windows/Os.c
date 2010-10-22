@@ -690,102 +690,123 @@ int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aAddr
     return err;
 }
 
-int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces)
+int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseLoopback)
 {
-    IP_ADAPTER_INFO* info;
-    ULONG bytes;
-    OsNetworkInterface* head = NULL;
-    int32_t index = 0;
+#define MakeIpAddress(aByte1, aByte2, aByte3, aByte4) \
+        (aByte1 | (aByte2<<8) | (aByte3<<16) | (aByte4<<24))
 
-    if (ERROR_BUFFER_OVERFLOW != GetAdaptersInfo(NULL, &bytes)) {
+    MIB_IFTABLE* ifTable          = NULL;
+    MIB_IPADDRTABLE* addrTable    = NULL;
+    ULONG bytes;
+    OsNetworkInterface* head      = NULL;
+    int32_t index                 = 0;
+    const TIpAddress loopbackAddr = MakeIpAddress(127, 0, 0, 1);
+    int32_t includeLoopback       = 1;
+    uint32_t i;
+
+    if (ERROR_INSUFFICIENT_BUFFER != GetIpAddrTable(NULL, &bytes, FALSE)) {
         return -1;
     }
-    info = (IP_ADAPTER_INFO*)malloc(bytes);
-    if (ERROR_SUCCESS == GetAdaptersInfo(info, &bytes)) {
-        IP_ADAPTER_INFO* ptr = info;
-        int32_t includeLoopback = 1;
+    addrTable = (MIB_IPADDRTABLE*)malloc(bytes);
+    if (NO_ERROR != GetIpAddrTable(addrTable, &bytes, FALSE)) {
+        goto failure;
+    }
+    if (ERROR_INSUFFICIENT_BUFFER != GetIfTable(NULL, &bytes, FALSE)) {
+        goto failure;
+    }
+    ifTable = (MIB_IFTABLE*)malloc(bytes);
+    if (NO_ERROR != GetIfTable(ifTable, &bytes, FALSE)) {
+        goto failure;
+    }
 
+    if (aUseLoopback == 0) {
         // Only include loopback if there are no non-loopback adapters
-        while (NULL != ptr && includeLoopback) {
-            if (ptr->Type != MIB_IF_TYPE_LOOPBACK) {
+        for (i=0; i<addrTable->dwNumEntries; i++) {
+            MIB_IPADDRROW* addrRow = &(addrTable->table[i]);
+            if (addrRow->dwAddr != loopbackAddr) {
                 includeLoopback = 0;
+                break;
             }
-            ptr = ptr->Next;
+        }
+    }
+
+    for (i=0; i<addrTable->dwNumEntries; i++) {
+        MIB_IPADDRROW* addrRow = &(addrTable->table[i]);
+        MIB_IFROW* ifRow = &(ifTable->table[addrRow->dwIndex]);
+        OsNetworkInterface* nif;
+        size_t len;
+
+        if ((addrRow->dwAddr == loopbackAddr && !includeLoopback) ||
+            (addrRow->dwAddr != loopbackAddr && aUseLoopback)) {
+            continue;
+        }
+        if (-1 != gTestInterfaceIndex && index++ != gTestInterfaceIndex) {
+            continue;
+        }
+        if (addrRow->dwAddr == 0 || addrRow->dwMask == 0) {
+            continue;
         }
 
-        ptr = info;
-        while (NULL != ptr) {
-            OsNetworkInterface* nif;
-            if (ptr->Type == MIB_IF_TYPE_LOOPBACK && !includeLoopback) {
-                ptr = ptr->Next;
-                continue;
-            }
-            if (-1 != gTestInterfaceIndex && index++ != gTestInterfaceIndex) {
-                ptr = ptr->Next;
-                continue;
-            }
-            nif = (OsNetworkInterface*)calloc(1, sizeof(*nif));
-            if (nif == NULL) {
-                goto failure;
-            }
-            nif->iReserved = ptr->Type;
-            if (0 != OsNetworkGetHostByName(ptr->IpAddressList.IpAddress.String, &nif->iAddress)) {
-                free(nif);
-                goto failure;
-            }
-            if (0 != OsNetworkGetHostByName(ptr->IpAddressList.IpMask.String, &nif->iNetMask)) {
-                free(nif);
-                goto failure;
-            }
-			
-			/* discard nifs with unusable zero'd address or mask */
+        {
+            uint32_t addr = addrRow->dwAddr;
+            fprintf(stderr, "Found type %d, interface %d.%d.%d.%d\n", ifRow->dwType, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
+        }
+        nif = (OsNetworkInterface*)calloc(1, sizeof(*nif));
+        if (nif == NULL) {
+            goto failure;
+        }
+        nif->iReserved = ifRow->dwType;
+        nif->iAddress = addrRow->dwAddr;
+        nif->iNetMask = addrRow->dwMask;
+        len = wcslen(ifRow->wszName);
+        nif->iName = (char*)malloc(len+1);
+        if (NULL == nif->iName) {
+            free(nif);
+            goto failure;
+        }
+        // warning - lossy conversion from unicode
+        for (i=0; i<len; i++) {
+            nif->iName[i] = (char)ifRow->wszName[i];
+        }
+        nif->iName[len] = '\0';
 
-			if (nif->iAddress==0 || nif->iNetMask==0) {
-			    free(nif);
-                ptr = ptr->Next;
-				continue;
-			}
-            
-			if (head == NULL) {
+        if (head == NULL) {
+            head = nif;
+        }
+        else {
+            TIpAddress subnet = (nif->iAddress & nif->iNetMask);
+            OsNetworkInterface* p1 = head;
+            OsNetworkInterface* prev = NULL;
+            while (NULL != p1) {
+                if ((p1->iAddress & p1->iNetMask) == subnet) {
+                    while (NULL != p1 && IF_TYPE_ETHERNET_CSMACD == p1->iReserved) {
+                        prev = p1;
+                        p1 = p1->iNext;
+                    }
+                    break;
+                }
+                prev = p1;
+                p1 = p1->iNext;
+            }
+            if (NULL == prev) {
+                nif->iNext = head;
                 head = nif;
             }
             else {
-                TIpAddress subnet = (nif->iAddress & nif->iNetMask);
-                OsNetworkInterface* p1 = head;
-                OsNetworkInterface* prev = NULL;
-                while (NULL != p1) {
-                    if ((p1->iAddress & p1->iNetMask) == subnet) {
-                        while (NULL != p1 && IF_TYPE_ETHERNET_CSMACD == p1->iReserved) {
-                            prev = p1;
-                            p1 = p1->iNext;
-                        }
-                        break;
-                    }
-                    prev = p1;
-                    p1 = p1->iNext;
-                }
-                if (NULL == prev) {
-                    nif->iNext = head;
-                    head = nif;
-                }
-                else {
-                    nif->iNext = prev->iNext;
-                    prev->iNext = nif;
-                }
+                nif->iNext = prev->iNext;
+                prev->iNext = nif;
             }
-            nif->iName = (char*)malloc(strlen(ptr->Description)+1);
-            if (NULL == nif->iName) {
-                goto failure;
-            }
-            (void)strcpy(nif->iName, ptr->Description);
-            ptr = ptr->Next;
         }
     }
 
+    free(addrTable);
+    free(ifTable);
     *aInterfaces = head;
     return 0;
 
 failure:
+    free(addrTable);
+    free(ifTable);
     OsNetworkFreeInterfaces(head);
     return -1;
 }

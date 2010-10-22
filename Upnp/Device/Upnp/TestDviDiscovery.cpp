@@ -696,6 +696,7 @@ void SuiteMsearch::TestMsearchServiceType()
 void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
 {
     aInitParams->SetMsearchTime(3); // higher time to give valgrind tests a hope of completing
+    //aInitParams->SetUseLoopbackNetworkInterface();
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartDv();
 

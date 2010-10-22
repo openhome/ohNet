@@ -117,6 +117,11 @@ public:
 	 * This is intended for C# wrappers and can be ignored by most (all?) other clients
 	 */
 	void SetFreeExternalCallback(ZappCallbackFreeExternal aCallback);
+    /**
+     * Limit the library to using only the loopback network interface.
+     * Useful for testing but not expected to be used in production code
+     */
+    void SetUseLoopbackNetworkInterface();
 	/**
 	 * Set the maximum time between device announcements for the device stack
 	 */
@@ -146,6 +151,7 @@ public:
     uint32_t NumSubscriberThreads() const;
     uint32_t PendingSubscriptionTimeoutMs() const;
 	ZappCallbackFreeExternal FreeExternal() const;
+    bool UseLoopbackNetworkInterface() const;
 	uint32_t DvMaxUpdateTimeSecs() const;
     uint32_t DvNumPublisherThreads() const;
 private:
@@ -171,6 +177,7 @@ private:
     uint32_t iNumSubscriberThreads;
     uint32_t iPendingSubscriptionTimeoutMs;
 	ZappCallbackFreeExternal iFreeExternal;
+    bool iUseLoopbackNetworkInterface;
 	uint32_t iDvMaxUpdateTimeSecs;
 	uint32_t iDvNumPublisherThreads;
 };

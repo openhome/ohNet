@@ -133,10 +133,10 @@ void Zapp::Os::NetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress 
     }
 }
 
-std::vector<NetworkInterface*>* Zapp::Os::NetworkListInterfaces()
+std::vector<NetworkInterface*>* Zapp::Os::NetworkListInterfaces(TBool aUseLoopback)
 {
     OsNetworkInterface* cIfs = NULL;
-    int32_t err = OsNetworkListInterfaces(&cIfs);
+    int32_t err = OsNetworkListInterfaces(&cIfs, (aUseLoopback? 1 : 0));
     if(err != 0) {
         LOG2F(kNetwork, kError, "Os::NetworkListInterfaces RETURN VALUE = %d\n", err);
         THROW(NetworkError);

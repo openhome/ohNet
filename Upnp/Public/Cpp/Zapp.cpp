@@ -182,6 +182,11 @@ void InitialisationParams::SetFreeExternalCallback(ZappCallbackFreeExternal aCal
     iFreeExternal = aCallback;
 }
 
+void InitialisationParams::SetUseLoopbackNetworkInterface()
+{
+    iUseLoopbackNetworkInterface = true;
+}
+
 void InitialisationParams::SetDvMaxUpdateTime(uint32_t aSecs)
 {
 	iDvMaxUpdateTimeSecs = aSecs;
@@ -277,6 +282,11 @@ ZappCallbackFreeExternal InitialisationParams::FreeExternal() const
     return iFreeExternal;
 }
 
+bool InitialisationParams::UseLoopbackNetworkInterface() const
+{
+    return iUseLoopbackNetworkInterface;
+}
+
 uint32_t InitialisationParams::DvMaxUpdateTimeSecs() const
 {
 	return iDvMaxUpdateTimeSecs;
@@ -299,6 +309,7 @@ InitialisationParams::InitialisationParams()
     , iNumSubscriberThreads(4)
     , iPendingSubscriptionTimeoutMs(2000)
     , iFreeExternal(NULL)
+    , iUseLoopbackNetworkInterface(false)
 	, iDvMaxUpdateTimeSecs(1800)
 	, iDvNumPublisherThreads(4)
 {

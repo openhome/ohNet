@@ -718,7 +718,7 @@ int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aAddr
     return err;
 }
 
-int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces)
+int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseLoopback)
 {
 #define MakeIpAddress(aByte1, aByte2, aByte3, aByte4) \
         (aByte1 | (aByte2<<8) | (aByte3<<16) | (aByte4<<24))
