@@ -79,6 +79,15 @@ void Zapp::Os::NetworkSocketSetSendBufBytes(THandle aHandle, TUint aBytes)
     }
 }
 
+void Zapp::Os::NetworkSocketSetRecvBufBytes(THandle aHandle, TUint aBytes)
+{
+    int32_t err = OsNetworkSocketSetRecvBufBytes(aHandle, aBytes);
+    if(err != 0) {
+        LOG2F(kNetwork, kError, "Os::NetworkSocketSetRecvBufBytes H = %d, RETURN VALUE = %d\n", aHandle, err);
+        THROW(NetworkError);
+    }
+}
+
 void Zapp::Os::NetworkSocketSetReceiveTimeout(THandle aHandle, TUint aMilliSeconds)
 {
     int32_t err = OsNetworkSocketSetReceiveTimeout(aHandle, aMilliSeconds);

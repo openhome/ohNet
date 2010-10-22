@@ -59,6 +59,7 @@ SsdpListenerMulticast::SsdpListenerMulticast(TIpAddress aInterface)
     , iBuffer(iSocket)
     , iReaderRequest(iBuffer)
 {
+    iSocket.SetRecvBufBytes(kRecvBufBytes);
     iReaderRequest.AddHeader(iHeaderHost);
     iReaderRequest.AddHeader(iHeaderCacheControl);
     iReaderRequest.AddHeader(iHeaderLocation);
@@ -337,6 +338,7 @@ SsdpListenerUnicast::SsdpListenerUnicast(ISsdpNotifyHandler& aNotifyHandler, TIp
     , iReadBuffer(iSocket)
     , iReaderResponse(iReadBuffer)
 {
+    iSocket.SetRecvBufBytes(kRecvBufBytes);
     iReaderResponse.AddHeader(iHeaderCacheControl);
     iReaderResponse.AddHeader(iHeaderExt);
     iReaderResponse.AddHeader(iHeaderLocation);

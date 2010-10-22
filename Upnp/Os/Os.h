@@ -52,6 +52,7 @@ public:
     inline static THandle NetworkAccept(THandle aHandle);
     static TIpAddress NetworkGetHostByName(const Brx& aAddress);
     static void NetworkSocketSetSendBufBytes(THandle aHandle, TUint aBytes);
+    static void NetworkSocketSetRecvBufBytes(THandle aHandle, TUint aBytes);
     static void NetworkSocketSetReceiveTimeout(THandle aHandle, TUint aMilliSeconds);
     static void NetworkTcpSetNoDelay(THandle aHandle);
     static void NetworkSocketSetReuseAddress(THandle aHandle);

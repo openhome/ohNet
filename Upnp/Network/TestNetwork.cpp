@@ -605,22 +605,22 @@ private:
     void Receiver();
     void Send(TUint aVal);
 private:
-    static const TUint kMsgBytes = 1000;
+    static const TUint kMsgBytes = 256;
     static const TUint kQuit = 0xFFFFFFFF;
     static const TUint kTestIterations = 1000;
 private:
-    Semaphore iSem;
     SocketUdpClient* iSender;
     SocketUdpClient* iReceiver;
     ThreadFunctor* iReceiverThread;
     TUint iSendVal;
+    TUint iLastVal;
 };
 
 SuiteUnicast::SuiteUnicast(TIpAddress aInterface)
     : Suite("Unicast Tests")
-    , iSem("SUNC", 0)
 {
     iReceiver = new SocketUdpClient(Endpoint(), 2, aInterface);
+    iReceiver->SetRecvBufBytes(kMsgBytes * kTestIterations * 2);
     Log::Print("Receiver running at port %u\n", iReceiver->Port());
     iSender = new SocketUdpClient(Endpoint(iReceiver->Port(), aInterface));
     iReceiverThread = new ThreadFunctor("UNIC", MakeFunctor(*this, &SuiteUnicast::Receiver));
@@ -651,11 +651,12 @@ void SuiteUnicast::Send(TUint aVal)
     }
     iSendVal = aVal;
     iSender->Send(buf);
-    iSem.Wait(10000); // timeout & fail after 10s
 }
 
 void SuiteUnicast::Receiver()
 {
+    TBool first = true;
+    iLastVal = 0;
     TUint val;
     Bws<kMsgBytes> recv;
     do {
@@ -663,8 +664,17 @@ void SuiteUnicast::Receiver()
         (void)iReceiver->Receive(recv);
         ASSERT(recv.Bytes() >= sizeof(TUint32));
         val = *((TUint32*)recv.Ptr());
-        TEST(val == iSendVal);
-        iSem.Signal();
+        if (val != kQuit) {
+            if (first) {
+                TEST(val == 0);
+                first = false;
+            }
+            else {
+                TEST(val == iLastVal+1);
+            }
+        }
+        //Print("Received %u, last sent %u\n", val, iSendVal);
+        iLastVal = val;
     } while (val != kQuit);
 }
 
@@ -685,8 +695,8 @@ void MainTestThread::Run()
     runner.Add(new SuiteSocketServer(iInterface));
     runner.Add(new SuiteTcpServerShutdown(iInterface));
     runner.Add(new SuiteEndpoint());
-    runner.Add(new SuiteMulticast());
     runner.Add(new SuiteUnicast(iInterface));
+    runner.Add(new SuiteMulticast());
     runner.Run();
     Signal();
 }

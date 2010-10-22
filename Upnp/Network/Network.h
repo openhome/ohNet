@@ -51,6 +51,7 @@ public:
     void Close();
     void Interrupt(TBool aInterrupt);
     void SetSendBufBytes(TUint aBytes);
+    void SetRecvBufBytes(TUint aBytes);
     void SetRecvTimeout(TUint aMs);
 protected:
     Socket();

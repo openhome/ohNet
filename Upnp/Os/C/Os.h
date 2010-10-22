@@ -432,6 +432,16 @@ int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost);
 int32_t OsNetworkSocketSetSendBufBytes(THandle aHandle, uint32_t aBytes);
 
 /**
+ * Set the size of a socket's receive (recv) buffer
+ *
+ * @param[in] aHandle      Socket handle returned from OsNetworkCreate()
+ * @param[in] aBytes       New size for the recv buffer
+ *
+ * @return  0 on success; -1 on failure
+ */
+int32_t OsNetworkSocketSetRecvBufBytes(THandle aHandle, uint32_t aBytes);
+
+/**
  * Modify the socket's receive timeout
  *
  * @param[in] aHandle      Socket handle returned from OsNetworkCreate()

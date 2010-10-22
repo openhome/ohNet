@@ -634,6 +634,13 @@ int32_t OsNetworkSocketSetSendBufBytes(THandle aHandle, uint32_t aBytes)
     return err;
 }
 
+int32_t OsNetworkSocketSetRecvBufBytes(THandle aHandle, uint32_t aBytes)
+{
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    int32_t err = setsockopt(handle->iSocket, SOL_SOCKET, SO_RCVBUF, (const char*)&aBytes, sizeof(aBytes));
+    return err;
+}
+
 int32_t OsNetworkSocketSetReceiveTimeout(THandle aHandle, uint32_t aMilliSeconds)
 {
     int32_t err;
@@ -747,10 +754,6 @@ int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseL
             continue;
         }
 
-        {
-            uint32_t addr = addrRow->dwAddr;
-            fprintf(stderr, "Found type %d, interface %d.%d.%d.%d\n", ifRow->dwType, addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
-        }
         nif = (OsNetworkInterface*)calloc(1, sizeof(*nif));
         if (nif == NULL) {
             goto failure;

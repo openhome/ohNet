@@ -665,6 +665,13 @@ int32_t OsNetworkSocketSetSendBufBytes(THandle aHandle, uint32_t aBytes)
     return err;
 }
 
+int32_t OsNetworkSocketSetRecvBufBytes(THandle aHandle, uint32_t aBytes)
+{
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    int32_t err = setsockopt(handle->iSocket, SOL_SOCKET, SO_RCVBUF, &aBytes, sizeof(aBytes));
+    return err;
+}
+
 int32_t OsNetworkSocketSetReceiveTimeout(THandle aHandle, uint32_t aMilliSeconds)
 {
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;

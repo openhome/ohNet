@@ -72,6 +72,7 @@ protected:
 class SsdpListenerMulticast : public SsdpListener
 {
     static const TUint kMaxBufferBytes = 1024;
+    static const TUint kRecvBufBytes = 32 * 1024;
 public:
     SsdpListenerMulticast(TIpAddress aInterface);
     virtual ~SsdpListenerMulticast();
@@ -125,6 +126,7 @@ private:
 class SsdpListenerUnicast : public SsdpListener
 {
     static const TUint kMaxBufferBytes = 1024;
+    static const TUint kRecvBufBytes = 64 * 1024;
 public:
     SsdpListenerUnicast(ISsdpNotifyHandler& aNotifyHandler, TIpAddress aInterface);
     ~SsdpListenerUnicast();

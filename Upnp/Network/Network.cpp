@@ -259,6 +259,11 @@ void Socket::SetSendBufBytes(TUint aBytes)
     Zapp::Os::NetworkSocketSetSendBufBytes(iHandle, aBytes);
 }
 
+void Socket::SetRecvBufBytes(TUint aBytes)
+{
+    Zapp::Os::NetworkSocketSetRecvBufBytes(iHandle, aBytes);
+}
+
 void Socket::SetRecvTimeout(TUint aMs)
 {
     Zapp::Os::NetworkSocketSetReceiveTimeout(iHandle, aMs);
