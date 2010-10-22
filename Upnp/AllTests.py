@@ -152,6 +152,7 @@ if gBuildOnly == 0:
         runTestsValgrind()
     else:
         runTests()
+    print '\nFinished.  All tests passed'
 print 'Start time: ' + gStartTime
 print 'Builds complete: ' + gBuildsCompleteTime
 print 'End time: ' + time.strftime('%H:%M:%S')
