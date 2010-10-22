@@ -188,14 +188,16 @@ protected:
 class SocketUdpMulticast : public SocketUdpClient
 {
 public:
-    SocketUdpMulticast(const Endpoint& aEndpoint);
-    SocketUdpMulticast(const Endpoint& aEndpoint, TUint aTtl); // deprecated
-    SocketUdpMulticast(const Endpoint& aEndpoint, TUint aTtl, TIpAddress aInterface);
+    SocketUdpMulticast();
+    SocketUdpMulticast(TUint aTtl, TIpAddress aInterface);
+    void AddMembership(const Endpoint& aEndpoint);
+    void DropMembership();
     ~SocketUdpMulticast();
 private:
     void Construct();
 private:
     TIpAddress iInterface;
+    TBool iMember;
 };
 
 /**

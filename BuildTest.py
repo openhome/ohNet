@@ -6,55 +6,69 @@ def getToolEnvironment():
         if os.environ.get('label') == 'arm':
                 tool = 'env'
                 ostype = 'Linux'
+		arch = 'arm'
                 os.environ['PATH'] = "/usr/local/arm-2010q1/bin:"+ os.environ['PATH']
                 os.environ['CROSS_COMPILE'] = 'arm-none-linux-gnueabi-'
 
         elif os.environ.get('label') == 'linux-x64':
                 tool = 'env'
                 ostype = 'Linux'
+		arch = 'x64'
 
         elif os.environ.get('label') == 'linux-x86':
                 tool = 'env'
                 ostype = 'Linux'
+		arch = 'x86'
 
         elif os.environ.get('label') == 'windows-x86':
                 tool = 'call vcvarsall.bat'
                 ostype = 'Windows'
+		arch = 'x86'
 
         elif os.environ.get('label') == 'windows-x64':
                 tool = 'call vcvarsall.bat amd64'
                 ostype = 'Windows'
+		arch = 'x64'
 
-        return tool, ostype
+        return tool, ostype, arch
+
+
+Tool = getToolEnvironment()
 
 
 
-def getModule():
+def getModule(ostype, arch):
         if os.environ.get('module') == 'upnp':
                         module = 'upnp'
-                        cmd = 'python AllTests.py -s'
-                        nightlyArgs = ' -f -vg'
+                        cmd = 'cd Upnp && python AllTests.py -s'
+
+			if arch != "arm" and ostype == "Linux":
+				nightlyArgs = ' -f -vg'
+
+			elif ostype == "Windows":
+				nightlyArgs = ' -f'
+
+			else:
+				nightlyargs = ' -b'
 
         if os.environ.get('module') == 'zappSpyGUI':
                         module = 'zappSpyGUI'
                         cmd = 'cd ../ZappVs2010 && MSBuild.exe Zapp.sln'
-                        nightlyArgs = ' -f'
+			nightlyArgs = ''
 
-		
 	if os.environ.get('nightly') != 'true':
 			nightlyArgs = ''
 
         return module, cmd, nightlyArgs
 
 
-Tool = getToolEnvironment()
-Module = getModule()
+Module = getModule(Tool[1],Tool[2])
 
 
 def Build(tool, ostype, module, cmd, args):
 
         buildCmd = []
-        buildCmd.append(tool + ' && ' + 'cd ' + module + ' && ' + cmd + args)
+        buildCmd.append(tool + ' && ' + cmd + args)
         print buildCmd
         ret = subprocess.call(buildCmd, shell=True)
         if ret != 0:
