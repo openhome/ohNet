@@ -571,7 +571,8 @@ void SuiteMulticast::Test()
 void SuiteMulticast::Receiver()
 {
     iPortLock.Wait();
-    SocketUdpMulticast recv(Endpoint(iPort, kMulticastAddress), 1);
+    SocketUdpMulticast recv(1, 0);
+	recv.AddMembership(Endpoint(iPort, kMulticastAddress));
     iPort = recv.Port();
     iPortLock.Signal();
 

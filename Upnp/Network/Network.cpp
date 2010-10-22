@@ -573,43 +573,51 @@ Endpoint SocketUdpClient::Receive(Bwx& aBuffer)
 
 // SocketUdpMulticast
 
-SocketUdpMulticast::SocketUdpMulticast(const Endpoint& aEndpoint)
-    : SocketUdpClient(aEndpoint)
+SocketUdpMulticast::SocketUdpMulticast()
+    : SocketUdpClient(Endpoint())
     , iInterface(0)
+    , iMember(false)
 {
-    Construct();
+    Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
 }
 
-SocketUdpMulticast::SocketUdpMulticast(const Endpoint& aEndpoint, TUint aTtl)
-    : SocketUdpClient(aEndpoint, aTtl)
-    , iInterface(0)
-{
-    Construct();
-}
-
-SocketUdpMulticast::SocketUdpMulticast(const Endpoint& aEndpoint, TUint aTtl, TIpAddress aInterface)
-    : SocketUdpClient(aEndpoint, aTtl)
+SocketUdpMulticast::SocketUdpMulticast(TUint aTtl, TIpAddress aInterface)
+    : SocketUdpClient(Endpoint(), aTtl)
     , iInterface(aInterface)
+    , iMember(false)
 {
     LOGF(kNetwork, "SocketUdpMulticast::SocketUdpMulticast\n");
-    Construct();
+    Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
 }
 
 SocketUdpMulticast::~SocketUdpMulticast()
 {
     LOGF(kNetwork, "SocketUdpMulticast::~SocketUdpMulticast\n");
-    Zapp::Os::NetworkSocketMulticastDropMembership(iHandle, iEndpoint.Address(), iInterface);
+    if (iMember) {
+        Zapp::Os::NetworkSocketMulticastDropMembership(iHandle, iEndpoint.Address(), iInterface);
+    }
 }
 
-void SocketUdpMulticast::Construct()
+void SocketUdpMulticast::AddMembership(const Endpoint& aEndpoint)
 {
-    LOGF(kNetwork, "SocketUdpMulticast::Construct\n");
-    Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
+    LOGF(kNetwork, "SocketUdpMulticast::AddMembersip\n");
+    ASSERT(!iMember);
+    iEndpoint.Replace(aEndpoint);
+    iPort = iEndpoint.Port();
     // Windows expects us to bind to the multicast port but not the address
     // linux doesn't seem to care
-    iPort = iEndpoint.Port();
 	SocketBind(iHandle, iPort, 0);
     Zapp::Os::NetworkSocketMulticastAddMembership(iHandle, iEndpoint.Address(), iInterface);
+    iMember = true;
+}
+
+void SocketUdpMulticast::DropMembership()
+{
+    LOGF(kNetwork, "SocketUdpMulticast::AddMembersip\n");
+    ASSERT(iMember);
+    Zapp::Os::NetworkSocketMulticastDropMembership(iHandle, iEndpoint.Address(), iInterface);
+    iEndpoint.Replace(Endpoint());
+    iMember = false;
 }
 
 // UdpControllerReader
