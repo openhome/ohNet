@@ -4,5 +4,6 @@
 
 /Upnp/*.sbr
 /Upnp/Build/
+/Upnp/vgout/
 /build/
 /install/
