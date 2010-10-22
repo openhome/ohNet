@@ -695,7 +695,7 @@ void MainTestThread::Run()
     runner.Add(new SuiteSocketServer(iInterface));
     runner.Add(new SuiteTcpServerShutdown(iInterface));
     runner.Add(new SuiteEndpoint());
-    runner.Add(new SuiteUnicast(iInterface));
+    //runner.Add(new SuiteUnicast(iInterface));
     runner.Add(new SuiteMulticast());
     runner.Run();
     Signal();

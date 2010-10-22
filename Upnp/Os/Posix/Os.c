@@ -739,44 +739,50 @@ int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseL
         return -1;
     }
     TIpAddress loopbackAddr = MakeIpAddress(127, 0, 0, 1);
-    /* first check whether we have any suitable interfaces other than loopback*/
-    iter = networkIf;
-    while (iter != NULL) {
-        if (iter->ifa_addr->sa_family == AF_INET &&
-            ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr != loopbackAddr) {
-            includeLoopback = 0;
-            break;
+    /* first check whether we have any suitable interfaces other than loopback */
+    if (aUseLoopback == 0) {
+        iter = networkIf;
+        while (iter != NULL) {
+            if (iter->ifa_addr->sa_family == AF_INET &&
+                ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr != loopbackAddr) {
+                includeLoopback = 0;
+                break;
+            }
+            iter = iter->ifa_next;
         }
-        iter = iter->ifa_next;
     }
     /* ...then allocate/populate the list */
     iter = networkIf;
     OsNetworkInterface* head = NULL;
     OsNetworkInterface* tail = NULL;
     while (iter != NULL) {
-        if (iter->ifa_addr->sa_family == AF_INET && (includeLoopback ||
-            ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr != loopbackAddr)) {
-            OsNetworkInterface* iface = (OsNetworkInterface*)calloc(1, sizeof(*iface));
-            if (iface == NULL) {
-                OsNetworkFreeInterfaces(head);
-                goto exit;
-            }
-            if (head == NULL) {
-                head = iface;
-            }
-            iface->iName = (char*)malloc(strlen(iter->ifa_name) + 1);
-            if (iface->iName == NULL) {
-                OsNetworkFreeInterfaces(head);
-                goto exit;
-            }
-            (void)strcpy(iface->iName, iter->ifa_name);
-            iface->iAddress = ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr;
-            iface->iNetMask = ((struct sockaddr_in*)iter->ifa_netmask)->sin_addr.s_addr;
-            if (tail != NULL) {
-                tail->iNext = iface;
-            }
-            tail = iface;
+        if (iter->ifa_addr->sa_family != AF_INET ||
+            (includeLoopback == 0 && ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr == loopbackAddr) ||
+            (aUseLoopback == 1 && ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr != loopbackAddr)) {
+            iter = iter->ifa_next;
+            continue;
         }
+
+        OsNetworkInterface* iface = (OsNetworkInterface*)calloc(1, sizeof(*iface));
+        if (iface == NULL) {
+            OsNetworkFreeInterfaces(head);
+            goto exit;
+        }
+        if (head == NULL) {
+            head = iface;
+        }
+        iface->iName = (char*)malloc(strlen(iter->ifa_name) + 1);
+        if (iface->iName == NULL) {
+            OsNetworkFreeInterfaces(head);
+            goto exit;
+        }
+        (void)strcpy(iface->iName, iter->ifa_name);
+        iface->iAddress = ((struct sockaddr_in*)iter->ifa_addr)->sin_addr.s_addr;
+        iface->iNetMask = ((struct sockaddr_in*)iter->ifa_netmask)->sin_addr.s_addr;
+        if (tail != NULL) {
+            tail->iNext = iface;
+        }
+        tail = iface;
         iter = iter->ifa_next;
     }
     ret = 0;
