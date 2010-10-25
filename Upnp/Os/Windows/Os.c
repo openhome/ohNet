@@ -704,7 +704,7 @@ int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseL
 
     MIB_IFTABLE* ifTable          = NULL;
     MIB_IPADDRTABLE* addrTable    = NULL;
-    ULONG bytes;
+    ULONG bytes                   = 0;
     OsNetworkInterface* head      = NULL;
     int32_t index                 = 0;
     const TIpAddress loopbackAddr = MakeIpAddress(127, 0, 0, 1);
@@ -718,6 +718,7 @@ int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseL
     if (NO_ERROR != GetIpAddrTable(addrTable, &bytes, FALSE)) {
         goto failure;
     }
+    bytes = 0;
     if (ERROR_INSUFFICIENT_BUFFER != GetIfTable(NULL, &bytes, FALSE)) {
         goto failure;
     }
@@ -739,9 +740,22 @@ int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseL
 
     for (i=0; i<addrTable->dwNumEntries; i++) {
         MIB_IPADDRROW* addrRow = &(addrTable->table[i]);
-        MIB_IFROW* ifRow = &(ifTable->table[addrRow->dwIndex]);
+        MIB_IFROW* ifRow = NULL;
         OsNetworkInterface* nif;
         size_t len;
+		DWORD j = 0;
+
+		for (; j< ifTable->dwNumEntries; j++) {
+			MIB_IFROW* tmp = &ifTable->table[j];
+			if (tmp->dwIndex == addrRow->dwIndex) {
+				ifRow = tmp;
+				break;
+			}
+		}
+		if (ifRow == NULL) {
+			fprintf(stderr, "Unable to match ifRow to addrRow\n");
+			continue;
+		}
 
         if ((addrRow->dwAddr == loopbackAddr && !includeLoopback) ||
             (addrRow->dwAddr != loopbackAddr && aUseLoopback)) {
