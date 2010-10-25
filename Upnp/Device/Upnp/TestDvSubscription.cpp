@@ -116,9 +116,11 @@ void ServiceTestBasic::GetBool(IInvocationResponse& aResponse, TUint /*aVersion*
 
 void ServiceTestBasic::SetMultiple(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aValueUint, TInt aValueInt, TBool aValueBool)
 {
+    PropertiesLock();
     SetPropertyVarUint(aValueUint);
     SetPropertyVarInt(aValueInt);
     SetPropertyVarBool(aValueBool);
+    PropertiesUnlock();
     aResponse.Start();
     aResponse.End();
 }

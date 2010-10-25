@@ -135,9 +135,11 @@ void ServiceTestBasic::GetBool(uint32_t /*aVersion*/, bool& aValueBool)
 
 void ServiceTestBasic::SetMultiple(uint32_t /*aVersion*/, uint32_t aValueUint, int32_t aValueInt, bool aValueBool)
 {
+    PropertiesLock();
     SetPropertyVarUint(aValueUint);
     SetPropertyVarInt(aValueInt);
     SetPropertyVarBool(aValueBool);
+    PropertiesUnlock();
 }
 
 void ServiceTestBasic::SetString(uint32_t /*aVersion*/, const std::string& aValueStr)
