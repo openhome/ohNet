@@ -94,5 +94,3 @@ def Build(tool, cmd, args):
 
 
 Build(Environment['tool'],Module['cmd'],Arguments['args'])
-
-#test
