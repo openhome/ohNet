@@ -8,6 +8,7 @@
 #include <Stack.h>
 
 #include <vector>
+#include <stdio.h>
 
 #include "OhmSender.h"
 
@@ -26,6 +27,11 @@ static void RandomiseUdn(Bwh& aUdn)
     aUdn.PtrZ();
 }
 
+void DisplayHelp()
+{
+	printf("<ENTER> = exit, <h> = help\n");
+}
+
 int main(int argc, char* argv[])
 {
     InitialisationParams* initParams = InitialisationParams::Create();
@@ -39,28 +45,38 @@ int main(int argc, char* argv[])
 
     DvDevice* device = new DvDevice(udn);
     
-    device->SetAttribute("Upnp.Domain", "zapp.org");
-    device->SetAttribute("Upnp.Type", "MultipusSender");
+    device->SetAttribute("Upnp.Domain", "music.openhome.org");
+    device->SetAttribute("Upnp.Type", "Sender");
     device->SetAttribute("Upnp.Version", "1");
-    device->SetAttribute("Upnp.FriendlyName", "WavPlayer");
-    device->SetAttribute("Upnp.Manufacturer", "Linn Products Limited");
-    device->SetAttribute("Upnp.ManufacturerUrl", "http://www.linn.co.uk");
-    device->SetAttribute("Upnp.ModelDescription", "Multipus Wav Player");
-    device->SetAttribute("Upnp.ModelName", "WavPlayer");
+    device->SetAttribute("Upnp.FriendlyName", "Openhome WavSender");
+    device->SetAttribute("Upnp.Manufacturer", "Openhome");
+    device->SetAttribute("Upnp.ManufacturerUrl", "http://www.openhome.org");
+    device->SetAttribute("Upnp.ModelDescription", "Openhome WavSender");
+    device->SetAttribute("Upnp.ModelName", "Openhome WavSender");
     device->SetAttribute("Upnp.ModelNumber", "1");
-    device->SetAttribute("Upnp.ModelUrl", "http://www.linn.co.uk");
-    device->SetAttribute("Upnp.SerialNumber", "123456");
-    device->SetAttribute("Upnp.Upc", "123456789");
+    device->SetAttribute("Upnp.ModelUrl", "http://www.openhome.org");
+    device->SetAttribute("Upnp.SerialNumber", "Not Applicable");
+    device->SetAttribute("Upnp.Upc", "Not Applicable");
 
-	OhmSender* sender = new OhmSender(*device);
+	OhmSender* sender = new OhmSender(*device, Brn("Test"), 123);
 	
     device->SetEnabled();
     
-    Mutex mutex("WAIT");
-    
-    mutex.Wait();
+    while (true) {
+    	TChar key = getchar();
+    	
+    	if (key == '\n') {
+    		break;
+    	}
+    	
+    	if (key == 'h' || key == 'H')
+    	{
+    		DisplayHelp();
+    	}
+    }
     
     delete (sender);
+    delete (device);
     
     return (0);
 }

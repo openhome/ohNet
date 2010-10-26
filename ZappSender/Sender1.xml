@@ -7,46 +7,6 @@
 
     <actionList>
         <action>
-            <name>Enabled</name>
-            <argumentList>
-                <argument>
-                    <name>Value</name>
-                    <direction>out</direction>
-                    <relatedStateVariable>Enabled</relatedStateVariable>
-                </argument>
-            </argumentList>
-        </action>
-        <action>
-            <name>SetEnabled</name>
-            <argumentList>
-                <argument>
-                    <name>Value</name>
-                    <direction>in</direction>
-                    <relatedStateVariable>Enabled</relatedStateVariable>
-                </argument>
-            </argumentList>
-        </action>
-        <action>
-            <name>Channel</name>
-            <argumentList>
-                <argument>
-                    <name>Value</name>
-                    <direction>out</direction>
-                    <relatedStateVariable>Channel</relatedStateVariable>
-                </argument>
-            </argumentList>
-        </action>
-        <action>
-            <name>SetChannel</name>
-            <argumentList>
-                <argument>
-                    <name>Value</name>
-                    <direction>in</direction>
-                    <relatedStateVariable>Channel</relatedStateVariable>
-                </argument>
-            </argumentList>
-        </action>
-        <action>
             <name>Metadata</name>
             <argumentList>
                 <argument>
@@ -77,41 +37,18 @@
             </argumentList>
         </action>
         <action>
-            <name>InfoAvailable</name>
+            <name>Attributes</name>
             <argumentList>
                 <argument>
                     <name>Value</name>
                     <direction>out</direction>
-                    <relatedStateVariable>InfoAvailable</relatedStateVariable>
-                </argument>
-            </argumentList>
-        </action>
-        <action>
-            <name>TimeAvailable</name>
-            <argumentList>
-                <argument>
-                    <name>Value</name>
-                    <direction>out</direction>
-                    <relatedStateVariable>TimeAvailable</relatedStateVariable>
+                    <relatedStateVariable>Attributes</relatedStateVariable>
                 </argument>
             </argumentList>
         </action>
     </actionList>
     
     <serviceStateTable>
-        <stateVariable sendEvents="yes">
-            <name>Enabled</name>
-            <dataType>boolean</dataType>
-        </stateVariable>        
-        <stateVariable sendEvents="yes">
-            <name>Channel</name>
-            <dataType>ui4</dataType>
-            <allowedValueRange>
-                <minimum>0</minimum>
-                <maximum>65535</maximum>
-                <step>1</step>
-            </allowedValueRange>
-        </stateVariable>        
         <stateVariable sendEvents="yes">
             <name>Metadata</name>
             <dataType>string</dataType>
@@ -131,12 +68,8 @@
             </allowedValueList>
         </stateVariable>
         <stateVariable sendEvents="yes">
-            <name>InfoAvailable</name>
-            <dataType>boolean</dataType>
-        </stateVariable>        
-        <stateVariable sendEvents="yes">
-            <name>TimeAvailable</name>
-            <dataType>boolean</dataType>
+            <name>Attributes</name>
+            <dataType>string</dataType>
         </stateVariable>        
     </serviceStateTable>
 </scpd>
