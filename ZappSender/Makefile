@@ -1,5 +1,6 @@
 objdir = Build/Obj/Posix
 incdir = Build/Include
+zappdir = ../Upnp/Build/Obj/Posix
 toolsDir = ../Upnp/Build/Tools
 templatesDir = ../Upnp/T4/Templates
 
@@ -40,17 +41,19 @@ installpkgconfdir = $(prefix)/lib/pkgconfig
 mkdir = mkdir -p
 rmdir = rm -rf
 
-wavplayer :
+$(objdir)/WavSender.exe :
 	mkdir -p $(objdir)
+	$(compiler)/DvMusicOpenhomeOrgSender1.$(objext) -c $(cflags) $(includes) DvMusicOpenhomeOrgSender1.cpp
 	$(compiler)/Ohm.$(objext) -c $(cflags) $(includes) Ohm.cpp
 	$(compiler)/OhmSender.$(objext) -c $(cflags) $(includes) OhmSender.cpp
 	$(compiler)/WavSender.$(objext) -c $(cflags) $(includes) WavSender.cpp
+	$(link) $(linkoutput)$(objdir)/WavSender.$(exeext) $(objdir)/WavSender.$(objext) $(objdir)/DvMusicOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(zappdir)/$(libprefix)upnp_core.$(libext)
 
 t4 = $(toolsDir)/TextTransform.exe
 
-gen: DvLinnCoUkSender1.h DvLinnCoUkSender1.cpp
+gen: DvMusicOpenhomeOrgSender1.h DvMusicOpenhomeOrgSender1.cpp
 
-DvLinnCoUkSender1.h : $(templatesDir)/DvUpnpCppCoreHeader.tt Sender1.xml
-	$(t4) -o DvLinnCoUkSender1.h $(templatesDir)/DvUpnpCppCoreHeader.tt -a "xml:Sender1.xml" -a domain:linn.co.uk -a type:MultipusSender -a version:1
-DvLinnCoUkSender1.cpp : ../Upnp/T4/Templates/DvUpnpCppCoreSource.tt Sender1.xml
-	$(t4) -o DvLinnCoUkSender1.cpp $(templatesDir)/DvUpnpCppCoreSource.tt -a "xml:Sender1.xml" -a domain:linn.co.uk -a type:MultipusSender -a version:1
+DvMusicOpenhomeOrgSender1.h : $(templatesDir)/DvUpnpCppCoreHeader.tt Sender1.xml
+	$(t4) -o DvMusicOpenhomeOrgSender1.h $(templatesDir)/DvUpnpCppCoreHeader.tt -a "xml:Sender1.xml" -a domain:music.openhome.org -a type:Sender -a version:1
+DvMusicOpenhomeOrgSender1.cpp : ../Upnp/T4/Templates/DvUpnpCppCoreSource.tt Sender1.xml
+	$(t4) -o DvMusicOpenhomeOrgSender1.cpp $(templatesDir)/DvUpnpCppCoreSource.tt -a "xml:Sender1.xml" -a domain:music.openhome.org -a type:Sender -a version:1
