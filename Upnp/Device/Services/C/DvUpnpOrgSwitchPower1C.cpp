@@ -117,9 +117,9 @@ void DvServiceUpnpOrgSwitchPower1EnableActionGetStatus(THandle aService, Callbac
     reinterpret_cast<DvServiceUpnpOrgSwitchPower1C*>(aService)->EnableActionGetStatus(aCallback, aPtr);
 }
 
-int32_t DvServiceUpnpOrgSwitchPower1SetPropertyStatus(THandle aService, uint32_t aValue)
+int32_t DvServiceUpnpOrgSwitchPower1SetPropertyStatus(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceUpnpOrgSwitchPower1C*>(aService)->SetPropertyStatus((aValue!=0));
+    *aChanged = (reinterpret_cast<DvServiceUpnpOrgSwitchPower1C*>(aService)->SetPropertyStatus((aValue!=0))? 1 : 0);
     return 0;
 }
 

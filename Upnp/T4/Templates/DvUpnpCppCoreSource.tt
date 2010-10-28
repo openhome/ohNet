@@ -51,9 +51,9 @@ using namespace Zapp;
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
 
-void <#=className#>::SetProperty<#=s.name#>(<#=inArgParamType[s.type]#> aValue)
+TBool <#=className#>::SetProperty<#=s.name#>(<#=inArgParamType[s.type]#> aValue)
 {
-    <#=propertySetter[s.type]#>(*iProperty<#=s.name#>, aValue);
+    return <#=propertySetter[s.type]#>(*iProperty<#=s.name#>, aValue);
 }
 
 void <#=className#>::GetProperty<#=s.name#>(<#=inArgType[s.type]#>& aValue)

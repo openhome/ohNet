@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceZappOrgTestBasic1Cpp::SetPropertyVarUint(uint32_t aValue)
+bool DvServiceZappOrgTestBasic1Cpp::SetPropertyVarUint(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyVarUint, aValue);
+    return SetPropertyUint(*iPropertyVarUint, aValue);
 }
 
 void DvServiceZappOrgTestBasic1Cpp::GetPropertyVarUint(uint32_t& aValue)
@@ -16,9 +16,9 @@ void DvServiceZappOrgTestBasic1Cpp::GetPropertyVarUint(uint32_t& aValue)
     aValue = iPropertyVarUint->Value();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::SetPropertyVarInt(int32_t aValue)
+bool DvServiceZappOrgTestBasic1Cpp::SetPropertyVarInt(int32_t aValue)
 {
-    SetPropertyInt(*iPropertyVarInt, aValue);
+    return SetPropertyInt(*iPropertyVarInt, aValue);
 }
 
 void DvServiceZappOrgTestBasic1Cpp::GetPropertyVarInt(int32_t& aValue)
@@ -26,9 +26,9 @@ void DvServiceZappOrgTestBasic1Cpp::GetPropertyVarInt(int32_t& aValue)
     aValue = iPropertyVarInt->Value();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::SetPropertyVarBool(bool aValue)
+bool DvServiceZappOrgTestBasic1Cpp::SetPropertyVarBool(bool aValue)
 {
-    SetPropertyBool(*iPropertyVarBool, aValue);
+    return SetPropertyBool(*iPropertyVarBool, aValue);
 }
 
 void DvServiceZappOrgTestBasic1Cpp::GetPropertyVarBool(bool& aValue)
@@ -36,10 +36,10 @@ void DvServiceZappOrgTestBasic1Cpp::GetPropertyVarBool(bool& aValue)
     aValue = iPropertyVarBool->Value();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::SetPropertyVarStr(const std::string& aValue)
+bool DvServiceZappOrgTestBasic1Cpp::SetPropertyVarStr(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyVarStr, buf);
+    return SetPropertyString(*iPropertyVarStr, buf);
 }
 
 void DvServiceZappOrgTestBasic1Cpp::GetPropertyVarStr(std::string& aValue)
@@ -48,10 +48,10 @@ void DvServiceZappOrgTestBasic1Cpp::GetPropertyVarStr(std::string& aValue)
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceZappOrgTestBasic1Cpp::SetPropertyVarBin(const std::string& aValue)
+bool DvServiceZappOrgTestBasic1Cpp::SetPropertyVarBin(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyBinary(*iPropertyVarBin, buf);
+    return SetPropertyBinary(*iPropertyVarBin, buf);
 }
 
 void DvServiceZappOrgTestBasic1Cpp::GetPropertyVarBin(std::string& aValue)

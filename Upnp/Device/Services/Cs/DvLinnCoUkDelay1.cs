@@ -12,11 +12,11 @@ namespace Zapp
         [DllImport("DvLinnCoUkDelay1")]
         static extern void DvServiceLinnCoUkDelay1Destroy(uint aHandle);
         [DllImport("DvLinnCoUkDelay1")]
-        static extern unsafe int DvServiceLinnCoUkDelay1SetPropertyPresetXml(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkDelay1SetPropertyPresetXml(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDelay1")]
         static extern unsafe void DvServiceLinnCoUkDelay1GetPropertyPresetXml(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkDelay1")]
-        static extern unsafe int DvServiceLinnCoUkDelay1SetPropertyPresetIndex(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkDelay1SetPropertyPresetIndex(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDelay1")]
         static extern unsafe void DvServiceLinnCoUkDelay1GetPropertyPresetIndex(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkDelay1")]
@@ -68,15 +68,17 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyPresetXml(string aValue)
+        public unsafe bool SetPropertyPresetXml(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkDelay1SetPropertyPresetXml(iHandle, value);
+            int err = DvServiceLinnCoUkDelay1SetPropertyPresetXml(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyPresetXml(out string aValue)
@@ -87,12 +89,14 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyPresetIndex(uint aValue)
+        public unsafe bool SetPropertyPresetIndex(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkDelay1SetPropertyPresetIndex(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkDelay1SetPropertyPresetIndex(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyPresetIndex(out uint aValue)

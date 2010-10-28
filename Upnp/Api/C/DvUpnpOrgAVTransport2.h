@@ -55,9 +55,9 @@ DllExport void DvServiceUpnpOrgAVTransport2EnableActionGetDRMState(THandle aServ
 DllExport void DvServiceUpnpOrgAVTransport2EnableActionGetStateVariables(THandle aService, CallbackAVTransport2GetStateVariables aCallback, void* aPtr);
 DllExport void DvServiceUpnpOrgAVTransport2EnableActionSetStateVariables(THandle aService, CallbackAVTransport2SetStateVariables aCallback, void* aPtr);
 
-DllExport int32_t DvServiceUpnpOrgAVTransport2SetPropertyLastChange(THandle aService, const char* aValue);
+DllExport int32_t DvServiceUpnpOrgAVTransport2SetPropertyLastChange(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceUpnpOrgAVTransport2GetPropertyLastChange(THandle aService, char** aValue);
-DllExport int32_t DvServiceUpnpOrgAVTransport2SetPropertyDRMState(THandle aService, const char* aValue);
+DllExport int32_t DvServiceUpnpOrgAVTransport2SetPropertyDRMState(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceUpnpOrgAVTransport2GetPropertyDRMState(THandle aService, char** aValue);
 
 #ifdef __cplusplus

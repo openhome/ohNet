@@ -24,13 +24,13 @@ class DvServiceLinnCoUkProxyManager1Cpp : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkProxyManager1Cpp() {}
-    void SetPropertyKontrolProductConnected(const std::string& aValue);
+    bool SetPropertyKontrolProductConnected(const std::string& aValue);
     void GetPropertyKontrolProductConnected(std::string& aValue);
-    void SetPropertyKontrolProductComPort(uint32_t aValue);
+    bool SetPropertyKontrolProductComPort(uint32_t aValue);
     void GetPropertyKontrolProductComPort(uint32_t& aValue);
-    void SetPropertyDiscPlayerConnected(const std::string& aValue);
+    bool SetPropertyDiscPlayerConnected(const std::string& aValue);
     void GetPropertyDiscPlayerConnected(std::string& aValue);
-    void SetPropertyDiscPlayerComPort(uint32_t aValue);
+    bool SetPropertyDiscPlayerComPort(uint32_t aValue);
     void GetPropertyDiscPlayerComPort(uint32_t& aValue);
 protected:
     DvServiceLinnCoUkProxyManager1Cpp(DvDeviceStd& aDevice);

@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkPlaylist1::SetPropertyIdArray(const Brx& aValue)
+TBool DvServiceLinnCoUkPlaylist1::SetPropertyIdArray(const Brx& aValue)
 {
-    SetPropertyBinary(*iPropertyIdArray, aValue);
+    return SetPropertyBinary(*iPropertyIdArray, aValue);
 }
 
 void DvServiceLinnCoUkPlaylist1::GetPropertyIdArray(Brh& aValue)
@@ -16,9 +16,9 @@ void DvServiceLinnCoUkPlaylist1::GetPropertyIdArray(Brh& aValue)
     aValue.Set(iPropertyIdArray->Value());
 }
 
-void DvServiceLinnCoUkPlaylist1::SetPropertyRepeat(TBool aValue)
+TBool DvServiceLinnCoUkPlaylist1::SetPropertyRepeat(TBool aValue)
 {
-    SetPropertyBool(*iPropertyRepeat, aValue);
+    return SetPropertyBool(*iPropertyRepeat, aValue);
 }
 
 void DvServiceLinnCoUkPlaylist1::GetPropertyRepeat(TBool& aValue)
@@ -26,9 +26,9 @@ void DvServiceLinnCoUkPlaylist1::GetPropertyRepeat(TBool& aValue)
     aValue = iPropertyRepeat->Value();
 }
 
-void DvServiceLinnCoUkPlaylist1::SetPropertyShuffle(TBool aValue)
+TBool DvServiceLinnCoUkPlaylist1::SetPropertyShuffle(TBool aValue)
 {
-    SetPropertyBool(*iPropertyShuffle, aValue);
+    return SetPropertyBool(*iPropertyShuffle, aValue);
 }
 
 void DvServiceLinnCoUkPlaylist1::GetPropertyShuffle(TBool& aValue)
@@ -36,9 +36,9 @@ void DvServiceLinnCoUkPlaylist1::GetPropertyShuffle(TBool& aValue)
     aValue = iPropertyShuffle->Value();
 }
 
-void DvServiceLinnCoUkPlaylist1::SetPropertyTracksMax(TUint aValue)
+TBool DvServiceLinnCoUkPlaylist1::SetPropertyTracksMax(TUint aValue)
 {
-    SetPropertyUint(*iPropertyTracksMax, aValue);
+    return SetPropertyUint(*iPropertyTracksMax, aValue);
 }
 
 void DvServiceLinnCoUkPlaylist1::GetPropertyTracksMax(TUint& aValue)

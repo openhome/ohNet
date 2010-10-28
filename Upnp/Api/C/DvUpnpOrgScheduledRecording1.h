@@ -49,7 +49,7 @@ DllExport void DvServiceUpnpOrgScheduledRecording1EnableActionResetRecordTask(TH
 DllExport void DvServiceUpnpOrgScheduledRecording1EnableActionGetRecordScheduleConflicts(THandle aService, CallbackScheduledRecording1GetRecordScheduleConflicts aCallback, void* aPtr);
 DllExport void DvServiceUpnpOrgScheduledRecording1EnableActionGetRecordTaskConflicts(THandle aService, CallbackScheduledRecording1GetRecordTaskConflicts aCallback, void* aPtr);
 
-DllExport int32_t DvServiceUpnpOrgScheduledRecording1SetPropertyLastChange(THandle aService, const char* aValue);
+DllExport int32_t DvServiceUpnpOrgScheduledRecording1SetPropertyLastChange(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceUpnpOrgScheduledRecording1GetPropertyLastChange(THandle aService, char** aValue);
 
 #ifdef __cplusplus

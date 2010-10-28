@@ -422,9 +422,9 @@ void DvServiceLinnCoUkPreamp4EnableActionStartupVolumeEnabled(THandle aService, 
     reinterpret_cast<DvServiceLinnCoUkPreamp4C*>(aService)->EnableActionStartupVolumeEnabled(aCallback, aPtr);
 }
 
-int32_t DvServiceLinnCoUkPreamp4SetPropertyVolume(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkPreamp4SetPropertyVolume(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkPreamp4C*>(aService)->SetPropertyVolume(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkPreamp4C*>(aService)->SetPropertyVolume(aValue)? 1 : 0);
     return 0;
 }
 
@@ -435,9 +435,9 @@ void DvServiceLinnCoUkPreamp4GetPropertyVolume(THandle aService, uint32_t* aValu
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkPreamp4SetPropertyMute(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkPreamp4SetPropertyMute(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkPreamp4C*>(aService)->SetPropertyMute((aValue!=0));
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkPreamp4C*>(aService)->SetPropertyMute((aValue!=0))? 1 : 0);
     return 0;
 }
 
@@ -448,9 +448,9 @@ void DvServiceLinnCoUkPreamp4GetPropertyMute(THandle aService, uint32_t* aValue)
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvServiceLinnCoUkPreamp4SetPropertyBalance(THandle aService, int32_t aValue)
+int32_t DvServiceLinnCoUkPreamp4SetPropertyBalance(THandle aService, int32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkPreamp4C*>(aService)->SetPropertyBalance(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkPreamp4C*>(aService)->SetPropertyBalance(aValue)? 1 : 0);
     return 0;
 }
 
@@ -461,9 +461,9 @@ void DvServiceLinnCoUkPreamp4GetPropertyBalance(THandle aService, int32_t* aValu
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkPreamp4SetPropertyVolumeLimit(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkPreamp4SetPropertyVolumeLimit(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkPreamp4C*>(aService)->SetPropertyVolumeLimit(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkPreamp4C*>(aService)->SetPropertyVolumeLimit(aValue)? 1 : 0);
     return 0;
 }
 
@@ -474,9 +474,9 @@ void DvServiceLinnCoUkPreamp4GetPropertyVolumeLimit(THandle aService, uint32_t* 
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkPreamp4SetPropertyStartupVolume(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkPreamp4SetPropertyStartupVolume(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkPreamp4C*>(aService)->SetPropertyStartupVolume(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkPreamp4C*>(aService)->SetPropertyStartupVolume(aValue)? 1 : 0);
     return 0;
 }
 
@@ -487,9 +487,9 @@ void DvServiceLinnCoUkPreamp4GetPropertyStartupVolume(THandle aService, uint32_t
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkPreamp4SetPropertyStartupVolumeEnabled(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkPreamp4SetPropertyStartupVolumeEnabled(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkPreamp4C*>(aService)->SetPropertyStartupVolumeEnabled((aValue!=0));
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkPreamp4C*>(aService)->SetPropertyStartupVolumeEnabled((aValue!=0))? 1 : 0);
     return 0;
 }
 

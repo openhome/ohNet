@@ -24,11 +24,11 @@ class DvServiceUpnpOrgContentDirectory2Cpp : public DvService
 {
 public:
     virtual ~DvServiceUpnpOrgContentDirectory2Cpp() {}
-    void SetPropertySystemUpdateID(uint32_t aValue);
+    bool SetPropertySystemUpdateID(uint32_t aValue);
     void GetPropertySystemUpdateID(uint32_t& aValue);
-    void SetPropertyContainerUpdateIDs(const std::string& aValue);
+    bool SetPropertyContainerUpdateIDs(const std::string& aValue);
     void GetPropertyContainerUpdateIDs(std::string& aValue);
-    void SetPropertyTransferIDs(const std::string& aValue);
+    bool SetPropertyTransferIDs(const std::string& aValue);
     void GetPropertyTransferIDs(std::string& aValue);
 protected:
     DvServiceUpnpOrgContentDirectory2Cpp(DvDeviceStd& aDevice);

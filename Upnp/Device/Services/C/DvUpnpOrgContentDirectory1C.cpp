@@ -478,10 +478,10 @@ void DvServiceUpnpOrgContentDirectory1EnableActionCreateReference(THandle aServi
     reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionCreateReference(aCallback, aPtr);
 }
 
-int32_t DvServiceUpnpOrgContentDirectory1SetPropertyTransferIDs(THandle aService, const char* aValue)
+int32_t DvServiceUpnpOrgContentDirectory1SetPropertyTransferIDs(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->SetPropertyTransferIDs(buf);
+    *aChanged = (reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->SetPropertyTransferIDs(buf)? 1 : 0);
     return 0;
 }
 
@@ -492,9 +492,9 @@ void DvServiceUpnpOrgContentDirectory1GetPropertyTransferIDs(THandle aService, c
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceUpnpOrgContentDirectory1SetPropertySystemUpdateID(THandle aService, uint32_t aValue)
+int32_t DvServiceUpnpOrgContentDirectory1SetPropertySystemUpdateID(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->SetPropertySystemUpdateID(aValue);
+    *aChanged = (reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->SetPropertySystemUpdateID(aValue)? 1 : 0);
     return 0;
 }
 
@@ -505,10 +505,10 @@ void DvServiceUpnpOrgContentDirectory1GetPropertySystemUpdateID(THandle aService
     *aValue = val;
 }
 
-int32_t DvServiceUpnpOrgContentDirectory1SetPropertyContainerUpdateIDs(THandle aService, const char* aValue)
+int32_t DvServiceUpnpOrgContentDirectory1SetPropertyContainerUpdateIDs(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->SetPropertyContainerUpdateIDs(buf);
+    *aChanged = (reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->SetPropertyContainerUpdateIDs(buf)? 1 : 0);
     return 0;
 }
 

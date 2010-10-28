@@ -24,17 +24,17 @@ class DvServiceLinnCoUkPreamp4Cpp : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkPreamp4Cpp() {}
-    void SetPropertyVolume(uint32_t aValue);
+    bool SetPropertyVolume(uint32_t aValue);
     void GetPropertyVolume(uint32_t& aValue);
-    void SetPropertyMute(bool aValue);
+    bool SetPropertyMute(bool aValue);
     void GetPropertyMute(bool& aValue);
-    void SetPropertyBalance(int32_t aValue);
+    bool SetPropertyBalance(int32_t aValue);
     void GetPropertyBalance(int32_t& aValue);
-    void SetPropertyVolumeLimit(uint32_t aValue);
+    bool SetPropertyVolumeLimit(uint32_t aValue);
     void GetPropertyVolumeLimit(uint32_t& aValue);
-    void SetPropertyStartupVolume(uint32_t aValue);
+    bool SetPropertyStartupVolume(uint32_t aValue);
     void GetPropertyStartupVolume(uint32_t& aValue);
-    void SetPropertyStartupVolumeEnabled(bool aValue);
+    bool SetPropertyStartupVolumeEnabled(bool aValue);
     void GetPropertyStartupVolumeEnabled(bool& aValue);
 protected:
     DvServiceLinnCoUkPreamp4Cpp(DvDeviceStd& aDevice);

@@ -17,7 +17,7 @@ DllExport void DvServiceZappOrgTestDimmableLight1Destroy(THandle aService);
 DllExport void DvServiceZappOrgTestDimmableLight1EnableActionGetLevel(THandle aService, CallbackTestDimmableLight1GetLevel aCallback, void* aPtr);
 DllExport void DvServiceZappOrgTestDimmableLight1EnableActionSetLevel(THandle aService, CallbackTestDimmableLight1SetLevel aCallback, void* aPtr);
 
-DllExport int32_t DvServiceZappOrgTestDimmableLight1SetPropertyA_ARG_Level(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceZappOrgTestDimmableLight1SetPropertyA_ARG_Level(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceZappOrgTestDimmableLight1GetPropertyA_ARG_Level(THandle aService, uint32_t* aValue);
 
 #ifdef __cplusplus

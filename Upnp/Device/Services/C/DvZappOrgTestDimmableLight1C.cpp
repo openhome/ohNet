@@ -88,9 +88,9 @@ void DvServiceZappOrgTestDimmableLight1EnableActionSetLevel(THandle aService, Ca
     reinterpret_cast<DvServiceZappOrgTestDimmableLight1C*>(aService)->EnableActionSetLevel(aCallback, aPtr);
 }
 
-int32_t DvServiceZappOrgTestDimmableLight1SetPropertyA_ARG_Level(THandle aService, uint32_t aValue)
+int32_t DvServiceZappOrgTestDimmableLight1SetPropertyA_ARG_Level(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceZappOrgTestDimmableLight1C*>(aService)->SetPropertyA_ARG_Level(aValue);
+    *aChanged = (reinterpret_cast<DvServiceZappOrgTestDimmableLight1C*>(aService)->SetPropertyA_ARG_Level(aValue)? 1 : 0);
     return 0;
 }
 

@@ -21,7 +21,7 @@ class DvServiceZappOrgTestDimmableLight1 : public DvService
 {
 public:
     virtual ~DvServiceZappOrgTestDimmableLight1() {}
-    void SetPropertyA_ARG_Level(TUint aValue);
+    TBool SetPropertyA_ARG_Level(TUint aValue);
     void GetPropertyA_ARG_Level(TUint& aValue);
 protected:
     DvServiceZappOrgTestDimmableLight1(DvDevice& aDevice);

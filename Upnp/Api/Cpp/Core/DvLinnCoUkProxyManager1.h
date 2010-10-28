@@ -21,13 +21,13 @@ class DvServiceLinnCoUkProxyManager1 : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkProxyManager1() {}
-    void SetPropertyKontrolProductConnected(const Brx& aValue);
+    TBool SetPropertyKontrolProductConnected(const Brx& aValue);
     void GetPropertyKontrolProductConnected(Brhz& aValue);
-    void SetPropertyKontrolProductComPort(TUint aValue);
+    TBool SetPropertyKontrolProductComPort(TUint aValue);
     void GetPropertyKontrolProductComPort(TUint& aValue);
-    void SetPropertyDiscPlayerConnected(const Brx& aValue);
+    TBool SetPropertyDiscPlayerConnected(const Brx& aValue);
     void GetPropertyDiscPlayerConnected(Brhz& aValue);
-    void SetPropertyDiscPlayerComPort(TUint aValue);
+    TBool SetPropertyDiscPlayerComPort(TUint aValue);
     void GetPropertyDiscPlayerComPort(TUint& aValue);
 protected:
     DvServiceLinnCoUkProxyManager1(DvDevice& aDevice);

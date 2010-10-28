@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkUi2Cpp::SetPropertyDisplayBrightness(uint32_t aValue)
+bool DvServiceLinnCoUkUi2Cpp::SetPropertyDisplayBrightness(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyDisplayBrightness, aValue);
+    return SetPropertyUint(*iPropertyDisplayBrightness, aValue);
 }
 
 void DvServiceLinnCoUkUi2Cpp::GetPropertyDisplayBrightness(uint32_t& aValue)
@@ -16,9 +16,9 @@ void DvServiceLinnCoUkUi2Cpp::GetPropertyDisplayBrightness(uint32_t& aValue)
     aValue = iPropertyDisplayBrightness->Value();
 }
 
-void DvServiceLinnCoUkUi2Cpp::SetPropertyDisplayBrightnessAuto(bool aValue)
+bool DvServiceLinnCoUkUi2Cpp::SetPropertyDisplayBrightnessAuto(bool aValue)
 {
-    SetPropertyBool(*iPropertyDisplayBrightnessAuto, aValue);
+    return SetPropertyBool(*iPropertyDisplayBrightnessAuto, aValue);
 }
 
 void DvServiceLinnCoUkUi2Cpp::GetPropertyDisplayBrightnessAuto(bool& aValue)
@@ -26,10 +26,10 @@ void DvServiceLinnCoUkUi2Cpp::GetPropertyDisplayBrightnessAuto(bool& aValue)
     aValue = iPropertyDisplayBrightnessAuto->Value();
 }
 
-void DvServiceLinnCoUkUi2Cpp::SetPropertyInfraredCommands(const std::string& aValue)
+bool DvServiceLinnCoUkUi2Cpp::SetPropertyInfraredCommands(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyInfraredCommands, buf);
+    return SetPropertyString(*iPropertyInfraredCommands, buf);
 }
 
 void DvServiceLinnCoUkUi2Cpp::GetPropertyInfraredCommands(std::string& aValue)
@@ -38,10 +38,10 @@ void DvServiceLinnCoUkUi2Cpp::GetPropertyInfraredCommands(std::string& aValue)
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkUi2Cpp::SetPropertyInfraredTerminalCommands(const std::string& aValue)
+bool DvServiceLinnCoUkUi2Cpp::SetPropertyInfraredTerminalCommands(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyInfraredTerminalCommands, buf);
+    return SetPropertyString(*iPropertyInfraredTerminalCommands, buf);
 }
 
 void DvServiceLinnCoUkUi2Cpp::GetPropertyInfraredTerminalCommands(std::string& aValue)
@@ -50,9 +50,9 @@ void DvServiceLinnCoUkUi2Cpp::GetPropertyInfraredTerminalCommands(std::string& a
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkUi2Cpp::SetPropertyDisplayUpsideDown(bool aValue)
+bool DvServiceLinnCoUkUi2Cpp::SetPropertyDisplayUpsideDown(bool aValue)
 {
-    SetPropertyBool(*iPropertyDisplayUpsideDown, aValue);
+    return SetPropertyBool(*iPropertyDisplayUpsideDown, aValue);
 }
 
 void DvServiceLinnCoUkUi2Cpp::GetPropertyDisplayUpsideDown(bool& aValue)
@@ -60,9 +60,9 @@ void DvServiceLinnCoUkUi2Cpp::GetPropertyDisplayUpsideDown(bool& aValue)
     aValue = iPropertyDisplayUpsideDown->Value();
 }
 
-void DvServiceLinnCoUkUi2Cpp::SetPropertyDisplayScrollText(bool aValue)
+bool DvServiceLinnCoUkUi2Cpp::SetPropertyDisplayScrollText(bool aValue)
 {
-    SetPropertyBool(*iPropertyDisplayScrollText, aValue);
+    return SetPropertyBool(*iPropertyDisplayScrollText, aValue);
 }
 
 void DvServiceLinnCoUkUi2Cpp::GetPropertyDisplayScrollText(bool& aValue)
@@ -70,9 +70,9 @@ void DvServiceLinnCoUkUi2Cpp::GetPropertyDisplayScrollText(bool& aValue)
     aValue = iPropertyDisplayScrollText->Value();
 }
 
-void DvServiceLinnCoUkUi2Cpp::SetPropertyDisplaySleep(bool aValue)
+bool DvServiceLinnCoUkUi2Cpp::SetPropertyDisplaySleep(bool aValue)
 {
-    SetPropertyBool(*iPropertyDisplaySleep, aValue);
+    return SetPropertyBool(*iPropertyDisplaySleep, aValue);
 }
 
 void DvServiceLinnCoUkUi2Cpp::GetPropertyDisplaySleep(bool& aValue)
@@ -80,9 +80,9 @@ void DvServiceLinnCoUkUi2Cpp::GetPropertyDisplaySleep(bool& aValue)
     aValue = iPropertyDisplaySleep->Value();
 }
 
-void DvServiceLinnCoUkUi2Cpp::SetPropertyDisplayLedOff(bool aValue)
+bool DvServiceLinnCoUkUi2Cpp::SetPropertyDisplayLedOff(bool aValue)
 {
-    SetPropertyBool(*iPropertyDisplayLedOff, aValue);
+    return SetPropertyBool(*iPropertyDisplayLedOff, aValue);
 }
 
 void DvServiceLinnCoUkUi2Cpp::GetPropertyDisplayLedOff(bool& aValue)
@@ -90,9 +90,9 @@ void DvServiceLinnCoUkUi2Cpp::GetPropertyDisplayLedOff(bool& aValue)
     aValue = iPropertyDisplayLedOff->Value();
 }
 
-void DvServiceLinnCoUkUi2Cpp::SetPropertyTerminalInputCode(uint32_t aValue)
+bool DvServiceLinnCoUkUi2Cpp::SetPropertyTerminalInputCode(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyTerminalInputCode, aValue);
+    return SetPropertyUint(*iPropertyTerminalInputCode, aValue);
 }
 
 void DvServiceLinnCoUkUi2Cpp::GetPropertyTerminalInputCode(uint32_t& aValue)
@@ -100,10 +100,10 @@ void DvServiceLinnCoUkUi2Cpp::GetPropertyTerminalInputCode(uint32_t& aValue)
     aValue = iPropertyTerminalInputCode->Value();
 }
 
-void DvServiceLinnCoUkUi2Cpp::SetPropertyTerminalInputName(const std::string& aValue)
+bool DvServiceLinnCoUkUi2Cpp::SetPropertyTerminalInputName(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyTerminalInputName, buf);
+    return SetPropertyString(*iPropertyTerminalInputName, buf);
 }
 
 void DvServiceLinnCoUkUi2Cpp::GetPropertyTerminalInputName(std::string& aValue)
@@ -112,10 +112,10 @@ void DvServiceLinnCoUkUi2Cpp::GetPropertyTerminalInputName(std::string& aValue)
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkUi2Cpp::SetPropertyDisplayPixels(const std::string& aValue)
+bool DvServiceLinnCoUkUi2Cpp::SetPropertyDisplayPixels(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyBinary(*iPropertyDisplayPixels, buf);
+    return SetPropertyBinary(*iPropertyDisplayPixels, buf);
 }
 
 void DvServiceLinnCoUkUi2Cpp::GetPropertyDisplayPixels(std::string& aValue)

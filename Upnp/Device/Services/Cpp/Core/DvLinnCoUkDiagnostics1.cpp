@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkDiagnostics1::SetPropertyaStateVariable(TUint aValue)
+TBool DvServiceLinnCoUkDiagnostics1::SetPropertyaStateVariable(TUint aValue)
 {
-    SetPropertyUint(*iPropertyaStateVariable, aValue);
+    return SetPropertyUint(*iPropertyaStateVariable, aValue);
 }
 
 void DvServiceLinnCoUkDiagnostics1::GetPropertyaStateVariable(TUint& aValue)

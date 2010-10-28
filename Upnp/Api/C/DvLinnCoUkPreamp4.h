@@ -41,17 +41,17 @@ DllExport void DvServiceLinnCoUkPreamp4EnableActionStartupVolume(THandle aServic
 DllExport void DvServiceLinnCoUkPreamp4EnableActionSetStartupVolumeEnabled(THandle aService, CallbackPreamp4SetStartupVolumeEnabled aCallback, void* aPtr);
 DllExport void DvServiceLinnCoUkPreamp4EnableActionStartupVolumeEnabled(THandle aService, CallbackPreamp4StartupVolumeEnabled aCallback, void* aPtr);
 
-DllExport int32_t DvServiceLinnCoUkPreamp4SetPropertyVolume(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkPreamp4SetPropertyVolume(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkPreamp4GetPropertyVolume(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkPreamp4SetPropertyMute(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkPreamp4SetPropertyMute(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkPreamp4GetPropertyMute(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkPreamp4SetPropertyBalance(THandle aService, int32_t aValue);
+DllExport int32_t DvServiceLinnCoUkPreamp4SetPropertyBalance(THandle aService, int32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkPreamp4GetPropertyBalance(THandle aService, int32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkPreamp4SetPropertyVolumeLimit(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkPreamp4SetPropertyVolumeLimit(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkPreamp4GetPropertyVolumeLimit(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkPreamp4SetPropertyStartupVolume(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkPreamp4SetPropertyStartupVolume(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkPreamp4GetPropertyStartupVolume(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkPreamp4SetPropertyStartupVolumeEnabled(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkPreamp4SetPropertyStartupVolumeEnabled(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkPreamp4GetPropertyStartupVolumeEnabled(THandle aService, uint32_t* aValue);
 
 #ifdef __cplusplus

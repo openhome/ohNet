@@ -47,15 +47,15 @@ DllExport void DvServiceZappOrgTestBasic1EnableActionSetBinary(THandle aService,
 DllExport void DvServiceZappOrgTestBasic1EnableActionGetBinary(THandle aService, CallbackTestBasic1GetBinary aCallback, void* aPtr);
 DllExport void DvServiceZappOrgTestBasic1EnableActionToggleBool(THandle aService, CallbackTestBasic1ToggleBool aCallback, void* aPtr);
 
-DllExport int32_t DvServiceZappOrgTestBasic1SetPropertyVarUint(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceZappOrgTestBasic1SetPropertyVarUint(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceZappOrgTestBasic1GetPropertyVarUint(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceZappOrgTestBasic1SetPropertyVarInt(THandle aService, int32_t aValue);
+DllExport int32_t DvServiceZappOrgTestBasic1SetPropertyVarInt(THandle aService, int32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceZappOrgTestBasic1GetPropertyVarInt(THandle aService, int32_t* aValue);
-DllExport int32_t DvServiceZappOrgTestBasic1SetPropertyVarBool(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceZappOrgTestBasic1SetPropertyVarBool(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceZappOrgTestBasic1GetPropertyVarBool(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceZappOrgTestBasic1SetPropertyVarStr(THandle aService, const char* aValue);
+DllExport int32_t DvServiceZappOrgTestBasic1SetPropertyVarStr(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceZappOrgTestBasic1GetPropertyVarStr(THandle aService, char** aValue);
-DllExport int32_t DvServiceZappOrgTestBasic1SetPropertyVarBin(THandle aService, const char* aValue, uint32_t aValueLen);
+DllExport int32_t DvServiceZappOrgTestBasic1SetPropertyVarBin(THandle aService, const char* aValue, uint32_t aValueLen, uint32_t* aChanged);
 DllExport void DvServiceZappOrgTestBasic1GetPropertyVarBin(THandle aService, char** aValue, uint32_t* aValueLen);
 
 #ifdef __cplusplus

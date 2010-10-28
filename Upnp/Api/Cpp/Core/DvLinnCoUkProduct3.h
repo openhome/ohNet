@@ -21,31 +21,31 @@ class DvServiceLinnCoUkProduct3 : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkProduct3() {}
-    void SetPropertyProductType(const Brx& aValue);
+    TBool SetPropertyProductType(const Brx& aValue);
     void GetPropertyProductType(Brhz& aValue);
-    void SetPropertyProductModel(const Brx& aValue);
+    TBool SetPropertyProductModel(const Brx& aValue);
     void GetPropertyProductModel(Brhz& aValue);
-    void SetPropertyProductName(const Brx& aValue);
+    TBool SetPropertyProductName(const Brx& aValue);
     void GetPropertyProductName(Brhz& aValue);
-    void SetPropertyProductRoom(const Brx& aValue);
+    TBool SetPropertyProductRoom(const Brx& aValue);
     void GetPropertyProductRoom(Brhz& aValue);
-    void SetPropertyProductStandby(TBool aValue);
+    TBool SetPropertyProductStandby(TBool aValue);
     void GetPropertyProductStandby(TBool& aValue);
-    void SetPropertyProductSourceIndex(TUint aValue);
+    TBool SetPropertyProductSourceIndex(TUint aValue);
     void GetPropertyProductSourceIndex(TUint& aValue);
-    void SetPropertyProductSourceCount(TUint aValue);
+    TBool SetPropertyProductSourceCount(TUint aValue);
     void GetPropertyProductSourceCount(TUint& aValue);
-    void SetPropertyProductSourceXml(const Brx& aValue);
+    TBool SetPropertyProductSourceXml(const Brx& aValue);
     void GetPropertyProductSourceXml(Brhz& aValue);
-    void SetPropertyStartupSourceIndex(TUint aValue);
+    TBool SetPropertyStartupSourceIndex(TUint aValue);
     void GetPropertyStartupSourceIndex(TUint& aValue);
-    void SetPropertyStartupSourceEnabled(TBool aValue);
+    TBool SetPropertyStartupSourceEnabled(TBool aValue);
     void GetPropertyStartupSourceEnabled(TBool& aValue);
-    void SetPropertyProductAnySourceName(TUint aValue);
+    TBool SetPropertyProductAnySourceName(TUint aValue);
     void GetPropertyProductAnySourceName(TUint& aValue);
-    void SetPropertyProductAnySourceVisible(TUint aValue);
+    TBool SetPropertyProductAnySourceVisible(TUint aValue);
     void GetPropertyProductAnySourceVisible(TUint& aValue);
-    void SetPropertyProductAnySourceType(TUint aValue);
+    TBool SetPropertyProductAnySourceType(TUint aValue);
     void GetPropertyProductAnySourceType(TUint& aValue);
 protected:
     DvServiceLinnCoUkProduct3(DvDevice& aDevice);

@@ -12,19 +12,19 @@ namespace Zapp
         [DllImport("DvLinnCoUkComponent1")]
         static extern void DvServiceLinnCoUkComponent1Destroy(uint aHandle);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern unsafe int DvServiceLinnCoUkComponent1SetPropertyAmplifierEnabled(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkComponent1SetPropertyAmplifierEnabled(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkComponent1")]
         static extern unsafe void DvServiceLinnCoUkComponent1GetPropertyAmplifierEnabled(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern unsafe int DvServiceLinnCoUkComponent1SetPropertyAmplifierAttenuation(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkComponent1SetPropertyAmplifierAttenuation(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkComponent1")]
         static extern unsafe void DvServiceLinnCoUkComponent1GetPropertyAmplifierAttenuation(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern unsafe int DvServiceLinnCoUkComponent1SetPropertyVolumeControlEnabled(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkComponent1SetPropertyVolumeControlEnabled(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkComponent1")]
         static extern unsafe void DvServiceLinnCoUkComponent1GetPropertyVolumeControlEnabled(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern unsafe int DvServiceLinnCoUkComponent1SetPropertyDigitalAudioOutputRaw(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkComponent1SetPropertyDigitalAudioOutputRaw(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkComponent1")]
         static extern unsafe void DvServiceLinnCoUkComponent1GetPropertyDigitalAudioOutputRaw(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkComponent1")]
@@ -84,13 +84,15 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyAmplifierEnabled(bool aValue)
+        public unsafe bool SetPropertyAmplifierEnabled(bool aValue)
         {
+        uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkComponent1SetPropertyAmplifierEnabled(iHandle, value))
+            if (0 != DvServiceLinnCoUkComponent1SetPropertyAmplifierEnabled(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyAmplifierEnabled(out bool aValue)
@@ -100,15 +102,17 @@ namespace Zapp
             aValue = (value != 0);
         }
 
-        public unsafe void SetPropertyAmplifierAttenuation(string aValue)
+        public unsafe bool SetPropertyAmplifierAttenuation(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkComponent1SetPropertyAmplifierAttenuation(iHandle, value);
+            int err = DvServiceLinnCoUkComponent1SetPropertyAmplifierAttenuation(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyAmplifierAttenuation(out string aValue)
@@ -119,13 +123,15 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyVolumeControlEnabled(bool aValue)
+        public unsafe bool SetPropertyVolumeControlEnabled(bool aValue)
         {
+        uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkComponent1SetPropertyVolumeControlEnabled(iHandle, value))
+            if (0 != DvServiceLinnCoUkComponent1SetPropertyVolumeControlEnabled(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyVolumeControlEnabled(out bool aValue)
@@ -135,13 +141,15 @@ namespace Zapp
             aValue = (value != 0);
         }
 
-        public unsafe void SetPropertyDigitalAudioOutputRaw(bool aValue)
+        public unsafe bool SetPropertyDigitalAudioOutputRaw(bool aValue)
         {
+        uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkComponent1SetPropertyDigitalAudioOutputRaw(iHandle, value))
+            if (0 != DvServiceLinnCoUkComponent1SetPropertyDigitalAudioOutputRaw(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyDigitalAudioOutputRaw(out bool aValue)

@@ -12,47 +12,47 @@ namespace Zapp
         [DllImport("DvLinnCoUkUi2")]
         static extern void DvServiceLinnCoUkUi2Destroy(uint aHandle);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayBrightness(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayBrightness(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
         static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayBrightness(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayBrightnessAuto(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayBrightnessAuto(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
         static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayBrightnessAuto(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyInfraredCommands(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyInfraredCommands(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
         static extern unsafe void DvServiceLinnCoUkUi2GetPropertyInfraredCommands(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyInfraredTerminalCommands(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyInfraredTerminalCommands(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
         static extern unsafe void DvServiceLinnCoUkUi2GetPropertyInfraredTerminalCommands(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayUpsideDown(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayUpsideDown(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
         static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayUpsideDown(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayScrollText(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayScrollText(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
         static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayScrollText(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplaySleep(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplaySleep(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
         static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplaySleep(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayLedOff(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayLedOff(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
         static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayLedOff(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyTerminalInputCode(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyTerminalInputCode(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
         static extern unsafe void DvServiceLinnCoUkUi2GetPropertyTerminalInputCode(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyTerminalInputName(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyTerminalInputName(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
         static extern unsafe void DvServiceLinnCoUkUi2GetPropertyTerminalInputName(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayPixels(uint aHandle, char* aValue, int aValueLen);
+        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayPixels(uint aHandle, char* aValue, int aValueLen, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
         static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayPixels(uint aHandle, char** aValue, int* aValueLen);
         [DllImport("DvLinnCoUkUi2")]
@@ -164,12 +164,14 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyDisplayBrightness(uint aValue)
+        public unsafe bool SetPropertyDisplayBrightness(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkUi2SetPropertyDisplayBrightness(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkUi2SetPropertyDisplayBrightness(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyDisplayBrightness(out uint aValue)
@@ -180,13 +182,15 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyDisplayBrightnessAuto(bool aValue)
+        public unsafe bool SetPropertyDisplayBrightnessAuto(bool aValue)
         {
+        uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkUi2SetPropertyDisplayBrightnessAuto(iHandle, value))
+            if (0 != DvServiceLinnCoUkUi2SetPropertyDisplayBrightnessAuto(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyDisplayBrightnessAuto(out bool aValue)
@@ -196,15 +200,17 @@ namespace Zapp
             aValue = (value != 0);
         }
 
-        public unsafe void SetPropertyInfraredCommands(string aValue)
+        public unsafe bool SetPropertyInfraredCommands(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkUi2SetPropertyInfraredCommands(iHandle, value);
+            int err = DvServiceLinnCoUkUi2SetPropertyInfraredCommands(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyInfraredCommands(out string aValue)
@@ -215,15 +221,17 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyInfraredTerminalCommands(string aValue)
+        public unsafe bool SetPropertyInfraredTerminalCommands(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkUi2SetPropertyInfraredTerminalCommands(iHandle, value);
+            int err = DvServiceLinnCoUkUi2SetPropertyInfraredTerminalCommands(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyInfraredTerminalCommands(out string aValue)
@@ -234,13 +242,15 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyDisplayUpsideDown(bool aValue)
+        public unsafe bool SetPropertyDisplayUpsideDown(bool aValue)
         {
+        uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkUi2SetPropertyDisplayUpsideDown(iHandle, value))
+            if (0 != DvServiceLinnCoUkUi2SetPropertyDisplayUpsideDown(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyDisplayUpsideDown(out bool aValue)
@@ -250,13 +260,15 @@ namespace Zapp
             aValue = (value != 0);
         }
 
-        public unsafe void SetPropertyDisplayScrollText(bool aValue)
+        public unsafe bool SetPropertyDisplayScrollText(bool aValue)
         {
+        uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkUi2SetPropertyDisplayScrollText(iHandle, value))
+            if (0 != DvServiceLinnCoUkUi2SetPropertyDisplayScrollText(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyDisplayScrollText(out bool aValue)
@@ -266,13 +278,15 @@ namespace Zapp
             aValue = (value != 0);
         }
 
-        public unsafe void SetPropertyDisplaySleep(bool aValue)
+        public unsafe bool SetPropertyDisplaySleep(bool aValue)
         {
+        uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkUi2SetPropertyDisplaySleep(iHandle, value))
+            if (0 != DvServiceLinnCoUkUi2SetPropertyDisplaySleep(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyDisplaySleep(out bool aValue)
@@ -282,13 +296,15 @@ namespace Zapp
             aValue = (value != 0);
         }
 
-        public unsafe void SetPropertyDisplayLedOff(bool aValue)
+        public unsafe bool SetPropertyDisplayLedOff(bool aValue)
         {
+        uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkUi2SetPropertyDisplayLedOff(iHandle, value))
+            if (0 != DvServiceLinnCoUkUi2SetPropertyDisplayLedOff(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyDisplayLedOff(out bool aValue)
@@ -298,12 +314,14 @@ namespace Zapp
             aValue = (value != 0);
         }
 
-        public unsafe void SetPropertyTerminalInputCode(uint aValue)
+        public unsafe bool SetPropertyTerminalInputCode(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkUi2SetPropertyTerminalInputCode(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkUi2SetPropertyTerminalInputCode(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyTerminalInputCode(out uint aValue)
@@ -314,15 +332,17 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyTerminalInputName(string aValue)
+        public unsafe bool SetPropertyTerminalInputName(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkUi2SetPropertyTerminalInputName(iHandle, value);
+            int err = DvServiceLinnCoUkUi2SetPropertyTerminalInputName(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyTerminalInputName(out string aValue)
@@ -333,16 +353,18 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyDisplayPixels(string aValue)
+        public unsafe bool SetPropertyDisplayPixels(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int valueLen = aValue.Length;
-            int err = DvServiceLinnCoUkUi2SetPropertyDisplayPixels(iHandle, value, valueLen);
+            int err = DvServiceLinnCoUkUi2SetPropertyDisplayPixels(iHandle, value, valueLen, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyDisplayPixels(out string aValue)

@@ -12,15 +12,15 @@ namespace Zapp
         [DllImport("DvLinnCoUkTime1")]
         static extern void DvServiceLinnCoUkTime1Destroy(uint aHandle);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe int DvServiceLinnCoUkTime1SetPropertyTrackCount(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkTime1SetPropertyTrackCount(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkTime1")]
         static extern unsafe void DvServiceLinnCoUkTime1GetPropertyTrackCount(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe int DvServiceLinnCoUkTime1SetPropertyDuration(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkTime1SetPropertyDuration(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkTime1")]
         static extern unsafe void DvServiceLinnCoUkTime1GetPropertyDuration(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe int DvServiceLinnCoUkTime1SetPropertySeconds(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkTime1SetPropertySeconds(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkTime1")]
         static extern unsafe void DvServiceLinnCoUkTime1GetPropertySeconds(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkTime1")]
@@ -40,12 +40,14 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyTrackCount(uint aValue)
+        public unsafe bool SetPropertyTrackCount(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkTime1SetPropertyTrackCount(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkTime1SetPropertyTrackCount(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyTrackCount(out uint aValue)
@@ -56,12 +58,14 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyDuration(uint aValue)
+        public unsafe bool SetPropertyDuration(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkTime1SetPropertyDuration(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkTime1SetPropertyDuration(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyDuration(out uint aValue)
@@ -72,12 +76,14 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertySeconds(uint aValue)
+        public unsafe bool SetPropertySeconds(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkTime1SetPropertySeconds(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkTime1SetPropertySeconds(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertySeconds(out uint aValue)

@@ -60,7 +60,8 @@ static int32_t echoBinary(void* /*aPtr*/, uint32_t /*aVersion*/, const char* aVa
 
 static int32_t setUint(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueUint)
 {
-    return DvServiceZappOrgTestBasic1SetPropertyVarUint((THandle)aPtr, aValueUint);
+    uint32_t changed;
+    return DvServiceZappOrgTestBasic1SetPropertyVarUint((THandle)aPtr, aValueUint, &changed);
 }
 
 static int32_t getUint(void* aPtr, uint32_t /*aVersion*/, uint32_t* aValueUint)
@@ -71,7 +72,8 @@ static int32_t getUint(void* aPtr, uint32_t /*aVersion*/, uint32_t* aValueUint)
 
 static int32_t setInt(void* aPtr, uint32_t /*aVersion*/, int32_t aValueInt)
 {
-    return DvServiceZappOrgTestBasic1SetPropertyVarInt((THandle)aPtr, aValueInt);
+    uint32_t changed;
+    return DvServiceZappOrgTestBasic1SetPropertyVarInt((THandle)aPtr, aValueInt, &changed);
 }
 
 static int32_t getInt(void* aPtr, uint32_t /*aVersion*/, int32_t* aValueInt)
@@ -82,7 +84,8 @@ static int32_t getInt(void* aPtr, uint32_t /*aVersion*/, int32_t* aValueInt)
 
 static int32_t setBool(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueBool)
 {
-    return DvServiceZappOrgTestBasic1SetPropertyVarBool((THandle)aPtr, aValueBool);
+    uint32_t changed;
+    return DvServiceZappOrgTestBasic1SetPropertyVarBool((THandle)aPtr, aValueBool, &changed);
 }
 
 static int32_t getBool(void* aPtr, uint32_t /*aVersion*/, uint32_t* aValueBool)
@@ -93,9 +96,12 @@ static int32_t getBool(void* aPtr, uint32_t /*aVersion*/, uint32_t* aValueBool)
 
 static int32_t setMultiple(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueUint, int32_t aValueInt, uint32_t aValueBool)
 {
-    if (0 == DvServiceZappOrgTestBasic1SetPropertyVarUint((THandle)aPtr, aValueUint) &&
-        0 == DvServiceZappOrgTestBasic1SetPropertyVarInt((THandle)aPtr, aValueInt)   &&
-        0 == DvServiceZappOrgTestBasic1SetPropertyVarBool((THandle)aPtr, aValueBool)) {
+    uint32_t changed1;
+    uint32_t changed2;
+    uint32_t changed3;
+    if (0 == DvServiceZappOrgTestBasic1SetPropertyVarUint((THandle)aPtr, aValueUint, &changed1) &&
+        0 == DvServiceZappOrgTestBasic1SetPropertyVarInt((THandle)aPtr, aValueInt, &changed2)   &&
+        0 == DvServiceZappOrgTestBasic1SetPropertyVarBool((THandle)aPtr, aValueBool, &changed3)) {
         return 0;
     }
     return -1;
@@ -103,7 +109,8 @@ static int32_t setMultiple(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueUin
 
 static int32_t setString(void* aPtr, uint32_t /*aVersion*/, const char* aValueStr)
 {
-    return DvServiceZappOrgTestBasic1SetPropertyVarStr((THandle)aPtr, aValueStr);
+    uint32_t changed;
+    return DvServiceZappOrgTestBasic1SetPropertyVarStr((THandle)aPtr, aValueStr, &changed);
 }
 
 static int32_t getString(void* aPtr, uint32_t /*aVersion*/, char** aValueStr)
@@ -114,7 +121,8 @@ static int32_t getString(void* aPtr, uint32_t /*aVersion*/, char** aValueStr)
 
 static int32_t setBinary(void* aPtr, uint32_t /*aVersion*/, const char* aValueBin, uint32_t aValueBinLen)
 {
-    return DvServiceZappOrgTestBasic1SetPropertyVarBin((THandle)aPtr, aValueBin, aValueBinLen);
+    uint32_t changed;
+    return DvServiceZappOrgTestBasic1SetPropertyVarBin((THandle)aPtr, aValueBin, aValueBinLen, &changed);
 }
 
 static int32_t getBinary(void* aPtr, uint32_t /*aVersion*/, char** aValueBin, uint32_t* aValueBinLen)
@@ -167,11 +175,12 @@ DeviceBasic::DeviceBasic()
     DvDeviceSetAttribute(iDevice, "Upnp.Upc", "123456654321");
     iTestBasic = DvServiceZappOrgTestBasic1Create(iDevice);
 
-    (void)DvServiceZappOrgTestBasic1SetPropertyVarUint(iTestBasic, 0);
-    (void)DvServiceZappOrgTestBasic1SetPropertyVarInt(iTestBasic, 0);
-    (void)DvServiceZappOrgTestBasic1SetPropertyVarBool(iTestBasic, 0);
-    (void)DvServiceZappOrgTestBasic1SetPropertyVarStr(iTestBasic, "");
-    (void)DvServiceZappOrgTestBasic1SetPropertyVarBin(iTestBasic, "", 0);
+    uint32_t ignore;
+    (void)DvServiceZappOrgTestBasic1SetPropertyVarUint(iTestBasic, 0, &ignore);
+    (void)DvServiceZappOrgTestBasic1SetPropertyVarInt(iTestBasic, 0, &ignore);
+    (void)DvServiceZappOrgTestBasic1SetPropertyVarBool(iTestBasic, 0, &ignore);
+    (void)DvServiceZappOrgTestBasic1SetPropertyVarStr(iTestBasic, "", &ignore);
+    (void)DvServiceZappOrgTestBasic1SetPropertyVarBin(iTestBasic, "", 0, &ignore);
     DvServiceZappOrgTestBasic1EnableActionIncrement(iTestBasic, increment, NULL);
     DvServiceZappOrgTestBasic1EnableActionDecrement(iTestBasic, decrement, NULL);
     DvServiceZappOrgTestBasic1EnableActionToggle(iTestBasic, toggle, NULL);

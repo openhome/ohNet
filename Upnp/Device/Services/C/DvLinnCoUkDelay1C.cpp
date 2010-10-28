@@ -288,10 +288,10 @@ void DvServiceLinnCoUkDelay1EnableActionPresetCount(THandle aService, CallbackDe
     reinterpret_cast<DvServiceLinnCoUkDelay1C*>(aService)->EnableActionPresetCount(aCallback, aPtr);
 }
 
-int32_t DvServiceLinnCoUkDelay1SetPropertyPresetXml(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkDelay1SetPropertyPresetXml(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkDelay1C*>(aService)->SetPropertyPresetXml(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkDelay1C*>(aService)->SetPropertyPresetXml(buf)? 1 : 0);
     return 0;
 }
 
@@ -302,9 +302,9 @@ void DvServiceLinnCoUkDelay1GetPropertyPresetXml(THandle aService, char** aValue
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkDelay1SetPropertyPresetIndex(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkDelay1SetPropertyPresetIndex(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkDelay1C*>(aService)->SetPropertyPresetIndex(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkDelay1C*>(aService)->SetPropertyPresetIndex(aValue)? 1 : 0);
     return 0;
 }
 

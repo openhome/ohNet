@@ -19,9 +19,9 @@ DllExport void DvServiceLinnCoUkConfiguration1EnableActionConfigurationXml(THand
 DllExport void DvServiceLinnCoUkConfiguration1EnableActionParameterXml(THandle aService, CallbackConfiguration1ParameterXml aCallback, void* aPtr);
 DllExport void DvServiceLinnCoUkConfiguration1EnableActionSetParameter(THandle aService, CallbackConfiguration1SetParameter aCallback, void* aPtr);
 
-DllExport int32_t DvServiceLinnCoUkConfiguration1SetPropertyConfigurationXml(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkConfiguration1SetPropertyConfigurationXml(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkConfiguration1GetPropertyConfigurationXml(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkConfiguration1SetPropertyParameterXml(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkConfiguration1SetPropertyParameterXml(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkConfiguration1GetPropertyParameterXml(THandle aService, char** aValue);
 
 #ifdef __cplusplus

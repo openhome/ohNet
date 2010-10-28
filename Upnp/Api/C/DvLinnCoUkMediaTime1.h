@@ -15,7 +15,7 @@ DllExport void DvServiceLinnCoUkMediaTime1Destroy(THandle aService);
 
 DllExport void DvServiceLinnCoUkMediaTime1EnableActionSeconds(THandle aService, CallbackMediaTime1Seconds aCallback, void* aPtr);
 
-DllExport int32_t DvServiceLinnCoUkMediaTime1SetPropertySeconds(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkMediaTime1SetPropertySeconds(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkMediaTime1GetPropertySeconds(THandle aService, uint32_t* aValue);
 
 #ifdef __cplusplus

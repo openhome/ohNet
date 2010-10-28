@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkProduct2::SetPropertyProductName(const Brx& aValue)
+TBool DvServiceLinnCoUkProduct2::SetPropertyProductName(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyProductName, aValue);
+    return SetPropertyString(*iPropertyProductName, aValue);
 }
 
 void DvServiceLinnCoUkProduct2::GetPropertyProductName(Brhz& aValue)
@@ -16,9 +16,9 @@ void DvServiceLinnCoUkProduct2::GetPropertyProductName(Brhz& aValue)
     aValue.Set(iPropertyProductName->Value());
 }
 
-void DvServiceLinnCoUkProduct2::SetPropertyProductRoom(const Brx& aValue)
+TBool DvServiceLinnCoUkProduct2::SetPropertyProductRoom(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyProductRoom, aValue);
+    return SetPropertyString(*iPropertyProductRoom, aValue);
 }
 
 void DvServiceLinnCoUkProduct2::GetPropertyProductRoom(Brhz& aValue)
@@ -26,9 +26,9 @@ void DvServiceLinnCoUkProduct2::GetPropertyProductRoom(Brhz& aValue)
     aValue.Set(iPropertyProductRoom->Value());
 }
 
-void DvServiceLinnCoUkProduct2::SetPropertyProductStandby(TBool aValue)
+TBool DvServiceLinnCoUkProduct2::SetPropertyProductStandby(TBool aValue)
 {
-    SetPropertyBool(*iPropertyProductStandby, aValue);
+    return SetPropertyBool(*iPropertyProductStandby, aValue);
 }
 
 void DvServiceLinnCoUkProduct2::GetPropertyProductStandby(TBool& aValue)
@@ -36,9 +36,9 @@ void DvServiceLinnCoUkProduct2::GetPropertyProductStandby(TBool& aValue)
     aValue = iPropertyProductStandby->Value();
 }
 
-void DvServiceLinnCoUkProduct2::SetPropertyProductSourceIndex(TUint aValue)
+TBool DvServiceLinnCoUkProduct2::SetPropertyProductSourceIndex(TUint aValue)
 {
-    SetPropertyUint(*iPropertyProductSourceIndex, aValue);
+    return SetPropertyUint(*iPropertyProductSourceIndex, aValue);
 }
 
 void DvServiceLinnCoUkProduct2::GetPropertyProductSourceIndex(TUint& aValue)

@@ -24,11 +24,11 @@ class DvServiceUpnpOrgConnectionManager2Cpp : public DvService
 {
 public:
     virtual ~DvServiceUpnpOrgConnectionManager2Cpp() {}
-    void SetPropertySourceProtocolInfo(const std::string& aValue);
+    bool SetPropertySourceProtocolInfo(const std::string& aValue);
     void GetPropertySourceProtocolInfo(std::string& aValue);
-    void SetPropertySinkProtocolInfo(const std::string& aValue);
+    bool SetPropertySinkProtocolInfo(const std::string& aValue);
     void GetPropertySinkProtocolInfo(std::string& aValue);
-    void SetPropertyCurrentConnectionIDs(const std::string& aValue);
+    bool SetPropertyCurrentConnectionIDs(const std::string& aValue);
     void GetPropertyCurrentConnectionIDs(std::string& aValue);
 protected:
     DvServiceUpnpOrgConnectionManager2Cpp(DvDeviceStd& aDevice);

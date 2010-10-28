@@ -87,7 +87,7 @@ DllExport void DvServiceUpnpOrgRenderingControl2EnableActionSetLoudness(THandle 
 DllExport void DvServiceUpnpOrgRenderingControl2EnableActionGetStateVariables(THandle aService, CallbackRenderingControl2GetStateVariables aCallback, void* aPtr);
 DllExport void DvServiceUpnpOrgRenderingControl2EnableActionSetStateVariables(THandle aService, CallbackRenderingControl2SetStateVariables aCallback, void* aPtr);
 
-DllExport int32_t DvServiceUpnpOrgRenderingControl2SetPropertyLastChange(THandle aService, const char* aValue);
+DllExport int32_t DvServiceUpnpOrgRenderingControl2SetPropertyLastChange(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceUpnpOrgRenderingControl2GetPropertyLastChange(THandle aService, char** aValue);
 
 #ifdef __cplusplus

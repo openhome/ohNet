@@ -24,31 +24,31 @@ class DvServiceLinnCoUkProduct3Cpp : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkProduct3Cpp() {}
-    void SetPropertyProductType(const std::string& aValue);
+    bool SetPropertyProductType(const std::string& aValue);
     void GetPropertyProductType(std::string& aValue);
-    void SetPropertyProductModel(const std::string& aValue);
+    bool SetPropertyProductModel(const std::string& aValue);
     void GetPropertyProductModel(std::string& aValue);
-    void SetPropertyProductName(const std::string& aValue);
+    bool SetPropertyProductName(const std::string& aValue);
     void GetPropertyProductName(std::string& aValue);
-    void SetPropertyProductRoom(const std::string& aValue);
+    bool SetPropertyProductRoom(const std::string& aValue);
     void GetPropertyProductRoom(std::string& aValue);
-    void SetPropertyProductStandby(bool aValue);
+    bool SetPropertyProductStandby(bool aValue);
     void GetPropertyProductStandby(bool& aValue);
-    void SetPropertyProductSourceIndex(uint32_t aValue);
+    bool SetPropertyProductSourceIndex(uint32_t aValue);
     void GetPropertyProductSourceIndex(uint32_t& aValue);
-    void SetPropertyProductSourceCount(uint32_t aValue);
+    bool SetPropertyProductSourceCount(uint32_t aValue);
     void GetPropertyProductSourceCount(uint32_t& aValue);
-    void SetPropertyProductSourceXml(const std::string& aValue);
+    bool SetPropertyProductSourceXml(const std::string& aValue);
     void GetPropertyProductSourceXml(std::string& aValue);
-    void SetPropertyStartupSourceIndex(uint32_t aValue);
+    bool SetPropertyStartupSourceIndex(uint32_t aValue);
     void GetPropertyStartupSourceIndex(uint32_t& aValue);
-    void SetPropertyStartupSourceEnabled(bool aValue);
+    bool SetPropertyStartupSourceEnabled(bool aValue);
     void GetPropertyStartupSourceEnabled(bool& aValue);
-    void SetPropertyProductAnySourceName(uint32_t aValue);
+    bool SetPropertyProductAnySourceName(uint32_t aValue);
     void GetPropertyProductAnySourceName(uint32_t& aValue);
-    void SetPropertyProductAnySourceVisible(uint32_t aValue);
+    bool SetPropertyProductAnySourceVisible(uint32_t aValue);
     void GetPropertyProductAnySourceVisible(uint32_t& aValue);
-    void SetPropertyProductAnySourceType(uint32_t aValue);
+    bool SetPropertyProductAnySourceType(uint32_t aValue);
     void GetPropertyProductAnySourceType(uint32_t& aValue);
 protected:
     DvServiceLinnCoUkProduct3Cpp(DvDeviceStd& aDevice);

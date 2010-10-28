@@ -23,11 +23,11 @@ DllExport void DvServiceUpnpOrgConnectionManager1EnableActionConnectionComplete(
 DllExport void DvServiceUpnpOrgConnectionManager1EnableActionGetCurrentConnectionIDs(THandle aService, CallbackConnectionManager1GetCurrentConnectionIDs aCallback, void* aPtr);
 DllExport void DvServiceUpnpOrgConnectionManager1EnableActionGetCurrentConnectionInfo(THandle aService, CallbackConnectionManager1GetCurrentConnectionInfo aCallback, void* aPtr);
 
-DllExport int32_t DvServiceUpnpOrgConnectionManager1SetPropertySourceProtocolInfo(THandle aService, const char* aValue);
+DllExport int32_t DvServiceUpnpOrgConnectionManager1SetPropertySourceProtocolInfo(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceUpnpOrgConnectionManager1GetPropertySourceProtocolInfo(THandle aService, char** aValue);
-DllExport int32_t DvServiceUpnpOrgConnectionManager1SetPropertySinkProtocolInfo(THandle aService, const char* aValue);
+DllExport int32_t DvServiceUpnpOrgConnectionManager1SetPropertySinkProtocolInfo(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceUpnpOrgConnectionManager1GetPropertySinkProtocolInfo(THandle aService, char** aValue);
-DllExport int32_t DvServiceUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDs(THandle aService, const char* aValue);
+DllExport int32_t DvServiceUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDs(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceUpnpOrgConnectionManager1GetPropertyCurrentConnectionIDs(THandle aService, char** aValue);
 
 #ifdef __cplusplus

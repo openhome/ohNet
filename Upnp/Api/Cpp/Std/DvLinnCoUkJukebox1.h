@@ -24,11 +24,11 @@ class DvServiceLinnCoUkJukebox1Cpp : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkJukebox1Cpp() {}
-    void SetPropertyCurrentPreset(uint32_t aValue);
+    bool SetPropertyCurrentPreset(uint32_t aValue);
     void GetPropertyCurrentPreset(uint32_t& aValue);
-    void SetPropertyPresetPrefix(const std::string& aValue);
+    bool SetPropertyPresetPrefix(const std::string& aValue);
     void GetPropertyPresetPrefix(std::string& aValue);
-    void SetPropertyAlbumArtFileName(const std::string& aValue);
+    bool SetPropertyAlbumArtFileName(const std::string& aValue);
     void GetPropertyAlbumArtFileName(std::string& aValue);
 protected:
     DvServiceLinnCoUkJukebox1Cpp(DvDeviceStd& aDevice);

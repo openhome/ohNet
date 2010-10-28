@@ -12,7 +12,7 @@ namespace Zapp
         [DllImport("DvZappOrgTestDimmableLight1")]
         static extern void DvServiceZappOrgTestDimmableLight1Destroy(uint aHandle);
         [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern unsafe int DvServiceZappOrgTestDimmableLight1SetPropertyA_ARG_Level(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceZappOrgTestDimmableLight1SetPropertyA_ARG_Level(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvZappOrgTestDimmableLight1")]
         static extern unsafe void DvServiceZappOrgTestDimmableLight1GetPropertyA_ARG_Level(uint aHandle, uint* aValue);
         [DllImport("DvZappOrgTestDimmableLight1")]
@@ -36,12 +36,14 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyA_ARG_Level(uint aValue)
+        public unsafe bool SetPropertyA_ARG_Level(uint aValue)
         {
-            if (0 != DvServiceZappOrgTestDimmableLight1SetPropertyA_ARG_Level(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceZappOrgTestDimmableLight1SetPropertyA_ARG_Level(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyA_ARG_Level(out uint aValue)

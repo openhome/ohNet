@@ -12,23 +12,23 @@ namespace Zapp
         [DllImport("DvUpnpOrgDimming1")]
         static extern void DvServiceUpnpOrgDimming1Destroy(uint aHandle);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe int DvServiceUpnpOrgDimming1SetPropertyLoadLevelStatus(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceUpnpOrgDimming1SetPropertyLoadLevelStatus(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvUpnpOrgDimming1")]
         static extern unsafe void DvServiceUpnpOrgDimming1GetPropertyLoadLevelStatus(uint aHandle, uint* aValue);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe int DvServiceUpnpOrgDimming1SetPropertyStepDelta(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceUpnpOrgDimming1SetPropertyStepDelta(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvUpnpOrgDimming1")]
         static extern unsafe void DvServiceUpnpOrgDimming1GetPropertyStepDelta(uint aHandle, uint* aValue);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe int DvServiceUpnpOrgDimming1SetPropertyRampRate(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceUpnpOrgDimming1SetPropertyRampRate(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvUpnpOrgDimming1")]
         static extern unsafe void DvServiceUpnpOrgDimming1GetPropertyRampRate(uint aHandle, uint* aValue);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe int DvServiceUpnpOrgDimming1SetPropertyIsRamping(uint aHandle, int aValue);
+        static extern unsafe int DvServiceUpnpOrgDimming1SetPropertyIsRamping(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvUpnpOrgDimming1")]
         static extern unsafe void DvServiceUpnpOrgDimming1GetPropertyIsRamping(uint aHandle, int* aValue);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe int DvServiceUpnpOrgDimming1SetPropertyRampPaused(uint aHandle, int aValue);
+        static extern unsafe int DvServiceUpnpOrgDimming1SetPropertyRampPaused(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvUpnpOrgDimming1")]
         static extern unsafe void DvServiceUpnpOrgDimming1GetPropertyRampPaused(uint aHandle, int* aValue);
         [DllImport("DvUpnpOrgDimming1")]
@@ -128,12 +128,14 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyLoadLevelStatus(uint aValue)
+        public unsafe bool SetPropertyLoadLevelStatus(uint aValue)
         {
-            if (0 != DvServiceUpnpOrgDimming1SetPropertyLoadLevelStatus(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceUpnpOrgDimming1SetPropertyLoadLevelStatus(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyLoadLevelStatus(out uint aValue)
@@ -144,12 +146,14 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyStepDelta(uint aValue)
+        public unsafe bool SetPropertyStepDelta(uint aValue)
         {
-            if (0 != DvServiceUpnpOrgDimming1SetPropertyStepDelta(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceUpnpOrgDimming1SetPropertyStepDelta(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyStepDelta(out uint aValue)
@@ -160,12 +164,14 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyRampRate(uint aValue)
+        public unsafe bool SetPropertyRampRate(uint aValue)
         {
-            if (0 != DvServiceUpnpOrgDimming1SetPropertyRampRate(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceUpnpOrgDimming1SetPropertyRampRate(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyRampRate(out uint aValue)
@@ -176,13 +182,15 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyIsRamping(bool aValue)
+        public unsafe bool SetPropertyIsRamping(bool aValue)
         {
+        uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceUpnpOrgDimming1SetPropertyIsRamping(iHandle, value))
+            if (0 != DvServiceUpnpOrgDimming1SetPropertyIsRamping(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyIsRamping(out bool aValue)
@@ -192,13 +200,15 @@ namespace Zapp
             aValue = (value != 0);
         }
 
-        public unsafe void SetPropertyRampPaused(bool aValue)
+        public unsafe bool SetPropertyRampPaused(bool aValue)
         {
+        uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceUpnpOrgDimming1SetPropertyRampPaused(iHandle, value))
+            if (0 != DvServiceUpnpOrgDimming1SetPropertyRampPaused(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyRampPaused(out bool aValue)

@@ -24,7 +24,7 @@ class DvServiceUpnpOrgRenderingControl1Cpp : public DvService
 {
 public:
     virtual ~DvServiceUpnpOrgRenderingControl1Cpp() {}
-    void SetPropertyLastChange(const std::string& aValue);
+    bool SetPropertyLastChange(const std::string& aValue);
     void GetPropertyLastChange(std::string& aValue);
 protected:
     DvServiceUpnpOrgRenderingControl1Cpp(DvDeviceStd& aDevice);

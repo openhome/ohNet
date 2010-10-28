@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkInfo1::SetPropertyTrackCount(TUint aValue)
+TBool DvServiceLinnCoUkInfo1::SetPropertyTrackCount(TUint aValue)
 {
-    SetPropertyUint(*iPropertyTrackCount, aValue);
+    return SetPropertyUint(*iPropertyTrackCount, aValue);
 }
 
 void DvServiceLinnCoUkInfo1::GetPropertyTrackCount(TUint& aValue)
@@ -16,9 +16,9 @@ void DvServiceLinnCoUkInfo1::GetPropertyTrackCount(TUint& aValue)
     aValue = iPropertyTrackCount->Value();
 }
 
-void DvServiceLinnCoUkInfo1::SetPropertyDetailsCount(TUint aValue)
+TBool DvServiceLinnCoUkInfo1::SetPropertyDetailsCount(TUint aValue)
 {
-    SetPropertyUint(*iPropertyDetailsCount, aValue);
+    return SetPropertyUint(*iPropertyDetailsCount, aValue);
 }
 
 void DvServiceLinnCoUkInfo1::GetPropertyDetailsCount(TUint& aValue)
@@ -26,9 +26,9 @@ void DvServiceLinnCoUkInfo1::GetPropertyDetailsCount(TUint& aValue)
     aValue = iPropertyDetailsCount->Value();
 }
 
-void DvServiceLinnCoUkInfo1::SetPropertyMetatextCount(TUint aValue)
+TBool DvServiceLinnCoUkInfo1::SetPropertyMetatextCount(TUint aValue)
 {
-    SetPropertyUint(*iPropertyMetatextCount, aValue);
+    return SetPropertyUint(*iPropertyMetatextCount, aValue);
 }
 
 void DvServiceLinnCoUkInfo1::GetPropertyMetatextCount(TUint& aValue)
@@ -36,9 +36,9 @@ void DvServiceLinnCoUkInfo1::GetPropertyMetatextCount(TUint& aValue)
     aValue = iPropertyMetatextCount->Value();
 }
 
-void DvServiceLinnCoUkInfo1::SetPropertyUri(const Brx& aValue)
+TBool DvServiceLinnCoUkInfo1::SetPropertyUri(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyUri, aValue);
+    return SetPropertyString(*iPropertyUri, aValue);
 }
 
 void DvServiceLinnCoUkInfo1::GetPropertyUri(Brhz& aValue)
@@ -46,9 +46,9 @@ void DvServiceLinnCoUkInfo1::GetPropertyUri(Brhz& aValue)
     aValue.Set(iPropertyUri->Value());
 }
 
-void DvServiceLinnCoUkInfo1::SetPropertyMetadata(const Brx& aValue)
+TBool DvServiceLinnCoUkInfo1::SetPropertyMetadata(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyMetadata, aValue);
+    return SetPropertyString(*iPropertyMetadata, aValue);
 }
 
 void DvServiceLinnCoUkInfo1::GetPropertyMetadata(Brhz& aValue)
@@ -56,9 +56,9 @@ void DvServiceLinnCoUkInfo1::GetPropertyMetadata(Brhz& aValue)
     aValue.Set(iPropertyMetadata->Value());
 }
 
-void DvServiceLinnCoUkInfo1::SetPropertyDuration(TUint aValue)
+TBool DvServiceLinnCoUkInfo1::SetPropertyDuration(TUint aValue)
 {
-    SetPropertyUint(*iPropertyDuration, aValue);
+    return SetPropertyUint(*iPropertyDuration, aValue);
 }
 
 void DvServiceLinnCoUkInfo1::GetPropertyDuration(TUint& aValue)
@@ -66,9 +66,9 @@ void DvServiceLinnCoUkInfo1::GetPropertyDuration(TUint& aValue)
     aValue = iPropertyDuration->Value();
 }
 
-void DvServiceLinnCoUkInfo1::SetPropertyBitRate(TUint aValue)
+TBool DvServiceLinnCoUkInfo1::SetPropertyBitRate(TUint aValue)
 {
-    SetPropertyUint(*iPropertyBitRate, aValue);
+    return SetPropertyUint(*iPropertyBitRate, aValue);
 }
 
 void DvServiceLinnCoUkInfo1::GetPropertyBitRate(TUint& aValue)
@@ -76,9 +76,9 @@ void DvServiceLinnCoUkInfo1::GetPropertyBitRate(TUint& aValue)
     aValue = iPropertyBitRate->Value();
 }
 
-void DvServiceLinnCoUkInfo1::SetPropertyBitDepth(TUint aValue)
+TBool DvServiceLinnCoUkInfo1::SetPropertyBitDepth(TUint aValue)
 {
-    SetPropertyUint(*iPropertyBitDepth, aValue);
+    return SetPropertyUint(*iPropertyBitDepth, aValue);
 }
 
 void DvServiceLinnCoUkInfo1::GetPropertyBitDepth(TUint& aValue)
@@ -86,9 +86,9 @@ void DvServiceLinnCoUkInfo1::GetPropertyBitDepth(TUint& aValue)
     aValue = iPropertyBitDepth->Value();
 }
 
-void DvServiceLinnCoUkInfo1::SetPropertySampleRate(TUint aValue)
+TBool DvServiceLinnCoUkInfo1::SetPropertySampleRate(TUint aValue)
 {
-    SetPropertyUint(*iPropertySampleRate, aValue);
+    return SetPropertyUint(*iPropertySampleRate, aValue);
 }
 
 void DvServiceLinnCoUkInfo1::GetPropertySampleRate(TUint& aValue)
@@ -96,9 +96,9 @@ void DvServiceLinnCoUkInfo1::GetPropertySampleRate(TUint& aValue)
     aValue = iPropertySampleRate->Value();
 }
 
-void DvServiceLinnCoUkInfo1::SetPropertyLossless(TBool aValue)
+TBool DvServiceLinnCoUkInfo1::SetPropertyLossless(TBool aValue)
 {
-    SetPropertyBool(*iPropertyLossless, aValue);
+    return SetPropertyBool(*iPropertyLossless, aValue);
 }
 
 void DvServiceLinnCoUkInfo1::GetPropertyLossless(TBool& aValue)
@@ -106,9 +106,9 @@ void DvServiceLinnCoUkInfo1::GetPropertyLossless(TBool& aValue)
     aValue = iPropertyLossless->Value();
 }
 
-void DvServiceLinnCoUkInfo1::SetPropertyCodecName(const Brx& aValue)
+TBool DvServiceLinnCoUkInfo1::SetPropertyCodecName(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyCodecName, aValue);
+    return SetPropertyString(*iPropertyCodecName, aValue);
 }
 
 void DvServiceLinnCoUkInfo1::GetPropertyCodecName(Brhz& aValue)
@@ -116,9 +116,9 @@ void DvServiceLinnCoUkInfo1::GetPropertyCodecName(Brhz& aValue)
     aValue.Set(iPropertyCodecName->Value());
 }
 
-void DvServiceLinnCoUkInfo1::SetPropertyMetatext(const Brx& aValue)
+TBool DvServiceLinnCoUkInfo1::SetPropertyMetatext(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyMetatext, aValue);
+    return SetPropertyString(*iPropertyMetatext, aValue);
 }
 
 void DvServiceLinnCoUkInfo1::GetPropertyMetatext(Brhz& aValue)

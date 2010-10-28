@@ -6,10 +6,10 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkPlaylist1Cpp::SetPropertyIdArray(const std::string& aValue)
+bool DvServiceLinnCoUkPlaylist1Cpp::SetPropertyIdArray(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyBinary(*iPropertyIdArray, buf);
+    return SetPropertyBinary(*iPropertyIdArray, buf);
 }
 
 void DvServiceLinnCoUkPlaylist1Cpp::GetPropertyIdArray(std::string& aValue)
@@ -18,9 +18,9 @@ void DvServiceLinnCoUkPlaylist1Cpp::GetPropertyIdArray(std::string& aValue)
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::SetPropertyRepeat(bool aValue)
+bool DvServiceLinnCoUkPlaylist1Cpp::SetPropertyRepeat(bool aValue)
 {
-    SetPropertyBool(*iPropertyRepeat, aValue);
+    return SetPropertyBool(*iPropertyRepeat, aValue);
 }
 
 void DvServiceLinnCoUkPlaylist1Cpp::GetPropertyRepeat(bool& aValue)
@@ -28,9 +28,9 @@ void DvServiceLinnCoUkPlaylist1Cpp::GetPropertyRepeat(bool& aValue)
     aValue = iPropertyRepeat->Value();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::SetPropertyShuffle(bool aValue)
+bool DvServiceLinnCoUkPlaylist1Cpp::SetPropertyShuffle(bool aValue)
 {
-    SetPropertyBool(*iPropertyShuffle, aValue);
+    return SetPropertyBool(*iPropertyShuffle, aValue);
 }
 
 void DvServiceLinnCoUkPlaylist1Cpp::GetPropertyShuffle(bool& aValue)
@@ -38,9 +38,9 @@ void DvServiceLinnCoUkPlaylist1Cpp::GetPropertyShuffle(bool& aValue)
     aValue = iPropertyShuffle->Value();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::SetPropertyTracksMax(uint32_t aValue)
+bool DvServiceLinnCoUkPlaylist1Cpp::SetPropertyTracksMax(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyTracksMax, aValue);
+    return SetPropertyUint(*iPropertyTracksMax, aValue);
 }
 
 void DvServiceLinnCoUkPlaylist1Cpp::GetPropertyTracksMax(uint32_t& aValue)

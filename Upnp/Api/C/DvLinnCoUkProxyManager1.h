@@ -33,13 +33,13 @@ DllExport void DvServiceLinnCoUkProxyManager1EnableActionSetDiscPlayerComPort(TH
 DllExport void DvServiceLinnCoUkProxyManager1EnableActionTestKontrolProductConnection(THandle aService, CallbackProxyManager1TestKontrolProductConnection aCallback, void* aPtr);
 DllExport void DvServiceLinnCoUkProxyManager1EnableActionTestDiscPlayerConnection(THandle aService, CallbackProxyManager1TestDiscPlayerConnection aCallback, void* aPtr);
 
-DllExport int32_t DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductConnected(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductConnected(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkProxyManager1GetPropertyKontrolProductConnected(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductComPort(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductComPort(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkProxyManager1GetPropertyKontrolProductComPort(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerConnected(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerConnected(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkProxyManager1GetPropertyDiscPlayerConnected(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerComPort(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerComPort(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkProxyManager1GetPropertyDiscPlayerComPort(THandle aService, uint32_t* aValue);
 
 #ifdef __cplusplus

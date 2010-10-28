@@ -45,19 +45,19 @@ DllExport void DvServiceLinnCoUkRadio1EnableActionIdArray(THandle aService, Call
 DllExport void DvServiceLinnCoUkRadio1EnableActionIdArrayChanged(THandle aService, CallbackRadio1IdArrayChanged aCallback, void* aPtr);
 DllExport void DvServiceLinnCoUkRadio1EnableActionIdsMax(THandle aService, CallbackRadio1IdsMax aCallback, void* aPtr);
 
-DllExport int32_t DvServiceLinnCoUkRadio1SetPropertyChannelUri(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkRadio1SetPropertyChannelUri(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkRadio1GetPropertyChannelUri(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkRadio1SetPropertyChannelMetadata(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkRadio1SetPropertyChannelMetadata(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkRadio1GetPropertyChannelMetadata(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkRadio1SetPropertyTransportState(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkRadio1SetPropertyTransportState(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkRadio1GetPropertyTransportState(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkRadio1SetPropertyProtocolInfo(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkRadio1SetPropertyProtocolInfo(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkRadio1GetPropertyProtocolInfo(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkRadio1SetPropertyId(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkRadio1SetPropertyId(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkRadio1GetPropertyId(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkRadio1SetPropertyIdArray(THandle aService, const char* aValue, uint32_t aValueLen);
+DllExport int32_t DvServiceLinnCoUkRadio1SetPropertyIdArray(THandle aService, const char* aValue, uint32_t aValueLen, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkRadio1GetPropertyIdArray(THandle aService, char** aValue, uint32_t* aValueLen);
-DllExport int32_t DvServiceLinnCoUkRadio1SetPropertyIdsMax(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkRadio1SetPropertyIdsMax(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkRadio1GetPropertyIdsMax(THandle aService, uint32_t* aValue);
 
 #ifdef __cplusplus

@@ -61,9 +61,9 @@ void DvServiceLinnCoUkMediaTime1EnableActionSeconds(THandle aService, CallbackMe
     reinterpret_cast<DvServiceLinnCoUkMediaTime1C*>(aService)->EnableActionSeconds(aCallback, aPtr);
 }
 
-int32_t DvServiceLinnCoUkMediaTime1SetPropertySeconds(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkMediaTime1SetPropertySeconds(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkMediaTime1C*>(aService)->SetPropertySeconds(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkMediaTime1C*>(aService)->SetPropertySeconds(aValue)? 1 : 0);
     return 0;
 }
 

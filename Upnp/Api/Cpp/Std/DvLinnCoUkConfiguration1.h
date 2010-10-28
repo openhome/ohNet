@@ -24,9 +24,9 @@ class DvServiceLinnCoUkConfiguration1Cpp : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkConfiguration1Cpp() {}
-    void SetPropertyConfigurationXml(const std::string& aValue);
+    bool SetPropertyConfigurationXml(const std::string& aValue);
     void GetPropertyConfigurationXml(std::string& aValue);
-    void SetPropertyParameterXml(const std::string& aValue);
+    bool SetPropertyParameterXml(const std::string& aValue);
     void GetPropertyParameterXml(std::string& aValue);
 protected:
     DvServiceLinnCoUkConfiguration1Cpp(DvDeviceStd& aDevice);

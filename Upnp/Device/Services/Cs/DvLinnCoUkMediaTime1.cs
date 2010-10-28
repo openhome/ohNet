@@ -12,7 +12,7 @@ namespace Zapp
         [DllImport("DvLinnCoUkMediaTime1")]
         static extern void DvServiceLinnCoUkMediaTime1Destroy(uint aHandle);
         [DllImport("DvLinnCoUkMediaTime1")]
-        static extern unsafe int DvServiceLinnCoUkMediaTime1SetPropertySeconds(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkMediaTime1SetPropertySeconds(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkMediaTime1")]
         static extern unsafe void DvServiceLinnCoUkMediaTime1GetPropertySeconds(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkMediaTime1")]
@@ -32,12 +32,14 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertySeconds(uint aValue)
+        public unsafe bool SetPropertySeconds(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkMediaTime1SetPropertySeconds(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkMediaTime1SetPropertySeconds(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertySeconds(out uint aValue)

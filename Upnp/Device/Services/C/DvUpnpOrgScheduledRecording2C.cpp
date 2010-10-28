@@ -599,10 +599,10 @@ void DvServiceUpnpOrgScheduledRecording2EnableActionGetRecordTaskConflicts(THand
     reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->EnableActionGetRecordTaskConflicts(aCallback, aPtr);
 }
 
-int32_t DvServiceUpnpOrgScheduledRecording2SetPropertyLastChange(THandle aService, const char* aValue)
+int32_t DvServiceUpnpOrgScheduledRecording2SetPropertyLastChange(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->SetPropertyLastChange(buf);
+    *aChanged = (reinterpret_cast<DvServiceUpnpOrgScheduledRecording2C*>(aService)->SetPropertyLastChange(buf)? 1 : 0);
     return 0;
 }
 

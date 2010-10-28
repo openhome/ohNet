@@ -12,7 +12,7 @@ namespace Zapp
         [DllImport("DvUpnpOrgSwitchPower1")]
         static extern void DvServiceUpnpOrgSwitchPower1Destroy(uint aHandle);
         [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern unsafe int DvServiceUpnpOrgSwitchPower1SetPropertyStatus(uint aHandle, int aValue);
+        static extern unsafe int DvServiceUpnpOrgSwitchPower1SetPropertyStatus(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvUpnpOrgSwitchPower1")]
         static extern unsafe void DvServiceUpnpOrgSwitchPower1GetPropertyStatus(uint aHandle, int* aValue);
         [DllImport("DvUpnpOrgSwitchPower1")]
@@ -40,13 +40,15 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyStatus(bool aValue)
+        public unsafe bool SetPropertyStatus(bool aValue)
         {
+        uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceUpnpOrgSwitchPower1SetPropertyStatus(iHandle, value))
+            if (0 != DvServiceUpnpOrgSwitchPower1SetPropertyStatus(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyStatus(out bool aValue)

@@ -21,9 +21,9 @@ class DvServiceLinnCoUkProduct1 : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkProduct1() {}
-    void SetPropertyRoom(const Brx& aValue);
+    TBool SetPropertyRoom(const Brx& aValue);
     void GetPropertyRoom(Brhz& aValue);
-    void SetPropertyStandby(TBool aValue);
+    TBool SetPropertyStandby(TBool aValue);
     void GetPropertyStandby(TBool& aValue);
 protected:
     DvServiceLinnCoUkProduct1(DvDevice& aDevice);

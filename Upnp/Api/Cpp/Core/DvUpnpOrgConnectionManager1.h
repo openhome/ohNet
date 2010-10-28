@@ -21,11 +21,11 @@ class DvServiceUpnpOrgConnectionManager1 : public DvService
 {
 public:
     virtual ~DvServiceUpnpOrgConnectionManager1() {}
-    void SetPropertySourceProtocolInfo(const Brx& aValue);
+    TBool SetPropertySourceProtocolInfo(const Brx& aValue);
     void GetPropertySourceProtocolInfo(Brhz& aValue);
-    void SetPropertySinkProtocolInfo(const Brx& aValue);
+    TBool SetPropertySinkProtocolInfo(const Brx& aValue);
     void GetPropertySinkProtocolInfo(Brhz& aValue);
-    void SetPropertyCurrentConnectionIDs(const Brx& aValue);
+    TBool SetPropertyCurrentConnectionIDs(const Brx& aValue);
     void GetPropertyCurrentConnectionIDs(Brhz& aValue);
 protected:
     DvServiceUpnpOrgConnectionManager1(DvDevice& aDevice);

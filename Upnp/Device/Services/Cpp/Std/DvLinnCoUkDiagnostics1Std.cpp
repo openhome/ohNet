@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkDiagnostics1Cpp::SetPropertyaStateVariable(uint32_t aValue)
+bool DvServiceLinnCoUkDiagnostics1Cpp::SetPropertyaStateVariable(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyaStateVariable, aValue);
+    return SetPropertyUint(*iPropertyaStateVariable, aValue);
 }
 
 void DvServiceLinnCoUkDiagnostics1Cpp::GetPropertyaStateVariable(uint32_t& aValue)

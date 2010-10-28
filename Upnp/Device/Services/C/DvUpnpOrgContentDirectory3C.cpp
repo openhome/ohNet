@@ -672,9 +672,9 @@ void DvServiceUpnpOrgContentDirectory3EnableActionGetFreeFormQueryCapabilities(T
     reinterpret_cast<DvServiceUpnpOrgContentDirectory3C*>(aService)->EnableActionGetFreeFormQueryCapabilities(aCallback, aPtr);
 }
 
-int32_t DvServiceUpnpOrgContentDirectory3SetPropertySystemUpdateID(THandle aService, uint32_t aValue)
+int32_t DvServiceUpnpOrgContentDirectory3SetPropertySystemUpdateID(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory3C*>(aService)->SetPropertySystemUpdateID(aValue);
+    *aChanged = (reinterpret_cast<DvServiceUpnpOrgContentDirectory3C*>(aService)->SetPropertySystemUpdateID(aValue)? 1 : 0);
     return 0;
 }
 
@@ -685,10 +685,10 @@ void DvServiceUpnpOrgContentDirectory3GetPropertySystemUpdateID(THandle aService
     *aValue = val;
 }
 
-int32_t DvServiceUpnpOrgContentDirectory3SetPropertyContainerUpdateIDs(THandle aService, const char* aValue)
+int32_t DvServiceUpnpOrgContentDirectory3SetPropertyContainerUpdateIDs(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory3C*>(aService)->SetPropertyContainerUpdateIDs(buf);
+    *aChanged = (reinterpret_cast<DvServiceUpnpOrgContentDirectory3C*>(aService)->SetPropertyContainerUpdateIDs(buf)? 1 : 0);
     return 0;
 }
 
@@ -699,10 +699,10 @@ void DvServiceUpnpOrgContentDirectory3GetPropertyContainerUpdateIDs(THandle aSer
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceUpnpOrgContentDirectory3SetPropertyLastChange(THandle aService, const char* aValue)
+int32_t DvServiceUpnpOrgContentDirectory3SetPropertyLastChange(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory3C*>(aService)->SetPropertyLastChange(buf);
+    *aChanged = (reinterpret_cast<DvServiceUpnpOrgContentDirectory3C*>(aService)->SetPropertyLastChange(buf)? 1 : 0);
     return 0;
 }
 
@@ -713,10 +713,10 @@ void DvServiceUpnpOrgContentDirectory3GetPropertyLastChange(THandle aService, ch
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceUpnpOrgContentDirectory3SetPropertyTransferIDs(THandle aService, const char* aValue)
+int32_t DvServiceUpnpOrgContentDirectory3SetPropertyTransferIDs(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory3C*>(aService)->SetPropertyTransferIDs(buf);
+    *aChanged = (reinterpret_cast<DvServiceUpnpOrgContentDirectory3C*>(aService)->SetPropertyTransferIDs(buf)? 1 : 0);
     return 0;
 }
 

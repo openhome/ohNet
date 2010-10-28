@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceUpnpOrgDimming1::SetPropertyLoadLevelStatus(TUint aValue)
+TBool DvServiceUpnpOrgDimming1::SetPropertyLoadLevelStatus(TUint aValue)
 {
-    SetPropertyUint(*iPropertyLoadLevelStatus, aValue);
+    return SetPropertyUint(*iPropertyLoadLevelStatus, aValue);
 }
 
 void DvServiceUpnpOrgDimming1::GetPropertyLoadLevelStatus(TUint& aValue)
@@ -16,9 +16,9 @@ void DvServiceUpnpOrgDimming1::GetPropertyLoadLevelStatus(TUint& aValue)
     aValue = iPropertyLoadLevelStatus->Value();
 }
 
-void DvServiceUpnpOrgDimming1::SetPropertyStepDelta(TUint aValue)
+TBool DvServiceUpnpOrgDimming1::SetPropertyStepDelta(TUint aValue)
 {
-    SetPropertyUint(*iPropertyStepDelta, aValue);
+    return SetPropertyUint(*iPropertyStepDelta, aValue);
 }
 
 void DvServiceUpnpOrgDimming1::GetPropertyStepDelta(TUint& aValue)
@@ -26,9 +26,9 @@ void DvServiceUpnpOrgDimming1::GetPropertyStepDelta(TUint& aValue)
     aValue = iPropertyStepDelta->Value();
 }
 
-void DvServiceUpnpOrgDimming1::SetPropertyRampRate(TUint aValue)
+TBool DvServiceUpnpOrgDimming1::SetPropertyRampRate(TUint aValue)
 {
-    SetPropertyUint(*iPropertyRampRate, aValue);
+    return SetPropertyUint(*iPropertyRampRate, aValue);
 }
 
 void DvServiceUpnpOrgDimming1::GetPropertyRampRate(TUint& aValue)
@@ -36,9 +36,9 @@ void DvServiceUpnpOrgDimming1::GetPropertyRampRate(TUint& aValue)
     aValue = iPropertyRampRate->Value();
 }
 
-void DvServiceUpnpOrgDimming1::SetPropertyIsRamping(TBool aValue)
+TBool DvServiceUpnpOrgDimming1::SetPropertyIsRamping(TBool aValue)
 {
-    SetPropertyBool(*iPropertyIsRamping, aValue);
+    return SetPropertyBool(*iPropertyIsRamping, aValue);
 }
 
 void DvServiceUpnpOrgDimming1::GetPropertyIsRamping(TBool& aValue)
@@ -46,9 +46,9 @@ void DvServiceUpnpOrgDimming1::GetPropertyIsRamping(TBool& aValue)
     aValue = iPropertyIsRamping->Value();
 }
 
-void DvServiceUpnpOrgDimming1::SetPropertyRampPaused(TBool aValue)
+TBool DvServiceUpnpOrgDimming1::SetPropertyRampPaused(TBool aValue)
 {
-    SetPropertyBool(*iPropertyRampPaused, aValue);
+    return SetPropertyBool(*iPropertyRampPaused, aValue);
 }
 
 void DvServiceUpnpOrgDimming1::GetPropertyRampPaused(TBool& aValue)

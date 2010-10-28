@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkTime1Cpp::SetPropertyTrackCount(uint32_t aValue)
+bool DvServiceLinnCoUkTime1Cpp::SetPropertyTrackCount(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyTrackCount, aValue);
+    return SetPropertyUint(*iPropertyTrackCount, aValue);
 }
 
 void DvServiceLinnCoUkTime1Cpp::GetPropertyTrackCount(uint32_t& aValue)
@@ -16,9 +16,9 @@ void DvServiceLinnCoUkTime1Cpp::GetPropertyTrackCount(uint32_t& aValue)
     aValue = iPropertyTrackCount->Value();
 }
 
-void DvServiceLinnCoUkTime1Cpp::SetPropertyDuration(uint32_t aValue)
+bool DvServiceLinnCoUkTime1Cpp::SetPropertyDuration(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyDuration, aValue);
+    return SetPropertyUint(*iPropertyDuration, aValue);
 }
 
 void DvServiceLinnCoUkTime1Cpp::GetPropertyDuration(uint32_t& aValue)
@@ -26,9 +26,9 @@ void DvServiceLinnCoUkTime1Cpp::GetPropertyDuration(uint32_t& aValue)
     aValue = iPropertyDuration->Value();
 }
 
-void DvServiceLinnCoUkTime1Cpp::SetPropertySeconds(uint32_t aValue)
+bool DvServiceLinnCoUkTime1Cpp::SetPropertySeconds(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertySeconds, aValue);
+    return SetPropertyUint(*iPropertySeconds, aValue);
 }
 
 void DvServiceLinnCoUkTime1Cpp::GetPropertySeconds(uint32_t& aValue)

@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkDs1::SetPropertySupportedProtocols(const Brx& aValue)
+TBool DvServiceLinnCoUkDs1::SetPropertySupportedProtocols(const Brx& aValue)
 {
-    SetPropertyString(*iPropertySupportedProtocols, aValue);
+    return SetPropertyString(*iPropertySupportedProtocols, aValue);
 }
 
 void DvServiceLinnCoUkDs1::GetPropertySupportedProtocols(Brhz& aValue)
@@ -16,9 +16,9 @@ void DvServiceLinnCoUkDs1::GetPropertySupportedProtocols(Brhz& aValue)
     aValue.Set(iPropertySupportedProtocols->Value());
 }
 
-void DvServiceLinnCoUkDs1::SetPropertyTrackDuration(TUint aValue)
+TBool DvServiceLinnCoUkDs1::SetPropertyTrackDuration(TUint aValue)
 {
-    SetPropertyUint(*iPropertyTrackDuration, aValue);
+    return SetPropertyUint(*iPropertyTrackDuration, aValue);
 }
 
 void DvServiceLinnCoUkDs1::GetPropertyTrackDuration(TUint& aValue)
@@ -26,9 +26,9 @@ void DvServiceLinnCoUkDs1::GetPropertyTrackDuration(TUint& aValue)
     aValue = iPropertyTrackDuration->Value();
 }
 
-void DvServiceLinnCoUkDs1::SetPropertyTrackBitRate(TUint aValue)
+TBool DvServiceLinnCoUkDs1::SetPropertyTrackBitRate(TUint aValue)
 {
-    SetPropertyUint(*iPropertyTrackBitRate, aValue);
+    return SetPropertyUint(*iPropertyTrackBitRate, aValue);
 }
 
 void DvServiceLinnCoUkDs1::GetPropertyTrackBitRate(TUint& aValue)
@@ -36,9 +36,9 @@ void DvServiceLinnCoUkDs1::GetPropertyTrackBitRate(TUint& aValue)
     aValue = iPropertyTrackBitRate->Value();
 }
 
-void DvServiceLinnCoUkDs1::SetPropertyTrackLossless(TBool aValue)
+TBool DvServiceLinnCoUkDs1::SetPropertyTrackLossless(TBool aValue)
 {
-    SetPropertyBool(*iPropertyTrackLossless, aValue);
+    return SetPropertyBool(*iPropertyTrackLossless, aValue);
 }
 
 void DvServiceLinnCoUkDs1::GetPropertyTrackLossless(TBool& aValue)
@@ -46,9 +46,9 @@ void DvServiceLinnCoUkDs1::GetPropertyTrackLossless(TBool& aValue)
     aValue = iPropertyTrackLossless->Value();
 }
 
-void DvServiceLinnCoUkDs1::SetPropertyTrackBitDepth(TUint aValue)
+TBool DvServiceLinnCoUkDs1::SetPropertyTrackBitDepth(TUint aValue)
 {
-    SetPropertyUint(*iPropertyTrackBitDepth, aValue);
+    return SetPropertyUint(*iPropertyTrackBitDepth, aValue);
 }
 
 void DvServiceLinnCoUkDs1::GetPropertyTrackBitDepth(TUint& aValue)
@@ -56,9 +56,9 @@ void DvServiceLinnCoUkDs1::GetPropertyTrackBitDepth(TUint& aValue)
     aValue = iPropertyTrackBitDepth->Value();
 }
 
-void DvServiceLinnCoUkDs1::SetPropertyTrackSampleRate(TUint aValue)
+TBool DvServiceLinnCoUkDs1::SetPropertyTrackSampleRate(TUint aValue)
 {
-    SetPropertyUint(*iPropertyTrackSampleRate, aValue);
+    return SetPropertyUint(*iPropertyTrackSampleRate, aValue);
 }
 
 void DvServiceLinnCoUkDs1::GetPropertyTrackSampleRate(TUint& aValue)
@@ -66,9 +66,9 @@ void DvServiceLinnCoUkDs1::GetPropertyTrackSampleRate(TUint& aValue)
     aValue = iPropertyTrackSampleRate->Value();
 }
 
-void DvServiceLinnCoUkDs1::SetPropertyTrackCodecName(const Brx& aValue)
+TBool DvServiceLinnCoUkDs1::SetPropertyTrackCodecName(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyTrackCodecName, aValue);
+    return SetPropertyString(*iPropertyTrackCodecName, aValue);
 }
 
 void DvServiceLinnCoUkDs1::GetPropertyTrackCodecName(Brhz& aValue)
@@ -76,9 +76,9 @@ void DvServiceLinnCoUkDs1::GetPropertyTrackCodecName(Brhz& aValue)
     aValue.Set(iPropertyTrackCodecName->Value());
 }
 
-void DvServiceLinnCoUkDs1::SetPropertyTrackId(TUint aValue)
+TBool DvServiceLinnCoUkDs1::SetPropertyTrackId(TUint aValue)
 {
-    SetPropertyUint(*iPropertyTrackId, aValue);
+    return SetPropertyUint(*iPropertyTrackId, aValue);
 }
 
 void DvServiceLinnCoUkDs1::GetPropertyTrackId(TUint& aValue)
@@ -86,9 +86,9 @@ void DvServiceLinnCoUkDs1::GetPropertyTrackId(TUint& aValue)
     aValue = iPropertyTrackId->Value();
 }
 
-void DvServiceLinnCoUkDs1::SetPropertyTransportState(const Brx& aValue)
+TBool DvServiceLinnCoUkDs1::SetPropertyTransportState(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyTransportState, aValue);
+    return SetPropertyString(*iPropertyTransportState, aValue);
 }
 
 void DvServiceLinnCoUkDs1::GetPropertyTransportState(Brhz& aValue)

@@ -21,29 +21,29 @@ DllExport void DvServiceLinnCoUkInfo1EnableActionTrack(THandle aService, Callbac
 DllExport void DvServiceLinnCoUkInfo1EnableActionDetails(THandle aService, CallbackInfo1Details aCallback, void* aPtr);
 DllExport void DvServiceLinnCoUkInfo1EnableActionMetatext(THandle aService, CallbackInfo1Metatext aCallback, void* aPtr);
 
-DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyTrackCount(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyTrackCount(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkInfo1GetPropertyTrackCount(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyDetailsCount(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyDetailsCount(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkInfo1GetPropertyDetailsCount(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyMetatextCount(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyMetatextCount(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkInfo1GetPropertyMetatextCount(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyUri(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyUri(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkInfo1GetPropertyUri(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyMetadata(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyMetadata(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkInfo1GetPropertyMetadata(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyDuration(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyDuration(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkInfo1GetPropertyDuration(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyBitRate(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyBitRate(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkInfo1GetPropertyBitRate(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyBitDepth(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyBitDepth(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkInfo1GetPropertyBitDepth(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkInfo1SetPropertySampleRate(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkInfo1SetPropertySampleRate(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkInfo1GetPropertySampleRate(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyLossless(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyLossless(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkInfo1GetPropertyLossless(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyCodecName(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyCodecName(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkInfo1GetPropertyCodecName(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyMetatext(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkInfo1SetPropertyMetatext(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkInfo1GetPropertyMetatext(THandle aService, char** aValue);
 
 #ifdef __cplusplus

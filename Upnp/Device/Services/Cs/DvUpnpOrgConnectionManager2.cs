@@ -12,15 +12,15 @@ namespace Zapp
         [DllImport("DvUpnpOrgConnectionManager2")]
         static extern void DvServiceUpnpOrgConnectionManager2Destroy(uint aHandle);
         [DllImport("DvUpnpOrgConnectionManager2")]
-        static extern unsafe int DvServiceUpnpOrgConnectionManager2SetPropertySourceProtocolInfo(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceUpnpOrgConnectionManager2SetPropertySourceProtocolInfo(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgConnectionManager2")]
         static extern unsafe void DvServiceUpnpOrgConnectionManager2GetPropertySourceProtocolInfo(uint aHandle, char** aValue);
         [DllImport("DvUpnpOrgConnectionManager2")]
-        static extern unsafe int DvServiceUpnpOrgConnectionManager2SetPropertySinkProtocolInfo(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceUpnpOrgConnectionManager2SetPropertySinkProtocolInfo(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgConnectionManager2")]
         static extern unsafe void DvServiceUpnpOrgConnectionManager2GetPropertySinkProtocolInfo(uint aHandle, char** aValue);
         [DllImport("DvUpnpOrgConnectionManager2")]
-        static extern unsafe int DvServiceUpnpOrgConnectionManager2SetPropertyCurrentConnectionIDs(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceUpnpOrgConnectionManager2SetPropertyCurrentConnectionIDs(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgConnectionManager2")]
         static extern unsafe void DvServiceUpnpOrgConnectionManager2GetPropertyCurrentConnectionIDs(uint aHandle, char** aValue);
         [DllImport("DvUpnpOrgConnectionManager2")]
@@ -56,15 +56,17 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertySourceProtocolInfo(string aValue)
+        public unsafe bool SetPropertySourceProtocolInfo(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgConnectionManager2SetPropertySourceProtocolInfo(iHandle, value);
+            int err = DvServiceUpnpOrgConnectionManager2SetPropertySourceProtocolInfo(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertySourceProtocolInfo(out string aValue)
@@ -75,15 +77,17 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertySinkProtocolInfo(string aValue)
+        public unsafe bool SetPropertySinkProtocolInfo(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgConnectionManager2SetPropertySinkProtocolInfo(iHandle, value);
+            int err = DvServiceUpnpOrgConnectionManager2SetPropertySinkProtocolInfo(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertySinkProtocolInfo(out string aValue)
@@ -94,15 +98,17 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyCurrentConnectionIDs(string aValue)
+        public unsafe bool SetPropertyCurrentConnectionIDs(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgConnectionManager2SetPropertyCurrentConnectionIDs(iHandle, value);
+            int err = DvServiceUpnpOrgConnectionManager2SetPropertyCurrentConnectionIDs(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyCurrentConnectionIDs(out string aValue)

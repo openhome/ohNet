@@ -21,7 +21,7 @@ class DvServiceUpnpOrgScheduledRecording1 : public DvService
 {
 public:
     virtual ~DvServiceUpnpOrgScheduledRecording1() {}
-    void SetPropertyLastChange(const Brx& aValue);
+    TBool SetPropertyLastChange(const Brx& aValue);
     void GetPropertyLastChange(Brhz& aValue);
 protected:
     DvServiceUpnpOrgScheduledRecording1(DvDevice& aDevice);

@@ -12,11 +12,11 @@ namespace Zapp
         [DllImport("DvUpnpOrgAVTransport2")]
         static extern void DvServiceUpnpOrgAVTransport2Destroy(uint aHandle);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern unsafe int DvServiceUpnpOrgAVTransport2SetPropertyLastChange(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceUpnpOrgAVTransport2SetPropertyLastChange(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgAVTransport2")]
         static extern unsafe void DvServiceUpnpOrgAVTransport2GetPropertyLastChange(uint aHandle, char** aValue);
         [DllImport("DvUpnpOrgAVTransport2")]
-        static extern unsafe int DvServiceUpnpOrgAVTransport2SetPropertyDRMState(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceUpnpOrgAVTransport2SetPropertyDRMState(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgAVTransport2")]
         static extern unsafe void DvServiceUpnpOrgAVTransport2GetPropertyDRMState(uint aHandle, char** aValue);
         [DllImport("DvUpnpOrgAVTransport2")]
@@ -116,15 +116,17 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyLastChange(string aValue)
+        public unsafe bool SetPropertyLastChange(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgAVTransport2SetPropertyLastChange(iHandle, value);
+            int err = DvServiceUpnpOrgAVTransport2SetPropertyLastChange(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyLastChange(out string aValue)
@@ -135,15 +137,17 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyDRMState(string aValue)
+        public unsafe bool SetPropertyDRMState(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgAVTransport2SetPropertyDRMState(iHandle, value);
+            int err = DvServiceUpnpOrgAVTransport2SetPropertyDRMState(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyDRMState(out string aValue)

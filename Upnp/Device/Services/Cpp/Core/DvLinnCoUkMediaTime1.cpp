@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkMediaTime1::SetPropertySeconds(TUint aValue)
+TBool DvServiceLinnCoUkMediaTime1::SetPropertySeconds(TUint aValue)
 {
-    SetPropertyUint(*iPropertySeconds, aValue);
+    return SetPropertyUint(*iPropertySeconds, aValue);
 }
 
 void DvServiceLinnCoUkMediaTime1::GetPropertySeconds(TUint& aValue)

@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkJukebox1::SetPropertyCurrentPreset(TUint aValue)
+TBool DvServiceLinnCoUkJukebox1::SetPropertyCurrentPreset(TUint aValue)
 {
-    SetPropertyUint(*iPropertyCurrentPreset, aValue);
+    return SetPropertyUint(*iPropertyCurrentPreset, aValue);
 }
 
 void DvServiceLinnCoUkJukebox1::GetPropertyCurrentPreset(TUint& aValue)
@@ -16,9 +16,9 @@ void DvServiceLinnCoUkJukebox1::GetPropertyCurrentPreset(TUint& aValue)
     aValue = iPropertyCurrentPreset->Value();
 }
 
-void DvServiceLinnCoUkJukebox1::SetPropertyPresetPrefix(const Brx& aValue)
+TBool DvServiceLinnCoUkJukebox1::SetPropertyPresetPrefix(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyPresetPrefix, aValue);
+    return SetPropertyString(*iPropertyPresetPrefix, aValue);
 }
 
 void DvServiceLinnCoUkJukebox1::GetPropertyPresetPrefix(Brhz& aValue)
@@ -26,9 +26,9 @@ void DvServiceLinnCoUkJukebox1::GetPropertyPresetPrefix(Brhz& aValue)
     aValue.Set(iPropertyPresetPrefix->Value());
 }
 
-void DvServiceLinnCoUkJukebox1::SetPropertyAlbumArtFileName(const Brx& aValue)
+TBool DvServiceLinnCoUkJukebox1::SetPropertyAlbumArtFileName(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyAlbumArtFileName, aValue);
+    return SetPropertyString(*iPropertyAlbumArtFileName, aValue);
 }
 
 void DvServiceLinnCoUkJukebox1::GetPropertyAlbumArtFileName(Brhz& aValue)

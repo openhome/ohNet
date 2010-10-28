@@ -65,9 +65,9 @@ void DvServiceLinnCoUkTime1EnableActionTime(THandle aService, CallbackTime1Time 
     reinterpret_cast<DvServiceLinnCoUkTime1C*>(aService)->EnableActionTime(aCallback, aPtr);
 }
 
-int32_t DvServiceLinnCoUkTime1SetPropertyTrackCount(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkTime1SetPropertyTrackCount(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkTime1C*>(aService)->SetPropertyTrackCount(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkTime1C*>(aService)->SetPropertyTrackCount(aValue)? 1 : 0);
     return 0;
 }
 
@@ -78,9 +78,9 @@ void DvServiceLinnCoUkTime1GetPropertyTrackCount(THandle aService, uint32_t* aVa
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkTime1SetPropertyDuration(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkTime1SetPropertyDuration(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkTime1C*>(aService)->SetPropertyDuration(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkTime1C*>(aService)->SetPropertyDuration(aValue)? 1 : 0);
     return 0;
 }
 
@@ -91,9 +91,9 @@ void DvServiceLinnCoUkTime1GetPropertyDuration(THandle aService, uint32_t* aValu
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkTime1SetPropertySeconds(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkTime1SetPropertySeconds(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkTime1C*>(aService)->SetPropertySeconds(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkTime1C*>(aService)->SetPropertySeconds(aValue)? 1 : 0);
     return 0;
 }
 

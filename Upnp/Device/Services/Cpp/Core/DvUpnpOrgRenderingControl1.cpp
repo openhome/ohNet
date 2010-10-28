@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceUpnpOrgRenderingControl1::SetPropertyLastChange(const Brx& aValue)
+TBool DvServiceUpnpOrgRenderingControl1::SetPropertyLastChange(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyLastChange, aValue);
+    return SetPropertyString(*iPropertyLastChange, aValue);
 }
 
 void DvServiceUpnpOrgRenderingControl1::GetPropertyLastChange(Brhz& aValue)

@@ -12,19 +12,19 @@ namespace Zapp
         [DllImport("DvLinnCoUkProduct2")]
         static extern void DvServiceLinnCoUkProduct2Destroy(uint aHandle);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern unsafe int DvServiceLinnCoUkProduct2SetPropertyProductName(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkProduct2SetPropertyProductName(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct2")]
         static extern unsafe void DvServiceLinnCoUkProduct2GetPropertyProductName(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern unsafe int DvServiceLinnCoUkProduct2SetPropertyProductRoom(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkProduct2SetPropertyProductRoom(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct2")]
         static extern unsafe void DvServiceLinnCoUkProduct2GetPropertyProductRoom(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern unsafe int DvServiceLinnCoUkProduct2SetPropertyProductStandby(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkProduct2SetPropertyProductStandby(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct2")]
         static extern unsafe void DvServiceLinnCoUkProduct2GetPropertyProductStandby(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkProduct2")]
-        static extern unsafe int DvServiceLinnCoUkProduct2SetPropertyProductSourceIndex(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkProduct2SetPropertyProductSourceIndex(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct2")]
         static extern unsafe void DvServiceLinnCoUkProduct2GetPropertyProductSourceIndex(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkProduct2")]
@@ -88,15 +88,17 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyProductName(string aValue)
+        public unsafe bool SetPropertyProductName(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkProduct2SetPropertyProductName(iHandle, value);
+            int err = DvServiceLinnCoUkProduct2SetPropertyProductName(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyProductName(out string aValue)
@@ -107,15 +109,17 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyProductRoom(string aValue)
+        public unsafe bool SetPropertyProductRoom(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkProduct2SetPropertyProductRoom(iHandle, value);
+            int err = DvServiceLinnCoUkProduct2SetPropertyProductRoom(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyProductRoom(out string aValue)
@@ -126,13 +130,15 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyProductStandby(bool aValue)
+        public unsafe bool SetPropertyProductStandby(bool aValue)
         {
+        uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkProduct2SetPropertyProductStandby(iHandle, value))
+            if (0 != DvServiceLinnCoUkProduct2SetPropertyProductStandby(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyProductStandby(out bool aValue)
@@ -142,12 +148,14 @@ namespace Zapp
             aValue = (value != 0);
         }
 
-        public unsafe void SetPropertyProductSourceIndex(uint aValue)
+        public unsafe bool SetPropertyProductSourceIndex(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkProduct2SetPropertyProductSourceIndex(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkProduct2SetPropertyProductSourceIndex(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyProductSourceIndex(out uint aValue)

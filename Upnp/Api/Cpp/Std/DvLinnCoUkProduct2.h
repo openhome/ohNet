@@ -24,13 +24,13 @@ class DvServiceLinnCoUkProduct2Cpp : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkProduct2Cpp() {}
-    void SetPropertyProductName(const std::string& aValue);
+    bool SetPropertyProductName(const std::string& aValue);
     void GetPropertyProductName(std::string& aValue);
-    void SetPropertyProductRoom(const std::string& aValue);
+    bool SetPropertyProductRoom(const std::string& aValue);
     void GetPropertyProductRoom(std::string& aValue);
-    void SetPropertyProductStandby(bool aValue);
+    bool SetPropertyProductStandby(bool aValue);
     void GetPropertyProductStandby(bool& aValue);
-    void SetPropertyProductSourceIndex(uint32_t aValue);
+    bool SetPropertyProductSourceIndex(uint32_t aValue);
     void GetPropertyProductSourceIndex(uint32_t& aValue);
 protected:
     DvServiceLinnCoUkProduct2Cpp(DvDeviceStd& aDevice);

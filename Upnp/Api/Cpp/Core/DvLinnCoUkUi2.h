@@ -21,27 +21,27 @@ class DvServiceLinnCoUkUi2 : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkUi2() {}
-    void SetPropertyDisplayBrightness(TUint aValue);
+    TBool SetPropertyDisplayBrightness(TUint aValue);
     void GetPropertyDisplayBrightness(TUint& aValue);
-    void SetPropertyDisplayBrightnessAuto(TBool aValue);
+    TBool SetPropertyDisplayBrightnessAuto(TBool aValue);
     void GetPropertyDisplayBrightnessAuto(TBool& aValue);
-    void SetPropertyInfraredCommands(const Brx& aValue);
+    TBool SetPropertyInfraredCommands(const Brx& aValue);
     void GetPropertyInfraredCommands(Brhz& aValue);
-    void SetPropertyInfraredTerminalCommands(const Brx& aValue);
+    TBool SetPropertyInfraredTerminalCommands(const Brx& aValue);
     void GetPropertyInfraredTerminalCommands(Brhz& aValue);
-    void SetPropertyDisplayUpsideDown(TBool aValue);
+    TBool SetPropertyDisplayUpsideDown(TBool aValue);
     void GetPropertyDisplayUpsideDown(TBool& aValue);
-    void SetPropertyDisplayScrollText(TBool aValue);
+    TBool SetPropertyDisplayScrollText(TBool aValue);
     void GetPropertyDisplayScrollText(TBool& aValue);
-    void SetPropertyDisplaySleep(TBool aValue);
+    TBool SetPropertyDisplaySleep(TBool aValue);
     void GetPropertyDisplaySleep(TBool& aValue);
-    void SetPropertyDisplayLedOff(TBool aValue);
+    TBool SetPropertyDisplayLedOff(TBool aValue);
     void GetPropertyDisplayLedOff(TBool& aValue);
-    void SetPropertyTerminalInputCode(TUint aValue);
+    TBool SetPropertyTerminalInputCode(TUint aValue);
     void GetPropertyTerminalInputCode(TUint& aValue);
-    void SetPropertyTerminalInputName(const Brx& aValue);
+    TBool SetPropertyTerminalInputName(const Brx& aValue);
     void GetPropertyTerminalInputName(Brhz& aValue);
-    void SetPropertyDisplayPixels(const Brx& aValue);
+    TBool SetPropertyDisplayPixels(const Brx& aValue);
     void GetPropertyDisplayPixels(Brh& aValue);
 protected:
     DvServiceLinnCoUkUi2(DvDevice& aDevice);

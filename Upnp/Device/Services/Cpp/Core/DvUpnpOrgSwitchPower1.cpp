@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceUpnpOrgSwitchPower1::SetPropertyStatus(TBool aValue)
+TBool DvServiceUpnpOrgSwitchPower1::SetPropertyStatus(TBool aValue)
 {
-    SetPropertyBool(*iPropertyStatus, aValue);
+    return SetPropertyBool(*iPropertyStatus, aValue);
 }
 
 void DvServiceUpnpOrgSwitchPower1::GetPropertyStatus(TBool& aValue)
