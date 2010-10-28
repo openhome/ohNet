@@ -12,6 +12,7 @@ namespace Zapp
         {
             InitParams initParams = new InitParams();
             initParams.SetMsearchTime(1);
+            initParams.SetUseLoopbackNetworkInterface();
             Library lib = new Library();
             lib.Initialise(ref initParams);
             lib.StartCombined();

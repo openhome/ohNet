@@ -6,6 +6,7 @@
 #include <C/Zapp.h>
 #include <ZappTypes.h>
 #include <TestFramework.h>
+#include <OptionParser.h>
 #include <DviDevice.h>
 #include <C/DvZappOrgTestBasic1.h>
 #include <C/CpProxy.h>
@@ -478,6 +479,7 @@ void DeviceList::UpdatesComplete()
 extern "C" void ZappTestRunner(ZappHandleInitParams aInitParams)
 {
     ZappInitParamsSetMsearchTime(aInitParams, 1);
+    ZappInitParamsSetUseLoopbackNetworkInterface(aInitParams);
     ZappLibraryInitialise(aInitParams);
     Print("TestDvDeviceC - starting\n");
     ZappLibraryStartCombined();

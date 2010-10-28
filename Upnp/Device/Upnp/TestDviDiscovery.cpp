@@ -1,4 +1,5 @@
 #include <TestFramework.h>
+#include <OptionParser.h>
 #include <ZappTypes.h>
 #include <Zapp.h>
 #include <Discovery.h>
@@ -693,8 +694,17 @@ void SuiteMsearch::TestMsearchServiceType()
 }
 
 
-void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
+    OptionParser parser;
+    OptionBool loopback("-l", "--loopback", "Use the loopback adapter only");
+    parser.AddOption(&loopback);
+    if (!parser.Parse(aArgc, aArgv) || parser.HelpDisplayed()) {
+        return;
+    }
+    if (loopback.IsSet()) {
+        aInitParams->SetUseLoopbackNetworkInterface();
+    }
     aInitParams->SetMsearchTime(3); // higher time to give valgrind tests a hope of completing
     //aInitParams->SetUseLoopbackNetworkInterface();
     UpnpLibrary::Initialise(aInitParams);
