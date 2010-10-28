@@ -12,7 +12,8 @@ namespace Zapp {
 class Ohm
 {
 public:
-    static const TUint kMaxMpusUriBytes = 30;
+    static const TUint kPort = 51972;
+    static const TUint kMaxUriBytes = 30;
 };
 
 

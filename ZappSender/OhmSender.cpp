@@ -1,74 +1,33 @@
 #include "OhmSender.h"
-
+#include <Ascii.h>
 #include <Maths.h>
 
 using namespace Zapp;
 
 // ProviderSender
 
-ProviderSender::ProviderSender(DvDevice& aDevice, IProviderSenderHandler& aHandler, TUint aChannel, TBool aEnabled)
-    : DvServiceLinnCoUkMultipusSender1(aDevice)
-    , iHandler(aHandler)
+ProviderSender::ProviderSender(DvDevice& aDevice)
+    : DvServiceMusicOpenhomeOrgSender1(aDevice)
     , iMutex("PSND")
     , iTimerAudioPresent(MakeFunctor(*this, &ProviderSender::TimerAudioPresentExpired))
 {
-    EnableActionEnabled();
-    EnableActionSetEnabled();
-    EnableActionChannel();
-    EnableActionSetChannel();
     EnableActionMetadata();
     EnableActionAudio();
     EnableActionStatus();
-    EnableActionInfoAvailable();
-    EnableActionTimeAvailable();
-    SetPropertyChannel(aChannel);
-    SetPropertyEnabled(aEnabled);
-}
-
-void ProviderSender::Channel(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aValue)
-{
-    TUint value;
-    GetPropertyChannel(value);
-    aResponse.Start();
-    aValue.Write(value);
-    aResponse.End();
-}
-
-void ProviderSender::SetChannel(IInvocationResponse& aResponse, TUint aVersion, TUint aValue)
-{
-    TBool changed = true;
-    SetPropertyChannel(aValue);
-    if (changed) {
-        iHandler.StoreChannel(aValue);
-    }
-    aResponse.Start();
-    aResponse.End();    
-}
-
-void ProviderSender::Enabled(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aValue)
-{
-    TBool value;
-    GetPropertyEnabled(value);
-    aResponse.Start();
-    aValue.Write(value);
-    aResponse.End();
-}
-
-void ProviderSender::SetEnabled(IInvocationResponse& aResponse, TUint aVersion, TBool aValue)
-{
-    TBool changed = true;
-    SetPropertyEnabled(aValue);
-    if (changed) {
-        iHandler.StoreEnabled(aValue);
-    }
-    aResponse.Start();
-    aResponse.End();    
+    EnableActionAttributes();
+    
+    SetPropertyMetadata(Brx::Empty());
+    SetPropertyAudio(false);
+    SetStatusInactive();
+    SetPropertyAttributes(Brx::Empty());
 }
 
 void ProviderSender::Metadata(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue)
 {
+	Brhz value;
+    GetPropertyMetadata(value);
     aResponse.Start();
-    aValue.Write(Brn("Metadata"));
+    aValue.Write(value);
     aValue.WriteFlush();
     aResponse.End();
 }
@@ -84,26 +43,27 @@ void ProviderSender::Audio(IInvocationResponse& aResponse, TUint aVersion, IInvo
 
 void ProviderSender::Status(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue)
 {
-    Brhz status;
-    GetPropertyStatus(status);
+    Brhz value;
+    GetPropertyStatus(value);
     aResponse.Start();
-    aValue.Write(status);
+    aValue.Write(value);
     aValue.WriteFlush();
     aResponse.End();
 }
 
-void ProviderSender::InfoAvailable(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aValue)
+void ProviderSender::Attributes(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue)
 {
+    Brhz value;
+    GetPropertyAttributes(value);
     aResponse.Start();
-    aValue.Write(false);
+    aValue.Write(value);
+    aValue.WriteFlush();
     aResponse.End();
 }
 
-void ProviderSender::TimeAvailable(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aValue)
+void ProviderSender::SetMetadata(const Brx& aValue)
 {
-    aResponse.Start();
-    aValue.Write(false);
-    aResponse.End();
+	SetPropertyMetadata(aValue);
 }
 
 static const Brn kStatusReady("Ready");
@@ -145,24 +105,27 @@ void ProviderSender::TimerAudioPresentExpired()
 
 // OhmSender
 
-OhmSender::OhmSender(DvDevice& aDevice)
+OhmSender::OhmSender(DvDevice& aDevice, const Brx& aName, TUint aChannel)
     : iDevice(aDevice)
+    , iName(aName)
+    , iChannel(aChannel)
+    , iEnabled(false)
     , iSocketAudio(kTtl, 0)
     , iReaderAudio(iSocketAudio)
     , iWriterAudio(iSocketAudio)
     , iAudioReceive(iReaderAudio)
-    , iMutexStartStop("MPSS")
-    , iMutexActive("MPAC")
-    , iNetworkAudioDeactivated("MPUS", 0)
+    , iMutexStartStop("OHMS")
+    , iMutexActive("OHMA")
+    , iNetworkAudioDeactivated("OHMD", 0)
     , iTimerAliveJoin(MakeFunctor(*this, &OhmSender::TimerAliveJoinExpired))
     , iTimerAliveAudio(MakeFunctor(*this, &OhmSender::TimerAliveAudioExpired))
     , iActivated(false)
     , iStarted(false)
     , iActive(false)
 {
-    iProvider = new ProviderSender(iDevice, *this, 0, true);
+    iProvider = new ProviderSender(iDevice);
     
-    UpdateEndpoint();
+    UpdateChannel();
 
     iThreadAudio = new ThreadFunctor("MPAU", MakeFunctor(*this, &OhmSender::RunAudio), kThreadPriorityAudio, kThreadStackBytesAudio);
     iThreadAudio->Start();
@@ -399,7 +362,73 @@ void OhmSender::ProcessOutMsgIbAudio(MsgIbAudio* aMsg)
 }
 */
 
-void OhmSender::StoreEnabled(TBool aValue)
+void OhmSender::SetName(const Brx& aValue)
+{
+    iMutexStartStop.Wait();
+    
+	iName.Replace(aValue);
+	
+	UpdateMetadata();
+
+    iMutexStartStop.Signal();
+}
+
+void OhmSender::SetChannel(TUint aValue)
+{
+    iMutexStartStop.Wait();
+    
+    if (iStarted) {
+        Stop();
+        iChannel = aValue;
+        UpdateChannel();
+        Start();
+    }
+    else {
+        iChannel = aValue;
+        UpdateChannel();
+    }
+    
+    iMutexStartStop.Signal();
+}
+
+void OhmSender::UpdateChannel()
+{
+    TUint address = (iChannel & 0xffff) | 0xeffd0000; // 239.253.x.x
+    iEndpoint.SetAddress(address);
+    iEndpoint.SetPort(Ohm::kPort);
+
+    iUri.Replace("mpus://");
+    Ascii::AppendDec(iUri, (address >> 24 & 0xff));
+    iUri.Append('.');
+    Ascii::AppendDec(iUri, (address >> 16 & 0xff));
+    iUri.Append('.');
+    Ascii::AppendDec(iUri, (address >> 8 & 0xff));
+    iUri.Append('.');
+    Ascii::AppendDec(iUri, (address & 0xff));
+    iUri.Append(':');
+    Ascii::AppendDec(iUri, Ohm::kPort);
+
+	UpdateMetadata();    
+}
+
+void OhmSender::UpdateMetadata()
+{
+    iMetadata.Replace("<DIDL-Lite xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:upnp=\"urn:schemas-upnp-org:metadata-1-0/upnp/\" xmlns=\"urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/\">");
+    iMetadata.Append("<item id=\"0\" restricted=\"True\">");
+    iMetadata.Append("<dc:title>");
+    iMetadata.Append(iName);
+    iMetadata.Append("</dc:title>");
+    iMetadata.Append("<res protocolInfo=\"mpus:*:*:*\">");
+    iMetadata.Append(iUri);
+    iMetadata.Append("</res>");
+    iMetadata.Append("<upnp:class>object.item.audioItem</upnp:class>");
+    iMetadata.Append("</item>");
+    iMetadata.Append("</DIDL-Lite>");
+
+	iProvider->SetMetadata(iMetadata);
+}
+
+void OhmSender::SetEnabled(TBool aValue)
 {
     iMutexStartStop.Wait();
     
@@ -416,35 +445,6 @@ void OhmSender::StoreEnabled(TBool aValue)
 
     iMutexStartStop.Signal();
 }
-
-void OhmSender::StoreChannel(TUint aValue)
-{
-    iMutexStartStop.Wait();
-    
-    if (iStarted) {
-        Stop();
-        iChannel = aValue;
-        Start();
-    }
-    else {
-        iChannel = aValue;
-    }
-    
-    iMutexStartStop.Signal();
-}
-
-/*
-void OhmSender::UpdateEndpoint(TUint aChannel)
-{
-    iProvider->Channel(iEndpoint);
-    Bws<kMaxEndpointAddressAndPortStringBytes> endpoint;
-    EndpointAddressAndPort(iEndpoint, endpoint);
-    Bws<kMaxEndpointAddressAndPortStringBytes + 7> uri;
-    uri.Replace("mpus://");
-    uri.Append(endpoint);
-    iMpusUri.Replace(uri);
-}
-*/
 
 // SendTrack called with alive mutex locked;
 
