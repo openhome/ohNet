@@ -184,7 +184,7 @@ namespace Zapp
 
         public Runner()
         {
-            Console.Write("TestDvDeviceCpp - starting\n");
+            Console.Write("TestDvDeviceCs - starting\n");
 
             iUpdatesComplete = new Semaphore(0, Int32.MaxValue);
             iSingleChanged = new Semaphore(0, Int32.MaxValue);

@@ -6,7 +6,6 @@
 #include <C/Zapp.h>
 #include <ZappTypes.h>
 #include <TestFramework.h>
-#include <OptionParser.h>
 #include <DviDevice.h>
 #include <C/DvZappOrgTestBasic1.h>
 #include <C/CpProxy.h>
