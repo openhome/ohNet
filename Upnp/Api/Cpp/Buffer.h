@@ -119,7 +119,6 @@ public:
     void SetBytes(TUint aBytes);
     inline TByte& operator[](TUint aByteIndex);
     TByte& At(TUint aByteIndex);
-    TUint32& Uint32At(TUint aByteIndex);
 protected:
     explicit Bwx(TUint aBytes, TUint aMaxBytes);
     TUint iMaxBytes;

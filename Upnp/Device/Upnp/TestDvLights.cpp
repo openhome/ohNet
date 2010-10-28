@@ -224,7 +224,7 @@ static void RandomiseUdn(Bwh& aUdn)
     aUdn.PtrZ();
 #else
     // !!!! temp hack to simplify Craig's 2 day trial
-    const Brn name("-lights-CraigGuthrie");
+    const Brn name("-lights-Ws");
     aUdn.Grow(aUdn.Bytes() + name.Bytes() + 1);
     aUdn.Append(name);
     aUdn.PtrZ();

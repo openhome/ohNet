@@ -12,6 +12,7 @@
 #include <DviServerUpnp.h>
 #include <DviDevice.h>
 #include <DviSubscription.h>
+#include <DviServerWebSocket.h>
 
 #include <vector>
 
@@ -36,6 +37,7 @@ private:
     DviServerUpnp* iDviServerUpnp;
     DviDeviceMap* iDviDeviceMap;
     DviSubscriptionManager* iSubscriptionManager;
+    DviServerWebSocket* iDviServerWebSocket;
 };
 
 } // namespace Zapp

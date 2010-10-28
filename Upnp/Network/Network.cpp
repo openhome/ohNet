@@ -5,6 +5,7 @@
 #include <Functor.h>
 #include <Stream.h>
 #include <Stack.h>
+#include <Ascii.h>
 
 using namespace Zapp;
 
@@ -218,6 +219,38 @@ TIpAddress Endpoint::Address() const
 TUint16 Endpoint::Port() const
 {
     return iPort;
+}
+
+void Endpoint::GetAddress(Bwx& aAddress) const
+{
+    ASSERT(aAddress.MaxBytes() - aAddress.Bytes() >= kMaxAddressBytes);
+#ifdef DEFINE_LITTLE_ENDIAN
+    (void)Ascii::AppendDec(aAddress, iAddress&0xff);
+    aAddress.Append('.');
+    (void)Ascii::AppendDec(aAddress, (iAddress>>8)&0xff);
+    aAddress.Append('.');
+    (void)Ascii::AppendDec(aAddress, (iAddress>>16)&0xff);
+    aAddress.Append('.');
+    (void)Ascii::AppendDec(aAddress, (iAddress>>24)&0xff);
+#elif defined DEFINE_BIG_ENDIAN
+    (void)Ascii::AppendDec(aAddress, (iAddress>>24)&0xff);
+    aAddress.Append('.');
+    (void)Ascii::AppendDec(aAddress, (iAddress>>16)&0xff);
+    aAddress.Append('.');
+    (void)Ascii::AppendDec(aAddress, (iAddress>>8)&0xff);
+    aAddress.Append('.');
+    (void)Ascii::AppendDec(aAddress, iAddress&0xff);
+#else
+# error No endianess defined
+#endif
+}
+
+void Endpoint::GetEndpoint(Bwx& aEndpoint) const
+{
+    ASSERT(aEndpoint.MaxBytes() - aEndpoint.Bytes() >= kMaxEndpointBytes);
+    GetAddress(aEndpoint);
+    aEndpoint.Append(':');
+    (void)Ascii::AppendDec(aEndpoint, iPort);
 }
 
 // Replace the endpoint with the supplied endpoint

@@ -13,7 +13,6 @@
 #include <XmlParser.h>
 #include <Converter.h>
 #include <Stream.h>
-#include <Stack.h>
 #include <Zapp.h>
 #include <Debug.h>
 
@@ -384,17 +383,20 @@ void DviSessionUpnp::Run()
     }
     catch (WriterError&) {
     }
-    if (!iResponseStarted) {
-        if (iErrorStatus == &HttpStatus::kOk) {
-            iErrorStatus = &HttpStatus::kNotFound;
+    try {
+        if (!iResponseStarted) {
+            if (iErrorStatus == &HttpStatus::kOk) {
+                iErrorStatus = &HttpStatus::kNotFound;
+            }
+            iWriterResponse->WriteStatus(*iErrorStatus, Http::eHttp11);
+            Http::WriteHeaderConnectionClose(*iWriterResponse);
+            iWriterResponse->WriteFlush();
         }
-        iWriterResponse->WriteStatus(*iErrorStatus, Http::eHttp11);
-        Http::WriteHeaderConnectionClose(*iWriterResponse);
-        iWriterResponse->WriteFlush();
+        else if (!iResponseEnded) {
+            iWriterResponse->WriteFlush();
+        }
     }
-    else if (!iResponseEnded) {
-        iWriterResponse->WriteFlush();
-    }
+    catch (WriterError&) {}
 }
 
 void DviSessionUpnp::Error(const HttpStatus& aStatus)
@@ -973,115 +975,13 @@ IPropertyWriter* DviSessionUpnp::CreateWriter(const Endpoint& aSubscriber, const
 // DviServerUpnp
 
 DviServerUpnp::DviServerUpnp()
-    : iLock("DSUM")
 {
-    Functor functor = MakeFunctor(*this, &DviServerUpnp::SubnetChanged);
-    NetworkInterfaceList& nifList = Stack::NetworkInterfaceList();
-    iSubnetChangeListenerId = nifList.AddSubnetChangeListener(functor);
-    iLock.Wait();
-    std::vector<NetworkInterface*>* subnetList = nifList.CreateSubnetList();
-    for (TUint i=0; i<subnetList->size(); i++) {
-        CreateServer(*(*subnetList)[i]);
-    }
-    NetworkInterfaceList::DestroySubnetList(subnetList);
-    iLock.Signal();
+    Initialise();
 }
 
-DviServerUpnp::~DviServerUpnp()
+SocketTcpServer* DviServerUpnp::CreateServer(const NetworkInterface& aNif)
 {
-    iLock.Wait();
-    Stack::NetworkInterfaceList().RemoveSubnetChangeListener(iSubnetChangeListenerId);
-    for (TUint i=0; i<iServers.size(); i++) {
-        delete iServers[i];
-    }
-    iServers.clear();
-    iLock.Signal();
-}
-
-TUint DviServerUpnp::Port(TIpAddress aInterface)
-{
-    DviServerUpnp& self = DviStack::ServerUpnp();
-    AutoMutex a(self.iLock);
-    for (TUint i=0; i<self.iServers.size(); i++) {
-        DviServerUpnp::Server* server = self.iServers[i];
-        if (server->Interface() == aInterface) {
-            return server->Port();
-        }
-    }
-    return 0;
-}
-
-void DviServerUpnp::CreateServer(const NetworkInterface& aNif)
-{
-    DviServerUpnp::Server* server = new DviServerUpnp::Server(aNif);
-    iServers.push_back(server);
-}
-
-void DviServerUpnp::SubnetChanged()
-{
-    /* DviDeviceUpnp relies on servers being available on all appropriate interfaces.
-       We assume this happens through DviServerUpnp being created before any devices
-       so registering for subnet change notification earlier.  Assuming NetworkInterfaceList
-       always runs its listeners in the order they registered, we'll have updated before
-       any device listeners are run. */
-
-    iLock.Wait();
-    NetworkInterfaceList& interfaceList = Stack::NetworkInterfaceList();
-    std::vector<NetworkInterface*>* subnetList = interfaceList.CreateSubnetList();
-    const std::vector<NetworkInterface*>& nifList = interfaceList.List();
-    TUint i;
-    // remove servers whose interface is no longer available
-    for (i=0; i<iServers.size(); i++) {
-        DviServerUpnp::Server* server = iServers[i];
-        if (FindInterface(server->Interface(), nifList) == -1) {
-            delete server;
-            iServers.erase(iServers.begin() + i);
-        }
-    }
-    // add servers for new subnets
-    for (i=0; i<subnetList->size(); i++) {
-        NetworkInterface* subnet = (*subnetList)[i];
-        if (FindServer(subnet->Subnet()) == -1) {
-            CreateServer(*subnet);
-        }
-    }
-
-    iLock.Signal();
-    NetworkInterfaceList::DestroySubnetList(subnetList);
-}
-
-TInt DviServerUpnp::FindInterface(TIpAddress aInterface, const std::vector<NetworkInterface*>& aNifList)
-{
-    for (TUint i=0; i<aNifList.size(); i++) {
-        if (aNifList[i]->Address() == aInterface) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-TInt DviServerUpnp::FindServer(TIpAddress aSubnet)
-{
-    for (TUint i=0; i<iServers.size(); i++) {
-        if (iServers[i]->Subnet() == aSubnet) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-
-//  DviServerUpnp::Server
-
-DviServerUpnp::Server::Server(const NetworkInterface& aNif)
-{
-    iServer = new SocketTcpServer("DSVU", 0, aNif.Address());
-    iServer->Add("DSES", new DviSessionUpnp(aNif.Address(), Port()));
-    iNif = aNif.Clone();
-}
-
-DviServerUpnp::Server::~Server()
-{
-    delete iServer;
-    delete iNif;
+    SocketTcpServer* server = new SocketTcpServer("DSVU", 0, aNif.Address());
+    server->Add("DSES", new DviSessionUpnp(aNif.Address(), server->Port()));
+    return server;
 }
