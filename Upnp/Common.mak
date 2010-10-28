@@ -100,7 +100,7 @@ headers = $(inc_build)/Ascii.h \
           $(inc_build)/DviDeviceUpnp.h \
           $(inc_build)/DviServer.h \
           $(inc_build)/DviServerUpnp.h \
-#          $(inc_build)/DviServerWebSocket.h \
+          $(inc_build)/DviServerWebSocket.h \
           $(inc_build)/DviService.h \
           $(inc_build)/DviStack.h \
           $(inc_build)/DviSubscription.h \
