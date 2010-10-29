@@ -227,6 +227,7 @@ TBool OptionParser::Parse(TInt aArgc, TChar* aArgv[])
     // Check if help option has been set
     if (iHelpOption.IsSet()) {
         DisplayHelp();
+        return (false);
     }
 
     return true;

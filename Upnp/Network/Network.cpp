@@ -605,7 +605,7 @@ SocketUdpMulticast::~SocketUdpMulticast()
 
 void SocketUdpMulticast::AddMembership(const Endpoint& aEndpoint)
 {
-    LOGF(kNetwork, "SocketUdpMulticast::AddMembersip\n");
+    LOGF(kNetwork, "SocketUdpMulticast::AddMembership\n");
     ASSERT(!iMember);
     iEndpoint.Replace(aEndpoint);
     iPort = iEndpoint.Port();

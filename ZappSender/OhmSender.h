@@ -12,37 +12,7 @@
 
 namespace Zapp {
 
-class ProviderSender : public DvServiceMusicOpenhomeOrgSender1
-{
-    static const TUint kMaxMetadataBytes = 4096;
-    static const TUint kTimeoutAudioPresentMs = 1000;
-
-public:
-    ProviderSender(DvDevice& aDevice);
-    
-    void SetMetadata(const Brx& aValue);
-    
-    void SetStatusReady();
-    void SetStatusSending();
-    void SetStatusBlocked();
-    void SetStatusInactive();
-    
-    void InformAudioPresent();
-    
-private:
-    virtual void Metadata(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
-    virtual void Audio(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aValue);
-    virtual void Status(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
-    virtual void Attributes(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
-
-    void UpdateMetadata();
-    void TimerAudioPresentExpired();
-
-private:
-    Bws<kMaxMetadataBytes> iMetadata;
-    mutable Mutex iMutex;
-    Timer iTimerAudioPresent;
-};
+class ProviderSender;
 
 class OhmSender
 {
@@ -62,12 +32,20 @@ public:
     static const TUint kMaxTrackMetatextBytes = 1000;
 
 public:
-    OhmSender(DvDevice& aDevice, const Brx& aName, TUint aChannel);
+    OhmSender(DvDevice& aDevice, TIpAddress aInterface, const Brx& aName, TUint aChannel);
     ~OhmSender();
 
 	void SetName(const Brx& aValue);
 	void SetChannel(TUint aValue);
 	void SetEnabled(TBool aValue);
+
+    void SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth, TBool aLossless, const Brx& aCodecName);
+    
+    void StartTrack(TUint64 aSampleStart);
+    void StartTrack(TUint64 aSampleStart, TUint64 aSamplesTotal);
+    void StartTrack(TUint64 aSampleStart, TUint64 aSamplesTotal, const Brx& aUri, const Brx& aMetadata);
+    
+	void SendAudio(const TByte* aData, TUint aBytes);
 	
     //void Play(const Brx& aAudioBuffer);
     //void SetTrack(const Brx& aUri, const Brx& aMetadata);
@@ -89,12 +67,8 @@ private:
     void SendTrackInfo();
     void SendTrack();
     void SendMetatext();
-    void SendZone(TUint aCount);
-    void SendZoneUri();
-    void SendZoneQuery();
-    void TimerSendZoneExpired();
-    void TimerMonitorExpired();
-
+    void CalculateMclocksPerSample();
+    
 private:
     DvDevice& iDevice;
     Bws<kMaxNameBytes> iName;
@@ -111,7 +85,6 @@ private:
     Timer iTimerAliveJoin;
     Timer iTimerAliveAudio;
     ProviderSender* iProvider;
-    TBool iActivated;
     TBool iStarted;
     TBool iActive;
     Endpoint iEndpoint;
@@ -126,6 +99,16 @@ private:
     Bws<kMaxTrackUriBytes> iTrackUri;
     Bws<kMaxTrackMetadataBytes> iTrackMetadata;
     Bws<kMaxTrackMetatextBytes> iTrackMetatext;
+    TUint iSampleRate;
+    TUint iBitRate;
+    TUint iChannels;
+    TUint iBitDepth;
+    TBool iLossless;
+    Bws<OhmHeaderAudio::kMaxCodecNameBytes> iCodecName;
+    TUint64 iSampleStart;
+    TUint64 iSamplesTotal;
+    TUint iTimestamp;
+    TUint iMclocksPerSample;
 };
 
 } // namespace Zapp

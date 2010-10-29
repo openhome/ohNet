@@ -1,6 +1,47 @@
 #include "OhmSender.h"
 #include <Ascii.h>
 #include <Maths.h>
+#include <Arch.h>
+
+#include <stdio.h>
+
+namespace Zapp {
+
+    class ProviderSender : public DvServiceMusicOpenhomeOrgSender1
+    {
+        static const TUint kMaxMetadataBytes = 4096;
+        static const TUint kTimeoutAudioPresentMs = 1000;
+    
+    public:
+        ProviderSender(DvDevice& aDevice);
+        
+        void SetMetadata(const Brx& aValue);
+        
+        void SetStatusReady();
+        void SetStatusSending();
+        void SetStatusBlocked();
+        void SetStatusInactive();
+        
+        void InformAudioPresent();
+        
+        ~ProviderSender() {}
+        
+    private:
+        virtual void Metadata(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
+        virtual void Audio(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aValue);
+        virtual void Status(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
+        virtual void Attributes(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
+    
+        void UpdateMetadata();
+        void TimerAudioPresentExpired();
+    
+    private:
+        Bws<kMaxMetadataBytes> iMetadata;
+        mutable Mutex iMutex;
+        Timer iTimerAudioPresent;
+    };
+
+}
 
 using namespace Zapp;
 
@@ -105,12 +146,12 @@ void ProviderSender::TimerAudioPresentExpired()
 
 // OhmSender
 
-OhmSender::OhmSender(DvDevice& aDevice, const Brx& aName, TUint aChannel)
+OhmSender::OhmSender(DvDevice& aDevice, TIpAddress aInterface, const Brx& aName, TUint aChannel)
     : iDevice(aDevice)
     , iName(aName)
     , iChannel(aChannel)
     , iEnabled(false)
-    , iSocketAudio(kTtl, 0)
+    , iSocketAudio(kTtl, aInterface)
     , iReaderAudio(iSocketAudio)
     , iWriterAudio(iSocketAudio)
     , iAudioReceive(iReaderAudio)
@@ -119,9 +160,14 @@ OhmSender::OhmSender(DvDevice& aDevice, const Brx& aName, TUint aChannel)
     , iNetworkAudioDeactivated("OHMD", 0)
     , iTimerAliveJoin(MakeFunctor(*this, &OhmSender::TimerAliveJoinExpired))
     , iTimerAliveAudio(MakeFunctor(*this, &OhmSender::TimerAliveAudioExpired))
-    , iActivated(false)
     , iStarted(false)
     , iActive(false)
+    , iFrame(0)
+    , iSendTrack(false)
+    , iSendMetatext(false)
+    , iSampleStart(0)
+    , iSamplesTotal(0)
+    , iTimestamp(0)
 {
     iProvider = new ProviderSender(iDevice);
     
@@ -131,16 +177,140 @@ OhmSender::OhmSender(DvDevice& aDevice, const Brx& aName, TUint aChannel)
     iThreadAudio->Start();
 }
 
+void OhmSender::SetName(const Brx& aValue)
+{
+    iMutexStartStop.Wait();
+    
+	iName.Replace(aValue);
+	
+	UpdateMetadata();
+
+    iMutexStartStop.Signal();
+}
+
+void OhmSender::SetChannel(TUint aValue)
+{
+    iMutexStartStop.Wait();
+    
+    if (iStarted) {
+        Stop();
+        iChannel = aValue;
+        UpdateChannel();
+        Start();
+    }
+    else {
+        iChannel = aValue;
+        UpdateChannel();
+    }
+    
+    iMutexStartStop.Signal();
+}
+
+void OhmSender::SetAudioFormat(TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth, TBool aLossless, const Brx& aCodecName)
+{
+    iMutexActive.Wait();
+    iSampleRate = aSampleRate;
+    iBitRate = aBitRate;
+    iChannels = aChannels;
+    iBitDepth = aBitDepth;
+    iLossless = aLossless;
+    iCodecName.Replace(aCodecName);
+    CalculateMclocksPerSample();
+    iMutexActive.Signal();
+}
+
+void OhmSender::CalculateMclocksPerSample()
+{
+    iMclocksPerSample = 256 * 44100 / iSampleRate;
+}
+
+void OhmSender::StartTrack(TUint64 aSampleStart)
+{
+    StartTrack(aSampleStart, 0);
+}
+
+void OhmSender::StartTrack(TUint64 aSampleStart, TUint64 aSamplesTotal)
+{
+    StartTrack(aSampleStart, aSamplesTotal, Brx::Empty(), Brx::Empty());
+}
+
+void OhmSender::StartTrack(TUint64 aSampleStart, TUint64 aSamplesTotal, const Brx& aUri, const Brx& aMetadata)
+{
+    iMutexActive.Wait();
+    iSampleStart = aSampleStart;
+    iSamplesTotal = aSamplesTotal;
+    iTrackUri.Replace(aUri);
+    iTrackMetadata.Replace(aMetadata);
+    iSendTrack = true;
+    iSendMetatext = true;
+    iMutexActive.Signal();
+}
+    
+void OhmSender::SendAudio(const TByte* aData, TUint aBytes)
+{
+    iProvider->InformAudioPresent();
+    
+	iMutexActive.Wait();
+	
+	/*
+	if (!iActive) {
+        iMutexActive.Signal();
+        return;
+	}
+	*/
+	
+    if (iSendTrack) {   
+        SendTrack();
+    }
+
+    if (iSendMetatext) {   
+        SendMetatext();
+    }
+    
+    TUint samples = aBytes * 8 / iChannels / iBitDepth;
+    
+    OhmHeaderAudio headerAudio(false, 
+                               iLossless,
+                               samples,
+                               iFrame,
+                               iTimestamp,
+                               iSampleStart,
+                               iSamplesTotal,
+                               iSampleRate,
+                               iBitRate,
+                               iBitDepth,
+                               iChannels,
+                               iCodecName);
+    
+    OhmHeader header(OhmHeader::kMsgTypeAudio, headerAudio.MsgBytes());
+    
+    WriterBuffer writer(iAudioTransmit);
+    
+    writer.Flush();
+    header.Externalise(writer);
+    headerAudio.Externalise(writer);
+    
+    writer.Write(Brn(aData, aBytes));
+    
+    try {
+        iWriterAudio.Write(iAudioTransmit);
+        iWriterAudio.WriteFlush();
+    }
+    catch (WriterError&) {
+    }
+    
+    iSampleStart += samples;
+    iTimestamp += samples * iMclocksPerSample;
+
+    iFrame++;
+    
+    iMutexActive.Signal();
+}
+
 OhmSender::~OhmSender()
 {
     iMutexStartStop.Wait();
-
-    if (iActivated) {    
-        iActivated = false;
-    
-        Stop();
-    }
-    
+    Stop();
     iMutexStartStop.Signal();
 
     delete iThreadAudio;
@@ -152,7 +322,13 @@ void OhmSender::Start()
 {
     if (!iStarted) {
         iFrame = 0;
-        iSocketAudio.AddMembership(iEndpoint);
+        try {
+	        iSocketAudio.AddMembership(iEndpoint);
+	    }
+	    catch (NetworkError&) {
+	    	printf("Start network error %x:%d\n", iEndpoint.Address(), iEndpoint.Port());
+	    	throw;
+	    }
         iSocketAudio.SetSendBufBytes(kUdpSendBufBytes);
         iThreadAudio->Signal();
         iStarted = true;
@@ -214,8 +390,12 @@ void OhmSender::RunAudio()
         try {
             while (true) {
                 try {
+                    printf("waiting for message\n");
+
                     OhmHeader header;
                     header.Internalise(iAudioReceive);
+                    
+                    printf("message received\n");
                     
                     if (header.MsgType() <= OhmHeader::kMsgTypeListen) {
                         
@@ -243,7 +423,7 @@ void OhmSender::RunAudio()
                         // then both sending again, then both seeing each other's audio again,
                         // then both backing off for the same amount of time ...
                         
-                        TUint delay = Random(kTimerAliveAudioTimeoutMs < 1, kTimerAliveAudioTimeoutMs);
+                        TUint delay = Random(kTimerAliveAudioTimeoutMs, kTimerAliveAudioTimeoutMs >> 1);
                         iMutexActive.Wait();
                         iActive = false;
                         iAliveBlocked = true;
@@ -362,39 +542,11 @@ void OhmSender::ProcessOutMsgIbAudio(MsgIbAudio* aMsg)
 }
 */
 
-void OhmSender::SetName(const Brx& aValue)
-{
-    iMutexStartStop.Wait();
-    
-	iName.Replace(aValue);
-	
-	UpdateMetadata();
-
-    iMutexStartStop.Signal();
-}
-
-void OhmSender::SetChannel(TUint aValue)
-{
-    iMutexStartStop.Wait();
-    
-    if (iStarted) {
-        Stop();
-        iChannel = aValue;
-        UpdateChannel();
-        Start();
-    }
-    else {
-        iChannel = aValue;
-        UpdateChannel();
-    }
-    
-    iMutexStartStop.Signal();
-}
-
 void OhmSender::UpdateChannel()
 {
     TUint address = (iChannel & 0xffff) | 0xeffd0000; // 239.253.x.x
-    iEndpoint.SetAddress(address);
+    
+    iEndpoint.SetAddress(Arch::BigEndian4(address));
     iEndpoint.SetPort(Ohm::kPort);
 
     iUri.Replace("mpus://");
@@ -435,9 +587,7 @@ void OhmSender::SetEnabled(TBool aValue)
     iEnabled = aValue;
     
     if (iEnabled) {
-        if (iActivated) {
-            Start();
-        }
+        Start();
     }
     else {
         Stop();

@@ -712,6 +712,14 @@ int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aAddre
     mreq.imr_multiaddr.s_addr = aAddress;
     mreq.imr_interface.s_addr = aInterface;
     int32_t err = setsockopt(handle->iSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
+    
+    if (err != 0) {
+        return err;
+    }
+    
+    uint8_t loop = 0;
+    err = setsockopt(handle->iSocket, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop));
+    
     return err;
 }
 

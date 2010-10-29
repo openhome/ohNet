@@ -65,6 +65,18 @@ public:
 
 public:
     OhmHeaderAudio();
+    OhmHeaderAudio(TBool aHalt, 
+                   TBool aLossless,
+                   TUint aSamples,
+                   TUint aFrame,
+                   TUint aTxTimestampPrev,
+                   TUint64 aSampleStart,
+                   TUint64 aSamplesTotal,
+                   TUint aSampleRate,
+                   TUint aBitRate,
+                   TUint aBitDepth,
+                   TUint aChannels,
+                   const Brx& aCodecName);
     
     void Internalise(IReader& aReader, const OhmHeader& aHeader);
     void Externalise(IWriter& aWriter) const;

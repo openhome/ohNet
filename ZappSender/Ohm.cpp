@@ -210,6 +210,35 @@ OhmHeaderAudio::OhmHeaderAudio()
 {
 }
 
+OhmHeaderAudio::OhmHeaderAudio(TBool aHalt, 
+                               TBool aLossless,
+                               TUint aSamples,
+                               TUint aFrame,
+                               TUint aTxTimestampPrev,
+                               TUint64 aSampleStart,
+                               TUint64 aSamplesTotal,
+                               TUint aSampleRate,
+                               TUint aBitRate,
+                               TUint aBitDepth,
+                               TUint aChannels,
+                               const Brx& aCodecName)
+    : iHalt(aHalt)
+    , iLossless(aLossless)
+    , iSamples(aSamples)
+    , iFrame(aFrame)
+    , iTxTimestampPrev(aTxTimestampPrev)
+    , iSampleStart(aSampleStart)
+    , iSamplesTotal(aSamplesTotal)
+    , iSampleRate(aSampleRate)
+    , iBitRate(aBitRate)
+    , iBitDepth(aBitDepth)
+    , iChannels(aChannels)
+    , iCodecName(aCodecName)
+{
+    iAudioBytes = iSamples * iBitDepth * iChannels / 8;
+}
+    
+
 void OhmHeaderAudio::Internalise(IReader& aReader, const OhmHeader& aHeader)
 {
     ASSERT (aHeader.MsgType() == OhmHeader::kMsgTypeAudio);
@@ -260,7 +289,7 @@ void OhmHeaderAudio::Internalise(IReader& aReader, const OhmHeader& aHeader)
         iCodecName.Replace(Brx::Empty());
     }
     
-    iAudioBytes = aHeader.MsgBytes() - kHeaderBytes;
+    iAudioBytes = aHeader.MsgBytes() - kHeaderBytes - iCodecName.Bytes();
 }
 
 void OhmHeaderAudio::Externalise(IWriter& aWriter) const
