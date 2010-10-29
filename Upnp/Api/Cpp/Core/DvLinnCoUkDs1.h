@@ -21,23 +21,23 @@ class DvServiceLinnCoUkDs1 : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkDs1() {}
-    void SetPropertySupportedProtocols(const Brx& aValue);
+    TBool SetPropertySupportedProtocols(const Brx& aValue);
     void GetPropertySupportedProtocols(Brhz& aValue);
-    void SetPropertyTrackDuration(TUint aValue);
+    TBool SetPropertyTrackDuration(TUint aValue);
     void GetPropertyTrackDuration(TUint& aValue);
-    void SetPropertyTrackBitRate(TUint aValue);
+    TBool SetPropertyTrackBitRate(TUint aValue);
     void GetPropertyTrackBitRate(TUint& aValue);
-    void SetPropertyTrackLossless(TBool aValue);
+    TBool SetPropertyTrackLossless(TBool aValue);
     void GetPropertyTrackLossless(TBool& aValue);
-    void SetPropertyTrackBitDepth(TUint aValue);
+    TBool SetPropertyTrackBitDepth(TUint aValue);
     void GetPropertyTrackBitDepth(TUint& aValue);
-    void SetPropertyTrackSampleRate(TUint aValue);
+    TBool SetPropertyTrackSampleRate(TUint aValue);
     void GetPropertyTrackSampleRate(TUint& aValue);
-    void SetPropertyTrackCodecName(const Brx& aValue);
+    TBool SetPropertyTrackCodecName(const Brx& aValue);
     void GetPropertyTrackCodecName(Brhz& aValue);
-    void SetPropertyTrackId(TUint aValue);
+    TBool SetPropertyTrackId(TUint aValue);
     void GetPropertyTrackId(TUint& aValue);
-    void SetPropertyTransportState(const Brx& aValue);
+    TBool SetPropertyTransportState(const Brx& aValue);
     void GetPropertyTransportState(Brhz& aValue);
 protected:
     DvServiceLinnCoUkDs1(DvDevice& aDevice);

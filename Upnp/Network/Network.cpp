@@ -5,6 +5,7 @@
 #include <Functor.h>
 #include <Stream.h>
 #include <Stack.h>
+#include <Ascii.h>
 
 using namespace Zapp;
 
@@ -220,6 +221,38 @@ TUint16 Endpoint::Port() const
     return iPort;
 }
 
+void Endpoint::GetAddress(Bwx& aAddress) const
+{
+    ASSERT(aAddress.MaxBytes() - aAddress.Bytes() >= kMaxAddressBytes);
+#ifdef DEFINE_LITTLE_ENDIAN
+    (void)Ascii::AppendDec(aAddress, iAddress&0xff);
+    aAddress.Append('.');
+    (void)Ascii::AppendDec(aAddress, (iAddress>>8)&0xff);
+    aAddress.Append('.');
+    (void)Ascii::AppendDec(aAddress, (iAddress>>16)&0xff);
+    aAddress.Append('.');
+    (void)Ascii::AppendDec(aAddress, (iAddress>>24)&0xff);
+#elif defined DEFINE_BIG_ENDIAN
+    (void)Ascii::AppendDec(aAddress, (iAddress>>24)&0xff);
+    aAddress.Append('.');
+    (void)Ascii::AppendDec(aAddress, (iAddress>>16)&0xff);
+    aAddress.Append('.');
+    (void)Ascii::AppendDec(aAddress, (iAddress>>8)&0xff);
+    aAddress.Append('.');
+    (void)Ascii::AppendDec(aAddress, iAddress&0xff);
+#else
+# error No endianess defined
+#endif
+}
+
+void Endpoint::GetEndpoint(Bwx& aEndpoint) const
+{
+    ASSERT(aEndpoint.MaxBytes() - aEndpoint.Bytes() >= kMaxEndpointBytes);
+    GetAddress(aEndpoint);
+    aEndpoint.Append(':');
+    (void)Ascii::AppendDec(aEndpoint, iPort);
+}
+
 // Replace the endpoint with the supplied endpoint
 void Endpoint::Replace(const Endpoint& aEndpoint)
 {
@@ -257,6 +290,11 @@ void Socket::Close()
 void Socket::SetSendBufBytes(TUint aBytes)
 {
     Zapp::Os::NetworkSocketSetSendBufBytes(iHandle, aBytes);
+}
+
+void Socket::SetRecvBufBytes(TUint aBytes)
+{
+    Zapp::Os::NetworkSocketSetRecvBufBytes(iHandle, aBytes);
 }
 
 void Socket::SetRecvTimeout(TUint aMs)
@@ -522,6 +560,7 @@ SocketTcpSession::~SocketTcpSession()
 
 SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint)
     : iEndpoint(aEndpoint)
+    , iPort(0)
 {
     LOGF(kNetwork, "> SocketUdpClient::SocketUdpClient\n");
     iHandle = SocketCreate(eSocketTypeDatagram);
@@ -531,6 +570,7 @@ SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint)
 
 SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint, TUint aTtl)
     : iEndpoint(aEndpoint)
+    , iPort(0)
 {
     LOGF(kNetwork, "> SocketUdpClient::SocketUdpClient aTtl=%d\n", aTtl);
     iHandle = SocketCreate(eSocketTypeDatagram);
@@ -540,13 +580,13 @@ SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint, TUint aTtl)
 
 SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint, TUint aTtl, TIpAddress aInterface)
     : iEndpoint(aEndpoint)
+    , iPort(0)
 {
     LOGF(kNetwork, "> SocketUdpClient::SocketUdpClient aTtl=%d\n", aTtl);
     iHandle = SocketCreate(eSocketTypeDatagram);
     Zapp::Os::NetworkSocketSetMulticastTtl(iHandle, (TByte)aTtl);
     Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
-    TUint port = 0;
-	SocketBind(iHandle, port, aInterface);
+	SocketBind(iHandle, iPort, aInterface);
     LOGF(kNetwork, "< SocketUdpClient::SocketUdpClient H = %d\n", iHandle);
 }
 
@@ -571,43 +611,51 @@ Endpoint SocketUdpClient::Receive(Bwx& aBuffer)
 
 // SocketUdpMulticast
 
-SocketUdpMulticast::SocketUdpMulticast(const Endpoint& aEndpoint)
-    : SocketUdpClient(aEndpoint)
+SocketUdpMulticast::SocketUdpMulticast()
+    : SocketUdpClient(Endpoint())
     , iInterface(0)
+    , iMember(false)
 {
-    Construct();
+    Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
 }
 
-SocketUdpMulticast::SocketUdpMulticast(const Endpoint& aEndpoint, TUint aTtl)
-    : SocketUdpClient(aEndpoint, aTtl)
-    , iInterface(0)
-{
-    Construct();
-}
-
-SocketUdpMulticast::SocketUdpMulticast(const Endpoint& aEndpoint, TUint aTtl, TIpAddress aInterface)
-    : SocketUdpClient(aEndpoint, aTtl)
+SocketUdpMulticast::SocketUdpMulticast(TUint aTtl, TIpAddress aInterface)
+    : SocketUdpClient(Endpoint(), aTtl)
     , iInterface(aInterface)
+    , iMember(false)
 {
     LOGF(kNetwork, "SocketUdpMulticast::SocketUdpMulticast\n");
-    Construct();
+    Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
 }
 
 SocketUdpMulticast::~SocketUdpMulticast()
 {
     LOGF(kNetwork, "SocketUdpMulticast::~SocketUdpMulticast\n");
-    Zapp::Os::NetworkSocketMulticastDropMembership(iHandle, iEndpoint.Address(), iInterface);
+    if (iMember) {
+        Zapp::Os::NetworkSocketMulticastDropMembership(iHandle, iEndpoint.Address(), iInterface);
+    }
 }
 
-void SocketUdpMulticast::Construct()
+void SocketUdpMulticast::AddMembership(const Endpoint& aEndpoint)
 {
-    LOGF(kNetwork, "SocketUdpMulticast::Construct\n");
-    Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
+    LOGF(kNetwork, "SocketUdpMulticast::AddMembership\n");
+    ASSERT(!iMember);
+    iEndpoint.Replace(aEndpoint);
+    iPort = iEndpoint.Port();
     // Windows expects us to bind to the multicast port but not the address
     // linux doesn't seem to care
-    iPort = iEndpoint.Port();
 	SocketBind(iHandle, iPort, 0);
     Zapp::Os::NetworkSocketMulticastAddMembership(iHandle, iEndpoint.Address(), iInterface);
+    iMember = true;
+}
+
+void SocketUdpMulticast::DropMembership()
+{
+    LOGF(kNetwork, "SocketUdpMulticast::AddMembersip\n");
+    ASSERT(iMember);
+    Zapp::Os::NetworkSocketMulticastDropMembership(iHandle, iEndpoint.Address(), iInterface);
+    iEndpoint.Replace(Endpoint());
+    iMember = false;
 }
 
 // UdpControllerReader

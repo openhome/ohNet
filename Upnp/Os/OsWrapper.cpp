@@ -79,6 +79,15 @@ void Zapp::Os::NetworkSocketSetSendBufBytes(THandle aHandle, TUint aBytes)
     }
 }
 
+void Zapp::Os::NetworkSocketSetRecvBufBytes(THandle aHandle, TUint aBytes)
+{
+    int32_t err = OsNetworkSocketSetRecvBufBytes(aHandle, aBytes);
+    if(err != 0) {
+        LOG2F(kNetwork, kError, "Os::NetworkSocketSetRecvBufBytes H = %d, RETURN VALUE = %d\n", aHandle, err);
+        THROW(NetworkError);
+    }
+}
+
 void Zapp::Os::NetworkSocketSetReceiveTimeout(THandle aHandle, TUint aMilliSeconds)
 {
     int32_t err = OsNetworkSocketSetReceiveTimeout(aHandle, aMilliSeconds);
@@ -133,10 +142,10 @@ void Zapp::Os::NetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress 
     }
 }
 
-std::vector<NetworkInterface*>* Zapp::Os::NetworkListInterfaces()
+std::vector<NetworkInterface*>* Zapp::Os::NetworkListInterfaces(TBool aUseLoopback)
 {
     OsNetworkInterface* cIfs = NULL;
-    int32_t err = OsNetworkListInterfaces(&cIfs);
+    int32_t err = OsNetworkListInterfaces(&cIfs, (aUseLoopback? 1 : 0));
     if(err != 0) {
         LOG2F(kNetwork, kError, "Os::NetworkListInterfaces RETURN VALUE = %d\n", err);
         THROW(NetworkError);

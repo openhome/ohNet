@@ -14,6 +14,7 @@ proxySrcC = ControlPoint\\Services\\C\\
 proxyApiCppStd = Api\\Cpp\\Std\\
 proxySrcCppStd = ControlPoint\\Services\\Cpp\\Std\\
 proxyCs = ControlPoint\\Services\\Cs\\
+proxyJs = ControlPoint\\Services\\Js\\
 deviceSrcCppCore = Device\\Services\\Cpp\\Core\\
 deviceApiCppCore = $(proxyApiCppCore)
 deviceSrcCppStd = Device\\Services\\Cpp\\Std\\

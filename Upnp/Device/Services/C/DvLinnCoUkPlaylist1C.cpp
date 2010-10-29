@@ -390,11 +390,11 @@ void DvServiceLinnCoUkPlaylist1EnableActionIdArrayChanged(THandle aService, Call
     reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->EnableActionIdArrayChanged(aCallback, aPtr);
 }
 
-int32_t DvServiceLinnCoUkPlaylist1SetPropertyIdArray(THandle aService, const char* aValue, uint32_t aValueLen)
+int32_t DvServiceLinnCoUkPlaylist1SetPropertyIdArray(THandle aService, const char* aValue, uint32_t aValueLen, uint32_t* aChanged)
 {
     Brh buf;
     buf.Set((const TByte*)aValue, aValueLen);
-    reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->SetPropertyIdArray(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->SetPropertyIdArray(buf)? 1 : 0);
     return 0;
 }
 
@@ -406,9 +406,9 @@ void DvServiceLinnCoUkPlaylist1GetPropertyIdArray(THandle aService, char** aValu
     *aValue = (char*)buf.Extract();
 }
 
-int32_t DvServiceLinnCoUkPlaylist1SetPropertyRepeat(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkPlaylist1SetPropertyRepeat(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->SetPropertyRepeat((aValue!=0));
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->SetPropertyRepeat((aValue!=0))? 1 : 0);
     return 0;
 }
 
@@ -419,9 +419,9 @@ void DvServiceLinnCoUkPlaylist1GetPropertyRepeat(THandle aService, uint32_t* aVa
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvServiceLinnCoUkPlaylist1SetPropertyShuffle(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkPlaylist1SetPropertyShuffle(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->SetPropertyShuffle((aValue!=0));
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->SetPropertyShuffle((aValue!=0))? 1 : 0);
     return 0;
 }
 
@@ -432,9 +432,9 @@ void DvServiceLinnCoUkPlaylist1GetPropertyShuffle(THandle aService, uint32_t* aV
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvServiceLinnCoUkPlaylist1SetPropertyTracksMax(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkPlaylist1SetPropertyTracksMax(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->SetPropertyTracksMax(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->SetPropertyTracksMax(aValue)? 1 : 0);
     return 0;
 }
 

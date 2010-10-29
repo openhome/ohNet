@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceUpnpOrgContentDirectory2Cpp::SetPropertySystemUpdateID(uint32_t aValue)
+bool DvServiceUpnpOrgContentDirectory2Cpp::SetPropertySystemUpdateID(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertySystemUpdateID, aValue);
+    return SetPropertyUint(*iPropertySystemUpdateID, aValue);
 }
 
 void DvServiceUpnpOrgContentDirectory2Cpp::GetPropertySystemUpdateID(uint32_t& aValue)
@@ -16,10 +16,10 @@ void DvServiceUpnpOrgContentDirectory2Cpp::GetPropertySystemUpdateID(uint32_t& a
     aValue = iPropertySystemUpdateID->Value();
 }
 
-void DvServiceUpnpOrgContentDirectory2Cpp::SetPropertyContainerUpdateIDs(const std::string& aValue)
+bool DvServiceUpnpOrgContentDirectory2Cpp::SetPropertyContainerUpdateIDs(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyContainerUpdateIDs, buf);
+    return SetPropertyString(*iPropertyContainerUpdateIDs, buf);
 }
 
 void DvServiceUpnpOrgContentDirectory2Cpp::GetPropertyContainerUpdateIDs(std::string& aValue)
@@ -28,10 +28,10 @@ void DvServiceUpnpOrgContentDirectory2Cpp::GetPropertyContainerUpdateIDs(std::st
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceUpnpOrgContentDirectory2Cpp::SetPropertyTransferIDs(const std::string& aValue)
+bool DvServiceUpnpOrgContentDirectory2Cpp::SetPropertyTransferIDs(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyTransferIDs, buf);
+    return SetPropertyString(*iPropertyTransferIDs, buf);
 }
 
 void DvServiceUpnpOrgContentDirectory2Cpp::GetPropertyTransferIDs(std::string& aValue)

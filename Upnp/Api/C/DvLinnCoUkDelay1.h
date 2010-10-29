@@ -31,9 +31,9 @@ DllExport void DvServiceLinnCoUkDelay1EnableActionDelayMinimum(THandle aService,
 DllExport void DvServiceLinnCoUkDelay1EnableActionDelayMaximum(THandle aService, CallbackDelay1DelayMaximum aCallback, void* aPtr);
 DllExport void DvServiceLinnCoUkDelay1EnableActionPresetCount(THandle aService, CallbackDelay1PresetCount aCallback, void* aPtr);
 
-DllExport int32_t DvServiceLinnCoUkDelay1SetPropertyPresetXml(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkDelay1SetPropertyPresetXml(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkDelay1GetPropertyPresetXml(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkDelay1SetPropertyPresetIndex(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkDelay1SetPropertyPresetIndex(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkDelay1GetPropertyPresetIndex(THandle aService, uint32_t* aValue);
 
 #ifdef __cplusplus

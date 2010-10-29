@@ -21,7 +21,7 @@ class DvServiceUpnpOrgRenderingControl1 : public DvService
 {
 public:
     virtual ~DvServiceUpnpOrgRenderingControl1() {}
-    void SetPropertyLastChange(const Brx& aValue);
+    TBool SetPropertyLastChange(const Brx& aValue);
     void GetPropertyLastChange(Brhz& aValue);
 protected:
     DvServiceUpnpOrgRenderingControl1(DvDevice& aDevice);

@@ -35,7 +35,7 @@ DvService::~DvService()
 {
 }
 
-void DvService::SetPropertyInt(PropertyInt& aProperty, TInt aValue)
+bool DvService::SetPropertyInt(PropertyInt& aProperty, TInt aValue)
 {
     if (aProperty.SetValue(aValue)) {
         if (iDelayPropertyUpdates) {
@@ -44,10 +44,12 @@ void DvService::SetPropertyInt(PropertyInt& aProperty, TInt aValue)
         else {
             iService->PublishPropertyUpdates();
         }
+        return true;
     }
+    return false;
 }
 
-void DvService::SetPropertyUint(PropertyUint& aProperty, TUint aValue)
+bool DvService::SetPropertyUint(PropertyUint& aProperty, TUint aValue)
 {
     if (aProperty.SetValue(aValue)) {
         if (iDelayPropertyUpdates) {
@@ -56,10 +58,12 @@ void DvService::SetPropertyUint(PropertyUint& aProperty, TUint aValue)
         else {
             iService->PublishPropertyUpdates();
         }
+        return true;
     }
+    return false;
 }
 
-void DvService::SetPropertyBool(PropertyBool& aProperty, TBool aValue)
+bool DvService::SetPropertyBool(PropertyBool& aProperty, TBool aValue)
 {
     if (aProperty.SetValue(aValue)) {
         if (iDelayPropertyUpdates) {
@@ -68,10 +72,12 @@ void DvService::SetPropertyBool(PropertyBool& aProperty, TBool aValue)
         else {
             iService->PublishPropertyUpdates();
         }
+        return true;
     }
+    return false;
 }
 
-void DvService::SetPropertyString(PropertyString& aProperty, const Brx& aValue)
+bool DvService::SetPropertyString(PropertyString& aProperty, const Brx& aValue)
 {
     if (aProperty.SetValue(aValue)) {
         if (iDelayPropertyUpdates) {
@@ -80,10 +86,12 @@ void DvService::SetPropertyString(PropertyString& aProperty, const Brx& aValue)
         else {
             iService->PublishPropertyUpdates();
         }
+        return true;
     }
+    return false;
 }
 
-void DvService::SetPropertyBinary(PropertyBinary& aProperty, const Brx& aValue)
+bool DvService::SetPropertyBinary(PropertyBinary& aProperty, const Brx& aValue)
 {
     if (aProperty.SetValue(aValue)) {
         if (iDelayPropertyUpdates) {
@@ -92,5 +100,7 @@ void DvService::SetPropertyBinary(PropertyBinary& aProperty, const Brx& aValue)
         else {
             iService->PublishPropertyUpdates();
         }
+        return true;
     }
+    return false;
 }

@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkProxyManager1::SetPropertyKontrolProductConnected(const Brx& aValue)
+TBool DvServiceLinnCoUkProxyManager1::SetPropertyKontrolProductConnected(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyKontrolProductConnected, aValue);
+    return SetPropertyString(*iPropertyKontrolProductConnected, aValue);
 }
 
 void DvServiceLinnCoUkProxyManager1::GetPropertyKontrolProductConnected(Brhz& aValue)
@@ -16,9 +16,9 @@ void DvServiceLinnCoUkProxyManager1::GetPropertyKontrolProductConnected(Brhz& aV
     aValue.Set(iPropertyKontrolProductConnected->Value());
 }
 
-void DvServiceLinnCoUkProxyManager1::SetPropertyKontrolProductComPort(TUint aValue)
+TBool DvServiceLinnCoUkProxyManager1::SetPropertyKontrolProductComPort(TUint aValue)
 {
-    SetPropertyUint(*iPropertyKontrolProductComPort, aValue);
+    return SetPropertyUint(*iPropertyKontrolProductComPort, aValue);
 }
 
 void DvServiceLinnCoUkProxyManager1::GetPropertyKontrolProductComPort(TUint& aValue)
@@ -26,9 +26,9 @@ void DvServiceLinnCoUkProxyManager1::GetPropertyKontrolProductComPort(TUint& aVa
     aValue = iPropertyKontrolProductComPort->Value();
 }
 
-void DvServiceLinnCoUkProxyManager1::SetPropertyDiscPlayerConnected(const Brx& aValue)
+TBool DvServiceLinnCoUkProxyManager1::SetPropertyDiscPlayerConnected(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyDiscPlayerConnected, aValue);
+    return SetPropertyString(*iPropertyDiscPlayerConnected, aValue);
 }
 
 void DvServiceLinnCoUkProxyManager1::GetPropertyDiscPlayerConnected(Brhz& aValue)
@@ -36,9 +36,9 @@ void DvServiceLinnCoUkProxyManager1::GetPropertyDiscPlayerConnected(Brhz& aValue
     aValue.Set(iPropertyDiscPlayerConnected->Value());
 }
 
-void DvServiceLinnCoUkProxyManager1::SetPropertyDiscPlayerComPort(TUint aValue)
+TBool DvServiceLinnCoUkProxyManager1::SetPropertyDiscPlayerComPort(TUint aValue)
 {
-    SetPropertyUint(*iPropertyDiscPlayerComPort, aValue);
+    return SetPropertyUint(*iPropertyDiscPlayerComPort, aValue);
 }
 
 void DvServiceLinnCoUkProxyManager1::GetPropertyDiscPlayerComPort(TUint& aValue)

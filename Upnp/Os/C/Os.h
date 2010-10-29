@@ -432,6 +432,16 @@ int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost);
 int32_t OsNetworkSocketSetSendBufBytes(THandle aHandle, uint32_t aBytes);
 
 /**
+ * Set the size of a socket's receive (recv) buffer
+ *
+ * @param[in] aHandle      Socket handle returned from OsNetworkCreate()
+ * @param[in] aBytes       New size for the recv buffer
+ *
+ * @return  0 on success; -1 on failure
+ */
+int32_t OsNetworkSocketSetRecvBufBytes(THandle aHandle, uint32_t aBytes);
+
+/**
  * Modify the socket's receive timeout
  *
  * @param[in] aHandle      Socket handle returned from OsNetworkCreate()
@@ -516,13 +526,14 @@ typedef struct OsNetworkInterface
  * for a subnet should be listed before wireless ones.
  * A loopback interface should only be reported if no other interfaces are present.
  *
- * @param[out] aInterfaces      Array of available interfaces.  Allocated inside this function;
+ * @param[out] aInterfaces      List of available interfaces.  Allocated inside this function;
  *                              the caller should use OsNetworkFreeInterfaces to free it
- * @param[out] aInterfaceCount  The number of items in aInterfaces
+ * @param[out] aUseLoopback     1 if only the loopback interface should be returned;
+ *                              0 (default) if normal behaviour is required
  *
  * @return  0 on success; -1 on failure
  */
-int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces);
+int32_t OsNetworkListInterfaces(OsNetworkInterface** aInterfaces, uint32_t aUseLoopback);
 
 /**
  * Destroy list returned by OsNetworkListInterfaces.

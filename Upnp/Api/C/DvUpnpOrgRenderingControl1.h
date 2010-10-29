@@ -83,7 +83,7 @@ DllExport void DvServiceUpnpOrgRenderingControl1EnableActionGetVolumeDBRange(THa
 DllExport void DvServiceUpnpOrgRenderingControl1EnableActionGetLoudness(THandle aService, CallbackRenderingControl1GetLoudness aCallback, void* aPtr);
 DllExport void DvServiceUpnpOrgRenderingControl1EnableActionSetLoudness(THandle aService, CallbackRenderingControl1SetLoudness aCallback, void* aPtr);
 
-DllExport int32_t DvServiceUpnpOrgRenderingControl1SetPropertyLastChange(THandle aService, const char* aValue);
+DllExport int32_t DvServiceUpnpOrgRenderingControl1SetPropertyLastChange(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceUpnpOrgRenderingControl1GetPropertyLastChange(THandle aService, char** aValue);
 
 #ifdef __cplusplus

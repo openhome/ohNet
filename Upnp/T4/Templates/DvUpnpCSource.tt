@@ -169,26 +169,26 @@ void <#=className#>EnableAction<#=a.name#>(THandle aService, <#=callbackPrefix#>
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
 
-int32_t <#=className#>SetProperty<#=s.name#>(THandle aService, <#=PropertyInArgs(s)#>)
+int32_t <#=className#>SetProperty<#=s.name#>(THandle aService, <#=PropertyInArgs(s)#>, uint32_t* aChanged)
 {
 <#      if (s.type=="bin.base64") #>
 <#      { #>
     Brh buf;
     buf.Set((const TByte*)aValue, aValueLen);
-    reinterpret_cast<<#=className#>C*>(aService)->SetProperty<#=s.name#>(buf);
+    *aChanged = (reinterpret_cast<<#=className#>C*>(aService)->SetProperty<#=s.name#>(buf)? 1 : 0);
 <#      } #>
 <#      else if (s.type=="string" || s.type=="uri") #>
 <#      { #>
     Brhz buf(aValue);
-    reinterpret_cast<<#=className#>C*>(aService)->SetProperty<#=s.name#>(buf);
+    *aChanged = (reinterpret_cast<<#=className#>C*>(aService)->SetProperty<#=s.name#>(buf)? 1 : 0);
 <#      } #>
 <#      else if (s.type=="boolean") #>
 <#      { #>
-    reinterpret_cast<<#=className#>C*>(aService)->SetProperty<#=s.name#>((aValue!=0));
+    *aChanged = (reinterpret_cast<<#=className#>C*>(aService)->SetProperty<#=s.name#>((aValue!=0))? 1 : 0);
 <#      } #>
 <#      else #>
 <#      { #>
-    reinterpret_cast<<#=className#>C*>(aService)->SetProperty<#=s.name#>(aValue);
+    *aChanged = (reinterpret_cast<<#=className#>C*>(aService)->SetProperty<#=s.name#>(aValue)? 1 : 0);
 <#      } #>
     return 0;
 }

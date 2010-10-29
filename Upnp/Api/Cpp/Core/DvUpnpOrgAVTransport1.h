@@ -21,7 +21,7 @@ class DvServiceUpnpOrgAVTransport1 : public DvService
 {
 public:
     virtual ~DvServiceUpnpOrgAVTransport1() {}
-    void SetPropertyLastChange(const Brx& aValue);
+    TBool SetPropertyLastChange(const Brx& aValue);
     void GetPropertyLastChange(Brhz& aValue);
 protected:
     DvServiceUpnpOrgAVTransport1(DvDevice& aDevice);

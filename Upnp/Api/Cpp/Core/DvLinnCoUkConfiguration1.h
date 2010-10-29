@@ -21,9 +21,9 @@ class DvServiceLinnCoUkConfiguration1 : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkConfiguration1() {}
-    void SetPropertyConfigurationXml(const Brx& aValue);
+    TBool SetPropertyConfigurationXml(const Brx& aValue);
     void GetPropertyConfigurationXml(Brhz& aValue);
-    void SetPropertyParameterXml(const Brx& aValue);
+    TBool SetPropertyParameterXml(const Brx& aValue);
     void GetPropertyParameterXml(Brhz& aValue);
 protected:
     DvServiceLinnCoUkConfiguration1(DvDevice& aDevice);

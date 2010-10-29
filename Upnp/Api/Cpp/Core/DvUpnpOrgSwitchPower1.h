@@ -21,7 +21,7 @@ class DvServiceUpnpOrgSwitchPower1 : public DvService
 {
 public:
     virtual ~DvServiceUpnpOrgSwitchPower1() {}
-    void SetPropertyStatus(TBool aValue);
+    TBool SetPropertyStatus(TBool aValue);
     void GetPropertyStatus(TBool& aValue);
 protected:
     DvServiceUpnpOrgSwitchPower1(DvDevice& aDevice);

@@ -6,10 +6,10 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkProduct2Cpp::SetPropertyProductName(const std::string& aValue)
+bool DvServiceLinnCoUkProduct2Cpp::SetPropertyProductName(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyProductName, buf);
+    return SetPropertyString(*iPropertyProductName, buf);
 }
 
 void DvServiceLinnCoUkProduct2Cpp::GetPropertyProductName(std::string& aValue)
@@ -18,10 +18,10 @@ void DvServiceLinnCoUkProduct2Cpp::GetPropertyProductName(std::string& aValue)
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkProduct2Cpp::SetPropertyProductRoom(const std::string& aValue)
+bool DvServiceLinnCoUkProduct2Cpp::SetPropertyProductRoom(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyProductRoom, buf);
+    return SetPropertyString(*iPropertyProductRoom, buf);
 }
 
 void DvServiceLinnCoUkProduct2Cpp::GetPropertyProductRoom(std::string& aValue)
@@ -30,9 +30,9 @@ void DvServiceLinnCoUkProduct2Cpp::GetPropertyProductRoom(std::string& aValue)
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkProduct2Cpp::SetPropertyProductStandby(bool aValue)
+bool DvServiceLinnCoUkProduct2Cpp::SetPropertyProductStandby(bool aValue)
 {
-    SetPropertyBool(*iPropertyProductStandby, aValue);
+    return SetPropertyBool(*iPropertyProductStandby, aValue);
 }
 
 void DvServiceLinnCoUkProduct2Cpp::GetPropertyProductStandby(bool& aValue)
@@ -40,9 +40,9 @@ void DvServiceLinnCoUkProduct2Cpp::GetPropertyProductStandby(bool& aValue)
     aValue = iPropertyProductStandby->Value();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::SetPropertyProductSourceIndex(uint32_t aValue)
+bool DvServiceLinnCoUkProduct2Cpp::SetPropertyProductSourceIndex(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyProductSourceIndex, aValue);
+    return SetPropertyUint(*iPropertyProductSourceIndex, aValue);
 }
 
 void DvServiceLinnCoUkProduct2Cpp::GetPropertyProductSourceIndex(uint32_t& aValue)

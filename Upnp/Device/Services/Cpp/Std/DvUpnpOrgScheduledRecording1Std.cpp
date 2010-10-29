@@ -6,10 +6,10 @@
 
 using namespace Zapp;
 
-void DvServiceUpnpOrgScheduledRecording1Cpp::SetPropertyLastChange(const std::string& aValue)
+bool DvServiceUpnpOrgScheduledRecording1Cpp::SetPropertyLastChange(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyLastChange, buf);
+    return SetPropertyString(*iPropertyLastChange, buf);
 }
 
 void DvServiceUpnpOrgScheduledRecording1Cpp::GetPropertyLastChange(std::string& aValue)

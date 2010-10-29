@@ -4,6 +4,7 @@
 #include <DviDevice.h>
 #include <DviSubscription.h>
 #include <Printer.h>
+#include <DviServerWebSocket.h>
 
 using namespace Zapp;
 
@@ -17,10 +18,12 @@ DviStack::DviStack()
     iDviServerUpnp = new DviServerUpnp;
     iDviDeviceMap = new DviDeviceMap;
     iSubscriptionManager = new DviSubscriptionManager;
+    iDviServerWebSocket = new DviServerWebSocket;
 }
 
 DviStack::~DviStack()
 {
+    delete iDviServerWebSocket;
     delete iDviServerUpnp;
     delete iDviDeviceMap;
     delete iSubscriptionManager;

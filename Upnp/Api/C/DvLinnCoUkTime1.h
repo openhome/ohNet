@@ -15,11 +15,11 @@ DllExport void DvServiceLinnCoUkTime1Destroy(THandle aService);
 
 DllExport void DvServiceLinnCoUkTime1EnableActionTime(THandle aService, CallbackTime1Time aCallback, void* aPtr);
 
-DllExport int32_t DvServiceLinnCoUkTime1SetPropertyTrackCount(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkTime1SetPropertyTrackCount(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkTime1GetPropertyTrackCount(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkTime1SetPropertyDuration(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkTime1SetPropertyDuration(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkTime1GetPropertyDuration(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkTime1SetPropertySeconds(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkTime1SetPropertySeconds(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkTime1GetPropertySeconds(THandle aService, uint32_t* aValue);
 
 #ifdef __cplusplus

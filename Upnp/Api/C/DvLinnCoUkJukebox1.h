@@ -29,11 +29,11 @@ DllExport void DvServiceLinnCoUkJukebox1EnableActionCurrentPreset(THandle aServi
 DllExport void DvServiceLinnCoUkJukebox1EnableActionPresetMetaData(THandle aService, CallbackJukebox1PresetMetaData aCallback, void* aPtr);
 DllExport void DvServiceLinnCoUkJukebox1EnableActionLoadManifest(THandle aService, CallbackJukebox1LoadManifest aCallback, void* aPtr);
 
-DllExport int32_t DvServiceLinnCoUkJukebox1SetPropertyCurrentPreset(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkJukebox1SetPropertyCurrentPreset(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkJukebox1GetPropertyCurrentPreset(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkJukebox1SetPropertyPresetPrefix(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkJukebox1SetPropertyPresetPrefix(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkJukebox1GetPropertyPresetPrefix(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkJukebox1SetPropertyAlbumArtFileName(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkJukebox1SetPropertyAlbumArtFileName(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkJukebox1GetPropertyAlbumArtFileName(THandle aService, char** aValue);
 
 #ifdef __cplusplus

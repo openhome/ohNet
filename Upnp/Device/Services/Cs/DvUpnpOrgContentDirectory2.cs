@@ -12,15 +12,15 @@ namespace Zapp
         [DllImport("DvUpnpOrgContentDirectory2")]
         static extern void DvServiceUpnpOrgContentDirectory2Destroy(uint aHandle);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern unsafe int DvServiceUpnpOrgContentDirectory2SetPropertySystemUpdateID(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceUpnpOrgContentDirectory2SetPropertySystemUpdateID(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvUpnpOrgContentDirectory2")]
         static extern unsafe void DvServiceUpnpOrgContentDirectory2GetPropertySystemUpdateID(uint aHandle, uint* aValue);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern unsafe int DvServiceUpnpOrgContentDirectory2SetPropertyContainerUpdateIDs(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceUpnpOrgContentDirectory2SetPropertyContainerUpdateIDs(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgContentDirectory2")]
         static extern unsafe void DvServiceUpnpOrgContentDirectory2GetPropertyContainerUpdateIDs(uint aHandle, char** aValue);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern unsafe int DvServiceUpnpOrgContentDirectory2SetPropertyTransferIDs(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceUpnpOrgContentDirectory2SetPropertyTransferIDs(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgContentDirectory2")]
         static extern unsafe void DvServiceUpnpOrgContentDirectory2GetPropertyTransferIDs(uint aHandle, char** aValue);
         [DllImport("DvUpnpOrgContentDirectory2")]
@@ -104,12 +104,14 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertySystemUpdateID(uint aValue)
+        public unsafe bool SetPropertySystemUpdateID(uint aValue)
         {
-            if (0 != DvServiceUpnpOrgContentDirectory2SetPropertySystemUpdateID(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceUpnpOrgContentDirectory2SetPropertySystemUpdateID(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertySystemUpdateID(out uint aValue)
@@ -120,15 +122,17 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyContainerUpdateIDs(string aValue)
+        public unsafe bool SetPropertyContainerUpdateIDs(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgContentDirectory2SetPropertyContainerUpdateIDs(iHandle, value);
+            int err = DvServiceUpnpOrgContentDirectory2SetPropertyContainerUpdateIDs(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyContainerUpdateIDs(out string aValue)
@@ -139,15 +143,17 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyTransferIDs(string aValue)
+        public unsafe bool SetPropertyTransferIDs(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgContentDirectory2SetPropertyTransferIDs(iHandle, value);
+            int err = DvServiceUpnpOrgContentDirectory2SetPropertyTransferIDs(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyTransferIDs(out string aValue)

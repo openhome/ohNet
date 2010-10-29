@@ -426,9 +426,9 @@ void DvServiceLinnCoUkDiagnostics1EnableActionReboot(THandle aService, CallbackD
     reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService)->EnableActionReboot(aCallback, aPtr);
 }
 
-int32_t DvServiceLinnCoUkDiagnostics1SetPropertyaStateVariable(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkDiagnostics1SetPropertyaStateVariable(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService)->SetPropertyaStateVariable(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkDiagnostics1C*>(aService)->SetPropertyaStateVariable(aValue)? 1 : 0);
     return 0;
 }
 

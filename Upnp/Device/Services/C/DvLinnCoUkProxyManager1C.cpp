@@ -320,10 +320,10 @@ void DvServiceLinnCoUkProxyManager1EnableActionTestDiscPlayerConnection(THandle 
     reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->EnableActionTestDiscPlayerConnection(aCallback, aPtr);
 }
 
-int32_t DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductConnected(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductConnected(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->SetPropertyKontrolProductConnected(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->SetPropertyKontrolProductConnected(buf)? 1 : 0);
     return 0;
 }
 
@@ -334,9 +334,9 @@ void DvServiceLinnCoUkProxyManager1GetPropertyKontrolProductConnected(THandle aS
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductComPort(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductComPort(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->SetPropertyKontrolProductComPort(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->SetPropertyKontrolProductComPort(aValue)? 1 : 0);
     return 0;
 }
 
@@ -347,10 +347,10 @@ void DvServiceLinnCoUkProxyManager1GetPropertyKontrolProductComPort(THandle aSer
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerConnected(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerConnected(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->SetPropertyDiscPlayerConnected(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->SetPropertyDiscPlayerConnected(buf)? 1 : 0);
     return 0;
 }
 
@@ -361,9 +361,9 @@ void DvServiceLinnCoUkProxyManager1GetPropertyDiscPlayerConnected(THandle aServi
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerComPort(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerComPort(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->SetPropertyDiscPlayerComPort(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProxyManager1C*>(aService)->SetPropertyDiscPlayerComPort(aValue)? 1 : 0);
     return 0;
 }
 

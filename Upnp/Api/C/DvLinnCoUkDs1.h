@@ -33,23 +33,23 @@ DllExport void DvServiceLinnCoUkDs1EnableActionSeekTrackRelative(THandle aServic
 DllExport void DvServiceLinnCoUkDs1EnableActionState(THandle aService, CallbackDs1State aCallback, void* aPtr);
 DllExport void DvServiceLinnCoUkDs1EnableActionProtocolInfo(THandle aService, CallbackDs1ProtocolInfo aCallback, void* aPtr);
 
-DllExport int32_t DvServiceLinnCoUkDs1SetPropertySupportedProtocols(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkDs1SetPropertySupportedProtocols(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkDs1GetPropertySupportedProtocols(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkDs1SetPropertyTrackDuration(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkDs1SetPropertyTrackDuration(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkDs1GetPropertyTrackDuration(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkDs1SetPropertyTrackBitRate(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkDs1SetPropertyTrackBitRate(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkDs1GetPropertyTrackBitRate(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkDs1SetPropertyTrackLossless(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkDs1SetPropertyTrackLossless(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkDs1GetPropertyTrackLossless(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkDs1SetPropertyTrackBitDepth(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkDs1SetPropertyTrackBitDepth(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkDs1GetPropertyTrackBitDepth(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkDs1SetPropertyTrackSampleRate(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkDs1SetPropertyTrackSampleRate(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkDs1GetPropertyTrackSampleRate(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkDs1SetPropertyTrackCodecName(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkDs1SetPropertyTrackCodecName(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkDs1GetPropertyTrackCodecName(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkDs1SetPropertyTrackId(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkDs1SetPropertyTrackId(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkDs1GetPropertyTrackId(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkDs1SetPropertyTransportState(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkDs1SetPropertyTransportState(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkDs1GetPropertyTransportState(THandle aService, char** aValue);
 
 #ifdef __cplusplus

@@ -75,6 +75,7 @@ const Brn Http::kHeaderSeparator(": ");
 const Brn Http::kHeaderTerminator("\r\n");
 const Brn Http::kChunkedCountSeparator("\r\n");
 const Brn Http::kConnectionClose("close");
+const Brn Http::kConnectionUpgrade("upgrade");
 const Brn Http::kContentLanguageEnglish("en");
 const Brn Http::kRangeBytes("bytes=");
 const Brn Http::kRangeSeparator("-");
@@ -800,6 +801,11 @@ TBool HttpHeaderConnection::Close() const
     return (Received()? iClose : false);
 }
 
+TBool HttpHeaderConnection::Upgrade() const
+{
+    return (Received()? iUpgrade : false);
+}
+
 TBool HttpHeaderConnection::Recognise(const Brx& aHeader)
 {
     return Ascii::CaseInsensitiveEquals(aHeader, Http::kHeaderConnection);
@@ -808,8 +814,13 @@ TBool HttpHeaderConnection::Recognise(const Brx& aHeader)
 void HttpHeaderConnection::Process(const Brx& aValue)
 {
     iClose = false;
+    iUpgrade = false;
     if (aValue == Http::kConnectionClose) {
         iClose = true;
+        SetReceived();
+    }
+    else if (Ascii::CaseInsensitiveEquals(aValue, Http::kConnectionUpgrade)) {
+        iUpgrade = true;
         SetReceived();
     }
 }

@@ -12,15 +12,15 @@ namespace Zapp
         [DllImport("DvLinnCoUkJukebox1")]
         static extern void DvServiceLinnCoUkJukebox1Destroy(uint aHandle);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern unsafe int DvServiceLinnCoUkJukebox1SetPropertyCurrentPreset(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkJukebox1SetPropertyCurrentPreset(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkJukebox1")]
         static extern unsafe void DvServiceLinnCoUkJukebox1GetPropertyCurrentPreset(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern unsafe int DvServiceLinnCoUkJukebox1SetPropertyPresetPrefix(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkJukebox1SetPropertyPresetPrefix(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkJukebox1")]
         static extern unsafe void DvServiceLinnCoUkJukebox1GetPropertyPresetPrefix(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern unsafe int DvServiceLinnCoUkJukebox1SetPropertyAlbumArtFileName(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkJukebox1SetPropertyAlbumArtFileName(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkJukebox1")]
         static extern unsafe void DvServiceLinnCoUkJukebox1GetPropertyAlbumArtFileName(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkJukebox1")]
@@ -68,12 +68,14 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyCurrentPreset(uint aValue)
+        public unsafe bool SetPropertyCurrentPreset(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkJukebox1SetPropertyCurrentPreset(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkJukebox1SetPropertyCurrentPreset(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyCurrentPreset(out uint aValue)
@@ -84,15 +86,17 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyPresetPrefix(string aValue)
+        public unsafe bool SetPropertyPresetPrefix(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkJukebox1SetPropertyPresetPrefix(iHandle, value);
+            int err = DvServiceLinnCoUkJukebox1SetPropertyPresetPrefix(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyPresetPrefix(out string aValue)
@@ -103,15 +107,17 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyAlbumArtFileName(string aValue)
+        public unsafe bool SetPropertyAlbumArtFileName(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkJukebox1SetPropertyAlbumArtFileName(iHandle, value);
+            int err = DvServiceLinnCoUkJukebox1SetPropertyAlbumArtFileName(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyAlbumArtFileName(out string aValue)

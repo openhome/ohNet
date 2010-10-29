@@ -24,7 +24,7 @@ class DvServiceLinnCoUkDiagnostics1Cpp : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkDiagnostics1Cpp() {}
-    void SetPropertyaStateVariable(uint32_t aValue);
+    bool SetPropertyaStateVariable(uint32_t aValue);
     void GetPropertyaStateVariable(uint32_t& aValue);
 protected:
     DvServiceLinnCoUkDiagnostics1Cpp(DvDeviceStd& aDevice);

@@ -527,9 +527,9 @@ void DvServiceZappOrgTestBasic1EnableActionToggleBool(THandle aService, Callback
     reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->EnableActionToggleBool(aCallback, aPtr);
 }
 
-int32_t DvServiceZappOrgTestBasic1SetPropertyVarUint(THandle aService, uint32_t aValue)
+int32_t DvServiceZappOrgTestBasic1SetPropertyVarUint(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->SetPropertyVarUint(aValue);
+    *aChanged = (reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->SetPropertyVarUint(aValue)? 1 : 0);
     return 0;
 }
 
@@ -540,9 +540,9 @@ void DvServiceZappOrgTestBasic1GetPropertyVarUint(THandle aService, uint32_t* aV
     *aValue = val;
 }
 
-int32_t DvServiceZappOrgTestBasic1SetPropertyVarInt(THandle aService, int32_t aValue)
+int32_t DvServiceZappOrgTestBasic1SetPropertyVarInt(THandle aService, int32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->SetPropertyVarInt(aValue);
+    *aChanged = (reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->SetPropertyVarInt(aValue)? 1 : 0);
     return 0;
 }
 
@@ -553,9 +553,9 @@ void DvServiceZappOrgTestBasic1GetPropertyVarInt(THandle aService, int32_t* aVal
     *aValue = val;
 }
 
-int32_t DvServiceZappOrgTestBasic1SetPropertyVarBool(THandle aService, uint32_t aValue)
+int32_t DvServiceZappOrgTestBasic1SetPropertyVarBool(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->SetPropertyVarBool((aValue!=0));
+    *aChanged = (reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->SetPropertyVarBool((aValue!=0))? 1 : 0);
     return 0;
 }
 
@@ -566,10 +566,10 @@ void DvServiceZappOrgTestBasic1GetPropertyVarBool(THandle aService, uint32_t* aV
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvServiceZappOrgTestBasic1SetPropertyVarStr(THandle aService, const char* aValue)
+int32_t DvServiceZappOrgTestBasic1SetPropertyVarStr(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->SetPropertyVarStr(buf);
+    *aChanged = (reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->SetPropertyVarStr(buf)? 1 : 0);
     return 0;
 }
 
@@ -580,11 +580,11 @@ void DvServiceZappOrgTestBasic1GetPropertyVarStr(THandle aService, char** aValue
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceZappOrgTestBasic1SetPropertyVarBin(THandle aService, const char* aValue, uint32_t aValueLen)
+int32_t DvServiceZappOrgTestBasic1SetPropertyVarBin(THandle aService, const char* aValue, uint32_t aValueLen, uint32_t* aChanged)
 {
     Brh buf;
     buf.Set((const TByte*)aValue, aValueLen);
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->SetPropertyVarBin(buf);
+    *aChanged = (reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->SetPropertyVarBin(buf)? 1 : 0);
     return 0;
 }
 

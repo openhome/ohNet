@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceZappOrgTestDimmableLight1::SetPropertyA_ARG_Level(TUint aValue)
+TBool DvServiceZappOrgTestDimmableLight1::SetPropertyA_ARG_Level(TUint aValue)
 {
-    SetPropertyUint(*iPropertyA_ARG_Level, aValue);
+    return SetPropertyUint(*iPropertyA_ARG_Level, aValue);
 }
 
 void DvServiceZappOrgTestDimmableLight1::GetPropertyA_ARG_Level(TUint& aValue)

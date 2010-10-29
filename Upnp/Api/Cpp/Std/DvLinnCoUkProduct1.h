@@ -24,9 +24,9 @@ class DvServiceLinnCoUkProduct1Cpp : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkProduct1Cpp() {}
-    void SetPropertyRoom(const std::string& aValue);
+    bool SetPropertyRoom(const std::string& aValue);
     void GetPropertyRoom(std::string& aValue);
-    void SetPropertyStandby(bool aValue);
+    bool SetPropertyStandby(bool aValue);
     void GetPropertyStandby(bool& aValue);
 protected:
     DvServiceLinnCoUkProduct1Cpp(DvDeviceStd& aDevice);

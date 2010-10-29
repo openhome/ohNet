@@ -24,23 +24,23 @@ class DvServiceLinnCoUkDs1Cpp : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkDs1Cpp() {}
-    void SetPropertySupportedProtocols(const std::string& aValue);
+    bool SetPropertySupportedProtocols(const std::string& aValue);
     void GetPropertySupportedProtocols(std::string& aValue);
-    void SetPropertyTrackDuration(uint32_t aValue);
+    bool SetPropertyTrackDuration(uint32_t aValue);
     void GetPropertyTrackDuration(uint32_t& aValue);
-    void SetPropertyTrackBitRate(uint32_t aValue);
+    bool SetPropertyTrackBitRate(uint32_t aValue);
     void GetPropertyTrackBitRate(uint32_t& aValue);
-    void SetPropertyTrackLossless(bool aValue);
+    bool SetPropertyTrackLossless(bool aValue);
     void GetPropertyTrackLossless(bool& aValue);
-    void SetPropertyTrackBitDepth(uint32_t aValue);
+    bool SetPropertyTrackBitDepth(uint32_t aValue);
     void GetPropertyTrackBitDepth(uint32_t& aValue);
-    void SetPropertyTrackSampleRate(uint32_t aValue);
+    bool SetPropertyTrackSampleRate(uint32_t aValue);
     void GetPropertyTrackSampleRate(uint32_t& aValue);
-    void SetPropertyTrackCodecName(const std::string& aValue);
+    bool SetPropertyTrackCodecName(const std::string& aValue);
     void GetPropertyTrackCodecName(std::string& aValue);
-    void SetPropertyTrackId(uint32_t aValue);
+    bool SetPropertyTrackId(uint32_t aValue);
     void GetPropertyTrackId(uint32_t& aValue);
-    void SetPropertyTransportState(const std::string& aValue);
+    bool SetPropertyTransportState(const std::string& aValue);
     void GetPropertyTransportState(std::string& aValue);
 protected:
     DvServiceLinnCoUkDs1Cpp(DvDeviceStd& aDevice);

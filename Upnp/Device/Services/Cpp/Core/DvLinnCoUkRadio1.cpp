@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkRadio1::SetPropertyChannelUri(const Brx& aValue)
+TBool DvServiceLinnCoUkRadio1::SetPropertyChannelUri(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyChannelUri, aValue);
+    return SetPropertyString(*iPropertyChannelUri, aValue);
 }
 
 void DvServiceLinnCoUkRadio1::GetPropertyChannelUri(Brhz& aValue)
@@ -16,9 +16,9 @@ void DvServiceLinnCoUkRadio1::GetPropertyChannelUri(Brhz& aValue)
     aValue.Set(iPropertyChannelUri->Value());
 }
 
-void DvServiceLinnCoUkRadio1::SetPropertyChannelMetadata(const Brx& aValue)
+TBool DvServiceLinnCoUkRadio1::SetPropertyChannelMetadata(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyChannelMetadata, aValue);
+    return SetPropertyString(*iPropertyChannelMetadata, aValue);
 }
 
 void DvServiceLinnCoUkRadio1::GetPropertyChannelMetadata(Brhz& aValue)
@@ -26,9 +26,9 @@ void DvServiceLinnCoUkRadio1::GetPropertyChannelMetadata(Brhz& aValue)
     aValue.Set(iPropertyChannelMetadata->Value());
 }
 
-void DvServiceLinnCoUkRadio1::SetPropertyTransportState(const Brx& aValue)
+TBool DvServiceLinnCoUkRadio1::SetPropertyTransportState(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyTransportState, aValue);
+    return SetPropertyString(*iPropertyTransportState, aValue);
 }
 
 void DvServiceLinnCoUkRadio1::GetPropertyTransportState(Brhz& aValue)
@@ -36,9 +36,9 @@ void DvServiceLinnCoUkRadio1::GetPropertyTransportState(Brhz& aValue)
     aValue.Set(iPropertyTransportState->Value());
 }
 
-void DvServiceLinnCoUkRadio1::SetPropertyProtocolInfo(const Brx& aValue)
+TBool DvServiceLinnCoUkRadio1::SetPropertyProtocolInfo(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyProtocolInfo, aValue);
+    return SetPropertyString(*iPropertyProtocolInfo, aValue);
 }
 
 void DvServiceLinnCoUkRadio1::GetPropertyProtocolInfo(Brhz& aValue)
@@ -46,9 +46,9 @@ void DvServiceLinnCoUkRadio1::GetPropertyProtocolInfo(Brhz& aValue)
     aValue.Set(iPropertyProtocolInfo->Value());
 }
 
-void DvServiceLinnCoUkRadio1::SetPropertyId(TUint aValue)
+TBool DvServiceLinnCoUkRadio1::SetPropertyId(TUint aValue)
 {
-    SetPropertyUint(*iPropertyId, aValue);
+    return SetPropertyUint(*iPropertyId, aValue);
 }
 
 void DvServiceLinnCoUkRadio1::GetPropertyId(TUint& aValue)
@@ -56,9 +56,9 @@ void DvServiceLinnCoUkRadio1::GetPropertyId(TUint& aValue)
     aValue = iPropertyId->Value();
 }
 
-void DvServiceLinnCoUkRadio1::SetPropertyIdArray(const Brx& aValue)
+TBool DvServiceLinnCoUkRadio1::SetPropertyIdArray(const Brx& aValue)
 {
-    SetPropertyBinary(*iPropertyIdArray, aValue);
+    return SetPropertyBinary(*iPropertyIdArray, aValue);
 }
 
 void DvServiceLinnCoUkRadio1::GetPropertyIdArray(Brh& aValue)
@@ -66,9 +66,9 @@ void DvServiceLinnCoUkRadio1::GetPropertyIdArray(Brh& aValue)
     aValue.Set(iPropertyIdArray->Value());
 }
 
-void DvServiceLinnCoUkRadio1::SetPropertyIdsMax(TUint aValue)
+TBool DvServiceLinnCoUkRadio1::SetPropertyIdsMax(TUint aValue)
 {
-    SetPropertyUint(*iPropertyIdsMax, aValue);
+    return SetPropertyUint(*iPropertyIdsMax, aValue);
 }
 
 void DvServiceLinnCoUkRadio1::GetPropertyIdsMax(TUint& aValue)

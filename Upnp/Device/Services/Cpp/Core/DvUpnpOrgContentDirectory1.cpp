@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceUpnpOrgContentDirectory1::SetPropertyTransferIDs(const Brx& aValue)
+TBool DvServiceUpnpOrgContentDirectory1::SetPropertyTransferIDs(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyTransferIDs, aValue);
+    return SetPropertyString(*iPropertyTransferIDs, aValue);
 }
 
 void DvServiceUpnpOrgContentDirectory1::GetPropertyTransferIDs(Brhz& aValue)
@@ -16,9 +16,9 @@ void DvServiceUpnpOrgContentDirectory1::GetPropertyTransferIDs(Brhz& aValue)
     aValue.Set(iPropertyTransferIDs->Value());
 }
 
-void DvServiceUpnpOrgContentDirectory1::SetPropertySystemUpdateID(TUint aValue)
+TBool DvServiceUpnpOrgContentDirectory1::SetPropertySystemUpdateID(TUint aValue)
 {
-    SetPropertyUint(*iPropertySystemUpdateID, aValue);
+    return SetPropertyUint(*iPropertySystemUpdateID, aValue);
 }
 
 void DvServiceUpnpOrgContentDirectory1::GetPropertySystemUpdateID(TUint& aValue)
@@ -26,9 +26,9 @@ void DvServiceUpnpOrgContentDirectory1::GetPropertySystemUpdateID(TUint& aValue)
     aValue = iPropertySystemUpdateID->Value();
 }
 
-void DvServiceUpnpOrgContentDirectory1::SetPropertyContainerUpdateIDs(const Brx& aValue)
+TBool DvServiceUpnpOrgContentDirectory1::SetPropertyContainerUpdateIDs(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyContainerUpdateIDs, aValue);
+    return SetPropertyString(*iPropertyContainerUpdateIDs, aValue);
 }
 
 void DvServiceUpnpOrgContentDirectory1::GetPropertyContainerUpdateIDs(Brhz& aValue)

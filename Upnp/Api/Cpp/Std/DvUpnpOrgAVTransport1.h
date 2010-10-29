@@ -24,7 +24,7 @@ class DvServiceUpnpOrgAVTransport1Cpp : public DvService
 {
 public:
     virtual ~DvServiceUpnpOrgAVTransport1Cpp() {}
-    void SetPropertyLastChange(const std::string& aValue);
+    bool SetPropertyLastChange(const std::string& aValue);
     void GetPropertyLastChange(std::string& aValue);
 protected:
     DvServiceUpnpOrgAVTransport1Cpp(DvDeviceStd& aDevice);

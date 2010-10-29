@@ -467,6 +467,14 @@ void SuiteEndpoint::Test()
 const TUint kMulticastPort = 2000;
 const Brn kMulticastAddress("239.252.0.0");
 
+static void AppendUint32(Bwx& aBuf, TUint aNum)
+{
+    TUint bytes = aBuf.Bytes();
+    ASSERT(bytes + sizeof(TUint32) <= aBuf.MaxBytes());
+    memcpy(const_cast<TByte*>(aBuf.Ptr()+bytes), &aNum, sizeof(TUint32));
+    aBuf.SetBytes(bytes + sizeof(TUint32));
+}
+
 class SuiteMulticast : public Suite
 {
 public:
@@ -502,9 +510,9 @@ SuiteMulticast::SuiteMulticast() :
     iThread1 = new ThreadFunctor("MUL2", MakeFunctor(*this, &SuiteMulticast::Receiver));
 
     TUint i;
-    iExp.AppendUint32(0); //save space for count
+    AppendUint32(iExp, 0); //save space for count
     for( i=0; i < kMsgBytes/4; i++) { //prefill iExp with expected values
-        iExp.AppendUint32(i);
+        AppendUint32(iExp, i);
     }
 }
 
@@ -528,7 +536,7 @@ void SuiteMulticast::Test()
     TUint i;
     for( i=0; i < kMsgBytes; i++) {
         buf.SetBytes(0);
-        buf.AppendUint32(i); //num of bytes in this message
+        AppendUint32(buf, i); //num of bytes in this message
         buf.SetBytes(i + sizeof(TUint)); //use prefilled values
         send.Send(buf);
         // assume that a delay of 500ms without response implies that the message wasn't delivered
@@ -548,7 +556,7 @@ void SuiteMulticast::Test()
     }
 
     buf.SetBytes(0);
-    buf.AppendUint32(kQuit);
+    AppendUint32(buf, kQuit);
     send.Send(buf);
 
     try {
@@ -563,7 +571,8 @@ void SuiteMulticast::Test()
 void SuiteMulticast::Receiver()
 {
     iPortLock.Wait();
-    SocketUdpMulticast recv(Endpoint(iPort, kMulticastAddress), 1);
+    SocketUdpMulticast recv(1, 0);
+	recv.AddMembership(Endpoint(iPort, kMulticastAddress));
     iPort = recv.Port();
     iPortLock.Signal();
 
@@ -573,7 +582,7 @@ void SuiteMulticast::Receiver()
     Brn exp = iExp.Split(4);
     while(1) {
         recv.Receive(buf);
-        TUint num = Arch::BigEndian4(*((TUint32*)(buf.Ptr())));
+        TUint num = *((TUint32*)buf.Ptr());
         if(num == kQuit) {
             break;
         }
@@ -584,6 +593,89 @@ void SuiteMulticast::Receiver()
     }
 
     iSender.Signal();
+}
+
+class SuiteUnicast : public Suite
+{
+public:
+    SuiteUnicast(TIpAddress aInterface);
+    ~SuiteUnicast();
+private:
+    void Test();
+    void Receiver();
+    void Send(TUint aVal);
+private:
+    static const TUint kMsgBytes = 256;
+    static const TUint kQuit = 0xFFFFFFFF;
+    static const TUint kTestIterations = 1000;
+private:
+    SocketUdpClient* iSender;
+    SocketUdpClient* iReceiver;
+    ThreadFunctor* iReceiverThread;
+    TUint iSendVal;
+    TUint iLastVal;
+};
+
+SuiteUnicast::SuiteUnicast(TIpAddress aInterface)
+    : Suite("Unicast Tests")
+{
+    iReceiver = new SocketUdpClient(Endpoint(), 2, aInterface);
+    iReceiver->SetRecvBufBytes(kMsgBytes * kTestIterations * 2);
+    Log::Print("Receiver running at port %u\n", iReceiver->Port());
+    iSender = new SocketUdpClient(Endpoint(iReceiver->Port(), aInterface));
+    iReceiverThread = new ThreadFunctor("UNIC", MakeFunctor(*this, &SuiteUnicast::Receiver));
+    iReceiverThread->Start();
+}
+
+SuiteUnicast::~SuiteUnicast()
+{
+    delete iReceiverThread;
+    delete iSender;
+    delete iReceiver;
+}
+
+void SuiteUnicast::Test()
+{
+    for (TUint i=0; i<kTestIterations; i++) {
+        Send(i);
+    }
+    Send(kQuit);
+}
+
+void SuiteUnicast::Send(TUint aVal)
+{
+    Bws<kMsgBytes> buf;
+    const TUint count = kMsgBytes/sizeof(TUint);
+    for (TUint i=0; i<count; i++) {
+        AppendUint32(buf, aVal);
+    }
+    iSendVal = aVal;
+    iSender->Send(buf);
+}
+
+void SuiteUnicast::Receiver()
+{
+    TBool first = true;
+    iLastVal = 0;
+    TUint val;
+    Bws<kMsgBytes> recv;
+    do {
+        recv.SetBytes(0);
+        (void)iReceiver->Receive(recv);
+        ASSERT(recv.Bytes() >= sizeof(TUint32));
+        val = *((TUint32*)recv.Ptr());
+        if (val != kQuit) {
+            if (first) {
+                TEST(val == 0);
+                first = false;
+            }
+            else {
+                TEST(val == iLastVal+1);
+            }
+        }
+        //Print("Received %u, last sent %u\n", val, iSendVal);
+        iLastVal = val;
+    } while (val != kQuit);
 }
 
 class MainTestThread : public Thread
@@ -603,6 +695,7 @@ void MainTestThread::Run()
     runner.Add(new SuiteSocketServer(iInterface));
     runner.Add(new SuiteTcpServerShutdown(iInterface));
     runner.Add(new SuiteEndpoint());
+    //runner.Add(new SuiteUnicast(iInterface));
     runner.Add(new SuiteMulticast());
     runner.Run();
     Signal();
@@ -619,7 +712,7 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
 
     UpnpLibrary::InitialiseMinimal(aInitParams);
 
-    std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces();
+    std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces(false);
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
     TIpAddress addr = (*ifs)[adapter.Value()]->Address();
     for (TUint i=0; i<ifs->size(); i++) {

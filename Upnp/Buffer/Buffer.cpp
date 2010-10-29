@@ -252,64 +252,6 @@ void Bwx::Append(const TByte* aPtr, TUint aBytes)
     iBytes = Bytes() + aBytes;
 }
 
-void Bwx::AppendUint8(TUint8 aNum)
-{
-    Append(&aNum, 1);
-}
-
-void Bwx::AppendInt8(TInt8 aNum)
-{
-    Append((TByte*)&aNum, 1);
-}
-
-void Bwx::AppendUint16(TUint16 aNum)
-{
-    ASSERT(Bytes() + sizeof(TUint16) <= MaxBytes());
-    TUint16 num = Arch::BigEndian2(aNum);
-    memcpy(const_cast<TByte*>(Ptr()+Bytes()), &num, sizeof(TUint16));
-    iBytes = Bytes() + sizeof(TUint16);
-}
-
-void Bwx::AppendInt16(TInt16 aNum)
-{
-    ASSERT(Bytes() + sizeof(TInt16) <= MaxBytes());
-    TInt16 num = Arch::BigEndian2(aNum);
-    memcpy(const_cast<TByte*>(Ptr()+Bytes()), &num, sizeof(TInt16));
-    iBytes = Bytes() + sizeof(TInt16);
-}
-
-void Bwx::AppendUint32(TUint32 aNum)
-{
-    ASSERT(Bytes() + sizeof(TUint32) <= MaxBytes());
-    TUint32 num = Arch::BigEndian4(aNum);
-    memcpy(const_cast<TByte*>(Ptr()+Bytes()), &num, sizeof(TUint32));
-    iBytes = Bytes() + sizeof(TUint32);
-}
-
-void Bwx::AppendInt32(TInt32 aNum)
-{
-    ASSERT(Bytes() + sizeof(TInt32) <= MaxBytes());
-    TInt32 num = Arch::BigEndian4(aNum);
-    memcpy(const_cast<TByte*>(Ptr()+Bytes()), &num, sizeof(TInt32));
-    iBytes = Bytes() + sizeof(TInt32);
-}
-
-void Bwx::AppendUint64(TUint64 aNum)
-{
-    ASSERT(Bytes() + sizeof(TUint64) <= MaxBytes());
-    TUint64 num = Arch::BigEndian8(aNum);
-    memcpy(const_cast<TByte*>(Ptr()+Bytes()), &num, sizeof(TUint64));
-    iBytes = Bytes() + sizeof(TUint64);
-}
-
-void Bwx::AppendInt64(TInt64 aNum)
-{
-    ASSERT(Bytes() + sizeof(TInt64) <= MaxBytes());
-    TInt64 num = Arch::BigEndian8(aNum);
-    memcpy(const_cast<TByte*>(Ptr()+Bytes()), &num, sizeof(TInt64));
-    iBytes = Bytes() + sizeof(TInt64);
-}
-
 void Bwx::AppendPrintf(const TChar* aFormatString, ...)
 {
     va_list args;
@@ -356,12 +298,6 @@ TByte& Bwx::At(TUint aByteIndex)
 {
     ASSERT(aByteIndex < Bytes());
     return(const_cast<TByte&>(Ptr()[aByteIndex]));
-}
-
-TUint32& Bwx::Uint32At(TUint aByteIndex)
-{
-    ASSERT((aByteIndex + sizeof(TUint32)) <= Bytes());
-    return((TUint32&)(Ptr()[aByteIndex]));
 }
 
 // Bwn

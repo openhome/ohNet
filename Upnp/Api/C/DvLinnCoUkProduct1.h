@@ -21,9 +21,9 @@ DllExport void DvServiceLinnCoUkProduct1EnableActionSetRoom(THandle aService, Ca
 DllExport void DvServiceLinnCoUkProduct1EnableActionStandby(THandle aService, CallbackProduct1Standby aCallback, void* aPtr);
 DllExport void DvServiceLinnCoUkProduct1EnableActionSetStandby(THandle aService, CallbackProduct1SetStandby aCallback, void* aPtr);
 
-DllExport int32_t DvServiceLinnCoUkProduct1SetPropertyRoom(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkProduct1SetPropertyRoom(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkProduct1GetPropertyRoom(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkProduct1SetPropertyStandby(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkProduct1SetPropertyStandby(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkProduct1GetPropertyStandby(THandle aService, uint32_t* aValue);
 
 #ifdef __cplusplus

@@ -24,29 +24,29 @@ class DvServiceLinnCoUkInfo1Cpp : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkInfo1Cpp() {}
-    void SetPropertyTrackCount(uint32_t aValue);
+    bool SetPropertyTrackCount(uint32_t aValue);
     void GetPropertyTrackCount(uint32_t& aValue);
-    void SetPropertyDetailsCount(uint32_t aValue);
+    bool SetPropertyDetailsCount(uint32_t aValue);
     void GetPropertyDetailsCount(uint32_t& aValue);
-    void SetPropertyMetatextCount(uint32_t aValue);
+    bool SetPropertyMetatextCount(uint32_t aValue);
     void GetPropertyMetatextCount(uint32_t& aValue);
-    void SetPropertyUri(const std::string& aValue);
+    bool SetPropertyUri(const std::string& aValue);
     void GetPropertyUri(std::string& aValue);
-    void SetPropertyMetadata(const std::string& aValue);
+    bool SetPropertyMetadata(const std::string& aValue);
     void GetPropertyMetadata(std::string& aValue);
-    void SetPropertyDuration(uint32_t aValue);
+    bool SetPropertyDuration(uint32_t aValue);
     void GetPropertyDuration(uint32_t& aValue);
-    void SetPropertyBitRate(uint32_t aValue);
+    bool SetPropertyBitRate(uint32_t aValue);
     void GetPropertyBitRate(uint32_t& aValue);
-    void SetPropertyBitDepth(uint32_t aValue);
+    bool SetPropertyBitDepth(uint32_t aValue);
     void GetPropertyBitDepth(uint32_t& aValue);
-    void SetPropertySampleRate(uint32_t aValue);
+    bool SetPropertySampleRate(uint32_t aValue);
     void GetPropertySampleRate(uint32_t& aValue);
-    void SetPropertyLossless(bool aValue);
+    bool SetPropertyLossless(bool aValue);
     void GetPropertyLossless(bool& aValue);
-    void SetPropertyCodecName(const std::string& aValue);
+    bool SetPropertyCodecName(const std::string& aValue);
     void GetPropertyCodecName(std::string& aValue);
-    void SetPropertyMetatext(const std::string& aValue);
+    bool SetPropertyMetatext(const std::string& aValue);
     void GetPropertyMetatext(std::string& aValue);
 protected:
     DvServiceLinnCoUkInfo1Cpp(DvDeviceStd& aDevice);

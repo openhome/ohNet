@@ -620,9 +620,9 @@ void DvServiceUpnpOrgDimming1EnableActionGetRampTime(THandle aService, CallbackD
     reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->EnableActionGetRampTime(aCallback, aPtr);
 }
 
-int32_t DvServiceUpnpOrgDimming1SetPropertyLoadLevelStatus(THandle aService, uint32_t aValue)
+int32_t DvServiceUpnpOrgDimming1SetPropertyLoadLevelStatus(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->SetPropertyLoadLevelStatus(aValue);
+    *aChanged = (reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->SetPropertyLoadLevelStatus(aValue)? 1 : 0);
     return 0;
 }
 
@@ -633,9 +633,9 @@ void DvServiceUpnpOrgDimming1GetPropertyLoadLevelStatus(THandle aService, uint32
     *aValue = val;
 }
 
-int32_t DvServiceUpnpOrgDimming1SetPropertyStepDelta(THandle aService, uint32_t aValue)
+int32_t DvServiceUpnpOrgDimming1SetPropertyStepDelta(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->SetPropertyStepDelta(aValue);
+    *aChanged = (reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->SetPropertyStepDelta(aValue)? 1 : 0);
     return 0;
 }
 
@@ -646,9 +646,9 @@ void DvServiceUpnpOrgDimming1GetPropertyStepDelta(THandle aService, uint32_t* aV
     *aValue = val;
 }
 
-int32_t DvServiceUpnpOrgDimming1SetPropertyRampRate(THandle aService, uint32_t aValue)
+int32_t DvServiceUpnpOrgDimming1SetPropertyRampRate(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->SetPropertyRampRate(aValue);
+    *aChanged = (reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->SetPropertyRampRate(aValue)? 1 : 0);
     return 0;
 }
 
@@ -659,9 +659,9 @@ void DvServiceUpnpOrgDimming1GetPropertyRampRate(THandle aService, uint32_t* aVa
     *aValue = val;
 }
 
-int32_t DvServiceUpnpOrgDimming1SetPropertyIsRamping(THandle aService, uint32_t aValue)
+int32_t DvServiceUpnpOrgDimming1SetPropertyIsRamping(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->SetPropertyIsRamping((aValue!=0));
+    *aChanged = (reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->SetPropertyIsRamping((aValue!=0))? 1 : 0);
     return 0;
 }
 
@@ -672,9 +672,9 @@ void DvServiceUpnpOrgDimming1GetPropertyIsRamping(THandle aService, uint32_t* aV
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvServiceUpnpOrgDimming1SetPropertyRampPaused(THandle aService, uint32_t aValue)
+int32_t DvServiceUpnpOrgDimming1SetPropertyRampPaused(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->SetPropertyRampPaused((aValue!=0));
+    *aChanged = (reinterpret_cast<DvServiceUpnpOrgDimming1C*>(aService)->SetPropertyRampPaused((aValue!=0))? 1 : 0);
     return 0;
 }
 

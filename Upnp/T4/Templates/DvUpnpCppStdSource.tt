@@ -51,16 +51,16 @@ using namespace Zapp;
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
 
-void <#=className#>::SetProperty<#=s.name#>(<#=inArgType[s.type]#> aValue)
+bool <#=className#>::SetProperty<#=s.name#>(<#=inArgType[s.type]#> aValue)
 {
 <#      if (IsStringType(s)) #>
 <#      { #>
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    <#=propertySetter[s.type]#>(*iProperty<#=s.name#>, buf);
+    return <#=propertySetter[s.type]#>(*iProperty<#=s.name#>, buf);
 <#      } #>
 <#      else #>
 <#      { #>
-    <#=propertySetter[s.type]#>(*iProperty<#=s.name#>, aValue);
+    return <#=propertySetter[s.type]#>(*iProperty<#=s.name#>, aValue);
 <#      } #>
 }
 

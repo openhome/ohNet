@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkTime1::SetPropertyTrackCount(TUint aValue)
+TBool DvServiceLinnCoUkTime1::SetPropertyTrackCount(TUint aValue)
 {
-    SetPropertyUint(*iPropertyTrackCount, aValue);
+    return SetPropertyUint(*iPropertyTrackCount, aValue);
 }
 
 void DvServiceLinnCoUkTime1::GetPropertyTrackCount(TUint& aValue)
@@ -16,9 +16,9 @@ void DvServiceLinnCoUkTime1::GetPropertyTrackCount(TUint& aValue)
     aValue = iPropertyTrackCount->Value();
 }
 
-void DvServiceLinnCoUkTime1::SetPropertyDuration(TUint aValue)
+TBool DvServiceLinnCoUkTime1::SetPropertyDuration(TUint aValue)
 {
-    SetPropertyUint(*iPropertyDuration, aValue);
+    return SetPropertyUint(*iPropertyDuration, aValue);
 }
 
 void DvServiceLinnCoUkTime1::GetPropertyDuration(TUint& aValue)
@@ -26,9 +26,9 @@ void DvServiceLinnCoUkTime1::GetPropertyDuration(TUint& aValue)
     aValue = iPropertyDuration->Value();
 }
 
-void DvServiceLinnCoUkTime1::SetPropertySeconds(TUint aValue)
+TBool DvServiceLinnCoUkTime1::SetPropertySeconds(TUint aValue)
 {
-    SetPropertyUint(*iPropertySeconds, aValue);
+    return SetPropertyUint(*iPropertySeconds, aValue);
 }
 
 void DvServiceLinnCoUkTime1::GetPropertySeconds(TUint& aValue)

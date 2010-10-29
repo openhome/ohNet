@@ -12,11 +12,11 @@ namespace Zapp
         [DllImport("DvLinnCoUkProduct1")]
         static extern void DvServiceLinnCoUkProduct1Destroy(uint aHandle);
         [DllImport("DvLinnCoUkProduct1")]
-        static extern unsafe int DvServiceLinnCoUkProduct1SetPropertyRoom(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkProduct1SetPropertyRoom(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct1")]
         static extern unsafe void DvServiceLinnCoUkProduct1GetPropertyRoom(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkProduct1")]
-        static extern unsafe int DvServiceLinnCoUkProduct1SetPropertyStandby(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkProduct1SetPropertyStandby(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct1")]
         static extern unsafe void DvServiceLinnCoUkProduct1GetPropertyStandby(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkProduct1")]
@@ -48,15 +48,17 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyRoom(string aValue)
+        public unsafe bool SetPropertyRoom(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkProduct1SetPropertyRoom(iHandle, value);
+            int err = DvServiceLinnCoUkProduct1SetPropertyRoom(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyRoom(out string aValue)
@@ -67,13 +69,15 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyStandby(bool aValue)
+        public unsafe bool SetPropertyStandby(bool aValue)
         {
+        uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkProduct1SetPropertyStandby(iHandle, value))
+            if (0 != DvServiceLinnCoUkProduct1SetPropertyStandby(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyStandby(out bool aValue)

@@ -41,11 +41,11 @@ DllExport void DvServiceUpnpOrgContentDirectory1EnableActionGetTransferProgress(
 DllExport void DvServiceUpnpOrgContentDirectory1EnableActionDeleteResource(THandle aService, CallbackContentDirectory1DeleteResource aCallback, void* aPtr);
 DllExport void DvServiceUpnpOrgContentDirectory1EnableActionCreateReference(THandle aService, CallbackContentDirectory1CreateReference aCallback, void* aPtr);
 
-DllExport int32_t DvServiceUpnpOrgContentDirectory1SetPropertyTransferIDs(THandle aService, const char* aValue);
+DllExport int32_t DvServiceUpnpOrgContentDirectory1SetPropertyTransferIDs(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceUpnpOrgContentDirectory1GetPropertyTransferIDs(THandle aService, char** aValue);
-DllExport int32_t DvServiceUpnpOrgContentDirectory1SetPropertySystemUpdateID(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceUpnpOrgContentDirectory1SetPropertySystemUpdateID(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceUpnpOrgContentDirectory1GetPropertySystemUpdateID(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceUpnpOrgContentDirectory1SetPropertyContainerUpdateIDs(THandle aService, const char* aValue);
+DllExport int32_t DvServiceUpnpOrgContentDirectory1SetPropertyContainerUpdateIDs(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceUpnpOrgContentDirectory1GetPropertyContainerUpdateIDs(THandle aService, char** aValue);
 
 #ifdef __cplusplus

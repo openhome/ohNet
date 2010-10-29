@@ -24,19 +24,19 @@ class DvServiceLinnCoUkRadio1Cpp : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkRadio1Cpp() {}
-    void SetPropertyChannelUri(const std::string& aValue);
+    bool SetPropertyChannelUri(const std::string& aValue);
     void GetPropertyChannelUri(std::string& aValue);
-    void SetPropertyChannelMetadata(const std::string& aValue);
+    bool SetPropertyChannelMetadata(const std::string& aValue);
     void GetPropertyChannelMetadata(std::string& aValue);
-    void SetPropertyTransportState(const std::string& aValue);
+    bool SetPropertyTransportState(const std::string& aValue);
     void GetPropertyTransportState(std::string& aValue);
-    void SetPropertyProtocolInfo(const std::string& aValue);
+    bool SetPropertyProtocolInfo(const std::string& aValue);
     void GetPropertyProtocolInfo(std::string& aValue);
-    void SetPropertyId(uint32_t aValue);
+    bool SetPropertyId(uint32_t aValue);
     void GetPropertyId(uint32_t& aValue);
-    void SetPropertyIdArray(const std::string& aValue);
+    bool SetPropertyIdArray(const std::string& aValue);
     void GetPropertyIdArray(std::string& aValue);
-    void SetPropertyIdsMax(uint32_t aValue);
+    bool SetPropertyIdsMax(uint32_t aValue);
     void GetPropertyIdsMax(uint32_t& aValue);
 protected:
     DvServiceLinnCoUkRadio1Cpp(DvDeviceStd& aDevice);

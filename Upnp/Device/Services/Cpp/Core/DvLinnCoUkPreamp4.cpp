@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkPreamp4::SetPropertyVolume(TUint aValue)
+TBool DvServiceLinnCoUkPreamp4::SetPropertyVolume(TUint aValue)
 {
-    SetPropertyUint(*iPropertyVolume, aValue);
+    return SetPropertyUint(*iPropertyVolume, aValue);
 }
 
 void DvServiceLinnCoUkPreamp4::GetPropertyVolume(TUint& aValue)
@@ -16,9 +16,9 @@ void DvServiceLinnCoUkPreamp4::GetPropertyVolume(TUint& aValue)
     aValue = iPropertyVolume->Value();
 }
 
-void DvServiceLinnCoUkPreamp4::SetPropertyMute(TBool aValue)
+TBool DvServiceLinnCoUkPreamp4::SetPropertyMute(TBool aValue)
 {
-    SetPropertyBool(*iPropertyMute, aValue);
+    return SetPropertyBool(*iPropertyMute, aValue);
 }
 
 void DvServiceLinnCoUkPreamp4::GetPropertyMute(TBool& aValue)
@@ -26,9 +26,9 @@ void DvServiceLinnCoUkPreamp4::GetPropertyMute(TBool& aValue)
     aValue = iPropertyMute->Value();
 }
 
-void DvServiceLinnCoUkPreamp4::SetPropertyBalance(TInt aValue)
+TBool DvServiceLinnCoUkPreamp4::SetPropertyBalance(TInt aValue)
 {
-    SetPropertyInt(*iPropertyBalance, aValue);
+    return SetPropertyInt(*iPropertyBalance, aValue);
 }
 
 void DvServiceLinnCoUkPreamp4::GetPropertyBalance(TInt& aValue)
@@ -36,9 +36,9 @@ void DvServiceLinnCoUkPreamp4::GetPropertyBalance(TInt& aValue)
     aValue = iPropertyBalance->Value();
 }
 
-void DvServiceLinnCoUkPreamp4::SetPropertyVolumeLimit(TUint aValue)
+TBool DvServiceLinnCoUkPreamp4::SetPropertyVolumeLimit(TUint aValue)
 {
-    SetPropertyUint(*iPropertyVolumeLimit, aValue);
+    return SetPropertyUint(*iPropertyVolumeLimit, aValue);
 }
 
 void DvServiceLinnCoUkPreamp4::GetPropertyVolumeLimit(TUint& aValue)
@@ -46,9 +46,9 @@ void DvServiceLinnCoUkPreamp4::GetPropertyVolumeLimit(TUint& aValue)
     aValue = iPropertyVolumeLimit->Value();
 }
 
-void DvServiceLinnCoUkPreamp4::SetPropertyStartupVolume(TUint aValue)
+TBool DvServiceLinnCoUkPreamp4::SetPropertyStartupVolume(TUint aValue)
 {
-    SetPropertyUint(*iPropertyStartupVolume, aValue);
+    return SetPropertyUint(*iPropertyStartupVolume, aValue);
 }
 
 void DvServiceLinnCoUkPreamp4::GetPropertyStartupVolume(TUint& aValue)
@@ -56,9 +56,9 @@ void DvServiceLinnCoUkPreamp4::GetPropertyStartupVolume(TUint& aValue)
     aValue = iPropertyStartupVolume->Value();
 }
 
-void DvServiceLinnCoUkPreamp4::SetPropertyStartupVolumeEnabled(TBool aValue)
+TBool DvServiceLinnCoUkPreamp4::SetPropertyStartupVolumeEnabled(TBool aValue)
 {
-    SetPropertyBool(*iPropertyStartupVolumeEnabled, aValue);
+    return SetPropertyBool(*iPropertyStartupVolumeEnabled, aValue);
 }
 
 void DvServiceLinnCoUkPreamp4::GetPropertyStartupVolumeEnabled(TBool& aValue)

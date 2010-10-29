@@ -24,9 +24,9 @@ class DvServiceLinnCoUkDelay1Cpp : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkDelay1Cpp() {}
-    void SetPropertyPresetXml(const std::string& aValue);
+    bool SetPropertyPresetXml(const std::string& aValue);
     void GetPropertyPresetXml(std::string& aValue);
-    void SetPropertyPresetIndex(uint32_t aValue);
+    bool SetPropertyPresetIndex(uint32_t aValue);
     void GetPropertyPresetIndex(uint32_t& aValue);
 protected:
     DvServiceLinnCoUkDelay1Cpp(DvDeviceStd& aDevice);

@@ -12,39 +12,39 @@ namespace Zapp
         [DllImport("DvLinnCoUkDs1")]
         static extern void DvServiceLinnCoUkDs1Destroy(uint aHandle);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvServiceLinnCoUkDs1SetPropertySupportedProtocols(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkDs1SetPropertySupportedProtocols(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDs1")]
         static extern unsafe void DvServiceLinnCoUkDs1GetPropertySupportedProtocols(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTrackDuration(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTrackDuration(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDs1")]
         static extern unsafe void DvServiceLinnCoUkDs1GetPropertyTrackDuration(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTrackBitRate(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTrackBitRate(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDs1")]
         static extern unsafe void DvServiceLinnCoUkDs1GetPropertyTrackBitRate(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTrackLossless(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTrackLossless(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDs1")]
         static extern unsafe void DvServiceLinnCoUkDs1GetPropertyTrackLossless(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTrackBitDepth(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTrackBitDepth(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDs1")]
         static extern unsafe void DvServiceLinnCoUkDs1GetPropertyTrackBitDepth(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTrackSampleRate(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTrackSampleRate(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDs1")]
         static extern unsafe void DvServiceLinnCoUkDs1GetPropertyTrackSampleRate(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTrackCodecName(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTrackCodecName(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDs1")]
         static extern unsafe void DvServiceLinnCoUkDs1GetPropertyTrackCodecName(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTrackId(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTrackId(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDs1")]
         static extern unsafe void DvServiceLinnCoUkDs1GetPropertyTrackId(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTransportState(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTransportState(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDs1")]
         static extern unsafe void DvServiceLinnCoUkDs1GetPropertyTransportState(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkDs1")]
@@ -100,15 +100,17 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertySupportedProtocols(string aValue)
+        public unsafe bool SetPropertySupportedProtocols(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkDs1SetPropertySupportedProtocols(iHandle, value);
+            int err = DvServiceLinnCoUkDs1SetPropertySupportedProtocols(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertySupportedProtocols(out string aValue)
@@ -119,12 +121,14 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyTrackDuration(uint aValue)
+        public unsafe bool SetPropertyTrackDuration(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkDs1SetPropertyTrackDuration(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkDs1SetPropertyTrackDuration(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyTrackDuration(out uint aValue)
@@ -135,12 +139,14 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyTrackBitRate(uint aValue)
+        public unsafe bool SetPropertyTrackBitRate(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkDs1SetPropertyTrackBitRate(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkDs1SetPropertyTrackBitRate(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyTrackBitRate(out uint aValue)
@@ -151,13 +157,15 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyTrackLossless(bool aValue)
+        public unsafe bool SetPropertyTrackLossless(bool aValue)
         {
+        uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkDs1SetPropertyTrackLossless(iHandle, value))
+            if (0 != DvServiceLinnCoUkDs1SetPropertyTrackLossless(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyTrackLossless(out bool aValue)
@@ -167,12 +175,14 @@ namespace Zapp
             aValue = (value != 0);
         }
 
-        public unsafe void SetPropertyTrackBitDepth(uint aValue)
+        public unsafe bool SetPropertyTrackBitDepth(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkDs1SetPropertyTrackBitDepth(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkDs1SetPropertyTrackBitDepth(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyTrackBitDepth(out uint aValue)
@@ -183,12 +193,14 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyTrackSampleRate(uint aValue)
+        public unsafe bool SetPropertyTrackSampleRate(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkDs1SetPropertyTrackSampleRate(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkDs1SetPropertyTrackSampleRate(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyTrackSampleRate(out uint aValue)
@@ -199,15 +211,17 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyTrackCodecName(string aValue)
+        public unsafe bool SetPropertyTrackCodecName(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkDs1SetPropertyTrackCodecName(iHandle, value);
+            int err = DvServiceLinnCoUkDs1SetPropertyTrackCodecName(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyTrackCodecName(out string aValue)
@@ -218,12 +232,14 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyTrackId(uint aValue)
+        public unsafe bool SetPropertyTrackId(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkDs1SetPropertyTrackId(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkDs1SetPropertyTrackId(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyTrackId(out uint aValue)
@@ -234,15 +250,17 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyTransportState(string aValue)
+        public unsafe bool SetPropertyTransportState(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkDs1SetPropertyTransportState(iHandle, value);
+            int err = DvServiceLinnCoUkDs1SetPropertyTransportState(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyTransportState(out string aValue)

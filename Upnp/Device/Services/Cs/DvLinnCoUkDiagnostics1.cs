@@ -12,7 +12,7 @@ namespace Zapp
         [DllImport("DvLinnCoUkDiagnostics1")]
         static extern void DvServiceLinnCoUkDiagnostics1Destroy(uint aHandle);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern unsafe int DvServiceLinnCoUkDiagnostics1SetPropertyaStateVariable(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkDiagnostics1SetPropertyaStateVariable(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDiagnostics1")]
         static extern unsafe void DvServiceLinnCoUkDiagnostics1GetPropertyaStateVariable(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkDiagnostics1")]
@@ -80,12 +80,14 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyaStateVariable(uint aValue)
+        public unsafe bool SetPropertyaStateVariable(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkDiagnostics1SetPropertyaStateVariable(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkDiagnostics1SetPropertyaStateVariable(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyaStateVariable(out uint aValue)

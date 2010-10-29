@@ -24,13 +24,13 @@ class DvServiceLinnCoUkPlaylist1Cpp : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkPlaylist1Cpp() {}
-    void SetPropertyIdArray(const std::string& aValue);
+    bool SetPropertyIdArray(const std::string& aValue);
     void GetPropertyIdArray(std::string& aValue);
-    void SetPropertyRepeat(bool aValue);
+    bool SetPropertyRepeat(bool aValue);
     void GetPropertyRepeat(bool& aValue);
-    void SetPropertyShuffle(bool aValue);
+    bool SetPropertyShuffle(bool aValue);
     void GetPropertyShuffle(bool& aValue);
-    void SetPropertyTracksMax(uint32_t aValue);
+    bool SetPropertyTracksMax(uint32_t aValue);
     void GetPropertyTracksMax(uint32_t& aValue);
 protected:
     DvServiceLinnCoUkPlaylist1Cpp(DvDeviceStd& aDevice);

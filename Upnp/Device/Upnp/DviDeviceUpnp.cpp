@@ -100,7 +100,7 @@ void DviDeviceUpnp::AddListener(const NetworkInterface& aNif)
 {
     TIpAddress addr = aNif.Address();
     Bwh uriBase;
-    TUint port = DviServerUpnp::Port(addr);
+    TUint port = DviStack::ServerUpnp().Port(addr);
     DviDevice* root = (iDevice.IsRoot()? &iDevice : iDevice.Root());
     root->GetUriBase(uriBase, addr, port, *this);
     DviDeviceUpnp::MulticastListener* listener = new DviDeviceUpnp::MulticastListener(*this, aNif, uriBase, port);
@@ -1010,9 +1010,6 @@ void DeviceMsgScheduler::Next(TUint aIndex)
     switch (aIndex)
     {
     case 0:
-        Log::Print("Sending notification for ");
-        Log::Print(iDevice.Udn());
-        Log::Print("\n");
         iNotifier->SsdpNotifyRoot(iDevice.Udn(), iUri);
         break;
     case 1:

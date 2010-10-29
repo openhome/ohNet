@@ -35,13 +35,13 @@ DllExport void DvServiceLinnCoUkComponent1EnableActionAmplifierOverTemperature(T
 DllExport void DvServiceLinnCoUkComponent1EnableActionEthernetLinkConnected(THandle aService, CallbackComponent1EthernetLinkConnected aCallback, void* aPtr);
 DllExport void DvServiceLinnCoUkComponent1EnableActionLocate(THandle aService, CallbackComponent1Locate aCallback, void* aPtr);
 
-DllExport int32_t DvServiceLinnCoUkComponent1SetPropertyAmplifierEnabled(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkComponent1SetPropertyAmplifierEnabled(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkComponent1GetPropertyAmplifierEnabled(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkComponent1SetPropertyAmplifierAttenuation(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkComponent1SetPropertyAmplifierAttenuation(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkComponent1GetPropertyAmplifierAttenuation(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkComponent1SetPropertyVolumeControlEnabled(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkComponent1SetPropertyVolumeControlEnabled(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkComponent1GetPropertyVolumeControlEnabled(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkComponent1SetPropertyDigitalAudioOutputRaw(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkComponent1SetPropertyDigitalAudioOutputRaw(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkComponent1GetPropertyDigitalAudioOutputRaw(THandle aService, uint32_t* aValue);
 
 #ifdef __cplusplus

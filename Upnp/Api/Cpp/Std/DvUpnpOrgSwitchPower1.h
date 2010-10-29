@@ -24,7 +24,7 @@ class DvServiceUpnpOrgSwitchPower1Cpp : public DvService
 {
 public:
     virtual ~DvServiceUpnpOrgSwitchPower1Cpp() {}
-    void SetPropertyStatus(bool aValue);
+    bool SetPropertyStatus(bool aValue);
     void GetPropertyStatus(bool& aValue);
 protected:
     DvServiceUpnpOrgSwitchPower1Cpp(DvDeviceStd& aDevice);

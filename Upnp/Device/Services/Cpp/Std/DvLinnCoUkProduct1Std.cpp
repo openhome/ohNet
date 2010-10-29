@@ -6,10 +6,10 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkProduct1Cpp::SetPropertyRoom(const std::string& aValue)
+bool DvServiceLinnCoUkProduct1Cpp::SetPropertyRoom(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyRoom, buf);
+    return SetPropertyString(*iPropertyRoom, buf);
 }
 
 void DvServiceLinnCoUkProduct1Cpp::GetPropertyRoom(std::string& aValue)
@@ -18,9 +18,9 @@ void DvServiceLinnCoUkProduct1Cpp::GetPropertyRoom(std::string& aValue)
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkProduct1Cpp::SetPropertyStandby(bool aValue)
+bool DvServiceLinnCoUkProduct1Cpp::SetPropertyStandby(bool aValue)
 {
-    SetPropertyBool(*iPropertyStandby, aValue);
+    return SetPropertyBool(*iPropertyStandby, aValue);
 }
 
 void DvServiceLinnCoUkProduct1Cpp::GetPropertyStandby(bool& aValue)

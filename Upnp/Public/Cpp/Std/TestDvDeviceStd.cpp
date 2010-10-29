@@ -1,4 +1,5 @@
 #include <TestFramework.h>
+#include <OptionParser.h>
 #include <ZappTypes.h>
 #include <Std/DvDevice.h>
 #include <Std/DvZappOrgTestBasic1.h>
@@ -135,9 +136,11 @@ void ServiceTestBasic::GetBool(uint32_t /*aVersion*/, bool& aValueBool)
 
 void ServiceTestBasic::SetMultiple(uint32_t /*aVersion*/, uint32_t aValueUint, int32_t aValueInt, bool aValueBool)
 {
+    PropertiesLock();
     SetPropertyVarUint(aValueUint);
     SetPropertyVarInt(aValueInt);
     SetPropertyVarBool(aValueBool);
+    PropertiesUnlock();
 }
 
 void ServiceTestBasic::SetString(uint32_t /*aVersion*/, const std::string& aValueStr)
@@ -435,8 +438,17 @@ void CpDevices::UpdatesComplete()
 }
 
 
-void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
+    OptionParser parser;
+    OptionBool loopback("-l", "--loopback", "Use the loopback adapter only");
+    parser.AddOption(&loopback);
+    if (!parser.Parse(aArgc, aArgv) || parser.HelpDisplayed()) {
+        return;
+    }
+    if (loopback.IsSet()) {
+        aInitParams->SetUseLoopbackNetworkInterface();
+    }
     aInitParams->SetMsearchTime(1);
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartCombined();

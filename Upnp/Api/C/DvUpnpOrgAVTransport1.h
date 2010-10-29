@@ -47,7 +47,7 @@ DllExport void DvServiceUpnpOrgAVTransport1EnableActionSetPlayMode(THandle aServ
 DllExport void DvServiceUpnpOrgAVTransport1EnableActionSetRecordQualityMode(THandle aService, CallbackAVTransport1SetRecordQualityMode aCallback, void* aPtr);
 DllExport void DvServiceUpnpOrgAVTransport1EnableActionGetCurrentTransportActions(THandle aService, CallbackAVTransport1GetCurrentTransportActions aCallback, void* aPtr);
 
-DllExport int32_t DvServiceUpnpOrgAVTransport1SetPropertyLastChange(THandle aService, const char* aValue);
+DllExport int32_t DvServiceUpnpOrgAVTransport1SetPropertyLastChange(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceUpnpOrgAVTransport1GetPropertyLastChange(THandle aService, char** aValue);
 
 #ifdef __cplusplus

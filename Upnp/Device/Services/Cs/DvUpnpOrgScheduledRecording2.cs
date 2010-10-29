@@ -12,7 +12,7 @@ namespace Zapp
         [DllImport("DvUpnpOrgScheduledRecording2")]
         static extern void DvServiceUpnpOrgScheduledRecording2Destroy(uint aHandle);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern unsafe int DvServiceUpnpOrgScheduledRecording2SetPropertyLastChange(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceUpnpOrgScheduledRecording2SetPropertyLastChange(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgScheduledRecording2")]
         static extern unsafe void DvServiceUpnpOrgScheduledRecording2GetPropertyLastChange(uint aHandle, char** aValue);
         [DllImport("DvUpnpOrgScheduledRecording2")]
@@ -100,15 +100,17 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyLastChange(string aValue)
+        public unsafe bool SetPropertyLastChange(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgScheduledRecording2SetPropertyLastChange(iHandle, value);
+            int err = DvServiceUpnpOrgScheduledRecording2SetPropertyLastChange(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyLastChange(out string aValue)

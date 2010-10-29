@@ -779,10 +779,10 @@ void DvServiceUpnpOrgAVTransport2EnableActionSetStateVariables(THandle aService,
     reinterpret_cast<DvServiceUpnpOrgAVTransport2C*>(aService)->EnableActionSetStateVariables(aCallback, aPtr);
 }
 
-int32_t DvServiceUpnpOrgAVTransport2SetPropertyLastChange(THandle aService, const char* aValue)
+int32_t DvServiceUpnpOrgAVTransport2SetPropertyLastChange(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceUpnpOrgAVTransport2C*>(aService)->SetPropertyLastChange(buf);
+    *aChanged = (reinterpret_cast<DvServiceUpnpOrgAVTransport2C*>(aService)->SetPropertyLastChange(buf)? 1 : 0);
     return 0;
 }
 
@@ -793,10 +793,10 @@ void DvServiceUpnpOrgAVTransport2GetPropertyLastChange(THandle aService, char** 
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceUpnpOrgAVTransport2SetPropertyDRMState(THandle aService, const char* aValue)
+int32_t DvServiceUpnpOrgAVTransport2SetPropertyDRMState(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceUpnpOrgAVTransport2C*>(aService)->SetPropertyDRMState(buf);
+    *aChanged = (reinterpret_cast<DvServiceUpnpOrgAVTransport2C*>(aService)->SetPropertyDRMState(buf)? 1 : 0);
     return 0;
 }
 

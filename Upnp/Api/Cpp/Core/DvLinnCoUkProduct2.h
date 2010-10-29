@@ -21,13 +21,13 @@ class DvServiceLinnCoUkProduct2 : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkProduct2() {}
-    void SetPropertyProductName(const Brx& aValue);
+    TBool SetPropertyProductName(const Brx& aValue);
     void GetPropertyProductName(Brhz& aValue);
-    void SetPropertyProductRoom(const Brx& aValue);
+    TBool SetPropertyProductRoom(const Brx& aValue);
     void GetPropertyProductRoom(Brhz& aValue);
-    void SetPropertyProductStandby(TBool aValue);
+    TBool SetPropertyProductStandby(TBool aValue);
     void GetPropertyProductStandby(TBool& aValue);
-    void SetPropertyProductSourceIndex(TUint aValue);
+    TBool SetPropertyProductSourceIndex(TUint aValue);
     void GetPropertyProductSourceIndex(TUint& aValue);
 protected:
     DvServiceLinnCoUkProduct2(DvDevice& aDevice);

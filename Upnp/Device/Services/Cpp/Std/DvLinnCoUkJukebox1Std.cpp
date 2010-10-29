@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkJukebox1Cpp::SetPropertyCurrentPreset(uint32_t aValue)
+bool DvServiceLinnCoUkJukebox1Cpp::SetPropertyCurrentPreset(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyCurrentPreset, aValue);
+    return SetPropertyUint(*iPropertyCurrentPreset, aValue);
 }
 
 void DvServiceLinnCoUkJukebox1Cpp::GetPropertyCurrentPreset(uint32_t& aValue)
@@ -16,10 +16,10 @@ void DvServiceLinnCoUkJukebox1Cpp::GetPropertyCurrentPreset(uint32_t& aValue)
     aValue = iPropertyCurrentPreset->Value();
 }
 
-void DvServiceLinnCoUkJukebox1Cpp::SetPropertyPresetPrefix(const std::string& aValue)
+bool DvServiceLinnCoUkJukebox1Cpp::SetPropertyPresetPrefix(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyPresetPrefix, buf);
+    return SetPropertyString(*iPropertyPresetPrefix, buf);
 }
 
 void DvServiceLinnCoUkJukebox1Cpp::GetPropertyPresetPrefix(std::string& aValue)
@@ -28,10 +28,10 @@ void DvServiceLinnCoUkJukebox1Cpp::GetPropertyPresetPrefix(std::string& aValue)
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkJukebox1Cpp::SetPropertyAlbumArtFileName(const std::string& aValue)
+bool DvServiceLinnCoUkJukebox1Cpp::SetPropertyAlbumArtFileName(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyAlbumArtFileName, buf);
+    return SetPropertyString(*iPropertyAlbumArtFileName, buf);
 }
 
 void DvServiceLinnCoUkJukebox1Cpp::GetPropertyAlbumArtFileName(std::string& aValue)

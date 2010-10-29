@@ -22,11 +22,11 @@ public:
 protected:
     DllExport DvService(DviDevice& aDevice, const TChar* aDomain, const TChar* aType, TUint aVersion);
     DllExport virtual ~DvService();
-    DllExport void SetPropertyInt(PropertyInt& aProperty, TInt aValue);
-    DllExport void SetPropertyUint(PropertyUint& aProperty, TUint aValue);
-    DllExport void SetPropertyBool(PropertyBool& aProperty, TBool aValue);
-    DllExport void SetPropertyString(PropertyString& aProperty, const Brx& aValue);
-    DllExport void SetPropertyBinary(PropertyBinary& aProperty, const Brx& aValue);
+    DllExport bool SetPropertyInt(PropertyInt& aProperty, TInt aValue);
+    DllExport bool SetPropertyUint(PropertyUint& aProperty, TUint aValue);
+    DllExport bool SetPropertyBool(PropertyBool& aProperty, TBool aValue);
+    DllExport bool SetPropertyString(PropertyString& aProperty, const Brx& aValue);
+    DllExport bool SetPropertyBinary(PropertyBinary& aProperty, const Brx& aValue);
 protected:
     DviService* iService;
 private:

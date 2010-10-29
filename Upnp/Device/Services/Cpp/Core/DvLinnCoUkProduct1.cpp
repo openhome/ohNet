@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkProduct1::SetPropertyRoom(const Brx& aValue)
+TBool DvServiceLinnCoUkProduct1::SetPropertyRoom(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyRoom, aValue);
+    return SetPropertyString(*iPropertyRoom, aValue);
 }
 
 void DvServiceLinnCoUkProduct1::GetPropertyRoom(Brhz& aValue)
@@ -16,9 +16,9 @@ void DvServiceLinnCoUkProduct1::GetPropertyRoom(Brhz& aValue)
     aValue.Set(iPropertyRoom->Value());
 }
 
-void DvServiceLinnCoUkProduct1::SetPropertyStandby(TBool aValue)
+TBool DvServiceLinnCoUkProduct1::SetPropertyStandby(TBool aValue)
 {
-    SetPropertyBool(*iPropertyStandby, aValue);
+    return SetPropertyBool(*iPropertyStandby, aValue);
 }
 
 void DvServiceLinnCoUkProduct1::GetPropertyStandby(TBool& aValue)

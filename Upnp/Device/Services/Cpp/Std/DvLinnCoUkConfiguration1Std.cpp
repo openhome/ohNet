@@ -6,10 +6,10 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkConfiguration1Cpp::SetPropertyConfigurationXml(const std::string& aValue)
+bool DvServiceLinnCoUkConfiguration1Cpp::SetPropertyConfigurationXml(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyConfigurationXml, buf);
+    return SetPropertyString(*iPropertyConfigurationXml, buf);
 }
 
 void DvServiceLinnCoUkConfiguration1Cpp::GetPropertyConfigurationXml(std::string& aValue)
@@ -18,10 +18,10 @@ void DvServiceLinnCoUkConfiguration1Cpp::GetPropertyConfigurationXml(std::string
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkConfiguration1Cpp::SetPropertyParameterXml(const std::string& aValue)
+bool DvServiceLinnCoUkConfiguration1Cpp::SetPropertyParameterXml(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyParameterXml, buf);
+    return SetPropertyString(*iPropertyParameterXml, buf);
 }
 
 void DvServiceLinnCoUkConfiguration1Cpp::GetPropertyParameterXml(std::string& aValue)

@@ -52,13 +52,14 @@ public:
     inline static THandle NetworkAccept(THandle aHandle);
     static TIpAddress NetworkGetHostByName(const Brx& aAddress);
     static void NetworkSocketSetSendBufBytes(THandle aHandle, TUint aBytes);
+    static void NetworkSocketSetRecvBufBytes(THandle aHandle, TUint aBytes);
     static void NetworkSocketSetReceiveTimeout(THandle aHandle, TUint aMilliSeconds);
     static void NetworkTcpSetNoDelay(THandle aHandle);
     static void NetworkSocketSetReuseAddress(THandle aHandle);
     static void NetworkSocketSetMulticastTtl(THandle aHandle, TUint8 aTtl);
     static void NetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aAddress, TIpAddress aInterface);
     static void NetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aAddress, TIpAddress aInterface);
-    static std::vector<NetworkInterface*>* NetworkListInterfaces();
+    static std::vector<NetworkInterface*>* NetworkListInterfaces(TBool aUseLoopback);
     inline static void NetworkSetInterfaceChangedObserver(InterfaceListChanged aCallback, void* aArg);
 };
 

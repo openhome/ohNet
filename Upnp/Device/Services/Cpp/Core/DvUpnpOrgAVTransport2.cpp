@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceUpnpOrgAVTransport2::SetPropertyLastChange(const Brx& aValue)
+TBool DvServiceUpnpOrgAVTransport2::SetPropertyLastChange(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyLastChange, aValue);
+    return SetPropertyString(*iPropertyLastChange, aValue);
 }
 
 void DvServiceUpnpOrgAVTransport2::GetPropertyLastChange(Brhz& aValue)
@@ -16,9 +16,9 @@ void DvServiceUpnpOrgAVTransport2::GetPropertyLastChange(Brhz& aValue)
     aValue.Set(iPropertyLastChange->Value());
 }
 
-void DvServiceUpnpOrgAVTransport2::SetPropertyDRMState(const Brx& aValue)
+TBool DvServiceUpnpOrgAVTransport2::SetPropertyDRMState(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyDRMState, aValue);
+    return SetPropertyString(*iPropertyDRMState, aValue);
 }
 
 void DvServiceUpnpOrgAVTransport2::GetPropertyDRMState(Brhz& aValue)

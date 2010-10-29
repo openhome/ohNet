@@ -67,7 +67,7 @@ DllExport void <#=className#>EnableAction<#=a.name#>(THandle aService, <#=callba
 
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
-DllExport int32_t <#=className#>SetProperty<#=s.name#>(THandle aService, <#=PropertyInArgs(s)#>);
+DllExport int32_t <#=className#>SetProperty<#=s.name#>(THandle aService, <#=PropertyInArgs(s)#>, uint32_t* aChanged);
 DllExport void <#=className#>GetProperty<#=s.name#>(THandle aService, <#=PropertyOutArgs(s)#>);
 <#  } #>
 

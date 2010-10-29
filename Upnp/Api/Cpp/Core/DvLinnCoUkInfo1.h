@@ -21,29 +21,29 @@ class DvServiceLinnCoUkInfo1 : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkInfo1() {}
-    void SetPropertyTrackCount(TUint aValue);
+    TBool SetPropertyTrackCount(TUint aValue);
     void GetPropertyTrackCount(TUint& aValue);
-    void SetPropertyDetailsCount(TUint aValue);
+    TBool SetPropertyDetailsCount(TUint aValue);
     void GetPropertyDetailsCount(TUint& aValue);
-    void SetPropertyMetatextCount(TUint aValue);
+    TBool SetPropertyMetatextCount(TUint aValue);
     void GetPropertyMetatextCount(TUint& aValue);
-    void SetPropertyUri(const Brx& aValue);
+    TBool SetPropertyUri(const Brx& aValue);
     void GetPropertyUri(Brhz& aValue);
-    void SetPropertyMetadata(const Brx& aValue);
+    TBool SetPropertyMetadata(const Brx& aValue);
     void GetPropertyMetadata(Brhz& aValue);
-    void SetPropertyDuration(TUint aValue);
+    TBool SetPropertyDuration(TUint aValue);
     void GetPropertyDuration(TUint& aValue);
-    void SetPropertyBitRate(TUint aValue);
+    TBool SetPropertyBitRate(TUint aValue);
     void GetPropertyBitRate(TUint& aValue);
-    void SetPropertyBitDepth(TUint aValue);
+    TBool SetPropertyBitDepth(TUint aValue);
     void GetPropertyBitDepth(TUint& aValue);
-    void SetPropertySampleRate(TUint aValue);
+    TBool SetPropertySampleRate(TUint aValue);
     void GetPropertySampleRate(TUint& aValue);
-    void SetPropertyLossless(TBool aValue);
+    TBool SetPropertyLossless(TBool aValue);
     void GetPropertyLossless(TBool& aValue);
-    void SetPropertyCodecName(const Brx& aValue);
+    TBool SetPropertyCodecName(const Brx& aValue);
     void GetPropertyCodecName(Brhz& aValue);
-    void SetPropertyMetatext(const Brx& aValue);
+    TBool SetPropertyMetatext(const Brx& aValue);
     void GetPropertyMetatext(Brhz& aValue);
 protected:
     DvServiceLinnCoUkInfo1(DvDevice& aDevice);

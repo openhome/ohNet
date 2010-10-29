@@ -6,10 +6,10 @@
 
 using namespace Zapp;
 
-void DvServiceUpnpOrgConnectionManager1Cpp::SetPropertySourceProtocolInfo(const std::string& aValue)
+bool DvServiceUpnpOrgConnectionManager1Cpp::SetPropertySourceProtocolInfo(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertySourceProtocolInfo, buf);
+    return SetPropertyString(*iPropertySourceProtocolInfo, buf);
 }
 
 void DvServiceUpnpOrgConnectionManager1Cpp::GetPropertySourceProtocolInfo(std::string& aValue)
@@ -18,10 +18,10 @@ void DvServiceUpnpOrgConnectionManager1Cpp::GetPropertySourceProtocolInfo(std::s
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceUpnpOrgConnectionManager1Cpp::SetPropertySinkProtocolInfo(const std::string& aValue)
+bool DvServiceUpnpOrgConnectionManager1Cpp::SetPropertySinkProtocolInfo(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertySinkProtocolInfo, buf);
+    return SetPropertyString(*iPropertySinkProtocolInfo, buf);
 }
 
 void DvServiceUpnpOrgConnectionManager1Cpp::GetPropertySinkProtocolInfo(std::string& aValue)
@@ -30,10 +30,10 @@ void DvServiceUpnpOrgConnectionManager1Cpp::GetPropertySinkProtocolInfo(std::str
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceUpnpOrgConnectionManager1Cpp::SetPropertyCurrentConnectionIDs(const std::string& aValue)
+bool DvServiceUpnpOrgConnectionManager1Cpp::SetPropertyCurrentConnectionIDs(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyCurrentConnectionIDs, buf);
+    return SetPropertyString(*iPropertyCurrentConnectionIDs, buf);
 }
 
 void DvServiceUpnpOrgConnectionManager1Cpp::GetPropertyCurrentConnectionIDs(std::string& aValue)

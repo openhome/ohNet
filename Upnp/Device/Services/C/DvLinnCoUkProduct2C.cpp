@@ -387,10 +387,10 @@ void DvServiceLinnCoUkProduct2EnableActionSourceType(THandle aService, CallbackP
     reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->EnableActionSourceType(aCallback, aPtr);
 }
 
-int32_t DvServiceLinnCoUkProduct2SetPropertyProductName(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkProduct2SetPropertyProductName(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->SetPropertyProductName(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->SetPropertyProductName(buf)? 1 : 0);
     return 0;
 }
 
@@ -401,10 +401,10 @@ void DvServiceLinnCoUkProduct2GetPropertyProductName(THandle aService, char** aV
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkProduct2SetPropertyProductRoom(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkProduct2SetPropertyProductRoom(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->SetPropertyProductRoom(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->SetPropertyProductRoom(buf)? 1 : 0);
     return 0;
 }
 
@@ -415,9 +415,9 @@ void DvServiceLinnCoUkProduct2GetPropertyProductRoom(THandle aService, char** aV
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkProduct2SetPropertyProductStandby(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkProduct2SetPropertyProductStandby(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->SetPropertyProductStandby((aValue!=0));
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->SetPropertyProductStandby((aValue!=0))? 1 : 0);
     return 0;
 }
 
@@ -428,9 +428,9 @@ void DvServiceLinnCoUkProduct2GetPropertyProductStandby(THandle aService, uint32
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvServiceLinnCoUkProduct2SetPropertyProductSourceIndex(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkProduct2SetPropertyProductSourceIndex(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->SetPropertyProductSourceIndex(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProduct2C*>(aService)->SetPropertyProductSourceIndex(aValue)? 1 : 0);
     return 0;
 }
 

@@ -6,10 +6,10 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkRadio1Cpp::SetPropertyChannelUri(const std::string& aValue)
+bool DvServiceLinnCoUkRadio1Cpp::SetPropertyChannelUri(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyChannelUri, buf);
+    return SetPropertyString(*iPropertyChannelUri, buf);
 }
 
 void DvServiceLinnCoUkRadio1Cpp::GetPropertyChannelUri(std::string& aValue)
@@ -18,10 +18,10 @@ void DvServiceLinnCoUkRadio1Cpp::GetPropertyChannelUri(std::string& aValue)
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkRadio1Cpp::SetPropertyChannelMetadata(const std::string& aValue)
+bool DvServiceLinnCoUkRadio1Cpp::SetPropertyChannelMetadata(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyChannelMetadata, buf);
+    return SetPropertyString(*iPropertyChannelMetadata, buf);
 }
 
 void DvServiceLinnCoUkRadio1Cpp::GetPropertyChannelMetadata(std::string& aValue)
@@ -30,10 +30,10 @@ void DvServiceLinnCoUkRadio1Cpp::GetPropertyChannelMetadata(std::string& aValue)
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkRadio1Cpp::SetPropertyTransportState(const std::string& aValue)
+bool DvServiceLinnCoUkRadio1Cpp::SetPropertyTransportState(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyTransportState, buf);
+    return SetPropertyString(*iPropertyTransportState, buf);
 }
 
 void DvServiceLinnCoUkRadio1Cpp::GetPropertyTransportState(std::string& aValue)
@@ -42,10 +42,10 @@ void DvServiceLinnCoUkRadio1Cpp::GetPropertyTransportState(std::string& aValue)
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkRadio1Cpp::SetPropertyProtocolInfo(const std::string& aValue)
+bool DvServiceLinnCoUkRadio1Cpp::SetPropertyProtocolInfo(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyProtocolInfo, buf);
+    return SetPropertyString(*iPropertyProtocolInfo, buf);
 }
 
 void DvServiceLinnCoUkRadio1Cpp::GetPropertyProtocolInfo(std::string& aValue)
@@ -54,9 +54,9 @@ void DvServiceLinnCoUkRadio1Cpp::GetPropertyProtocolInfo(std::string& aValue)
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkRadio1Cpp::SetPropertyId(uint32_t aValue)
+bool DvServiceLinnCoUkRadio1Cpp::SetPropertyId(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyId, aValue);
+    return SetPropertyUint(*iPropertyId, aValue);
 }
 
 void DvServiceLinnCoUkRadio1Cpp::GetPropertyId(uint32_t& aValue)
@@ -64,10 +64,10 @@ void DvServiceLinnCoUkRadio1Cpp::GetPropertyId(uint32_t& aValue)
     aValue = iPropertyId->Value();
 }
 
-void DvServiceLinnCoUkRadio1Cpp::SetPropertyIdArray(const std::string& aValue)
+bool DvServiceLinnCoUkRadio1Cpp::SetPropertyIdArray(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyBinary(*iPropertyIdArray, buf);
+    return SetPropertyBinary(*iPropertyIdArray, buf);
 }
 
 void DvServiceLinnCoUkRadio1Cpp::GetPropertyIdArray(std::string& aValue)
@@ -76,9 +76,9 @@ void DvServiceLinnCoUkRadio1Cpp::GetPropertyIdArray(std::string& aValue)
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkRadio1Cpp::SetPropertyIdsMax(uint32_t aValue)
+bool DvServiceLinnCoUkRadio1Cpp::SetPropertyIdsMax(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyIdsMax, aValue);
+    return SetPropertyUint(*iPropertyIdsMax, aValue);
 }
 
 void DvServiceLinnCoUkRadio1Cpp::GetPropertyIdsMax(uint32_t& aValue)
