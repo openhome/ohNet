@@ -21,19 +21,19 @@ class DvServiceLinnCoUkRadio1 : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkRadio1() {}
-    void SetPropertyChannelUri(const Brx& aValue);
+    TBool SetPropertyChannelUri(const Brx& aValue);
     void GetPropertyChannelUri(Brhz& aValue);
-    void SetPropertyChannelMetadata(const Brx& aValue);
+    TBool SetPropertyChannelMetadata(const Brx& aValue);
     void GetPropertyChannelMetadata(Brhz& aValue);
-    void SetPropertyTransportState(const Brx& aValue);
+    TBool SetPropertyTransportState(const Brx& aValue);
     void GetPropertyTransportState(Brhz& aValue);
-    void SetPropertyProtocolInfo(const Brx& aValue);
+    TBool SetPropertyProtocolInfo(const Brx& aValue);
     void GetPropertyProtocolInfo(Brhz& aValue);
-    void SetPropertyId(TUint aValue);
+    TBool SetPropertyId(TUint aValue);
     void GetPropertyId(TUint& aValue);
-    void SetPropertyIdArray(const Brx& aValue);
+    TBool SetPropertyIdArray(const Brx& aValue);
     void GetPropertyIdArray(Brh& aValue);
-    void SetPropertyIdsMax(TUint aValue);
+    TBool SetPropertyIdsMax(TUint aValue);
     void GetPropertyIdsMax(TUint& aValue);
 protected:
     DvServiceLinnCoUkRadio1(DvDevice& aDevice);

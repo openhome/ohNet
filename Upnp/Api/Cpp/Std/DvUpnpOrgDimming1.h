@@ -24,15 +24,15 @@ class DvServiceUpnpOrgDimming1Cpp : public DvService
 {
 public:
     virtual ~DvServiceUpnpOrgDimming1Cpp() {}
-    void SetPropertyLoadLevelStatus(uint32_t aValue);
+    bool SetPropertyLoadLevelStatus(uint32_t aValue);
     void GetPropertyLoadLevelStatus(uint32_t& aValue);
-    void SetPropertyStepDelta(uint32_t aValue);
+    bool SetPropertyStepDelta(uint32_t aValue);
     void GetPropertyStepDelta(uint32_t& aValue);
-    void SetPropertyRampRate(uint32_t aValue);
+    bool SetPropertyRampRate(uint32_t aValue);
     void GetPropertyRampRate(uint32_t& aValue);
-    void SetPropertyIsRamping(bool aValue);
+    bool SetPropertyIsRamping(bool aValue);
     void GetPropertyIsRamping(bool& aValue);
-    void SetPropertyRampPaused(bool aValue);
+    bool SetPropertyRampPaused(bool aValue);
     void GetPropertyRampPaused(bool& aValue);
 protected:
     DvServiceUpnpOrgDimming1Cpp(DvDeviceStd& aDevice);

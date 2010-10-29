@@ -484,6 +484,16 @@ int32_t OsNetworkReceive(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes)
         }
     }
 
+#if 0
+    if (received > 0)
+    {
+        char buf[1025];
+        size_t len = (aBytes<1025? aBytes : 1024);
+        memcpy(buf, aBuffer, len);
+        buf[len] = '\0';
+        fprintf(stdout, "OsNetworkReceive, got\n%s\n", buf);
+    }
+#endif
     SetSocketNonBlocking(handle->iSocket);
     WSACloseEvent(event);
     return received;

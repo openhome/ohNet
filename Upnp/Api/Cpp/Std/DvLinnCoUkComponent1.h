@@ -24,13 +24,13 @@ class DvServiceLinnCoUkComponent1Cpp : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkComponent1Cpp() {}
-    void SetPropertyAmplifierEnabled(bool aValue);
+    bool SetPropertyAmplifierEnabled(bool aValue);
     void GetPropertyAmplifierEnabled(bool& aValue);
-    void SetPropertyAmplifierAttenuation(const std::string& aValue);
+    bool SetPropertyAmplifierAttenuation(const std::string& aValue);
     void GetPropertyAmplifierAttenuation(std::string& aValue);
-    void SetPropertyVolumeControlEnabled(bool aValue);
+    bool SetPropertyVolumeControlEnabled(bool aValue);
     void GetPropertyVolumeControlEnabled(bool& aValue);
-    void SetPropertyDigitalAudioOutputRaw(bool aValue);
+    bool SetPropertyDigitalAudioOutputRaw(bool aValue);
     void GetPropertyDigitalAudioOutputRaw(bool& aValue);
 protected:
     DvServiceLinnCoUkComponent1Cpp(DvDeviceStd& aDevice);

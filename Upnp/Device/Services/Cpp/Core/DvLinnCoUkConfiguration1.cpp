@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkConfiguration1::SetPropertyConfigurationXml(const Brx& aValue)
+TBool DvServiceLinnCoUkConfiguration1::SetPropertyConfigurationXml(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyConfigurationXml, aValue);
+    return SetPropertyString(*iPropertyConfigurationXml, aValue);
 }
 
 void DvServiceLinnCoUkConfiguration1::GetPropertyConfigurationXml(Brhz& aValue)
@@ -16,9 +16,9 @@ void DvServiceLinnCoUkConfiguration1::GetPropertyConfigurationXml(Brhz& aValue)
     aValue.Set(iPropertyConfigurationXml->Value());
 }
 
-void DvServiceLinnCoUkConfiguration1::SetPropertyParameterXml(const Brx& aValue)
+TBool DvServiceLinnCoUkConfiguration1::SetPropertyParameterXml(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyParameterXml, aValue);
+    return SetPropertyString(*iPropertyParameterXml, aValue);
 }
 
 void DvServiceLinnCoUkConfiguration1::GetPropertyParameterXml(Brhz& aValue)

@@ -28,6 +28,11 @@ enum ESocketType
 class Endpoint
 {
 public:
+    static const TUint kMaxAddressBytes = 15;
+    static const TUint kMaxEndpointBytes = 21;
+    typedef Bws<kMaxAddressBytes> AddressBuf;
+    typedef Bws<kMaxEndpointBytes> EndpointBuf;
+public:
     Endpoint();
     Endpoint(TUint aPort, const Brx& aAddress);          // specify port, specify ip address from string e.g. "192.168.0.1"
     Endpoint(TUint aPort, TIpAddress aAddress);          // specify port, specify ip address from uint
@@ -40,6 +45,8 @@ public:
     TBool Equals(const Endpoint& aEndpoint) const;       // test if this endpoint is equal to the specified endpoint
     TIpAddress Address() const;
     TUint16 Port() const;                                // return port as a network order uint16
+    void GetAddress(Bwx& aAddress) const;
+    void GetEndpoint(Bwx& aEndpoint) const;
 private:
     TIpAddress iAddress;
     TUint16 iPort;

@@ -24,27 +24,27 @@ class DvServiceLinnCoUkUi2Cpp : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkUi2Cpp() {}
-    void SetPropertyDisplayBrightness(uint32_t aValue);
+    bool SetPropertyDisplayBrightness(uint32_t aValue);
     void GetPropertyDisplayBrightness(uint32_t& aValue);
-    void SetPropertyDisplayBrightnessAuto(bool aValue);
+    bool SetPropertyDisplayBrightnessAuto(bool aValue);
     void GetPropertyDisplayBrightnessAuto(bool& aValue);
-    void SetPropertyInfraredCommands(const std::string& aValue);
+    bool SetPropertyInfraredCommands(const std::string& aValue);
     void GetPropertyInfraredCommands(std::string& aValue);
-    void SetPropertyInfraredTerminalCommands(const std::string& aValue);
+    bool SetPropertyInfraredTerminalCommands(const std::string& aValue);
     void GetPropertyInfraredTerminalCommands(std::string& aValue);
-    void SetPropertyDisplayUpsideDown(bool aValue);
+    bool SetPropertyDisplayUpsideDown(bool aValue);
     void GetPropertyDisplayUpsideDown(bool& aValue);
-    void SetPropertyDisplayScrollText(bool aValue);
+    bool SetPropertyDisplayScrollText(bool aValue);
     void GetPropertyDisplayScrollText(bool& aValue);
-    void SetPropertyDisplaySleep(bool aValue);
+    bool SetPropertyDisplaySleep(bool aValue);
     void GetPropertyDisplaySleep(bool& aValue);
-    void SetPropertyDisplayLedOff(bool aValue);
+    bool SetPropertyDisplayLedOff(bool aValue);
     void GetPropertyDisplayLedOff(bool& aValue);
-    void SetPropertyTerminalInputCode(uint32_t aValue);
+    bool SetPropertyTerminalInputCode(uint32_t aValue);
     void GetPropertyTerminalInputCode(uint32_t& aValue);
-    void SetPropertyTerminalInputName(const std::string& aValue);
+    bool SetPropertyTerminalInputName(const std::string& aValue);
     void GetPropertyTerminalInputName(std::string& aValue);
-    void SetPropertyDisplayPixels(const std::string& aValue);
+    bool SetPropertyDisplayPixels(const std::string& aValue);
     void GetPropertyDisplayPixels(std::string& aValue);
 protected:
     DvServiceLinnCoUkUi2Cpp(DvDeviceStd& aDevice);

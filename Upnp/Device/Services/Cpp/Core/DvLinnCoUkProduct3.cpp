@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkProduct3::SetPropertyProductType(const Brx& aValue)
+TBool DvServiceLinnCoUkProduct3::SetPropertyProductType(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyProductType, aValue);
+    return SetPropertyString(*iPropertyProductType, aValue);
 }
 
 void DvServiceLinnCoUkProduct3::GetPropertyProductType(Brhz& aValue)
@@ -16,9 +16,9 @@ void DvServiceLinnCoUkProduct3::GetPropertyProductType(Brhz& aValue)
     aValue.Set(iPropertyProductType->Value());
 }
 
-void DvServiceLinnCoUkProduct3::SetPropertyProductModel(const Brx& aValue)
+TBool DvServiceLinnCoUkProduct3::SetPropertyProductModel(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyProductModel, aValue);
+    return SetPropertyString(*iPropertyProductModel, aValue);
 }
 
 void DvServiceLinnCoUkProduct3::GetPropertyProductModel(Brhz& aValue)
@@ -26,9 +26,9 @@ void DvServiceLinnCoUkProduct3::GetPropertyProductModel(Brhz& aValue)
     aValue.Set(iPropertyProductModel->Value());
 }
 
-void DvServiceLinnCoUkProduct3::SetPropertyProductName(const Brx& aValue)
+TBool DvServiceLinnCoUkProduct3::SetPropertyProductName(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyProductName, aValue);
+    return SetPropertyString(*iPropertyProductName, aValue);
 }
 
 void DvServiceLinnCoUkProduct3::GetPropertyProductName(Brhz& aValue)
@@ -36,9 +36,9 @@ void DvServiceLinnCoUkProduct3::GetPropertyProductName(Brhz& aValue)
     aValue.Set(iPropertyProductName->Value());
 }
 
-void DvServiceLinnCoUkProduct3::SetPropertyProductRoom(const Brx& aValue)
+TBool DvServiceLinnCoUkProduct3::SetPropertyProductRoom(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyProductRoom, aValue);
+    return SetPropertyString(*iPropertyProductRoom, aValue);
 }
 
 void DvServiceLinnCoUkProduct3::GetPropertyProductRoom(Brhz& aValue)
@@ -46,9 +46,9 @@ void DvServiceLinnCoUkProduct3::GetPropertyProductRoom(Brhz& aValue)
     aValue.Set(iPropertyProductRoom->Value());
 }
 
-void DvServiceLinnCoUkProduct3::SetPropertyProductStandby(TBool aValue)
+TBool DvServiceLinnCoUkProduct3::SetPropertyProductStandby(TBool aValue)
 {
-    SetPropertyBool(*iPropertyProductStandby, aValue);
+    return SetPropertyBool(*iPropertyProductStandby, aValue);
 }
 
 void DvServiceLinnCoUkProduct3::GetPropertyProductStandby(TBool& aValue)
@@ -56,9 +56,9 @@ void DvServiceLinnCoUkProduct3::GetPropertyProductStandby(TBool& aValue)
     aValue = iPropertyProductStandby->Value();
 }
 
-void DvServiceLinnCoUkProduct3::SetPropertyProductSourceIndex(TUint aValue)
+TBool DvServiceLinnCoUkProduct3::SetPropertyProductSourceIndex(TUint aValue)
 {
-    SetPropertyUint(*iPropertyProductSourceIndex, aValue);
+    return SetPropertyUint(*iPropertyProductSourceIndex, aValue);
 }
 
 void DvServiceLinnCoUkProduct3::GetPropertyProductSourceIndex(TUint& aValue)
@@ -66,9 +66,9 @@ void DvServiceLinnCoUkProduct3::GetPropertyProductSourceIndex(TUint& aValue)
     aValue = iPropertyProductSourceIndex->Value();
 }
 
-void DvServiceLinnCoUkProduct3::SetPropertyProductSourceCount(TUint aValue)
+TBool DvServiceLinnCoUkProduct3::SetPropertyProductSourceCount(TUint aValue)
 {
-    SetPropertyUint(*iPropertyProductSourceCount, aValue);
+    return SetPropertyUint(*iPropertyProductSourceCount, aValue);
 }
 
 void DvServiceLinnCoUkProduct3::GetPropertyProductSourceCount(TUint& aValue)
@@ -76,9 +76,9 @@ void DvServiceLinnCoUkProduct3::GetPropertyProductSourceCount(TUint& aValue)
     aValue = iPropertyProductSourceCount->Value();
 }
 
-void DvServiceLinnCoUkProduct3::SetPropertyProductSourceXml(const Brx& aValue)
+TBool DvServiceLinnCoUkProduct3::SetPropertyProductSourceXml(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyProductSourceXml, aValue);
+    return SetPropertyString(*iPropertyProductSourceXml, aValue);
 }
 
 void DvServiceLinnCoUkProduct3::GetPropertyProductSourceXml(Brhz& aValue)
@@ -86,9 +86,9 @@ void DvServiceLinnCoUkProduct3::GetPropertyProductSourceXml(Brhz& aValue)
     aValue.Set(iPropertyProductSourceXml->Value());
 }
 
-void DvServiceLinnCoUkProduct3::SetPropertyStartupSourceIndex(TUint aValue)
+TBool DvServiceLinnCoUkProduct3::SetPropertyStartupSourceIndex(TUint aValue)
 {
-    SetPropertyUint(*iPropertyStartupSourceIndex, aValue);
+    return SetPropertyUint(*iPropertyStartupSourceIndex, aValue);
 }
 
 void DvServiceLinnCoUkProduct3::GetPropertyStartupSourceIndex(TUint& aValue)
@@ -96,9 +96,9 @@ void DvServiceLinnCoUkProduct3::GetPropertyStartupSourceIndex(TUint& aValue)
     aValue = iPropertyStartupSourceIndex->Value();
 }
 
-void DvServiceLinnCoUkProduct3::SetPropertyStartupSourceEnabled(TBool aValue)
+TBool DvServiceLinnCoUkProduct3::SetPropertyStartupSourceEnabled(TBool aValue)
 {
-    SetPropertyBool(*iPropertyStartupSourceEnabled, aValue);
+    return SetPropertyBool(*iPropertyStartupSourceEnabled, aValue);
 }
 
 void DvServiceLinnCoUkProduct3::GetPropertyStartupSourceEnabled(TBool& aValue)
@@ -106,9 +106,9 @@ void DvServiceLinnCoUkProduct3::GetPropertyStartupSourceEnabled(TBool& aValue)
     aValue = iPropertyStartupSourceEnabled->Value();
 }
 
-void DvServiceLinnCoUkProduct3::SetPropertyProductAnySourceName(TUint aValue)
+TBool DvServiceLinnCoUkProduct3::SetPropertyProductAnySourceName(TUint aValue)
 {
-    SetPropertyUint(*iPropertyProductAnySourceName, aValue);
+    return SetPropertyUint(*iPropertyProductAnySourceName, aValue);
 }
 
 void DvServiceLinnCoUkProduct3::GetPropertyProductAnySourceName(TUint& aValue)
@@ -116,9 +116,9 @@ void DvServiceLinnCoUkProduct3::GetPropertyProductAnySourceName(TUint& aValue)
     aValue = iPropertyProductAnySourceName->Value();
 }
 
-void DvServiceLinnCoUkProduct3::SetPropertyProductAnySourceVisible(TUint aValue)
+TBool DvServiceLinnCoUkProduct3::SetPropertyProductAnySourceVisible(TUint aValue)
 {
-    SetPropertyUint(*iPropertyProductAnySourceVisible, aValue);
+    return SetPropertyUint(*iPropertyProductAnySourceVisible, aValue);
 }
 
 void DvServiceLinnCoUkProduct3::GetPropertyProductAnySourceVisible(TUint& aValue)
@@ -126,9 +126,9 @@ void DvServiceLinnCoUkProduct3::GetPropertyProductAnySourceVisible(TUint& aValue
     aValue = iPropertyProductAnySourceVisible->Value();
 }
 
-void DvServiceLinnCoUkProduct3::SetPropertyProductAnySourceType(TUint aValue)
+TBool DvServiceLinnCoUkProduct3::SetPropertyProductAnySourceType(TUint aValue)
 {
-    SetPropertyUint(*iPropertyProductAnySourceType, aValue);
+    return SetPropertyUint(*iPropertyProductAnySourceType, aValue);
 }
 
 void DvServiceLinnCoUkProduct3::GetPropertyProductAnySourceType(TUint& aValue)

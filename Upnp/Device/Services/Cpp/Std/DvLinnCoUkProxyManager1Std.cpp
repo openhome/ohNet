@@ -6,10 +6,10 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkProxyManager1Cpp::SetPropertyKontrolProductConnected(const std::string& aValue)
+bool DvServiceLinnCoUkProxyManager1Cpp::SetPropertyKontrolProductConnected(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyKontrolProductConnected, buf);
+    return SetPropertyString(*iPropertyKontrolProductConnected, buf);
 }
 
 void DvServiceLinnCoUkProxyManager1Cpp::GetPropertyKontrolProductConnected(std::string& aValue)
@@ -18,9 +18,9 @@ void DvServiceLinnCoUkProxyManager1Cpp::GetPropertyKontrolProductConnected(std::
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::SetPropertyKontrolProductComPort(uint32_t aValue)
+bool DvServiceLinnCoUkProxyManager1Cpp::SetPropertyKontrolProductComPort(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyKontrolProductComPort, aValue);
+    return SetPropertyUint(*iPropertyKontrolProductComPort, aValue);
 }
 
 void DvServiceLinnCoUkProxyManager1Cpp::GetPropertyKontrolProductComPort(uint32_t& aValue)
@@ -28,10 +28,10 @@ void DvServiceLinnCoUkProxyManager1Cpp::GetPropertyKontrolProductComPort(uint32_
     aValue = iPropertyKontrolProductComPort->Value();
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::SetPropertyDiscPlayerConnected(const std::string& aValue)
+bool DvServiceLinnCoUkProxyManager1Cpp::SetPropertyDiscPlayerConnected(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyDiscPlayerConnected, buf);
+    return SetPropertyString(*iPropertyDiscPlayerConnected, buf);
 }
 
 void DvServiceLinnCoUkProxyManager1Cpp::GetPropertyDiscPlayerConnected(std::string& aValue)
@@ -40,9 +40,9 @@ void DvServiceLinnCoUkProxyManager1Cpp::GetPropertyDiscPlayerConnected(std::stri
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::SetPropertyDiscPlayerComPort(uint32_t aValue)
+bool DvServiceLinnCoUkProxyManager1Cpp::SetPropertyDiscPlayerComPort(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyDiscPlayerComPort, aValue);
+    return SetPropertyUint(*iPropertyDiscPlayerComPort, aValue);
 }
 
 void DvServiceLinnCoUkProxyManager1Cpp::GetPropertyDiscPlayerComPort(uint32_t& aValue)

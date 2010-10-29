@@ -12,7 +12,7 @@ namespace Zapp
         [DllImport("DvUpnpOrgAVTransport1")]
         static extern void DvServiceUpnpOrgAVTransport1Destroy(uint aHandle);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern unsafe int DvServiceUpnpOrgAVTransport1SetPropertyLastChange(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceUpnpOrgAVTransport1SetPropertyLastChange(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgAVTransport1")]
         static extern unsafe void DvServiceUpnpOrgAVTransport1GetPropertyLastChange(uint aHandle, char** aValue);
         [DllImport("DvUpnpOrgAVTransport1")]
@@ -96,15 +96,17 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyLastChange(string aValue)
+        public unsafe bool SetPropertyLastChange(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgAVTransport1SetPropertyLastChange(iHandle, value);
+            int err = DvServiceUpnpOrgAVTransport1SetPropertyLastChange(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyLastChange(out string aValue)

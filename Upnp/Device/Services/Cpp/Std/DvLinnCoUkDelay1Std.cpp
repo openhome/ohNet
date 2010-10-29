@@ -6,10 +6,10 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkDelay1Cpp::SetPropertyPresetXml(const std::string& aValue)
+bool DvServiceLinnCoUkDelay1Cpp::SetPropertyPresetXml(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyPresetXml, buf);
+    return SetPropertyString(*iPropertyPresetXml, buf);
 }
 
 void DvServiceLinnCoUkDelay1Cpp::GetPropertyPresetXml(std::string& aValue)
@@ -18,9 +18,9 @@ void DvServiceLinnCoUkDelay1Cpp::GetPropertyPresetXml(std::string& aValue)
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkDelay1Cpp::SetPropertyPresetIndex(uint32_t aValue)
+bool DvServiceLinnCoUkDelay1Cpp::SetPropertyPresetIndex(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyPresetIndex, aValue);
+    return SetPropertyUint(*iPropertyPresetIndex, aValue);
 }
 
 void DvServiceLinnCoUkDelay1Cpp::GetPropertyPresetIndex(uint32_t& aValue)

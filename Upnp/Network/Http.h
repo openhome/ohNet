@@ -85,6 +85,7 @@ public:
     static const Brn kHeaderSeparator;
     static const Brn kHeaderTerminator;
     static const Brn kConnectionClose;
+    static const Brn kConnectionUpgrade;
     static const Brn kContentLanguageEnglish;
     static const Brn kRangeBytes;
     static const Brn kRangeSeparator;
@@ -369,11 +370,13 @@ class HttpHeaderConnection : public HttpHeader
 {
 public:
     TBool Close() const;
+    TBool Upgrade() const;
 private:
     virtual TBool Recognise(const Brx& aHeader);
     virtual void Process(const Brx& aValue);
 private:
     TBool iClose;
+    TBool iUpgrade;
 };
 
 class HttpHeaderLocation : public HttpHeader

@@ -46,6 +46,8 @@ namespace Zapp
         [DllImport("ZappUpnp")]
         static extern void ZappInitParamsSetDvNumPublisherThreads(uint aParams, uint aNumThreads);
         [DllImport("ZappUpnp")]
+        static extern void ZappInitParamsSetUseLoopbackNetworkInterface(uint aParams);
+        [DllImport("ZappUpnp")]
         static extern int ZappInitParamsTcpConnectTimeoutMs(uint aParams);
         [DllImport("ZappUpnp")]
         static extern int ZappInitParamsMsearchTimeSecs(uint aParams);
@@ -168,6 +170,11 @@ namespace Zapp
         public void SetDvNumPublisherThreads(uint aNumThreads)
         {
             ZappInitParamsSetDvNumPublisherThreads(iHandle, aNumThreads);
+        }
+
+        public void SetUseLoopbackNetworkInterface()
+        {
+            ZappInitParamsSetUseLoopbackNetworkInterface(iHandle);
         }
 
         public int TcpConnectTimeoutMs()

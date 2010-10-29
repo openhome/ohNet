@@ -61,27 +61,27 @@ DllExport void DvServiceLinnCoUkUi2EnableActionDisplaySleep(THandle aService, Ca
 DllExport void DvServiceLinnCoUkUi2EnableActionSetDisplayLedOff(THandle aService, CallbackUi2SetDisplayLedOff aCallback, void* aPtr);
 DllExport void DvServiceLinnCoUkUi2EnableActionDisplayLedOff(THandle aService, CallbackUi2DisplayLedOff aCallback, void* aPtr);
 
-DllExport int32_t DvServiceLinnCoUkUi2SetPropertyDisplayBrightness(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkUi2SetPropertyDisplayBrightness(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkUi2GetPropertyDisplayBrightness(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkUi2SetPropertyDisplayBrightnessAuto(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkUi2SetPropertyDisplayBrightnessAuto(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkUi2GetPropertyDisplayBrightnessAuto(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkUi2SetPropertyInfraredCommands(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkUi2SetPropertyInfraredCommands(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkUi2GetPropertyInfraredCommands(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkUi2SetPropertyInfraredTerminalCommands(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkUi2SetPropertyInfraredTerminalCommands(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkUi2GetPropertyInfraredTerminalCommands(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkUi2SetPropertyDisplayUpsideDown(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkUi2SetPropertyDisplayUpsideDown(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkUi2GetPropertyDisplayUpsideDown(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkUi2SetPropertyDisplayScrollText(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkUi2SetPropertyDisplayScrollText(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkUi2GetPropertyDisplayScrollText(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkUi2SetPropertyDisplaySleep(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkUi2SetPropertyDisplaySleep(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkUi2GetPropertyDisplaySleep(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkUi2SetPropertyDisplayLedOff(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkUi2SetPropertyDisplayLedOff(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkUi2GetPropertyDisplayLedOff(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkUi2SetPropertyTerminalInputCode(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceLinnCoUkUi2SetPropertyTerminalInputCode(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkUi2GetPropertyTerminalInputCode(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkUi2SetPropertyTerminalInputName(THandle aService, const char* aValue);
+DllExport int32_t DvServiceLinnCoUkUi2SetPropertyTerminalInputName(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkUi2GetPropertyTerminalInputName(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkUi2SetPropertyDisplayPixels(THandle aService, const char* aValue, uint32_t aValueLen);
+DllExport int32_t DvServiceLinnCoUkUi2SetPropertyDisplayPixels(THandle aService, const char* aValue, uint32_t aValueLen, uint32_t* aChanged);
 DllExport void DvServiceLinnCoUkUi2GetPropertyDisplayPixels(THandle aService, char** aValue, uint32_t* aValueLen);
 
 #ifdef __cplusplus

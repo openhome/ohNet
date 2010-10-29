@@ -732,10 +732,10 @@ void DvServiceLinnCoUkProduct3EnableActionSetSourceVisible(THandle aService, Cal
     reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->EnableActionSetSourceVisible(aCallback, aPtr);
 }
 
-int32_t DvServiceLinnCoUkProduct3SetPropertyProductType(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkProduct3SetPropertyProductType(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductType(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductType(buf)? 1 : 0);
     return 0;
 }
 
@@ -746,10 +746,10 @@ void DvServiceLinnCoUkProduct3GetPropertyProductType(THandle aService, char** aV
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkProduct3SetPropertyProductModel(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkProduct3SetPropertyProductModel(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductModel(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductModel(buf)? 1 : 0);
     return 0;
 }
 
@@ -760,10 +760,10 @@ void DvServiceLinnCoUkProduct3GetPropertyProductModel(THandle aService, char** a
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkProduct3SetPropertyProductName(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkProduct3SetPropertyProductName(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductName(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductName(buf)? 1 : 0);
     return 0;
 }
 
@@ -774,10 +774,10 @@ void DvServiceLinnCoUkProduct3GetPropertyProductName(THandle aService, char** aV
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkProduct3SetPropertyProductRoom(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkProduct3SetPropertyProductRoom(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductRoom(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductRoom(buf)? 1 : 0);
     return 0;
 }
 
@@ -788,9 +788,9 @@ void DvServiceLinnCoUkProduct3GetPropertyProductRoom(THandle aService, char** aV
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkProduct3SetPropertyProductStandby(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkProduct3SetPropertyProductStandby(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductStandby((aValue!=0));
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductStandby((aValue!=0))? 1 : 0);
     return 0;
 }
 
@@ -801,9 +801,9 @@ void DvServiceLinnCoUkProduct3GetPropertyProductStandby(THandle aService, uint32
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvServiceLinnCoUkProduct3SetPropertyProductSourceIndex(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkProduct3SetPropertyProductSourceIndex(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductSourceIndex(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductSourceIndex(aValue)? 1 : 0);
     return 0;
 }
 
@@ -814,9 +814,9 @@ void DvServiceLinnCoUkProduct3GetPropertyProductSourceIndex(THandle aService, ui
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkProduct3SetPropertyProductSourceCount(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkProduct3SetPropertyProductSourceCount(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductSourceCount(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductSourceCount(aValue)? 1 : 0);
     return 0;
 }
 
@@ -827,10 +827,10 @@ void DvServiceLinnCoUkProduct3GetPropertyProductSourceCount(THandle aService, ui
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkProduct3SetPropertyProductSourceXml(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkProduct3SetPropertyProductSourceXml(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductSourceXml(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductSourceXml(buf)? 1 : 0);
     return 0;
 }
 
@@ -841,9 +841,9 @@ void DvServiceLinnCoUkProduct3GetPropertyProductSourceXml(THandle aService, char
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkProduct3SetPropertyStartupSourceIndex(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkProduct3SetPropertyStartupSourceIndex(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyStartupSourceIndex(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyStartupSourceIndex(aValue)? 1 : 0);
     return 0;
 }
 
@@ -854,9 +854,9 @@ void DvServiceLinnCoUkProduct3GetPropertyStartupSourceIndex(THandle aService, ui
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkProduct3SetPropertyStartupSourceEnabled(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkProduct3SetPropertyStartupSourceEnabled(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyStartupSourceEnabled((aValue!=0));
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyStartupSourceEnabled((aValue!=0))? 1 : 0);
     return 0;
 }
 
@@ -867,9 +867,9 @@ void DvServiceLinnCoUkProduct3GetPropertyStartupSourceEnabled(THandle aService, 
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvServiceLinnCoUkProduct3SetPropertyProductAnySourceName(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkProduct3SetPropertyProductAnySourceName(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductAnySourceName(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductAnySourceName(aValue)? 1 : 0);
     return 0;
 }
 
@@ -880,9 +880,9 @@ void DvServiceLinnCoUkProduct3GetPropertyProductAnySourceName(THandle aService, 
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkProduct3SetPropertyProductAnySourceVisible(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkProduct3SetPropertyProductAnySourceVisible(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductAnySourceVisible(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductAnySourceVisible(aValue)? 1 : 0);
     return 0;
 }
 
@@ -893,9 +893,9 @@ void DvServiceLinnCoUkProduct3GetPropertyProductAnySourceVisible(THandle aServic
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkProduct3SetPropertyProductAnySourceType(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkProduct3SetPropertyProductAnySourceType(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductAnySourceType(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProduct3C*>(aService)->SetPropertyProductAnySourceType(aValue)? 1 : 0);
     return 0;
 }
 

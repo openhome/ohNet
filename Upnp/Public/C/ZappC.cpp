@@ -161,6 +161,12 @@ void ZappInitParamsSetFreeExternalCallback(ZappHandleInitParams aParams, ZappCal
     ip->SetFreeExternalCallback(aCallback);
 }
 
+void ZappInitParamsSetUseLoopbackNetworkInterface(ZappHandleInitParams aParams)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+    ip->SetUseLoopbackNetworkInterface();
+}
+
 void ZappInitParamsSetDvMaxUpdateTime(ZappHandleInitParams aParams, uint32_t aSecs)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);

@@ -6,10 +6,10 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkProduct3Cpp::SetPropertyProductType(const std::string& aValue)
+bool DvServiceLinnCoUkProduct3Cpp::SetPropertyProductType(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyProductType, buf);
+    return SetPropertyString(*iPropertyProductType, buf);
 }
 
 void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductType(std::string& aValue)
@@ -18,10 +18,10 @@ void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductType(std::string& aValue)
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkProduct3Cpp::SetPropertyProductModel(const std::string& aValue)
+bool DvServiceLinnCoUkProduct3Cpp::SetPropertyProductModel(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyProductModel, buf);
+    return SetPropertyString(*iPropertyProductModel, buf);
 }
 
 void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductModel(std::string& aValue)
@@ -30,10 +30,10 @@ void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductModel(std::string& aValue)
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkProduct3Cpp::SetPropertyProductName(const std::string& aValue)
+bool DvServiceLinnCoUkProduct3Cpp::SetPropertyProductName(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyProductName, buf);
+    return SetPropertyString(*iPropertyProductName, buf);
 }
 
 void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductName(std::string& aValue)
@@ -42,10 +42,10 @@ void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductName(std::string& aValue)
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkProduct3Cpp::SetPropertyProductRoom(const std::string& aValue)
+bool DvServiceLinnCoUkProduct3Cpp::SetPropertyProductRoom(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyProductRoom, buf);
+    return SetPropertyString(*iPropertyProductRoom, buf);
 }
 
 void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductRoom(std::string& aValue)
@@ -54,9 +54,9 @@ void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductRoom(std::string& aValue)
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkProduct3Cpp::SetPropertyProductStandby(bool aValue)
+bool DvServiceLinnCoUkProduct3Cpp::SetPropertyProductStandby(bool aValue)
 {
-    SetPropertyBool(*iPropertyProductStandby, aValue);
+    return SetPropertyBool(*iPropertyProductStandby, aValue);
 }
 
 void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductStandby(bool& aValue)
@@ -64,9 +64,9 @@ void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductStandby(bool& aValue)
     aValue = iPropertyProductStandby->Value();
 }
 
-void DvServiceLinnCoUkProduct3Cpp::SetPropertyProductSourceIndex(uint32_t aValue)
+bool DvServiceLinnCoUkProduct3Cpp::SetPropertyProductSourceIndex(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyProductSourceIndex, aValue);
+    return SetPropertyUint(*iPropertyProductSourceIndex, aValue);
 }
 
 void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductSourceIndex(uint32_t& aValue)
@@ -74,9 +74,9 @@ void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductSourceIndex(uint32_t& aValu
     aValue = iPropertyProductSourceIndex->Value();
 }
 
-void DvServiceLinnCoUkProduct3Cpp::SetPropertyProductSourceCount(uint32_t aValue)
+bool DvServiceLinnCoUkProduct3Cpp::SetPropertyProductSourceCount(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyProductSourceCount, aValue);
+    return SetPropertyUint(*iPropertyProductSourceCount, aValue);
 }
 
 void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductSourceCount(uint32_t& aValue)
@@ -84,10 +84,10 @@ void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductSourceCount(uint32_t& aValu
     aValue = iPropertyProductSourceCount->Value();
 }
 
-void DvServiceLinnCoUkProduct3Cpp::SetPropertyProductSourceXml(const std::string& aValue)
+bool DvServiceLinnCoUkProduct3Cpp::SetPropertyProductSourceXml(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyProductSourceXml, buf);
+    return SetPropertyString(*iPropertyProductSourceXml, buf);
 }
 
 void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductSourceXml(std::string& aValue)
@@ -96,9 +96,9 @@ void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductSourceXml(std::string& aVal
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkProduct3Cpp::SetPropertyStartupSourceIndex(uint32_t aValue)
+bool DvServiceLinnCoUkProduct3Cpp::SetPropertyStartupSourceIndex(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyStartupSourceIndex, aValue);
+    return SetPropertyUint(*iPropertyStartupSourceIndex, aValue);
 }
 
 void DvServiceLinnCoUkProduct3Cpp::GetPropertyStartupSourceIndex(uint32_t& aValue)
@@ -106,9 +106,9 @@ void DvServiceLinnCoUkProduct3Cpp::GetPropertyStartupSourceIndex(uint32_t& aValu
     aValue = iPropertyStartupSourceIndex->Value();
 }
 
-void DvServiceLinnCoUkProduct3Cpp::SetPropertyStartupSourceEnabled(bool aValue)
+bool DvServiceLinnCoUkProduct3Cpp::SetPropertyStartupSourceEnabled(bool aValue)
 {
-    SetPropertyBool(*iPropertyStartupSourceEnabled, aValue);
+    return SetPropertyBool(*iPropertyStartupSourceEnabled, aValue);
 }
 
 void DvServiceLinnCoUkProduct3Cpp::GetPropertyStartupSourceEnabled(bool& aValue)
@@ -116,9 +116,9 @@ void DvServiceLinnCoUkProduct3Cpp::GetPropertyStartupSourceEnabled(bool& aValue)
     aValue = iPropertyStartupSourceEnabled->Value();
 }
 
-void DvServiceLinnCoUkProduct3Cpp::SetPropertyProductAnySourceName(uint32_t aValue)
+bool DvServiceLinnCoUkProduct3Cpp::SetPropertyProductAnySourceName(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyProductAnySourceName, aValue);
+    return SetPropertyUint(*iPropertyProductAnySourceName, aValue);
 }
 
 void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductAnySourceName(uint32_t& aValue)
@@ -126,9 +126,9 @@ void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductAnySourceName(uint32_t& aVa
     aValue = iPropertyProductAnySourceName->Value();
 }
 
-void DvServiceLinnCoUkProduct3Cpp::SetPropertyProductAnySourceVisible(uint32_t aValue)
+bool DvServiceLinnCoUkProduct3Cpp::SetPropertyProductAnySourceVisible(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyProductAnySourceVisible, aValue);
+    return SetPropertyUint(*iPropertyProductAnySourceVisible, aValue);
 }
 
 void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductAnySourceVisible(uint32_t& aValue)
@@ -136,9 +136,9 @@ void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductAnySourceVisible(uint32_t& 
     aValue = iPropertyProductAnySourceVisible->Value();
 }
 
-void DvServiceLinnCoUkProduct3Cpp::SetPropertyProductAnySourceType(uint32_t aValue)
+bool DvServiceLinnCoUkProduct3Cpp::SetPropertyProductAnySourceType(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyProductAnySourceType, aValue);
+    return SetPropertyUint(*iPropertyProductAnySourceType, aValue);
 }
 
 void DvServiceLinnCoUkProduct3Cpp::GetPropertyProductAnySourceType(uint32_t& aValue)

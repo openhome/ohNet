@@ -12,27 +12,27 @@ namespace Zapp
         [DllImport("DvLinnCoUkPreamp4")]
         static extern void DvServiceLinnCoUkPreamp4Destroy(uint aHandle);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvServiceLinnCoUkPreamp4SetPropertyVolume(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkPreamp4SetPropertyVolume(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPreamp4")]
         static extern unsafe void DvServiceLinnCoUkPreamp4GetPropertyVolume(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvServiceLinnCoUkPreamp4SetPropertyMute(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkPreamp4SetPropertyMute(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPreamp4")]
         static extern unsafe void DvServiceLinnCoUkPreamp4GetPropertyMute(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvServiceLinnCoUkPreamp4SetPropertyBalance(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkPreamp4SetPropertyBalance(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPreamp4")]
         static extern unsafe void DvServiceLinnCoUkPreamp4GetPropertyBalance(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvServiceLinnCoUkPreamp4SetPropertyVolumeLimit(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkPreamp4SetPropertyVolumeLimit(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPreamp4")]
         static extern unsafe void DvServiceLinnCoUkPreamp4GetPropertyVolumeLimit(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvServiceLinnCoUkPreamp4SetPropertyStartupVolume(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkPreamp4SetPropertyStartupVolume(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPreamp4")]
         static extern unsafe void DvServiceLinnCoUkPreamp4GetPropertyStartupVolume(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvServiceLinnCoUkPreamp4SetPropertyStartupVolumeEnabled(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkPreamp4SetPropertyStartupVolumeEnabled(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPreamp4")]
         static extern unsafe void DvServiceLinnCoUkPreamp4GetPropertyStartupVolumeEnabled(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkPreamp4")]
@@ -104,12 +104,14 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyVolume(uint aValue)
+        public unsafe bool SetPropertyVolume(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkPreamp4SetPropertyVolume(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkPreamp4SetPropertyVolume(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyVolume(out uint aValue)
@@ -120,13 +122,15 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyMute(bool aValue)
+        public unsafe bool SetPropertyMute(bool aValue)
         {
+        uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkPreamp4SetPropertyMute(iHandle, value))
+            if (0 != DvServiceLinnCoUkPreamp4SetPropertyMute(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyMute(out bool aValue)
@@ -136,12 +140,14 @@ namespace Zapp
             aValue = (value != 0);
         }
 
-        public unsafe void SetPropertyBalance(int aValue)
+        public unsafe bool SetPropertyBalance(int aValue)
         {
-            if (0 != DvServiceLinnCoUkPreamp4SetPropertyBalance(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkPreamp4SetPropertyBalance(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyBalance(out int aValue)
@@ -152,12 +158,14 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyVolumeLimit(uint aValue)
+        public unsafe bool SetPropertyVolumeLimit(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkPreamp4SetPropertyVolumeLimit(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkPreamp4SetPropertyVolumeLimit(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyVolumeLimit(out uint aValue)
@@ -168,12 +176,14 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyStartupVolume(uint aValue)
+        public unsafe bool SetPropertyStartupVolume(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkPreamp4SetPropertyStartupVolume(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkPreamp4SetPropertyStartupVolume(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyStartupVolume(out uint aValue)
@@ -184,13 +194,15 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyStartupVolumeEnabled(bool aValue)
+        public unsafe bool SetPropertyStartupVolumeEnabled(bool aValue)
         {
+        uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkPreamp4SetPropertyStartupVolumeEnabled(iHandle, value))
+            if (0 != DvServiceLinnCoUkPreamp4SetPropertyStartupVolumeEnabled(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyStartupVolumeEnabled(out bool aValue)

@@ -6,10 +6,10 @@
 
 using namespace Zapp;
 
-void DvServiceUpnpOrgAVTransport2Cpp::SetPropertyLastChange(const std::string& aValue)
+bool DvServiceUpnpOrgAVTransport2Cpp::SetPropertyLastChange(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyLastChange, buf);
+    return SetPropertyString(*iPropertyLastChange, buf);
 }
 
 void DvServiceUpnpOrgAVTransport2Cpp::GetPropertyLastChange(std::string& aValue)
@@ -18,10 +18,10 @@ void DvServiceUpnpOrgAVTransport2Cpp::GetPropertyLastChange(std::string& aValue)
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceUpnpOrgAVTransport2Cpp::SetPropertyDRMState(const std::string& aValue)
+bool DvServiceUpnpOrgAVTransport2Cpp::SetPropertyDRMState(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyDRMState, buf);
+    return SetPropertyString(*iPropertyDRMState, buf);
 }
 
 void DvServiceUpnpOrgAVTransport2Cpp::GetPropertyDRMState(std::string& aValue)

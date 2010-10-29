@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkComponent1Cpp::SetPropertyAmplifierEnabled(bool aValue)
+bool DvServiceLinnCoUkComponent1Cpp::SetPropertyAmplifierEnabled(bool aValue)
 {
-    SetPropertyBool(*iPropertyAmplifierEnabled, aValue);
+    return SetPropertyBool(*iPropertyAmplifierEnabled, aValue);
 }
 
 void DvServiceLinnCoUkComponent1Cpp::GetPropertyAmplifierEnabled(bool& aValue)
@@ -16,10 +16,10 @@ void DvServiceLinnCoUkComponent1Cpp::GetPropertyAmplifierEnabled(bool& aValue)
     aValue = iPropertyAmplifierEnabled->Value();
 }
 
-void DvServiceLinnCoUkComponent1Cpp::SetPropertyAmplifierAttenuation(const std::string& aValue)
+bool DvServiceLinnCoUkComponent1Cpp::SetPropertyAmplifierAttenuation(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyAmplifierAttenuation, buf);
+    return SetPropertyString(*iPropertyAmplifierAttenuation, buf);
 }
 
 void DvServiceLinnCoUkComponent1Cpp::GetPropertyAmplifierAttenuation(std::string& aValue)
@@ -28,9 +28,9 @@ void DvServiceLinnCoUkComponent1Cpp::GetPropertyAmplifierAttenuation(std::string
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkComponent1Cpp::SetPropertyVolumeControlEnabled(bool aValue)
+bool DvServiceLinnCoUkComponent1Cpp::SetPropertyVolumeControlEnabled(bool aValue)
 {
-    SetPropertyBool(*iPropertyVolumeControlEnabled, aValue);
+    return SetPropertyBool(*iPropertyVolumeControlEnabled, aValue);
 }
 
 void DvServiceLinnCoUkComponent1Cpp::GetPropertyVolumeControlEnabled(bool& aValue)
@@ -38,9 +38,9 @@ void DvServiceLinnCoUkComponent1Cpp::GetPropertyVolumeControlEnabled(bool& aValu
     aValue = iPropertyVolumeControlEnabled->Value();
 }
 
-void DvServiceLinnCoUkComponent1Cpp::SetPropertyDigitalAudioOutputRaw(bool aValue)
+bool DvServiceLinnCoUkComponent1Cpp::SetPropertyDigitalAudioOutputRaw(bool aValue)
 {
-    SetPropertyBool(*iPropertyDigitalAudioOutputRaw, aValue);
+    return SetPropertyBool(*iPropertyDigitalAudioOutputRaw, aValue);
 }
 
 void DvServiceLinnCoUkComponent1Cpp::GetPropertyDigitalAudioOutputRaw(bool& aValue)

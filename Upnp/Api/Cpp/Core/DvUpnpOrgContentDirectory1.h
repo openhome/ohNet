@@ -21,11 +21,11 @@ class DvServiceUpnpOrgContentDirectory1 : public DvService
 {
 public:
     virtual ~DvServiceUpnpOrgContentDirectory1() {}
-    void SetPropertyTransferIDs(const Brx& aValue);
+    TBool SetPropertyTransferIDs(const Brx& aValue);
     void GetPropertyTransferIDs(Brhz& aValue);
-    void SetPropertySystemUpdateID(TUint aValue);
+    TBool SetPropertySystemUpdateID(TUint aValue);
     void GetPropertySystemUpdateID(TUint& aValue);
-    void SetPropertyContainerUpdateIDs(const Brx& aValue);
+    TBool SetPropertyContainerUpdateIDs(const Brx& aValue);
     void GetPropertyContainerUpdateIDs(Brhz& aValue);
 protected:
     DvServiceUpnpOrgContentDirectory1(DvDevice& aDevice);

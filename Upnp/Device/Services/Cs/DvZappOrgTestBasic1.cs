@@ -12,23 +12,23 @@ namespace Zapp
         [DllImport("DvZappOrgTestBasic1")]
         static extern void DvServiceZappOrgTestBasic1Destroy(uint aHandle);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe int DvServiceZappOrgTestBasic1SetPropertyVarUint(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceZappOrgTestBasic1SetPropertyVarUint(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvZappOrgTestBasic1")]
         static extern unsafe void DvServiceZappOrgTestBasic1GetPropertyVarUint(uint aHandle, uint* aValue);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe int DvServiceZappOrgTestBasic1SetPropertyVarInt(uint aHandle, int aValue);
+        static extern unsafe int DvServiceZappOrgTestBasic1SetPropertyVarInt(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvZappOrgTestBasic1")]
         static extern unsafe void DvServiceZappOrgTestBasic1GetPropertyVarInt(uint aHandle, int* aValue);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe int DvServiceZappOrgTestBasic1SetPropertyVarBool(uint aHandle, int aValue);
+        static extern unsafe int DvServiceZappOrgTestBasic1SetPropertyVarBool(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvZappOrgTestBasic1")]
         static extern unsafe void DvServiceZappOrgTestBasic1GetPropertyVarBool(uint aHandle, int* aValue);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe int DvServiceZappOrgTestBasic1SetPropertyVarStr(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceZappOrgTestBasic1SetPropertyVarStr(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvZappOrgTestBasic1")]
         static extern unsafe void DvServiceZappOrgTestBasic1GetPropertyVarStr(uint aHandle, char** aValue);
         [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe int DvServiceZappOrgTestBasic1SetPropertyVarBin(uint aHandle, char* aValue, int aValueLen);
+        static extern unsafe int DvServiceZappOrgTestBasic1SetPropertyVarBin(uint aHandle, char* aValue, int aValueLen, uint* aChanged);
         [DllImport("DvZappOrgTestBasic1")]
         static extern unsafe void DvServiceZappOrgTestBasic1GetPropertyVarBin(uint aHandle, char** aValue, int* aValueLen);
         [DllImport("DvZappOrgTestBasic1")]
@@ -112,12 +112,14 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyVarUint(uint aValue)
+        public unsafe bool SetPropertyVarUint(uint aValue)
         {
-            if (0 != DvServiceZappOrgTestBasic1SetPropertyVarUint(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceZappOrgTestBasic1SetPropertyVarUint(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyVarUint(out uint aValue)
@@ -128,12 +130,14 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyVarInt(int aValue)
+        public unsafe bool SetPropertyVarInt(int aValue)
         {
-            if (0 != DvServiceZappOrgTestBasic1SetPropertyVarInt(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceZappOrgTestBasic1SetPropertyVarInt(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyVarInt(out int aValue)
@@ -144,13 +148,15 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyVarBool(bool aValue)
+        public unsafe bool SetPropertyVarBool(bool aValue)
         {
+        uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceZappOrgTestBasic1SetPropertyVarBool(iHandle, value))
+            if (0 != DvServiceZappOrgTestBasic1SetPropertyVarBool(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyVarBool(out bool aValue)
@@ -160,15 +166,17 @@ namespace Zapp
             aValue = (value != 0);
         }
 
-        public unsafe void SetPropertyVarStr(string aValue)
+        public unsafe bool SetPropertyVarStr(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceZappOrgTestBasic1SetPropertyVarStr(iHandle, value);
+            int err = DvServiceZappOrgTestBasic1SetPropertyVarStr(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyVarStr(out string aValue)
@@ -179,16 +187,18 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyVarBin(string aValue)
+        public unsafe bool SetPropertyVarBin(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int valueLen = aValue.Length;
-            int err = DvServiceZappOrgTestBasic1SetPropertyVarBin(iHandle, value, valueLen);
+            int err = DvServiceZappOrgTestBasic1SetPropertyVarBin(iHandle, value, valueLen, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyVarBin(out string aValue)

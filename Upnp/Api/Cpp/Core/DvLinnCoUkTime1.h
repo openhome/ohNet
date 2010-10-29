@@ -21,11 +21,11 @@ class DvServiceLinnCoUkTime1 : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkTime1() {}
-    void SetPropertyTrackCount(TUint aValue);
+    TBool SetPropertyTrackCount(TUint aValue);
     void GetPropertyTrackCount(TUint& aValue);
-    void SetPropertyDuration(TUint aValue);
+    TBool SetPropertyDuration(TUint aValue);
     void GetPropertyDuration(TUint& aValue);
-    void SetPropertySeconds(TUint aValue);
+    TBool SetPropertySeconds(TUint aValue);
     void GetPropertySeconds(TUint& aValue);
 protected:
     DvServiceLinnCoUkTime1(DvDevice& aDevice);

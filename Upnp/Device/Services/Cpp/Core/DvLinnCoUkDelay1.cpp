@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkDelay1::SetPropertyPresetXml(const Brx& aValue)
+TBool DvServiceLinnCoUkDelay1::SetPropertyPresetXml(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyPresetXml, aValue);
+    return SetPropertyString(*iPropertyPresetXml, aValue);
 }
 
 void DvServiceLinnCoUkDelay1::GetPropertyPresetXml(Brhz& aValue)
@@ -16,9 +16,9 @@ void DvServiceLinnCoUkDelay1::GetPropertyPresetXml(Brhz& aValue)
     aValue.Set(iPropertyPresetXml->Value());
 }
 
-void DvServiceLinnCoUkDelay1::SetPropertyPresetIndex(TUint aValue)
+TBool DvServiceLinnCoUkDelay1::SetPropertyPresetIndex(TUint aValue)
 {
-    SetPropertyUint(*iPropertyPresetIndex, aValue);
+    return SetPropertyUint(*iPropertyPresetIndex, aValue);
 }
 
 void DvServiceLinnCoUkDelay1::GetPropertyPresetIndex(TUint& aValue)

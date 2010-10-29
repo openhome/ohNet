@@ -12,11 +12,11 @@ namespace Zapp
         [DllImport("DvLinnCoUkConfiguration1")]
         static extern void DvServiceLinnCoUkConfiguration1Destroy(uint aHandle);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern unsafe int DvServiceLinnCoUkConfiguration1SetPropertyConfigurationXml(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkConfiguration1SetPropertyConfigurationXml(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkConfiguration1")]
         static extern unsafe void DvServiceLinnCoUkConfiguration1GetPropertyConfigurationXml(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern unsafe int DvServiceLinnCoUkConfiguration1SetPropertyParameterXml(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkConfiguration1SetPropertyParameterXml(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkConfiguration1")]
         static extern unsafe void DvServiceLinnCoUkConfiguration1GetPropertyParameterXml(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkConfiguration1")]
@@ -44,15 +44,17 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyConfigurationXml(string aValue)
+        public unsafe bool SetPropertyConfigurationXml(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkConfiguration1SetPropertyConfigurationXml(iHandle, value);
+            int err = DvServiceLinnCoUkConfiguration1SetPropertyConfigurationXml(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyConfigurationXml(out string aValue)
@@ -63,15 +65,17 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyParameterXml(string aValue)
+        public unsafe bool SetPropertyParameterXml(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkConfiguration1SetPropertyParameterXml(iHandle, value);
+            int err = DvServiceLinnCoUkConfiguration1SetPropertyParameterXml(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyParameterXml(out string aValue)

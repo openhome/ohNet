@@ -283,6 +283,12 @@ DllExport void ZappInitParamsSetPendingSubscriptionTimeout(ZappHandleInitParams 
 DllExport void ZappInitParamsSetFreeExternalCallback(ZappHandleInitParams aParams, ZappCallbackFreeExternal aCallback);
 
 /**
+ * Limit the library to using only the loopback network interface.
+ * Useful for testing but not expected to be used in production code
+ */
+DllExport void ZappInitParamsSetUseLoopbackNetworkInterface(ZappHandleInitParams aParams);
+
+/**
  * Set the maximum time between device announcements for the device stack
  */
 DllExport void ZappInitParamsSetDvMaxUpdateTime(ZappHandleInitParams aParams, uint32_t aSecs);

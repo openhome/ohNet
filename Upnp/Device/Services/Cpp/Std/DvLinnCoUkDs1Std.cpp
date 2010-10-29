@@ -6,10 +6,10 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkDs1Cpp::SetPropertySupportedProtocols(const std::string& aValue)
+bool DvServiceLinnCoUkDs1Cpp::SetPropertySupportedProtocols(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertySupportedProtocols, buf);
+    return SetPropertyString(*iPropertySupportedProtocols, buf);
 }
 
 void DvServiceLinnCoUkDs1Cpp::GetPropertySupportedProtocols(std::string& aValue)
@@ -18,9 +18,9 @@ void DvServiceLinnCoUkDs1Cpp::GetPropertySupportedProtocols(std::string& aValue)
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkDs1Cpp::SetPropertyTrackDuration(uint32_t aValue)
+bool DvServiceLinnCoUkDs1Cpp::SetPropertyTrackDuration(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyTrackDuration, aValue);
+    return SetPropertyUint(*iPropertyTrackDuration, aValue);
 }
 
 void DvServiceLinnCoUkDs1Cpp::GetPropertyTrackDuration(uint32_t& aValue)
@@ -28,9 +28,9 @@ void DvServiceLinnCoUkDs1Cpp::GetPropertyTrackDuration(uint32_t& aValue)
     aValue = iPropertyTrackDuration->Value();
 }
 
-void DvServiceLinnCoUkDs1Cpp::SetPropertyTrackBitRate(uint32_t aValue)
+bool DvServiceLinnCoUkDs1Cpp::SetPropertyTrackBitRate(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyTrackBitRate, aValue);
+    return SetPropertyUint(*iPropertyTrackBitRate, aValue);
 }
 
 void DvServiceLinnCoUkDs1Cpp::GetPropertyTrackBitRate(uint32_t& aValue)
@@ -38,9 +38,9 @@ void DvServiceLinnCoUkDs1Cpp::GetPropertyTrackBitRate(uint32_t& aValue)
     aValue = iPropertyTrackBitRate->Value();
 }
 
-void DvServiceLinnCoUkDs1Cpp::SetPropertyTrackLossless(bool aValue)
+bool DvServiceLinnCoUkDs1Cpp::SetPropertyTrackLossless(bool aValue)
 {
-    SetPropertyBool(*iPropertyTrackLossless, aValue);
+    return SetPropertyBool(*iPropertyTrackLossless, aValue);
 }
 
 void DvServiceLinnCoUkDs1Cpp::GetPropertyTrackLossless(bool& aValue)
@@ -48,9 +48,9 @@ void DvServiceLinnCoUkDs1Cpp::GetPropertyTrackLossless(bool& aValue)
     aValue = iPropertyTrackLossless->Value();
 }
 
-void DvServiceLinnCoUkDs1Cpp::SetPropertyTrackBitDepth(uint32_t aValue)
+bool DvServiceLinnCoUkDs1Cpp::SetPropertyTrackBitDepth(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyTrackBitDepth, aValue);
+    return SetPropertyUint(*iPropertyTrackBitDepth, aValue);
 }
 
 void DvServiceLinnCoUkDs1Cpp::GetPropertyTrackBitDepth(uint32_t& aValue)
@@ -58,9 +58,9 @@ void DvServiceLinnCoUkDs1Cpp::GetPropertyTrackBitDepth(uint32_t& aValue)
     aValue = iPropertyTrackBitDepth->Value();
 }
 
-void DvServiceLinnCoUkDs1Cpp::SetPropertyTrackSampleRate(uint32_t aValue)
+bool DvServiceLinnCoUkDs1Cpp::SetPropertyTrackSampleRate(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyTrackSampleRate, aValue);
+    return SetPropertyUint(*iPropertyTrackSampleRate, aValue);
 }
 
 void DvServiceLinnCoUkDs1Cpp::GetPropertyTrackSampleRate(uint32_t& aValue)
@@ -68,10 +68,10 @@ void DvServiceLinnCoUkDs1Cpp::GetPropertyTrackSampleRate(uint32_t& aValue)
     aValue = iPropertyTrackSampleRate->Value();
 }
 
-void DvServiceLinnCoUkDs1Cpp::SetPropertyTrackCodecName(const std::string& aValue)
+bool DvServiceLinnCoUkDs1Cpp::SetPropertyTrackCodecName(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyTrackCodecName, buf);
+    return SetPropertyString(*iPropertyTrackCodecName, buf);
 }
 
 void DvServiceLinnCoUkDs1Cpp::GetPropertyTrackCodecName(std::string& aValue)
@@ -80,9 +80,9 @@ void DvServiceLinnCoUkDs1Cpp::GetPropertyTrackCodecName(std::string& aValue)
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkDs1Cpp::SetPropertyTrackId(uint32_t aValue)
+bool DvServiceLinnCoUkDs1Cpp::SetPropertyTrackId(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyTrackId, aValue);
+    return SetPropertyUint(*iPropertyTrackId, aValue);
 }
 
 void DvServiceLinnCoUkDs1Cpp::GetPropertyTrackId(uint32_t& aValue)
@@ -90,10 +90,10 @@ void DvServiceLinnCoUkDs1Cpp::GetPropertyTrackId(uint32_t& aValue)
     aValue = iPropertyTrackId->Value();
 }
 
-void DvServiceLinnCoUkDs1Cpp::SetPropertyTransportState(const std::string& aValue)
+bool DvServiceLinnCoUkDs1Cpp::SetPropertyTransportState(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyTransportState, buf);
+    return SetPropertyString(*iPropertyTransportState, buf);
 }
 
 void DvServiceLinnCoUkDs1Cpp::GetPropertyTransportState(std::string& aValue)

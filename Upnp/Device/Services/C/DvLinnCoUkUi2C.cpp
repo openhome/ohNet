@@ -704,9 +704,9 @@ void DvServiceLinnCoUkUi2EnableActionDisplayLedOff(THandle aService, CallbackUi2
     reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->EnableActionDisplayLedOff(aCallback, aPtr);
 }
 
-int32_t DvServiceLinnCoUkUi2SetPropertyDisplayBrightness(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkUi2SetPropertyDisplayBrightness(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyDisplayBrightness(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyDisplayBrightness(aValue)? 1 : 0);
     return 0;
 }
 
@@ -717,9 +717,9 @@ void DvServiceLinnCoUkUi2GetPropertyDisplayBrightness(THandle aService, uint32_t
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkUi2SetPropertyDisplayBrightnessAuto(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkUi2SetPropertyDisplayBrightnessAuto(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyDisplayBrightnessAuto((aValue!=0));
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyDisplayBrightnessAuto((aValue!=0))? 1 : 0);
     return 0;
 }
 
@@ -730,10 +730,10 @@ void DvServiceLinnCoUkUi2GetPropertyDisplayBrightnessAuto(THandle aService, uint
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvServiceLinnCoUkUi2SetPropertyInfraredCommands(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkUi2SetPropertyInfraredCommands(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyInfraredCommands(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyInfraredCommands(buf)? 1 : 0);
     return 0;
 }
 
@@ -744,10 +744,10 @@ void DvServiceLinnCoUkUi2GetPropertyInfraredCommands(THandle aService, char** aV
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkUi2SetPropertyInfraredTerminalCommands(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkUi2SetPropertyInfraredTerminalCommands(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyInfraredTerminalCommands(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyInfraredTerminalCommands(buf)? 1 : 0);
     return 0;
 }
 
@@ -758,9 +758,9 @@ void DvServiceLinnCoUkUi2GetPropertyInfraredTerminalCommands(THandle aService, c
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkUi2SetPropertyDisplayUpsideDown(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkUi2SetPropertyDisplayUpsideDown(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyDisplayUpsideDown((aValue!=0));
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyDisplayUpsideDown((aValue!=0))? 1 : 0);
     return 0;
 }
 
@@ -771,9 +771,9 @@ void DvServiceLinnCoUkUi2GetPropertyDisplayUpsideDown(THandle aService, uint32_t
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvServiceLinnCoUkUi2SetPropertyDisplayScrollText(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkUi2SetPropertyDisplayScrollText(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyDisplayScrollText((aValue!=0));
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyDisplayScrollText((aValue!=0))? 1 : 0);
     return 0;
 }
 
@@ -784,9 +784,9 @@ void DvServiceLinnCoUkUi2GetPropertyDisplayScrollText(THandle aService, uint32_t
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvServiceLinnCoUkUi2SetPropertyDisplaySleep(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkUi2SetPropertyDisplaySleep(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyDisplaySleep((aValue!=0));
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyDisplaySleep((aValue!=0))? 1 : 0);
     return 0;
 }
 
@@ -797,9 +797,9 @@ void DvServiceLinnCoUkUi2GetPropertyDisplaySleep(THandle aService, uint32_t* aVa
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvServiceLinnCoUkUi2SetPropertyDisplayLedOff(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkUi2SetPropertyDisplayLedOff(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyDisplayLedOff((aValue!=0));
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyDisplayLedOff((aValue!=0))? 1 : 0);
     return 0;
 }
 
@@ -810,9 +810,9 @@ void DvServiceLinnCoUkUi2GetPropertyDisplayLedOff(THandle aService, uint32_t* aV
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvServiceLinnCoUkUi2SetPropertyTerminalInputCode(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkUi2SetPropertyTerminalInputCode(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyTerminalInputCode(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyTerminalInputCode(aValue)? 1 : 0);
     return 0;
 }
 
@@ -823,10 +823,10 @@ void DvServiceLinnCoUkUi2GetPropertyTerminalInputCode(THandle aService, uint32_t
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkUi2SetPropertyTerminalInputName(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkUi2SetPropertyTerminalInputName(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyTerminalInputName(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyTerminalInputName(buf)? 1 : 0);
     return 0;
 }
 
@@ -837,11 +837,11 @@ void DvServiceLinnCoUkUi2GetPropertyTerminalInputName(THandle aService, char** a
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkUi2SetPropertyDisplayPixels(THandle aService, const char* aValue, uint32_t aValueLen)
+int32_t DvServiceLinnCoUkUi2SetPropertyDisplayPixels(THandle aService, const char* aValue, uint32_t aValueLen, uint32_t* aChanged)
 {
     Brh buf;
     buf.Set((const TByte*)aValue, aValueLen);
-    reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyDisplayPixels(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkUi2C*>(aService)->SetPropertyDisplayPixels(buf)? 1 : 0);
     return 0;
 }
 

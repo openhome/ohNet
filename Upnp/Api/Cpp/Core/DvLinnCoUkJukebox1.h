@@ -21,11 +21,11 @@ class DvServiceLinnCoUkJukebox1 : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkJukebox1() {}
-    void SetPropertyCurrentPreset(TUint aValue);
+    TBool SetPropertyCurrentPreset(TUint aValue);
     void GetPropertyCurrentPreset(TUint& aValue);
-    void SetPropertyPresetPrefix(const Brx& aValue);
+    TBool SetPropertyPresetPrefix(const Brx& aValue);
     void GetPropertyPresetPrefix(Brhz& aValue);
-    void SetPropertyAlbumArtFileName(const Brx& aValue);
+    TBool SetPropertyAlbumArtFileName(const Brx& aValue);
     void GetPropertyAlbumArtFileName(Brhz& aValue);
 protected:
     DvServiceLinnCoUkJukebox1(DvDevice& aDevice);

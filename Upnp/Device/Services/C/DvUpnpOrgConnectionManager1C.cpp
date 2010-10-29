@@ -214,10 +214,10 @@ void DvServiceUpnpOrgConnectionManager1EnableActionGetCurrentConnectionInfo(THan
     reinterpret_cast<DvServiceUpnpOrgConnectionManager1C*>(aService)->EnableActionGetCurrentConnectionInfo(aCallback, aPtr);
 }
 
-int32_t DvServiceUpnpOrgConnectionManager1SetPropertySourceProtocolInfo(THandle aService, const char* aValue)
+int32_t DvServiceUpnpOrgConnectionManager1SetPropertySourceProtocolInfo(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager1C*>(aService)->SetPropertySourceProtocolInfo(buf);
+    *aChanged = (reinterpret_cast<DvServiceUpnpOrgConnectionManager1C*>(aService)->SetPropertySourceProtocolInfo(buf)? 1 : 0);
     return 0;
 }
 
@@ -228,10 +228,10 @@ void DvServiceUpnpOrgConnectionManager1GetPropertySourceProtocolInfo(THandle aSe
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceUpnpOrgConnectionManager1SetPropertySinkProtocolInfo(THandle aService, const char* aValue)
+int32_t DvServiceUpnpOrgConnectionManager1SetPropertySinkProtocolInfo(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager1C*>(aService)->SetPropertySinkProtocolInfo(buf);
+    *aChanged = (reinterpret_cast<DvServiceUpnpOrgConnectionManager1C*>(aService)->SetPropertySinkProtocolInfo(buf)? 1 : 0);
     return 0;
 }
 
@@ -242,10 +242,10 @@ void DvServiceUpnpOrgConnectionManager1GetPropertySinkProtocolInfo(THandle aServ
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDs(THandle aService, const char* aValue)
+int32_t DvServiceUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDs(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager1C*>(aService)->SetPropertyCurrentConnectionIDs(buf);
+    *aChanged = (reinterpret_cast<DvServiceUpnpOrgConnectionManager1C*>(aService)->SetPropertyCurrentConnectionIDs(buf)? 1 : 0);
     return 0;
 }
 

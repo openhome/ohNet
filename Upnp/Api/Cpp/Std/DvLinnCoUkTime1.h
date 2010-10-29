@@ -24,11 +24,11 @@ class DvServiceLinnCoUkTime1Cpp : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkTime1Cpp() {}
-    void SetPropertyTrackCount(uint32_t aValue);
+    bool SetPropertyTrackCount(uint32_t aValue);
     void GetPropertyTrackCount(uint32_t& aValue);
-    void SetPropertyDuration(uint32_t aValue);
+    bool SetPropertyDuration(uint32_t aValue);
     void GetPropertyDuration(uint32_t& aValue);
-    void SetPropertySeconds(uint32_t aValue);
+    bool SetPropertySeconds(uint32_t aValue);
     void GetPropertySeconds(uint32_t& aValue);
 protected:
     DvServiceLinnCoUkTime1Cpp(DvDeviceStd& aDevice);

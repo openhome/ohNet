@@ -21,7 +21,7 @@ class DvServiceLinnCoUkDiagnostics1 : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkDiagnostics1() {}
-    void SetPropertyaStateVariable(TUint aValue);
+    TBool SetPropertyaStateVariable(TUint aValue);
     void GetPropertyaStateVariable(TUint& aValue);
 protected:
     DvServiceLinnCoUkDiagnostics1(DvDevice& aDevice);

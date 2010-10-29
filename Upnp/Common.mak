@@ -26,7 +26,9 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)DvDeviceC.$(objext) \
     		   $(objdir)DviDevice.$(objext) \
     		   $(objdir)DviDeviceUpnp.$(objext) \
+    		   $(objdir)DviServer.$(objext) \
     		   $(objdir)DviServerUpnp.$(objext) \
+    		   $(objdir)DviServerWebSocket.$(objext) \
     		   $(objdir)DviService.$(objext) \
     		   $(objdir)DviStack.$(objext) \
     		   $(objdir)DviSubscription.$(objext) \
@@ -38,6 +40,7 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)Fifo.$(objext) \
     		   $(objdir)Http.$(objext) \
     		   $(objdir)Maths.$(objext) \
+    		   $(objdir)Md5.$(objext) \
     		   $(objdir)NetworkInterfaceList.$(objext) \
     		   $(objdir)Network.$(objext) \
     		   $(objdir)Parser.$(objext) \
@@ -95,7 +98,9 @@ headers = $(inc_build)/Ascii.h \
           $(inc_build)/C/DviDeviceC.h \
           $(inc_build)/DviDevice.h \
           $(inc_build)/DviDeviceUpnp.h \
+          $(inc_build)/DviServer.h \
           $(inc_build)/DviServerUpnp.h \
+          $(inc_build)/DviServerWebSocket.h \
           $(inc_build)/DviService.h \
           $(inc_build)/DviStack.h \
           $(inc_build)/DviSubscription.h \
@@ -194,8 +199,12 @@ $(objdir)DviDevice.$(objext) : Device/DviDevice.cpp $(headers)
 	$(compiler)DviDevice.$(objext) -c $(cflags) $(includes) Device/DviDevice.cpp
 $(objdir)DviDeviceUpnp.$(objext) : Device/Upnp/DviDeviceUpnp.cpp $(headers)
 	$(compiler)DviDeviceUpnp.$(objext) -c $(cflags) $(includes) Device/Upnp/DviDeviceUpnp.cpp
+$(objdir)DviServer.$(objext) : Device/DviServer.cpp $(headers)
+	$(compiler)DviServer.$(objext) -c $(cflags) $(includes) Device/DviServer.cpp
 $(objdir)DviServerUpnp.$(objext) : Device/Upnp/DviServerUpnp.cpp $(headers)
 	$(compiler)DviServerUpnp.$(objext) -c $(cflags) $(includes) Device/Upnp/DviServerUpnp.cpp
+$(objdir)DviServerWebSocket.$(objext) : Device/Upnp/DviServerWebSocket.cpp $(headers)
+	$(compiler)DviServerWebSocket.$(objext) -c $(cflags) $(includes) Device/Upnp/DviServerWebSocket.cpp
 $(objdir)DviService.$(objext) : Device/DviService.cpp $(headers)
 	$(compiler)DviService.$(objext) -c $(cflags) $(includes) Device/DviService.cpp
 $(objdir)DviStack.$(objext) : Device/DviStack.cpp $(headers)
@@ -218,6 +227,8 @@ $(objdir)Http.$(objext) : Network/Http.cpp $(headers)
 	$(compiler)Http.$(objext) -c $(cflags) $(includes) Network/Http.cpp
 $(objdir)Maths.$(objext) : Utils/Maths.cpp $(headers)
 	$(compiler)Maths.$(objext) -c $(cflags) $(includes) Utils/Maths.cpp
+$(objdir)Md5.$(objext) : Utils/md5.c $(headers)
+	$(compiler)Md5.$(objext) -c $(cflags) $(includes) Utils/md5.c
 $(objdir)NetworkInterfaceList.$(objext) : Network/NetworkInterfaceList.cpp $(headers)
 	$(compiler)NetworkInterfaceList.$(objext) -c $(cflags) $(includes) Network/NetworkInterfaceList.cpp
 $(objdir)Network.$(objext) : Network/Network.cpp $(headers)

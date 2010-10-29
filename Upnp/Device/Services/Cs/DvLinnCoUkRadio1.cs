@@ -12,31 +12,31 @@ namespace Zapp
         [DllImport("DvLinnCoUkRadio1")]
         static extern void DvServiceLinnCoUkRadio1Destroy(uint aHandle);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyChannelUri(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyChannelUri(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkRadio1")]
         static extern unsafe void DvServiceLinnCoUkRadio1GetPropertyChannelUri(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyChannelMetadata(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyChannelMetadata(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkRadio1")]
         static extern unsafe void DvServiceLinnCoUkRadio1GetPropertyChannelMetadata(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyTransportState(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyTransportState(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkRadio1")]
         static extern unsafe void DvServiceLinnCoUkRadio1GetPropertyTransportState(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyProtocolInfo(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyProtocolInfo(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkRadio1")]
         static extern unsafe void DvServiceLinnCoUkRadio1GetPropertyProtocolInfo(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyId(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyId(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkRadio1")]
         static extern unsafe void DvServiceLinnCoUkRadio1GetPropertyId(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyIdArray(uint aHandle, char* aValue, int aValueLen);
+        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyIdArray(uint aHandle, char* aValue, int aValueLen, uint* aChanged);
         [DllImport("DvLinnCoUkRadio1")]
         static extern unsafe void DvServiceLinnCoUkRadio1GetPropertyIdArray(uint aHandle, char** aValue, int* aValueLen);
         [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyIdsMax(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkRadio1SetPropertyIdsMax(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkRadio1")]
         static extern unsafe void DvServiceLinnCoUkRadio1GetPropertyIdsMax(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkRadio1")]
@@ -116,15 +116,17 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyChannelUri(string aValue)
+        public unsafe bool SetPropertyChannelUri(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkRadio1SetPropertyChannelUri(iHandle, value);
+            int err = DvServiceLinnCoUkRadio1SetPropertyChannelUri(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyChannelUri(out string aValue)
@@ -135,15 +137,17 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyChannelMetadata(string aValue)
+        public unsafe bool SetPropertyChannelMetadata(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkRadio1SetPropertyChannelMetadata(iHandle, value);
+            int err = DvServiceLinnCoUkRadio1SetPropertyChannelMetadata(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyChannelMetadata(out string aValue)
@@ -154,15 +158,17 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyTransportState(string aValue)
+        public unsafe bool SetPropertyTransportState(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkRadio1SetPropertyTransportState(iHandle, value);
+            int err = DvServiceLinnCoUkRadio1SetPropertyTransportState(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyTransportState(out string aValue)
@@ -173,15 +179,17 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyProtocolInfo(string aValue)
+        public unsafe bool SetPropertyProtocolInfo(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkRadio1SetPropertyProtocolInfo(iHandle, value);
+            int err = DvServiceLinnCoUkRadio1SetPropertyProtocolInfo(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyProtocolInfo(out string aValue)
@@ -192,12 +200,14 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyId(uint aValue)
+        public unsafe bool SetPropertyId(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkRadio1SetPropertyId(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkRadio1SetPropertyId(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyId(out uint aValue)
@@ -208,16 +218,18 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyIdArray(string aValue)
+        public unsafe bool SetPropertyIdArray(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int valueLen = aValue.Length;
-            int err = DvServiceLinnCoUkRadio1SetPropertyIdArray(iHandle, value, valueLen);
+            int err = DvServiceLinnCoUkRadio1SetPropertyIdArray(iHandle, value, valueLen, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyIdArray(out string aValue)
@@ -229,12 +241,14 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyIdsMax(uint aValue)
+        public unsafe bool SetPropertyIdsMax(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkRadio1SetPropertyIdsMax(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkRadio1SetPropertyIdsMax(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyIdsMax(out uint aValue)

@@ -21,15 +21,15 @@ class DvServiceUpnpOrgDimming1 : public DvService
 {
 public:
     virtual ~DvServiceUpnpOrgDimming1() {}
-    void SetPropertyLoadLevelStatus(TUint aValue);
+    TBool SetPropertyLoadLevelStatus(TUint aValue);
     void GetPropertyLoadLevelStatus(TUint& aValue);
-    void SetPropertyStepDelta(TUint aValue);
+    TBool SetPropertyStepDelta(TUint aValue);
     void GetPropertyStepDelta(TUint& aValue);
-    void SetPropertyRampRate(TUint aValue);
+    TBool SetPropertyRampRate(TUint aValue);
     void GetPropertyRampRate(TUint& aValue);
-    void SetPropertyIsRamping(TBool aValue);
+    TBool SetPropertyIsRamping(TBool aValue);
     void GetPropertyIsRamping(TBool& aValue);
-    void SetPropertyRampPaused(TBool aValue);
+    TBool SetPropertyRampPaused(TBool aValue);
     void GetPropertyRampPaused(TBool& aValue);
 protected:
     DvServiceUpnpOrgDimming1(DvDevice& aDevice);

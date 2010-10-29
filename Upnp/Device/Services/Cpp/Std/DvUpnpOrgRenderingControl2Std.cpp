@@ -6,10 +6,10 @@
 
 using namespace Zapp;
 
-void DvServiceUpnpOrgRenderingControl2Cpp::SetPropertyLastChange(const std::string& aValue)
+bool DvServiceUpnpOrgRenderingControl2Cpp::SetPropertyLastChange(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyLastChange, buf);
+    return SetPropertyString(*iPropertyLastChange, buf);
 }
 
 void DvServiceUpnpOrgRenderingControl2Cpp::GetPropertyLastChange(std::string& aValue)

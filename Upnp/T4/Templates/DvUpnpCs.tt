@@ -67,14 +67,14 @@ namespace Zapp
 <#      if (s.type == "bin.base64") #>
 <#      { #>
         [DllImport("<#=dllName#>")]
-        static extern unsafe int <#=className#>SetProperty<#=s.name#>(uint aHandle, <#=inargctype[s.type]#> aValue, int aValueLen);
+        static extern unsafe int <#=className#>SetProperty<#=s.name#>(uint aHandle, <#=inargctype[s.type]#> aValue, int aValueLen, uint* aChanged);
         [DllImport("<#=dllName#>")]
         static extern unsafe void <#=className#>GetProperty<#=s.name#>(uint aHandle, <#=outargctype[s.type]#> aValue, int* aValueLen);
 <#      } #>
 <#      else #>
 <#      { #>
         [DllImport("<#=dllName#>")]
-        static extern unsafe int <#=className#>SetProperty<#=s.name#>(uint aHandle, <#=inargctype[s.type]#> aValue);
+        static extern unsafe int <#=className#>SetProperty<#=s.name#>(uint aHandle, <#=inargctype[s.type]#> aValue, uint* aChanged);
         [DllImport("<#=dllName#>")]
         static extern unsafe void <#=className#>GetProperty<#=s.name#>(uint aHandle, <#=outargctype[s.type]#> aValue);
 <#      } #>
@@ -107,17 +107,18 @@ namespace Zapp
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
 
-        public unsafe void SetProperty<#=s.name#>(<#=argtype[s.type]#> aValue)
+        public unsafe bool SetProperty<#=s.name#>(<#=argtype[s.type]#> aValue)
         {
+        uint changed;
 <#      if (s.type == "boolean") #>
 <#      { #>
             int value = (aValue ? 1 : 0);
-            if (0 != <#=className#>SetProperty<#=s.name#>(iHandle, value))
+            if (0 != <#=className#>SetProperty<#=s.name#>(iHandle, value, &changed))
 <#      } #>
 <#      else if (s.type == "string" || s.type == "uri") #>
 <#      { #>
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = <#=className#>SetProperty<#=s.name#>(iHandle, value);
+            int err = <#=className#>SetProperty<#=s.name#>(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
 <#      } #>
@@ -125,17 +126,18 @@ namespace Zapp
 <#      { #>
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int valueLen = aValue.Length;
-            int err = <#=className#>SetProperty<#=s.name#>(iHandle, value, valueLen);
+            int err = <#=className#>SetProperty<#=s.name#>(iHandle, value, valueLen, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
 <#      } #>
 <#      else #>
 <#      { #>
-            if (0 != <#=className#>SetProperty<#=s.name#>(iHandle, aValue))
+            if (0 != <#=className#>SetProperty<#=s.name#>(iHandle, aValue, &changed))
 <#      } #>
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetProperty<#=s.name#>(out <#=argtype[s.type]#> aValue)

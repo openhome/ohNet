@@ -55,15 +55,15 @@ DllExport void DvServiceUpnpOrgDimming1EnableActionGetIsRamping(THandle aService
 DllExport void DvServiceUpnpOrgDimming1EnableActionGetRampPaused(THandle aService, CallbackDimming1GetRampPaused aCallback, void* aPtr);
 DllExport void DvServiceUpnpOrgDimming1EnableActionGetRampTime(THandle aService, CallbackDimming1GetRampTime aCallback, void* aPtr);
 
-DllExport int32_t DvServiceUpnpOrgDimming1SetPropertyLoadLevelStatus(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceUpnpOrgDimming1SetPropertyLoadLevelStatus(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceUpnpOrgDimming1GetPropertyLoadLevelStatus(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceUpnpOrgDimming1SetPropertyStepDelta(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceUpnpOrgDimming1SetPropertyStepDelta(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceUpnpOrgDimming1GetPropertyStepDelta(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceUpnpOrgDimming1SetPropertyRampRate(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceUpnpOrgDimming1SetPropertyRampRate(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceUpnpOrgDimming1GetPropertyRampRate(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceUpnpOrgDimming1SetPropertyIsRamping(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceUpnpOrgDimming1SetPropertyIsRamping(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceUpnpOrgDimming1GetPropertyIsRamping(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceUpnpOrgDimming1SetPropertyRampPaused(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceUpnpOrgDimming1SetPropertyRampPaused(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceUpnpOrgDimming1GetPropertyRampPaused(THandle aService, uint32_t* aValue);
 
 #ifdef __cplusplus

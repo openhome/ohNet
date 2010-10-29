@@ -5,7 +5,7 @@
 
 GenAll: AllCp AllDv
 
-AllCp: CpApiCppCore CpSrcCppCore CpApiCppStd CpSrcCppStd CpApiC CpSrcC CpCs
+AllCp: CpApiCppCore CpSrcCppCore CpApiCppStd CpSrcCppStd CpApiC CpSrcC CpCs CpJs
 
 AllDv: DvApiCppCore DvSrcCppCore DvApiCppStd DvSrcCppStd DvApiC DvSrcC DvCs
 
@@ -527,6 +527,80 @@ $(proxyCs)CpZappOrgTestLights1.cs : $(tt) T4/Templates/CpUpnpCs.tt Service/Upnp/
 	$(t4) -o $(proxyCs)CpZappOrgTestLights1.cs T4/Templates/CpUpnpCs.tt -a "xml:Service/Upnp/Zapp/Test/TestLights1.xml" -a domain:zapp.org -a type:TestLights -a version:1
 $(proxyCs)CpZappOrgTestDimmableLight1.cs : $(tt) T4/Templates/CpUpnpCs.tt Service/Upnp/Zapp/Test/TestDimmableLight1.xml
 	$(t4) -o $(proxyCs)CpZappOrgTestDimmableLight1.cs T4/Templates/CpUpnpCs.tt -a "xml:Service/Upnp/Zapp/Test/TestDimmableLight1.xml" -a domain:zapp.org -a type:TestDimmableLight -a version:1
+
+CpJs:   $(proxyJs)CpUpnpOrgAVTransport1.js $(proxyJs)CpUpnpOrgAVTransport2.js $(proxyJs)CpUpnpOrgConnectionManager1.js $(proxyJs)CpUpnpOrgConnectionManager2.js $(proxyJs)CpUpnpOrgContentDirectory1.js $(proxyJs)CpUpnpOrgContentDirectory2.js $(proxyJs)CpUpnpOrgContentDirectory3.js $(proxyJs)CpUpnpOrgRenderingControl1.js $(proxyJs)CpUpnpOrgRenderingControl2.js $(proxyJs)CpUpnpOrgScheduledRecording1.js $(proxyJs)CpUpnpOrgScheduledRecording2.js $(proxyJs)CpUpnpOrgSwitchPower1.js $(proxyJs)CpUpnpOrgDimming1.js $(proxyJs)CpLinnCoUkComponent1.js $(proxyJs)CpLinnCoUkConfiguration1.js $(proxyJs)CpLinnCoUkDebug2.js $(proxyJs)CpLinnCoUkDelay1.js $(proxyJs)CpLinnCoUkDiagnostics1.js $(proxyJs)CpLinnCoUkDs1.js $(proxyJs)CpLinnCoUkInfo1.js $(proxyJs)CpLinnCoUkJukebox1.js $(proxyJs)CpLinnCoUkMediaTime1.js $(proxyJs)CpLinnCoUkPlaylist1.js $(proxyJs)CpLinnCoUkPreamp4.js $(proxyJs)CpLinnCoUkProduct1.js $(proxyJs)CpLinnCoUkProduct2.js $(proxyJs)CpLinnCoUkProduct3.js $(proxyJs)CpLinnCoUkProxyManager1.js $(proxyJs)CpLinnCoUkPtest1.js $(proxyJs)CpLinnCoUkRadio1.js $(proxyJs)CpLinnCoUkTime1.js $(proxyJs)CpLinnCoUkUi2.js $(proxyJs)CpLinnCoUkVolkano1.js $(proxyJs)CpZappOrgTestBasic1.js $(proxyJs)CpZappOrgTestLights1.js $(proxyJs)CpZappOrgTestDimmableLight1.js
+$(proxyJs)CpUpnpOrgAVTransport1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Upnp/MediaServer_3/AVTransport1.xml
+	$(t4) -o $(proxyJs)CpUpnpOrgAVTransport1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Upnp/MediaServer_3/AVTransport1.xml" -a domain:upnp.org -a type:AVTransport -a version:1
+$(proxyJs)CpUpnpOrgAVTransport2.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Upnp/MediaServer_3/AVTransport2.xml
+	$(t4) -o $(proxyJs)CpUpnpOrgAVTransport2.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Upnp/MediaServer_3/AVTransport2.xml" -a domain:upnp.org -a type:AVTransport -a version:2
+$(proxyJs)CpUpnpOrgConnectionManager1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Upnp/MediaServer_3/ConnectionManager1.xml
+	$(t4) -o $(proxyJs)CpUpnpOrgConnectionManager1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Upnp/MediaServer_3/ConnectionManager1.xml" -a domain:upnp.org -a type:ConnectionManager -a version:1
+$(proxyJs)CpUpnpOrgConnectionManager2.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Upnp/MediaServer_3/ConnectionManager2.xml
+	$(t4) -o $(proxyJs)CpUpnpOrgConnectionManager2.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Upnp/MediaServer_3/ConnectionManager2.xml" -a domain:upnp.org -a type:ConnectionManager -a version:2
+$(proxyJs)CpUpnpOrgContentDirectory1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Upnp/MediaServer_3/ContentDirectory1.xml
+	$(t4) -o $(proxyJs)CpUpnpOrgContentDirectory1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Upnp/MediaServer_3/ContentDirectory1.xml" -a domain:upnp.org -a type:ContentDirectory -a version:1
+$(proxyJs)CpUpnpOrgContentDirectory2.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Upnp/MediaServer_3/ContentDirectory2.xml
+	$(t4) -o $(proxyJs)CpUpnpOrgContentDirectory2.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Upnp/MediaServer_3/ContentDirectory2.xml" -a domain:upnp.org -a type:ContentDirectory -a version:2
+$(proxyJs)CpUpnpOrgContentDirectory3.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Upnp/MediaServer_3/ContentDirectory3.xml
+	$(t4) -o $(proxyJs)CpUpnpOrgContentDirectory3.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Upnp/MediaServer_3/ContentDirectory3.xml" -a domain:upnp.org -a type:ContentDirectory -a version:3
+$(proxyJs)CpUpnpOrgRenderingControl1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Upnp/MediaServer_3/RenderingControl1.xml
+	$(t4) -o $(proxyJs)CpUpnpOrgRenderingControl1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Upnp/MediaServer_3/RenderingControl1.xml" -a domain:upnp.org -a type:RenderingControl -a version:1
+$(proxyJs)CpUpnpOrgRenderingControl2.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Upnp/MediaServer_3/RenderingControl2.xml
+	$(t4) -o $(proxyJs)CpUpnpOrgRenderingControl2.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Upnp/MediaServer_3/RenderingControl2.xml" -a domain:upnp.org -a type:RenderingControl -a version:2
+$(proxyJs)CpUpnpOrgScheduledRecording1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Upnp/MediaServer_3/ScheduledRecording1.xml
+	$(t4) -o $(proxyJs)CpUpnpOrgScheduledRecording1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Upnp/MediaServer_3/ScheduledRecording1.xml" -a domain:upnp.org -a type:ScheduledRecording -a version:1
+$(proxyJs)CpUpnpOrgScheduledRecording2.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Upnp/MediaServer_3/ScheduledRecording2.xml
+	$(t4) -o $(proxyJs)CpUpnpOrgScheduledRecording2.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Upnp/MediaServer_3/ScheduledRecording2.xml" -a domain:upnp.org -a type:ScheduledRecording -a version:2
+$(proxyJs)CpUpnpOrgSwitchPower1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Upnp/LightingControls_1/SwitchPower1.xml
+	$(t4) -o $(proxyJs)CpUpnpOrgSwitchPower1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Upnp/LightingControls_1/SwitchPower1.xml" -a domain:upnp.org -a type:SwitchPower -a version:1
+$(proxyJs)CpUpnpOrgDimming1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Upnp/LightingControls_1/Dimming1.xml
+	$(t4) -o $(proxyJs)CpUpnpOrgDimming1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Upnp/LightingControls_1/Dimming1.xml" -a domain:upnp.org -a type:Dimming -a version:1
+$(proxyJs)CpLinnCoUkComponent1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Linn/Component1.xml
+	$(t4) -o $(proxyJs)CpLinnCoUkComponent1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Linn/Component1.xml" -a domain:linn.co.uk -a type:Component -a version:1
+$(proxyJs)CpLinnCoUkConfiguration1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Linn/Configuration1.xml
+	$(t4) -o $(proxyJs)CpLinnCoUkConfiguration1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Linn/Configuration1.xml" -a domain:linn.co.uk -a type:Configuration -a version:1
+$(proxyJs)CpLinnCoUkDebug2.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Linn/Debug2.xml
+	$(t4) -o $(proxyJs)CpLinnCoUkDebug2.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Linn/Debug2.xml" -a domain:linn.co.uk -a type:Debug -a version:2
+$(proxyJs)CpLinnCoUkDelay1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Linn/Delay1.xml
+	$(t4) -o $(proxyJs)CpLinnCoUkDelay1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Linn/Delay1.xml" -a domain:linn.co.uk -a type:Delay -a version:1
+$(proxyJs)CpLinnCoUkDiagnostics1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Linn/Diagnostics1.xml
+	$(t4) -o $(proxyJs)CpLinnCoUkDiagnostics1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Linn/Diagnostics1.xml" -a domain:linn.co.uk -a type:Diagnostics -a version:1
+$(proxyJs)CpLinnCoUkDs1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Linn/Ds1.xml
+	$(t4) -o $(proxyJs)CpLinnCoUkDs1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Linn/Ds1.xml" -a domain:linn.co.uk -a type:Ds -a version:1
+$(proxyJs)CpLinnCoUkInfo1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Linn/Info1.xml
+	$(t4) -o $(proxyJs)CpLinnCoUkInfo1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Linn/Info1.xml" -a domain:linn.co.uk -a type:Info -a version:1
+$(proxyJs)CpLinnCoUkJukebox1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Linn/Jukebox1.xml
+	$(t4) -o $(proxyJs)CpLinnCoUkJukebox1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Linn/Jukebox1.xml" -a domain:linn.co.uk -a type:Jukebox -a version:1
+$(proxyJs)CpLinnCoUkMediaTime1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Linn/MediaTime1.xml
+	$(t4) -o $(proxyJs)CpLinnCoUkMediaTime1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Linn/MediaTime1.xml" -a domain:linn.co.uk -a type:MediaTime -a version:1
+$(proxyJs)CpLinnCoUkPlaylist1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Linn/Playlist1.xml
+	$(t4) -o $(proxyJs)CpLinnCoUkPlaylist1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Linn/Playlist1.xml" -a domain:linn.co.uk -a type:Playlist -a version:1
+$(proxyJs)CpLinnCoUkPreamp4.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Linn/Preamp4.xml
+	$(t4) -o $(proxyJs)CpLinnCoUkPreamp4.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Linn/Preamp4.xml" -a domain:linn.co.uk -a type:Preamp -a version:4
+$(proxyJs)CpLinnCoUkProduct1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Linn/Product1.xml
+	$(t4) -o $(proxyJs)CpLinnCoUkProduct1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Linn/Product1.xml" -a domain:linn.co.uk -a type:Product -a version:1
+$(proxyJs)CpLinnCoUkProduct2.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Linn/Product2.xml
+	$(t4) -o $(proxyJs)CpLinnCoUkProduct2.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Linn/Product2.xml" -a domain:linn.co.uk -a type:Product -a version:2
+$(proxyJs)CpLinnCoUkProduct3.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Linn/Product3.xml
+	$(t4) -o $(proxyJs)CpLinnCoUkProduct3.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Linn/Product3.xml" -a domain:linn.co.uk -a type:Product -a version:3
+$(proxyJs)CpLinnCoUkProxyManager1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Linn/ProxyManager1.xml
+	$(t4) -o $(proxyJs)CpLinnCoUkProxyManager1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Linn/ProxyManager1.xml" -a domain:linn.co.uk -a type:ProxyManager -a version:1
+$(proxyJs)CpLinnCoUkPtest1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Linn/Ptest1.xml
+	$(t4) -o $(proxyJs)CpLinnCoUkPtest1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Linn/Ptest1.xml" -a domain:linn.co.uk -a type:Ptest -a version:1
+$(proxyJs)CpLinnCoUkRadio1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Linn/Radio1.xml
+	$(t4) -o $(proxyJs)CpLinnCoUkRadio1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Linn/Radio1.xml" -a domain:linn.co.uk -a type:Radio -a version:1
+$(proxyJs)CpLinnCoUkTime1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Linn/Time1.xml
+	$(t4) -o $(proxyJs)CpLinnCoUkTime1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Linn/Time1.xml" -a domain:linn.co.uk -a type:Time -a version:1
+$(proxyJs)CpLinnCoUkUi2.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Linn/Ui2.xml
+	$(t4) -o $(proxyJs)CpLinnCoUkUi2.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Linn/Ui2.xml" -a domain:linn.co.uk -a type:Ui -a version:2
+$(proxyJs)CpLinnCoUkVolkano1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Linn/Volkano1.xml
+	$(t4) -o $(proxyJs)CpLinnCoUkVolkano1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Linn/Volkano1.xml" -a domain:linn.co.uk -a type:Volkano -a version:1
+$(proxyJs)CpZappOrgTestBasic1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Zapp/Test/TestBasic1.xml
+	$(t4) -o $(proxyJs)CpZappOrgTestBasic1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Zapp/Test/TestBasic1.xml" -a domain:zapp.org -a type:TestBasic -a version:1
+$(proxyJs)CpZappOrgTestLights1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Zapp/Test/TestLights1.xml
+	$(t4) -o $(proxyJs)CpZappOrgTestLights1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Zapp/Test/TestLights1.xml" -a domain:zapp.org -a type:TestLights -a version:1
+$(proxyJs)CpZappOrgTestDimmableLight1.js : $(tt) T4/Templates/CpUpnpJs.tt Service/Upnp/Zapp/Test/TestDimmableLight1.xml
+	$(t4) -o $(proxyJs)CpZappOrgTestDimmableLight1.js T4/Templates/CpUpnpJs.tt -a "xml:Service/Upnp/Zapp/Test/TestDimmableLight1.xml" -a domain:zapp.org -a type:TestDimmableLight -a version:1
 
 DvApiCppCore :   $(deviceApiCppCore)DvUpnpOrgAVTransport1.h $(deviceApiCppCore)DvUpnpOrgAVTransport2.h $(deviceApiCppCore)DvUpnpOrgConnectionManager1.h $(deviceApiCppCore)DvUpnpOrgConnectionManager2.h $(deviceApiCppCore)DvUpnpOrgContentDirectory1.h $(deviceApiCppCore)DvUpnpOrgContentDirectory2.h $(deviceApiCppCore)DvUpnpOrgContentDirectory3.h $(deviceApiCppCore)DvUpnpOrgRenderingControl1.h $(deviceApiCppCore)DvUpnpOrgRenderingControl2.h $(deviceApiCppCore)DvUpnpOrgScheduledRecording1.h $(deviceApiCppCore)DvUpnpOrgScheduledRecording2.h $(deviceApiCppCore)DvUpnpOrgSwitchPower1.h $(deviceApiCppCore)DvUpnpOrgDimming1.h $(deviceApiCppCore)DvLinnCoUkComponent1.h $(deviceApiCppCore)DvLinnCoUkConfiguration1.h $(deviceApiCppCore)DvLinnCoUkDebug2.h $(deviceApiCppCore)DvLinnCoUkDelay1.h $(deviceApiCppCore)DvLinnCoUkDiagnostics1.h $(deviceApiCppCore)DvLinnCoUkDs1.h $(deviceApiCppCore)DvLinnCoUkInfo1.h $(deviceApiCppCore)DvLinnCoUkJukebox1.h $(deviceApiCppCore)DvLinnCoUkMediaTime1.h $(deviceApiCppCore)DvLinnCoUkPlaylist1.h $(deviceApiCppCore)DvLinnCoUkPreamp4.h $(deviceApiCppCore)DvLinnCoUkProduct1.h $(deviceApiCppCore)DvLinnCoUkProduct2.h $(deviceApiCppCore)DvLinnCoUkProduct3.h $(deviceApiCppCore)DvLinnCoUkProxyManager1.h $(deviceApiCppCore)DvLinnCoUkPtest1.h $(deviceApiCppCore)DvLinnCoUkRadio1.h $(deviceApiCppCore)DvLinnCoUkTime1.h $(deviceApiCppCore)DvLinnCoUkUi2.h $(deviceApiCppCore)DvLinnCoUkVolkano1.h $(deviceApiCppCore)DvZappOrgTestBasic1.h $(deviceApiCppCore)DvZappOrgTestLights1.h $(deviceApiCppCore)DvZappOrgTestDimmableLight1.h
 $(deviceApiCppCore)DvUpnpOrgAVTransport1.h : $(tt) T4/Templates/DvUpnpCppCoreHeader.tt Service/Upnp/Upnp/MediaServer_3/AVTransport1.xml

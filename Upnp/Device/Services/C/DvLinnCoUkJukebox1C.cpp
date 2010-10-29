@@ -267,9 +267,9 @@ void DvServiceLinnCoUkJukebox1EnableActionLoadManifest(THandle aService, Callbac
     reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService)->EnableActionLoadManifest(aCallback, aPtr);
 }
 
-int32_t DvServiceLinnCoUkJukebox1SetPropertyCurrentPreset(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkJukebox1SetPropertyCurrentPreset(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService)->SetPropertyCurrentPreset(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService)->SetPropertyCurrentPreset(aValue)? 1 : 0);
     return 0;
 }
 
@@ -280,10 +280,10 @@ void DvServiceLinnCoUkJukebox1GetPropertyCurrentPreset(THandle aService, uint32_
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkJukebox1SetPropertyPresetPrefix(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkJukebox1SetPropertyPresetPrefix(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService)->SetPropertyPresetPrefix(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService)->SetPropertyPresetPrefix(buf)? 1 : 0);
     return 0;
 }
 
@@ -294,10 +294,10 @@ void DvServiceLinnCoUkJukebox1GetPropertyPresetPrefix(THandle aService, char** a
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkJukebox1SetPropertyAlbumArtFileName(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkJukebox1SetPropertyAlbumArtFileName(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService)->SetPropertyAlbumArtFileName(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService)->SetPropertyAlbumArtFileName(buf)? 1 : 0);
     return 0;
 }
 

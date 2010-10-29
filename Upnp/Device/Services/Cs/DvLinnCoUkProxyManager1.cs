@@ -12,19 +12,19 @@ namespace Zapp
         [DllImport("DvLinnCoUkProxyManager1")]
         static extern void DvServiceLinnCoUkProxyManager1Destroy(uint aHandle);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern unsafe int DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductConnected(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductConnected(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProxyManager1")]
         static extern unsafe void DvServiceLinnCoUkProxyManager1GetPropertyKontrolProductConnected(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern unsafe int DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductComPort(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductComPort(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProxyManager1")]
         static extern unsafe void DvServiceLinnCoUkProxyManager1GetPropertyKontrolProductComPort(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern unsafe int DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerConnected(uint aHandle, char* aValue);
+        static extern unsafe int DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerConnected(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProxyManager1")]
         static extern unsafe void DvServiceLinnCoUkProxyManager1GetPropertyDiscPlayerConnected(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkProxyManager1")]
-        static extern unsafe int DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerComPort(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerComPort(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProxyManager1")]
         static extern unsafe void DvServiceLinnCoUkProxyManager1GetPropertyDiscPlayerComPort(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkProxyManager1")]
@@ -80,15 +80,17 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyKontrolProductConnected(string aValue)
+        public unsafe bool SetPropertyKontrolProductConnected(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductConnected(iHandle, value);
+            int err = DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductConnected(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyKontrolProductConnected(out string aValue)
@@ -99,12 +101,14 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyKontrolProductComPort(uint aValue)
+        public unsafe bool SetPropertyKontrolProductComPort(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductComPort(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkProxyManager1SetPropertyKontrolProductComPort(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyKontrolProductComPort(out uint aValue)
@@ -115,15 +119,17 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyDiscPlayerConnected(string aValue)
+        public unsafe bool SetPropertyDiscPlayerConnected(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerConnected(iHandle, value);
+            int err = DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerConnected(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyDiscPlayerConnected(out string aValue)
@@ -134,12 +140,14 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyDiscPlayerComPort(uint aValue)
+        public unsafe bool SetPropertyDiscPlayerComPort(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerComPort(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkProxyManager1SetPropertyDiscPlayerComPort(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyDiscPlayerComPort(out uint aValue)

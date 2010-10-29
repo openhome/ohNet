@@ -53,13 +53,13 @@ DllExport void DvServiceUpnpOrgContentDirectory3EnableActionCreateReference(THan
 DllExport void DvServiceUpnpOrgContentDirectory3EnableActionFreeFormQuery(THandle aService, CallbackContentDirectory3FreeFormQuery aCallback, void* aPtr);
 DllExport void DvServiceUpnpOrgContentDirectory3EnableActionGetFreeFormQueryCapabilities(THandle aService, CallbackContentDirectory3GetFreeFormQueryCapabilities aCallback, void* aPtr);
 
-DllExport int32_t DvServiceUpnpOrgContentDirectory3SetPropertySystemUpdateID(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceUpnpOrgContentDirectory3SetPropertySystemUpdateID(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceUpnpOrgContentDirectory3GetPropertySystemUpdateID(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceUpnpOrgContentDirectory3SetPropertyContainerUpdateIDs(THandle aService, const char* aValue);
+DllExport int32_t DvServiceUpnpOrgContentDirectory3SetPropertyContainerUpdateIDs(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceUpnpOrgContentDirectory3GetPropertyContainerUpdateIDs(THandle aService, char** aValue);
-DllExport int32_t DvServiceUpnpOrgContentDirectory3SetPropertyLastChange(THandle aService, const char* aValue);
+DllExport int32_t DvServiceUpnpOrgContentDirectory3SetPropertyLastChange(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceUpnpOrgContentDirectory3GetPropertyLastChange(THandle aService, char** aValue);
-DllExport int32_t DvServiceUpnpOrgContentDirectory3SetPropertyTransferIDs(THandle aService, const char* aValue);
+DllExport int32_t DvServiceUpnpOrgContentDirectory3SetPropertyTransferIDs(THandle aService, const char* aValue, uint32_t* aChanged);
 DllExport void DvServiceUpnpOrgContentDirectory3GetPropertyTransferIDs(THandle aService, char** aValue);
 
 #ifdef __cplusplus

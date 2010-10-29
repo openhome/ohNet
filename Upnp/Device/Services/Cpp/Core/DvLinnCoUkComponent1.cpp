@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkComponent1::SetPropertyAmplifierEnabled(TBool aValue)
+TBool DvServiceLinnCoUkComponent1::SetPropertyAmplifierEnabled(TBool aValue)
 {
-    SetPropertyBool(*iPropertyAmplifierEnabled, aValue);
+    return SetPropertyBool(*iPropertyAmplifierEnabled, aValue);
 }
 
 void DvServiceLinnCoUkComponent1::GetPropertyAmplifierEnabled(TBool& aValue)
@@ -16,9 +16,9 @@ void DvServiceLinnCoUkComponent1::GetPropertyAmplifierEnabled(TBool& aValue)
     aValue = iPropertyAmplifierEnabled->Value();
 }
 
-void DvServiceLinnCoUkComponent1::SetPropertyAmplifierAttenuation(const Brx& aValue)
+TBool DvServiceLinnCoUkComponent1::SetPropertyAmplifierAttenuation(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyAmplifierAttenuation, aValue);
+    return SetPropertyString(*iPropertyAmplifierAttenuation, aValue);
 }
 
 void DvServiceLinnCoUkComponent1::GetPropertyAmplifierAttenuation(Brhz& aValue)
@@ -26,9 +26,9 @@ void DvServiceLinnCoUkComponent1::GetPropertyAmplifierAttenuation(Brhz& aValue)
     aValue.Set(iPropertyAmplifierAttenuation->Value());
 }
 
-void DvServiceLinnCoUkComponent1::SetPropertyVolumeControlEnabled(TBool aValue)
+TBool DvServiceLinnCoUkComponent1::SetPropertyVolumeControlEnabled(TBool aValue)
 {
-    SetPropertyBool(*iPropertyVolumeControlEnabled, aValue);
+    return SetPropertyBool(*iPropertyVolumeControlEnabled, aValue);
 }
 
 void DvServiceLinnCoUkComponent1::GetPropertyVolumeControlEnabled(TBool& aValue)
@@ -36,9 +36,9 @@ void DvServiceLinnCoUkComponent1::GetPropertyVolumeControlEnabled(TBool& aValue)
     aValue = iPropertyVolumeControlEnabled->Value();
 }
 
-void DvServiceLinnCoUkComponent1::SetPropertyDigitalAudioOutputRaw(TBool aValue)
+TBool DvServiceLinnCoUkComponent1::SetPropertyDigitalAudioOutputRaw(TBool aValue)
 {
-    SetPropertyBool(*iPropertyDigitalAudioOutputRaw, aValue);
+    return SetPropertyBool(*iPropertyDigitalAudioOutputRaw, aValue);
 }
 
 void DvServiceLinnCoUkComponent1::GetPropertyDigitalAudioOutputRaw(TBool& aValue)

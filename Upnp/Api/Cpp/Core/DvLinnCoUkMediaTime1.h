@@ -21,7 +21,7 @@ class DvServiceLinnCoUkMediaTime1 : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkMediaTime1() {}
-    void SetPropertySeconds(TUint aValue);
+    TBool SetPropertySeconds(TUint aValue);
     void GetPropertySeconds(TUint& aValue);
 protected:
     DvServiceLinnCoUkMediaTime1(DvDevice& aDevice);

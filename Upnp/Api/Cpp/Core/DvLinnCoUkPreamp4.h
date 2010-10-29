@@ -21,17 +21,17 @@ class DvServiceLinnCoUkPreamp4 : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkPreamp4() {}
-    void SetPropertyVolume(TUint aValue);
+    TBool SetPropertyVolume(TUint aValue);
     void GetPropertyVolume(TUint& aValue);
-    void SetPropertyMute(TBool aValue);
+    TBool SetPropertyMute(TBool aValue);
     void GetPropertyMute(TBool& aValue);
-    void SetPropertyBalance(TInt aValue);
+    TBool SetPropertyBalance(TInt aValue);
     void GetPropertyBalance(TInt& aValue);
-    void SetPropertyVolumeLimit(TUint aValue);
+    TBool SetPropertyVolumeLimit(TUint aValue);
     void GetPropertyVolumeLimit(TUint& aValue);
-    void SetPropertyStartupVolume(TUint aValue);
+    TBool SetPropertyStartupVolume(TUint aValue);
     void GetPropertyStartupVolume(TUint& aValue);
-    void SetPropertyStartupVolumeEnabled(TBool aValue);
+    TBool SetPropertyStartupVolumeEnabled(TBool aValue);
     void GetPropertyStartupVolumeEnabled(TBool& aValue);
 protected:
     DvServiceLinnCoUkPreamp4(DvDevice& aDevice);

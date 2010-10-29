@@ -509,10 +509,10 @@ void DvServiceLinnCoUkRadio1EnableActionIdsMax(THandle aService, CallbackRadio1I
     reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->EnableActionIdsMax(aCallback, aPtr);
 }
 
-int32_t DvServiceLinnCoUkRadio1SetPropertyChannelUri(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkRadio1SetPropertyChannelUri(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->SetPropertyChannelUri(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->SetPropertyChannelUri(buf)? 1 : 0);
     return 0;
 }
 
@@ -523,10 +523,10 @@ void DvServiceLinnCoUkRadio1GetPropertyChannelUri(THandle aService, char** aValu
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkRadio1SetPropertyChannelMetadata(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkRadio1SetPropertyChannelMetadata(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->SetPropertyChannelMetadata(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->SetPropertyChannelMetadata(buf)? 1 : 0);
     return 0;
 }
 
@@ -537,10 +537,10 @@ void DvServiceLinnCoUkRadio1GetPropertyChannelMetadata(THandle aService, char** 
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkRadio1SetPropertyTransportState(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkRadio1SetPropertyTransportState(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->SetPropertyTransportState(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->SetPropertyTransportState(buf)? 1 : 0);
     return 0;
 }
 
@@ -551,10 +551,10 @@ void DvServiceLinnCoUkRadio1GetPropertyTransportState(THandle aService, char** a
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkRadio1SetPropertyProtocolInfo(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkRadio1SetPropertyProtocolInfo(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->SetPropertyProtocolInfo(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->SetPropertyProtocolInfo(buf)? 1 : 0);
     return 0;
 }
 
@@ -565,9 +565,9 @@ void DvServiceLinnCoUkRadio1GetPropertyProtocolInfo(THandle aService, char** aVa
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkRadio1SetPropertyId(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkRadio1SetPropertyId(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->SetPropertyId(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->SetPropertyId(aValue)? 1 : 0);
     return 0;
 }
 
@@ -578,11 +578,11 @@ void DvServiceLinnCoUkRadio1GetPropertyId(THandle aService, uint32_t* aValue)
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkRadio1SetPropertyIdArray(THandle aService, const char* aValue, uint32_t aValueLen)
+int32_t DvServiceLinnCoUkRadio1SetPropertyIdArray(THandle aService, const char* aValue, uint32_t aValueLen, uint32_t* aChanged)
 {
     Brh buf;
     buf.Set((const TByte*)aValue, aValueLen);
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->SetPropertyIdArray(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->SetPropertyIdArray(buf)? 1 : 0);
     return 0;
 }
 
@@ -594,9 +594,9 @@ void DvServiceLinnCoUkRadio1GetPropertyIdArray(THandle aService, char** aValue, 
     *aValue = (char*)buf.Extract();
 }
 
-int32_t DvServiceLinnCoUkRadio1SetPropertyIdsMax(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkRadio1SetPropertyIdsMax(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->SetPropertyIdsMax(aValue);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkRadio1C*>(aService)->SetPropertyIdsMax(aValue)? 1 : 0);
     return 0;
 }
 

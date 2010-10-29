@@ -344,9 +344,9 @@ void DvServiceLinnCoUkComponent1EnableActionLocate(THandle aService, CallbackCom
     reinterpret_cast<DvServiceLinnCoUkComponent1C*>(aService)->EnableActionLocate(aCallback, aPtr);
 }
 
-int32_t DvServiceLinnCoUkComponent1SetPropertyAmplifierEnabled(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkComponent1SetPropertyAmplifierEnabled(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkComponent1C*>(aService)->SetPropertyAmplifierEnabled((aValue!=0));
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkComponent1C*>(aService)->SetPropertyAmplifierEnabled((aValue!=0))? 1 : 0);
     return 0;
 }
 
@@ -357,10 +357,10 @@ void DvServiceLinnCoUkComponent1GetPropertyAmplifierEnabled(THandle aService, ui
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvServiceLinnCoUkComponent1SetPropertyAmplifierAttenuation(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkComponent1SetPropertyAmplifierAttenuation(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkComponent1C*>(aService)->SetPropertyAmplifierAttenuation(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkComponent1C*>(aService)->SetPropertyAmplifierAttenuation(buf)? 1 : 0);
     return 0;
 }
 
@@ -371,9 +371,9 @@ void DvServiceLinnCoUkComponent1GetPropertyAmplifierAttenuation(THandle aService
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkComponent1SetPropertyVolumeControlEnabled(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkComponent1SetPropertyVolumeControlEnabled(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkComponent1C*>(aService)->SetPropertyVolumeControlEnabled((aValue!=0));
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkComponent1C*>(aService)->SetPropertyVolumeControlEnabled((aValue!=0))? 1 : 0);
     return 0;
 }
 
@@ -384,9 +384,9 @@ void DvServiceLinnCoUkComponent1GetPropertyVolumeControlEnabled(THandle aService
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvServiceLinnCoUkComponent1SetPropertyDigitalAudioOutputRaw(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkComponent1SetPropertyDigitalAudioOutputRaw(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkComponent1C*>(aService)->SetPropertyDigitalAudioOutputRaw((aValue!=0));
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkComponent1C*>(aService)->SetPropertyDigitalAudioOutputRaw((aValue!=0))? 1 : 0);
     return 0;
 }
 

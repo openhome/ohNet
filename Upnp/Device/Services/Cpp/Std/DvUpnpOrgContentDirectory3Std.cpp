@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceUpnpOrgContentDirectory3Cpp::SetPropertySystemUpdateID(uint32_t aValue)
+bool DvServiceUpnpOrgContentDirectory3Cpp::SetPropertySystemUpdateID(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertySystemUpdateID, aValue);
+    return SetPropertyUint(*iPropertySystemUpdateID, aValue);
 }
 
 void DvServiceUpnpOrgContentDirectory3Cpp::GetPropertySystemUpdateID(uint32_t& aValue)
@@ -16,10 +16,10 @@ void DvServiceUpnpOrgContentDirectory3Cpp::GetPropertySystemUpdateID(uint32_t& a
     aValue = iPropertySystemUpdateID->Value();
 }
 
-void DvServiceUpnpOrgContentDirectory3Cpp::SetPropertyContainerUpdateIDs(const std::string& aValue)
+bool DvServiceUpnpOrgContentDirectory3Cpp::SetPropertyContainerUpdateIDs(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyContainerUpdateIDs, buf);
+    return SetPropertyString(*iPropertyContainerUpdateIDs, buf);
 }
 
 void DvServiceUpnpOrgContentDirectory3Cpp::GetPropertyContainerUpdateIDs(std::string& aValue)
@@ -28,10 +28,10 @@ void DvServiceUpnpOrgContentDirectory3Cpp::GetPropertyContainerUpdateIDs(std::st
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceUpnpOrgContentDirectory3Cpp::SetPropertyLastChange(const std::string& aValue)
+bool DvServiceUpnpOrgContentDirectory3Cpp::SetPropertyLastChange(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyLastChange, buf);
+    return SetPropertyString(*iPropertyLastChange, buf);
 }
 
 void DvServiceUpnpOrgContentDirectory3Cpp::GetPropertyLastChange(std::string& aValue)
@@ -40,10 +40,10 @@ void DvServiceUpnpOrgContentDirectory3Cpp::GetPropertyLastChange(std::string& aV
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceUpnpOrgContentDirectory3Cpp::SetPropertyTransferIDs(const std::string& aValue)
+bool DvServiceUpnpOrgContentDirectory3Cpp::SetPropertyTransferIDs(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyTransferIDs, buf);
+    return SetPropertyString(*iPropertyTransferIDs, buf);
 }
 
 void DvServiceUpnpOrgContentDirectory3Cpp::GetPropertyTransferIDs(std::string& aValue)

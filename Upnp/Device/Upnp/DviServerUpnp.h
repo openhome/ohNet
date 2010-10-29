@@ -1,16 +1,16 @@
-#ifndef HEADER_DVI_SERVER
-#define HEADER_DVI_SERVER
+#ifndef HEADER_DVI_SERVER_UPNP
+#define HEADER_DVI_SERVER_UPNP
 
 #include <ZappTypes.h>
 #include <Network.h>
 #include <Http.h>
-#include <Zapp.h>
-#include <Thread.h>
+#include <Buffer.h>
 #include <DviDevice.h>
 #include <Stream.h>
 #include <DviService.h>
 #include <Subscription.h>
 #include <Service.h>
+#include <DviServer.h>
 
 #include <vector>
 
@@ -151,38 +151,14 @@ private:
     Brn iSoapRequest;
 };
 
-class DviServerUpnp
+class DviServerUpnp : public DviServer
 {
 public:
     DviServerUpnp();
-    ~DviServerUpnp();
-    static TUint Port(TIpAddress aInterface);
-private:
-    void CreateServer(const NetworkInterface& aNif);
-    void SubnetChanged();
-    TInt FindInterface(TIpAddress aInterface, const std::vector<NetworkInterface*>& aNifList);
-    TInt FindServer(TIpAddress aSubnet);
-private:
-    class Server
-    {
-    public:
-        Server(const NetworkInterface& aNif);
-        ~Server();
-        TIpAddress Interface() const { return iNif->Address(); }
-        TIpAddress Subnet() const { return iNif->Subnet(); }
-        TUint Port() const { return iServer->Port(); }
-    private:
-        Server() {}
-    private:
-        SocketTcpServer* iServer;
-        NetworkInterface* iNif;
-    };
-private:
-    Mutex iLock;
-    std::vector<DviServerUpnp::Server*> iServers;
-    TInt iSubnetChangeListenerId;
+protected:
+    virtual SocketTcpServer* CreateServer(const NetworkInterface& aNif);
 };
 
 } // namespace Zapp
 
-#endif // HEADER_DVI_SERVER
+#endif // HEADER_DVI_SERVER_UPNP

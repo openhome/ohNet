@@ -21,13 +21,13 @@ class DvServiceLinnCoUkPlaylist1 : public DvService
 {
 public:
     virtual ~DvServiceLinnCoUkPlaylist1() {}
-    void SetPropertyIdArray(const Brx& aValue);
+    TBool SetPropertyIdArray(const Brx& aValue);
     void GetPropertyIdArray(Brh& aValue);
-    void SetPropertyRepeat(TBool aValue);
+    TBool SetPropertyRepeat(TBool aValue);
     void GetPropertyRepeat(TBool& aValue);
-    void SetPropertyShuffle(TBool aValue);
+    TBool SetPropertyShuffle(TBool aValue);
     void GetPropertyShuffle(TBool& aValue);
-    void SetPropertyTracksMax(TUint aValue);
+    TBool SetPropertyTracksMax(TUint aValue);
     void GetPropertyTracksMax(TUint& aValue);
 protected:
     DvServiceLinnCoUkPlaylist1(DvDevice& aDevice);

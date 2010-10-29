@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceZappOrgTestBasic1::SetPropertyVarUint(TUint aValue)
+TBool DvServiceZappOrgTestBasic1::SetPropertyVarUint(TUint aValue)
 {
-    SetPropertyUint(*iPropertyVarUint, aValue);
+    return SetPropertyUint(*iPropertyVarUint, aValue);
 }
 
 void DvServiceZappOrgTestBasic1::GetPropertyVarUint(TUint& aValue)
@@ -16,9 +16,9 @@ void DvServiceZappOrgTestBasic1::GetPropertyVarUint(TUint& aValue)
     aValue = iPropertyVarUint->Value();
 }
 
-void DvServiceZappOrgTestBasic1::SetPropertyVarInt(TInt aValue)
+TBool DvServiceZappOrgTestBasic1::SetPropertyVarInt(TInt aValue)
 {
-    SetPropertyInt(*iPropertyVarInt, aValue);
+    return SetPropertyInt(*iPropertyVarInt, aValue);
 }
 
 void DvServiceZappOrgTestBasic1::GetPropertyVarInt(TInt& aValue)
@@ -26,9 +26,9 @@ void DvServiceZappOrgTestBasic1::GetPropertyVarInt(TInt& aValue)
     aValue = iPropertyVarInt->Value();
 }
 
-void DvServiceZappOrgTestBasic1::SetPropertyVarBool(TBool aValue)
+TBool DvServiceZappOrgTestBasic1::SetPropertyVarBool(TBool aValue)
 {
-    SetPropertyBool(*iPropertyVarBool, aValue);
+    return SetPropertyBool(*iPropertyVarBool, aValue);
 }
 
 void DvServiceZappOrgTestBasic1::GetPropertyVarBool(TBool& aValue)
@@ -36,9 +36,9 @@ void DvServiceZappOrgTestBasic1::GetPropertyVarBool(TBool& aValue)
     aValue = iPropertyVarBool->Value();
 }
 
-void DvServiceZappOrgTestBasic1::SetPropertyVarStr(const Brx& aValue)
+TBool DvServiceZappOrgTestBasic1::SetPropertyVarStr(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyVarStr, aValue);
+    return SetPropertyString(*iPropertyVarStr, aValue);
 }
 
 void DvServiceZappOrgTestBasic1::GetPropertyVarStr(Brhz& aValue)
@@ -46,9 +46,9 @@ void DvServiceZappOrgTestBasic1::GetPropertyVarStr(Brhz& aValue)
     aValue.Set(iPropertyVarStr->Value());
 }
 
-void DvServiceZappOrgTestBasic1::SetPropertyVarBin(const Brx& aValue)
+TBool DvServiceZappOrgTestBasic1::SetPropertyVarBin(const Brx& aValue)
 {
-    SetPropertyBinary(*iPropertyVarBin, aValue);
+    return SetPropertyBinary(*iPropertyVarBin, aValue);
 }
 
 void DvServiceZappOrgTestBasic1::GetPropertyVarBin(Brh& aValue)

@@ -24,7 +24,7 @@ class DvServiceUpnpOrgScheduledRecording2Cpp : public DvService
 {
 public:
     virtual ~DvServiceUpnpOrgScheduledRecording2Cpp() {}
-    void SetPropertyLastChange(const std::string& aValue);
+    bool SetPropertyLastChange(const std::string& aValue);
     void GetPropertyLastChange(std::string& aValue);
 protected:
     DvServiceUpnpOrgScheduledRecording2Cpp(DvDeviceStd& aDevice);

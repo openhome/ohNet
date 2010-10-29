@@ -1018,10 +1018,10 @@ void DvServiceUpnpOrgRenderingControl1EnableActionSetLoudness(THandle aService, 
     reinterpret_cast<DvServiceUpnpOrgRenderingControl1C*>(aService)->EnableActionSetLoudness(aCallback, aPtr);
 }
 
-int32_t DvServiceUpnpOrgRenderingControl1SetPropertyLastChange(THandle aService, const char* aValue)
+int32_t DvServiceUpnpOrgRenderingControl1SetPropertyLastChange(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceUpnpOrgRenderingControl1C*>(aService)->SetPropertyLastChange(buf);
+    *aChanged = (reinterpret_cast<DvServiceUpnpOrgRenderingControl1C*>(aService)->SetPropertyLastChange(buf)? 1 : 0);
     return 0;
 }
 

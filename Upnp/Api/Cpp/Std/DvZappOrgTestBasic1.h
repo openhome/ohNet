@@ -24,15 +24,15 @@ class DvServiceZappOrgTestBasic1Cpp : public DvService
 {
 public:
     virtual ~DvServiceZappOrgTestBasic1Cpp() {}
-    void SetPropertyVarUint(uint32_t aValue);
+    bool SetPropertyVarUint(uint32_t aValue);
     void GetPropertyVarUint(uint32_t& aValue);
-    void SetPropertyVarInt(int32_t aValue);
+    bool SetPropertyVarInt(int32_t aValue);
     void GetPropertyVarInt(int32_t& aValue);
-    void SetPropertyVarBool(bool aValue);
+    bool SetPropertyVarBool(bool aValue);
     void GetPropertyVarBool(bool& aValue);
-    void SetPropertyVarStr(const std::string& aValue);
+    bool SetPropertyVarStr(const std::string& aValue);
     void GetPropertyVarStr(std::string& aValue);
-    void SetPropertyVarBin(const std::string& aValue);
+    bool SetPropertyVarBin(const std::string& aValue);
     void GetPropertyVarBin(std::string& aValue);
 protected:
     DvServiceZappOrgTestBasic1Cpp(DvDeviceStd& aDevice);

@@ -12,19 +12,19 @@ namespace Zapp
         [DllImport("DvLinnCoUkPlaylist1")]
         static extern void DvServiceLinnCoUkPlaylist1Destroy(uint aHandle);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern unsafe int DvServiceLinnCoUkPlaylist1SetPropertyIdArray(uint aHandle, char* aValue, int aValueLen);
+        static extern unsafe int DvServiceLinnCoUkPlaylist1SetPropertyIdArray(uint aHandle, char* aValue, int aValueLen, uint* aChanged);
         [DllImport("DvLinnCoUkPlaylist1")]
         static extern unsafe void DvServiceLinnCoUkPlaylist1GetPropertyIdArray(uint aHandle, char** aValue, int* aValueLen);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern unsafe int DvServiceLinnCoUkPlaylist1SetPropertyRepeat(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkPlaylist1SetPropertyRepeat(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPlaylist1")]
         static extern unsafe void DvServiceLinnCoUkPlaylist1GetPropertyRepeat(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern unsafe int DvServiceLinnCoUkPlaylist1SetPropertyShuffle(uint aHandle, int aValue);
+        static extern unsafe int DvServiceLinnCoUkPlaylist1SetPropertyShuffle(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPlaylist1")]
         static extern unsafe void DvServiceLinnCoUkPlaylist1GetPropertyShuffle(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern unsafe int DvServiceLinnCoUkPlaylist1SetPropertyTracksMax(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceLinnCoUkPlaylist1SetPropertyTracksMax(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPlaylist1")]
         static extern unsafe void DvServiceLinnCoUkPlaylist1GetPropertyTracksMax(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkPlaylist1")]
@@ -88,16 +88,18 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyIdArray(string aValue)
+        public unsafe bool SetPropertyIdArray(string aValue)
         {
+        uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int valueLen = aValue.Length;
-            int err = DvServiceLinnCoUkPlaylist1SetPropertyIdArray(iHandle, value, valueLen);
+            int err = DvServiceLinnCoUkPlaylist1SetPropertyIdArray(iHandle, value, valueLen, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyIdArray(out string aValue)
@@ -109,13 +111,15 @@ namespace Zapp
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyRepeat(bool aValue)
+        public unsafe bool SetPropertyRepeat(bool aValue)
         {
+        uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkPlaylist1SetPropertyRepeat(iHandle, value))
+            if (0 != DvServiceLinnCoUkPlaylist1SetPropertyRepeat(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyRepeat(out bool aValue)
@@ -125,13 +129,15 @@ namespace Zapp
             aValue = (value != 0);
         }
 
-        public unsafe void SetPropertyShuffle(bool aValue)
+        public unsafe bool SetPropertyShuffle(bool aValue)
         {
+        uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkPlaylist1SetPropertyShuffle(iHandle, value))
+            if (0 != DvServiceLinnCoUkPlaylist1SetPropertyShuffle(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyShuffle(out bool aValue)
@@ -141,12 +147,14 @@ namespace Zapp
             aValue = (value != 0);
         }
 
-        public unsafe void SetPropertyTracksMax(uint aValue)
+        public unsafe bool SetPropertyTracksMax(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkPlaylist1SetPropertyTracksMax(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceLinnCoUkPlaylist1SetPropertyTracksMax(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyTracksMax(out uint aValue)

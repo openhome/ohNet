@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceUpnpOrgConnectionManager1::SetPropertySourceProtocolInfo(const Brx& aValue)
+TBool DvServiceUpnpOrgConnectionManager1::SetPropertySourceProtocolInfo(const Brx& aValue)
 {
-    SetPropertyString(*iPropertySourceProtocolInfo, aValue);
+    return SetPropertyString(*iPropertySourceProtocolInfo, aValue);
 }
 
 void DvServiceUpnpOrgConnectionManager1::GetPropertySourceProtocolInfo(Brhz& aValue)
@@ -16,9 +16,9 @@ void DvServiceUpnpOrgConnectionManager1::GetPropertySourceProtocolInfo(Brhz& aVa
     aValue.Set(iPropertySourceProtocolInfo->Value());
 }
 
-void DvServiceUpnpOrgConnectionManager1::SetPropertySinkProtocolInfo(const Brx& aValue)
+TBool DvServiceUpnpOrgConnectionManager1::SetPropertySinkProtocolInfo(const Brx& aValue)
 {
-    SetPropertyString(*iPropertySinkProtocolInfo, aValue);
+    return SetPropertyString(*iPropertySinkProtocolInfo, aValue);
 }
 
 void DvServiceUpnpOrgConnectionManager1::GetPropertySinkProtocolInfo(Brhz& aValue)
@@ -26,9 +26,9 @@ void DvServiceUpnpOrgConnectionManager1::GetPropertySinkProtocolInfo(Brhz& aValu
     aValue.Set(iPropertySinkProtocolInfo->Value());
 }
 
-void DvServiceUpnpOrgConnectionManager1::SetPropertyCurrentConnectionIDs(const Brx& aValue)
+TBool DvServiceUpnpOrgConnectionManager1::SetPropertyCurrentConnectionIDs(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyCurrentConnectionIDs, aValue);
+    return SetPropertyString(*iPropertyCurrentConnectionIDs, aValue);
 }
 
 void DvServiceUpnpOrgConnectionManager1::GetPropertyCurrentConnectionIDs(Brhz& aValue)

@@ -123,10 +123,10 @@ void DvServiceLinnCoUkConfiguration1EnableActionSetParameter(THandle aService, C
     reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService)->EnableActionSetParameter(aCallback, aPtr);
 }
 
-int32_t DvServiceLinnCoUkConfiguration1SetPropertyConfigurationXml(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkConfiguration1SetPropertyConfigurationXml(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService)->SetPropertyConfigurationXml(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService)->SetPropertyConfigurationXml(buf)? 1 : 0);
     return 0;
 }
 
@@ -137,10 +137,10 @@ void DvServiceLinnCoUkConfiguration1GetPropertyConfigurationXml(THandle aService
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkConfiguration1SetPropertyParameterXml(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkConfiguration1SetPropertyParameterXml(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService)->SetPropertyParameterXml(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService)->SetPropertyParameterXml(buf)? 1 : 0);
     return 0;
 }
 

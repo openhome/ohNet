@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkUi2::SetPropertyDisplayBrightness(TUint aValue)
+TBool DvServiceLinnCoUkUi2::SetPropertyDisplayBrightness(TUint aValue)
 {
-    SetPropertyUint(*iPropertyDisplayBrightness, aValue);
+    return SetPropertyUint(*iPropertyDisplayBrightness, aValue);
 }
 
 void DvServiceLinnCoUkUi2::GetPropertyDisplayBrightness(TUint& aValue)
@@ -16,9 +16,9 @@ void DvServiceLinnCoUkUi2::GetPropertyDisplayBrightness(TUint& aValue)
     aValue = iPropertyDisplayBrightness->Value();
 }
 
-void DvServiceLinnCoUkUi2::SetPropertyDisplayBrightnessAuto(TBool aValue)
+TBool DvServiceLinnCoUkUi2::SetPropertyDisplayBrightnessAuto(TBool aValue)
 {
-    SetPropertyBool(*iPropertyDisplayBrightnessAuto, aValue);
+    return SetPropertyBool(*iPropertyDisplayBrightnessAuto, aValue);
 }
 
 void DvServiceLinnCoUkUi2::GetPropertyDisplayBrightnessAuto(TBool& aValue)
@@ -26,9 +26,9 @@ void DvServiceLinnCoUkUi2::GetPropertyDisplayBrightnessAuto(TBool& aValue)
     aValue = iPropertyDisplayBrightnessAuto->Value();
 }
 
-void DvServiceLinnCoUkUi2::SetPropertyInfraredCommands(const Brx& aValue)
+TBool DvServiceLinnCoUkUi2::SetPropertyInfraredCommands(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyInfraredCommands, aValue);
+    return SetPropertyString(*iPropertyInfraredCommands, aValue);
 }
 
 void DvServiceLinnCoUkUi2::GetPropertyInfraredCommands(Brhz& aValue)
@@ -36,9 +36,9 @@ void DvServiceLinnCoUkUi2::GetPropertyInfraredCommands(Brhz& aValue)
     aValue.Set(iPropertyInfraredCommands->Value());
 }
 
-void DvServiceLinnCoUkUi2::SetPropertyInfraredTerminalCommands(const Brx& aValue)
+TBool DvServiceLinnCoUkUi2::SetPropertyInfraredTerminalCommands(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyInfraredTerminalCommands, aValue);
+    return SetPropertyString(*iPropertyInfraredTerminalCommands, aValue);
 }
 
 void DvServiceLinnCoUkUi2::GetPropertyInfraredTerminalCommands(Brhz& aValue)
@@ -46,9 +46,9 @@ void DvServiceLinnCoUkUi2::GetPropertyInfraredTerminalCommands(Brhz& aValue)
     aValue.Set(iPropertyInfraredTerminalCommands->Value());
 }
 
-void DvServiceLinnCoUkUi2::SetPropertyDisplayUpsideDown(TBool aValue)
+TBool DvServiceLinnCoUkUi2::SetPropertyDisplayUpsideDown(TBool aValue)
 {
-    SetPropertyBool(*iPropertyDisplayUpsideDown, aValue);
+    return SetPropertyBool(*iPropertyDisplayUpsideDown, aValue);
 }
 
 void DvServiceLinnCoUkUi2::GetPropertyDisplayUpsideDown(TBool& aValue)
@@ -56,9 +56,9 @@ void DvServiceLinnCoUkUi2::GetPropertyDisplayUpsideDown(TBool& aValue)
     aValue = iPropertyDisplayUpsideDown->Value();
 }
 
-void DvServiceLinnCoUkUi2::SetPropertyDisplayScrollText(TBool aValue)
+TBool DvServiceLinnCoUkUi2::SetPropertyDisplayScrollText(TBool aValue)
 {
-    SetPropertyBool(*iPropertyDisplayScrollText, aValue);
+    return SetPropertyBool(*iPropertyDisplayScrollText, aValue);
 }
 
 void DvServiceLinnCoUkUi2::GetPropertyDisplayScrollText(TBool& aValue)
@@ -66,9 +66,9 @@ void DvServiceLinnCoUkUi2::GetPropertyDisplayScrollText(TBool& aValue)
     aValue = iPropertyDisplayScrollText->Value();
 }
 
-void DvServiceLinnCoUkUi2::SetPropertyDisplaySleep(TBool aValue)
+TBool DvServiceLinnCoUkUi2::SetPropertyDisplaySleep(TBool aValue)
 {
-    SetPropertyBool(*iPropertyDisplaySleep, aValue);
+    return SetPropertyBool(*iPropertyDisplaySleep, aValue);
 }
 
 void DvServiceLinnCoUkUi2::GetPropertyDisplaySleep(TBool& aValue)
@@ -76,9 +76,9 @@ void DvServiceLinnCoUkUi2::GetPropertyDisplaySleep(TBool& aValue)
     aValue = iPropertyDisplaySleep->Value();
 }
 
-void DvServiceLinnCoUkUi2::SetPropertyDisplayLedOff(TBool aValue)
+TBool DvServiceLinnCoUkUi2::SetPropertyDisplayLedOff(TBool aValue)
 {
-    SetPropertyBool(*iPropertyDisplayLedOff, aValue);
+    return SetPropertyBool(*iPropertyDisplayLedOff, aValue);
 }
 
 void DvServiceLinnCoUkUi2::GetPropertyDisplayLedOff(TBool& aValue)
@@ -86,9 +86,9 @@ void DvServiceLinnCoUkUi2::GetPropertyDisplayLedOff(TBool& aValue)
     aValue = iPropertyDisplayLedOff->Value();
 }
 
-void DvServiceLinnCoUkUi2::SetPropertyTerminalInputCode(TUint aValue)
+TBool DvServiceLinnCoUkUi2::SetPropertyTerminalInputCode(TUint aValue)
 {
-    SetPropertyUint(*iPropertyTerminalInputCode, aValue);
+    return SetPropertyUint(*iPropertyTerminalInputCode, aValue);
 }
 
 void DvServiceLinnCoUkUi2::GetPropertyTerminalInputCode(TUint& aValue)
@@ -96,9 +96,9 @@ void DvServiceLinnCoUkUi2::GetPropertyTerminalInputCode(TUint& aValue)
     aValue = iPropertyTerminalInputCode->Value();
 }
 
-void DvServiceLinnCoUkUi2::SetPropertyTerminalInputName(const Brx& aValue)
+TBool DvServiceLinnCoUkUi2::SetPropertyTerminalInputName(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyTerminalInputName, aValue);
+    return SetPropertyString(*iPropertyTerminalInputName, aValue);
 }
 
 void DvServiceLinnCoUkUi2::GetPropertyTerminalInputName(Brhz& aValue)
@@ -106,9 +106,9 @@ void DvServiceLinnCoUkUi2::GetPropertyTerminalInputName(Brhz& aValue)
     aValue.Set(iPropertyTerminalInputName->Value());
 }
 
-void DvServiceLinnCoUkUi2::SetPropertyDisplayPixels(const Brx& aValue)
+TBool DvServiceLinnCoUkUi2::SetPropertyDisplayPixels(const Brx& aValue)
 {
-    SetPropertyBinary(*iPropertyDisplayPixels, aValue);
+    return SetPropertyBinary(*iPropertyDisplayPixels, aValue);
 }
 
 void DvServiceLinnCoUkUi2::GetPropertyDisplayPixels(Brh& aValue)

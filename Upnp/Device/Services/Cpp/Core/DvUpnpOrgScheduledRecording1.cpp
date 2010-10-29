@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceUpnpOrgScheduledRecording1::SetPropertyLastChange(const Brx& aValue)
+TBool DvServiceUpnpOrgScheduledRecording1::SetPropertyLastChange(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyLastChange, aValue);
+    return SetPropertyString(*iPropertyLastChange, aValue);
 }
 
 void DvServiceUpnpOrgScheduledRecording1::GetPropertyLastChange(Brhz& aValue)

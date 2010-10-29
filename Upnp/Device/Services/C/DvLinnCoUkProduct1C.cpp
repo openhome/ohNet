@@ -147,10 +147,10 @@ void DvServiceLinnCoUkProduct1EnableActionSetStandby(THandle aService, CallbackP
     reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService)->EnableActionSetStandby(aCallback, aPtr);
 }
 
-int32_t DvServiceLinnCoUkProduct1SetPropertyRoom(THandle aService, const char* aValue)
+int32_t DvServiceLinnCoUkProduct1SetPropertyRoom(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService)->SetPropertyRoom(buf);
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService)->SetPropertyRoom(buf)? 1 : 0);
     return 0;
 }
 
@@ -161,9 +161,9 @@ void DvServiceLinnCoUkProduct1GetPropertyRoom(THandle aService, char** aValue)
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkProduct1SetPropertyStandby(THandle aService, uint32_t aValue)
+int32_t DvServiceLinnCoUkProduct1SetPropertyStandby(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService)->SetPropertyStandby((aValue!=0));
+    *aChanged = (reinterpret_cast<DvServiceLinnCoUkProduct1C*>(aService)->SetPropertyStandby((aValue!=0))? 1 : 0);
     return 0;
 }
 
