@@ -24,21 +24,21 @@ class DvServiceZappOrgTestWidget1Cpp : public DvService
 {
 public:
     virtual ~DvServiceZappOrgTestWidget1Cpp() {}
-    void SetPropertyReadWriteRegister0(uint32_t aValue);
+    bool SetPropertyReadWriteRegister0(uint32_t aValue);
     void GetPropertyReadWriteRegister0(uint32_t& aValue);
-    void SetPropertyReadWriteRegister1(uint32_t aValue);
+    bool SetPropertyReadWriteRegister1(uint32_t aValue);
     void GetPropertyReadWriteRegister1(uint32_t& aValue);
-    void SetPropertyReadWriteRegister2(uint32_t aValue);
+    bool SetPropertyReadWriteRegister2(uint32_t aValue);
     void GetPropertyReadWriteRegister2(uint32_t& aValue);
-    void SetPropertyReadWriteRegister3(uint32_t aValue);
+    bool SetPropertyReadWriteRegister3(uint32_t aValue);
     void GetPropertyReadWriteRegister3(uint32_t& aValue);
-    void SetPropertyReadOnlyRegister4(uint32_t aValue);
+    bool SetPropertyReadOnlyRegister4(uint32_t aValue);
     void GetPropertyReadOnlyRegister4(uint32_t& aValue);
-    void SetPropertyReadOnlyRegister5(uint32_t aValue);
+    bool SetPropertyReadOnlyRegister5(uint32_t aValue);
     void GetPropertyReadOnlyRegister5(uint32_t& aValue);
-    void SetPropertyReadOnlyRegister6(uint32_t aValue);
+    bool SetPropertyReadOnlyRegister6(uint32_t aValue);
     void GetPropertyReadOnlyRegister6(uint32_t& aValue);
-    void SetPropertyReadOnlyRegister7(uint32_t aValue);
+    bool SetPropertyReadOnlyRegister7(uint32_t aValue);
     void GetPropertyReadOnlyRegister7(uint32_t& aValue);
 protected:
     DvServiceZappOrgTestWidget1Cpp(DvDeviceStd& aDevice);

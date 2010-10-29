@@ -12,35 +12,35 @@ namespace Zapp
         [DllImport("DvZappOrgTestWidget1")]
         static extern void DvServiceZappOrgTestWidget1Destroy(uint aHandle);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe int DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister0(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister0(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvZappOrgTestWidget1")]
         static extern unsafe void DvServiceZappOrgTestWidget1GetPropertyReadWriteRegister0(uint aHandle, uint* aValue);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe int DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister1(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister1(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvZappOrgTestWidget1")]
         static extern unsafe void DvServiceZappOrgTestWidget1GetPropertyReadWriteRegister1(uint aHandle, uint* aValue);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe int DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister2(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister2(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvZappOrgTestWidget1")]
         static extern unsafe void DvServiceZappOrgTestWidget1GetPropertyReadWriteRegister2(uint aHandle, uint* aValue);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe int DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister3(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister3(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvZappOrgTestWidget1")]
         static extern unsafe void DvServiceZappOrgTestWidget1GetPropertyReadWriteRegister3(uint aHandle, uint* aValue);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe int DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister4(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister4(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvZappOrgTestWidget1")]
         static extern unsafe void DvServiceZappOrgTestWidget1GetPropertyReadOnlyRegister4(uint aHandle, uint* aValue);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe int DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister5(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister5(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvZappOrgTestWidget1")]
         static extern unsafe void DvServiceZappOrgTestWidget1GetPropertyReadOnlyRegister5(uint aHandle, uint* aValue);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe int DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister6(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister6(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvZappOrgTestWidget1")]
         static extern unsafe void DvServiceZappOrgTestWidget1GetPropertyReadOnlyRegister6(uint aHandle, uint* aValue);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe int DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister7(uint aHandle, uint aValue);
+        static extern unsafe int DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister7(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvZappOrgTestWidget1")]
         static extern unsafe void DvServiceZappOrgTestWidget1GetPropertyReadOnlyRegister7(uint aHandle, uint* aValue);
         [DllImport("DvZappOrgTestWidget1")]
@@ -60,12 +60,14 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyReadWriteRegister0(uint aValue)
+        public unsafe bool SetPropertyReadWriteRegister0(uint aValue)
         {
-            if (0 != DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister0(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister0(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyReadWriteRegister0(out uint aValue)
@@ -76,12 +78,14 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyReadWriteRegister1(uint aValue)
+        public unsafe bool SetPropertyReadWriteRegister1(uint aValue)
         {
-            if (0 != DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister1(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister1(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyReadWriteRegister1(out uint aValue)
@@ -92,12 +96,14 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyReadWriteRegister2(uint aValue)
+        public unsafe bool SetPropertyReadWriteRegister2(uint aValue)
         {
-            if (0 != DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister2(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister2(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyReadWriteRegister2(out uint aValue)
@@ -108,12 +114,14 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyReadWriteRegister3(uint aValue)
+        public unsafe bool SetPropertyReadWriteRegister3(uint aValue)
         {
-            if (0 != DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister3(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister3(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyReadWriteRegister3(out uint aValue)
@@ -124,12 +132,14 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyReadOnlyRegister4(uint aValue)
+        public unsafe bool SetPropertyReadOnlyRegister4(uint aValue)
         {
-            if (0 != DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister4(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister4(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyReadOnlyRegister4(out uint aValue)
@@ -140,12 +150,14 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyReadOnlyRegister5(uint aValue)
+        public unsafe bool SetPropertyReadOnlyRegister5(uint aValue)
         {
-            if (0 != DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister5(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister5(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyReadOnlyRegister5(out uint aValue)
@@ -156,12 +168,14 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyReadOnlyRegister6(uint aValue)
+        public unsafe bool SetPropertyReadOnlyRegister6(uint aValue)
         {
-            if (0 != DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister6(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister6(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyReadOnlyRegister6(out uint aValue)
@@ -172,12 +186,14 @@ namespace Zapp
             }
         }
 
-        public unsafe void SetPropertyReadOnlyRegister7(uint aValue)
+        public unsafe bool SetPropertyReadOnlyRegister7(uint aValue)
         {
-            if (0 != DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister7(iHandle, aValue))
+        uint changed;
+            if (0 != DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister7(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
         public unsafe void GetPropertyReadOnlyRegister7(out uint aValue)

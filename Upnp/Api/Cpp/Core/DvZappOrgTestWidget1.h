@@ -21,21 +21,21 @@ class DvServiceZappOrgTestWidget1 : public DvService
 {
 public:
     virtual ~DvServiceZappOrgTestWidget1() {}
-    void SetPropertyReadWriteRegister0(TUint aValue);
+    TBool SetPropertyReadWriteRegister0(TUint aValue);
     void GetPropertyReadWriteRegister0(TUint& aValue);
-    void SetPropertyReadWriteRegister1(TUint aValue);
+    TBool SetPropertyReadWriteRegister1(TUint aValue);
     void GetPropertyReadWriteRegister1(TUint& aValue);
-    void SetPropertyReadWriteRegister2(TUint aValue);
+    TBool SetPropertyReadWriteRegister2(TUint aValue);
     void GetPropertyReadWriteRegister2(TUint& aValue);
-    void SetPropertyReadWriteRegister3(TUint aValue);
+    TBool SetPropertyReadWriteRegister3(TUint aValue);
     void GetPropertyReadWriteRegister3(TUint& aValue);
-    void SetPropertyReadOnlyRegister4(TUint aValue);
+    TBool SetPropertyReadOnlyRegister4(TUint aValue);
     void GetPropertyReadOnlyRegister4(TUint& aValue);
-    void SetPropertyReadOnlyRegister5(TUint aValue);
+    TBool SetPropertyReadOnlyRegister5(TUint aValue);
     void GetPropertyReadOnlyRegister5(TUint& aValue);
-    void SetPropertyReadOnlyRegister6(TUint aValue);
+    TBool SetPropertyReadOnlyRegister6(TUint aValue);
     void GetPropertyReadOnlyRegister6(TUint& aValue);
-    void SetPropertyReadOnlyRegister7(TUint aValue);
+    TBool SetPropertyReadOnlyRegister7(TUint aValue);
     void GetPropertyReadOnlyRegister7(TUint& aValue);
 protected:
     DvServiceZappOrgTestWidget1(DvDevice& aDevice);

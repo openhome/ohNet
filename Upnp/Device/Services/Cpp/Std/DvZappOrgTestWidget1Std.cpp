@@ -6,9 +6,9 @@
 
 using namespace Zapp;
 
-void DvServiceZappOrgTestWidget1Cpp::SetPropertyReadWriteRegister0(uint32_t aValue)
+bool DvServiceZappOrgTestWidget1Cpp::SetPropertyReadWriteRegister0(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyReadWriteRegister0, aValue);
+    return SetPropertyUint(*iPropertyReadWriteRegister0, aValue);
 }
 
 void DvServiceZappOrgTestWidget1Cpp::GetPropertyReadWriteRegister0(uint32_t& aValue)
@@ -16,9 +16,9 @@ void DvServiceZappOrgTestWidget1Cpp::GetPropertyReadWriteRegister0(uint32_t& aVa
     aValue = iPropertyReadWriteRegister0->Value();
 }
 
-void DvServiceZappOrgTestWidget1Cpp::SetPropertyReadWriteRegister1(uint32_t aValue)
+bool DvServiceZappOrgTestWidget1Cpp::SetPropertyReadWriteRegister1(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyReadWriteRegister1, aValue);
+    return SetPropertyUint(*iPropertyReadWriteRegister1, aValue);
 }
 
 void DvServiceZappOrgTestWidget1Cpp::GetPropertyReadWriteRegister1(uint32_t& aValue)
@@ -26,9 +26,9 @@ void DvServiceZappOrgTestWidget1Cpp::GetPropertyReadWriteRegister1(uint32_t& aVa
     aValue = iPropertyReadWriteRegister1->Value();
 }
 
-void DvServiceZappOrgTestWidget1Cpp::SetPropertyReadWriteRegister2(uint32_t aValue)
+bool DvServiceZappOrgTestWidget1Cpp::SetPropertyReadWriteRegister2(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyReadWriteRegister2, aValue);
+    return SetPropertyUint(*iPropertyReadWriteRegister2, aValue);
 }
 
 void DvServiceZappOrgTestWidget1Cpp::GetPropertyReadWriteRegister2(uint32_t& aValue)
@@ -36,9 +36,9 @@ void DvServiceZappOrgTestWidget1Cpp::GetPropertyReadWriteRegister2(uint32_t& aVa
     aValue = iPropertyReadWriteRegister2->Value();
 }
 
-void DvServiceZappOrgTestWidget1Cpp::SetPropertyReadWriteRegister3(uint32_t aValue)
+bool DvServiceZappOrgTestWidget1Cpp::SetPropertyReadWriteRegister3(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyReadWriteRegister3, aValue);
+    return SetPropertyUint(*iPropertyReadWriteRegister3, aValue);
 }
 
 void DvServiceZappOrgTestWidget1Cpp::GetPropertyReadWriteRegister3(uint32_t& aValue)
@@ -46,9 +46,9 @@ void DvServiceZappOrgTestWidget1Cpp::GetPropertyReadWriteRegister3(uint32_t& aVa
     aValue = iPropertyReadWriteRegister3->Value();
 }
 
-void DvServiceZappOrgTestWidget1Cpp::SetPropertyReadOnlyRegister4(uint32_t aValue)
+bool DvServiceZappOrgTestWidget1Cpp::SetPropertyReadOnlyRegister4(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyReadOnlyRegister4, aValue);
+    return SetPropertyUint(*iPropertyReadOnlyRegister4, aValue);
 }
 
 void DvServiceZappOrgTestWidget1Cpp::GetPropertyReadOnlyRegister4(uint32_t& aValue)
@@ -56,9 +56,9 @@ void DvServiceZappOrgTestWidget1Cpp::GetPropertyReadOnlyRegister4(uint32_t& aVal
     aValue = iPropertyReadOnlyRegister4->Value();
 }
 
-void DvServiceZappOrgTestWidget1Cpp::SetPropertyReadOnlyRegister5(uint32_t aValue)
+bool DvServiceZappOrgTestWidget1Cpp::SetPropertyReadOnlyRegister5(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyReadOnlyRegister5, aValue);
+    return SetPropertyUint(*iPropertyReadOnlyRegister5, aValue);
 }
 
 void DvServiceZappOrgTestWidget1Cpp::GetPropertyReadOnlyRegister5(uint32_t& aValue)
@@ -66,9 +66,9 @@ void DvServiceZappOrgTestWidget1Cpp::GetPropertyReadOnlyRegister5(uint32_t& aVal
     aValue = iPropertyReadOnlyRegister5->Value();
 }
 
-void DvServiceZappOrgTestWidget1Cpp::SetPropertyReadOnlyRegister6(uint32_t aValue)
+bool DvServiceZappOrgTestWidget1Cpp::SetPropertyReadOnlyRegister6(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyReadOnlyRegister6, aValue);
+    return SetPropertyUint(*iPropertyReadOnlyRegister6, aValue);
 }
 
 void DvServiceZappOrgTestWidget1Cpp::GetPropertyReadOnlyRegister6(uint32_t& aValue)
@@ -76,9 +76,9 @@ void DvServiceZappOrgTestWidget1Cpp::GetPropertyReadOnlyRegister6(uint32_t& aVal
     aValue = iPropertyReadOnlyRegister6->Value();
 }
 
-void DvServiceZappOrgTestWidget1Cpp::SetPropertyReadOnlyRegister7(uint32_t aValue)
+bool DvServiceZappOrgTestWidget1Cpp::SetPropertyReadOnlyRegister7(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyReadOnlyRegister7, aValue);
+    return SetPropertyUint(*iPropertyReadOnlyRegister7, aValue);
 }
 
 void DvServiceZappOrgTestWidget1Cpp::GetPropertyReadOnlyRegister7(uint32_t& aValue)

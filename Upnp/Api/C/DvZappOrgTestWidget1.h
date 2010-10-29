@@ -15,21 +15,21 @@ DllExport void DvServiceZappOrgTestWidget1Destroy(THandle aService);
 
 DllExport void DvServiceZappOrgTestWidget1EnableActionSetReadWriteRegister(THandle aService, CallbackTestWidget1SetReadWriteRegister aCallback, void* aPtr);
 
-DllExport int32_t DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister0(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister0(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceZappOrgTestWidget1GetPropertyReadWriteRegister0(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister1(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister1(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceZappOrgTestWidget1GetPropertyReadWriteRegister1(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister2(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister2(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceZappOrgTestWidget1GetPropertyReadWriteRegister2(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister3(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceZappOrgTestWidget1SetPropertyReadWriteRegister3(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceZappOrgTestWidget1GetPropertyReadWriteRegister3(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister4(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister4(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceZappOrgTestWidget1GetPropertyReadOnlyRegister4(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister5(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister5(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceZappOrgTestWidget1GetPropertyReadOnlyRegister5(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister6(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister6(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceZappOrgTestWidget1GetPropertyReadOnlyRegister6(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister7(THandle aService, uint32_t aValue);
+DllExport int32_t DvServiceZappOrgTestWidget1SetPropertyReadOnlyRegister7(THandle aService, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvServiceZappOrgTestWidget1GetPropertyReadOnlyRegister7(THandle aService, uint32_t* aValue);
 
 #ifdef __cplusplus
