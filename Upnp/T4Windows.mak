@@ -80,7 +80,7 @@ $(toolsDir)UpnpServiceMake.dll : $(makesources)
 	csc -target:library -out:$(upnpServiceMake) $(makesources)
 
 clean-t4:
-	rd /s/q $(toolsDir)
+	$(rmdir) $(toolsDir)
 
 mkToolsDir:
 	if not exist $(toolsDir) mkdir $(toolsDir)
