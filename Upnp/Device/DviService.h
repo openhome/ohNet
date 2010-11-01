@@ -92,7 +92,7 @@ private:
     std::vector<DviSubscription*> iSubscriptions;
 };
 
-class InvocationResponse : public IInvocationResponse, private INonCopyable
+class DllExportClass InvocationResponse : public IInvocationResponse, private INonCopyable
 {
 public:
 	DllExport InvocationResponse(IDvInvocation& aInvocation);
@@ -103,7 +103,7 @@ private:
 	IDvInvocation& iInvocation;
 };
 
-class InvocationResponseBool : public IInvocationResponseBool, private INonCopyable
+class DllExportClass InvocationResponseBool : public IInvocationResponseBool, private INonCopyable
 {
 public:
 	DllExport InvocationResponseBool(IDvInvocation& aInvocation, const TChar* aName);
@@ -113,7 +113,7 @@ private:
 	const TChar* iName;
 };
 
-class InvocationResponseUint : public IInvocationResponseUint, private INonCopyable
+class DllExportClass InvocationResponseUint : public IInvocationResponseUint, private INonCopyable
 {
 public:
 	DllExport InvocationResponseUint(IDvInvocation& aInvocation, const TChar* aName);
@@ -123,7 +123,7 @@ private:
 	const TChar* iName;
 };
 
-class InvocationResponseInt : public IInvocationResponseInt, private INonCopyable
+class DllExportClass InvocationResponseInt : public IInvocationResponseInt, private INonCopyable
 {
 public:
 	DllExport InvocationResponseInt(IDvInvocation& aInvocation, const TChar* aName);
@@ -133,7 +133,7 @@ private:
 	const TChar* iName;
 };
 
-class InvocationResponseBinary : public IInvocationResponseBinary, private INonCopyable
+class DllExportClass InvocationResponseBinary : public IInvocationResponseBinary, private INonCopyable
 {
 public:
 	DllExport InvocationResponseBinary(IDvInvocation& aInvocation, const TChar* aName);
@@ -149,7 +149,7 @@ private:
 	TBool iFirst;
 };
 
-class InvocationResponseString : public IInvocationResponseString, private INonCopyable
+class DllExportClass InvocationResponseString : public IInvocationResponseString, private INonCopyable
 {
 public:
 	DllExport InvocationResponseString(IDvInvocation& aInvocation, const TChar* aName);

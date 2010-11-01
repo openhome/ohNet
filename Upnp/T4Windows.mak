@@ -2,7 +2,7 @@
 
 # Macros used by T4.mak
 
-toolsDir = Build\\Tools\\
+toolsDir = Build\Windows\Tools^\
 t4 = $(toolsDir)TextTransform.exe
 upnpServiceXml = $(toolsDir)UpnpServiceXml.dll
 upnpServiceMake = $(toolsDir)UpnpServiceMake.dll
@@ -81,7 +81,7 @@ $(toolsDir)UpnpServiceMake.dll : $(makesources)
 	csc -target:library -out:$(upnpServiceMake) $(makesources)
 
 clean-t4:
-	rd /s/q $(toolsDir)
+	$(rmdir) $(toolsDir)
 
 mkToolsDir:
 	if not exist $(toolsDir) mkdir $(toolsDir)

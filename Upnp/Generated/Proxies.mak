@@ -106,6 +106,12 @@ objects_proxies = \
                   $(objdir)CpZappOrgTestBasic1.$(objext) \
                   $(objdir)CpZappOrgTestBasic1C.$(objext) \
                   $(objdir)CpZappOrgTestBasic1Std.$(objext) \
+                  $(objdir)CpZappOrgTestWidget1.$(objext) \
+                  $(objdir)CpZappOrgTestWidget1C.$(objext) \
+                  $(objdir)CpZappOrgTestWidget1Std.$(objext) \
+                  $(objdir)CpZappOrgTestWidgetController1.$(objext) \
+                  $(objdir)CpZappOrgTestWidgetController1C.$(objext) \
+                  $(objdir)CpZappOrgTestWidgetController1Std.$(objext) \
                   $(objdir)CpZappOrgTestLights1.$(objext) \
                   $(objdir)CpZappOrgTestLights1C.$(objext) \
                   $(objdir)CpZappOrgTestLights1Std.$(objext) \
@@ -161,6 +167,8 @@ proxy_dotnet_assemblies = \
 		CpLinnCoUkUi2.net.dll \
 		CpLinnCoUkVolkano1.net.dll \
 		CpZappOrgTestBasic1.net.dll \
+		CpZappOrgTestWidget1.net.dll \
+		CpZappOrgTestWidgetController1.net.dll \
 		CpZappOrgTestLights1.net.dll \
 		CpZappOrgTestDimmableLight1.net.dll \
 
@@ -199,6 +207,8 @@ proxy_dotnet_assemblies_with_path = \
 		$(objdir)CpLinnCoUkUi2.net.dll \
 		$(objdir)CpLinnCoUkVolkano1.net.dll \
 		$(objdir)CpZappOrgTestBasic1.net.dll \
+		$(objdir)CpZappOrgTestWidget1.net.dll \
+		$(objdir)CpZappOrgTestWidgetController1.net.dll \
 		$(objdir)CpZappOrgTestLights1.net.dll \
 		$(objdir)CpZappOrgTestDimmableLight1.net.dll \
 
@@ -409,6 +419,18 @@ $(objdir)CpZappOrgTestBasic1C.$(objext) : $(proxySrcC)CpZappOrgTestBasic1C.cpp $
 	$(compiler)CpZappOrgTestBasic1C.$(objext) -c $(cflags) $(includes) $(proxySrcC)CpZappOrgTestBasic1C.cpp
 $(objdir)CpZappOrgTestBasic1Std.$(objext) : $(proxySrcCppStd)CpZappOrgTestBasic1Std.cpp $(headers_proxy) $(inc_build)/Cpp/Std/CpZappOrgTestBasic1.h
 	$(compiler)CpZappOrgTestBasic1Std.$(objext) -c $(cflags) $(includes) $(proxySrcCppStd)CpZappOrgTestBasic1Std.cpp
+$(objdir)CpZappOrgTestWidget1.$(objext) : $(proxySrcCppCore)CpZappOrgTestWidget1.cpp $(headers_proxy) $(inc_build)/Cpp/Core/CpZappOrgTestWidget1.h
+	$(compiler)CpZappOrgTestWidget1.$(objext) -c $(cflags) $(includes) $(proxySrcCppCore)CpZappOrgTestWidget1.cpp
+$(objdir)CpZappOrgTestWidget1C.$(objext) : $(proxySrcC)CpZappOrgTestWidget1C.cpp $(headers_proxy) $(inc_build)/C/CpZappOrgTestWidget1.h
+	$(compiler)CpZappOrgTestWidget1C.$(objext) -c $(cflags) $(includes) $(proxySrcC)CpZappOrgTestWidget1C.cpp
+$(objdir)CpZappOrgTestWidget1Std.$(objext) : $(proxySrcCppStd)CpZappOrgTestWidget1Std.cpp $(headers_proxy) $(inc_build)/Cpp/Std/CpZappOrgTestWidget1.h
+	$(compiler)CpZappOrgTestWidget1Std.$(objext) -c $(cflags) $(includes) $(proxySrcCppStd)CpZappOrgTestWidget1Std.cpp
+$(objdir)CpZappOrgTestWidgetController1.$(objext) : $(proxySrcCppCore)CpZappOrgTestWidgetController1.cpp $(headers_proxy) $(inc_build)/Cpp/Core/CpZappOrgTestWidgetController1.h
+	$(compiler)CpZappOrgTestWidgetController1.$(objext) -c $(cflags) $(includes) $(proxySrcCppCore)CpZappOrgTestWidgetController1.cpp
+$(objdir)CpZappOrgTestWidgetController1C.$(objext) : $(proxySrcC)CpZappOrgTestWidgetController1C.cpp $(headers_proxy) $(inc_build)/C/CpZappOrgTestWidgetController1.h
+	$(compiler)CpZappOrgTestWidgetController1C.$(objext) -c $(cflags) $(includes) $(proxySrcC)CpZappOrgTestWidgetController1C.cpp
+$(objdir)CpZappOrgTestWidgetController1Std.$(objext) : $(proxySrcCppStd)CpZappOrgTestWidgetController1Std.cpp $(headers_proxy) $(inc_build)/Cpp/Std/CpZappOrgTestWidgetController1.h
+	$(compiler)CpZappOrgTestWidgetController1Std.$(objext) -c $(cflags) $(includes) $(proxySrcCppStd)CpZappOrgTestWidgetController1Std.cpp
 $(objdir)CpZappOrgTestLights1.$(objext) : $(proxySrcCppCore)CpZappOrgTestLights1.cpp $(headers_proxy) $(inc_build)/Cpp/Core/CpZappOrgTestLights1.h
 	$(compiler)CpZappOrgTestLights1.$(objext) -c $(cflags) $(includes) $(proxySrcCppCore)CpZappOrgTestLights1.cpp
 $(objdir)CpZappOrgTestLights1C.$(objext) : $(proxySrcC)CpZappOrgTestLights1C.cpp $(headers_proxy) $(inc_build)/C/CpZappOrgTestLights1.h
@@ -457,6 +479,8 @@ proxy_dlls = \
              CpLinnCoUkUi2Dll \
              CpLinnCoUkVolkano1Dll \
              CpZappOrgTestBasic1Dll \
+             CpZappOrgTestWidget1Dll \
+             CpZappOrgTestWidgetController1Dll \
              CpZappOrgTestLights1Dll \
              CpZappOrgTestDimmableLight1Dll \
 
@@ -564,6 +588,12 @@ $(objdir)$(dllprefix)CpLinnCoUkVolkano1.$(dllext) : ZappUpnpDll $(objdir)CpLinnC
 CpZappOrgTestBasic1Dll: $(objdir)$(dllprefix)CpZappOrgTestBasic1.$(dllext)
 $(objdir)$(dllprefix)CpZappOrgTestBasic1.$(dllext) : ZappUpnpDll $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpZappOrgTestBasic1.$(dllext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext)
+CpZappOrgTestWidget1Dll: $(objdir)$(dllprefix)CpZappOrgTestWidget1.$(dllext)
+$(objdir)$(dllprefix)CpZappOrgTestWidget1.$(dllext) : ZappUpnpDll $(objdir)CpZappOrgTestWidget1C.$(objext) $(objdir)CpZappOrgTestWidget1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpZappOrgTestWidget1.$(dllext) $(objdir)CpZappOrgTestWidget1C.$(objext) $(objdir)CpZappOrgTestWidget1.$(objext)
+CpZappOrgTestWidgetController1Dll: $(objdir)$(dllprefix)CpZappOrgTestWidgetController1.$(dllext)
+$(objdir)$(dllprefix)CpZappOrgTestWidgetController1.$(dllext) : ZappUpnpDll $(objdir)CpZappOrgTestWidgetController1C.$(objext) $(objdir)CpZappOrgTestWidgetController1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpZappOrgTestWidgetController1.$(dllext) $(objdir)CpZappOrgTestWidgetController1C.$(objext) $(objdir)CpZappOrgTestWidgetController1.$(objext)
 CpZappOrgTestLights1Dll: $(objdir)$(dllprefix)CpZappOrgTestLights1.$(dllext)
 $(objdir)$(dllprefix)CpZappOrgTestLights1.$(dllext) : ZappUpnpDll $(objdir)CpZappOrgTestLights1C.$(objext) $(objdir)CpZappOrgTestLights1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpZappOrgTestLights1.$(dllext) $(objdir)CpZappOrgTestLights1C.$(objext) $(objdir)CpZappOrgTestLights1.$(objext)
@@ -745,6 +775,16 @@ $(objdir)CpZappOrgTestBasic1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpZappOrgT
 		/out:$(objdir)CpZappOrgTestBasic1.net.dll \
 		/reference:$(objdir)Zapp.net.dll \
 		$(proxyCs)CpZappOrgTestBasic1.cs
+$(objdir)CpZappOrgTestWidget1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpZappOrgTestWidget1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpZappOrgTestWidget1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(proxyCs)CpZappOrgTestWidget1.cs
+$(objdir)CpZappOrgTestWidgetController1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpZappOrgTestWidgetController1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpZappOrgTestWidgetController1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(proxyCs)CpZappOrgTestWidgetController1.cs
 $(objdir)CpZappOrgTestLights1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpZappOrgTestLights1.cs
 	$(csharp) /unsafe /t:library \
 		/out:$(objdir)CpZappOrgTestLights1.net.dll \
