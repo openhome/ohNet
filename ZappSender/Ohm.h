@@ -13,6 +13,8 @@ namespace Zapp {
 
 class OhmSocket : public IReaderSource, public IWriter, public INonCopyable
 {
+    static const TUint kSendBufBytes = 32 * 1024;
+
 public:
     OhmSocket(TUint aTtl, TIpAddress aInterface);
 
@@ -29,6 +31,8 @@ public:
     virtual void Write(const Brx& aBuffer);
     virtual void WriteFlush();
 
+    ~OhmSocket();
+    
 private:
     TUint iTtl;
     TIpAddress iInterface;

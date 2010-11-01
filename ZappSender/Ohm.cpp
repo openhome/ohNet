@@ -159,34 +159,63 @@ OhmSocket::OhmSocket(TUint aTtl, TIpAddress aInterface)
 
 void OhmSocket::AddMembership(Endpoint& aEndpoint)
 {
+    ASSERT(iSocket == 0);
+    iSocket = new SocketUdpMulticast(aEndpoint, iTtl, iInterface);
+    iSocket->SetSendBufBytes(kSendBufBytes);
+    iReader = new UdpControllerReader(*iSocket);
+    iWriter = new UdpControllerWriter(*iSocket);
 }
 
 void OhmSocket::DropMembership()
 {
+    ASSERT(iSocket != 0);
+    delete (iWriter);
+    delete (iReader);
+    delete (iSocket);
+    iSocket = 0;
 }
     
 void OhmSocket::Read(Bwx& aBuffer)
 {
+    ASSERT(iSocket != 0);
+    iReader->Read(aBuffer);
 }
 
 void OhmSocket::ReadFlush()
 {
+    ASSERT(iSocket != 0);
+    iReader->ReadFlush();
 }
 
 void OhmSocket::ReadInterrupt()
 {
+    ASSERT(iSocket != 0);
+    iReader->ReadInterrupt();
 }
 
 void OhmSocket::Write(TByte aValue)
 {
+    ASSERT(iSocket != 0);
+    iWriter->Write(aValue);
 }
 
 void OhmSocket::Write(const Brx& aBuffer)
 {
+    ASSERT(iSocket != 0);
+    iWriter->Write(aBuffer);
 }
 
 void OhmSocket::WriteFlush()
 {
+    ASSERT(iSocket != 0);
+    iWriter->WriteFlush();
+}
+
+OhmSocket::~OhmSocket()
+{
+    if (iSocket != 0) {
+        DropMembership();
+    }
 }
 
 

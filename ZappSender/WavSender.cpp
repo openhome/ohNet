@@ -190,7 +190,7 @@ static void RandomiseUdn(Bwh& aUdn)
 
 int main(int aArgc, char* aArgv[])
 {
-	Debug::SetLevel(Debug::kAll);
+	//Debug::SetLevel(Debug::kAll);
 	
     OptionParser parser;
     

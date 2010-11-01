@@ -152,9 +152,7 @@ OhmSender::OhmSender(DvDevice& aDevice, TIpAddress aInterface, const Brx& aName,
     , iChannel(aChannel)
     , iEnabled(false)
     , iSocketAudio(kTtl, aInterface)
-    , iReaderAudio(iSocketAudio)
-    , iWriterAudio(iSocketAudio)
-    , iAudioReceive(iReaderAudio)
+    , iAudioReceive(iSocketAudio)
     , iMutexStartStop("OHMS")
     , iMutexActive("OHMA")
     , iNetworkAudioDeactivated("OHMD", 0)
@@ -293,8 +291,8 @@ void OhmSender::SendAudio(const TByte* aData, TUint aBytes)
     writer.Write(Brn(aData, aBytes));
     
     try {
-        iWriterAudio.Write(iAudioTransmit);
-        iWriterAudio.WriteFlush();
+        iSocketAudio.Write(iAudioTransmit);
+        iSocketAudio.WriteFlush();
     }
     catch (WriterError&) {
     }
@@ -329,7 +327,6 @@ void OhmSender::Start()
 	    	printf("Start network error %x:%d\n", iEndpoint.Address(), iEndpoint.Port());
 	    	throw;
 	    }
-        iSocketAudio.SetSendBufBytes(kUdpSendBufBytes);
         iThreadAudio->Signal();
         iStarted = true;
     }
@@ -340,7 +337,7 @@ void OhmSender::Start()
 void OhmSender::Stop()
 {
     if (iStarted) {
-        iReaderAudio.ReadInterrupt();
+        iSocketAudio.ReadInterrupt();
         iNetworkAudioDeactivated.Wait();
         iSocketAudio.DropMembership();
         iStarted = false;
@@ -611,8 +608,8 @@ void OhmSender::SendTrack()
     writer.Write(iTrackUri);
     writer.Write(iTrackMetadata);
     
-    iWriterAudio.Write(iAudioTransmit);
-    iWriterAudio.WriteFlush();
+    iSocketAudio.Write(iAudioTransmit);
+    iSocketAudio.WriteFlush();
     
     iSendTrack = false;
 }
@@ -631,8 +628,8 @@ void OhmSender::SendMetatext()
     headerMetatext.Externalise(writer);
     writer.Write(iTrackMetatext);
     
-    iWriterAudio.Write(iAudioTransmit);
-    iWriterAudio.WriteFlush();
+    iSocketAudio.Write(iAudioTransmit);
+    iSocketAudio.WriteFlush();
 
     iSendMetatext = false;
 }

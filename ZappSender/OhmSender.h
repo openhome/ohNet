@@ -17,7 +17,6 @@ class ProviderSender;
 class OhmSender
 {
     static const TUint kTtl = 4;
-    static const TUint kUdpSendBufBytes = 32 * 1024;
     static const TUint kMaxAudioFrameBytes = 16 * 1024;
     static const TUint kThreadStackBytesAudio = 64 * 1024;
     static const TUint kThreadPriorityAudio = kPriorityNormal;
@@ -74,9 +73,7 @@ private:
     Bws<kMaxNameBytes> iName;
     TUint iChannel;
     TBool iEnabled;
-    SocketUdpMulticast iSocketAudio;
-    UdpControllerReader iReaderAudio;
-    UdpControllerWriter iWriterAudio;
+    OhmSocket iSocketAudio;
     Srs<kMaxAudioFrameBytes> iAudioReceive;
     Bws<kMaxAudioFrameBytes> iAudioTransmit;
     Mutex iMutexStartStop;
