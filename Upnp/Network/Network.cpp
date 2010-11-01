@@ -7,6 +7,8 @@
 #include <Stack.h>
 #include <Ascii.h>
 
+#include <errno.h>
+
 using namespace Zapp;
 
 // OS sockets interface
@@ -99,6 +101,7 @@ static void SocketReceiveFrom(THandle aHandle, Bwx& aBuffer, Endpoint& aEndpoint
         THROW(NetworkError);
     }
     aBuffer.SetBytes(received);
+    LOGF(kNetwork, "<SocketReceiveFrom H = %d\n", aHandle);
 }
 
 static void SocketInterrupt(THandle aHandle, TBool aInterrupt)
@@ -560,7 +563,6 @@ SocketTcpSession::~SocketTcpSession()
 
 SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint)
     : iEndpoint(aEndpoint)
-    , iPort(0)
 {
     LOGF(kNetwork, "> SocketUdpClient::SocketUdpClient\n");
     iHandle = SocketCreate(eSocketTypeDatagram);
@@ -570,7 +572,6 @@ SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint)
 
 SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint, TUint aTtl)
     : iEndpoint(aEndpoint)
-    , iPort(0)
 {
     LOGF(kNetwork, "> SocketUdpClient::SocketUdpClient aTtl=%d\n", aTtl);
     iHandle = SocketCreate(eSocketTypeDatagram);
@@ -580,19 +581,26 @@ SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint, TUint aTtl)
 
 SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint, TUint aTtl, TIpAddress aInterface)
     : iEndpoint(aEndpoint)
-    , iPort(0)
 {
     LOGF(kNetwork, "> SocketUdpClient::SocketUdpClient aTtl=%d\n", aTtl);
     iHandle = SocketCreate(eSocketTypeDatagram);
     Zapp::Os::NetworkSocketSetMulticastTtl(iHandle, (TByte)aTtl);
     Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
-	SocketBind(iHandle, iPort, aInterface);
+    TUint port = iEndpoint.Port();
+	SocketBind(iHandle, port, aInterface);
+	iEndpoint.SetPort(port);
     LOGF(kNetwork, "< SocketUdpClient::SocketUdpClient H = %d\n", iHandle);
 }
 
 SocketUdpClient::~SocketUdpClient()
 {
     Close();
+}
+
+TUint SocketUdpClient::Port() const
+{
+    TUint port = iEndpoint.Port();
+    return port;;
 }
 
 void SocketUdpClient::Send(const Brx& aBuffer)
@@ -611,51 +619,18 @@ Endpoint SocketUdpClient::Receive(Bwx& aBuffer)
 
 // SocketUdpMulticast
 
-SocketUdpMulticast::SocketUdpMulticast()
-    : SocketUdpClient(Endpoint())
-    , iInterface(0)
-    , iMember(false)
-{
-    Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
-}
-
-SocketUdpMulticast::SocketUdpMulticast(TUint aTtl, TIpAddress aInterface)
-    : SocketUdpClient(Endpoint(), aTtl)
+SocketUdpMulticast::SocketUdpMulticast(const Endpoint& aEndpoint, TUint aTtl, TIpAddress aInterface)
+    : SocketUdpClient(aEndpoint, aTtl, aInterface)
     , iInterface(aInterface)
-    , iMember(false)
 {
     LOGF(kNetwork, "SocketUdpMulticast::SocketUdpMulticast\n");
-    Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
+    Zapp::Os::NetworkSocketMulticastAddMembership(iHandle, iInterface, iEndpoint);
 }
 
 SocketUdpMulticast::~SocketUdpMulticast()
 {
     LOGF(kNetwork, "SocketUdpMulticast::~SocketUdpMulticast\n");
-    if (iMember) {
-        Zapp::Os::NetworkSocketMulticastDropMembership(iHandle, iEndpoint.Address(), iInterface);
-    }
-}
-
-void SocketUdpMulticast::AddMembership(const Endpoint& aEndpoint)
-{
-    LOGF(kNetwork, "SocketUdpMulticast::AddMembership\n");
-    ASSERT(!iMember);
-    iEndpoint.Replace(aEndpoint);
-    iPort = iEndpoint.Port();
-    // Windows expects us to bind to the multicast port but not the address
-    // linux doesn't seem to care
-	SocketBind(iHandle, iPort, 0);
-    Zapp::Os::NetworkSocketMulticastAddMembership(iHandle, iEndpoint.Address(), iInterface);
-    iMember = true;
-}
-
-void SocketUdpMulticast::DropMembership()
-{
-    LOGF(kNetwork, "SocketUdpMulticast::AddMembersip\n");
-    ASSERT(iMember);
-    Zapp::Os::NetworkSocketMulticastDropMembership(iHandle, iEndpoint.Address(), iInterface);
-    iEndpoint.Replace(Endpoint());
-    iMember = false;
+    Zapp::Os::NetworkSocketMulticastDropMembership(iHandle, iInterface, iEndpoint);
 }
 
 // UdpControllerReader

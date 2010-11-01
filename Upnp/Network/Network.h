@@ -184,28 +184,21 @@ public:
     SocketUdpClient(const Endpoint& aEndpoint, TUint aTtl); // deprecated
     SocketUdpClient(const Endpoint& aEndpoint, TUint aTtl, TIpAddress aInterface); // assumes aEndpoint is multicast
     ~SocketUdpClient();
+    TUint Port() const;
     void Send(const Brx& aBuffer);
     Endpoint Receive(Bwx& aBuffer);
-    TUint Port() const { return iPort; }
 protected:
-    Endpoint iEndpoint; // multicast address/port
-    TUint iPort;
+    Endpoint iEndpoint; // endpoint to send to
 };
 
 // multicast receiver
 class SocketUdpMulticast : public SocketUdpClient
 {
 public:
-    SocketUdpMulticast();
-    SocketUdpMulticast(TUint aTtl, TIpAddress aInterface);
-    void AddMembership(const Endpoint& aEndpoint);
-    void DropMembership();
+    SocketUdpMulticast(const Endpoint& aEndpoint, TUint aTtl, TIpAddress aInterface);
     ~SocketUdpMulticast();
 private:
-    void Construct();
-private:
     TIpAddress iInterface;
-    TBool iMember;
 };
 
 /**

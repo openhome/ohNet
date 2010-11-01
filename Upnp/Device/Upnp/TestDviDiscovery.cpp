@@ -259,6 +259,8 @@ void SuiteAlive::Test()
     /* we expect 5 messages but linux sometimes reports multicast messages from
       all subnets to listeners on any single subnet so just check that we've
       received a multiple of 5 messages */
+      
+    TEST(listener->TotalMessages() > 0);
     TEST(listener->TotalMessages() % 5 == 0);
 
     Functor disabled = MakeFunctor(*this, &SuiteAlive::Disabled);
@@ -271,6 +273,7 @@ void SuiteAlive::Test()
 
     device->SetEnabled();
     blocker->Wait(1);
+    TEST(listener->TotalMessages() > 0);
     TEST(listener->TotalMessages() % 5 == 0);
 
     // Control point doesn't process ssdp:update notifications
@@ -278,6 +281,7 @@ void SuiteAlive::Test()
     TUint oldTotal = listener->TotalMessages();
     device->SetAttribute("Upnp.TestUpdate", "1");
     blocker->Wait(1);
+    printf("Old %d, new %d\n", oldTotal, listener->TotalMessages());
     TEST(listener->TotalMessages() > oldTotal);
     TEST(listener->TotalMessages() % 5 == 0);
 

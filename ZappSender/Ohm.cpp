@@ -148,9 +148,52 @@ void WriterBinary::WriteUint64Be(TUint64 aValue)
     iWriter.Write(aValue);
 }
 
-const Brn OhmHeader::kMpus("Mpus");
+// OhmSocket
+
+OhmSocket::OhmSocket(TUint aTtl, TIpAddress aInterface)
+    : iTtl(aTtl)
+    , iInterface(aInterface)
+    , iSocket(0)
+{
+}
+
+void OhmSocket::AddMembership(Endpoint& aEndpoint)
+{
+}
+
+void OhmSocket::DropMembership()
+{
+}
+    
+void OhmSocket::Read(Bwx& aBuffer)
+{
+}
+
+void OhmSocket::ReadFlush()
+{
+}
+
+void OhmSocket::ReadInterrupt()
+{
+}
+
+void OhmSocket::Write(TByte aValue)
+{
+}
+
+void OhmSocket::Write(const Brx& aBuffer)
+{
+}
+
+void OhmSocket::WriteFlush()
+{
+}
+
 
 // OhmHeader
+
+
+const Brn OhmHeader::kMpus("Mpus");
 
 OhmHeader::OhmHeader()
     : iMsgType(kMsgTypeJoin)

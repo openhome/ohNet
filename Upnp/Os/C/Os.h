@@ -485,14 +485,15 @@ int32_t OsNetworkSocketSetMulticastTtl(THandle aHandle, uint8_t aTtl);
  * Add a socket to a given multicast group
  *
  * @param[in] aHandle      Socket handle returned from OsNetworkCreate()
- * @param[in] aAddress     IpV4 address (in network byte order) specifying the multicast group
  * @param[in] aInterface   IpV4 address (in network byte order) specifying the network
  *                         interface on which the multicast group should be joined.
  *                         If this is 0, the default multicast interface will be used.
+ * @param[in] aAddress     IpV4 address (in network byte order) specifying the multicast group
+ * @param[in] aPort        Port [0..65535].  If 0 is passed, this will be set to the port the OS selects
  *
  * @return  0 on success; -1 on failure
  */
-int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aAddress, TIpAddress aInterface);
+int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress);
 
 /**
  * Remove a socket from a given mukticast group
@@ -502,10 +503,11 @@ int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aAddre
  * @param[in] aInterface   IpV4 address (in network byte order) specifying the network
  *                         interface on which the multicast group should be dropped.
  *                         If this is 0, the default multicast interface will be used.
+ * @param[in] aPort        Port [0..65535]
  *
  * @return  0 on success; -1 on failure
  */
-int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aAddress, TIpAddress aInterface);
+int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress);
 
 /**
  * Representation of a network interface

@@ -4,10 +4,38 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Stream.h>
+#include <Network.h>
 
 EXCEPTION(OhmHeaderInvalid);
 
 namespace Zapp {
+
+
+class OhmSocket : public IReaderSource, public IWriter, public INonCopyable
+{
+public:
+    OhmSocket(TUint aTtl, TIpAddress aInterface);
+
+    void AddMembership(Endpoint& aEndpoint);
+    void DropMembership();
+    
+    // IReaderSource
+    virtual void Read(Bwx& aBuffer);
+    virtual void ReadFlush();
+    virtual void ReadInterrupt();
+    
+    // IWriter
+    virtual void Write(TByte aValue);
+    virtual void Write(const Brx& aBuffer);
+    virtual void WriteFlush();
+
+private:
+    TUint iTtl;
+    TIpAddress iInterface;
+    SocketUdpMulticast* iSocket;
+    UdpControllerReader* iReader;
+    UdpControllerWriter* iWriter;
+};
 
 class Ohm
 {

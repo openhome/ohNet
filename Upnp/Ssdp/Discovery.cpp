@@ -8,9 +8,8 @@ using namespace Zapp;
 // SsdpSocketReader
 
 SsdpSocketReader::SsdpSocketReader(const Endpoint& aMulticast, TIpAddress aInterface)
-    : SocketUdpMulticast(Stack::InitParams().MsearchTtl(), aInterface)
+    : SocketUdpMulticast(aMulticast, Stack::InitParams().MsearchTtl(), aInterface)
 {
-	AddMembership(aMulticast);
     iReader = new UdpControllerReader(*this);
 }
 
