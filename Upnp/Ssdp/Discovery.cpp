@@ -329,12 +329,12 @@ TIpAddress SsdpListenerMulticast::Interface() const
 
 SsdpListenerUnicast::SsdpListenerUnicast(ISsdpNotifyHandler& aNotifyHandler, TIpAddress aInterface)
     : iNotifyHandler(aNotifyHandler)
-    , iSocket(Endpoint(Ssdp::kMulticastPort, Ssdp::kMulticastAddress),
-              Stack::InitParams().MsearchTtl(),
-              aInterface)
-    , iWriteBuffer(iSocket)
+    , iSocket(Endpoint(Ssdp::kMulticastPort, Ssdp::kMulticastAddress), Stack::InitParams().MsearchTtl(), aInterface)
+    , iSocketWriter(iSocket)
+    , iSocketReader(iSocket)
+    , iWriteBuffer(iSocketWriter)
     , iWriter(iWriteBuffer)
-    , iReadBuffer(iSocket)
+    , iReadBuffer(iSocketReader)
     , iReaderResponse(iReadBuffer)
 {
     iSocket.SetRecvBufBytes(kRecvBufBytes);
@@ -349,7 +349,7 @@ SsdpListenerUnicast::SsdpListenerUnicast(ISsdpNotifyHandler& aNotifyHandler, TIp
 SsdpListenerUnicast::~SsdpListenerUnicast()
 {
     LOG(kSsdpUnicast, "SSDP Unicast        Destructor\n");
-    iSocket.ReadInterrupt();
+    iSocketReader.ReadInterrupt();
     Join();
 }
 

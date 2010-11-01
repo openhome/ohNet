@@ -40,7 +40,8 @@ public:
     inline static void ThreadDestroy(THandle aThread);
     inline static TBool ThreadSupportsPriorities();
     static THandle NetworkCreate(ESocketType aSocketType);
-    static TInt NetworkBind(THandle aHandle, Endpoint& aEndpoint);
+    static TInt NetworkBind(THandle aHandle, const Endpoint& aEndpoint);
+    static TInt NetworkPort(THandle aHandle, TUint& aPort);
     static void NetworkConnect(THandle aHandle, const Endpoint& aEndpoint, TUint aTimeoutMs);
     inline static TInt NetworkSend(THandle aHandle, const Brx& aBuffer);
     inline static TInt NetworkSendTo(THandle aHandle, const Brx& aBuffer, const Endpoint& aEndpoint);

@@ -353,26 +353,31 @@ THandle OsNetworkCreate(OsNetworkSocketType aSocketType)
     return (THandle)handle;
 }
 
-int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint16_t* aPort)
+int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint32_t aPort)
 {
-    struct sockaddr_in addr;
-	int len;
-    int err;
+    int32_t err;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
-    if (SocketInterrupted(handle)) {
-        return -1;
-    }
-    sockaddrFromEndpoint(&addr, aAddress, *aPort);
+    struct sockaddr_in addr;
+    uint16_t port = (uint16_t)aPort;
+    sockaddrFromEndpoint(&addr, aAddress, port);
     err = bind(handle->iSocket, (struct sockaddr*)&addr, sizeof(addr));
-	if (err != 0) {
-		return -1;
-	}
-	len = sizeof(addr);
-	if (0 != getsockname(handle->iSocket, (struct sockaddr*)&addr, &len)) {
-		return -1;
-	}
-	*aPort = SwapEndian16(addr.sin_port);
-    return 0;
+    return err;
+}
+
+int32_t OsNetworkPort(THandle aHandle, uint32_t* aPort)
+{
+    int32_t err;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+
+    struct sockaddr_in addr;
+    socklen_t len = sizeof(addr);
+    err = getsockname(handle->iSocket, (struct sockaddr*)&addr, &len);
+    
+    if (err == 0) {
+        uint16_t port = SwapEndian16(addr.sin_port);
+        *aPort = port;
+    }
+    return err;
 }
 
 int32_t OsNetworkConnect(THandle aHandle, TIpAddress aAddress, uint16_t aPort, uint32_t aTimeoutMs)
@@ -685,7 +690,7 @@ int32_t OsNetworkSocketSetMulticastTtl(THandle aHandle, uint8_t aTtl)
     return err;
 }
 
-int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress, uint16_t aPort)
+int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress)
 {
     int32_t err;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
@@ -699,13 +704,10 @@ int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInter
         return err;
     }
     
-    uint8_t loop = 0;
-    err = setsockopt(handle->iSocket, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop));
-    
     return err;
 }
 
-int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress, uint16_t /*aPort*/);
+int32_t OsNetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress)
 {
     int32_t err;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;

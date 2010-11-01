@@ -24,14 +24,20 @@ THandle Os::NetworkCreate(ESocketType aSocketType)
     return handle;
 }
 
-TInt Os::NetworkBind(THandle aHandle, Endpoint& aEndpoint)
+TInt Os::NetworkBind(THandle aHandle, const Endpoint& aEndpoint)
 {
-    TUint16 port = aEndpoint.Port();
-	TInt ret = OsNetworkBind(aHandle, aEndpoint.Address(), &port);
-	if (ret == 0) {
-	    aEndpoint.SetPort(port);
-	}
+	TInt ret = OsNetworkBind(aHandle, aEndpoint.Address(), aEndpoint.Port());
 	return ret;
+}
+
+TInt Os::NetworkPort(THandle aHandle, TUint& aPort)
+{
+    TUint port;
+    TInt ret = OsNetworkPort(aHandle, &port);
+    if (ret == 0) {
+        aPort = port;
+    }
+    return ret;
 }
 
 TUint32 Zapp::Os::NetworkGetHostByName(const Brx& aAddress)

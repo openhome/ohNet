@@ -124,16 +124,24 @@ static void SocketClose(THandle aHandle)
     }
 }
 
-static void SocketBind(THandle aHandle, TUint& aPort, TIpAddress aInterface)
+static void SocketBind(THandle aHandle, const Endpoint& aEndpoint)
 {
     LOGF(kNetwork, "SocketBind H = %d\n", aHandle);
-    Endpoint endpt(aPort, aInterface);
-    TInt err = Zapp::Os::NetworkBind(aHandle, endpt);
+    TInt err = Zapp::Os::NetworkBind(aHandle, aEndpoint);
     if(err != 0) {
         LOG2F(kNetwork, kError, "SocketBind H = %d, RETURN VALUE = %d\n", aHandle, err);
         THROW(NetworkError);
     }
-	aPort = endpt.Port();
+}
+
+static void SocketPort(THandle aHandle, TUint& aPort)
+{
+    LOGF(kNetwork, "SocketPort H = %d\n", aHandle);
+    TInt err = Zapp::Os::NetworkPort(aHandle, aPort);
+    if(err != 0) {
+        LOG2F(kNetwork, kError, "SocketPort H = %d, RETURN VALUE = %d\n", aHandle, err);
+        THROW(NetworkError);
+    }
 }
 
 static void SocketListen(THandle aHandle, TUint aSlots)
@@ -409,8 +417,8 @@ SocketTcpServer::SocketTcpServer(const TChar* aName, TUint aPort, TIpAddress aIn
     Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
     Zapp::Os::NetworkTcpSetNoDelay(iHandle);
 	iInterface = aInterface;
-    iPort = aPort;
-    SocketBind(iHandle, iPort, aInterface);
+    SocketBind(iHandle, Endpoint(aPort, aInterface));
+    SocketPort(iHandle, iPort);
     SocketListen(iHandle, aSlots);
 }
 
@@ -563,20 +571,21 @@ SocketTcpSession::~SocketTcpSession()
 
 SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint)
     : iEndpoint(aEndpoint)
+    , iPort(0)
 {
     LOGF(kNetwork, "> SocketUdpClient::SocketUdpClient\n");
     iHandle = SocketCreate(eSocketTypeDatagram);
-    Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
-    LOGF(kNetwork, "< SocketUdpClient::SocketUdpClient H = %d\n", iHandle);
+    LOGF(kNetwork, "< SocketUdpClient::SocketUdpClient H = %d, P = %d\n", iHandle, iPort);
 }
 
 SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint, TUint aTtl)
     : iEndpoint(aEndpoint)
+    , iPort(0)
 {
     LOGF(kNetwork, "> SocketUdpClient::SocketUdpClient aTtl=%d\n", aTtl);
     iHandle = SocketCreate(eSocketTypeDatagram);
     Zapp::Os::NetworkSocketSetMulticastTtl(iHandle, (TByte)aTtl);
-    LOGF(kNetwork, "< SocketUdpClient::SocketUdpClient H = %d\n", iHandle);
+    LOGF(kNetwork, "< SocketUdpClient::SocketUdpClient H = %d, P = %d\n", iHandle, iPort);
 }
 
 SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint, TUint aTtl, TIpAddress aInterface)
@@ -586,10 +595,9 @@ SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint, TUint aTtl, TIpAddre
     iHandle = SocketCreate(eSocketTypeDatagram);
     Zapp::Os::NetworkSocketSetMulticastTtl(iHandle, (TByte)aTtl);
     Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
-    TUint port = iEndpoint.Port();
-	SocketBind(iHandle, port, aInterface);
-	iEndpoint.SetPort(port);
-    LOGF(kNetwork, "< SocketUdpClient::SocketUdpClient H = %d\n", iHandle);
+    SocketBind(iHandle, Endpoint(0, aInterface));
+    SocketPort(iHandle, iPort);
+    LOGF(kNetwork, "< SocketUdpClient::SocketUdpClient H = %d, P = %d\n", iHandle, iPort);
 }
 
 SocketUdpClient::~SocketUdpClient()
@@ -599,8 +607,7 @@ SocketUdpClient::~SocketUdpClient()
 
 TUint SocketUdpClient::Port() const
 {
-    TUint port = iEndpoint.Port();
-    return port;;
+    return iPort;;
 }
 
 void SocketUdpClient::Send(const Brx& aBuffer)
@@ -620,17 +627,24 @@ Endpoint SocketUdpClient::Receive(Bwx& aBuffer)
 // SocketUdpMulticast
 
 SocketUdpMulticast::SocketUdpMulticast(const Endpoint& aEndpoint, TUint aTtl, TIpAddress aInterface)
-    : SocketUdpClient(aEndpoint, aTtl, aInterface)
+    : SocketUdpClient(aEndpoint)
     , iInterface(aInterface)
 {
-    LOGF(kNetwork, "SocketUdpMulticast::SocketUdpMulticast\n");
+    LOGF(kNetwork, "> SocketUdpMulticast::SocketUdpMulticast\n");
+    Zapp::Os::NetworkSocketSetMulticastTtl(iHandle, (TByte)aTtl);
+    Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
+    SocketBind(iHandle, Endpoint(iEndpoint.Port(), 0));
+    SocketPort(iHandle, iPort);
+    iEndpoint.SetPort(iPort);
     Zapp::Os::NetworkSocketMulticastAddMembership(iHandle, iInterface, iEndpoint);
+    LOGF(kNetwork, "< SocketUdpMulticast::SocketUdpMulticast H = %d, P = %d\n", iHandle, iPort);
 }
 
 SocketUdpMulticast::~SocketUdpMulticast()
 {
-    LOGF(kNetwork, "SocketUdpMulticast::~SocketUdpMulticast\n");
+    LOGF(kNetwork, "> SocketUdpMulticast::~SocketUdpMulticast\n");
     Zapp::Os::NetworkSocketMulticastDropMembership(iHandle, iInterface, iEndpoint);
+    LOGF(kNetwork, "< SocketUdpMulticast::~SocketUdpMulticast\n");
 }
 
 // UdpControllerReader

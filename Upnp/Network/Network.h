@@ -189,6 +189,7 @@ public:
     Endpoint Receive(Bwx& aBuffer);
 protected:
     Endpoint iEndpoint; // endpoint to send to
+    TUint iPort;
 };
 
 // multicast receiver

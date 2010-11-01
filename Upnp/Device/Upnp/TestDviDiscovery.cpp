@@ -281,7 +281,6 @@ void SuiteAlive::Test()
     TUint oldTotal = listener->TotalMessages();
     device->SetAttribute("Upnp.TestUpdate", "1");
     blocker->Wait(1);
-    printf("Old %d, new %d\n", oldTotal, listener->TotalMessages());
     TEST(listener->TotalMessages() > oldTotal);
     TEST(listener->TotalMessages() % 5 == 0);
 

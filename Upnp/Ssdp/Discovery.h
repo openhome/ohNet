@@ -140,7 +140,9 @@ private:
     void Run();
 private:
     ISsdpNotifyHandler& iNotifyHandler;
-    SsdpSocketStream iSocket;
+    SocketUdpClient iSocket;
+    UdpControllerWriter iSocketWriter;
+    UdpControllerReader iSocketReader;
     Sws<kMaxBufferBytes> iWriteBuffer;
     SsdpWriterMsearchRequest iWriter;
     Srs<kMaxBufferBytes> iReadBuffer;

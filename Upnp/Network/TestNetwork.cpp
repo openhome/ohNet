@@ -618,7 +618,7 @@ private:
 SuiteUnicast::SuiteUnicast(TIpAddress aInterface)
     : Suite("Unicast Tests")
 {
-    iReceiver = new SocketUdpClient(Endpoint(), 2, aInterface);
+    iReceiver = new SocketUdpClient(Endpoint());
     iReceiver->SetRecvBufBytes(kMsgBytes * kTestIterations * 2);
     Log::Print("Receiver running at port %u\n", iReceiver->Port());
     iSender = new SocketUdpClient(Endpoint(iReceiver->Port(), aInterface));

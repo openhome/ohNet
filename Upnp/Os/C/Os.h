@@ -287,7 +287,19 @@ THandle OsNetworkCreate(OsNetworkSocketType aSocketType);
  *
  * @return  0 on success; -1 on failure
  */
-int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint16_t* aPort);
+int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint32_t aPort);
+
+/**
+ * Get the socket port.
+ *
+ * This is equivalent to the BSD bind() function
+ *
+ * @param[in] aHandle      Socket handle returned from OsNetworkCreate()
+ * @param[in] aPort        Port set to the port of the socket
+ *
+ * @return  0 on success; -1 on failure
+ */
+int32_t OsNetworkPort(THandle aHandle, uint32_t* aPort);
 
 /**
  * Connect to a (possibly remote) socket, specifying a timeout to fail after

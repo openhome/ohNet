@@ -408,23 +408,30 @@ THandle OsNetworkCreate(OsNetworkSocketType aSocketType)
     return (THandle)handle;
 }
 
-int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint16_t* aPort)
+int32_t OsNetworkBind(THandle aHandle, TIpAddress aAddress, uint32_t aPort)
 {
+    int32_t err;
+    OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
+    struct sockaddr_in addr;
+    uint16_t port = (uint16_t)aPort;
+    sockaddrFromEndpoint(&addr, aAddress, port);
+    err = bind(handle->iSocket, (struct sockaddr*)&addr, sizeof(addr));
+    return err;
+}
+
+int32_t OsNetworkPort(THandle aHandle, uint32_t* aPort)
+{
+    int32_t err;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     if (SocketInterrupted(handle)) {
         return -1;
     }
     struct sockaddr_in addr;
-    sockaddrFromEndpoint(&addr, aAddress, *aPort);
-    int err = bind(handle->iSocket, (struct sockaddr*)&addr, sizeof(addr));
+    socklen_t len = sizeof(addr);
+    err = getsockname(handle->iSocket, (struct sockaddr*)&addr, &len);
     if (err == 0) {
-        socklen_t len = sizeof(addr);
-        if (0 != getsockname(handle->iSocket, (struct sockaddr*)&addr, &len)) {
-            err = -1;
-            }
-        else {
-            *aPort = SwapEndian16(addr.sin_port);
-        }
+        uint16_t port = SwapEndian16(addr.sin_port);
+        *aPort = port;
     }
     return err;
 }
@@ -708,18 +715,19 @@ int32_t OsNetworkSocketSetMulticastTtl(THandle aHandle, uint8_t aTtl)
 int32_t OsNetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInterface, TIpAddress aAddress)
 {
     int32_t err;
+    char loop;
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
-    
+
     struct ip_mreq mreq;
     mreq.imr_multiaddr.s_addr = aAddress;
     mreq.imr_interface.s_addr = aInterface;
-    err = setsockopt(handle->iSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
-    
+    err = setsockopt(handle->iSocket, IPPROTO_IP, IP_ADD_MEMBERSHIP, (const char*)&mreq, sizeof(mreq));
+
     if (err != 0) {
         return err;
     }
     
-    uint8_t loop = 0;
+    loop = 0;
     err = setsockopt(handle->iSocket, IPPROTO_IP, IP_MULTICAST_LOOP, &loop, sizeof(loop));
     
     return err;
