@@ -173,7 +173,6 @@ DviSessionWebSocket::~DviSessionWebSocket()
 
 void DviSessionWebSocket::Run()
 {
-    LogVerbose(true);
     iErrorStatus = &HttpStatus::kOk;
     iReaderRequest->Flush();
     iExit = false;
@@ -187,9 +186,7 @@ void DviSessionWebSocket::Run()
         if (iReaderRequest->MethodNotAllowed()) {
             Error(HttpStatus::kMethodNotAllowed);
         }
-        LogVerbose(true, true);
         Handshake();
-        LogVerbose(true, true);
     }
     catch (HttpError&) {
         iErrorStatus = &HttpStatus::kBadRequest;
@@ -218,12 +215,11 @@ void DviSessionWebSocket::Run()
             }
             catch (ReaderError&) {}
             catch (WebSocketError&) {}
-            catch (WriterError&) {}
-            //Write(eClose, Brn(""));
-            //iExit = true;
+            catch (WriterError&) {
+                iExit = true;
+            }
         }
     }
-    Log::Print("< DviSessionWebSocket::Run\n");
 }
 
 void DviSessionWebSocket::Error(const HttpStatus& aStatus)
@@ -274,7 +270,7 @@ void DviSessionWebSocket::Handshake()
     iWriterResponse->WriteHeader(Brn("Upgrade"), Brn("WebSocket"));
     iWriterResponse->WriteHeader(Brn("Connection"), Brn("Upgrade"));
     if (iHeaderProtocol.Protocol().Bytes() > 0) {
-        iWriterResponse->WriteHeader(Brn("WebSocket::kHeaderProtocol"), iHeaderProtocol.Protocol());
+        iWriterResponse->WriteHeader(WebSocket::kHeaderProtocol, iHeaderProtocol.Protocol());
     }
     if (iHeaderOrigin.Origin().Bytes() > 0) {
         iWriterResponse->WriteHeader(WebSocket::kHeaderResponseOrigin, iHeaderOrigin.Origin());
@@ -325,7 +321,7 @@ void DviSessionWebSocket::Handshake()
     location.Append('/');
     iWriterResponse->WriteHeader(WebSocket::kHeaderLocation, location);
     if (iHeaderProtocol.Protocol().Bytes() > 0) {
-        iWriterResponse->WriteHeader(Brn("WebSocket::kHeaderProtocol"), iHeaderProtocol.Protocol());
+        iWriterResponse->WriteHeader(WebSocket::kHeaderProtocol, iHeaderProtocol.Protocol());
     }
     iWriterBuffer->WriteFlush();
 }
@@ -426,12 +422,6 @@ void DviSessionWebSocket::Read()
     Log::Print("WS: Received data - ");
     Log::Print(data);
     Log::Print("\n");
-    Write(eText, Brn("hi from server 1"));
-    Write(eText, Brn("hi from server 2"));
-    Write(eText, Brn("hi from server 3"));
-    Write(eText, Brn("hi from server 4"));
-    Write(eText, Brn("hi from server 5"));
-    Close();
 }
 #endif // WS_DRAFT03_READ
 
