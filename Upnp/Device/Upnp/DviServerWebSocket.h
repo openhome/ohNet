@@ -8,6 +8,7 @@
 #include <Stream.h>
 #include <Http.h>
 #include <Exception.h>
+#include <DvResourceWriter.h>
 
 EXCEPTION(WebSocketError);
 
@@ -88,21 +89,33 @@ public:
     DviSessionWebSocket(TIpAddress aInterface, TUint aPort);
     ~DviSessionWebSocket();
 private:
+    enum WsOpcode
+    {
+        eContinuation
+       ,eClose
+       ,ePing
+       ,ePong
+       ,eText
+       ,eBinary
+    };
+private:
     void Run();
     void Error(const HttpStatus& aStatus);
-    void Get();
+    void Handshake();
+    void Read();
+    void Write(WsOpcode aOpcode, const Brx& aData);
+    void Close();
 private: // IPropertyWriterFactory
     IPropertyWriter* CreateWriter(const Endpoint& aSubscriber, const Brx& aSubscriberPath,
                                   const Brx& aSid, TUint aSequenceNumber);
 private:
     static const TUint kMaxRequestBytes = 4*1024;
-    static const TUint kMaxResponseBytes = 4*1024;
+    static const TUint kMaxWriteBytes = 4*1024;
 private:
     Endpoint iEndpoint;
     Srs<kMaxRequestBytes>* iReadBuffer;
     ReaderHttpRequest* iReaderRequest;
-    WriterHttpChunked* iWriterChunked;
-    Sws<kMaxResponseBytes>* iWriterBuffer;
+    Sws<kMaxWriteBytes>* iWriterBuffer;
     WriterHttpResponse* iWriterResponse;
     HttpHeaderHost iHeaderHost;
     HttpHeaderConnection iHeaderConnection;
@@ -112,6 +125,7 @@ private:
     WsHeaderProtocol iHeaderProtocol;
     WsHeaderOrigin iHeaderOrigin;
     const HttpStatus* iErrorStatus;
+    TBool iExit;
 };
 
 class DviServerWebSocket : public DviServer

@@ -9,12 +9,22 @@
 
 using namespace Zapp;
 
+#define WS_76_HANDSHAKE
+#undef  WS_DRAFT03_READ
+#undef  WS_DRAFT03_WRITE
+
 // WebSocket
 
+#ifdef WS_76_HANDSHAKE
 const Brn WebSocket::kHeaderProtocol("Sec-WebSocket-Protocol");
-const Brn WebSocket::kHeaderOrigin("Origin");
 const Brn WebSocket::kHeaderResponseOrigin("Sec-WebSocket-Origin");
 const Brn WebSocket::kHeaderLocation("Sec-WebSocket-Location");
+#else
+const Brn WebSocket::kHeaderProtocol("WebSocket-Protocol");
+const Brn WebSocket::kHeaderResponseOrigin("WebSocket-Origin");
+const Brn WebSocket::kHeaderLocation("WebSocket-Location");
+#endif
+const Brn WebSocket::kHeaderOrigin("Origin");
 const Brn WebSocket::kUpgradeWebSocket("WebSocket");
 
 
@@ -139,8 +149,7 @@ DviSessionWebSocket::DviSessionWebSocket(TIpAddress aInterface, TUint aPort)
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
     iReaderRequest = new ReaderHttpRequest(*iReadBuffer);
-    iWriterChunked = new WriterHttpChunked(*this);
-    iWriterBuffer = new Sws<kMaxResponseBytes>(*iWriterChunked);
+    iWriterBuffer = new Sws<kMaxWriteBytes>(*this);
     iWriterResponse = new WriterHttpResponse(*iWriterBuffer);
 
     iReaderRequest->AddMethod(Http::kMethodGet);
@@ -158,17 +167,16 @@ DviSessionWebSocket::~DviSessionWebSocket()
 {
     delete iWriterResponse;
     delete iWriterBuffer;
-    delete iWriterChunked;
     delete iReaderRequest;
     delete iReadBuffer;
 }
 
 void DviSessionWebSocket::Run()
 {
+    LogVerbose(true);
     iErrorStatus = &HttpStatus::kOk;
     iReaderRequest->Flush();
-    iWriterChunked->SetChunked(false);
-    // check headers
+    iExit = false;
     try {
         try {
             iReaderRequest->Read();
@@ -179,35 +187,43 @@ void DviSessionWebSocket::Run()
         if (iReaderRequest->MethodNotAllowed()) {
             Error(HttpStatus::kMethodNotAllowed);
         }
-        const Brx& method = iReaderRequest->Method();
-        //iResponseStarted = false;
-        //iResponseEnded = false;
-        if (method == Http::kMethodGet) {
-            Get();
-        }
+        LogVerbose(true, true);
+        Handshake();
+        LogVerbose(true, true);
     }
     catch (HttpError&) {
-        if (iReaderRequest->MethodNotAllowed()) {
-            Error(HttpStatus::kMethodNotAllowed);
-        }
+        iErrorStatus = &HttpStatus::kBadRequest;
     }
     catch (ReaderError&) {
         iErrorStatus = &HttpStatus::kBadRequest;
     }
+    catch (WebSocketError&) {
+        iErrorStatus = &HttpStatus::kBadRequest;
+    }
     catch (WriterError&) {
+        iExit = true;
     }
-/*
-    if (!iResponseStarted) {
-        if (iErrorStatus == &HttpStatus::kOk) {
-            iErrorStatus = &HttpStatus::kNotFound;
+    if (iErrorStatus != &HttpStatus::kOk) {
+        try {
+            iWriterResponse->WriteStatus(*iErrorStatus, Http::eHttp11);
+            Http::WriteHeaderConnectionClose(*iWriterResponse);
+            iWriterResponse->WriteFlush();
         }
-        iWriterResponse->WriteStatus(*iErrorStatus, Http::eHttp11);
-        Http::WriteHeaderConnectionClose(*iWriterResponse);
-        iWriterResponse->WriteFlush();
+        catch (WriterError&) {}
     }
-    else if (!iResponseEnded) {
-        iWriterResponse->WriteFlush();
-    }*/
+    else {
+        while (!iExit) {
+            try {
+                Read();
+            }
+            catch (ReaderError&) {}
+            catch (WebSocketError&) {}
+            catch (WriterError&) {}
+            //Write(eClose, Brn(""));
+            //iExit = true;
+        }
+    }
+    Log::Print("< DviSessionWebSocket::Run\n");
 }
 
 void DviSessionWebSocket::Error(const HttpStatus& aStatus)
@@ -216,11 +232,13 @@ void DviSessionWebSocket::Error(const HttpStatus& aStatus)
     THROW(HttpError);
 }
 
-void DviSessionWebSocket::Get()
+#ifdef WS_76_HANDSHAKE
+void DviSessionWebSocket::Handshake()
 {
+    // !!!! Add check for sub-protocol upnp-event being set
     if (!iHeaderConnection.Upgrade() || iHeaderUpgrade.Upgrade() != WebSocket::kUpgradeWebSocket ||
         !iHeaderKey1.Received() || !iHeaderKey2.Received()) {
-        Log::Print("Missing expected header\n");
+        Log::Print("WS: Missing expected header\n");
         Error(HttpStatus::kBadRequest);
     }
     Bws<16> buf;
@@ -234,9 +252,6 @@ void DviSessionWebSocket::Get()
     Brn entity(iReadBuffer->Read(8));
     memcpy(ptr, entity.Ptr(), 8);
     buf.SetBytes(16);
-    Log::Print("Processing connection: key1=%u, key2=%u, entity=", iHeaderKey1.Key(), iHeaderKey2.Key());
-    Log::Print(entity);
-    Log::Print("\n");
 
     // calculate md5 response
     md5_state_t state;
@@ -264,14 +279,209 @@ void DviSessionWebSocket::Get()
     if (iHeaderOrigin.Origin().Bytes() > 0) {
         iWriterResponse->WriteHeader(WebSocket::kHeaderResponseOrigin, iHeaderOrigin.Origin());
     }
+    Bws<1024> location;
+    location.Append("ws://");
+    iEndpoint.GetEndpoint(location);
+    location.Append(iReaderRequest->Uri());
+    iWriterResponse->WriteHeader(WebSocket::kHeaderLocation, location);
+    writer.WriteNewline();
+    writer.Write(resp);
+    iWriterBuffer->WriteFlush(); /* don't use iWriterResponse as that'll append \r\n which will
+                                    be treated as the (invalid) start of the first message we send */
+}
+#else
+void DviSessionWebSocket::Handshake()
+{
+    Log::Print("WS: Handshake for ws75\n");
+    // !!!! Add check for sub-protocol upnp-event being set
+    if (!iHeaderConnection.Upgrade() || iHeaderUpgrade.Upgrade() != WebSocket::kUpgradeWebSocket) {
+        Log::Print("WS: Missing expected header\n");
+        Error(HttpStatus::kBadRequest);
+    }
+
+    // write response
+    WriterAscii writer(*iWriterBuffer);
+    writer.Write(Http::Version(Http::eHttp11));
+    writer.WriteSpace();
+    writer.WriteUint(HttpStatus::kSwitchingProtocols.Code());
+    writer.WriteSpace();
+    writer.Write(Brn("WebSocket Protocol Handshake"));
+    writer.WriteNewline();
+    iWriterResponse->WriteHeader(Brn("Upgrade"), Brn("WebSocket"));
+    iWriterResponse->WriteHeader(Brn("Connection"), Brn("Upgrade"));
+    if (iHeaderOrigin.Origin().Bytes() > 0) {
+        Bwh origin(iHeaderOrigin.Origin());
+        for (TUint i=0; i<origin.Bytes(); i++) {
+            TChar chr = (TChar)origin[i];
+            if (Ascii::IsUpperCase(chr)) {
+                origin[i] = (TByte)Ascii::ToLowerCase(chr);
+            }
+        }
+        iWriterResponse->WriteHeader(WebSocket::kHeaderResponseOrigin, origin);
+    }
     Bws<Endpoint::kMaxEndpointBytes+6> location;
     location.Append("ws://");
     iEndpoint.GetEndpoint(location);
     location.Append('/');
     iWriterResponse->WriteHeader(WebSocket::kHeaderLocation, location);
-    writer.WriteNewline();
-    writer.Write(resp);
-    iWriterResponse->WriteFlush();
+    if (iHeaderProtocol.Protocol().Bytes() > 0) {
+        iWriterResponse->WriteHeader(Brn("WebSocket::kHeaderProtocol"), iHeaderProtocol.Protocol());
+    }
+    iWriterBuffer->WriteFlush();
+}
+#endif // WS_76_HANDSHAKE
+#ifdef WS_DRAFT03_READ
+void DviSessionWebSocket::Read()
+{
+    static const TByte kBitMaskMore       = 1<<7;
+    static const TByte kBitMaskRsv123     = 0x70;
+    static const TByte kBitMaskOpcode     = 0xf;
+    static const TByte kBitMaskRsv4       = 1<<7;
+    static const TByte kBitMaskPayloadLen = 0x7f;
+    // read data then validate the framing
+    // most instances of unexpected content will result in us responing with BadRequest then waiting for further messages
+    // unexpectedly large messages will cause us to close the socket
+    Bws<2> ctrl;
+    ctrl.Append(iReadBuffer->Read(2));
+    Log::Print("Read control codes\n");
+
+    // validate framing
+    const TByte& byte1 = ctrl.At(0);
+    const TByte& byte2 = ctrl.At(1);
+    if (byte1 & kBitMaskMore) {
+        Log::Print("WS: MORE bit set - fragmented packets not supported (but should be if you're seeing this error)\n");
+        THROW(WebSocketError);
+    }
+    if ((byte1 & kBitMaskRsv123) || (byte2 & kBitMaskRsv4)) {
+        Log::Print("WS: RSV bit(s) set - %u, %u - but no extension negotiated\n", (byte1 & kBitMaskRsv123) >> 4, byte2 & kBitMaskRsv4);
+        THROW(WebSocketError);
+    }
+    WsOpcode opcode = (WsOpcode)(byte1 & kBitMaskOpcode);
+    Log::Print("opcode = %u\n", opcode);
+    if (opcode == 0) THROW(WebSocketError);
+
+    TUint32 payloadLen = byte2 & kBitMaskPayloadLen;
+    Log::Print("payloadLen=%u\n", payloadLen);
+    if (payloadLen == 0x7f) {
+        Brn extendedLen = iReadBuffer->Read(8);
+        TUint64 len;
+        memcpy(&len, extendedLen.Ptr(), 8);
+        payloadLen = (TUint32)Arch::BigEndian8(len);
+    }
+    else if (payloadLen == 0x7e) {
+        Brn extendedLen = iReadBuffer->Read(2);
+        TUint16 len;
+        memcpy(&len, extendedLen.Ptr(), 2);
+        payloadLen = Arch::BigEndian2(len);
+    }
+    if (payloadLen > kMaxRequestBytes) {
+        // larger message than we expect to handle - close the socket
+        iExit = true;
+        THROW(WebSocketError);
+    }
+    Log::Print("payloadLen=%u\n", payloadLen);
+    Brn data = iReadBuffer->Read(payloadLen);
+    Log::Print("Read data\n");
+
+    switch (opcode)
+    {
+    case eContinuation:
+        Log::Print("WS: Continuation opcode not yet supported\n");
+        break;
+    case eClose:
+        // !!!! check that this isn't a reply to a close we initiated
+        Write(eClose, data);
+        iExit = true;
+        break;
+    case ePing:
+        Write(ePong, data);
+        break;
+    case ePong:
+        Log::Print("WS: Pong - ");
+        Log::Print(data);
+        Log::Print("\n");
+        break;
+    case eText:
+        Log::Print("WS: eText\n");
+        // subscribe, renew, unsubscribe
+        break;
+    case eBinary:
+        Log::Print("WS: Binary opcode not supported\n");
+        break;
+    default:
+        Log::Print("WS: Unexpected reserved opcode %u received\n", opcode);
+        break;
+    }
+}
+#else // !WS_DRAFT03_READ
+void DviSessionWebSocket::Read()
+{
+    static const TByte kMsgTerminator = 0xff;
+    Brn data = iReadBuffer->ReadUntil(kMsgTerminator);
+    if (data[0] != 0) {
+        Log::Print("WS: Unexpected leading byte - %u\n", data[0]);
+        THROW(WebSocketError);
+    }
+    data.Set(data.Split(1, data.Bytes()-1));
+    Log::Print("WS: Received data - ");
+    Log::Print(data);
+    Log::Print("\n");
+    Write(eText, Brn("hi from server 1"));
+    Write(eText, Brn("hi from server 2"));
+    Write(eText, Brn("hi from server 3"));
+    Write(eText, Brn("hi from server 4"));
+    Write(eText, Brn("hi from server 5"));
+    Close();
+}
+#endif // WS_DRAFT03_READ
+
+#ifdef WS_DRAFT03_WRITE
+void DviSessionWebSocket::Write(WsOpcode aOpcode, const Brx& aData)
+{
+    iWriterBuffer->Write((TByte)aOpcode);
+    const TUint dataLen = aData.Bytes();
+    if (dataLen < 126) {
+        iWriterBuffer->Write((TByte)dataLen);
+    }
+    else if (dataLen > (1<<16)) {
+        iWriterBuffer->Write((TByte)0x7e);
+        TUint16 len = (TUint16)dataLen;
+        len = Arch::BigEndian2(len);
+        Bws<2> lenBuf;
+        (void)memcpy((TByte*)lenBuf.Ptr(), &len, 2);
+        lenBuf.SetBytes(2);
+        iWriterBuffer->Write(lenBuf);
+    }
+    else {
+        iWriterBuffer->Write((TByte)0x7f);
+        TUint64 len = dataLen;
+        len = Arch::BigEndian8(len);
+        Bws<8> lenBuf;
+        (void)memcpy((TByte*)lenBuf.Ptr(), &len, 8);
+        lenBuf.SetBytes(8);
+        iWriterBuffer->Write(lenBuf);
+    }
+    iWriterBuffer->Write(aData);
+    iWriterBuffer->WriteFlush();
+}
+#else // !WS_DRAFT03_WRITE
+void DviSessionWebSocket::Write(WsOpcode /*aOpcode*/, const Brx& aData)
+{
+    static const TByte kWriteBufStart = (TByte)'\0';
+    static const TByte kWriteBufEnd = (TByte)'\xff';
+    iWriterBuffer->Write(kWriteBufStart);
+    iWriterBuffer->Write(aData);
+    iWriterBuffer->Write(kWriteBufEnd);
+    iWriterBuffer->WriteFlush();
+}
+#endif // WS_DRAFT03_WRITE
+
+void DviSessionWebSocket::Close()
+{
+    static const TByte kFrameClose = (TByte)'\xff';
+    iWriterBuffer->Write(kFrameClose);
+    iWriterBuffer->WriteFlush();
+    iExit = true;
 }
 
 IPropertyWriter* DviSessionWebSocket::CreateWriter(const Endpoint& /*aSubscriber*/, const Brx& /*aSubscriberPath*/,
