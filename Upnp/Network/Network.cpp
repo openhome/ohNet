@@ -621,6 +621,7 @@ Endpoint SocketUdpClient::Receive(Bwx& aBuffer)
     LOGF(kNetwork, "> SocketUdpClient::Receive\n");
     Endpoint endpoint;
     SocketReceiveFrom(iHandle, aBuffer, endpoint);
+    LOGF(kNetwork, "< SocketUdpClient::Receive\n");
     return endpoint;
 }
 

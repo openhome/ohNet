@@ -11,6 +11,17 @@ EXCEPTION(OhmHeaderInvalid);
 namespace Zapp {
 
 
+class Ohm
+{
+public:
+    static const TUint kPort = 51972;
+    static const TUint kMaxUriBytes = 30;
+    static const TUint kMaxTrackUriBytes = 1000;
+    static const TUint kMaxTrackMetadataBytes = 5000;
+    static const TUint kMaxTrackMetatextBytes = 1000;
+    static const TUint kMaxCodecNameBytes = 256;
+};
+
 class OhmSocket : public IReaderSource, public IWriter, public INonCopyable
 {
     static const TUint kSendBufBytes = 32 * 1024;
@@ -40,14 +51,6 @@ private:
     UdpControllerReader* iReader;
     UdpControllerWriter* iWriter;
 };
-
-class Ohm
-{
-public:
-    static const TUint kPort = 51972;
-    static const TUint kMaxUriBytes = 30;
-};
-
 
 class OhmHeader
 {
@@ -93,7 +96,6 @@ public:
     static const TUint kReserved = 0;
     static const TUint kFlagHalt = 1;
     static const TUint kFlagLossless = 2;
-    static const TUint kMaxCodecNameBytes = 256;
 
 public:
     OhmHeaderAudio();
@@ -159,7 +161,7 @@ private:
     TUint iBitRate;
     TUint iBitDepth;
     TUint iChannels;
-    Bws<kMaxCodecNameBytes> iCodecName;
+    Bws<Ohm::kMaxCodecNameBytes> iCodecName;
     TUint iAudioBytes;
 };
 

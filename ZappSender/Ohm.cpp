@@ -43,7 +43,7 @@ ReaderBinary::ReaderBinary(IReader& aReader)
 
 const Brn ReaderBinary::Read(TUint aBytes)
 {
-    return iReader.Read(aBytes);    
+    return (iReader.Read(aBytes));    
 }
 
 TUint ReaderBinary::ReadUintBe(TUint aBytes)
@@ -241,7 +241,7 @@ void OhmHeader::Internalise(IReader& aReader)
     ReaderBinary reader(aReader);
 
     Brn mpus = reader.Read(4);
-
+    
     if(mpus != kMpus) {
         THROW(OhmHeaderInvalid);
     }

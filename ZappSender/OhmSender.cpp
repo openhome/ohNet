@@ -152,7 +152,7 @@ OhmSender::OhmSender(DvDevice& aDevice, TIpAddress aInterface, const Brx& aName,
     , iChannel(aChannel)
     , iEnabled(false)
     , iSocketAudio(kTtl, aInterface)
-    , iAudioReceive(iSocketAudio)
+    , iAudioRxBuf(iSocketAudio)
     , iMutexStartStop("OHMS")
     , iMutexActive("OHMA")
     , iNetworkAudioDeactivated("OHMD", 0)
@@ -282,7 +282,7 @@ void OhmSender::SendAudio(const TByte* aData, TUint aBytes)
     
     OhmHeader header(OhmHeader::kMsgTypeAudio, headerAudio.MsgBytes());
     
-    WriterBuffer writer(iAudioTransmit);
+    WriterBuffer writer(iAudioTxBuf);
     
     writer.Flush();
     header.Externalise(writer);
@@ -291,7 +291,7 @@ void OhmSender::SendAudio(const TByte* aData, TUint aBytes)
     writer.Write(Brn(aData, aBytes));
     
     try {
-        iSocketAudio.Write(iAudioTransmit);
+        iSocketAudio.Write(iAudioTxBuf);
         iSocketAudio.WriteFlush();
     }
     catch (WriterError&) {
@@ -390,7 +390,7 @@ void OhmSender::RunAudio()
                     printf("waiting for message\n");
 
                     OhmHeader header;
-                    header.Internalise(iAudioReceive);
+                    header.Internalise(iAudioRxBuf);
                     
                     printf("message received\n");
                     
@@ -433,14 +433,14 @@ void OhmSender::RunAudio()
                 {
                 }
                 
-                iAudioReceive.ReadFlush();
+                iAudioRxBuf.ReadFlush();
             }
         }
         catch (ReaderError) {
             // LOG(kMedia, "OhmSender::RunNetwork reader error\n");
         }
 
-        iAudioReceive.ReadFlush();
+        iAudioRxBuf.ReadFlush();
 
         iMutexActive.Wait();
         iActive = false;
@@ -506,24 +506,24 @@ void OhmSender::ProcessOutMsgIbAudio(MsgIbAudio* aMsg)
         OhmHeaderAudio headerAudio(aMsg, iFrame, txTimestampPrev);
         OhmHeader header(OhmHeader::kMsgTypeAudio, headerAudio.MsgBytes());
         
-        WriterBuffer writer(iAudioTransmit);
+        WriterBuffer writer(iAudioTxBuf);
         
         writer.Flush();
         header.Externalise(writer);
         headerAudio.Externalise(writer);
         
-        TByte* ptr = (TByte*)iAudioTransmit.Ptr();
-        TUint max = iAudioTransmit.MaxBytes();
-        TUint bytes = iAudioTransmit.Bytes();
+        TByte* ptr = (TByte*)iAudioTxBuf.Ptr();
+        TUint max = iAudioTxBuf.MaxBytes();
+        TUint bytes = iAudioTxBuf.Bytes();
         
         Bwn audio(ptr + bytes, max - bytes);
         
         MsgIbAudio::PackBigEndian(audio, *aMsg);
         
-        iAudioTransmit.SetBytes(bytes + audio.Bytes());
+        iAudioTxBuf.SetBytes(bytes + audio.Bytes());
         
         try {
-            iSocketAudio.Write(iAudioTransmit);
+            iSocketAudio.Write(iAudioTxBuf);
             iSocketAudio.WriteFlush();
         }
         catch (WriterError&) {
@@ -600,7 +600,7 @@ void OhmSender::SendTrack()
     OhmHeaderTrack headerTrack(iTrackUri, iTrackMetadata);
     OhmHeader header(OhmHeader::kMsgTypeTrack, headerTrack.MsgBytes());
     
-    WriterBuffer writer(iAudioTransmit);
+    WriterBuffer writer(iAudioTxBuf);
     
     writer.Flush();
     header.Externalise(writer);
@@ -608,7 +608,7 @@ void OhmSender::SendTrack()
     writer.Write(iTrackUri);
     writer.Write(iTrackMetadata);
     
-    iSocketAudio.Write(iAudioTransmit);
+    iSocketAudio.Write(iAudioTxBuf);
     iSocketAudio.WriteFlush();
     
     iSendTrack = false;
@@ -621,14 +621,14 @@ void OhmSender::SendMetatext()
     OhmHeaderMetatext headerMetatext(iTrackMetatext);
     OhmHeader header(OhmHeader::kMsgTypeMetatext, headerMetatext.MsgBytes());
     
-    WriterBuffer writer(iAudioTransmit);
+    WriterBuffer writer(iAudioTxBuf);
     
     writer.Flush();
     header.Externalise(writer);
     headerMetatext.Externalise(writer);
     writer.Write(iTrackMetatext);
     
-    iSocketAudio.Write(iAudioTransmit);
+    iSocketAudio.Write(iAudioTxBuf);
     iSocketAudio.WriteFlush();
 
     iSendMetatext = false;

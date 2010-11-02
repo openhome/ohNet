@@ -44,7 +44,7 @@ public:
 	static const TUint kMaxPacketBytes = 4096;
 	
 public:
-	WavSender(OhmSender* aSender, const TByte* aData, TUint aSampleCount, TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth);
+	WavSender(OhmSender* aSender, const Brx& aUri, const TByte* aData, TUint aSampleCount, TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth);
 	void Start();
 	void Pause();
 	void SetSpeed(TUint aValue);
@@ -57,6 +57,7 @@ private:
 	
 private:
 	OhmSender* iSender;
+	Bws<OhmSender::kMaxTrackUriBytes> iUri;
 	const TByte* iData;
 	TUint iSampleCount;
 	TUint iSampleRate;
@@ -72,8 +73,9 @@ private:
 	TUint iPacketBytes;
 };
 
-WavSender::WavSender(OhmSender* aSender, const TByte* aData, TUint aSampleCount, TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth)
+WavSender::WavSender(OhmSender* aSender, const Brx& aUri, const TByte* aData, TUint aSampleCount, TUint aSampleRate, TUint aBitRate, TUint aChannels, TUint aBitDepth)
 	: iSender(aSender)
+	, iUri(aUri)
 	, iData(aData)
 	, iSampleCount(aSampleCount)
 	, iSampleRate(aSampleRate)
@@ -148,7 +150,7 @@ void WavSender::TimerExpired()
 	
 	if (!iPaused) {
 	    if (iIndex == 0) {
-            iSender->StartTrack(0, iSampleCount);
+            iSender->StartTrack(0, iSampleCount, iUri, Brx::Empty());
 	    }
 	    
 		if (iIndex + iPacketBytes <= iTotalBytes) {
@@ -190,7 +192,7 @@ static void RandomiseUdn(Bwh& aUdn)
 
 int main(int aArgc, char* aArgv[])
 {
-	//Debug::SetLevel(Debug::kAll);
+	//Debug::SetLevel(Debug::kNetwork);
 	
     OptionParser parser;
     
@@ -212,13 +214,13 @@ int main(int aArgc, char* aArgv[])
 
     std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces(false);
     ASSERT(ifs->size() > 0 && adapter.Value() < ifs->size());
-    TIpAddress addr = (*ifs)[adapter.Value()]->Address();
+    TIpAddress interface = (*ifs)[adapter.Value()]->Address();
     for (TUint i=0; i<ifs->size(); i++) {
         delete (*ifs)[i];
     }
     delete ifs;
     
-    printf("Using network interface %d.%d.%d.%d\n", addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
+    printf("Using network interface %d.%d.%d.%d\n", interface&0xff, (interface>>8)&0xff, (interface>>16)&0xff, (interface>>24)&0xff);
 
 	Brhz file(optionFile.Value());
     Brhz name(optionName.Value());
@@ -414,9 +416,9 @@ int main(int aArgc, char* aArgv[])
     device->SetAttribute("Upnp.SerialNumber", "Not Applicable");
     device->SetAttribute("Upnp.Upc", "Not Applicable");
 
-	OhmSender* sender = new OhmSender(*device, addr, name, channel);
+	OhmSender* sender = new OhmSender(*device, interface, name, channel);
 	
-    WavSender* wavsender = new WavSender(sender, data, sampleCount, sampleRate, byteRate * 8, numChannels, bitsPerSample);
+    WavSender* wavsender = new WavSender(sender, file, data, sampleCount, sampleRate, byteRate * 8, numChannels, bitsPerSample);
     
     device->SetEnabled();
 

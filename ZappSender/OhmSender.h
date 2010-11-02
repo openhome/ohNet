@@ -17,18 +17,18 @@ class ProviderSender;
 class OhmSender
 {
     static const TUint kTtl = 4;
+    static const TUint kMaxMetadataBytes = 1000;
     static const TUint kMaxAudioFrameBytes = 16 * 1024;
     static const TUint kThreadStackBytesAudio = 64 * 1024;
     static const TUint kThreadPriorityAudio = kPriorityNormal;
     static const TUint kTimerAliveJoinTimeoutMs = 10000;
     static const TUint kTimerAliveAudioTimeoutMs = 3000;
-    static const TUint kMaxMetadataBytes = 5000;
 
 public:
 	static const TUint kMaxNameBytes = 32;
-    static const TUint kMaxTrackUriBytes = 1000;
-    static const TUint kMaxTrackMetadataBytes = 5000;
-    static const TUint kMaxTrackMetatextBytes = 1000;
+	static const TUint kMaxTrackUriBytes = Ohm::kMaxTrackUriBytes;
+	static const TUint kMaxTrackMetadataBytes = Ohm::kMaxTrackMetadataBytes;
+	static const TUint kMaxTrackMetatextBytes = Ohm::kMaxTrackMetatextBytes;
 
 public:
     OhmSender(DvDevice& aDevice, TIpAddress aInterface, const Brx& aName, TUint aChannel);
@@ -74,8 +74,8 @@ private:
     TUint iChannel;
     TBool iEnabled;
     OhmSocket iSocketAudio;
-    Srs<kMaxAudioFrameBytes> iAudioReceive;
-    Bws<kMaxAudioFrameBytes> iAudioTransmit;
+    Srs<kMaxAudioFrameBytes> iAudioRxBuf;
+    Bws<kMaxAudioFrameBytes> iAudioTxBuf;
     Mutex iMutexStartStop;
     Mutex iMutexActive;
     Semaphore iNetworkAudioDeactivated;
@@ -93,15 +93,15 @@ private:
     Bws<kMaxMetadataBytes> iMetadata;
     TBool iSendTrack;
     TBool iSendMetatext;
-    Bws<kMaxTrackUriBytes> iTrackUri;
-    Bws<kMaxTrackMetadataBytes> iTrackMetadata;
-    Bws<kMaxTrackMetatextBytes> iTrackMetatext;
+    Bws<Ohm::kMaxTrackUriBytes> iTrackUri;
+    Bws<Ohm::kMaxTrackMetadataBytes> iTrackMetadata;
+    Bws<Ohm::kMaxTrackMetatextBytes> iTrackMetatext;
     TUint iSampleRate;
     TUint iBitRate;
     TUint iChannels;
     TUint iBitDepth;
     TBool iLossless;
-    Bws<OhmHeaderAudio::kMaxCodecNameBytes> iCodecName;
+    Bws<Ohm::kMaxCodecNameBytes> iCodecName;
     TUint64 iSampleStart;
     TUint64 iSamplesTotal;
     TUint iTimestamp;
