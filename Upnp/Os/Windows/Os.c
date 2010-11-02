@@ -423,15 +423,6 @@ int32_t OsNetworkSend(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes)
     if (SocketInterrupted(handle)) {
         return -1;
     }
-#if 0
-    {
-        char buf[1025];
-        size_t len = (aBytes<1025? aBytes : 1024);
-        memcpy(buf, aBuffer, len);
-        buf[len] = '\0';
-        fprintf(stdout, "OsNetworkSend, sending\n%s\n", buf);
-    }
-#endif
 	sent = send(handle->iSocket, (const char*)aBuffer, aBytes, 0);
     return sent;
 }
@@ -445,15 +436,6 @@ int32_t OsNetworkSendTo(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes
         return -1;
     }
     sockaddrFromEndpoint(&addr, aAddress, aPort);
-#if 0
-    {
-        char buf[1025];
-        size_t len = (aBytes<1025? aBytes : 1024);
-        memcpy(buf, aBuffer, len);
-        buf[len] = '\0';
-        fprintf(stdout, "OsNetworkSendTo, sending\n%s\n", buf);
-    }
-#endif
     sent = sendto(handle->iSocket, (const char*)aBuffer, aBytes, 0, (struct sockaddr*)&addr, sizeof(addr));
     return sent;
 }
@@ -489,16 +471,6 @@ int32_t OsNetworkReceive(THandle aHandle, uint8_t* aBuffer, uint32_t aBytes)
         }
     }
 
-#if 0
-    if (received > 0)
-    {
-        char buf[1025];
-        size_t len = (aBytes<1025? aBytes : 1024);
-        memcpy(buf, aBuffer, len);
-        buf[len] = '\0';
-        fprintf(stdout, "OsNetworkReceive, got\n%s\n", buf);
-    }
-#endif
     SetSocketNonBlocking(handle->iSocket);
     WSACloseEvent(event);
     return received;

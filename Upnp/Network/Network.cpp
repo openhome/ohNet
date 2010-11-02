@@ -21,151 +21,6 @@ static THandle SocketCreate(ESocketType aSocketType)
     return handle;
 }
 
-static void SocketSend(THandle aHandle, const Brx& aBuffer)
-{
-    LOGF(kNetwork, "SocketSend  H = %d, BC = %d\n", aHandle, aBuffer.Bytes());
-    TInt sent = Zapp::Os::NetworkSend(aHandle, aBuffer);
-    if(sent < 0) {
-        LOG2F(kNetwork, kError, "SocketSend H = %d, RETURN VALUE = %d\n", aHandle, sent);
-        THROW(NetworkError);
-    }
-    if((TUint)sent != aBuffer.Bytes()) {
-        LOG2F(kNetwork, kError, "SocketSend H = %d, RETURN VALUE = %d, INCOMPLETE\n", aHandle, sent);
-        THROW(NetworkError);
-    }
-}
-
-static void SocketSendTo(THandle aHandle, const Brx& aBuffer, const Endpoint& aEndpoint)
-{
-    LOGF(kNetwork, "SocketSendTo  H = %d, BC = %d\n", aHandle, aBuffer.Bytes());
-    TInt sent = Zapp::Os::NetworkSendTo(aHandle, aBuffer, aEndpoint);
-    if(sent < 0) {
-        LOG2F(kNetwork, kError, "SocketSendTo H = %d, RETURN VALUE = %d\n", aHandle, sent);
-        THROW(NetworkError);
-    }
-    if((TUint)sent != aBuffer.Bytes()) {
-        LOG2F(kNetwork, kError, "SocketSendTo H = %d, RETURN VALUE = %d, INCOMPLETE\n", aHandle, sent);
-        THROW(NetworkError);
-    }
-}
-
-static void SocketReceive(THandle aHandle, Bwx& aBuffer)
-{
-    // This variant of Receive will receive any number of bytes in the
-    // range [0, aBuffer.MaxBytes()] (0 means socket was closed at the other end)
-    LOGF(kNetwork, ">SocketReceive H = %d, MAX = %d\n", aHandle, aBuffer.MaxBytes());
-    aBuffer.SetBytes(0);
-    TInt received = Zapp::Os::NetworkReceive(aHandle, aBuffer);
-    if(received < 0) {
-        LOG2F(kNetwork, kError, "SocketReceive H = %d, RETURN VALUE = %d\n", aHandle, received);
-        THROW(NetworkError);
-    }
-    aBuffer.SetBytes(received);
-    LOGF(kNetwork, "<SocketReceive H = %d, BC = %d\n", aHandle, aBuffer.Bytes());
-}
-
-static void SocketReceive(THandle aHandle, Bwx& aBuffer, TUint aBytes)
-{
-    // This variant of Receive() expects the specified number of bytes. Therefore it will:
-    //  - block until aBytes bytes have been received, or
-    //  - throw a NetworkError on a genuine socket error OR if the socket
-    //    is closed at the other end
-    LOGF(kNetwork, "SocketReceive H = %d, BC = %d\n", aHandle, aBytes);
-
-    ASSERT(aBytes <= aBuffer.MaxBytes());
-    TUint received = 0;
-    aBuffer.SetBytes(0);
-    TByte* ptr = (TByte*)aBuffer.Ptr();
-    while(received < aBytes) {
-        Bwn buf(ptr+received, aBytes-received);
-        TInt ret = Zapp::Os::NetworkReceive(aHandle, buf);
-        if(ret < 0) {
-            LOG2F(kNetwork, kError, "SocketReceive H = %d, RETURN VALUE = %d\n", aHandle, ret);
-            THROW(NetworkError);
-        } else if(ret == 0) {
-            // not all requested data received before connection closed
-            THROW(NetworkError);
-        }
-        LOGF(kNetwork, "SocketReceive H = %d, BYTES = %d\n", aHandle, ret);
-        received += ret;
-        aBuffer.SetBytes(received);
-    }
-}
-
-static void SocketReceiveFrom(THandle aHandle, Bwx& aBuffer, Endpoint& aEndpoint)
-{
-    LOGF(kNetwork, "SocketReceiveFrom H = %d\n", aHandle);
-    TInt received = Zapp::Os::NetworkReceiveFrom(aHandle, aBuffer, aEndpoint);
-    if(received < 0) {
-        LOG2F(kNetwork, kError, "SocketReceiveFrom H = %d, RETURN VALUE = %d\n", aHandle, received);
-        THROW(NetworkError);
-    }
-    aBuffer.SetBytes(received);
-    LOGF(kNetwork, "<SocketReceiveFrom H = %d\n", aHandle);
-}
-
-static void SocketInterrupt(THandle aHandle, TBool aInterrupt)
-{
-    LOGF(kNetwork, "SocketShutdown H = %d\n", aHandle);
-    TInt err = Zapp::Os::NetworkInterrupt(aHandle, aInterrupt);
-    if(err != 0) {
-        LOG2F(kNetwork, kError, "SocketShutdown H = %d, RETURN VALUE = %d\n", aHandle, err);
-        THROW(NetworkError);
-    }
-}
-
-static void SocketClose(THandle aHandle)
-{
-    LOGF(kNetwork, "SocketClose H = %d\n", aHandle);
-    TInt err = Zapp::Os::NetworkClose(aHandle);
-    if(err != 0) {
-        LOG2F(kNetwork, kError, "SocketClose H = %d, RETURN VALUE = %d\n", aHandle, err);
-        THROW(NetworkError);
-    }
-}
-
-static void SocketBind(THandle aHandle, const Endpoint& aEndpoint)
-{
-    LOGF(kNetwork, "SocketBind H = %d\n", aHandle);
-    TInt err = Zapp::Os::NetworkBind(aHandle, aEndpoint);
-    if(err != 0) {
-        LOG2F(kNetwork, kError, "SocketBind H = %d, RETURN VALUE = %d\n", aHandle, err);
-        THROW(NetworkError);
-    }
-}
-
-static void SocketPort(THandle aHandle, TUint& aPort)
-{
-    LOGF(kNetwork, "SocketPort H = %d\n", aHandle);
-    TInt err = Zapp::Os::NetworkPort(aHandle, aPort);
-    if(err != 0) {
-        LOG2F(kNetwork, kError, "SocketPort H = %d, RETURN VALUE = %d\n", aHandle, err);
-        THROW(NetworkError);
-    }
-}
-
-static void SocketListen(THandle aHandle, TUint aSlots)
-{
-    LOGF(kNetwork, "SocketListen H = %d S = %d\n", aHandle, aSlots);
-    TInt err = Zapp::Os::NetworkListen(aHandle, aSlots);
-    if(err != 0) {
-        LOG2F(kNetwork, kError, "SocketListen H = %d, RETURN VALUE = %d\n", aHandle, err);
-        THROW(NetworkError);
-    }
-}
-
-static THandle SocketAccept(THandle aHandle)
-{
-    LOGF(kNetwork, "SocketAccept H = %d\n", aHandle);
-    THandle handle = Zapp::Os::NetworkAccept(aHandle);
-    LOGF(kNetwork,"SocketAccept Accepted Handle = %d\n", handle);
-    if(handle == kHandleNull) {
-        LOG2F(kNetwork, kError, "SocketAccept H = %d\n", handle);
-        THROW(NetworkError);
-    }
-    return handle;
-}
-
 static TUint32 GetHostByName(const Brx& aAddress)
 {
     return Zapp::Os::NetworkGetHostByName(aAddress);
@@ -282,19 +137,28 @@ TBool Endpoint::Equals(const Endpoint& aEndpoint) const
 Socket::Socket()
 {
     iHandle = kHandleNull;
+    iLog = kLogNone;
 }
 
 void Socket::Interrupt(TBool aInterrupt)
 {
-    LOGF(kNetwork, "Socket::Shutdown\n");
-    SocketInterrupt(iHandle, aInterrupt);
+    LOGF(kNetwork, "Socket::Interrupt H = %d\n", iHandle);
+    TInt err = Zapp::Os::NetworkInterrupt(iHandle, aInterrupt);
+    if(err != 0) {
+        LOG2F(kNetwork, kError, "Socket::Interrupt H = %d, RETURN VALUE = %d\n", iHandle, err);
+        THROW(NetworkError);
+    }
 }
 
 void Socket::Close()
 {
-    LOGF(kNetwork, "Socket::Close\n");
     // close connection and allow caller to handle any exceptions
-    SocketClose(iHandle);
+    LOGF(kNetwork, "Socket::Close H = %d\n", iHandle);
+    TInt err = Zapp::Os::NetworkClose(iHandle);
+    if(err != 0) {
+        LOG2F(kNetwork, kError, "Socket::Close H = %d, RETURN VALUE = %d\n", iHandle, err);
+        THROW(NetworkError);
+    }
     iHandle = kHandleNull;
 }
 
@@ -312,6 +176,185 @@ void Socket::SetRecvTimeout(TUint aMs)
 {
     Zapp::Os::NetworkSocketSetReceiveTimeout(iHandle, aMs);
 }
+
+void Socket::LogVerbose(TBool aLog, TBool aHex)
+{
+    if (!aLog) {
+        iLog = kLogNone;
+        ASSERT(!aHex);
+    }
+    else if (!aHex) {
+        iLog = kLogPlainText;
+    }
+    else {
+        iLog = kLogHex;
+    }
+}
+
+void Socket::Send(const Brx& aBuffer)
+{
+    LOGF(kNetwork, "Socket::Send  H = %d, BC = %d\n", iHandle, aBuffer.Bytes());
+    Log("Socket::Send, sending\n", aBuffer);
+    TInt sent = Zapp::Os::NetworkSend(iHandle, aBuffer);
+    if(sent < 0) {
+        LOG2F(kNetwork, kError, "Socket::Send H = %d, RETURN VALUE = %d\n", iHandle, sent);
+        THROW(NetworkError);
+    }
+    if((TUint)sent != aBuffer.Bytes()) {
+        LOG2F(kNetwork, kError, "Socket::Send H = %d, RETURN VALUE = %d, INCOMPLETE\n", iHandle, sent);
+        THROW(NetworkError);
+    }
+}
+
+void Socket::SendTo(const Brx& aBuffer, const Endpoint& aEndpoint)
+{
+    LOGF(kNetwork, "Socket::SendTo  H = %d, BC = %d\n", iHandle, aBuffer.Bytes());
+    Log("Socket::SendTo, sending\n", aBuffer);
+    TInt sent = Zapp::Os::NetworkSendTo(iHandle, aBuffer, aEndpoint);
+    if(sent < 0) {
+        LOG2F(kNetwork, kError, "Socket::SendTo H = %d, RETURN VALUE = %d\n", iHandle, sent);
+        THROW(NetworkError);
+    }
+    if((TUint)sent != aBuffer.Bytes()) {
+        LOG2F(kNetwork, kError, "Socket::SendTo H = %d, RETURN VALUE = %d, INCOMPLETE\n", iHandle, sent);
+        THROW(NetworkError);
+    }
+}
+
+void Socket::Receive(Bwx& aBuffer)
+{
+    // This variant of Receive will receive any number of bytes in the
+    // range [0, aBuffer.MaxBytes()] (0 means socket was closed at the other end)
+    LOGF(kNetwork, ">Socket::Receive H = %d, MAX = %d\n", iHandle, aBuffer.MaxBytes());
+    aBuffer.SetBytes(0);
+    TInt received = Zapp::Os::NetworkReceive(iHandle, aBuffer);
+    if(received < 0) {
+        LOG2F(kNetwork, kError, "Socket::Receive H = %d, RETURN VALUE = %d\n", iHandle, received);
+        THROW(NetworkError);
+    }
+    aBuffer.SetBytes(received);
+    Log("Socket::Receive, got\n", aBuffer);
+    LOGF(kNetwork, "<Socket::Receive H = %d, BC = %d\n", iHandle, aBuffer.Bytes());
+}
+
+void Socket::Receive(Bwx& aBuffer, TUint aBytes)
+{
+    // This variant of Receive() expects the specified number of bytes. Therefore it will:
+    //  - block until aBytes bytes have been received, or
+    //  - throw a NetworkError on a genuine socket error OR if the socket
+    //    is closed at the other end
+    LOGF(kNetwork, "Socket::Receive H = %d, BC = %d\n", iHandle, aBytes);
+
+    ASSERT(aBytes <= aBuffer.MaxBytes());
+    TUint received = 0;
+    aBuffer.SetBytes(0);
+    TByte* ptr = (TByte*)aBuffer.Ptr();
+    while(received < aBytes) {
+        Bwn buf(ptr+received, aBytes-received);
+        TInt ret = Zapp::Os::NetworkReceive(iHandle, buf);
+        if(ret < 0) {
+            LOG2F(kNetwork, kError, "Socket::Receive H = %d, RETURN VALUE = %d\n", iHandle, ret);
+            THROW(NetworkError);
+        } else if(ret == 0) {
+            // not all requested data received before connection closed
+            THROW(NetworkError);
+        }
+        LOGF(kNetwork, "Socket::Receive H = %d, BYTES = %d\n", iHandle, ret);
+        received += ret;
+        aBuffer.SetBytes(received);
+    }
+    Log("Socket::Receive, got\n", aBuffer);
+}
+
+void Socket::ReceiveFrom(Bwx& aBuffer, Endpoint& aEndpoint)
+{
+    LOGF(kNetwork, "Socket::ReceiveFrom H = %d\n", iHandle);
+    TInt received = Zapp::Os::NetworkReceiveFrom(iHandle, aBuffer, aEndpoint);
+    if(received < 0) {
+        LOG2F(kNetwork, kError, "Socket::ReceiveFrom H = %d, RETURN VALUE = %d\n", iHandle, received);
+        THROW(NetworkError);
+    }
+    aBuffer.SetBytes(received);
+    Log("Socket::ReceiveFrom, got\n", aBuffer);
+    LOGF(kNetwork, "<Socket::ReceiveFrom H = %d\n", iHandle);
+}
+
+void Socket::Bind(const Endpoint& aEndpoint)
+{
+    LOGF(kNetwork, "Socket::Bind H = %d\n", iHandle);
+    TInt err = Zapp::Os::NetworkBind(iHandle, aEndpoint);
+    if(err != 0) {
+        LOG2F(kNetwork, kError, "Socket::Bind H = %d, RETURN VALUE = %d\n", iHandle, err);
+        THROW(NetworkError);
+    }
+}
+
+void Socket::GetPort(TUint& aPort)
+{
+    LOGF(kNetwork, "Socket::GetPort H = %d\n", iHandle);
+    TInt err = Zapp::Os::NetworkPort(iHandle, aPort);
+    if(err != 0) {
+        LOG2F(kNetwork, kError, "Socket::GetPort H = %d, RETURN VALUE = %d\n", iHandle, err);
+        THROW(NetworkError);
+    }
+}
+
+void Socket::Listen(TUint aSlots)
+{
+    LOGF(kNetwork, "Socket::Listen H = %d S = %d\n", iHandle, aSlots);
+    TInt err = Zapp::Os::NetworkListen(iHandle, aSlots);
+    if(err != 0) {
+        LOG2F(kNetwork, kError, "Socket::Listen H = %d, RETURN VALUE = %d\n", iHandle, err);
+        THROW(NetworkError);
+    }
+}
+
+THandle Socket::Accept()
+{
+    LOGF(kNetwork, "Socket::Accept H = %d\n", iHandle);
+    THandle handle = Zapp::Os::NetworkAccept(iHandle);
+    LOGF(kNetwork,"Socket::Accept Accepted Handle = %d\n", handle);
+    if(handle == kHandleNull) {
+        LOG2F(kNetwork, kError, "Socket::Accept H = %d\n", handle);
+        THROW(NetworkError);
+    }
+    return handle;
+}
+
+void Socket::Log(const char* aPrefix, const Brx& aBuffer)
+{
+    if (iLog == kLogNone) {
+        return;
+    }
+    AutoMutex a(Stack::Mutex());
+    if (iLog == kLogPlainText) {
+        Log::Print("%s", aPrefix);
+        TUint bytes = aBuffer.Bytes();
+        const TByte* ptr = aBuffer.Ptr();
+        while (bytes > 0) {
+            char buf[513];
+            size_t len = (bytes<513? bytes : 512);
+            memcpy(buf, ptr, len);
+            buf[len] = '\0';
+            Brn buf2(buf);
+            Log::Print(buf2);
+            bytes -= len;
+            ptr += len;
+        }
+        Log::Print("\n");
+        return;
+    }
+    ASSERT(iLog == kLogHex);
+    Log::Print("%s", aPrefix);
+    for (TUint i=0; i<aBuffer.Bytes(); i++) {
+        Log::Print(" %02x", aBuffer[i]);
+        if ((i&0xf) == 0xf) {
+            fprintf(stdout, "\n");
+        }
+    }
+    Log::Print("\n");
+}
+
 
 // AutoSocket
 
@@ -335,7 +378,7 @@ SocketTcp::SocketTcp()
 void SocketTcp::Receive(Bwx& aBuffer, TUint aBytes)
 {
     LOGF(kNetwork, "SocketTcp::Receive only %d bytes\n", aBytes);
-    SocketReceive(iHandle, aBuffer, aBytes);
+    Socket::Receive(aBuffer, aBytes);
 }
 
 void SocketTcp::Write(TByte aValue)
@@ -348,7 +391,7 @@ void SocketTcp::Write(const Brx& aBuffer)
 {
     LOGF(kNetwork, "SocketTcp::Write\n");
     try {
-        SocketSend(iHandle, aBuffer);
+        Send(aBuffer);
     }
     catch(NetworkError&) {
         THROW(WriterError);
@@ -364,7 +407,7 @@ void SocketTcp::Read(Bwx& aBuffer)
 {
     LOGF(kNetwork, ">SocketTcp::Read\n");
     try {
-        SocketReceive(iHandle, aBuffer);
+        Socket::Receive(aBuffer);
     }
     catch(NetworkError&) {
         THROW(ReaderError);
@@ -417,9 +460,9 @@ SocketTcpServer::SocketTcpServer(const TChar* aName, TUint aPort, TIpAddress aIn
     Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
     Zapp::Os::NetworkTcpSetNoDelay(iHandle);
 	iInterface = aInterface;
-    SocketBind(iHandle, Endpoint(aPort, aInterface));
-    SocketPort(iHandle, iPort);
-    SocketListen(iHandle, aSlots);
+    Bind(Endpoint(aPort, aInterface));
+    GetPort(iPort);
+    Listen(aSlots);
 }
 
 void SocketTcpServer::Add(const TChar* aName, SocketTcpSession* aSession, TInt aPriorityOffset)
@@ -448,7 +491,7 @@ THandle SocketTcpServer::Accept()
 
     THandle handle;
     try {
-        handle = SocketAccept(iHandle);    // accept the connection
+        handle = Socket::Accept();    // accept the connection
         iMutex.Signal();
         return (handle);
     }
@@ -595,8 +638,8 @@ SocketUdpClient::SocketUdpClient(const Endpoint& aEndpoint, TUint aTtl, TIpAddre
     iHandle = SocketCreate(eSocketTypeDatagram);
     Zapp::Os::NetworkSocketSetMulticastTtl(iHandle, (TByte)aTtl);
     Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
-    SocketBind(iHandle, Endpoint(0, aInterface));
-    SocketPort(iHandle, iPort);
+    Bind(Endpoint(0, aInterface));
+    GetPort(iPort);
     LOGF(kNetwork, "< SocketUdpClient::SocketUdpClient H = %d, P = %d\n", iHandle, iPort);
 }
 
@@ -613,14 +656,14 @@ TUint SocketUdpClient::Port() const
 void SocketUdpClient::Send(const Brx& aBuffer)
 {
     LOGF(kNetwork, "> SocketUdpClient::Send\n");
-    SocketSendTo(iHandle, aBuffer, iEndpoint);
+    SendTo(aBuffer, iEndpoint);
 }
 
 Endpoint SocketUdpClient::Receive(Bwx& aBuffer)
 {
     LOGF(kNetwork, "> SocketUdpClient::Receive\n");
     Endpoint endpoint;
-    SocketReceiveFrom(iHandle, aBuffer, endpoint);
+    ReceiveFrom(aBuffer, endpoint);
     LOGF(kNetwork, "< SocketUdpClient::Receive\n");
     return endpoint;
 }
@@ -634,8 +677,8 @@ SocketUdpMulticast::SocketUdpMulticast(const Endpoint& aEndpoint, TUint aTtl, TI
     LOGF(kNetwork, "> SocketUdpMulticast::SocketUdpMulticast\n");
     Zapp::Os::NetworkSocketSetMulticastTtl(iHandle, (TByte)aTtl);
     Zapp::Os::NetworkSocketSetReuseAddress(iHandle);
-    SocketBind(iHandle, Endpoint(iEndpoint.Port(), 0));
-    SocketPort(iHandle, iPort);
+    Bind(Endpoint(iEndpoint.Port(), 0));
+    GetPort(iPort);
     iEndpoint.SetPort(iPort);
     Zapp::Os::NetworkSocketMulticastAddMembership(iHandle, iInterface, iEndpoint);
     LOGF(kNetwork, "< SocketUdpMulticast::SocketUdpMulticast H = %d, P = %d\n", iHandle, iPort);
