@@ -76,6 +76,7 @@ gBuildOnly = 0
 gFullTests = 0
 gIncremental = 0
 gSilent = 0
+gTestsOnly = 0
 gValgrind = 0
 for arg in sys.argv[1:]:
     if arg == '-b' or arg == '--buildonly':
@@ -86,6 +87,8 @@ for arg in sys.argv[1:]:
         gIncremental = 1
     elif arg == '-s' or arg == '--silent':
         gSilent = 1
+    elif arg == '-t' or arg == '--testsonly':
+        gTestsOnly = 1
     elif arg == '-vg' or arg == '--valgrind':
         gValgrind = 1
         if os.name == 'nt':
@@ -145,7 +148,8 @@ gAllTests = [ TestCase('TestBuffer', [], True)
              ,TestCase('TestProxyCs', [], False, False)
             ]
 
-runBuilds()
+if gTestsOnly == 0:
+    runBuilds()
 gBuildsCompleteTime = time.strftime('%H:%M:%S')
 if gBuildOnly == 0:
     if gValgrind == 1:
