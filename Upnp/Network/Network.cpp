@@ -338,7 +338,7 @@ void Socket::Log(const char* aPrefix, const Brx& aBuffer)
             buf[len] = '\0';
             Brn buf2(buf);
             Log::Print(buf2);
-            bytes -= len;
+            bytes -= (TUint)len;
             ptr += len;
         }
         Log::Print("\n");
