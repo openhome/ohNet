@@ -97,7 +97,6 @@ copy_build_includes:
 	copy Ssdp\*.h $(inc_build) > nul
 	copy Os\*.h $(inc_build) > nul
 	copy Os\*.inl $(inc_build) > nul
-	copy Os\C\Os.h $(inc_build)\C > nul
 	copy Public\C\*.h $(inc_build)\C > nul
 	copy Thread\Thread.h $(inc_build) > nul
 	copy Timer\Timer.h $(inc_build) > nul

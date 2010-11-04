@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <Thread.h>
 #include <Printer.h>
-#include <Os.h>
+#include <OsWrapper.h>
 #include <Zapp.h>
 #include <Debug.h>
 

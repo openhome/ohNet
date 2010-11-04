@@ -1,6 +1,6 @@
 #include <TestFramework.h>
 #include <Thread.h>
-#include <Os.h>
+#include <OsWrapper.h>
 
 using namespace Zapp;
 using namespace Zapp::TestFramework;

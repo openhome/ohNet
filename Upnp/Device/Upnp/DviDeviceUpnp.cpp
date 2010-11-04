@@ -6,7 +6,7 @@
 #include <DviStack.h>
 #include <NetworkInterfaceList.h>
 #include <Discovery.h>
-#include <Os.h>
+#include <OsWrapper.h>
 #include <Maths.h>
 #include <Printer.h>
 #include <Ascii.h>

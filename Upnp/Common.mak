@@ -122,10 +122,10 @@ headers = $(inc_build)/Ascii.h \
           $(inc_build)/Http.h \
           $(inc_build)/Network.h \
           $(inc_build)/NetworkInterfaceList.h \
-          $(inc_build)/Os.h \
-          $(inc_build)/Os.inl \
+          $(inc_build)/OsWrapper.h \
+          $(inc_build)/OsWrapper.inl \
           $(inc_build)/OsTypes.h \
-          $(inc_build)/C/Os.h \
+          $(inc_build)/Os.h \
           $(inc_build)/Parser.h \
           $(inc_build)/Printer.h \
           $(inc_build)/ProtocolUpnp.h \

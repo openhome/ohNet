@@ -1,7 +1,7 @@
 #include <Zapp.h>
 #include <Stack.h>
 #include <Standard.h>
-#include <Os.h>
+#include <OsWrapper.h>
 #include <Discovery.h>
 #include <NetworkInterfaceList.h>
 #include <Printer.h>
