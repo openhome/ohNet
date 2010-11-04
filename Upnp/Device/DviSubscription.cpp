@@ -27,6 +27,7 @@ DviSubscription::DviSubscription(DviDevice& aDevice, IPropertyWriterFactory& aWr
     , iSubscriberPath(aSubscriberPath)
     , iService(NULL)
     , iSequenceNumber(0)
+    , iExpired(false)
 {
     aSid.TransferTo(iSid);
     Functor functor = MakeFunctor(*this, &DviSubscription::Expired);
@@ -84,7 +85,7 @@ void DviSubscription::WriteChanges()
     }
 
     iService->PropertiesLock();
-    if (iSubscriber.Address() == 0) {
+    if (iExpired) {
         LOG(kDvEvent, "Subscription expired; don't publish changes\n");
         iService->PropertiesUnlock();
         return;
@@ -155,6 +156,11 @@ TBool DviSubscription::PropertiesInitialised() const
     return initialised;
 }
 
+TBool DviSubscription::HasExpired() const
+{
+    return iExpired;
+}
+
 DviSubscription::~DviSubscription()
 {
     delete iTimer;
@@ -163,7 +169,7 @@ DviSubscription::~DviSubscription()
 void DviSubscription::Expired()
 {
     iLock.Wait();
-    iSubscriber.SetAddress(0);
+    iExpired = true;
     iLock.Signal();
     iService->RemoveSubscription(iSid);
 }

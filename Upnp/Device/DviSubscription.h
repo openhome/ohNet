@@ -31,6 +31,7 @@ public:
     const Endpoint& Subscriber() const;
     const Brx& Sid() const;
     TBool PropertiesInitialised() const;
+    TBool HasExpired() const;
 private:
     ~DviSubscription();
     void Expired();
@@ -46,6 +47,7 @@ private:
     std::vector<TUint> iPropertySequenceNumbers;
     TUint iSequenceNumber;
     Timer* iTimer;
+    TBool iExpired;
 };
 
 class PropertyWriter : public IPropertyWriter

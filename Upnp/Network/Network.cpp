@@ -142,6 +142,9 @@ Socket::Socket()
 
 void Socket::Interrupt(TBool aInterrupt)
 {
+    if (iHandle == kHandleNull) {
+        return;
+    }
     LOGF(kNetwork, "Socket::Interrupt H = %d\n", iHandle);
     TInt err = Zapp::Os::NetworkInterrupt(iHandle, aInterrupt);
     if(err != 0) {

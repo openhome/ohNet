@@ -191,6 +191,7 @@ private:
     typedef std::map<Brn,SubscriptionWrapper*,BufferCmp> Map;
     Map iMap;
     Mutex iInterruptLock;
+    Semaphore iShutdownSem;
     Fifo<Brh*> iPropertyUpdates;
 };
 
