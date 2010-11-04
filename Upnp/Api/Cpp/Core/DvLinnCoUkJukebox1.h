@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,10 +17,10 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Jukebox:1
  */
-class DvServiceLinnCoUkJukebox1 : public DvService
+class DvProviderLinnCoUkJukebox1 : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkJukebox1() {}
+    virtual ~DvProviderLinnCoUkJukebox1() {}
     TBool SetPropertyCurrentPreset(TUint aValue);
     void GetPropertyCurrentPreset(TUint& aValue);
     TBool SetPropertyPresetPrefix(const Brx& aValue);
@@ -28,7 +28,7 @@ public:
     TBool SetPropertyAlbumArtFileName(const Brx& aValue);
     void GetPropertyAlbumArtFileName(Brhz& aValue);
 protected:
-    DvServiceLinnCoUkJukebox1(DvDevice& aDevice);
+    DvProviderLinnCoUkJukebox1(DvDevice& aDevice);
     void EnableActionSetPresetPrefix();
     void EnableActionPresetPrefix();
     void EnableActionSetAlbumArtFileName();
@@ -47,7 +47,7 @@ private:
     virtual void PresetMetaData(IInvocationResponse& aResponse, TUint aVersion, TUint aaPreset, IInvocationResponseString& aaMetaData);
     virtual void LoadManifest(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaTotalPresets);
 private:
-    DvServiceLinnCoUkJukebox1();
+    DvProviderLinnCoUkJukebox1();
     void DoSetPresetPrefix(IDvInvocation& aInvocation, TUint aVersion);
     void DoPresetPrefix(IDvInvocation& aInvocation, TUint aVersion);
     void DoSetAlbumArtFileName(IDvInvocation& aInvocation, TUint aVersion);

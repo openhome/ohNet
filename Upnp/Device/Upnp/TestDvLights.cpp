@@ -48,11 +48,11 @@ Light::Light(const TChar* aRoom, const TChar* aName, TUint aPosX, TUint aPosY, T
 }
 
 
-class ServiceLights : public DvServiceZappOrgTestLights1
+class ProviderLights : public DvProviderZappOrgTestLights1
 {
 public:
-    ServiceLights(DvDevice& aDevice, TUint aMode);
-    ~ServiceLights();
+    ProviderLights(DvDevice& aDevice, TUint aMode);
+    ~ProviderLights();
 private:
     void InitMode1();
     void InitMode2();
@@ -78,13 +78,13 @@ private:
     void WriteResource(const Brx& aUriTail, TIpAddress aInterface, IResourceWriter& aResourceWriter);
 private:
     DvDevice* iDevice;
-    ServiceLights* iLights;
+    ProviderLights* iLights;
     Brh iConfigDir;
 };
 
 
-ServiceLights::ServiceLights(DvDevice& aDevice, TUint aMode)
-    : DvServiceZappOrgTestLights1(aDevice)
+ProviderLights::ProviderLights(DvDevice& aDevice, TUint aMode)
+    : DvProviderZappOrgTestLights1(aDevice)
 {
     EnableActionGetCount();
     EnableActionGetRoom();
@@ -111,21 +111,21 @@ ServiceLights::ServiceLights(DvDevice& aDevice, TUint aMode)
     }
 }
 
-ServiceLights::~ServiceLights()
+ProviderLights::~ProviderLights()
 {
     for (TUint i=0; i<iLights.size(); i++) {
         delete iLights[i];
     }
 }
 
-void ServiceLights::InitMode1()
+void ProviderLights::InitMode1()
 {
     iLights.push_back(new Light("Lounge", "Ceiling1", 150, 180, 200, MAKE_COLOR(255, 255, 255, 255)));
     iLights.push_back(new Light("Lounge", "Ceiling2", 650, 180, 200, MAKE_COLOR(128, 255, 255, 255)));
     iLights.push_back(new Light("Lounge", "Reading", 400, 30, 135, MAKE_COLOR(0, 255, 255, 255)));
 }
 
-void ServiceLights::InitMode2()
+void ProviderLights::InitMode2()
 {
     iLights.push_back(new Light("Lounge", "Ceiling1", 150, 180, 200, MAKE_COLOR(255, 255, 255, 255)));
     iLights.push_back(new Light("Lounge", "Ceiling2", 650, 180, 200, MAKE_COLOR(128, 255, 255, 255)));
@@ -134,7 +134,7 @@ void ServiceLights::InitMode2()
     iLights.push_back(new Light("Hall", "Hall", 120, 60, 200, MAKE_COLOR(0, 255, 255, 255)));
 }
 
-void ServiceLights::InitMode3()
+void ProviderLights::InitMode3()
 {
     iLights.push_back(new Light("Lounge", "Ceiling1", 150, 180, 200, MAKE_COLOR(255, 255, 255, 255)));
     iLights.push_back(new Light("Lounge", "Ceiling2", 650, 180, 200, MAKE_COLOR(128, 255, 255, 255)));
@@ -147,14 +147,14 @@ void ServiceLights::InitMode3()
     iLights.push_back(new Light("Bedroom2", "Ceiling", 150, 150, 200, MAKE_COLOR(0, 255, 255, 255)));
 }
 
-void ServiceLights::GetCount(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseUint& aCount)
+void ProviderLights::GetCount(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseUint& aCount)
 {
     aResponse.Start();
     aCount.Write((TUint)iLights.size());
     aResponse.End();
 }
 
-void ServiceLights::GetRoom(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aIndex, IInvocationResponseString& aRoomName)
+void ProviderLights::GetRoom(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aIndex, IInvocationResponseString& aRoomName)
 {
     Light* light = iLights[aIndex];
     aResponse.Start();
@@ -163,7 +163,7 @@ void ServiceLights::GetRoom(IInvocationResponse& aResponse, TUint /*aVersion*/, 
     aResponse.End();
 }
 
-void ServiceLights::GetName(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aIndex, IInvocationResponseString& aFriendlyName)
+void ProviderLights::GetName(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aIndex, IInvocationResponseString& aFriendlyName)
 {
     Light* light = iLights[aIndex];
     aResponse.Start();
@@ -172,7 +172,7 @@ void ServiceLights::GetName(IInvocationResponse& aResponse, TUint /*aVersion*/, 
     aResponse.End();
 }
 
-void ServiceLights::GetPosition(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aIndex, IInvocationResponseUint& aX, IInvocationResponseUint& aY, IInvocationResponseUint& aZ)
+void ProviderLights::GetPosition(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aIndex, IInvocationResponseUint& aX, IInvocationResponseUint& aY, IInvocationResponseUint& aZ)
 {
     Light* light = iLights[aIndex];
     aResponse.Start();
@@ -182,7 +182,7 @@ void ServiceLights::GetPosition(IInvocationResponse& aResponse, TUint /*aVersion
     aResponse.End();
 }
 
-void ServiceLights::SetColor(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aIndex, TUint aColor)
+void ProviderLights::SetColor(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aIndex, TUint aColor)
 {
     Light* light = iLights[aIndex];
     light->SetColor(aColor);
@@ -190,7 +190,7 @@ void ServiceLights::SetColor(IInvocationResponse& aResponse, TUint /*aVersion*/,
     aResponse.End();
 }
 
-void ServiceLights::GetColor(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aIndex, IInvocationResponseUint& aColor)
+void ProviderLights::GetColor(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aIndex, IInvocationResponseUint& aColor)
 {
     Light* light = iLights[aIndex];
     aResponse.Start();
@@ -198,7 +198,7 @@ void ServiceLights::GetColor(IInvocationResponse& aResponse, TUint /*aVersion*/,
     aResponse.End();
 }
 
-void ServiceLights::GetColorComponents(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aColor, IInvocationResponseUint& aBrightness, IInvocationResponseUint& aRed, IInvocationResponseUint& aGreen, IInvocationResponseUint& aBlue)
+void ProviderLights::GetColorComponents(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aColor, IInvocationResponseUint& aBrightness, IInvocationResponseUint& aRed, IInvocationResponseUint& aGreen, IInvocationResponseUint& aBlue)
 {
     aResponse.Start();
     aBrightness.Write(aColor>>24);
@@ -249,7 +249,7 @@ DeviceLights::DeviceLights(TUint aMode, const Brx& aConfigDir)
     iDevice->SetAttribute("Upnp.ModelUrl", "http://www.linn.co.uk");
     iDevice->SetAttribute("Upnp.SerialNumber", "123456");
     iDevice->SetAttribute("Upnp.Upc", "123456654321");
-    iLights = new ServiceLights(*iDevice, aMode);
+    iLights = new ProviderLights(*iDevice, aMode);
     iDevice->SetEnabled();
 }
 

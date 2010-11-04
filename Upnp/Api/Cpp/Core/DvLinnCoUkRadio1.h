@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,10 +17,10 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Radio:1
  */
-class DvServiceLinnCoUkRadio1 : public DvService
+class DvProviderLinnCoUkRadio1 : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkRadio1() {}
+    virtual ~DvProviderLinnCoUkRadio1() {}
     TBool SetPropertyChannelUri(const Brx& aValue);
     void GetPropertyChannelUri(Brhz& aValue);
     TBool SetPropertyChannelMetadata(const Brx& aValue);
@@ -36,7 +36,7 @@ public:
     TBool SetPropertyIdsMax(TUint aValue);
     void GetPropertyIdsMax(TUint& aValue);
 protected:
-    DvServiceLinnCoUkRadio1(DvDevice& aDevice);
+    DvProviderLinnCoUkRadio1(DvDevice& aDevice);
     void EnableActionPlay();
     void EnableActionPause();
     void EnableActionStop();
@@ -71,7 +71,7 @@ private:
     virtual void IdArrayChanged(IInvocationResponse& aResponse, TUint aVersion, TUint aaIdArrayToken, IInvocationResponseBool& aaIdArrayChanged);
     virtual void IdsMax(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaIdsMax);
 private:
-    DvServiceLinnCoUkRadio1();
+    DvProviderLinnCoUkRadio1();
     void DoPlay(IDvInvocation& aInvocation, TUint aVersion);
     void DoPause(IDvInvocation& aInvocation, TUint aVersion);
     void DoStop(IDvInvocation& aInvocation, TUint aVersion);

@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,14 +17,14 @@ class PropertyBinary;
 /**
  * Base Device for upnp.org:RenderingControl:1
  */
-class DvServiceUpnpOrgRenderingControl1 : public DvService
+class DvProviderUpnpOrgRenderingControl1 : public DvProvider
 {
 public:
-    virtual ~DvServiceUpnpOrgRenderingControl1() {}
+    virtual ~DvProviderUpnpOrgRenderingControl1() {}
     TBool SetPropertyLastChange(const Brx& aValue);
     void GetPropertyLastChange(Brhz& aValue);
 protected:
-    DvServiceUpnpOrgRenderingControl1(DvDevice& aDevice);
+    DvProviderUpnpOrgRenderingControl1(DvDevice& aDevice);
     void EnableActionListPresets();
     void EnableActionSelectPreset();
     void EnableActionGetBrightness();
@@ -97,7 +97,7 @@ private:
     virtual void GetLoudness(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aChannel, IInvocationResponseBool& aCurrentLoudness);
     virtual void SetLoudness(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aChannel, TBool aDesiredLoudness);
 private:
-    DvServiceUpnpOrgRenderingControl1();
+    DvProviderUpnpOrgRenderingControl1();
     void DoListPresets(IDvInvocation& aInvocation, TUint aVersion);
     void DoSelectPreset(IDvInvocation& aInvocation, TUint aVersion);
     void DoGetBrightness(IDvInvocation& aInvocation, TUint aVersion);

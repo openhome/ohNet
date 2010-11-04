@@ -21,9 +21,9 @@ namespace Zapp
         }
     }
 
-    class ServiceTestBasic : DvServiceZappOrgTestBasic1
+    class ProviderTestBasic : DvProviderZappOrgTestBasic1
     {
-        public ServiceTestBasic(DvDevice aDevice)
+        public ProviderTestBasic(DvDevice aDevice)
             : base(aDevice)
         {
             SetPropertyVarUint(0);
@@ -138,7 +138,7 @@ namespace Zapp
     {
         public static string gDeviceName = "device";
         private DvDevice iDevice;
-        private DvServiceZappOrgTestBasic1 iTestBasic;
+        private DvProviderZappOrgTestBasic1 iTestBasic;
 
         private static void RandomiseUdn(out string aUdn)
         {
@@ -164,7 +164,7 @@ namespace Zapp
             iDevice.SetAttribute("Upnp.ModelUrl", "http://www.linn.co.uk");
             iDevice.SetAttribute("Upnp.SerialNumber", "123456");
             iDevice.SetAttribute("Upnp.Upc", "123456654321");
-            iTestBasic = new ServiceTestBasic(iDevice);
+            iTestBasic = new ProviderTestBasic(iDevice);
             iDevice.SetEnabled();
         }
         

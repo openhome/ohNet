@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,16 +17,16 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Delay:1
  */
-class DvServiceLinnCoUkDelay1 : public DvService
+class DvProviderLinnCoUkDelay1 : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkDelay1() {}
+    virtual ~DvProviderLinnCoUkDelay1() {}
     TBool SetPropertyPresetXml(const Brx& aValue);
     void GetPropertyPresetXml(Brhz& aValue);
     TBool SetPropertyPresetIndex(TUint aValue);
     void GetPropertyPresetIndex(TUint& aValue);
 protected:
-    DvServiceLinnCoUkDelay1(DvDevice& aDevice);
+    DvProviderLinnCoUkDelay1(DvDevice& aDevice);
     void EnableActionPresetXml();
     void EnableActionPresetIndex();
     void EnableActionSetPresetIndex();
@@ -47,7 +47,7 @@ private:
     virtual void DelayMaximum(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaDelay);
     virtual void PresetCount(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaCount);
 private:
-    DvServiceLinnCoUkDelay1();
+    DvProviderLinnCoUkDelay1();
     void DoPresetXml(IDvInvocation& aInvocation, TUint aVersion);
     void DoPresetIndex(IDvInvocation& aInvocation, TUint aVersion);
     void DoSetPresetIndex(IDvInvocation& aInvocation, TUint aVersion);

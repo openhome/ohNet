@@ -6,62 +6,62 @@
 
 using namespace Zapp;
 
-bool DvServiceZappOrgTestBasic1Cpp::SetPropertyVarUint(uint32_t aValue)
+bool DvProviderZappOrgTestBasic1Cpp::SetPropertyVarUint(uint32_t aValue)
 {
     return SetPropertyUint(*iPropertyVarUint, aValue);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::GetPropertyVarUint(uint32_t& aValue)
+void DvProviderZappOrgTestBasic1Cpp::GetPropertyVarUint(uint32_t& aValue)
 {
     aValue = iPropertyVarUint->Value();
 }
 
-bool DvServiceZappOrgTestBasic1Cpp::SetPropertyVarInt(int32_t aValue)
+bool DvProviderZappOrgTestBasic1Cpp::SetPropertyVarInt(int32_t aValue)
 {
     return SetPropertyInt(*iPropertyVarInt, aValue);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::GetPropertyVarInt(int32_t& aValue)
+void DvProviderZappOrgTestBasic1Cpp::GetPropertyVarInt(int32_t& aValue)
 {
     aValue = iPropertyVarInt->Value();
 }
 
-bool DvServiceZappOrgTestBasic1Cpp::SetPropertyVarBool(bool aValue)
+bool DvProviderZappOrgTestBasic1Cpp::SetPropertyVarBool(bool aValue)
 {
     return SetPropertyBool(*iPropertyVarBool, aValue);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::GetPropertyVarBool(bool& aValue)
+void DvProviderZappOrgTestBasic1Cpp::GetPropertyVarBool(bool& aValue)
 {
     aValue = iPropertyVarBool->Value();
 }
 
-bool DvServiceZappOrgTestBasic1Cpp::SetPropertyVarStr(const std::string& aValue)
+bool DvProviderZappOrgTestBasic1Cpp::SetPropertyVarStr(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyVarStr, buf);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::GetPropertyVarStr(std::string& aValue)
+void DvProviderZappOrgTestBasic1Cpp::GetPropertyVarStr(std::string& aValue)
 {
     const Brx& val = iPropertyVarStr->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-bool DvServiceZappOrgTestBasic1Cpp::SetPropertyVarBin(const std::string& aValue)
+bool DvProviderZappOrgTestBasic1Cpp::SetPropertyVarBin(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyBinary(*iPropertyVarBin, buf);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::GetPropertyVarBin(std::string& aValue)
+void DvProviderZappOrgTestBasic1Cpp::GetPropertyVarBin(std::string& aValue)
 {
     const Brx& val = iPropertyVarBin->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-DvServiceZappOrgTestBasic1Cpp::DvServiceZappOrgTestBasic1Cpp(DvDeviceStd& aDevice)
-    : DvService(aDevice.Device(), "zapp.org", "TestBasic", 1)
+DvProviderZappOrgTestBasic1Cpp::DvProviderZappOrgTestBasic1Cpp(DvDeviceStd& aDevice)
+    : DvProvider(aDevice.Device(), "zapp.org", "TestBasic", 1)
 {
     Functor empty;
     iPropertyVarUint = new PropertyUint(new ParameterUint("VarUint"), empty);
@@ -76,149 +76,149 @@ DvServiceZappOrgTestBasic1Cpp::DvServiceZappOrgTestBasic1Cpp(DvDeviceStd& aDevic
     iService->AddProperty(iPropertyVarBin); // passes ownership
 }
 
-void DvServiceZappOrgTestBasic1Cpp::EnableActionIncrement()
+void DvProviderZappOrgTestBasic1Cpp::EnableActionIncrement()
 {
     Zapp::Action* action = new Zapp::Action("Increment");
     action->AddInputParameter(new ParameterUint("Value"));
     action->AddOutputParameter(new ParameterUint("Result"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestBasic1Cpp::DoIncrement);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestBasic1Cpp::DoIncrement);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::EnableActionDecrement()
+void DvProviderZappOrgTestBasic1Cpp::EnableActionDecrement()
 {
     Zapp::Action* action = new Zapp::Action("Decrement");
     action->AddInputParameter(new ParameterInt("Value"));
     action->AddOutputParameter(new ParameterInt("Result"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestBasic1Cpp::DoDecrement);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestBasic1Cpp::DoDecrement);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::EnableActionToggle()
+void DvProviderZappOrgTestBasic1Cpp::EnableActionToggle()
 {
     Zapp::Action* action = new Zapp::Action("Toggle");
     action->AddInputParameter(new ParameterBool("Value"));
     action->AddOutputParameter(new ParameterBool("Result"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestBasic1Cpp::DoToggle);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestBasic1Cpp::DoToggle);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::EnableActionEchoString()
+void DvProviderZappOrgTestBasic1Cpp::EnableActionEchoString()
 {
     Zapp::Action* action = new Zapp::Action("EchoString");
     action->AddInputParameter(new ParameterString("Value"));
     action->AddOutputParameter(new ParameterString("Result"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestBasic1Cpp::DoEchoString);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestBasic1Cpp::DoEchoString);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::EnableActionEchoBinary()
+void DvProviderZappOrgTestBasic1Cpp::EnableActionEchoBinary()
 {
     Zapp::Action* action = new Zapp::Action("EchoBinary");
     action->AddInputParameter(new ParameterBinary("Value"));
     action->AddOutputParameter(new ParameterBinary("Result"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestBasic1Cpp::DoEchoBinary);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestBasic1Cpp::DoEchoBinary);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::EnableActionSetUint()
+void DvProviderZappOrgTestBasic1Cpp::EnableActionSetUint()
 {
     Zapp::Action* action = new Zapp::Action("SetUint");
     action->AddInputParameter(new ParameterRelated("ValueUint", *iPropertyVarUint));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestBasic1Cpp::DoSetUint);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestBasic1Cpp::DoSetUint);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::EnableActionGetUint()
+void DvProviderZappOrgTestBasic1Cpp::EnableActionGetUint()
 {
     Zapp::Action* action = new Zapp::Action("GetUint");
     action->AddOutputParameter(new ParameterRelated("ValueUint", *iPropertyVarUint));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestBasic1Cpp::DoGetUint);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestBasic1Cpp::DoGetUint);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::EnableActionSetInt()
+void DvProviderZappOrgTestBasic1Cpp::EnableActionSetInt()
 {
     Zapp::Action* action = new Zapp::Action("SetInt");
     action->AddInputParameter(new ParameterRelated("ValueInt", *iPropertyVarInt));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestBasic1Cpp::DoSetInt);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestBasic1Cpp::DoSetInt);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::EnableActionGetInt()
+void DvProviderZappOrgTestBasic1Cpp::EnableActionGetInt()
 {
     Zapp::Action* action = new Zapp::Action("GetInt");
     action->AddOutputParameter(new ParameterRelated("ValueInt", *iPropertyVarInt));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestBasic1Cpp::DoGetInt);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestBasic1Cpp::DoGetInt);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::EnableActionSetBool()
+void DvProviderZappOrgTestBasic1Cpp::EnableActionSetBool()
 {
     Zapp::Action* action = new Zapp::Action("SetBool");
     action->AddInputParameter(new ParameterRelated("ValueBool", *iPropertyVarBool));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestBasic1Cpp::DoSetBool);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestBasic1Cpp::DoSetBool);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::EnableActionGetBool()
+void DvProviderZappOrgTestBasic1Cpp::EnableActionGetBool()
 {
     Zapp::Action* action = new Zapp::Action("GetBool");
     action->AddOutputParameter(new ParameterRelated("ValueBool", *iPropertyVarBool));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestBasic1Cpp::DoGetBool);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestBasic1Cpp::DoGetBool);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::EnableActionSetMultiple()
+void DvProviderZappOrgTestBasic1Cpp::EnableActionSetMultiple()
 {
     Zapp::Action* action = new Zapp::Action("SetMultiple");
     action->AddInputParameter(new ParameterRelated("ValueUint", *iPropertyVarUint));
     action->AddInputParameter(new ParameterRelated("ValueInt", *iPropertyVarInt));
     action->AddInputParameter(new ParameterRelated("ValueBool", *iPropertyVarBool));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestBasic1Cpp::DoSetMultiple);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestBasic1Cpp::DoSetMultiple);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::EnableActionSetString()
+void DvProviderZappOrgTestBasic1Cpp::EnableActionSetString()
 {
     Zapp::Action* action = new Zapp::Action("SetString");
     action->AddInputParameter(new ParameterRelated("ValueStr", *iPropertyVarStr));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestBasic1Cpp::DoSetString);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestBasic1Cpp::DoSetString);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::EnableActionGetString()
+void DvProviderZappOrgTestBasic1Cpp::EnableActionGetString()
 {
     Zapp::Action* action = new Zapp::Action("GetString");
     action->AddOutputParameter(new ParameterRelated("ValueStr", *iPropertyVarStr));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestBasic1Cpp::DoGetString);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestBasic1Cpp::DoGetString);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::EnableActionSetBinary()
+void DvProviderZappOrgTestBasic1Cpp::EnableActionSetBinary()
 {
     Zapp::Action* action = new Zapp::Action("SetBinary");
     action->AddInputParameter(new ParameterRelated("ValueBin", *iPropertyVarBin));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestBasic1Cpp::DoSetBinary);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestBasic1Cpp::DoSetBinary);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::EnableActionGetBinary()
+void DvProviderZappOrgTestBasic1Cpp::EnableActionGetBinary()
 {
     Zapp::Action* action = new Zapp::Action("GetBinary");
     action->AddOutputParameter(new ParameterRelated("ValueBin", *iPropertyVarBin));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestBasic1Cpp::DoGetBinary);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestBasic1Cpp::DoGetBinary);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::EnableActionToggleBool()
+void DvProviderZappOrgTestBasic1Cpp::EnableActionToggleBool()
 {
     Zapp::Action* action = new Zapp::Action("ToggleBool");
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestBasic1Cpp::DoToggleBool);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestBasic1Cpp::DoToggleBool);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestBasic1Cpp::DoIncrement(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestBasic1Cpp::DoIncrement(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t Value = aInvocation.InvocationReadUint("Value");
@@ -231,7 +231,7 @@ void DvServiceZappOrgTestBasic1Cpp::DoIncrement(IDvInvocation& aInvocation, TUin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::DoDecrement(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestBasic1Cpp::DoDecrement(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     int32_t Value = aInvocation.InvocationReadInt("Value");
@@ -244,7 +244,7 @@ void DvServiceZappOrgTestBasic1Cpp::DoDecrement(IDvInvocation& aInvocation, TUin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::DoToggle(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestBasic1Cpp::DoToggle(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     bool Value = aInvocation.InvocationReadBool("Value");
@@ -257,7 +257,7 @@ void DvServiceZappOrgTestBasic1Cpp::DoToggle(IDvInvocation& aInvocation, TUint a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::DoEchoString(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestBasic1Cpp::DoEchoString(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_Value;
@@ -274,7 +274,7 @@ void DvServiceZappOrgTestBasic1Cpp::DoEchoString(IDvInvocation& aInvocation, TUi
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::DoEchoBinary(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestBasic1Cpp::DoEchoBinary(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brh buf_Value;
@@ -291,7 +291,7 @@ void DvServiceZappOrgTestBasic1Cpp::DoEchoBinary(IDvInvocation& aInvocation, TUi
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::DoSetUint(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestBasic1Cpp::DoSetUint(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t ValueUint = aInvocation.InvocationReadUint("ValueUint");
@@ -301,7 +301,7 @@ void DvServiceZappOrgTestBasic1Cpp::DoSetUint(IDvInvocation& aInvocation, TUint 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::DoGetUint(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestBasic1Cpp::DoGetUint(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -313,7 +313,7 @@ void DvServiceZappOrgTestBasic1Cpp::DoGetUint(IDvInvocation& aInvocation, TUint 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::DoSetInt(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestBasic1Cpp::DoSetInt(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     int32_t ValueInt = aInvocation.InvocationReadInt("ValueInt");
@@ -323,7 +323,7 @@ void DvServiceZappOrgTestBasic1Cpp::DoSetInt(IDvInvocation& aInvocation, TUint a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::DoGetInt(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestBasic1Cpp::DoGetInt(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -335,7 +335,7 @@ void DvServiceZappOrgTestBasic1Cpp::DoGetInt(IDvInvocation& aInvocation, TUint a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::DoSetBool(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestBasic1Cpp::DoSetBool(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     bool ValueBool = aInvocation.InvocationReadBool("ValueBool");
@@ -345,7 +345,7 @@ void DvServiceZappOrgTestBasic1Cpp::DoSetBool(IDvInvocation& aInvocation, TUint 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::DoGetBool(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestBasic1Cpp::DoGetBool(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -357,7 +357,7 @@ void DvServiceZappOrgTestBasic1Cpp::DoGetBool(IDvInvocation& aInvocation, TUint 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::DoSetMultiple(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestBasic1Cpp::DoSetMultiple(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t ValueUint = aInvocation.InvocationReadUint("ValueUint");
@@ -369,7 +369,7 @@ void DvServiceZappOrgTestBasic1Cpp::DoSetMultiple(IDvInvocation& aInvocation, TU
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::DoSetString(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestBasic1Cpp::DoSetString(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ValueStr;
@@ -381,7 +381,7 @@ void DvServiceZappOrgTestBasic1Cpp::DoSetString(IDvInvocation& aInvocation, TUin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::DoGetString(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestBasic1Cpp::DoGetString(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -395,7 +395,7 @@ void DvServiceZappOrgTestBasic1Cpp::DoGetString(IDvInvocation& aInvocation, TUin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::DoSetBinary(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestBasic1Cpp::DoSetBinary(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brh buf_ValueBin;
@@ -407,7 +407,7 @@ void DvServiceZappOrgTestBasic1Cpp::DoSetBinary(IDvInvocation& aInvocation, TUin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::DoGetBinary(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestBasic1Cpp::DoGetBinary(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -421,7 +421,7 @@ void DvServiceZappOrgTestBasic1Cpp::DoGetBinary(IDvInvocation& aInvocation, TUin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::DoToggleBool(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestBasic1Cpp::DoToggleBool(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -430,87 +430,87 @@ void DvServiceZappOrgTestBasic1Cpp::DoToggleBool(IDvInvocation& aInvocation, TUi
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::Increment(uint32_t /*aVersion*/, uint32_t /*aValue*/, uint32_t& /*aResult*/)
+void DvProviderZappOrgTestBasic1Cpp::Increment(uint32_t /*aVersion*/, uint32_t /*aValue*/, uint32_t& /*aResult*/)
 {
     ASSERTS();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::Decrement(uint32_t /*aVersion*/, int32_t /*aValue*/, int32_t& /*aResult*/)
+void DvProviderZappOrgTestBasic1Cpp::Decrement(uint32_t /*aVersion*/, int32_t /*aValue*/, int32_t& /*aResult*/)
 {
     ASSERTS();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::Toggle(uint32_t /*aVersion*/, bool /*aValue*/, bool& /*aResult*/)
+void DvProviderZappOrgTestBasic1Cpp::Toggle(uint32_t /*aVersion*/, bool /*aValue*/, bool& /*aResult*/)
 {
     ASSERTS();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::EchoString(uint32_t /*aVersion*/, const std::string& /*aValue*/, std::string& /*aResult*/)
+void DvProviderZappOrgTestBasic1Cpp::EchoString(uint32_t /*aVersion*/, const std::string& /*aValue*/, std::string& /*aResult*/)
 {
     ASSERTS();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::EchoBinary(uint32_t /*aVersion*/, const std::string& /*aValue*/, std::string& /*aResult*/)
+void DvProviderZappOrgTestBasic1Cpp::EchoBinary(uint32_t /*aVersion*/, const std::string& /*aValue*/, std::string& /*aResult*/)
 {
     ASSERTS();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::SetUint(uint32_t /*aVersion*/, uint32_t /*aValueUint*/)
+void DvProviderZappOrgTestBasic1Cpp::SetUint(uint32_t /*aVersion*/, uint32_t /*aValueUint*/)
 {
     ASSERTS();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::GetUint(uint32_t /*aVersion*/, uint32_t& /*aValueUint*/)
+void DvProviderZappOrgTestBasic1Cpp::GetUint(uint32_t /*aVersion*/, uint32_t& /*aValueUint*/)
 {
     ASSERTS();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::SetInt(uint32_t /*aVersion*/, int32_t /*aValueInt*/)
+void DvProviderZappOrgTestBasic1Cpp::SetInt(uint32_t /*aVersion*/, int32_t /*aValueInt*/)
 {
     ASSERTS();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::GetInt(uint32_t /*aVersion*/, int32_t& /*aValueInt*/)
+void DvProviderZappOrgTestBasic1Cpp::GetInt(uint32_t /*aVersion*/, int32_t& /*aValueInt*/)
 {
     ASSERTS();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::SetBool(uint32_t /*aVersion*/, bool /*aValueBool*/)
+void DvProviderZappOrgTestBasic1Cpp::SetBool(uint32_t /*aVersion*/, bool /*aValueBool*/)
 {
     ASSERTS();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::GetBool(uint32_t /*aVersion*/, bool& /*aValueBool*/)
+void DvProviderZappOrgTestBasic1Cpp::GetBool(uint32_t /*aVersion*/, bool& /*aValueBool*/)
 {
     ASSERTS();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::SetMultiple(uint32_t /*aVersion*/, uint32_t /*aValueUint*/, int32_t /*aValueInt*/, bool /*aValueBool*/)
+void DvProviderZappOrgTestBasic1Cpp::SetMultiple(uint32_t /*aVersion*/, uint32_t /*aValueUint*/, int32_t /*aValueInt*/, bool /*aValueBool*/)
 {
     ASSERTS();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::SetString(uint32_t /*aVersion*/, const std::string& /*aValueStr*/)
+void DvProviderZappOrgTestBasic1Cpp::SetString(uint32_t /*aVersion*/, const std::string& /*aValueStr*/)
 {
     ASSERTS();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::GetString(uint32_t /*aVersion*/, std::string& /*aValueStr*/)
+void DvProviderZappOrgTestBasic1Cpp::GetString(uint32_t /*aVersion*/, std::string& /*aValueStr*/)
 {
     ASSERTS();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::SetBinary(uint32_t /*aVersion*/, const std::string& /*aValueBin*/)
+void DvProviderZappOrgTestBasic1Cpp::SetBinary(uint32_t /*aVersion*/, const std::string& /*aValueBin*/)
 {
     ASSERTS();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::GetBinary(uint32_t /*aVersion*/, std::string& /*aValueBin*/)
+void DvProviderZappOrgTestBasic1Cpp::GetBinary(uint32_t /*aVersion*/, std::string& /*aValueBin*/)
 {
     ASSERTS();
 }
 
-void DvServiceZappOrgTestBasic1Cpp::ToggleBool(uint32_t /*aVersion*/)
+void DvProviderZappOrgTestBasic1Cpp::ToggleBool(uint32_t /*aVersion*/)
 {
     ASSERTS();
 }

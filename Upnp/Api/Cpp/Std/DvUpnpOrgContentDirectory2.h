@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 #include <string>
 
@@ -20,10 +20,10 @@ class PropertyBinary;
 /**
  * Base Device for upnp.org:ContentDirectory:2
  */
-class DvServiceUpnpOrgContentDirectory2Cpp : public DvService
+class DvProviderUpnpOrgContentDirectory2Cpp : public DvProvider
 {
 public:
-    virtual ~DvServiceUpnpOrgContentDirectory2Cpp() {}
+    virtual ~DvProviderUpnpOrgContentDirectory2Cpp() {}
     bool SetPropertySystemUpdateID(uint32_t aValue);
     void GetPropertySystemUpdateID(uint32_t& aValue);
     bool SetPropertyContainerUpdateIDs(const std::string& aValue);
@@ -31,7 +31,7 @@ public:
     bool SetPropertyTransferIDs(const std::string& aValue);
     void GetPropertyTransferIDs(std::string& aValue);
 protected:
-    DvServiceUpnpOrgContentDirectory2Cpp(DvDeviceStd& aDevice);
+    DvProviderUpnpOrgContentDirectory2Cpp(DvDeviceStd& aDevice);
     void EnableActionGetSearchCapabilities();
     void EnableActionGetSortCapabilities();
     void EnableActionGetSortExtensionCapabilities();
@@ -68,7 +68,7 @@ private:
     virtual void GetTransferProgress(uint32_t aVersion, uint32_t aTransferID, std::string& aTransferStatus, std::string& aTransferLength, std::string& aTransferTotal);
     virtual void CreateReference(uint32_t aVersion, const std::string& aContainerID, const std::string& aObjectID, std::string& aNewID);
 private:
-    DvServiceUpnpOrgContentDirectory2Cpp();
+    DvProviderUpnpOrgContentDirectory2Cpp();
     void DoGetSearchCapabilities(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoGetSortCapabilities(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoGetSortExtensionCapabilities(IDvInvocation& aInvocation, uint32_t aVersion);

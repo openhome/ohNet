@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 #include <string>
 
@@ -20,12 +20,12 @@ class PropertyBinary;
 /**
  * Base Device for zapp.org:TestLights:1
  */
-class DvServiceZappOrgTestLights1Cpp : public DvService
+class DvProviderZappOrgTestLights1Cpp : public DvProvider
 {
 public:
-    virtual ~DvServiceZappOrgTestLights1Cpp() {}
+    virtual ~DvProviderZappOrgTestLights1Cpp() {}
 protected:
-    DvServiceZappOrgTestLights1Cpp(DvDeviceStd& aDevice);
+    DvProviderZappOrgTestLights1Cpp(DvDeviceStd& aDevice);
     void EnableActionGetCount();
     void EnableActionGetRoom();
     void EnableActionGetName();
@@ -42,7 +42,7 @@ private:
     virtual void GetColor(uint32_t aVersion, uint32_t aIndex, uint32_t& aColor);
     virtual void GetColorComponents(uint32_t aVersion, uint32_t aColor, uint32_t& aBrightness, uint32_t& aRed, uint32_t& aGreen, uint32_t& aBlue);
 private:
-    DvServiceZappOrgTestLights1Cpp();
+    DvProviderZappOrgTestLights1Cpp();
     void DoGetCount(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoGetRoom(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoGetName(IDvInvocation& aInvocation, uint32_t aVersion);

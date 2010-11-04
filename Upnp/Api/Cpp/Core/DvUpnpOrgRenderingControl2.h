@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,14 +17,14 @@ class PropertyBinary;
 /**
  * Base Device for upnp.org:RenderingControl:2
  */
-class DvServiceUpnpOrgRenderingControl2 : public DvService
+class DvProviderUpnpOrgRenderingControl2 : public DvProvider
 {
 public:
-    virtual ~DvServiceUpnpOrgRenderingControl2() {}
+    virtual ~DvProviderUpnpOrgRenderingControl2() {}
     TBool SetPropertyLastChange(const Brx& aValue);
     void GetPropertyLastChange(Brhz& aValue);
 protected:
-    DvServiceUpnpOrgRenderingControl2(DvDevice& aDevice);
+    DvProviderUpnpOrgRenderingControl2(DvDevice& aDevice);
     void EnableActionListPresets();
     void EnableActionSelectPreset();
     void EnableActionGetBrightness();
@@ -101,7 +101,7 @@ private:
     virtual void GetStateVariables(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aStateVariableList, IInvocationResponseString& aStateVariableValuePairs);
     virtual void SetStateVariables(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aRenderingControlUDN, const Brx& aServiceType, const Brx& aServiceId, const Brx& aStateVariableValuePairs, IInvocationResponseString& aStateVariableList);
 private:
-    DvServiceUpnpOrgRenderingControl2();
+    DvProviderUpnpOrgRenderingControl2();
     void DoListPresets(IDvInvocation& aInvocation, TUint aVersion);
     void DoSelectPreset(IDvInvocation& aInvocation, TUint aVersion);
     void DoGetBrightness(IDvInvocation& aInvocation, TUint aVersion);

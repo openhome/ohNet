@@ -7,10 +7,10 @@
 
 using namespace Zapp;
 
-class DvServiceZappOrgTestLights1C : public DvServiceZappOrgTestLights1
+class DvProviderZappOrgTestLights1C : public DvProviderZappOrgTestLights1
 {
 public:
-    DvServiceZappOrgTestLights1C(DvDevice& aDevice);
+    DvProviderZappOrgTestLights1C(DvDevice& aDevice);
     void EnableActionGetCount(CallbackTestLights1GetCount aCallback, void* aPtr);
     void EnableActionGetRoom(CallbackTestLights1GetRoom aCallback, void* aPtr);
     void EnableActionGetName(CallbackTestLights1GetName aCallback, void* aPtr);
@@ -43,61 +43,61 @@ private:
     void* iPtrGetColorComponents;
 };
 
-DvServiceZappOrgTestLights1C::DvServiceZappOrgTestLights1C(DvDevice& aDevice)
-    : DvServiceZappOrgTestLights1(aDevice)
+DvProviderZappOrgTestLights1C::DvProviderZappOrgTestLights1C(DvDevice& aDevice)
+    : DvProviderZappOrgTestLights1(aDevice)
 {
 }
 
-void DvServiceZappOrgTestLights1C::EnableActionGetCount(CallbackTestLights1GetCount aCallback, void* aPtr)
+void DvProviderZappOrgTestLights1C::EnableActionGetCount(CallbackTestLights1GetCount aCallback, void* aPtr)
 {
     iCallbackGetCount = aCallback;
     iPtrGetCount = aPtr;
-    DvServiceZappOrgTestLights1::EnableActionGetCount();
+    DvProviderZappOrgTestLights1::EnableActionGetCount();
 }
 
-void DvServiceZappOrgTestLights1C::EnableActionGetRoom(CallbackTestLights1GetRoom aCallback, void* aPtr)
+void DvProviderZappOrgTestLights1C::EnableActionGetRoom(CallbackTestLights1GetRoom aCallback, void* aPtr)
 {
     iCallbackGetRoom = aCallback;
     iPtrGetRoom = aPtr;
-    DvServiceZappOrgTestLights1::EnableActionGetRoom();
+    DvProviderZappOrgTestLights1::EnableActionGetRoom();
 }
 
-void DvServiceZappOrgTestLights1C::EnableActionGetName(CallbackTestLights1GetName aCallback, void* aPtr)
+void DvProviderZappOrgTestLights1C::EnableActionGetName(CallbackTestLights1GetName aCallback, void* aPtr)
 {
     iCallbackGetName = aCallback;
     iPtrGetName = aPtr;
-    DvServiceZappOrgTestLights1::EnableActionGetName();
+    DvProviderZappOrgTestLights1::EnableActionGetName();
 }
 
-void DvServiceZappOrgTestLights1C::EnableActionGetPosition(CallbackTestLights1GetPosition aCallback, void* aPtr)
+void DvProviderZappOrgTestLights1C::EnableActionGetPosition(CallbackTestLights1GetPosition aCallback, void* aPtr)
 {
     iCallbackGetPosition = aCallback;
     iPtrGetPosition = aPtr;
-    DvServiceZappOrgTestLights1::EnableActionGetPosition();
+    DvProviderZappOrgTestLights1::EnableActionGetPosition();
 }
 
-void DvServiceZappOrgTestLights1C::EnableActionSetColor(CallbackTestLights1SetColor aCallback, void* aPtr)
+void DvProviderZappOrgTestLights1C::EnableActionSetColor(CallbackTestLights1SetColor aCallback, void* aPtr)
 {
     iCallbackSetColor = aCallback;
     iPtrSetColor = aPtr;
-    DvServiceZappOrgTestLights1::EnableActionSetColor();
+    DvProviderZappOrgTestLights1::EnableActionSetColor();
 }
 
-void DvServiceZappOrgTestLights1C::EnableActionGetColor(CallbackTestLights1GetColor aCallback, void* aPtr)
+void DvProviderZappOrgTestLights1C::EnableActionGetColor(CallbackTestLights1GetColor aCallback, void* aPtr)
 {
     iCallbackGetColor = aCallback;
     iPtrGetColor = aPtr;
-    DvServiceZappOrgTestLights1::EnableActionGetColor();
+    DvProviderZappOrgTestLights1::EnableActionGetColor();
 }
 
-void DvServiceZappOrgTestLights1C::EnableActionGetColorComponents(CallbackTestLights1GetColorComponents aCallback, void* aPtr)
+void DvProviderZappOrgTestLights1C::EnableActionGetColorComponents(CallbackTestLights1GetColorComponents aCallback, void* aPtr)
 {
     iCallbackGetColorComponents = aCallback;
     iPtrGetColorComponents = aPtr;
-    DvServiceZappOrgTestLights1::EnableActionGetColorComponents();
+    DvProviderZappOrgTestLights1::EnableActionGetColorComponents();
 }
 
-void DvServiceZappOrgTestLights1C::GetCount(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aCount)
+void DvProviderZappOrgTestLights1C::GetCount(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aCount)
 {
     uint32_t Count;
     ASSERT(iCallbackGetCount != NULL);
@@ -110,7 +110,7 @@ void DvServiceZappOrgTestLights1C::GetCount(IInvocationResponse& aResponse, TUin
     aResponse.End();
 }
 
-void DvServiceZappOrgTestLights1C::GetRoom(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseString& aRoomName)
+void DvProviderZappOrgTestLights1C::GetRoom(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseString& aRoomName)
 {
     char* RoomName;
     ASSERT(iCallbackGetRoom != NULL);
@@ -126,7 +126,7 @@ void DvServiceZappOrgTestLights1C::GetRoom(IInvocationResponse& aResponse, TUint
     aResponse.End();
 }
 
-void DvServiceZappOrgTestLights1C::GetName(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseString& aFriendlyName)
+void DvProviderZappOrgTestLights1C::GetName(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseString& aFriendlyName)
 {
     char* FriendlyName;
     ASSERT(iCallbackGetName != NULL);
@@ -142,7 +142,7 @@ void DvServiceZappOrgTestLights1C::GetName(IInvocationResponse& aResponse, TUint
     aResponse.End();
 }
 
-void DvServiceZappOrgTestLights1C::GetPosition(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseUint& aX, IInvocationResponseUint& aY, IInvocationResponseUint& aZ)
+void DvProviderZappOrgTestLights1C::GetPosition(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseUint& aX, IInvocationResponseUint& aY, IInvocationResponseUint& aZ)
 {
     uint32_t X;
     uint32_t Y;
@@ -159,7 +159,7 @@ void DvServiceZappOrgTestLights1C::GetPosition(IInvocationResponse& aResponse, T
     aResponse.End();
 }
 
-void DvServiceZappOrgTestLights1C::SetColor(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, TUint aColor)
+void DvProviderZappOrgTestLights1C::SetColor(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, TUint aColor)
 {
     ASSERT(iCallbackSetColor != NULL);
     if (0 != iCallbackSetColor(iPtrSetColor, aVersion, aIndex, aColor)) {
@@ -170,7 +170,7 @@ void DvServiceZappOrgTestLights1C::SetColor(IInvocationResponse& aResponse, TUin
     aResponse.End();
 }
 
-void DvServiceZappOrgTestLights1C::GetColor(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseUint& aColor)
+void DvProviderZappOrgTestLights1C::GetColor(IInvocationResponse& aResponse, TUint aVersion, TUint aIndex, IInvocationResponseUint& aColor)
 {
     uint32_t Color;
     ASSERT(iCallbackGetColor != NULL);
@@ -183,7 +183,7 @@ void DvServiceZappOrgTestLights1C::GetColor(IInvocationResponse& aResponse, TUin
     aResponse.End();
 }
 
-void DvServiceZappOrgTestLights1C::GetColorComponents(IInvocationResponse& aResponse, TUint aVersion, TUint aColor, IInvocationResponseUint& aBrightness, IInvocationResponseUint& aRed, IInvocationResponseUint& aGreen, IInvocationResponseUint& aBlue)
+void DvProviderZappOrgTestLights1C::GetColorComponents(IInvocationResponse& aResponse, TUint aVersion, TUint aColor, IInvocationResponseUint& aBrightness, IInvocationResponseUint& aRed, IInvocationResponseUint& aGreen, IInvocationResponseUint& aBlue)
 {
     uint32_t Brightness;
     uint32_t Red;
@@ -204,48 +204,48 @@ void DvServiceZappOrgTestLights1C::GetColorComponents(IInvocationResponse& aResp
 
 
 
-THandle DvServiceZappOrgTestLights1Create(DvDeviceC aDevice)
+THandle DvProviderZappOrgTestLights1Create(DvDeviceC aDevice)
 {
-	return new DvServiceZappOrgTestLights1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderZappOrgTestLights1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvServiceZappOrgTestLights1Destroy(THandle aService)
+void DvProviderZappOrgTestLights1Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService);
+    delete reinterpret_cast<DvProviderZappOrgTestLights1C*>(aService);
 }
 
-void DvServiceZappOrgTestLights1EnableActionGetCount(THandle aService, CallbackTestLights1GetCount aCallback, void* aPtr)
+void DvProviderZappOrgTestLights1EnableActionGetCount(THandle aService, CallbackTestLights1GetCount aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService)->EnableActionGetCount(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestLights1C*>(aService)->EnableActionGetCount(aCallback, aPtr);
 }
 
-void DvServiceZappOrgTestLights1EnableActionGetRoom(THandle aService, CallbackTestLights1GetRoom aCallback, void* aPtr)
+void DvProviderZappOrgTestLights1EnableActionGetRoom(THandle aService, CallbackTestLights1GetRoom aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService)->EnableActionGetRoom(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestLights1C*>(aService)->EnableActionGetRoom(aCallback, aPtr);
 }
 
-void DvServiceZappOrgTestLights1EnableActionGetName(THandle aService, CallbackTestLights1GetName aCallback, void* aPtr)
+void DvProviderZappOrgTestLights1EnableActionGetName(THandle aService, CallbackTestLights1GetName aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService)->EnableActionGetName(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestLights1C*>(aService)->EnableActionGetName(aCallback, aPtr);
 }
 
-void DvServiceZappOrgTestLights1EnableActionGetPosition(THandle aService, CallbackTestLights1GetPosition aCallback, void* aPtr)
+void DvProviderZappOrgTestLights1EnableActionGetPosition(THandle aService, CallbackTestLights1GetPosition aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService)->EnableActionGetPosition(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestLights1C*>(aService)->EnableActionGetPosition(aCallback, aPtr);
 }
 
-void DvServiceZappOrgTestLights1EnableActionSetColor(THandle aService, CallbackTestLights1SetColor aCallback, void* aPtr)
+void DvProviderZappOrgTestLights1EnableActionSetColor(THandle aService, CallbackTestLights1SetColor aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService)->EnableActionSetColor(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestLights1C*>(aService)->EnableActionSetColor(aCallback, aPtr);
 }
 
-void DvServiceZappOrgTestLights1EnableActionGetColor(THandle aService, CallbackTestLights1GetColor aCallback, void* aPtr)
+void DvProviderZappOrgTestLights1EnableActionGetColor(THandle aService, CallbackTestLights1GetColor aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService)->EnableActionGetColor(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestLights1C*>(aService)->EnableActionGetColor(aCallback, aPtr);
 }
 
-void DvServiceZappOrgTestLights1EnableActionGetColorComponents(THandle aService, CallbackTestLights1GetColorComponents aCallback, void* aPtr)
+void DvProviderZappOrgTestLights1EnableActionGetColorComponents(THandle aService, CallbackTestLights1GetColorComponents aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestLights1C*>(aService)->EnableActionGetColorComponents(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestLights1C*>(aService)->EnableActionGetColorComponents(aCallback, aPtr);
 }
 

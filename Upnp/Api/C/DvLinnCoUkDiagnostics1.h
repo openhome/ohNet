@@ -22,25 +22,25 @@ typedef int32_t (*CallbackDiagnostics1StateVariablePeriod)(void* aPtr, uint32_t 
 typedef int32_t (*CallbackDiagnostics1SetStateVariablePeriod)(void* aPtr, uint32_t aVersion, uint32_t aaPeriod);
 typedef int32_t (*CallbackDiagnostics1Reboot)(void* aPtr, uint32_t aVersion, uint32_t aaDelay);
 
-DllExport THandle DvServiceLinnCoUkDiagnostics1Create(DvDeviceC aDevice);
-DllExport void DvServiceLinnCoUkDiagnostics1Destroy(THandle aService);
+DllExport THandle DvProviderLinnCoUkDiagnostics1Create(DvDeviceC aDevice);
+DllExport void DvProviderLinnCoUkDiagnostics1Destroy(THandle aService);
 
-DllExport void DvServiceLinnCoUkDiagnostics1EnableActionEcho(THandle aService, CallbackDiagnostics1Echo aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkDiagnostics1EnableActionElfFile(THandle aService, CallbackDiagnostics1ElfFile aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkDiagnostics1EnableActionElfFingerprint(THandle aService, CallbackDiagnostics1ElfFingerprint aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkDiagnostics1EnableActionCrashDataStatus(THandle aService, CallbackDiagnostics1CrashDataStatus aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkDiagnostics1EnableActionCrashDataFetch(THandle aService, CallbackDiagnostics1CrashDataFetch aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkDiagnostics1EnableActionCrashDataClear(THandle aService, CallbackDiagnostics1CrashDataClear aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkDiagnostics1EnableActionSysLog(THandle aService, CallbackDiagnostics1SysLog aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkDiagnostics1EnableActionDiagnostic(THandle aService, CallbackDiagnostics1Diagnostic aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkDiagnostics1EnableActionStateVariable(THandle aService, CallbackDiagnostics1StateVariable aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkDiagnostics1EnableActionSetStateVariable(THandle aService, CallbackDiagnostics1SetStateVariable aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkDiagnostics1EnableActionStateVariablePeriod(THandle aService, CallbackDiagnostics1StateVariablePeriod aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkDiagnostics1EnableActionSetStateVariablePeriod(THandle aService, CallbackDiagnostics1SetStateVariablePeriod aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkDiagnostics1EnableActionReboot(THandle aService, CallbackDiagnostics1Reboot aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDiagnostics1EnableActionEcho(THandle aService, CallbackDiagnostics1Echo aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDiagnostics1EnableActionElfFile(THandle aService, CallbackDiagnostics1ElfFile aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDiagnostics1EnableActionElfFingerprint(THandle aService, CallbackDiagnostics1ElfFingerprint aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDiagnostics1EnableActionCrashDataStatus(THandle aService, CallbackDiagnostics1CrashDataStatus aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDiagnostics1EnableActionCrashDataFetch(THandle aService, CallbackDiagnostics1CrashDataFetch aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDiagnostics1EnableActionCrashDataClear(THandle aService, CallbackDiagnostics1CrashDataClear aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDiagnostics1EnableActionSysLog(THandle aService, CallbackDiagnostics1SysLog aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDiagnostics1EnableActionDiagnostic(THandle aService, CallbackDiagnostics1Diagnostic aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDiagnostics1EnableActionStateVariable(THandle aService, CallbackDiagnostics1StateVariable aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDiagnostics1EnableActionSetStateVariable(THandle aService, CallbackDiagnostics1SetStateVariable aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDiagnostics1EnableActionStateVariablePeriod(THandle aService, CallbackDiagnostics1StateVariablePeriod aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDiagnostics1EnableActionSetStateVariablePeriod(THandle aService, CallbackDiagnostics1SetStateVariablePeriod aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDiagnostics1EnableActionReboot(THandle aService, CallbackDiagnostics1Reboot aCallback, void* aPtr);
 
-DllExport int32_t DvServiceLinnCoUkDiagnostics1SetPropertyaStateVariable(THandle aService, uint32_t aValue, uint32_t* aChanged);
-DllExport void DvServiceLinnCoUkDiagnostics1GetPropertyaStateVariable(THandle aService, uint32_t* aValue);
+DllExport int32_t DvProviderLinnCoUkDiagnostics1SetPropertyaStateVariable(THandle aService, uint32_t aValue, uint32_t* aChanged);
+DllExport void DvProviderLinnCoUkDiagnostics1GetPropertyaStateVariable(THandle aService, uint32_t* aValue);
 
 #ifdef __cplusplus
 } // extern "C"

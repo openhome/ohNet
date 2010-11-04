@@ -32,7 +32,7 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)DviService.$(objext) \
     		   $(objdir)DviStack.$(objext) \
     		   $(objdir)DviSubscription.$(objext) \
-    		   $(objdir)DvService.$(objext) \
+    		   $(objdir)DvProvider.$(objext) \
     		   $(objdir)DeviceXml.$(objext) \
     		   $(objdir)Error.$(objext) \
     		   $(objdir)EventUpnp.$(objext) \
@@ -104,7 +104,7 @@ headers = $(inc_build)/Ascii.h \
           $(inc_build)/DviService.h \
           $(inc_build)/DviStack.h \
           $(inc_build)/DviSubscription.h \
-          $(inc_build)/Cpp/DvService.h \
+          $(inc_build)/Cpp/DvProvider.h \
           $(inc_build)/FunctorDvInvocation.h \
           $(inc_build)/DeviceXml.h \
           $(inc_build)/Error.h \
@@ -211,8 +211,8 @@ $(objdir)DviStack.$(objext) : Device/DviStack.cpp $(headers)
 	$(compiler)DviStack.$(objext) -c $(cflags) $(includes) Device/DviStack.cpp
 $(objdir)DviSubscription.$(objext) : Device/DviSubscription.cpp $(headers)
 	$(compiler)DviSubscription.$(objext) -c $(cflags) $(includes) Device/DviSubscription.cpp
-$(objdir)DvService.$(objext) : Public/Cpp/DvService.cpp $(headers)
-	$(compiler)DvService.$(objext) -c $(cflags) $(includes) Public/Cpp/DvService.cpp
+$(objdir)DvProvider.$(objext) : Public/Cpp/DvProvider.cpp $(headers)
+	$(compiler)DvProvider.$(objext) -c $(cflags) $(includes) Public/Cpp/DvProvider.cpp
 $(objdir)DeviceXml.$(objext) : ControlPoint/Upnp/DeviceXml.cpp $(headers)
 	$(compiler)DeviceXml.$(objext) -c $(cflags) $(includes) ControlPoint/Upnp/DeviceXml.cpp
 $(objdir)Error.$(objext) : Utils/Error.cpp $(headers)
@@ -497,7 +497,7 @@ $(objdir)Zapp.net.dll:
 		$(publiccsdir)CpDeviceUpnp.cs \
 		$(publiccsdir)CpProxy.cs \
 		$(publiccsdir)DvDevice.cs \
-		$(publiccsdir)DvServiceErrors.cs \
+		$(publiccsdir)DvProviderErrors.cs \
 		$(publiccsdir)Zapp.cs
 
 TestProxyCs: $(objdir)TestProxyCs.exe

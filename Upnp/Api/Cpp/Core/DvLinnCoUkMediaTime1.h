@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,19 +17,19 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:MediaTime:1
  */
-class DvServiceLinnCoUkMediaTime1 : public DvService
+class DvProviderLinnCoUkMediaTime1 : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkMediaTime1() {}
+    virtual ~DvProviderLinnCoUkMediaTime1() {}
     TBool SetPropertySeconds(TUint aValue);
     void GetPropertySeconds(TUint& aValue);
 protected:
-    DvServiceLinnCoUkMediaTime1(DvDevice& aDevice);
+    DvProviderLinnCoUkMediaTime1(DvDevice& aDevice);
     void EnableActionSeconds();
 private:
     virtual void Seconds(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaSeconds);
 private:
-    DvServiceLinnCoUkMediaTime1();
+    DvProviderLinnCoUkMediaTime1();
     void DoSeconds(IDvInvocation& aInvocation, TUint aVersion);
 private:
     PropertyUint* iPropertySeconds;

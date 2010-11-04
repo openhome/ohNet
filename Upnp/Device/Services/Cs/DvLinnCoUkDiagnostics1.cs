@@ -5,42 +5,42 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvServiceLinnCoUkDiagnostics1 : IDisposable
+    public class DvProviderLinnCoUkDiagnostics1 : IDisposable
     {
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern uint DvServiceLinnCoUkDiagnostics1Create(uint aDeviceHandle);
+        static extern uint DvProviderLinnCoUkDiagnostics1Create(uint aDeviceHandle);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1Destroy(uint aHandle);
+        static extern void DvProviderLinnCoUkDiagnostics1Destroy(uint aHandle);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern unsafe int DvServiceLinnCoUkDiagnostics1SetPropertyaStateVariable(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkDiagnostics1SetPropertyaStateVariable(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern unsafe void DvServiceLinnCoUkDiagnostics1GetPropertyaStateVariable(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkDiagnostics1GetPropertyaStateVariable(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionEcho(uint aHandle, CallbackEcho aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionEcho(uint aHandle, CallbackEcho aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionElfFile(uint aHandle, CallbackElfFile aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionElfFile(uint aHandle, CallbackElfFile aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionElfFingerprint(uint aHandle, CallbackElfFingerprint aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionElfFingerprint(uint aHandle, CallbackElfFingerprint aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionCrashDataStatus(uint aHandle, CallbackCrashDataStatus aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionCrashDataStatus(uint aHandle, CallbackCrashDataStatus aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionCrashDataFetch(uint aHandle, CallbackCrashDataFetch aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionCrashDataFetch(uint aHandle, CallbackCrashDataFetch aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionCrashDataClear(uint aHandle, CallbackCrashDataClear aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionCrashDataClear(uint aHandle, CallbackCrashDataClear aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionSysLog(uint aHandle, CallbackSysLog aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionSysLog(uint aHandle, CallbackSysLog aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionDiagnostic(uint aHandle, CallbackDiagnostic aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionDiagnostic(uint aHandle, CallbackDiagnostic aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionStateVariable(uint aHandle, CallbackStateVariable aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionStateVariable(uint aHandle, CallbackStateVariable aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionSetStateVariable(uint aHandle, CallbackSetStateVariable aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionSetStateVariable(uint aHandle, CallbackSetStateVariable aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionStateVariablePeriod(uint aHandle, CallbackStateVariablePeriod aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionStateVariablePeriod(uint aHandle, CallbackStateVariablePeriod aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionSetStateVariablePeriod(uint aHandle, CallbackSetStateVariablePeriod aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionSetStateVariablePeriod(uint aHandle, CallbackSetStateVariablePeriod aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvServiceLinnCoUkDiagnostics1EnableActionReboot(uint aHandle, CallbackReboot aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionReboot(uint aHandle, CallbackReboot aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -74,16 +74,16 @@ namespace Zapp
         private CallbackSetStateVariablePeriod iCallbackSetStateVariablePeriod;
         private CallbackReboot iCallbackReboot;
 
-        public DvServiceLinnCoUkDiagnostics1(DvDevice aDevice)
+        public DvProviderLinnCoUkDiagnostics1(DvDevice aDevice)
         {
-            iHandle = DvServiceLinnCoUkDiagnostics1Create(aDevice.Handle()); 
+            iHandle = DvProviderLinnCoUkDiagnostics1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
         public unsafe bool SetPropertyaStateVariable(uint aValue)
         {
         uint changed;
-            if (0 != DvServiceLinnCoUkDiagnostics1SetPropertyaStateVariable(iHandle, aValue, &changed))
+            if (0 != DvProviderLinnCoUkDiagnostics1SetPropertyaStateVariable(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -94,7 +94,7 @@ namespace Zapp
         {
             fixed (uint* value = &aValue)
 			{
-                DvServiceLinnCoUkDiagnostics1GetPropertyaStateVariable(iHandle, value);
+                DvProviderLinnCoUkDiagnostics1GetPropertyaStateVariable(iHandle, value);
             }
         }
 
@@ -102,91 +102,91 @@ namespace Zapp
         {
             iCallbackEcho = new CallbackEcho(DoEcho);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDiagnostics1EnableActionEcho(iHandle, iCallbackEcho, ptr);
+            DvProviderLinnCoUkDiagnostics1EnableActionEcho(iHandle, iCallbackEcho, ptr);
         }
 
         protected unsafe void EnableActionElfFile()
         {
             iCallbackElfFile = new CallbackElfFile(DoElfFile);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDiagnostics1EnableActionElfFile(iHandle, iCallbackElfFile, ptr);
+            DvProviderLinnCoUkDiagnostics1EnableActionElfFile(iHandle, iCallbackElfFile, ptr);
         }
 
         protected unsafe void EnableActionElfFingerprint()
         {
             iCallbackElfFingerprint = new CallbackElfFingerprint(DoElfFingerprint);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDiagnostics1EnableActionElfFingerprint(iHandle, iCallbackElfFingerprint, ptr);
+            DvProviderLinnCoUkDiagnostics1EnableActionElfFingerprint(iHandle, iCallbackElfFingerprint, ptr);
         }
 
         protected unsafe void EnableActionCrashDataStatus()
         {
             iCallbackCrashDataStatus = new CallbackCrashDataStatus(DoCrashDataStatus);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDiagnostics1EnableActionCrashDataStatus(iHandle, iCallbackCrashDataStatus, ptr);
+            DvProviderLinnCoUkDiagnostics1EnableActionCrashDataStatus(iHandle, iCallbackCrashDataStatus, ptr);
         }
 
         protected unsafe void EnableActionCrashDataFetch()
         {
             iCallbackCrashDataFetch = new CallbackCrashDataFetch(DoCrashDataFetch);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDiagnostics1EnableActionCrashDataFetch(iHandle, iCallbackCrashDataFetch, ptr);
+            DvProviderLinnCoUkDiagnostics1EnableActionCrashDataFetch(iHandle, iCallbackCrashDataFetch, ptr);
         }
 
         protected unsafe void EnableActionCrashDataClear()
         {
             iCallbackCrashDataClear = new CallbackCrashDataClear(DoCrashDataClear);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDiagnostics1EnableActionCrashDataClear(iHandle, iCallbackCrashDataClear, ptr);
+            DvProviderLinnCoUkDiagnostics1EnableActionCrashDataClear(iHandle, iCallbackCrashDataClear, ptr);
         }
 
         protected unsafe void EnableActionSysLog()
         {
             iCallbackSysLog = new CallbackSysLog(DoSysLog);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDiagnostics1EnableActionSysLog(iHandle, iCallbackSysLog, ptr);
+            DvProviderLinnCoUkDiagnostics1EnableActionSysLog(iHandle, iCallbackSysLog, ptr);
         }
 
         protected unsafe void EnableActionDiagnostic()
         {
             iCallbackDiagnostic = new CallbackDiagnostic(DoDiagnostic);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDiagnostics1EnableActionDiagnostic(iHandle, iCallbackDiagnostic, ptr);
+            DvProviderLinnCoUkDiagnostics1EnableActionDiagnostic(iHandle, iCallbackDiagnostic, ptr);
         }
 
         protected unsafe void EnableActionStateVariable()
         {
             iCallbackStateVariable = new CallbackStateVariable(DoStateVariable);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDiagnostics1EnableActionStateVariable(iHandle, iCallbackStateVariable, ptr);
+            DvProviderLinnCoUkDiagnostics1EnableActionStateVariable(iHandle, iCallbackStateVariable, ptr);
         }
 
         protected unsafe void EnableActionSetStateVariable()
         {
             iCallbackSetStateVariable = new CallbackSetStateVariable(DoSetStateVariable);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDiagnostics1EnableActionSetStateVariable(iHandle, iCallbackSetStateVariable, ptr);
+            DvProviderLinnCoUkDiagnostics1EnableActionSetStateVariable(iHandle, iCallbackSetStateVariable, ptr);
         }
 
         protected unsafe void EnableActionStateVariablePeriod()
         {
             iCallbackStateVariablePeriod = new CallbackStateVariablePeriod(DoStateVariablePeriod);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDiagnostics1EnableActionStateVariablePeriod(iHandle, iCallbackStateVariablePeriod, ptr);
+            DvProviderLinnCoUkDiagnostics1EnableActionStateVariablePeriod(iHandle, iCallbackStateVariablePeriod, ptr);
         }
 
         protected unsafe void EnableActionSetStateVariablePeriod()
         {
             iCallbackSetStateVariablePeriod = new CallbackSetStateVariablePeriod(DoSetStateVariablePeriod);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDiagnostics1EnableActionSetStateVariablePeriod(iHandle, iCallbackSetStateVariablePeriod, ptr);
+            DvProviderLinnCoUkDiagnostics1EnableActionSetStateVariablePeriod(iHandle, iCallbackSetStateVariablePeriod, ptr);
         }
 
         protected unsafe void EnableActionReboot()
         {
             iCallbackReboot = new CallbackReboot(DoReboot);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDiagnostics1EnableActionReboot(iHandle, iCallbackReboot, ptr);
+            DvProviderLinnCoUkDiagnostics1EnableActionReboot(iHandle, iCallbackReboot, ptr);
         }
 
         protected virtual void Echo(uint aVersion, string aaIn, out string aaOut)
@@ -257,7 +257,7 @@ namespace Zapp
         private static unsafe int DoEcho(IntPtr aPtr, uint aVersion, char* aaIn, char** aaOut)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDiagnostics1 self = (DvServiceLinnCoUkDiagnostics1)gch.Target;
+            DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             string aIn = Marshal.PtrToStringAnsi((IntPtr)aaIn);
             string aOut;
             self.Echo(aVersion, aIn, out aOut);
@@ -268,7 +268,7 @@ namespace Zapp
         private static unsafe int DoElfFile(IntPtr aPtr, uint aVersion, char** aaElfFile)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDiagnostics1 self = (DvServiceLinnCoUkDiagnostics1)gch.Target;
+            DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             string aElfFile;
             self.ElfFile(aVersion, out aElfFile);
             *aaElfFile = (char*)Marshal.StringToHGlobalAnsi(aElfFile).ToPointer();
@@ -278,7 +278,7 @@ namespace Zapp
         private static unsafe int DoElfFingerprint(IntPtr aPtr, uint aVersion, char** aaElfFileFingerprint)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDiagnostics1 self = (DvServiceLinnCoUkDiagnostics1)gch.Target;
+            DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             string aElfFileFingerprint;
             self.ElfFingerprint(aVersion, out aElfFileFingerprint);
             *aaElfFileFingerprint = (char*)Marshal.StringToHGlobalAnsi(aElfFileFingerprint).ToPointer();
@@ -288,7 +288,7 @@ namespace Zapp
         private static unsafe int DoCrashDataStatus(IntPtr aPtr, uint aVersion, char** aaCrashDataStatus)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDiagnostics1 self = (DvServiceLinnCoUkDiagnostics1)gch.Target;
+            DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             string aCrashDataStatus;
             self.CrashDataStatus(aVersion, out aCrashDataStatus);
             *aaCrashDataStatus = (char*)Marshal.StringToHGlobalAnsi(aCrashDataStatus).ToPointer();
@@ -298,7 +298,7 @@ namespace Zapp
         private static unsafe int DoCrashDataFetch(IntPtr aPtr, uint aVersion, char** aaCrashData, int* aaCrashDataLen)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDiagnostics1 self = (DvServiceLinnCoUkDiagnostics1)gch.Target;
+            DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             string aCrashData;
             self.CrashDataFetch(aVersion, out aCrashData);
             *aaCrashData = (char*)Marshal.StringToHGlobalAnsi(aCrashData).ToPointer();
@@ -309,7 +309,7 @@ namespace Zapp
         private static unsafe int DoCrashDataClear(IntPtr aPtr, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDiagnostics1 self = (DvServiceLinnCoUkDiagnostics1)gch.Target;
+            DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             self.CrashDataClear(aVersion);
             return 0;
         }
@@ -317,7 +317,7 @@ namespace Zapp
         private static unsafe int DoSysLog(IntPtr aPtr, uint aVersion, char** aaSysLog, int* aaSysLogLen)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDiagnostics1 self = (DvServiceLinnCoUkDiagnostics1)gch.Target;
+            DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             string aSysLog;
             self.SysLog(aVersion, out aSysLog);
             *aaSysLog = (char*)Marshal.StringToHGlobalAnsi(aSysLog).ToPointer();
@@ -328,7 +328,7 @@ namespace Zapp
         private static unsafe int DoDiagnostic(IntPtr aPtr, uint aVersion, char* aaDiagnosticType, char** aaDiagnosticInfo)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDiagnostics1 self = (DvServiceLinnCoUkDiagnostics1)gch.Target;
+            DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             string aDiagnosticType = Marshal.PtrToStringAnsi((IntPtr)aaDiagnosticType);
             string aDiagnosticInfo;
             self.Diagnostic(aVersion, aDiagnosticType, out aDiagnosticInfo);
@@ -339,7 +339,7 @@ namespace Zapp
         private static unsafe int DoStateVariable(IntPtr aPtr, uint aVersion, uint* aaStateVariable)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDiagnostics1 self = (DvServiceLinnCoUkDiagnostics1)gch.Target;
+            DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             uint aStateVariable;
             self.StateVariable(aVersion, out aStateVariable);
             *aaStateVariable = aStateVariable;
@@ -349,7 +349,7 @@ namespace Zapp
         private static unsafe int DoSetStateVariable(IntPtr aPtr, uint aVersion, uint aaStateVariable)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDiagnostics1 self = (DvServiceLinnCoUkDiagnostics1)gch.Target;
+            DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             self.SetStateVariable(aVersion, aaStateVariable);
             return 0;
         }
@@ -357,7 +357,7 @@ namespace Zapp
         private static unsafe int DoStateVariablePeriod(IntPtr aPtr, uint aVersion, uint* aaPeriod)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDiagnostics1 self = (DvServiceLinnCoUkDiagnostics1)gch.Target;
+            DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             uint aPeriod;
             self.StateVariablePeriod(aVersion, out aPeriod);
             *aaPeriod = aPeriod;
@@ -367,7 +367,7 @@ namespace Zapp
         private static unsafe int DoSetStateVariablePeriod(IntPtr aPtr, uint aVersion, uint aaPeriod)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDiagnostics1 self = (DvServiceLinnCoUkDiagnostics1)gch.Target;
+            DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             self.SetStateVariablePeriod(aVersion, aaPeriod);
             return 0;
         }
@@ -375,7 +375,7 @@ namespace Zapp
         private static unsafe int DoReboot(IntPtr aPtr, uint aVersion, uint aaDelay)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDiagnostics1 self = (DvServiceLinnCoUkDiagnostics1)gch.Target;
+            DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             self.Reboot(aVersion, aaDelay);
             return 0;
         }
@@ -387,7 +387,7 @@ namespace Zapp
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceLinnCoUkDiagnostics1()
+        ~DvProviderLinnCoUkDiagnostics1()
         {
             DoDispose();
         }
@@ -404,7 +404,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = 0;
             }
-            DvServiceLinnCoUkDiagnostics1Destroy(handle);
+            DvProviderLinnCoUkDiagnostics1Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,10 +17,10 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Ui:2
  */
-class DvServiceLinnCoUkUi2 : public DvService
+class DvProviderLinnCoUkUi2 : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkUi2() {}
+    virtual ~DvProviderLinnCoUkUi2() {}
     TBool SetPropertyDisplayBrightness(TUint aValue);
     void GetPropertyDisplayBrightness(TUint& aValue);
     TBool SetPropertyDisplayBrightnessAuto(TBool aValue);
@@ -44,7 +44,7 @@ public:
     TBool SetPropertyDisplayPixels(const Brx& aValue);
     void GetPropertyDisplayPixels(Brh& aValue);
 protected:
-    DvServiceLinnCoUkUi2(DvDevice& aDevice);
+    DvProviderLinnCoUkUi2(DvDevice& aDevice);
     void EnableActionDisplayTestPattern();
     void EnableActionDisplayFill();
     void EnableActionDisplayClear();
@@ -95,7 +95,7 @@ private:
     virtual void SetDisplayLedOff(IInvocationResponse& aResponse, TUint aVersion, TBool aaOff);
     virtual void DisplayLedOff(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaOff);
 private:
-    DvServiceLinnCoUkUi2();
+    DvProviderLinnCoUkUi2();
     void DoDisplayTestPattern(IDvInvocation& aInvocation, TUint aVersion);
     void DoDisplayFill(IDvInvocation& aInvocation, TUint aVersion);
     void DoDisplayClear(IDvInvocation& aInvocation, TUint aVersion);

@@ -65,10 +65,10 @@ include UserTargets.mak
 # Following macros must be provided by each file which wraps Common.mak
 
 TestDvDeviceCs: ZappUpnpDll CpZappOrgTestBasic1Dll DvZappOrgTestBasic1Dll
-	$(csharp) /d:DEBUG /debug /unsafe /platform:x86 /t:exe -out:$(objdir)TestDvDeviceCs.exe Public\\Cs\\CpDevice.cs Public\\Cs\\CpDeviceUpnp.cs Public\\Cs\\CpProxy.cs Public\\Cs\\Zapp.cs Public\\Cs\\AssemblyInfo.cs ControlPoint\\Services\\Cs\\CpZappOrgTestBasic1.cs  Public\\Cs\\DvDevice.cs Public\\Cs\\DvServiceErrors.cs Device\\Services\\Cs\\DvZappOrgTestBasic1.cs  Public\\Cs\\TestDvDevice.cs
+	$(csharp) /d:DEBUG /debug /unsafe /platform:x86 /t:exe -out:$(objdir)TestDvDeviceCs.exe Public\\Cs\\CpDevice.cs Public\\Cs\\CpDeviceUpnp.cs Public\\Cs\\CpProxy.cs Public\\Cs\\Zapp.cs Public\\Cs\\AssemblyInfo.cs ControlPoint\\Services\\Cs\\CpZappOrgTestBasic1.cs  Public\\Cs\\DvDevice.cs Public\\Cs\\DvProviderErrors.cs Device\\Services\\Cs\\DvZappOrgTestBasic1.cs  Public\\Cs\\TestDvDevice.cs
 
 TestDvLightsCs: ZappUpnpDll CpZappOrgTestLights1Dll DvZappOrgTestLights1Dll
-	$(csharp) /d:DEBUG /debug /unsafe /platform:x86 /t:exe -out:$(objdir)TestDvLightsCs.exe Public\\Cs\\CpDevice.cs Public\\Cs\\CpDeviceUpnp.cs Public\\Cs\\CpProxy.cs Public\\Cs\\Zapp.cs Public\\Cs\\AssemblyInfo.cs ControlPoint\\Services\\Cs\\CpZappOrgTestLights1.cs  Public\\Cs\\DvDevice.cs Public\\Cs\\DvServiceErrors.cs Device\\Services\\Cs\\DvZappOrgTestLights1.cs  Public\\Cs\\TestDvLights.cs
+	$(csharp) /d:DEBUG /debug /unsafe /platform:x86 /t:exe -out:$(objdir)TestDvLightsCs.exe Public\\Cs\\CpDevice.cs Public\\Cs\\CpDeviceUpnp.cs Public\\Cs\\CpProxy.cs Public\\Cs\\Zapp.cs Public\\Cs\\AssemblyInfo.cs ControlPoint\\Services\\Cs\\CpZappOrgTestLights1.cs  Public\\Cs\\DvDevice.cs Public\\Cs\\DvProviderErrors.cs Device\\Services\\Cs\\DvZappOrgTestLights1.cs  Public\\Cs\\TestDvLights.cs
 
 make_obj_dir:
 	if not exist $(objdirbare) mkdir $(objdirbare)

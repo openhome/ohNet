@@ -35,7 +35,7 @@
     }
     fileName += type;
     fileName += version;
-    string className = "DvService" + fileName + "Cpp";
+    string className = "DvProvider" + fileName + "Cpp";
 
     Initialise();
 
@@ -79,7 +79,7 @@ void <#=className#>::GetProperty<#=s.name#>(<#=outArgType[s.type]#> aValue)
 <#  } #>
 
 <#=className#>::<#=className#>(DvDeviceStd& aDevice)
-    : DvService(aDevice.Device(), "<#=domain#>", "<#=type#>", <#=version#>)
+    : DvProvider(aDevice.Device(), "<#=domain#>", "<#=type#>", <#=version#>)
 {
     Functor empty;<#=DeclareAllowedValuesForProperties(u)#>
 <#  foreach (Variable s in u.evented) #>

@@ -42,7 +42,7 @@
     }
     fileName += type;
     fileName += version;
-    string className = "DvService" + fileName;
+    string className = "DvProvider" + fileName;
     string dllName = "Dv" + fileName;
 
     Initialise();

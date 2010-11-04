@@ -6,20 +6,20 @@
 
 using namespace Zapp;
 
-DvServiceLinnCoUkVolkano1::DvServiceLinnCoUkVolkano1(DvDevice& aDevice)
-    : DvService(aDevice.Device(), "linn.co.uk", "Volkano", 1)
+DvProviderLinnCoUkVolkano1::DvProviderLinnCoUkVolkano1(DvDevice& aDevice)
+    : DvProvider(aDevice.Device(), "linn.co.uk", "Volkano", 1)
 {
     Functor empty;
 }
 
-void DvServiceLinnCoUkVolkano1::EnableActionReboot()
+void DvProviderLinnCoUkVolkano1::EnableActionReboot()
 {
     Zapp::Action* action = new Zapp::Action("Reboot");
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkVolkano1::DoReboot);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1::DoReboot);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkVolkano1::EnableActionBootMode()
+void DvProviderLinnCoUkVolkano1::EnableActionBootMode()
 {
     Zapp::Action* action = new Zapp::Action("BootMode");
     TChar** allowedValues;
@@ -31,11 +31,11 @@ void DvServiceLinnCoUkVolkano1::EnableActionBootMode()
     allowedValues[index++] = (TChar*)"Ram";
     action->AddOutputParameter(new ParameterString("aMode", allowedValues, 3));
     delete[] allowedValues;
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkVolkano1::DoBootMode);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1::DoBootMode);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkVolkano1::EnableActionSetBootMode()
+void DvProviderLinnCoUkVolkano1::EnableActionSetBootMode()
 {
     Zapp::Action* action = new Zapp::Action("SetBootMode");
     TChar** allowedValues;
@@ -46,77 +46,77 @@ void DvServiceLinnCoUkVolkano1::EnableActionSetBootMode()
     allowedValues[index++] = (TChar*)"Fallback";
     action->AddInputParameter(new ParameterString("aMode", allowedValues, 2));
     delete[] allowedValues;
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkVolkano1::DoSetBootMode);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1::DoSetBootMode);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkVolkano1::EnableActionBspType()
+void DvProviderLinnCoUkVolkano1::EnableActionBspType()
 {
     Zapp::Action* action = new Zapp::Action("BspType");
     action->AddOutputParameter(new ParameterString("aBspType"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkVolkano1::DoBspType);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1::DoBspType);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkVolkano1::EnableActionUglyName()
+void DvProviderLinnCoUkVolkano1::EnableActionUglyName()
 {
     Zapp::Action* action = new Zapp::Action("UglyName");
     action->AddOutputParameter(new ParameterString("aUglyName"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkVolkano1::DoUglyName);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1::DoUglyName);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkVolkano1::EnableActionMacAddress()
+void DvProviderLinnCoUkVolkano1::EnableActionMacAddress()
 {
     Zapp::Action* action = new Zapp::Action("MacAddress");
     action->AddOutputParameter(new ParameterString("aMacAddress"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkVolkano1::DoMacAddress);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1::DoMacAddress);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkVolkano1::EnableActionProductId()
+void DvProviderLinnCoUkVolkano1::EnableActionProductId()
 {
     Zapp::Action* action = new Zapp::Action("ProductId");
     action->AddOutputParameter(new ParameterString("aProductNumber"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkVolkano1::DoProductId);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1::DoProductId);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkVolkano1::EnableActionBoardId()
+void DvProviderLinnCoUkVolkano1::EnableActionBoardId()
 {
     Zapp::Action* action = new Zapp::Action("BoardId");
     action->AddInputParameter(new ParameterUint("aIndex"));
     action->AddOutputParameter(new ParameterString("aBoardNumber"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkVolkano1::DoBoardId);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1::DoBoardId);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkVolkano1::EnableActionBoardType()
+void DvProviderLinnCoUkVolkano1::EnableActionBoardType()
 {
     Zapp::Action* action = new Zapp::Action("BoardType");
     action->AddInputParameter(new ParameterUint("aIndex"));
     action->AddOutputParameter(new ParameterString("aBoardNumber"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkVolkano1::DoBoardType);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1::DoBoardType);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkVolkano1::EnableActionMaxBoards()
+void DvProviderLinnCoUkVolkano1::EnableActionMaxBoards()
 {
     Zapp::Action* action = new Zapp::Action("MaxBoards");
     action->AddOutputParameter(new ParameterUint("aMaxBoards"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkVolkano1::DoMaxBoards);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1::DoMaxBoards);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkVolkano1::EnableActionSoftwareVersion()
+void DvProviderLinnCoUkVolkano1::EnableActionSoftwareVersion()
 {
     Zapp::Action* action = new Zapp::Action("SoftwareVersion");
     action->AddOutputParameter(new ParameterString("aSoftwareVersion"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkVolkano1::DoSoftwareVersion);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1::DoSoftwareVersion);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkVolkano1::DoReboot(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1::DoReboot(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -124,7 +124,7 @@ void DvServiceLinnCoUkVolkano1::DoReboot(IDvInvocation& aInvocation, TUint aVers
     Reboot(resp, aVersion);
 }
 
-void DvServiceLinnCoUkVolkano1::DoBootMode(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1::DoBootMode(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -133,7 +133,7 @@ void DvServiceLinnCoUkVolkano1::DoBootMode(IDvInvocation& aInvocation, TUint aVe
     BootMode(resp, aVersion, respaMode);
 }
 
-void DvServiceLinnCoUkVolkano1::DoSetBootMode(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1::DoSetBootMode(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz aMode;
@@ -143,7 +143,7 @@ void DvServiceLinnCoUkVolkano1::DoSetBootMode(IDvInvocation& aInvocation, TUint 
     SetBootMode(resp, aVersion, aMode);
 }
 
-void DvServiceLinnCoUkVolkano1::DoBspType(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1::DoBspType(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -152,7 +152,7 @@ void DvServiceLinnCoUkVolkano1::DoBspType(IDvInvocation& aInvocation, TUint aVer
     BspType(resp, aVersion, respaBspType);
 }
 
-void DvServiceLinnCoUkVolkano1::DoUglyName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1::DoUglyName(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -161,7 +161,7 @@ void DvServiceLinnCoUkVolkano1::DoUglyName(IDvInvocation& aInvocation, TUint aVe
     UglyName(resp, aVersion, respaUglyName);
 }
 
-void DvServiceLinnCoUkVolkano1::DoMacAddress(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1::DoMacAddress(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -170,7 +170,7 @@ void DvServiceLinnCoUkVolkano1::DoMacAddress(IDvInvocation& aInvocation, TUint a
     MacAddress(resp, aVersion, respaMacAddress);
 }
 
-void DvServiceLinnCoUkVolkano1::DoProductId(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1::DoProductId(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -179,7 +179,7 @@ void DvServiceLinnCoUkVolkano1::DoProductId(IDvInvocation& aInvocation, TUint aV
     ProductId(resp, aVersion, respaProductNumber);
 }
 
-void DvServiceLinnCoUkVolkano1::DoBoardId(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1::DoBoardId(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aIndex = aInvocation.InvocationReadUint("aIndex");
@@ -189,7 +189,7 @@ void DvServiceLinnCoUkVolkano1::DoBoardId(IDvInvocation& aInvocation, TUint aVer
     BoardId(resp, aVersion, aIndex, respaBoardNumber);
 }
 
-void DvServiceLinnCoUkVolkano1::DoBoardType(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1::DoBoardType(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aIndex = aInvocation.InvocationReadUint("aIndex");
@@ -199,7 +199,7 @@ void DvServiceLinnCoUkVolkano1::DoBoardType(IDvInvocation& aInvocation, TUint aV
     BoardType(resp, aVersion, aIndex, respaBoardNumber);
 }
 
-void DvServiceLinnCoUkVolkano1::DoMaxBoards(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1::DoMaxBoards(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -208,7 +208,7 @@ void DvServiceLinnCoUkVolkano1::DoMaxBoards(IDvInvocation& aInvocation, TUint aV
     MaxBoards(resp, aVersion, respaMaxBoards);
 }
 
-void DvServiceLinnCoUkVolkano1::DoSoftwareVersion(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1::DoSoftwareVersion(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -217,57 +217,57 @@ void DvServiceLinnCoUkVolkano1::DoSoftwareVersion(IDvInvocation& aInvocation, TU
     SoftwareVersion(resp, aVersion, respaSoftwareVersion);
 }
 
-void DvServiceLinnCoUkVolkano1::Reboot(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/)
+void DvProviderLinnCoUkVolkano1::Reboot(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkVolkano1::BootMode(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaMode*/)
+void DvProviderLinnCoUkVolkano1::BootMode(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaMode*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkVolkano1::SetBootMode(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aaMode*/)
+void DvProviderLinnCoUkVolkano1::SetBootMode(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aaMode*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkVolkano1::BspType(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaBspType*/)
+void DvProviderLinnCoUkVolkano1::BspType(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaBspType*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkVolkano1::UglyName(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaUglyName*/)
+void DvProviderLinnCoUkVolkano1::UglyName(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaUglyName*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkVolkano1::MacAddress(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaMacAddress*/)
+void DvProviderLinnCoUkVolkano1::MacAddress(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaMacAddress*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkVolkano1::ProductId(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaProductNumber*/)
+void DvProviderLinnCoUkVolkano1::ProductId(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaProductNumber*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkVolkano1::BoardId(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaIndex*/, IInvocationResponseString& /*aaBoardNumber*/)
+void DvProviderLinnCoUkVolkano1::BoardId(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaIndex*/, IInvocationResponseString& /*aaBoardNumber*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkVolkano1::BoardType(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaIndex*/, IInvocationResponseString& /*aaBoardNumber*/)
+void DvProviderLinnCoUkVolkano1::BoardType(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaIndex*/, IInvocationResponseString& /*aaBoardNumber*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkVolkano1::MaxBoards(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aaMaxBoards*/)
+void DvProviderLinnCoUkVolkano1::MaxBoards(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aaMaxBoards*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkVolkano1::SoftwareVersion(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaSoftwareVersion*/)
+void DvProviderLinnCoUkVolkano1::SoftwareVersion(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaSoftwareVersion*/)
 {
     ASSERTS();
 }

@@ -5,50 +5,50 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvServiceLinnCoUkComponent1 : IDisposable
+    public class DvProviderLinnCoUkComponent1 : IDisposable
     {
         [DllImport("DvLinnCoUkComponent1")]
-        static extern uint DvServiceLinnCoUkComponent1Create(uint aDeviceHandle);
+        static extern uint DvProviderLinnCoUkComponent1Create(uint aDeviceHandle);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvServiceLinnCoUkComponent1Destroy(uint aHandle);
+        static extern void DvProviderLinnCoUkComponent1Destroy(uint aHandle);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern unsafe int DvServiceLinnCoUkComponent1SetPropertyAmplifierEnabled(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkComponent1SetPropertyAmplifierEnabled(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern unsafe void DvServiceLinnCoUkComponent1GetPropertyAmplifierEnabled(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkComponent1GetPropertyAmplifierEnabled(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern unsafe int DvServiceLinnCoUkComponent1SetPropertyAmplifierAttenuation(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkComponent1SetPropertyAmplifierAttenuation(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern unsafe void DvServiceLinnCoUkComponent1GetPropertyAmplifierAttenuation(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkComponent1GetPropertyAmplifierAttenuation(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern unsafe int DvServiceLinnCoUkComponent1SetPropertyVolumeControlEnabled(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkComponent1SetPropertyVolumeControlEnabled(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern unsafe void DvServiceLinnCoUkComponent1GetPropertyVolumeControlEnabled(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkComponent1GetPropertyVolumeControlEnabled(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern unsafe int DvServiceLinnCoUkComponent1SetPropertyDigitalAudioOutputRaw(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkComponent1SetPropertyDigitalAudioOutputRaw(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern unsafe void DvServiceLinnCoUkComponent1GetPropertyDigitalAudioOutputRaw(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkComponent1GetPropertyDigitalAudioOutputRaw(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvServiceLinnCoUkComponent1EnableActionAmplifierEnabled(uint aHandle, CallbackAmplifierEnabled aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionAmplifierEnabled(uint aHandle, CallbackAmplifierEnabled aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvServiceLinnCoUkComponent1EnableActionSetAmplifierEnabled(uint aHandle, CallbackSetAmplifierEnabled aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionSetAmplifierEnabled(uint aHandle, CallbackSetAmplifierEnabled aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvServiceLinnCoUkComponent1EnableActionAmplifierAttenuation(uint aHandle, CallbackAmplifierAttenuation aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionAmplifierAttenuation(uint aHandle, CallbackAmplifierAttenuation aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvServiceLinnCoUkComponent1EnableActionSetAmplifierAttenuation(uint aHandle, CallbackSetAmplifierAttenuation aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionSetAmplifierAttenuation(uint aHandle, CallbackSetAmplifierAttenuation aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvServiceLinnCoUkComponent1EnableActionSetVolumeControlEnabled(uint aHandle, CallbackSetVolumeControlEnabled aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionSetVolumeControlEnabled(uint aHandle, CallbackSetVolumeControlEnabled aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvServiceLinnCoUkComponent1EnableActionVolumeControlEnabled(uint aHandle, CallbackVolumeControlEnabled aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionVolumeControlEnabled(uint aHandle, CallbackVolumeControlEnabled aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvServiceLinnCoUkComponent1EnableActionSetDigitalAudioOutputRaw(uint aHandle, CallbackSetDigitalAudioOutputRaw aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionSetDigitalAudioOutputRaw(uint aHandle, CallbackSetDigitalAudioOutputRaw aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvServiceLinnCoUkComponent1EnableActionDigitalAudioOutputRaw(uint aHandle, CallbackDigitalAudioOutputRaw aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionDigitalAudioOutputRaw(uint aHandle, CallbackDigitalAudioOutputRaw aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvServiceLinnCoUkComponent1EnableActionAmplifierOverTemperature(uint aHandle, CallbackAmplifierOverTemperature aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionAmplifierOverTemperature(uint aHandle, CallbackAmplifierOverTemperature aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvServiceLinnCoUkComponent1EnableActionEthernetLinkConnected(uint aHandle, CallbackEthernetLinkConnected aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionEthernetLinkConnected(uint aHandle, CallbackEthernetLinkConnected aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvServiceLinnCoUkComponent1EnableActionLocate(uint aHandle, CallbackLocate aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionLocate(uint aHandle, CallbackLocate aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -78,9 +78,9 @@ namespace Zapp
         private CallbackEthernetLinkConnected iCallbackEthernetLinkConnected;
         private CallbackLocate iCallbackLocate;
 
-        public DvServiceLinnCoUkComponent1(DvDevice aDevice)
+        public DvProviderLinnCoUkComponent1(DvDevice aDevice)
         {
-            iHandle = DvServiceLinnCoUkComponent1Create(aDevice.Handle()); 
+            iHandle = DvProviderLinnCoUkComponent1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
@@ -88,7 +88,7 @@ namespace Zapp
         {
         uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkComponent1SetPropertyAmplifierEnabled(iHandle, value, &changed))
+            if (0 != DvProviderLinnCoUkComponent1SetPropertyAmplifierEnabled(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -98,7 +98,7 @@ namespace Zapp
         public unsafe void GetPropertyAmplifierEnabled(out bool aValue)
         {
             int value;
-            DvServiceLinnCoUkComponent1GetPropertyAmplifierEnabled(iHandle, &value);
+            DvProviderLinnCoUkComponent1GetPropertyAmplifierEnabled(iHandle, &value);
             aValue = (value != 0);
         }
 
@@ -106,7 +106,7 @@ namespace Zapp
         {
         uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkComponent1SetPropertyAmplifierAttenuation(iHandle, value, &changed);
+            int err = DvProviderLinnCoUkComponent1SetPropertyAmplifierAttenuation(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
@@ -118,7 +118,7 @@ namespace Zapp
         public unsafe void GetPropertyAmplifierAttenuation(out string aValue)
         {
             char* value;
-            DvServiceLinnCoUkComponent1GetPropertyAmplifierAttenuation(iHandle, &value);
+            DvProviderLinnCoUkComponent1GetPropertyAmplifierAttenuation(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
@@ -127,7 +127,7 @@ namespace Zapp
         {
         uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkComponent1SetPropertyVolumeControlEnabled(iHandle, value, &changed))
+            if (0 != DvProviderLinnCoUkComponent1SetPropertyVolumeControlEnabled(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -137,7 +137,7 @@ namespace Zapp
         public unsafe void GetPropertyVolumeControlEnabled(out bool aValue)
         {
             int value;
-            DvServiceLinnCoUkComponent1GetPropertyVolumeControlEnabled(iHandle, &value);
+            DvProviderLinnCoUkComponent1GetPropertyVolumeControlEnabled(iHandle, &value);
             aValue = (value != 0);
         }
 
@@ -145,7 +145,7 @@ namespace Zapp
         {
         uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkComponent1SetPropertyDigitalAudioOutputRaw(iHandle, value, &changed))
+            if (0 != DvProviderLinnCoUkComponent1SetPropertyDigitalAudioOutputRaw(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -155,7 +155,7 @@ namespace Zapp
         public unsafe void GetPropertyDigitalAudioOutputRaw(out bool aValue)
         {
             int value;
-            DvServiceLinnCoUkComponent1GetPropertyDigitalAudioOutputRaw(iHandle, &value);
+            DvProviderLinnCoUkComponent1GetPropertyDigitalAudioOutputRaw(iHandle, &value);
             aValue = (value != 0);
         }
 
@@ -163,77 +163,77 @@ namespace Zapp
         {
             iCallbackAmplifierEnabled = new CallbackAmplifierEnabled(DoAmplifierEnabled);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkComponent1EnableActionAmplifierEnabled(iHandle, iCallbackAmplifierEnabled, ptr);
+            DvProviderLinnCoUkComponent1EnableActionAmplifierEnabled(iHandle, iCallbackAmplifierEnabled, ptr);
         }
 
         protected unsafe void EnableActionSetAmplifierEnabled()
         {
             iCallbackSetAmplifierEnabled = new CallbackSetAmplifierEnabled(DoSetAmplifierEnabled);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkComponent1EnableActionSetAmplifierEnabled(iHandle, iCallbackSetAmplifierEnabled, ptr);
+            DvProviderLinnCoUkComponent1EnableActionSetAmplifierEnabled(iHandle, iCallbackSetAmplifierEnabled, ptr);
         }
 
         protected unsafe void EnableActionAmplifierAttenuation()
         {
             iCallbackAmplifierAttenuation = new CallbackAmplifierAttenuation(DoAmplifierAttenuation);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkComponent1EnableActionAmplifierAttenuation(iHandle, iCallbackAmplifierAttenuation, ptr);
+            DvProviderLinnCoUkComponent1EnableActionAmplifierAttenuation(iHandle, iCallbackAmplifierAttenuation, ptr);
         }
 
         protected unsafe void EnableActionSetAmplifierAttenuation()
         {
             iCallbackSetAmplifierAttenuation = new CallbackSetAmplifierAttenuation(DoSetAmplifierAttenuation);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkComponent1EnableActionSetAmplifierAttenuation(iHandle, iCallbackSetAmplifierAttenuation, ptr);
+            DvProviderLinnCoUkComponent1EnableActionSetAmplifierAttenuation(iHandle, iCallbackSetAmplifierAttenuation, ptr);
         }
 
         protected unsafe void EnableActionSetVolumeControlEnabled()
         {
             iCallbackSetVolumeControlEnabled = new CallbackSetVolumeControlEnabled(DoSetVolumeControlEnabled);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkComponent1EnableActionSetVolumeControlEnabled(iHandle, iCallbackSetVolumeControlEnabled, ptr);
+            DvProviderLinnCoUkComponent1EnableActionSetVolumeControlEnabled(iHandle, iCallbackSetVolumeControlEnabled, ptr);
         }
 
         protected unsafe void EnableActionVolumeControlEnabled()
         {
             iCallbackVolumeControlEnabled = new CallbackVolumeControlEnabled(DoVolumeControlEnabled);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkComponent1EnableActionVolumeControlEnabled(iHandle, iCallbackVolumeControlEnabled, ptr);
+            DvProviderLinnCoUkComponent1EnableActionVolumeControlEnabled(iHandle, iCallbackVolumeControlEnabled, ptr);
         }
 
         protected unsafe void EnableActionSetDigitalAudioOutputRaw()
         {
             iCallbackSetDigitalAudioOutputRaw = new CallbackSetDigitalAudioOutputRaw(DoSetDigitalAudioOutputRaw);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkComponent1EnableActionSetDigitalAudioOutputRaw(iHandle, iCallbackSetDigitalAudioOutputRaw, ptr);
+            DvProviderLinnCoUkComponent1EnableActionSetDigitalAudioOutputRaw(iHandle, iCallbackSetDigitalAudioOutputRaw, ptr);
         }
 
         protected unsafe void EnableActionDigitalAudioOutputRaw()
         {
             iCallbackDigitalAudioOutputRaw = new CallbackDigitalAudioOutputRaw(DoDigitalAudioOutputRaw);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkComponent1EnableActionDigitalAudioOutputRaw(iHandle, iCallbackDigitalAudioOutputRaw, ptr);
+            DvProviderLinnCoUkComponent1EnableActionDigitalAudioOutputRaw(iHandle, iCallbackDigitalAudioOutputRaw, ptr);
         }
 
         protected unsafe void EnableActionAmplifierOverTemperature()
         {
             iCallbackAmplifierOverTemperature = new CallbackAmplifierOverTemperature(DoAmplifierOverTemperature);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkComponent1EnableActionAmplifierOverTemperature(iHandle, iCallbackAmplifierOverTemperature, ptr);
+            DvProviderLinnCoUkComponent1EnableActionAmplifierOverTemperature(iHandle, iCallbackAmplifierOverTemperature, ptr);
         }
 
         protected unsafe void EnableActionEthernetLinkConnected()
         {
             iCallbackEthernetLinkConnected = new CallbackEthernetLinkConnected(DoEthernetLinkConnected);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkComponent1EnableActionEthernetLinkConnected(iHandle, iCallbackEthernetLinkConnected, ptr);
+            DvProviderLinnCoUkComponent1EnableActionEthernetLinkConnected(iHandle, iCallbackEthernetLinkConnected, ptr);
         }
 
         protected unsafe void EnableActionLocate()
         {
             iCallbackLocate = new CallbackLocate(DoLocate);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkComponent1EnableActionLocate(iHandle, iCallbackLocate, ptr);
+            DvProviderLinnCoUkComponent1EnableActionLocate(iHandle, iCallbackLocate, ptr);
         }
 
         protected virtual void AmplifierEnabled(uint aVersion, out bool aaEnabled)
@@ -294,7 +294,7 @@ namespace Zapp
         private static unsafe int DoAmplifierEnabled(IntPtr aPtr, uint aVersion, int* aaEnabled)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkComponent1 self = (DvServiceLinnCoUkComponent1)gch.Target;
+            DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             bool aEnabled;
             self.AmplifierEnabled(aVersion, out aEnabled);
             *aaEnabled = (aEnabled ? 1 : 0);
@@ -304,7 +304,7 @@ namespace Zapp
         private static unsafe int DoSetAmplifierEnabled(IntPtr aPtr, uint aVersion, int aaEnabled)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkComponent1 self = (DvServiceLinnCoUkComponent1)gch.Target;
+            DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             bool aEnabled = (aaEnabled != 0);
             self.SetAmplifierEnabled(aVersion, aEnabled);
             return 0;
@@ -313,7 +313,7 @@ namespace Zapp
         private static unsafe int DoAmplifierAttenuation(IntPtr aPtr, uint aVersion, char** aaAttenuation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkComponent1 self = (DvServiceLinnCoUkComponent1)gch.Target;
+            DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             string aAttenuation;
             self.AmplifierAttenuation(aVersion, out aAttenuation);
             *aaAttenuation = (char*)Marshal.StringToHGlobalAnsi(aAttenuation).ToPointer();
@@ -323,7 +323,7 @@ namespace Zapp
         private static unsafe int DoSetAmplifierAttenuation(IntPtr aPtr, uint aVersion, char* aaAttenuation)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkComponent1 self = (DvServiceLinnCoUkComponent1)gch.Target;
+            DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             string aAttenuation = Marshal.PtrToStringAnsi((IntPtr)aaAttenuation);
             self.SetAmplifierAttenuation(aVersion, aAttenuation);
             return 0;
@@ -332,7 +332,7 @@ namespace Zapp
         private static unsafe int DoSetVolumeControlEnabled(IntPtr aPtr, uint aVersion, int aaEnabled)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkComponent1 self = (DvServiceLinnCoUkComponent1)gch.Target;
+            DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             bool aEnabled = (aaEnabled != 0);
             self.SetVolumeControlEnabled(aVersion, aEnabled);
             return 0;
@@ -341,7 +341,7 @@ namespace Zapp
         private static unsafe int DoVolumeControlEnabled(IntPtr aPtr, uint aVersion, int* aaEnabled)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkComponent1 self = (DvServiceLinnCoUkComponent1)gch.Target;
+            DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             bool aEnabled;
             self.VolumeControlEnabled(aVersion, out aEnabled);
             *aaEnabled = (aEnabled ? 1 : 0);
@@ -351,7 +351,7 @@ namespace Zapp
         private static unsafe int DoSetDigitalAudioOutputRaw(IntPtr aPtr, uint aVersion, int aaRaw)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkComponent1 self = (DvServiceLinnCoUkComponent1)gch.Target;
+            DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             bool aRaw = (aaRaw != 0);
             self.SetDigitalAudioOutputRaw(aVersion, aRaw);
             return 0;
@@ -360,7 +360,7 @@ namespace Zapp
         private static unsafe int DoDigitalAudioOutputRaw(IntPtr aPtr, uint aVersion, int* aaRaw)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkComponent1 self = (DvServiceLinnCoUkComponent1)gch.Target;
+            DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             bool aRaw;
             self.DigitalAudioOutputRaw(aVersion, out aRaw);
             *aaRaw = (aRaw ? 1 : 0);
@@ -370,7 +370,7 @@ namespace Zapp
         private static unsafe int DoAmplifierOverTemperature(IntPtr aPtr, uint aVersion, int* aaOverTemperature)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkComponent1 self = (DvServiceLinnCoUkComponent1)gch.Target;
+            DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             bool aOverTemperature;
             self.AmplifierOverTemperature(aVersion, out aOverTemperature);
             *aaOverTemperature = (aOverTemperature ? 1 : 0);
@@ -380,7 +380,7 @@ namespace Zapp
         private static unsafe int DoEthernetLinkConnected(IntPtr aPtr, uint aVersion, int* aaLinkConnected)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkComponent1 self = (DvServiceLinnCoUkComponent1)gch.Target;
+            DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             bool aLinkConnected;
             self.EthernetLinkConnected(aVersion, out aLinkConnected);
             *aaLinkConnected = (aLinkConnected ? 1 : 0);
@@ -390,7 +390,7 @@ namespace Zapp
         private static unsafe int DoLocate(IntPtr aPtr, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkComponent1 self = (DvServiceLinnCoUkComponent1)gch.Target;
+            DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             self.Locate(aVersion);
             return 0;
         }
@@ -402,7 +402,7 @@ namespace Zapp
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceLinnCoUkComponent1()
+        ~DvProviderLinnCoUkComponent1()
         {
             DoDispose();
         }
@@ -419,7 +419,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = 0;
             }
-            DvServiceLinnCoUkComponent1Destroy(handle);
+            DvProviderLinnCoUkComponent1Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

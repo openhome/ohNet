@@ -7,10 +7,10 @@
 
 using namespace Zapp;
 
-class DvServiceLinnCoUkMediaTime1C : public DvServiceLinnCoUkMediaTime1
+class DvProviderLinnCoUkMediaTime1C : public DvProviderLinnCoUkMediaTime1
 {
 public:
-    DvServiceLinnCoUkMediaTime1C(DvDevice& aDevice);
+    DvProviderLinnCoUkMediaTime1C(DvDevice& aDevice);
     void EnableActionSeconds(CallbackMediaTime1Seconds aCallback, void* aPtr);
 private:
     void Seconds(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaSeconds);
@@ -19,19 +19,19 @@ private:
     void* iPtrSeconds;
 };
 
-DvServiceLinnCoUkMediaTime1C::DvServiceLinnCoUkMediaTime1C(DvDevice& aDevice)
-    : DvServiceLinnCoUkMediaTime1(aDevice)
+DvProviderLinnCoUkMediaTime1C::DvProviderLinnCoUkMediaTime1C(DvDevice& aDevice)
+    : DvProviderLinnCoUkMediaTime1(aDevice)
 {
 }
 
-void DvServiceLinnCoUkMediaTime1C::EnableActionSeconds(CallbackMediaTime1Seconds aCallback, void* aPtr)
+void DvProviderLinnCoUkMediaTime1C::EnableActionSeconds(CallbackMediaTime1Seconds aCallback, void* aPtr)
 {
     iCallbackSeconds = aCallback;
     iPtrSeconds = aPtr;
-    DvServiceLinnCoUkMediaTime1::EnableActionSeconds();
+    DvProviderLinnCoUkMediaTime1::EnableActionSeconds();
 }
 
-void DvServiceLinnCoUkMediaTime1C::Seconds(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaSeconds)
+void DvProviderLinnCoUkMediaTime1C::Seconds(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaSeconds)
 {
     uint32_t aSeconds;
     ASSERT(iCallbackSeconds != NULL);
@@ -46,31 +46,31 @@ void DvServiceLinnCoUkMediaTime1C::Seconds(IInvocationResponse& aResponse, TUint
 
 
 
-THandle DvServiceLinnCoUkMediaTime1Create(DvDeviceC aDevice)
+THandle DvProviderLinnCoUkMediaTime1Create(DvDeviceC aDevice)
 {
-	return new DvServiceLinnCoUkMediaTime1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderLinnCoUkMediaTime1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvServiceLinnCoUkMediaTime1Destroy(THandle aService)
+void DvProviderLinnCoUkMediaTime1Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceLinnCoUkMediaTime1C*>(aService);
+    delete reinterpret_cast<DvProviderLinnCoUkMediaTime1C*>(aService);
 }
 
-void DvServiceLinnCoUkMediaTime1EnableActionSeconds(THandle aService, CallbackMediaTime1Seconds aCallback, void* aPtr)
+void DvProviderLinnCoUkMediaTime1EnableActionSeconds(THandle aService, CallbackMediaTime1Seconds aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkMediaTime1C*>(aService)->EnableActionSeconds(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkMediaTime1C*>(aService)->EnableActionSeconds(aCallback, aPtr);
 }
 
-int32_t DvServiceLinnCoUkMediaTime1SetPropertySeconds(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkMediaTime1SetPropertySeconds(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvServiceLinnCoUkMediaTime1C*>(aService)->SetPropertySeconds(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkMediaTime1C*>(aService)->SetPropertySeconds(aValue)? 1 : 0);
     return 0;
 }
 
-void DvServiceLinnCoUkMediaTime1GetPropertySeconds(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkMediaTime1GetPropertySeconds(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkMediaTime1C*>(aService)->GetPropertySeconds(val);
+    reinterpret_cast<DvProviderLinnCoUkMediaTime1C*>(aService)->GetPropertySeconds(val);
     *aValue = val;
 }
 

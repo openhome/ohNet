@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 #include <string>
 
@@ -20,10 +20,10 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Product:3
  */
-class DvServiceLinnCoUkProduct3Cpp : public DvService
+class DvProviderLinnCoUkProduct3Cpp : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkProduct3Cpp() {}
+    virtual ~DvProviderLinnCoUkProduct3Cpp() {}
     bool SetPropertyProductType(const std::string& aValue);
     void GetPropertyProductType(std::string& aValue);
     bool SetPropertyProductModel(const std::string& aValue);
@@ -51,7 +51,7 @@ public:
     bool SetPropertyProductAnySourceType(uint32_t aValue);
     void GetPropertyProductAnySourceType(uint32_t& aValue);
 protected:
-    DvServiceLinnCoUkProduct3Cpp(DvDeviceStd& aDevice);
+    DvProviderLinnCoUkProduct3Cpp(DvDeviceStd& aDevice);
     void EnableActionType();
     void EnableActionModel();
     void EnableActionName();
@@ -102,7 +102,7 @@ private:
     virtual void SourceVisible(uint32_t aVersion, uint32_t aaSourceIndex, bool& aaSourceVisible);
     virtual void SetSourceVisible(uint32_t aVersion, uint32_t aaSourceIndex, bool aaSourceVisible);
 private:
-    DvServiceLinnCoUkProduct3Cpp();
+    DvProviderLinnCoUkProduct3Cpp();
     void DoType(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoModel(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoName(IDvInvocation& aInvocation, uint32_t aVersion);

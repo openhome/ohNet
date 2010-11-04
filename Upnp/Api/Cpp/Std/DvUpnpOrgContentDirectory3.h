@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 #include <string>
 
@@ -20,10 +20,10 @@ class PropertyBinary;
 /**
  * Base Device for upnp.org:ContentDirectory:3
  */
-class DvServiceUpnpOrgContentDirectory3Cpp : public DvService
+class DvProviderUpnpOrgContentDirectory3Cpp : public DvProvider
 {
 public:
-    virtual ~DvServiceUpnpOrgContentDirectory3Cpp() {}
+    virtual ~DvProviderUpnpOrgContentDirectory3Cpp() {}
     bool SetPropertySystemUpdateID(uint32_t aValue);
     void GetPropertySystemUpdateID(uint32_t& aValue);
     bool SetPropertyContainerUpdateIDs(const std::string& aValue);
@@ -33,7 +33,7 @@ public:
     bool SetPropertyTransferIDs(const std::string& aValue);
     void GetPropertyTransferIDs(std::string& aValue);
 protected:
-    DvServiceUpnpOrgContentDirectory3Cpp(DvDeviceStd& aDevice);
+    DvProviderUpnpOrgContentDirectory3Cpp(DvDeviceStd& aDevice);
     void EnableActionGetSearchCapabilities();
     void EnableActionGetSortCapabilities();
     void EnableActionGetSortExtensionCapabilities();
@@ -76,7 +76,7 @@ private:
     virtual void FreeFormQuery(uint32_t aVersion, const std::string& aContainerID, uint32_t aCDSView, const std::string& aQueryRequest, std::string& aQueryResult, uint32_t& aUpdateID);
     virtual void GetFreeFormQueryCapabilities(uint32_t aVersion, std::string& aFFQCapabilities);
 private:
-    DvServiceUpnpOrgContentDirectory3Cpp();
+    DvProviderUpnpOrgContentDirectory3Cpp();
     void DoGetSearchCapabilities(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoGetSortCapabilities(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoGetSortExtensionCapabilities(IDvInvocation& aInvocation, uint32_t aVersion);

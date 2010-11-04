@@ -5,18 +5,18 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvServiceZappOrgTestWidgetController1 : IDisposable
+    public class DvProviderZappOrgTestWidgetController1 : IDisposable
     {
         [DllImport("DvZappOrgTestWidgetController1")]
-        static extern uint DvServiceZappOrgTestWidgetController1Create(uint aDeviceHandle);
+        static extern uint DvProviderZappOrgTestWidgetController1Create(uint aDeviceHandle);
         [DllImport("DvZappOrgTestWidgetController1")]
-        static extern void DvServiceZappOrgTestWidgetController1Destroy(uint aHandle);
+        static extern void DvProviderZappOrgTestWidgetController1Destroy(uint aHandle);
         [DllImport("DvZappOrgTestWidgetController1")]
-        static extern void DvServiceZappOrgTestWidgetController1EnableActionCreateWidget(uint aHandle, CallbackCreateWidget aCallback, IntPtr aPtr);
+        static extern void DvProviderZappOrgTestWidgetController1EnableActionCreateWidget(uint aHandle, CallbackCreateWidget aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestWidgetController1")]
-        static extern void DvServiceZappOrgTestWidgetController1EnableActionRemoveWidget(uint aHandle, CallbackRemoveWidget aCallback, IntPtr aPtr);
+        static extern void DvProviderZappOrgTestWidgetController1EnableActionRemoveWidget(uint aHandle, CallbackRemoveWidget aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestWidgetController1")]
-        static extern void DvServiceZappOrgTestWidgetController1EnableActionSetWidgetRegister(uint aHandle, CallbackSetWidgetRegister aCallback, IntPtr aPtr);
+        static extern void DvProviderZappOrgTestWidgetController1EnableActionSetWidgetRegister(uint aHandle, CallbackSetWidgetRegister aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -30,9 +30,9 @@ namespace Zapp
         private CallbackRemoveWidget iCallbackRemoveWidget;
         private CallbackSetWidgetRegister iCallbackSetWidgetRegister;
 
-        public DvServiceZappOrgTestWidgetController1(DvDevice aDevice)
+        public DvProviderZappOrgTestWidgetController1(DvDevice aDevice)
         {
-            iHandle = DvServiceZappOrgTestWidgetController1Create(aDevice.Handle()); 
+            iHandle = DvProviderZappOrgTestWidgetController1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
@@ -40,21 +40,21 @@ namespace Zapp
         {
             iCallbackCreateWidget = new CallbackCreateWidget(DoCreateWidget);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceZappOrgTestWidgetController1EnableActionCreateWidget(iHandle, iCallbackCreateWidget, ptr);
+            DvProviderZappOrgTestWidgetController1EnableActionCreateWidget(iHandle, iCallbackCreateWidget, ptr);
         }
 
         protected unsafe void EnableActionRemoveWidget()
         {
             iCallbackRemoveWidget = new CallbackRemoveWidget(DoRemoveWidget);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceZappOrgTestWidgetController1EnableActionRemoveWidget(iHandle, iCallbackRemoveWidget, ptr);
+            DvProviderZappOrgTestWidgetController1EnableActionRemoveWidget(iHandle, iCallbackRemoveWidget, ptr);
         }
 
         protected unsafe void EnableActionSetWidgetRegister()
         {
             iCallbackSetWidgetRegister = new CallbackSetWidgetRegister(DoSetWidgetRegister);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceZappOrgTestWidgetController1EnableActionSetWidgetRegister(iHandle, iCallbackSetWidgetRegister, ptr);
+            DvProviderZappOrgTestWidgetController1EnableActionSetWidgetRegister(iHandle, iCallbackSetWidgetRegister, ptr);
         }
 
         protected virtual void CreateWidget(uint aVersion, string aWidgetUdn)
@@ -75,7 +75,7 @@ namespace Zapp
         private static unsafe int DoCreateWidget(IntPtr aPtr, uint aVersion, char* aWidgetUdn)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceZappOrgTestWidgetController1 self = (DvServiceZappOrgTestWidgetController1)gch.Target;
+            DvProviderZappOrgTestWidgetController1 self = (DvProviderZappOrgTestWidgetController1)gch.Target;
             string widgetUdn = Marshal.PtrToStringAnsi((IntPtr)aWidgetUdn);
             self.CreateWidget(aVersion, widgetUdn);
             return 0;
@@ -84,7 +84,7 @@ namespace Zapp
         private static unsafe int DoRemoveWidget(IntPtr aPtr, uint aVersion, char* aWidgetUdn)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceZappOrgTestWidgetController1 self = (DvServiceZappOrgTestWidgetController1)gch.Target;
+            DvProviderZappOrgTestWidgetController1 self = (DvProviderZappOrgTestWidgetController1)gch.Target;
             string widgetUdn = Marshal.PtrToStringAnsi((IntPtr)aWidgetUdn);
             self.RemoveWidget(aVersion, widgetUdn);
             return 0;
@@ -93,7 +93,7 @@ namespace Zapp
         private static unsafe int DoSetWidgetRegister(IntPtr aPtr, uint aVersion, char* aWidgetUdn, uint aRegisterIndex, uint aRegisterValue)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceZappOrgTestWidgetController1 self = (DvServiceZappOrgTestWidgetController1)gch.Target;
+            DvProviderZappOrgTestWidgetController1 self = (DvProviderZappOrgTestWidgetController1)gch.Target;
             string widgetUdn = Marshal.PtrToStringAnsi((IntPtr)aWidgetUdn);
             self.SetWidgetRegister(aVersion, widgetUdn, aRegisterIndex, aRegisterValue);
             return 0;
@@ -106,7 +106,7 @@ namespace Zapp
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceZappOrgTestWidgetController1()
+        ~DvProviderZappOrgTestWidgetController1()
         {
             DoDispose();
         }
@@ -123,7 +123,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = 0;
             }
-            DvServiceZappOrgTestWidgetController1Destroy(handle);
+            DvProviderZappOrgTestWidgetController1Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

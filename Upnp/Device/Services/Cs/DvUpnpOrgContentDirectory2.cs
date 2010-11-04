@@ -5,58 +5,58 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvServiceUpnpOrgContentDirectory2 : IDisposable
+    public class DvProviderUpnpOrgContentDirectory2 : IDisposable
     {
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern uint DvServiceUpnpOrgContentDirectory2Create(uint aDeviceHandle);
+        static extern uint DvProviderUpnpOrgContentDirectory2Create(uint aDeviceHandle);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern void DvServiceUpnpOrgContentDirectory2Destroy(uint aHandle);
+        static extern void DvProviderUpnpOrgContentDirectory2Destroy(uint aHandle);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern unsafe int DvServiceUpnpOrgContentDirectory2SetPropertySystemUpdateID(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgContentDirectory2SetPropertySystemUpdateID(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern unsafe void DvServiceUpnpOrgContentDirectory2GetPropertySystemUpdateID(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderUpnpOrgContentDirectory2GetPropertySystemUpdateID(uint aHandle, uint* aValue);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern unsafe int DvServiceUpnpOrgContentDirectory2SetPropertyContainerUpdateIDs(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgContentDirectory2SetPropertyContainerUpdateIDs(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern unsafe void DvServiceUpnpOrgContentDirectory2GetPropertyContainerUpdateIDs(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderUpnpOrgContentDirectory2GetPropertyContainerUpdateIDs(uint aHandle, char** aValue);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern unsafe int DvServiceUpnpOrgContentDirectory2SetPropertyTransferIDs(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgContentDirectory2SetPropertyTransferIDs(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern unsafe void DvServiceUpnpOrgContentDirectory2GetPropertyTransferIDs(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderUpnpOrgContentDirectory2GetPropertyTransferIDs(uint aHandle, char** aValue);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern void DvServiceUpnpOrgContentDirectory2EnableActionGetSearchCapabilities(uint aHandle, CallbackGetSearchCapabilities aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory2EnableActionGetSearchCapabilities(uint aHandle, CallbackGetSearchCapabilities aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern void DvServiceUpnpOrgContentDirectory2EnableActionGetSortCapabilities(uint aHandle, CallbackGetSortCapabilities aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory2EnableActionGetSortCapabilities(uint aHandle, CallbackGetSortCapabilities aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern void DvServiceUpnpOrgContentDirectory2EnableActionGetSortExtensionCapabilities(uint aHandle, CallbackGetSortExtensionCapabilities aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory2EnableActionGetSortExtensionCapabilities(uint aHandle, CallbackGetSortExtensionCapabilities aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern void DvServiceUpnpOrgContentDirectory2EnableActionGetFeatureList(uint aHandle, CallbackGetFeatureList aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory2EnableActionGetFeatureList(uint aHandle, CallbackGetFeatureList aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern void DvServiceUpnpOrgContentDirectory2EnableActionGetSystemUpdateID(uint aHandle, CallbackGetSystemUpdateID aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory2EnableActionGetSystemUpdateID(uint aHandle, CallbackGetSystemUpdateID aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern void DvServiceUpnpOrgContentDirectory2EnableActionBrowse(uint aHandle, CallbackBrowse aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory2EnableActionBrowse(uint aHandle, CallbackBrowse aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern void DvServiceUpnpOrgContentDirectory2EnableActionSearch(uint aHandle, CallbackSearch aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory2EnableActionSearch(uint aHandle, CallbackSearch aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern void DvServiceUpnpOrgContentDirectory2EnableActionCreateObject(uint aHandle, CallbackCreateObject aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory2EnableActionCreateObject(uint aHandle, CallbackCreateObject aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern void DvServiceUpnpOrgContentDirectory2EnableActionDestroyObject(uint aHandle, CallbackDestroyObject aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory2EnableActionDestroyObject(uint aHandle, CallbackDestroyObject aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern void DvServiceUpnpOrgContentDirectory2EnableActionUpdateObject(uint aHandle, CallbackUpdateObject aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory2EnableActionUpdateObject(uint aHandle, CallbackUpdateObject aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern void DvServiceUpnpOrgContentDirectory2EnableActionMoveObject(uint aHandle, CallbackMoveObject aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory2EnableActionMoveObject(uint aHandle, CallbackMoveObject aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern void DvServiceUpnpOrgContentDirectory2EnableActionImportResource(uint aHandle, CallbackImportResource aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory2EnableActionImportResource(uint aHandle, CallbackImportResource aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern void DvServiceUpnpOrgContentDirectory2EnableActionExportResource(uint aHandle, CallbackExportResource aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory2EnableActionExportResource(uint aHandle, CallbackExportResource aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern void DvServiceUpnpOrgContentDirectory2EnableActionDeleteResource(uint aHandle, CallbackDeleteResource aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory2EnableActionDeleteResource(uint aHandle, CallbackDeleteResource aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern void DvServiceUpnpOrgContentDirectory2EnableActionStopTransferResource(uint aHandle, CallbackStopTransferResource aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory2EnableActionStopTransferResource(uint aHandle, CallbackStopTransferResource aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern void DvServiceUpnpOrgContentDirectory2EnableActionGetTransferProgress(uint aHandle, CallbackGetTransferProgress aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory2EnableActionGetTransferProgress(uint aHandle, CallbackGetTransferProgress aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory2")]
-        static extern void DvServiceUpnpOrgContentDirectory2EnableActionCreateReference(uint aHandle, CallbackCreateReference aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory2EnableActionCreateReference(uint aHandle, CallbackCreateReference aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -98,16 +98,16 @@ namespace Zapp
         private CallbackGetTransferProgress iCallbackGetTransferProgress;
         private CallbackCreateReference iCallbackCreateReference;
 
-        public DvServiceUpnpOrgContentDirectory2(DvDevice aDevice)
+        public DvProviderUpnpOrgContentDirectory2(DvDevice aDevice)
         {
-            iHandle = DvServiceUpnpOrgContentDirectory2Create(aDevice.Handle()); 
+            iHandle = DvProviderUpnpOrgContentDirectory2Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
         public unsafe bool SetPropertySystemUpdateID(uint aValue)
         {
         uint changed;
-            if (0 != DvServiceUpnpOrgContentDirectory2SetPropertySystemUpdateID(iHandle, aValue, &changed))
+            if (0 != DvProviderUpnpOrgContentDirectory2SetPropertySystemUpdateID(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -118,7 +118,7 @@ namespace Zapp
         {
             fixed (uint* value = &aValue)
 			{
-                DvServiceUpnpOrgContentDirectory2GetPropertySystemUpdateID(iHandle, value);
+                DvProviderUpnpOrgContentDirectory2GetPropertySystemUpdateID(iHandle, value);
             }
         }
 
@@ -126,7 +126,7 @@ namespace Zapp
         {
         uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgContentDirectory2SetPropertyContainerUpdateIDs(iHandle, value, &changed);
+            int err = DvProviderUpnpOrgContentDirectory2SetPropertyContainerUpdateIDs(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
@@ -138,7 +138,7 @@ namespace Zapp
         public unsafe void GetPropertyContainerUpdateIDs(out string aValue)
         {
             char* value;
-            DvServiceUpnpOrgContentDirectory2GetPropertyContainerUpdateIDs(iHandle, &value);
+            DvProviderUpnpOrgContentDirectory2GetPropertyContainerUpdateIDs(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
@@ -147,7 +147,7 @@ namespace Zapp
         {
         uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgContentDirectory2SetPropertyTransferIDs(iHandle, value, &changed);
+            int err = DvProviderUpnpOrgContentDirectory2SetPropertyTransferIDs(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
@@ -159,7 +159,7 @@ namespace Zapp
         public unsafe void GetPropertyTransferIDs(out string aValue)
         {
             char* value;
-            DvServiceUpnpOrgContentDirectory2GetPropertyTransferIDs(iHandle, &value);
+            DvProviderUpnpOrgContentDirectory2GetPropertyTransferIDs(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
@@ -168,119 +168,119 @@ namespace Zapp
         {
             iCallbackGetSearchCapabilities = new CallbackGetSearchCapabilities(DoGetSearchCapabilities);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory2EnableActionGetSearchCapabilities(iHandle, iCallbackGetSearchCapabilities, ptr);
+            DvProviderUpnpOrgContentDirectory2EnableActionGetSearchCapabilities(iHandle, iCallbackGetSearchCapabilities, ptr);
         }
 
         protected unsafe void EnableActionGetSortCapabilities()
         {
             iCallbackGetSortCapabilities = new CallbackGetSortCapabilities(DoGetSortCapabilities);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory2EnableActionGetSortCapabilities(iHandle, iCallbackGetSortCapabilities, ptr);
+            DvProviderUpnpOrgContentDirectory2EnableActionGetSortCapabilities(iHandle, iCallbackGetSortCapabilities, ptr);
         }
 
         protected unsafe void EnableActionGetSortExtensionCapabilities()
         {
             iCallbackGetSortExtensionCapabilities = new CallbackGetSortExtensionCapabilities(DoGetSortExtensionCapabilities);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory2EnableActionGetSortExtensionCapabilities(iHandle, iCallbackGetSortExtensionCapabilities, ptr);
+            DvProviderUpnpOrgContentDirectory2EnableActionGetSortExtensionCapabilities(iHandle, iCallbackGetSortExtensionCapabilities, ptr);
         }
 
         protected unsafe void EnableActionGetFeatureList()
         {
             iCallbackGetFeatureList = new CallbackGetFeatureList(DoGetFeatureList);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory2EnableActionGetFeatureList(iHandle, iCallbackGetFeatureList, ptr);
+            DvProviderUpnpOrgContentDirectory2EnableActionGetFeatureList(iHandle, iCallbackGetFeatureList, ptr);
         }
 
         protected unsafe void EnableActionGetSystemUpdateID()
         {
             iCallbackGetSystemUpdateID = new CallbackGetSystemUpdateID(DoGetSystemUpdateID);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory2EnableActionGetSystemUpdateID(iHandle, iCallbackGetSystemUpdateID, ptr);
+            DvProviderUpnpOrgContentDirectory2EnableActionGetSystemUpdateID(iHandle, iCallbackGetSystemUpdateID, ptr);
         }
 
         protected unsafe void EnableActionBrowse()
         {
             iCallbackBrowse = new CallbackBrowse(DoBrowse);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory2EnableActionBrowse(iHandle, iCallbackBrowse, ptr);
+            DvProviderUpnpOrgContentDirectory2EnableActionBrowse(iHandle, iCallbackBrowse, ptr);
         }
 
         protected unsafe void EnableActionSearch()
         {
             iCallbackSearch = new CallbackSearch(DoSearch);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory2EnableActionSearch(iHandle, iCallbackSearch, ptr);
+            DvProviderUpnpOrgContentDirectory2EnableActionSearch(iHandle, iCallbackSearch, ptr);
         }
 
         protected unsafe void EnableActionCreateObject()
         {
             iCallbackCreateObject = new CallbackCreateObject(DoCreateObject);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory2EnableActionCreateObject(iHandle, iCallbackCreateObject, ptr);
+            DvProviderUpnpOrgContentDirectory2EnableActionCreateObject(iHandle, iCallbackCreateObject, ptr);
         }
 
         protected unsafe void EnableActionDestroyObject()
         {
             iCallbackDestroyObject = new CallbackDestroyObject(DoDestroyObject);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory2EnableActionDestroyObject(iHandle, iCallbackDestroyObject, ptr);
+            DvProviderUpnpOrgContentDirectory2EnableActionDestroyObject(iHandle, iCallbackDestroyObject, ptr);
         }
 
         protected unsafe void EnableActionUpdateObject()
         {
             iCallbackUpdateObject = new CallbackUpdateObject(DoUpdateObject);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory2EnableActionUpdateObject(iHandle, iCallbackUpdateObject, ptr);
+            DvProviderUpnpOrgContentDirectory2EnableActionUpdateObject(iHandle, iCallbackUpdateObject, ptr);
         }
 
         protected unsafe void EnableActionMoveObject()
         {
             iCallbackMoveObject = new CallbackMoveObject(DoMoveObject);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory2EnableActionMoveObject(iHandle, iCallbackMoveObject, ptr);
+            DvProviderUpnpOrgContentDirectory2EnableActionMoveObject(iHandle, iCallbackMoveObject, ptr);
         }
 
         protected unsafe void EnableActionImportResource()
         {
             iCallbackImportResource = new CallbackImportResource(DoImportResource);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory2EnableActionImportResource(iHandle, iCallbackImportResource, ptr);
+            DvProviderUpnpOrgContentDirectory2EnableActionImportResource(iHandle, iCallbackImportResource, ptr);
         }
 
         protected unsafe void EnableActionExportResource()
         {
             iCallbackExportResource = new CallbackExportResource(DoExportResource);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory2EnableActionExportResource(iHandle, iCallbackExportResource, ptr);
+            DvProviderUpnpOrgContentDirectory2EnableActionExportResource(iHandle, iCallbackExportResource, ptr);
         }
 
         protected unsafe void EnableActionDeleteResource()
         {
             iCallbackDeleteResource = new CallbackDeleteResource(DoDeleteResource);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory2EnableActionDeleteResource(iHandle, iCallbackDeleteResource, ptr);
+            DvProviderUpnpOrgContentDirectory2EnableActionDeleteResource(iHandle, iCallbackDeleteResource, ptr);
         }
 
         protected unsafe void EnableActionStopTransferResource()
         {
             iCallbackStopTransferResource = new CallbackStopTransferResource(DoStopTransferResource);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory2EnableActionStopTransferResource(iHandle, iCallbackStopTransferResource, ptr);
+            DvProviderUpnpOrgContentDirectory2EnableActionStopTransferResource(iHandle, iCallbackStopTransferResource, ptr);
         }
 
         protected unsafe void EnableActionGetTransferProgress()
         {
             iCallbackGetTransferProgress = new CallbackGetTransferProgress(DoGetTransferProgress);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory2EnableActionGetTransferProgress(iHandle, iCallbackGetTransferProgress, ptr);
+            DvProviderUpnpOrgContentDirectory2EnableActionGetTransferProgress(iHandle, iCallbackGetTransferProgress, ptr);
         }
 
         protected unsafe void EnableActionCreateReference()
         {
             iCallbackCreateReference = new CallbackCreateReference(DoCreateReference);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory2EnableActionCreateReference(iHandle, iCallbackCreateReference, ptr);
+            DvProviderUpnpOrgContentDirectory2EnableActionCreateReference(iHandle, iCallbackCreateReference, ptr);
         }
 
         protected virtual void GetSearchCapabilities(uint aVersion, out string aSearchCaps)
@@ -371,7 +371,7 @@ namespace Zapp
         private static unsafe int DoGetSearchCapabilities(IntPtr aPtr, uint aVersion, char** aSearchCaps)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory2 self = (DvServiceUpnpOrgContentDirectory2)gch.Target;
+            DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             string searchCaps;
             self.GetSearchCapabilities(aVersion, out searchCaps);
             *aSearchCaps = (char*)Marshal.StringToHGlobalAnsi(searchCaps).ToPointer();
@@ -381,7 +381,7 @@ namespace Zapp
         private static unsafe int DoGetSortCapabilities(IntPtr aPtr, uint aVersion, char** aSortCaps)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory2 self = (DvServiceUpnpOrgContentDirectory2)gch.Target;
+            DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             string sortCaps;
             self.GetSortCapabilities(aVersion, out sortCaps);
             *aSortCaps = (char*)Marshal.StringToHGlobalAnsi(sortCaps).ToPointer();
@@ -391,7 +391,7 @@ namespace Zapp
         private static unsafe int DoGetSortExtensionCapabilities(IntPtr aPtr, uint aVersion, char** aSortExtensionCaps)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory2 self = (DvServiceUpnpOrgContentDirectory2)gch.Target;
+            DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             string sortExtensionCaps;
             self.GetSortExtensionCapabilities(aVersion, out sortExtensionCaps);
             *aSortExtensionCaps = (char*)Marshal.StringToHGlobalAnsi(sortExtensionCaps).ToPointer();
@@ -401,7 +401,7 @@ namespace Zapp
         private static unsafe int DoGetFeatureList(IntPtr aPtr, uint aVersion, char** aFeatureList)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory2 self = (DvServiceUpnpOrgContentDirectory2)gch.Target;
+            DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             string featureList;
             self.GetFeatureList(aVersion, out featureList);
             *aFeatureList = (char*)Marshal.StringToHGlobalAnsi(featureList).ToPointer();
@@ -411,7 +411,7 @@ namespace Zapp
         private static unsafe int DoGetSystemUpdateID(IntPtr aPtr, uint aVersion, uint* aId)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory2 self = (DvServiceUpnpOrgContentDirectory2)gch.Target;
+            DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             uint id;
             self.GetSystemUpdateID(aVersion, out id);
             *aId = id;
@@ -421,7 +421,7 @@ namespace Zapp
         private static unsafe int DoBrowse(IntPtr aPtr, uint aVersion, char* aObjectID, char* aBrowseFlag, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory2 self = (DvServiceUpnpOrgContentDirectory2)gch.Target;
+            DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             string objectID = Marshal.PtrToStringAnsi((IntPtr)aObjectID);
             string browseFlag = Marshal.PtrToStringAnsi((IntPtr)aBrowseFlag);
             string filter = Marshal.PtrToStringAnsi((IntPtr)aFilter);
@@ -441,7 +441,7 @@ namespace Zapp
         private static unsafe int DoSearch(IntPtr aPtr, uint aVersion, char* aContainerID, char* aSearchCriteria, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory2 self = (DvServiceUpnpOrgContentDirectory2)gch.Target;
+            DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             string containerID = Marshal.PtrToStringAnsi((IntPtr)aContainerID);
             string searchCriteria = Marshal.PtrToStringAnsi((IntPtr)aSearchCriteria);
             string filter = Marshal.PtrToStringAnsi((IntPtr)aFilter);
@@ -461,7 +461,7 @@ namespace Zapp
         private static unsafe int DoCreateObject(IntPtr aPtr, uint aVersion, char* aContainerID, char* aElements, char** aObjectID, char** aResult)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory2 self = (DvServiceUpnpOrgContentDirectory2)gch.Target;
+            DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             string containerID = Marshal.PtrToStringAnsi((IntPtr)aContainerID);
             string elements = Marshal.PtrToStringAnsi((IntPtr)aElements);
             string objectID;
@@ -475,7 +475,7 @@ namespace Zapp
         private static unsafe int DoDestroyObject(IntPtr aPtr, uint aVersion, char* aObjectID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory2 self = (DvServiceUpnpOrgContentDirectory2)gch.Target;
+            DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             string objectID = Marshal.PtrToStringAnsi((IntPtr)aObjectID);
             self.DestroyObject(aVersion, objectID);
             return 0;
@@ -484,7 +484,7 @@ namespace Zapp
         private static unsafe int DoUpdateObject(IntPtr aPtr, uint aVersion, char* aObjectID, char* aCurrentTagValue, char* aNewTagValue)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory2 self = (DvServiceUpnpOrgContentDirectory2)gch.Target;
+            DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             string objectID = Marshal.PtrToStringAnsi((IntPtr)aObjectID);
             string currentTagValue = Marshal.PtrToStringAnsi((IntPtr)aCurrentTagValue);
             string newTagValue = Marshal.PtrToStringAnsi((IntPtr)aNewTagValue);
@@ -495,7 +495,7 @@ namespace Zapp
         private static unsafe int DoMoveObject(IntPtr aPtr, uint aVersion, char* aObjectID, char* aNewParentID, char** aNewObjectID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory2 self = (DvServiceUpnpOrgContentDirectory2)gch.Target;
+            DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             string objectID = Marshal.PtrToStringAnsi((IntPtr)aObjectID);
             string newParentID = Marshal.PtrToStringAnsi((IntPtr)aNewParentID);
             string newObjectID;
@@ -507,7 +507,7 @@ namespace Zapp
         private static unsafe int DoImportResource(IntPtr aPtr, uint aVersion, char* aSourceURI, char* aDestinationURI, uint* aTransferID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory2 self = (DvServiceUpnpOrgContentDirectory2)gch.Target;
+            DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             string sourceURI = Marshal.PtrToStringAnsi((IntPtr)aSourceURI);
             string destinationURI = Marshal.PtrToStringAnsi((IntPtr)aDestinationURI);
             uint transferID;
@@ -519,7 +519,7 @@ namespace Zapp
         private static unsafe int DoExportResource(IntPtr aPtr, uint aVersion, char* aSourceURI, char* aDestinationURI, uint* aTransferID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory2 self = (DvServiceUpnpOrgContentDirectory2)gch.Target;
+            DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             string sourceURI = Marshal.PtrToStringAnsi((IntPtr)aSourceURI);
             string destinationURI = Marshal.PtrToStringAnsi((IntPtr)aDestinationURI);
             uint transferID;
@@ -531,7 +531,7 @@ namespace Zapp
         private static unsafe int DoDeleteResource(IntPtr aPtr, uint aVersion, char* aResourceURI)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory2 self = (DvServiceUpnpOrgContentDirectory2)gch.Target;
+            DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             string resourceURI = Marshal.PtrToStringAnsi((IntPtr)aResourceURI);
             self.DeleteResource(aVersion, resourceURI);
             return 0;
@@ -540,7 +540,7 @@ namespace Zapp
         private static unsafe int DoStopTransferResource(IntPtr aPtr, uint aVersion, uint aTransferID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory2 self = (DvServiceUpnpOrgContentDirectory2)gch.Target;
+            DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             self.StopTransferResource(aVersion, aTransferID);
             return 0;
         }
@@ -548,7 +548,7 @@ namespace Zapp
         private static unsafe int DoGetTransferProgress(IntPtr aPtr, uint aVersion, uint aTransferID, char** aTransferStatus, char** aTransferLength, char** aTransferTotal)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory2 self = (DvServiceUpnpOrgContentDirectory2)gch.Target;
+            DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             string transferStatus;
             string transferLength;
             string transferTotal;
@@ -562,7 +562,7 @@ namespace Zapp
         private static unsafe int DoCreateReference(IntPtr aPtr, uint aVersion, char* aContainerID, char* aObjectID, char** aNewID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory2 self = (DvServiceUpnpOrgContentDirectory2)gch.Target;
+            DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             string containerID = Marshal.PtrToStringAnsi((IntPtr)aContainerID);
             string objectID = Marshal.PtrToStringAnsi((IntPtr)aObjectID);
             string newID;
@@ -578,7 +578,7 @@ namespace Zapp
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceUpnpOrgContentDirectory2()
+        ~DvProviderUpnpOrgContentDirectory2()
         {
             DoDispose();
         }
@@ -595,7 +595,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = 0;
             }
-            DvServiceUpnpOrgContentDirectory2Destroy(handle);
+            DvProviderUpnpOrgContentDirectory2Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

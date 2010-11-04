@@ -14,21 +14,21 @@ typedef int32_t (*CallbackConnectionManager2ConnectionComplete)(void* aPtr, uint
 typedef int32_t (*CallbackConnectionManager2GetCurrentConnectionIDs)(void* aPtr, uint32_t aVersion, char** aConnectionIDs);
 typedef int32_t (*CallbackConnectionManager2GetCurrentConnectionInfo)(void* aPtr, uint32_t aVersion, int32_t aConnectionID, int32_t* aRcsID, int32_t* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int32_t* aPeerConnectionID, char** aDirection, char** aStatus);
 
-DllExport THandle DvServiceUpnpOrgConnectionManager2Create(DvDeviceC aDevice);
-DllExport void DvServiceUpnpOrgConnectionManager2Destroy(THandle aService);
+DllExport THandle DvProviderUpnpOrgConnectionManager2Create(DvDeviceC aDevice);
+DllExport void DvProviderUpnpOrgConnectionManager2Destroy(THandle aService);
 
-DllExport void DvServiceUpnpOrgConnectionManager2EnableActionGetProtocolInfo(THandle aService, CallbackConnectionManager2GetProtocolInfo aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgConnectionManager2EnableActionPrepareForConnection(THandle aService, CallbackConnectionManager2PrepareForConnection aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgConnectionManager2EnableActionConnectionComplete(THandle aService, CallbackConnectionManager2ConnectionComplete aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgConnectionManager2EnableActionGetCurrentConnectionIDs(THandle aService, CallbackConnectionManager2GetCurrentConnectionIDs aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgConnectionManager2EnableActionGetCurrentConnectionInfo(THandle aService, CallbackConnectionManager2GetCurrentConnectionInfo aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgConnectionManager2EnableActionGetProtocolInfo(THandle aService, CallbackConnectionManager2GetProtocolInfo aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgConnectionManager2EnableActionPrepareForConnection(THandle aService, CallbackConnectionManager2PrepareForConnection aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgConnectionManager2EnableActionConnectionComplete(THandle aService, CallbackConnectionManager2ConnectionComplete aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgConnectionManager2EnableActionGetCurrentConnectionIDs(THandle aService, CallbackConnectionManager2GetCurrentConnectionIDs aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgConnectionManager2EnableActionGetCurrentConnectionInfo(THandle aService, CallbackConnectionManager2GetCurrentConnectionInfo aCallback, void* aPtr);
 
-DllExport int32_t DvServiceUpnpOrgConnectionManager2SetPropertySourceProtocolInfo(THandle aService, const char* aValue, uint32_t* aChanged);
-DllExport void DvServiceUpnpOrgConnectionManager2GetPropertySourceProtocolInfo(THandle aService, char** aValue);
-DllExport int32_t DvServiceUpnpOrgConnectionManager2SetPropertySinkProtocolInfo(THandle aService, const char* aValue, uint32_t* aChanged);
-DllExport void DvServiceUpnpOrgConnectionManager2GetPropertySinkProtocolInfo(THandle aService, char** aValue);
-DllExport int32_t DvServiceUpnpOrgConnectionManager2SetPropertyCurrentConnectionIDs(THandle aService, const char* aValue, uint32_t* aChanged);
-DllExport void DvServiceUpnpOrgConnectionManager2GetPropertyCurrentConnectionIDs(THandle aService, char** aValue);
+DllExport int32_t DvProviderUpnpOrgConnectionManager2SetPropertySourceProtocolInfo(THandle aService, const char* aValue, uint32_t* aChanged);
+DllExport void DvProviderUpnpOrgConnectionManager2GetPropertySourceProtocolInfo(THandle aService, char** aValue);
+DllExport int32_t DvProviderUpnpOrgConnectionManager2SetPropertySinkProtocolInfo(THandle aService, const char* aValue, uint32_t* aChanged);
+DllExport void DvProviderUpnpOrgConnectionManager2GetPropertySinkProtocolInfo(THandle aService, char** aValue);
+DllExport int32_t DvProviderUpnpOrgConnectionManager2SetPropertyCurrentConnectionIDs(THandle aService, const char* aValue, uint32_t* aChanged);
+DllExport void DvProviderUpnpOrgConnectionManager2GetPropertyCurrentConnectionIDs(THandle aService, char** aValue);
 
 #ifdef __cplusplus
 } // extern "C"

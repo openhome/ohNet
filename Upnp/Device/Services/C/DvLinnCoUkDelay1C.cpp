@@ -7,10 +7,10 @@
 
 using namespace Zapp;
 
-class DvServiceLinnCoUkDelay1C : public DvServiceLinnCoUkDelay1
+class DvProviderLinnCoUkDelay1C : public DvProviderLinnCoUkDelay1
 {
 public:
-    DvServiceLinnCoUkDelay1C(DvDevice& aDevice);
+    DvProviderLinnCoUkDelay1C(DvDevice& aDevice);
     void EnableActionPresetXml(CallbackDelay1PresetXml aCallback, void* aPtr);
     void EnableActionPresetIndex(CallbackDelay1PresetIndex aCallback, void* aPtr);
     void EnableActionSetPresetIndex(CallbackDelay1SetPresetIndex aCallback, void* aPtr);
@@ -51,75 +51,75 @@ private:
     void* iPtrPresetCount;
 };
 
-DvServiceLinnCoUkDelay1C::DvServiceLinnCoUkDelay1C(DvDevice& aDevice)
-    : DvServiceLinnCoUkDelay1(aDevice)
+DvProviderLinnCoUkDelay1C::DvProviderLinnCoUkDelay1C(DvDevice& aDevice)
+    : DvProviderLinnCoUkDelay1(aDevice)
 {
 }
 
-void DvServiceLinnCoUkDelay1C::EnableActionPresetXml(CallbackDelay1PresetXml aCallback, void* aPtr)
+void DvProviderLinnCoUkDelay1C::EnableActionPresetXml(CallbackDelay1PresetXml aCallback, void* aPtr)
 {
     iCallbackPresetXml = aCallback;
     iPtrPresetXml = aPtr;
-    DvServiceLinnCoUkDelay1::EnableActionPresetXml();
+    DvProviderLinnCoUkDelay1::EnableActionPresetXml();
 }
 
-void DvServiceLinnCoUkDelay1C::EnableActionPresetIndex(CallbackDelay1PresetIndex aCallback, void* aPtr)
+void DvProviderLinnCoUkDelay1C::EnableActionPresetIndex(CallbackDelay1PresetIndex aCallback, void* aPtr)
 {
     iCallbackPresetIndex = aCallback;
     iPtrPresetIndex = aPtr;
-    DvServiceLinnCoUkDelay1::EnableActionPresetIndex();
+    DvProviderLinnCoUkDelay1::EnableActionPresetIndex();
 }
 
-void DvServiceLinnCoUkDelay1C::EnableActionSetPresetIndex(CallbackDelay1SetPresetIndex aCallback, void* aPtr)
+void DvProviderLinnCoUkDelay1C::EnableActionSetPresetIndex(CallbackDelay1SetPresetIndex aCallback, void* aPtr)
 {
     iCallbackSetPresetIndex = aCallback;
     iPtrSetPresetIndex = aPtr;
-    DvServiceLinnCoUkDelay1::EnableActionSetPresetIndex();
+    DvProviderLinnCoUkDelay1::EnableActionSetPresetIndex();
 }
 
-void DvServiceLinnCoUkDelay1C::EnableActionSetPresetDelay(CallbackDelay1SetPresetDelay aCallback, void* aPtr)
+void DvProviderLinnCoUkDelay1C::EnableActionSetPresetDelay(CallbackDelay1SetPresetDelay aCallback, void* aPtr)
 {
     iCallbackSetPresetDelay = aCallback;
     iPtrSetPresetDelay = aPtr;
-    DvServiceLinnCoUkDelay1::EnableActionSetPresetDelay();
+    DvProviderLinnCoUkDelay1::EnableActionSetPresetDelay();
 }
 
-void DvServiceLinnCoUkDelay1C::EnableActionSetPresetVisible(CallbackDelay1SetPresetVisible aCallback, void* aPtr)
+void DvProviderLinnCoUkDelay1C::EnableActionSetPresetVisible(CallbackDelay1SetPresetVisible aCallback, void* aPtr)
 {
     iCallbackSetPresetVisible = aCallback;
     iPtrSetPresetVisible = aPtr;
-    DvServiceLinnCoUkDelay1::EnableActionSetPresetVisible();
+    DvProviderLinnCoUkDelay1::EnableActionSetPresetVisible();
 }
 
-void DvServiceLinnCoUkDelay1C::EnableActionSetPresetName(CallbackDelay1SetPresetName aCallback, void* aPtr)
+void DvProviderLinnCoUkDelay1C::EnableActionSetPresetName(CallbackDelay1SetPresetName aCallback, void* aPtr)
 {
     iCallbackSetPresetName = aCallback;
     iPtrSetPresetName = aPtr;
-    DvServiceLinnCoUkDelay1::EnableActionSetPresetName();
+    DvProviderLinnCoUkDelay1::EnableActionSetPresetName();
 }
 
-void DvServiceLinnCoUkDelay1C::EnableActionDelayMinimum(CallbackDelay1DelayMinimum aCallback, void* aPtr)
+void DvProviderLinnCoUkDelay1C::EnableActionDelayMinimum(CallbackDelay1DelayMinimum aCallback, void* aPtr)
 {
     iCallbackDelayMinimum = aCallback;
     iPtrDelayMinimum = aPtr;
-    DvServiceLinnCoUkDelay1::EnableActionDelayMinimum();
+    DvProviderLinnCoUkDelay1::EnableActionDelayMinimum();
 }
 
-void DvServiceLinnCoUkDelay1C::EnableActionDelayMaximum(CallbackDelay1DelayMaximum aCallback, void* aPtr)
+void DvProviderLinnCoUkDelay1C::EnableActionDelayMaximum(CallbackDelay1DelayMaximum aCallback, void* aPtr)
 {
     iCallbackDelayMaximum = aCallback;
     iPtrDelayMaximum = aPtr;
-    DvServiceLinnCoUkDelay1::EnableActionDelayMaximum();
+    DvProviderLinnCoUkDelay1::EnableActionDelayMaximum();
 }
 
-void DvServiceLinnCoUkDelay1C::EnableActionPresetCount(CallbackDelay1PresetCount aCallback, void* aPtr)
+void DvProviderLinnCoUkDelay1C::EnableActionPresetCount(CallbackDelay1PresetCount aCallback, void* aPtr)
 {
     iCallbackPresetCount = aCallback;
     iPtrPresetCount = aPtr;
-    DvServiceLinnCoUkDelay1::EnableActionPresetCount();
+    DvProviderLinnCoUkDelay1::EnableActionPresetCount();
 }
 
-void DvServiceLinnCoUkDelay1C::PresetXml(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaPresetXml)
+void DvProviderLinnCoUkDelay1C::PresetXml(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaPresetXml)
 {
     char* aPresetXml;
     ASSERT(iCallbackPresetXml != NULL);
@@ -135,7 +135,7 @@ void DvServiceLinnCoUkDelay1C::PresetXml(IInvocationResponse& aResponse, TUint a
     aResponse.End();
 }
 
-void DvServiceLinnCoUkDelay1C::PresetIndex(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaIndex)
+void DvProviderLinnCoUkDelay1C::PresetIndex(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaIndex)
 {
     uint32_t aIndex;
     ASSERT(iCallbackPresetIndex != NULL);
@@ -148,7 +148,7 @@ void DvServiceLinnCoUkDelay1C::PresetIndex(IInvocationResponse& aResponse, TUint
     aResponse.End();
 }
 
-void DvServiceLinnCoUkDelay1C::SetPresetIndex(IInvocationResponse& aResponse, TUint aVersion, TUint aaIndex)
+void DvProviderLinnCoUkDelay1C::SetPresetIndex(IInvocationResponse& aResponse, TUint aVersion, TUint aaIndex)
 {
     ASSERT(iCallbackSetPresetIndex != NULL);
     if (0 != iCallbackSetPresetIndex(iPtrSetPresetIndex, aVersion, aaIndex)) {
@@ -159,7 +159,7 @@ void DvServiceLinnCoUkDelay1C::SetPresetIndex(IInvocationResponse& aResponse, TU
     aResponse.End();
 }
 
-void DvServiceLinnCoUkDelay1C::SetPresetDelay(IInvocationResponse& aResponse, TUint aVersion, TUint aaIndex, TUint aaDelay)
+void DvProviderLinnCoUkDelay1C::SetPresetDelay(IInvocationResponse& aResponse, TUint aVersion, TUint aaIndex, TUint aaDelay)
 {
     ASSERT(iCallbackSetPresetDelay != NULL);
     if (0 != iCallbackSetPresetDelay(iPtrSetPresetDelay, aVersion, aaIndex, aaDelay)) {
@@ -170,7 +170,7 @@ void DvServiceLinnCoUkDelay1C::SetPresetDelay(IInvocationResponse& aResponse, TU
     aResponse.End();
 }
 
-void DvServiceLinnCoUkDelay1C::SetPresetVisible(IInvocationResponse& aResponse, TUint aVersion, TUint aaIndex, TBool aaVisible)
+void DvProviderLinnCoUkDelay1C::SetPresetVisible(IInvocationResponse& aResponse, TUint aVersion, TUint aaIndex, TBool aaVisible)
 {
     ASSERT(iCallbackSetPresetVisible != NULL);
     if (0 != iCallbackSetPresetVisible(iPtrSetPresetVisible, aVersion, aaIndex, aaVisible)) {
@@ -181,7 +181,7 @@ void DvServiceLinnCoUkDelay1C::SetPresetVisible(IInvocationResponse& aResponse, 
     aResponse.End();
 }
 
-void DvServiceLinnCoUkDelay1C::SetPresetName(IInvocationResponse& aResponse, TUint aVersion, TUint aaIndex, const Brx& aaName)
+void DvProviderLinnCoUkDelay1C::SetPresetName(IInvocationResponse& aResponse, TUint aVersion, TUint aaIndex, const Brx& aaName)
 {
     ASSERT(iCallbackSetPresetName != NULL);
     if (0 != iCallbackSetPresetName(iPtrSetPresetName, aVersion, aaIndex, (const char*)aaName.Ptr())) {
@@ -192,7 +192,7 @@ void DvServiceLinnCoUkDelay1C::SetPresetName(IInvocationResponse& aResponse, TUi
     aResponse.End();
 }
 
-void DvServiceLinnCoUkDelay1C::DelayMinimum(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaDelay)
+void DvProviderLinnCoUkDelay1C::DelayMinimum(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaDelay)
 {
     uint32_t aDelay;
     ASSERT(iCallbackDelayMinimum != NULL);
@@ -205,7 +205,7 @@ void DvServiceLinnCoUkDelay1C::DelayMinimum(IInvocationResponse& aResponse, TUin
     aResponse.End();
 }
 
-void DvServiceLinnCoUkDelay1C::DelayMaximum(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaDelay)
+void DvProviderLinnCoUkDelay1C::DelayMaximum(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaDelay)
 {
     uint32_t aDelay;
     ASSERT(iCallbackDelayMaximum != NULL);
@@ -218,7 +218,7 @@ void DvServiceLinnCoUkDelay1C::DelayMaximum(IInvocationResponse& aResponse, TUin
     aResponse.End();
 }
 
-void DvServiceLinnCoUkDelay1C::PresetCount(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaCount)
+void DvProviderLinnCoUkDelay1C::PresetCount(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaCount)
 {
     uint32_t aCount;
     ASSERT(iCallbackPresetCount != NULL);
@@ -233,85 +233,85 @@ void DvServiceLinnCoUkDelay1C::PresetCount(IInvocationResponse& aResponse, TUint
 
 
 
-THandle DvServiceLinnCoUkDelay1Create(DvDeviceC aDevice)
+THandle DvProviderLinnCoUkDelay1Create(DvDeviceC aDevice)
 {
-	return new DvServiceLinnCoUkDelay1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderLinnCoUkDelay1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvServiceLinnCoUkDelay1Destroy(THandle aService)
+void DvProviderLinnCoUkDelay1Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceLinnCoUkDelay1C*>(aService);
+    delete reinterpret_cast<DvProviderLinnCoUkDelay1C*>(aService);
 }
 
-void DvServiceLinnCoUkDelay1EnableActionPresetXml(THandle aService, CallbackDelay1PresetXml aCallback, void* aPtr)
+void DvProviderLinnCoUkDelay1EnableActionPresetXml(THandle aService, CallbackDelay1PresetXml aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDelay1C*>(aService)->EnableActionPresetXml(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDelay1C*>(aService)->EnableActionPresetXml(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkDelay1EnableActionPresetIndex(THandle aService, CallbackDelay1PresetIndex aCallback, void* aPtr)
+void DvProviderLinnCoUkDelay1EnableActionPresetIndex(THandle aService, CallbackDelay1PresetIndex aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDelay1C*>(aService)->EnableActionPresetIndex(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDelay1C*>(aService)->EnableActionPresetIndex(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkDelay1EnableActionSetPresetIndex(THandle aService, CallbackDelay1SetPresetIndex aCallback, void* aPtr)
+void DvProviderLinnCoUkDelay1EnableActionSetPresetIndex(THandle aService, CallbackDelay1SetPresetIndex aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDelay1C*>(aService)->EnableActionSetPresetIndex(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDelay1C*>(aService)->EnableActionSetPresetIndex(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkDelay1EnableActionSetPresetDelay(THandle aService, CallbackDelay1SetPresetDelay aCallback, void* aPtr)
+void DvProviderLinnCoUkDelay1EnableActionSetPresetDelay(THandle aService, CallbackDelay1SetPresetDelay aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDelay1C*>(aService)->EnableActionSetPresetDelay(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDelay1C*>(aService)->EnableActionSetPresetDelay(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkDelay1EnableActionSetPresetVisible(THandle aService, CallbackDelay1SetPresetVisible aCallback, void* aPtr)
+void DvProviderLinnCoUkDelay1EnableActionSetPresetVisible(THandle aService, CallbackDelay1SetPresetVisible aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDelay1C*>(aService)->EnableActionSetPresetVisible(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDelay1C*>(aService)->EnableActionSetPresetVisible(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkDelay1EnableActionSetPresetName(THandle aService, CallbackDelay1SetPresetName aCallback, void* aPtr)
+void DvProviderLinnCoUkDelay1EnableActionSetPresetName(THandle aService, CallbackDelay1SetPresetName aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDelay1C*>(aService)->EnableActionSetPresetName(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDelay1C*>(aService)->EnableActionSetPresetName(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkDelay1EnableActionDelayMinimum(THandle aService, CallbackDelay1DelayMinimum aCallback, void* aPtr)
+void DvProviderLinnCoUkDelay1EnableActionDelayMinimum(THandle aService, CallbackDelay1DelayMinimum aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDelay1C*>(aService)->EnableActionDelayMinimum(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDelay1C*>(aService)->EnableActionDelayMinimum(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkDelay1EnableActionDelayMaximum(THandle aService, CallbackDelay1DelayMaximum aCallback, void* aPtr)
+void DvProviderLinnCoUkDelay1EnableActionDelayMaximum(THandle aService, CallbackDelay1DelayMaximum aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDelay1C*>(aService)->EnableActionDelayMaximum(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDelay1C*>(aService)->EnableActionDelayMaximum(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkDelay1EnableActionPresetCount(THandle aService, CallbackDelay1PresetCount aCallback, void* aPtr)
+void DvProviderLinnCoUkDelay1EnableActionPresetCount(THandle aService, CallbackDelay1PresetCount aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDelay1C*>(aService)->EnableActionPresetCount(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDelay1C*>(aService)->EnableActionPresetCount(aCallback, aPtr);
 }
 
-int32_t DvServiceLinnCoUkDelay1SetPropertyPresetXml(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkDelay1SetPropertyPresetXml(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvServiceLinnCoUkDelay1C*>(aService)->SetPropertyPresetXml(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkDelay1C*>(aService)->SetPropertyPresetXml(buf)? 1 : 0);
     return 0;
 }
 
-void DvServiceLinnCoUkDelay1GetPropertyPresetXml(THandle aService, char** aValue)
+void DvProviderLinnCoUkDelay1GetPropertyPresetXml(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkDelay1C*>(aService)->GetPropertyPresetXml(buf);
+    reinterpret_cast<DvProviderLinnCoUkDelay1C*>(aService)->GetPropertyPresetXml(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkDelay1SetPropertyPresetIndex(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkDelay1SetPropertyPresetIndex(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvServiceLinnCoUkDelay1C*>(aService)->SetPropertyPresetIndex(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkDelay1C*>(aService)->SetPropertyPresetIndex(aValue)? 1 : 0);
     return 0;
 }
 
-void DvServiceLinnCoUkDelay1GetPropertyPresetIndex(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkDelay1GetPropertyPresetIndex(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkDelay1C*>(aService)->GetPropertyPresetIndex(val);
+    reinterpret_cast<DvProviderLinnCoUkDelay1C*>(aService)->GetPropertyPresetIndex(val);
     *aValue = val;
 }
 

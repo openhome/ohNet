@@ -5,34 +5,34 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvServiceUpnpOrgConnectionManager1 : IDisposable
+    public class DvProviderUpnpOrgConnectionManager1 : IDisposable
     {
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern uint DvServiceUpnpOrgConnectionManager1Create(uint aDeviceHandle);
+        static extern uint DvProviderUpnpOrgConnectionManager1Create(uint aDeviceHandle);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern void DvServiceUpnpOrgConnectionManager1Destroy(uint aHandle);
+        static extern void DvProviderUpnpOrgConnectionManager1Destroy(uint aHandle);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern unsafe int DvServiceUpnpOrgConnectionManager1SetPropertySourceProtocolInfo(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgConnectionManager1SetPropertySourceProtocolInfo(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern unsafe void DvServiceUpnpOrgConnectionManager1GetPropertySourceProtocolInfo(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderUpnpOrgConnectionManager1GetPropertySourceProtocolInfo(uint aHandle, char** aValue);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern unsafe int DvServiceUpnpOrgConnectionManager1SetPropertySinkProtocolInfo(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgConnectionManager1SetPropertySinkProtocolInfo(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern unsafe void DvServiceUpnpOrgConnectionManager1GetPropertySinkProtocolInfo(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderUpnpOrgConnectionManager1GetPropertySinkProtocolInfo(uint aHandle, char** aValue);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern unsafe int DvServiceUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDs(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDs(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern unsafe void DvServiceUpnpOrgConnectionManager1GetPropertyCurrentConnectionIDs(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderUpnpOrgConnectionManager1GetPropertyCurrentConnectionIDs(uint aHandle, char** aValue);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern void DvServiceUpnpOrgConnectionManager1EnableActionGetProtocolInfo(uint aHandle, CallbackGetProtocolInfo aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgConnectionManager1EnableActionGetProtocolInfo(uint aHandle, CallbackGetProtocolInfo aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern void DvServiceUpnpOrgConnectionManager1EnableActionPrepareForConnection(uint aHandle, CallbackPrepareForConnection aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgConnectionManager1EnableActionPrepareForConnection(uint aHandle, CallbackPrepareForConnection aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern void DvServiceUpnpOrgConnectionManager1EnableActionConnectionComplete(uint aHandle, CallbackConnectionComplete aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgConnectionManager1EnableActionConnectionComplete(uint aHandle, CallbackConnectionComplete aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern void DvServiceUpnpOrgConnectionManager1EnableActionGetCurrentConnectionIDs(uint aHandle, CallbackGetCurrentConnectionIDs aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgConnectionManager1EnableActionGetCurrentConnectionIDs(uint aHandle, CallbackGetCurrentConnectionIDs aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern void DvServiceUpnpOrgConnectionManager1EnableActionGetCurrentConnectionInfo(uint aHandle, CallbackGetCurrentConnectionInfo aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgConnectionManager1EnableActionGetCurrentConnectionInfo(uint aHandle, CallbackGetCurrentConnectionInfo aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -50,9 +50,9 @@ namespace Zapp
         private CallbackGetCurrentConnectionIDs iCallbackGetCurrentConnectionIDs;
         private CallbackGetCurrentConnectionInfo iCallbackGetCurrentConnectionInfo;
 
-        public DvServiceUpnpOrgConnectionManager1(DvDevice aDevice)
+        public DvProviderUpnpOrgConnectionManager1(DvDevice aDevice)
         {
-            iHandle = DvServiceUpnpOrgConnectionManager1Create(aDevice.Handle()); 
+            iHandle = DvProviderUpnpOrgConnectionManager1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
@@ -60,7 +60,7 @@ namespace Zapp
         {
         uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgConnectionManager1SetPropertySourceProtocolInfo(iHandle, value, &changed);
+            int err = DvProviderUpnpOrgConnectionManager1SetPropertySourceProtocolInfo(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
@@ -72,7 +72,7 @@ namespace Zapp
         public unsafe void GetPropertySourceProtocolInfo(out string aValue)
         {
             char* value;
-            DvServiceUpnpOrgConnectionManager1GetPropertySourceProtocolInfo(iHandle, &value);
+            DvProviderUpnpOrgConnectionManager1GetPropertySourceProtocolInfo(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
@@ -81,7 +81,7 @@ namespace Zapp
         {
         uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgConnectionManager1SetPropertySinkProtocolInfo(iHandle, value, &changed);
+            int err = DvProviderUpnpOrgConnectionManager1SetPropertySinkProtocolInfo(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
@@ -93,7 +93,7 @@ namespace Zapp
         public unsafe void GetPropertySinkProtocolInfo(out string aValue)
         {
             char* value;
-            DvServiceUpnpOrgConnectionManager1GetPropertySinkProtocolInfo(iHandle, &value);
+            DvProviderUpnpOrgConnectionManager1GetPropertySinkProtocolInfo(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
@@ -102,7 +102,7 @@ namespace Zapp
         {
         uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDs(iHandle, value, &changed);
+            int err = DvProviderUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDs(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
@@ -114,7 +114,7 @@ namespace Zapp
         public unsafe void GetPropertyCurrentConnectionIDs(out string aValue)
         {
             char* value;
-            DvServiceUpnpOrgConnectionManager1GetPropertyCurrentConnectionIDs(iHandle, &value);
+            DvProviderUpnpOrgConnectionManager1GetPropertyCurrentConnectionIDs(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
@@ -123,35 +123,35 @@ namespace Zapp
         {
             iCallbackGetProtocolInfo = new CallbackGetProtocolInfo(DoGetProtocolInfo);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgConnectionManager1EnableActionGetProtocolInfo(iHandle, iCallbackGetProtocolInfo, ptr);
+            DvProviderUpnpOrgConnectionManager1EnableActionGetProtocolInfo(iHandle, iCallbackGetProtocolInfo, ptr);
         }
 
         protected unsafe void EnableActionPrepareForConnection()
         {
             iCallbackPrepareForConnection = new CallbackPrepareForConnection(DoPrepareForConnection);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgConnectionManager1EnableActionPrepareForConnection(iHandle, iCallbackPrepareForConnection, ptr);
+            DvProviderUpnpOrgConnectionManager1EnableActionPrepareForConnection(iHandle, iCallbackPrepareForConnection, ptr);
         }
 
         protected unsafe void EnableActionConnectionComplete()
         {
             iCallbackConnectionComplete = new CallbackConnectionComplete(DoConnectionComplete);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgConnectionManager1EnableActionConnectionComplete(iHandle, iCallbackConnectionComplete, ptr);
+            DvProviderUpnpOrgConnectionManager1EnableActionConnectionComplete(iHandle, iCallbackConnectionComplete, ptr);
         }
 
         protected unsafe void EnableActionGetCurrentConnectionIDs()
         {
             iCallbackGetCurrentConnectionIDs = new CallbackGetCurrentConnectionIDs(DoGetCurrentConnectionIDs);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgConnectionManager1EnableActionGetCurrentConnectionIDs(iHandle, iCallbackGetCurrentConnectionIDs, ptr);
+            DvProviderUpnpOrgConnectionManager1EnableActionGetCurrentConnectionIDs(iHandle, iCallbackGetCurrentConnectionIDs, ptr);
         }
 
         protected unsafe void EnableActionGetCurrentConnectionInfo()
         {
             iCallbackGetCurrentConnectionInfo = new CallbackGetCurrentConnectionInfo(DoGetCurrentConnectionInfo);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgConnectionManager1EnableActionGetCurrentConnectionInfo(iHandle, iCallbackGetCurrentConnectionInfo, ptr);
+            DvProviderUpnpOrgConnectionManager1EnableActionGetCurrentConnectionInfo(iHandle, iCallbackGetCurrentConnectionInfo, ptr);
         }
 
         protected virtual void GetProtocolInfo(uint aVersion, out string aSource, out string aSink)
@@ -182,7 +182,7 @@ namespace Zapp
         private static unsafe int DoGetProtocolInfo(IntPtr aPtr, uint aVersion, char** aSource, char** aSink)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgConnectionManager1 self = (DvServiceUpnpOrgConnectionManager1)gch.Target;
+            DvProviderUpnpOrgConnectionManager1 self = (DvProviderUpnpOrgConnectionManager1)gch.Target;
             string source;
             string sink;
             self.GetProtocolInfo(aVersion, out source, out sink);
@@ -194,7 +194,7 @@ namespace Zapp
         private static unsafe int DoPrepareForConnection(IntPtr aPtr, uint aVersion, char* aRemoteProtocolInfo, char* aPeerConnectionManager, int aPeerConnectionID, char* aDirection, int* aConnectionID, int* aAVTransportID, int* aRcsID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgConnectionManager1 self = (DvServiceUpnpOrgConnectionManager1)gch.Target;
+            DvProviderUpnpOrgConnectionManager1 self = (DvProviderUpnpOrgConnectionManager1)gch.Target;
             string remoteProtocolInfo = Marshal.PtrToStringAnsi((IntPtr)aRemoteProtocolInfo);
             string peerConnectionManager = Marshal.PtrToStringAnsi((IntPtr)aPeerConnectionManager);
             string direction = Marshal.PtrToStringAnsi((IntPtr)aDirection);
@@ -211,7 +211,7 @@ namespace Zapp
         private static unsafe int DoConnectionComplete(IntPtr aPtr, uint aVersion, int aConnectionID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgConnectionManager1 self = (DvServiceUpnpOrgConnectionManager1)gch.Target;
+            DvProviderUpnpOrgConnectionManager1 self = (DvProviderUpnpOrgConnectionManager1)gch.Target;
             self.ConnectionComplete(aVersion, aConnectionID);
             return 0;
         }
@@ -219,7 +219,7 @@ namespace Zapp
         private static unsafe int DoGetCurrentConnectionIDs(IntPtr aPtr, uint aVersion, char** aConnectionIDs)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgConnectionManager1 self = (DvServiceUpnpOrgConnectionManager1)gch.Target;
+            DvProviderUpnpOrgConnectionManager1 self = (DvProviderUpnpOrgConnectionManager1)gch.Target;
             string connectionIDs;
             self.GetCurrentConnectionIDs(aVersion, out connectionIDs);
             *aConnectionIDs = (char*)Marshal.StringToHGlobalAnsi(connectionIDs).ToPointer();
@@ -229,7 +229,7 @@ namespace Zapp
         private static unsafe int DoGetCurrentConnectionInfo(IntPtr aPtr, uint aVersion, int aConnectionID, int* aRcsID, int* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int* aPeerConnectionID, char** aDirection, char** aStatus)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgConnectionManager1 self = (DvServiceUpnpOrgConnectionManager1)gch.Target;
+            DvProviderUpnpOrgConnectionManager1 self = (DvProviderUpnpOrgConnectionManager1)gch.Target;
             int rcsID;
             int aVTransportID;
             string protocolInfo;
@@ -255,7 +255,7 @@ namespace Zapp
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceUpnpOrgConnectionManager1()
+        ~DvProviderUpnpOrgConnectionManager1()
         {
             DoDispose();
         }
@@ -272,7 +272,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = 0;
             }
-            DvServiceUpnpOrgConnectionManager1Destroy(handle);
+            DvProviderUpnpOrgConnectionManager1Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

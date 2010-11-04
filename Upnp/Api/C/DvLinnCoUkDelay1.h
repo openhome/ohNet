@@ -18,23 +18,23 @@ typedef int32_t (*CallbackDelay1DelayMinimum)(void* aPtr, uint32_t aVersion, uin
 typedef int32_t (*CallbackDelay1DelayMaximum)(void* aPtr, uint32_t aVersion, uint32_t* aaDelay);
 typedef int32_t (*CallbackDelay1PresetCount)(void* aPtr, uint32_t aVersion, uint32_t* aaCount);
 
-DllExport THandle DvServiceLinnCoUkDelay1Create(DvDeviceC aDevice);
-DllExport void DvServiceLinnCoUkDelay1Destroy(THandle aService);
+DllExport THandle DvProviderLinnCoUkDelay1Create(DvDeviceC aDevice);
+DllExport void DvProviderLinnCoUkDelay1Destroy(THandle aService);
 
-DllExport void DvServiceLinnCoUkDelay1EnableActionPresetXml(THandle aService, CallbackDelay1PresetXml aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkDelay1EnableActionPresetIndex(THandle aService, CallbackDelay1PresetIndex aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkDelay1EnableActionSetPresetIndex(THandle aService, CallbackDelay1SetPresetIndex aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkDelay1EnableActionSetPresetDelay(THandle aService, CallbackDelay1SetPresetDelay aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkDelay1EnableActionSetPresetVisible(THandle aService, CallbackDelay1SetPresetVisible aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkDelay1EnableActionSetPresetName(THandle aService, CallbackDelay1SetPresetName aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkDelay1EnableActionDelayMinimum(THandle aService, CallbackDelay1DelayMinimum aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkDelay1EnableActionDelayMaximum(THandle aService, CallbackDelay1DelayMaximum aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkDelay1EnableActionPresetCount(THandle aService, CallbackDelay1PresetCount aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDelay1EnableActionPresetXml(THandle aService, CallbackDelay1PresetXml aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDelay1EnableActionPresetIndex(THandle aService, CallbackDelay1PresetIndex aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDelay1EnableActionSetPresetIndex(THandle aService, CallbackDelay1SetPresetIndex aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDelay1EnableActionSetPresetDelay(THandle aService, CallbackDelay1SetPresetDelay aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDelay1EnableActionSetPresetVisible(THandle aService, CallbackDelay1SetPresetVisible aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDelay1EnableActionSetPresetName(THandle aService, CallbackDelay1SetPresetName aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDelay1EnableActionDelayMinimum(THandle aService, CallbackDelay1DelayMinimum aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDelay1EnableActionDelayMaximum(THandle aService, CallbackDelay1DelayMaximum aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDelay1EnableActionPresetCount(THandle aService, CallbackDelay1PresetCount aCallback, void* aPtr);
 
-DllExport int32_t DvServiceLinnCoUkDelay1SetPropertyPresetXml(THandle aService, const char* aValue, uint32_t* aChanged);
-DllExport void DvServiceLinnCoUkDelay1GetPropertyPresetXml(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkDelay1SetPropertyPresetIndex(THandle aService, uint32_t aValue, uint32_t* aChanged);
-DllExport void DvServiceLinnCoUkDelay1GetPropertyPresetIndex(THandle aService, uint32_t* aValue);
+DllExport int32_t DvProviderLinnCoUkDelay1SetPropertyPresetXml(THandle aService, const char* aValue, uint32_t* aChanged);
+DllExport void DvProviderLinnCoUkDelay1GetPropertyPresetXml(THandle aService, char** aValue);
+DllExport int32_t DvProviderLinnCoUkDelay1SetPropertyPresetIndex(THandle aService, uint32_t aValue, uint32_t* aChanged);
+DllExport void DvProviderLinnCoUkDelay1GetPropertyPresetIndex(THandle aService, uint32_t* aValue);
 
 #ifdef __cplusplus
 } // extern "C"

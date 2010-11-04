@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 #include <string>
 
@@ -20,10 +20,10 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Playlist:1
  */
-class DvServiceLinnCoUkPlaylist1Cpp : public DvService
+class DvProviderLinnCoUkPlaylist1Cpp : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkPlaylist1Cpp() {}
+    virtual ~DvProviderLinnCoUkPlaylist1Cpp() {}
     bool SetPropertyIdArray(const std::string& aValue);
     void GetPropertyIdArray(std::string& aValue);
     bool SetPropertyRepeat(bool aValue);
@@ -33,7 +33,7 @@ public:
     bool SetPropertyTracksMax(uint32_t aValue);
     void GetPropertyTracksMax(uint32_t& aValue);
 protected:
-    DvServiceLinnCoUkPlaylist1Cpp(DvDeviceStd& aDevice);
+    DvProviderLinnCoUkPlaylist1Cpp(DvDeviceStd& aDevice);
     void EnableActionRead();
     void EnableActionReadList();
     void EnableActionInsert();
@@ -60,7 +60,7 @@ private:
     virtual void IdArray(uint32_t aVersion, uint32_t& aaIdArrayToken, std::string& aaIdArray);
     virtual void IdArrayChanged(uint32_t aVersion, uint32_t aaIdArrayToken, bool& aaIdArrayChanged);
 private:
-    DvServiceLinnCoUkPlaylist1Cpp();
+    DvProviderLinnCoUkPlaylist1Cpp();
     void DoRead(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoReadList(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoInsert(IDvInvocation& aInvocation, uint32_t aVersion);

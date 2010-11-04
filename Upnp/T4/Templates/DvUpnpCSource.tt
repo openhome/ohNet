@@ -35,7 +35,7 @@
     }
     fileName += type;
     fileName += version;
-    string className = "DvService" + fileName;
+    string className = "DvProvider" + fileName;
     string callbackPrefix = "Callback" + type + version;
 
     Initialise();

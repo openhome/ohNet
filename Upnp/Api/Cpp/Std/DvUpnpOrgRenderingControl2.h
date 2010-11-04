@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 #include <string>
 
@@ -20,14 +20,14 @@ class PropertyBinary;
 /**
  * Base Device for upnp.org:RenderingControl:2
  */
-class DvServiceUpnpOrgRenderingControl2Cpp : public DvService
+class DvProviderUpnpOrgRenderingControl2Cpp : public DvProvider
 {
 public:
-    virtual ~DvServiceUpnpOrgRenderingControl2Cpp() {}
+    virtual ~DvProviderUpnpOrgRenderingControl2Cpp() {}
     bool SetPropertyLastChange(const std::string& aValue);
     void GetPropertyLastChange(std::string& aValue);
 protected:
-    DvServiceUpnpOrgRenderingControl2Cpp(DvDeviceStd& aDevice);
+    DvProviderUpnpOrgRenderingControl2Cpp(DvDeviceStd& aDevice);
     void EnableActionListPresets();
     void EnableActionSelectPreset();
     void EnableActionGetBrightness();
@@ -104,7 +104,7 @@ private:
     virtual void GetStateVariables(uint32_t aVersion, uint32_t aInstanceID, const std::string& aStateVariableList, std::string& aStateVariableValuePairs);
     virtual void SetStateVariables(uint32_t aVersion, uint32_t aInstanceID, const std::string& aRenderingControlUDN, const std::string& aServiceType, const std::string& aServiceId, const std::string& aStateVariableValuePairs, std::string& aStateVariableList);
 private:
-    DvServiceUpnpOrgRenderingControl2Cpp();
+    DvProviderUpnpOrgRenderingControl2Cpp();
     void DoListPresets(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoSelectPreset(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoGetBrightness(IDvInvocation& aInvocation, uint32_t aVersion);

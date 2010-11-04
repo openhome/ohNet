@@ -5,64 +5,64 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvServiceLinnCoUkPreamp4 : IDisposable
+    public class DvProviderLinnCoUkPreamp4 : IDisposable
     {
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern uint DvServiceLinnCoUkPreamp4Create(uint aDeviceHandle);
+        static extern uint DvProviderLinnCoUkPreamp4Create(uint aDeviceHandle);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvServiceLinnCoUkPreamp4Destroy(uint aHandle);
+        static extern void DvProviderLinnCoUkPreamp4Destroy(uint aHandle);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvServiceLinnCoUkPreamp4SetPropertyVolume(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyVolume(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe void DvServiceLinnCoUkPreamp4GetPropertyVolume(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyVolume(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvServiceLinnCoUkPreamp4SetPropertyMute(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyMute(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe void DvServiceLinnCoUkPreamp4GetPropertyMute(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyMute(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvServiceLinnCoUkPreamp4SetPropertyBalance(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyBalance(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe void DvServiceLinnCoUkPreamp4GetPropertyBalance(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyBalance(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvServiceLinnCoUkPreamp4SetPropertyVolumeLimit(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyVolumeLimit(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe void DvServiceLinnCoUkPreamp4GetPropertyVolumeLimit(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyVolumeLimit(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvServiceLinnCoUkPreamp4SetPropertyStartupVolume(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyStartupVolume(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe void DvServiceLinnCoUkPreamp4GetPropertyStartupVolume(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyStartupVolume(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvServiceLinnCoUkPreamp4SetPropertyStartupVolumeEnabled(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyStartupVolumeEnabled(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe void DvServiceLinnCoUkPreamp4GetPropertyStartupVolumeEnabled(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyStartupVolumeEnabled(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvServiceLinnCoUkPreamp4EnableActionVolumeInc(uint aHandle, CallbackVolumeInc aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionVolumeInc(uint aHandle, CallbackVolumeInc aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvServiceLinnCoUkPreamp4EnableActionVolumeDec(uint aHandle, CallbackVolumeDec aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionVolumeDec(uint aHandle, CallbackVolumeDec aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvServiceLinnCoUkPreamp4EnableActionSetVolume(uint aHandle, CallbackSetVolume aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionSetVolume(uint aHandle, CallbackSetVolume aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvServiceLinnCoUkPreamp4EnableActionVolume(uint aHandle, CallbackVolume aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionVolume(uint aHandle, CallbackVolume aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvServiceLinnCoUkPreamp4EnableActionSetMute(uint aHandle, CallbackSetMute aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionSetMute(uint aHandle, CallbackSetMute aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvServiceLinnCoUkPreamp4EnableActionMute(uint aHandle, CallbackMute aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionMute(uint aHandle, CallbackMute aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvServiceLinnCoUkPreamp4EnableActionSetBalance(uint aHandle, CallbackSetBalance aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionSetBalance(uint aHandle, CallbackSetBalance aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvServiceLinnCoUkPreamp4EnableActionBalance(uint aHandle, CallbackBalance aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionBalance(uint aHandle, CallbackBalance aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvServiceLinnCoUkPreamp4EnableActionSetVolumeLimit(uint aHandle, CallbackSetVolumeLimit aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionSetVolumeLimit(uint aHandle, CallbackSetVolumeLimit aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvServiceLinnCoUkPreamp4EnableActionVolumeLimit(uint aHandle, CallbackVolumeLimit aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionVolumeLimit(uint aHandle, CallbackVolumeLimit aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvServiceLinnCoUkPreamp4EnableActionSetStartupVolume(uint aHandle, CallbackSetStartupVolume aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionSetStartupVolume(uint aHandle, CallbackSetStartupVolume aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvServiceLinnCoUkPreamp4EnableActionStartupVolume(uint aHandle, CallbackStartupVolume aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionStartupVolume(uint aHandle, CallbackStartupVolume aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvServiceLinnCoUkPreamp4EnableActionSetStartupVolumeEnabled(uint aHandle, CallbackSetStartupVolumeEnabled aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionSetStartupVolumeEnabled(uint aHandle, CallbackSetStartupVolumeEnabled aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvServiceLinnCoUkPreamp4EnableActionStartupVolumeEnabled(uint aHandle, CallbackStartupVolumeEnabled aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionStartupVolumeEnabled(uint aHandle, CallbackStartupVolumeEnabled aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -98,16 +98,16 @@ namespace Zapp
         private CallbackSetStartupVolumeEnabled iCallbackSetStartupVolumeEnabled;
         private CallbackStartupVolumeEnabled iCallbackStartupVolumeEnabled;
 
-        public DvServiceLinnCoUkPreamp4(DvDevice aDevice)
+        public DvProviderLinnCoUkPreamp4(DvDevice aDevice)
         {
-            iHandle = DvServiceLinnCoUkPreamp4Create(aDevice.Handle()); 
+            iHandle = DvProviderLinnCoUkPreamp4Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
         public unsafe bool SetPropertyVolume(uint aValue)
         {
         uint changed;
-            if (0 != DvServiceLinnCoUkPreamp4SetPropertyVolume(iHandle, aValue, &changed))
+            if (0 != DvProviderLinnCoUkPreamp4SetPropertyVolume(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -118,7 +118,7 @@ namespace Zapp
         {
             fixed (uint* value = &aValue)
 			{
-                DvServiceLinnCoUkPreamp4GetPropertyVolume(iHandle, value);
+                DvProviderLinnCoUkPreamp4GetPropertyVolume(iHandle, value);
             }
         }
 
@@ -126,7 +126,7 @@ namespace Zapp
         {
         uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkPreamp4SetPropertyMute(iHandle, value, &changed))
+            if (0 != DvProviderLinnCoUkPreamp4SetPropertyMute(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -136,14 +136,14 @@ namespace Zapp
         public unsafe void GetPropertyMute(out bool aValue)
         {
             int value;
-            DvServiceLinnCoUkPreamp4GetPropertyMute(iHandle, &value);
+            DvProviderLinnCoUkPreamp4GetPropertyMute(iHandle, &value);
             aValue = (value != 0);
         }
 
         public unsafe bool SetPropertyBalance(int aValue)
         {
         uint changed;
-            if (0 != DvServiceLinnCoUkPreamp4SetPropertyBalance(iHandle, aValue, &changed))
+            if (0 != DvProviderLinnCoUkPreamp4SetPropertyBalance(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -154,14 +154,14 @@ namespace Zapp
         {
             fixed (int* value = &aValue)
 			{
-                DvServiceLinnCoUkPreamp4GetPropertyBalance(iHandle, value);
+                DvProviderLinnCoUkPreamp4GetPropertyBalance(iHandle, value);
             }
         }
 
         public unsafe bool SetPropertyVolumeLimit(uint aValue)
         {
         uint changed;
-            if (0 != DvServiceLinnCoUkPreamp4SetPropertyVolumeLimit(iHandle, aValue, &changed))
+            if (0 != DvProviderLinnCoUkPreamp4SetPropertyVolumeLimit(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -172,14 +172,14 @@ namespace Zapp
         {
             fixed (uint* value = &aValue)
 			{
-                DvServiceLinnCoUkPreamp4GetPropertyVolumeLimit(iHandle, value);
+                DvProviderLinnCoUkPreamp4GetPropertyVolumeLimit(iHandle, value);
             }
         }
 
         public unsafe bool SetPropertyStartupVolume(uint aValue)
         {
         uint changed;
-            if (0 != DvServiceLinnCoUkPreamp4SetPropertyStartupVolume(iHandle, aValue, &changed))
+            if (0 != DvProviderLinnCoUkPreamp4SetPropertyStartupVolume(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -190,7 +190,7 @@ namespace Zapp
         {
             fixed (uint* value = &aValue)
 			{
-                DvServiceLinnCoUkPreamp4GetPropertyStartupVolume(iHandle, value);
+                DvProviderLinnCoUkPreamp4GetPropertyStartupVolume(iHandle, value);
             }
         }
 
@@ -198,7 +198,7 @@ namespace Zapp
         {
         uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkPreamp4SetPropertyStartupVolumeEnabled(iHandle, value, &changed))
+            if (0 != DvProviderLinnCoUkPreamp4SetPropertyStartupVolumeEnabled(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -208,7 +208,7 @@ namespace Zapp
         public unsafe void GetPropertyStartupVolumeEnabled(out bool aValue)
         {
             int value;
-            DvServiceLinnCoUkPreamp4GetPropertyStartupVolumeEnabled(iHandle, &value);
+            DvProviderLinnCoUkPreamp4GetPropertyStartupVolumeEnabled(iHandle, &value);
             aValue = (value != 0);
         }
 
@@ -216,98 +216,98 @@ namespace Zapp
         {
             iCallbackVolumeInc = new CallbackVolumeInc(DoVolumeInc);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkPreamp4EnableActionVolumeInc(iHandle, iCallbackVolumeInc, ptr);
+            DvProviderLinnCoUkPreamp4EnableActionVolumeInc(iHandle, iCallbackVolumeInc, ptr);
         }
 
         protected unsafe void EnableActionVolumeDec()
         {
             iCallbackVolumeDec = new CallbackVolumeDec(DoVolumeDec);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkPreamp4EnableActionVolumeDec(iHandle, iCallbackVolumeDec, ptr);
+            DvProviderLinnCoUkPreamp4EnableActionVolumeDec(iHandle, iCallbackVolumeDec, ptr);
         }
 
         protected unsafe void EnableActionSetVolume()
         {
             iCallbackSetVolume = new CallbackSetVolume(DoSetVolume);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkPreamp4EnableActionSetVolume(iHandle, iCallbackSetVolume, ptr);
+            DvProviderLinnCoUkPreamp4EnableActionSetVolume(iHandle, iCallbackSetVolume, ptr);
         }
 
         protected unsafe void EnableActionVolume()
         {
             iCallbackVolume = new CallbackVolume(DoVolume);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkPreamp4EnableActionVolume(iHandle, iCallbackVolume, ptr);
+            DvProviderLinnCoUkPreamp4EnableActionVolume(iHandle, iCallbackVolume, ptr);
         }
 
         protected unsafe void EnableActionSetMute()
         {
             iCallbackSetMute = new CallbackSetMute(DoSetMute);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkPreamp4EnableActionSetMute(iHandle, iCallbackSetMute, ptr);
+            DvProviderLinnCoUkPreamp4EnableActionSetMute(iHandle, iCallbackSetMute, ptr);
         }
 
         protected unsafe void EnableActionMute()
         {
             iCallbackMute = new CallbackMute(DoMute);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkPreamp4EnableActionMute(iHandle, iCallbackMute, ptr);
+            DvProviderLinnCoUkPreamp4EnableActionMute(iHandle, iCallbackMute, ptr);
         }
 
         protected unsafe void EnableActionSetBalance()
         {
             iCallbackSetBalance = new CallbackSetBalance(DoSetBalance);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkPreamp4EnableActionSetBalance(iHandle, iCallbackSetBalance, ptr);
+            DvProviderLinnCoUkPreamp4EnableActionSetBalance(iHandle, iCallbackSetBalance, ptr);
         }
 
         protected unsafe void EnableActionBalance()
         {
             iCallbackBalance = new CallbackBalance(DoBalance);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkPreamp4EnableActionBalance(iHandle, iCallbackBalance, ptr);
+            DvProviderLinnCoUkPreamp4EnableActionBalance(iHandle, iCallbackBalance, ptr);
         }
 
         protected unsafe void EnableActionSetVolumeLimit()
         {
             iCallbackSetVolumeLimit = new CallbackSetVolumeLimit(DoSetVolumeLimit);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkPreamp4EnableActionSetVolumeLimit(iHandle, iCallbackSetVolumeLimit, ptr);
+            DvProviderLinnCoUkPreamp4EnableActionSetVolumeLimit(iHandle, iCallbackSetVolumeLimit, ptr);
         }
 
         protected unsafe void EnableActionVolumeLimit()
         {
             iCallbackVolumeLimit = new CallbackVolumeLimit(DoVolumeLimit);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkPreamp4EnableActionVolumeLimit(iHandle, iCallbackVolumeLimit, ptr);
+            DvProviderLinnCoUkPreamp4EnableActionVolumeLimit(iHandle, iCallbackVolumeLimit, ptr);
         }
 
         protected unsafe void EnableActionSetStartupVolume()
         {
             iCallbackSetStartupVolume = new CallbackSetStartupVolume(DoSetStartupVolume);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkPreamp4EnableActionSetStartupVolume(iHandle, iCallbackSetStartupVolume, ptr);
+            DvProviderLinnCoUkPreamp4EnableActionSetStartupVolume(iHandle, iCallbackSetStartupVolume, ptr);
         }
 
         protected unsafe void EnableActionStartupVolume()
         {
             iCallbackStartupVolume = new CallbackStartupVolume(DoStartupVolume);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkPreamp4EnableActionStartupVolume(iHandle, iCallbackStartupVolume, ptr);
+            DvProviderLinnCoUkPreamp4EnableActionStartupVolume(iHandle, iCallbackStartupVolume, ptr);
         }
 
         protected unsafe void EnableActionSetStartupVolumeEnabled()
         {
             iCallbackSetStartupVolumeEnabled = new CallbackSetStartupVolumeEnabled(DoSetStartupVolumeEnabled);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkPreamp4EnableActionSetStartupVolumeEnabled(iHandle, iCallbackSetStartupVolumeEnabled, ptr);
+            DvProviderLinnCoUkPreamp4EnableActionSetStartupVolumeEnabled(iHandle, iCallbackSetStartupVolumeEnabled, ptr);
         }
 
         protected unsafe void EnableActionStartupVolumeEnabled()
         {
             iCallbackStartupVolumeEnabled = new CallbackStartupVolumeEnabled(DoStartupVolumeEnabled);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkPreamp4EnableActionStartupVolumeEnabled(iHandle, iCallbackStartupVolumeEnabled, ptr);
+            DvProviderLinnCoUkPreamp4EnableActionStartupVolumeEnabled(iHandle, iCallbackStartupVolumeEnabled, ptr);
         }
 
         protected virtual void VolumeInc(uint aVersion)
@@ -383,7 +383,7 @@ namespace Zapp
         private static unsafe int DoVolumeInc(IntPtr aPtr, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkPreamp4 self = (DvServiceLinnCoUkPreamp4)gch.Target;
+            DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
             self.VolumeInc(aVersion);
             return 0;
         }
@@ -391,7 +391,7 @@ namespace Zapp
         private static unsafe int DoVolumeDec(IntPtr aPtr, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkPreamp4 self = (DvServiceLinnCoUkPreamp4)gch.Target;
+            DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
             self.VolumeDec(aVersion);
             return 0;
         }
@@ -399,7 +399,7 @@ namespace Zapp
         private static unsafe int DoSetVolume(IntPtr aPtr, uint aVersion, uint aaVolume)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkPreamp4 self = (DvServiceLinnCoUkPreamp4)gch.Target;
+            DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
             self.SetVolume(aVersion, aaVolume);
             return 0;
         }
@@ -407,7 +407,7 @@ namespace Zapp
         private static unsafe int DoVolume(IntPtr aPtr, uint aVersion, uint* aaVolume)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkPreamp4 self = (DvServiceLinnCoUkPreamp4)gch.Target;
+            DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
             uint aVolume;
             self.Volume(aVersion, out aVolume);
             *aaVolume = aVolume;
@@ -417,7 +417,7 @@ namespace Zapp
         private static unsafe int DoSetMute(IntPtr aPtr, uint aVersion, int aaMute)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkPreamp4 self = (DvServiceLinnCoUkPreamp4)gch.Target;
+            DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
             bool aMute = (aaMute != 0);
             self.SetMute(aVersion, aMute);
             return 0;
@@ -426,7 +426,7 @@ namespace Zapp
         private static unsafe int DoMute(IntPtr aPtr, uint aVersion, int* aaMute)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkPreamp4 self = (DvServiceLinnCoUkPreamp4)gch.Target;
+            DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
             bool aMute;
             self.Mute(aVersion, out aMute);
             *aaMute = (aMute ? 1 : 0);
@@ -436,7 +436,7 @@ namespace Zapp
         private static unsafe int DoSetBalance(IntPtr aPtr, uint aVersion, int aaBalance)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkPreamp4 self = (DvServiceLinnCoUkPreamp4)gch.Target;
+            DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
             self.SetBalance(aVersion, aaBalance);
             return 0;
         }
@@ -444,7 +444,7 @@ namespace Zapp
         private static unsafe int DoBalance(IntPtr aPtr, uint aVersion, int* aaBalance)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkPreamp4 self = (DvServiceLinnCoUkPreamp4)gch.Target;
+            DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
             int aBalance;
             self.Balance(aVersion, out aBalance);
             *aaBalance = aBalance;
@@ -454,7 +454,7 @@ namespace Zapp
         private static unsafe int DoSetVolumeLimit(IntPtr aPtr, uint aVersion, uint aaVolumeLimit)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkPreamp4 self = (DvServiceLinnCoUkPreamp4)gch.Target;
+            DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
             self.SetVolumeLimit(aVersion, aaVolumeLimit);
             return 0;
         }
@@ -462,7 +462,7 @@ namespace Zapp
         private static unsafe int DoVolumeLimit(IntPtr aPtr, uint aVersion, uint* aaVolumeLimit)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkPreamp4 self = (DvServiceLinnCoUkPreamp4)gch.Target;
+            DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
             uint aVolumeLimit;
             self.VolumeLimit(aVersion, out aVolumeLimit);
             *aaVolumeLimit = aVolumeLimit;
@@ -472,7 +472,7 @@ namespace Zapp
         private static unsafe int DoSetStartupVolume(IntPtr aPtr, uint aVersion, uint aaStartupVolume)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkPreamp4 self = (DvServiceLinnCoUkPreamp4)gch.Target;
+            DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
             self.SetStartupVolume(aVersion, aaStartupVolume);
             return 0;
         }
@@ -480,7 +480,7 @@ namespace Zapp
         private static unsafe int DoStartupVolume(IntPtr aPtr, uint aVersion, uint* aaStartupVolume)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkPreamp4 self = (DvServiceLinnCoUkPreamp4)gch.Target;
+            DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
             uint aStartupVolume;
             self.StartupVolume(aVersion, out aStartupVolume);
             *aaStartupVolume = aStartupVolume;
@@ -490,7 +490,7 @@ namespace Zapp
         private static unsafe int DoSetStartupVolumeEnabled(IntPtr aPtr, uint aVersion, int aaStartupVolumeEnabled)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkPreamp4 self = (DvServiceLinnCoUkPreamp4)gch.Target;
+            DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
             bool aStartupVolumeEnabled = (aaStartupVolumeEnabled != 0);
             self.SetStartupVolumeEnabled(aVersion, aStartupVolumeEnabled);
             return 0;
@@ -499,7 +499,7 @@ namespace Zapp
         private static unsafe int DoStartupVolumeEnabled(IntPtr aPtr, uint aVersion, int* aaStartupVolumeEnabled)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkPreamp4 self = (DvServiceLinnCoUkPreamp4)gch.Target;
+            DvProviderLinnCoUkPreamp4 self = (DvProviderLinnCoUkPreamp4)gch.Target;
             bool aStartupVolumeEnabled;
             self.StartupVolumeEnabled(aVersion, out aStartupVolumeEnabled);
             *aaStartupVolumeEnabled = (aStartupVolumeEnabled ? 1 : 0);
@@ -513,7 +513,7 @@ namespace Zapp
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceLinnCoUkPreamp4()
+        ~DvProviderLinnCoUkPreamp4()
         {
             DoDispose();
         }
@@ -530,7 +530,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = 0;
             }
-            DvServiceLinnCoUkPreamp4Destroy(handle);
+            DvProviderLinnCoUkPreamp4Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

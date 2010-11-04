@@ -5,74 +5,74 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvServiceUpnpOrgDimming1 : IDisposable
+    public class DvProviderUpnpOrgDimming1 : IDisposable
     {
         [DllImport("DvUpnpOrgDimming1")]
-        static extern uint DvServiceUpnpOrgDimming1Create(uint aDeviceHandle);
+        static extern uint DvProviderUpnpOrgDimming1Create(uint aDeviceHandle);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1Destroy(uint aHandle);
+        static extern void DvProviderUpnpOrgDimming1Destroy(uint aHandle);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe int DvServiceUpnpOrgDimming1SetPropertyLoadLevelStatus(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgDimming1SetPropertyLoadLevelStatus(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe void DvServiceUpnpOrgDimming1GetPropertyLoadLevelStatus(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderUpnpOrgDimming1GetPropertyLoadLevelStatus(uint aHandle, uint* aValue);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe int DvServiceUpnpOrgDimming1SetPropertyStepDelta(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgDimming1SetPropertyStepDelta(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe void DvServiceUpnpOrgDimming1GetPropertyStepDelta(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderUpnpOrgDimming1GetPropertyStepDelta(uint aHandle, uint* aValue);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe int DvServiceUpnpOrgDimming1SetPropertyRampRate(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgDimming1SetPropertyRampRate(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe void DvServiceUpnpOrgDimming1GetPropertyRampRate(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderUpnpOrgDimming1GetPropertyRampRate(uint aHandle, uint* aValue);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe int DvServiceUpnpOrgDimming1SetPropertyIsRamping(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgDimming1SetPropertyIsRamping(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe void DvServiceUpnpOrgDimming1GetPropertyIsRamping(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderUpnpOrgDimming1GetPropertyIsRamping(uint aHandle, int* aValue);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe int DvServiceUpnpOrgDimming1SetPropertyRampPaused(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgDimming1SetPropertyRampPaused(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe void DvServiceUpnpOrgDimming1GetPropertyRampPaused(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderUpnpOrgDimming1GetPropertyRampPaused(uint aHandle, int* aValue);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1EnableActionSetLoadLevelTarget(uint aHandle, CallbackSetLoadLevelTarget aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionSetLoadLevelTarget(uint aHandle, CallbackSetLoadLevelTarget aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1EnableActionGetLoadLevelTarget(uint aHandle, CallbackGetLoadLevelTarget aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionGetLoadLevelTarget(uint aHandle, CallbackGetLoadLevelTarget aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1EnableActionGetLoadLevelStatus(uint aHandle, CallbackGetLoadLevelStatus aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionGetLoadLevelStatus(uint aHandle, CallbackGetLoadLevelStatus aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1EnableActionSetOnEffectLevel(uint aHandle, CallbackSetOnEffectLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionSetOnEffectLevel(uint aHandle, CallbackSetOnEffectLevel aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1EnableActionSetOnEffect(uint aHandle, CallbackSetOnEffect aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionSetOnEffect(uint aHandle, CallbackSetOnEffect aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1EnableActionGetOnEffectParameters(uint aHandle, CallbackGetOnEffectParameters aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionGetOnEffectParameters(uint aHandle, CallbackGetOnEffectParameters aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1EnableActionStepUp(uint aHandle, CallbackStepUp aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionStepUp(uint aHandle, CallbackStepUp aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1EnableActionStepDown(uint aHandle, CallbackStepDown aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionStepDown(uint aHandle, CallbackStepDown aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1EnableActionStartRampUp(uint aHandle, CallbackStartRampUp aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionStartRampUp(uint aHandle, CallbackStartRampUp aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1EnableActionStartRampDown(uint aHandle, CallbackStartRampDown aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionStartRampDown(uint aHandle, CallbackStartRampDown aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1EnableActionStopRamp(uint aHandle, CallbackStopRamp aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionStopRamp(uint aHandle, CallbackStopRamp aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1EnableActionStartRampToLevel(uint aHandle, CallbackStartRampToLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionStartRampToLevel(uint aHandle, CallbackStartRampToLevel aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1EnableActionSetStepDelta(uint aHandle, CallbackSetStepDelta aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionSetStepDelta(uint aHandle, CallbackSetStepDelta aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1EnableActionGetStepDelta(uint aHandle, CallbackGetStepDelta aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionGetStepDelta(uint aHandle, CallbackGetStepDelta aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1EnableActionSetRampRate(uint aHandle, CallbackSetRampRate aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionSetRampRate(uint aHandle, CallbackSetRampRate aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1EnableActionGetRampRate(uint aHandle, CallbackGetRampRate aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionGetRampRate(uint aHandle, CallbackGetRampRate aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1EnableActionPauseRamp(uint aHandle, CallbackPauseRamp aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionPauseRamp(uint aHandle, CallbackPauseRamp aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1EnableActionResumeRamp(uint aHandle, CallbackResumeRamp aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionResumeRamp(uint aHandle, CallbackResumeRamp aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1EnableActionGetIsRamping(uint aHandle, CallbackGetIsRamping aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionGetIsRamping(uint aHandle, CallbackGetIsRamping aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1EnableActionGetRampPaused(uint aHandle, CallbackGetRampPaused aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionGetRampPaused(uint aHandle, CallbackGetRampPaused aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvServiceUpnpOrgDimming1EnableActionGetRampTime(uint aHandle, CallbackGetRampTime aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionGetRampTime(uint aHandle, CallbackGetRampTime aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -122,16 +122,16 @@ namespace Zapp
         private CallbackGetRampPaused iCallbackGetRampPaused;
         private CallbackGetRampTime iCallbackGetRampTime;
 
-        public DvServiceUpnpOrgDimming1(DvDevice aDevice)
+        public DvProviderUpnpOrgDimming1(DvDevice aDevice)
         {
-            iHandle = DvServiceUpnpOrgDimming1Create(aDevice.Handle()); 
+            iHandle = DvProviderUpnpOrgDimming1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
         public unsafe bool SetPropertyLoadLevelStatus(uint aValue)
         {
         uint changed;
-            if (0 != DvServiceUpnpOrgDimming1SetPropertyLoadLevelStatus(iHandle, aValue, &changed))
+            if (0 != DvProviderUpnpOrgDimming1SetPropertyLoadLevelStatus(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -142,14 +142,14 @@ namespace Zapp
         {
             fixed (uint* value = &aValue)
 			{
-                DvServiceUpnpOrgDimming1GetPropertyLoadLevelStatus(iHandle, value);
+                DvProviderUpnpOrgDimming1GetPropertyLoadLevelStatus(iHandle, value);
             }
         }
 
         public unsafe bool SetPropertyStepDelta(uint aValue)
         {
         uint changed;
-            if (0 != DvServiceUpnpOrgDimming1SetPropertyStepDelta(iHandle, aValue, &changed))
+            if (0 != DvProviderUpnpOrgDimming1SetPropertyStepDelta(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -160,14 +160,14 @@ namespace Zapp
         {
             fixed (uint* value = &aValue)
 			{
-                DvServiceUpnpOrgDimming1GetPropertyStepDelta(iHandle, value);
+                DvProviderUpnpOrgDimming1GetPropertyStepDelta(iHandle, value);
             }
         }
 
         public unsafe bool SetPropertyRampRate(uint aValue)
         {
         uint changed;
-            if (0 != DvServiceUpnpOrgDimming1SetPropertyRampRate(iHandle, aValue, &changed))
+            if (0 != DvProviderUpnpOrgDimming1SetPropertyRampRate(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -178,7 +178,7 @@ namespace Zapp
         {
             fixed (uint* value = &aValue)
 			{
-                DvServiceUpnpOrgDimming1GetPropertyRampRate(iHandle, value);
+                DvProviderUpnpOrgDimming1GetPropertyRampRate(iHandle, value);
             }
         }
 
@@ -186,7 +186,7 @@ namespace Zapp
         {
         uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceUpnpOrgDimming1SetPropertyIsRamping(iHandle, value, &changed))
+            if (0 != DvProviderUpnpOrgDimming1SetPropertyIsRamping(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -196,7 +196,7 @@ namespace Zapp
         public unsafe void GetPropertyIsRamping(out bool aValue)
         {
             int value;
-            DvServiceUpnpOrgDimming1GetPropertyIsRamping(iHandle, &value);
+            DvProviderUpnpOrgDimming1GetPropertyIsRamping(iHandle, &value);
             aValue = (value != 0);
         }
 
@@ -204,7 +204,7 @@ namespace Zapp
         {
         uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceUpnpOrgDimming1SetPropertyRampPaused(iHandle, value, &changed))
+            if (0 != DvProviderUpnpOrgDimming1SetPropertyRampPaused(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -214,7 +214,7 @@ namespace Zapp
         public unsafe void GetPropertyRampPaused(out bool aValue)
         {
             int value;
-            DvServiceUpnpOrgDimming1GetPropertyRampPaused(iHandle, &value);
+            DvProviderUpnpOrgDimming1GetPropertyRampPaused(iHandle, &value);
             aValue = (value != 0);
         }
 
@@ -222,147 +222,147 @@ namespace Zapp
         {
             iCallbackSetLoadLevelTarget = new CallbackSetLoadLevelTarget(DoSetLoadLevelTarget);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgDimming1EnableActionSetLoadLevelTarget(iHandle, iCallbackSetLoadLevelTarget, ptr);
+            DvProviderUpnpOrgDimming1EnableActionSetLoadLevelTarget(iHandle, iCallbackSetLoadLevelTarget, ptr);
         }
 
         protected unsafe void EnableActionGetLoadLevelTarget()
         {
             iCallbackGetLoadLevelTarget = new CallbackGetLoadLevelTarget(DoGetLoadLevelTarget);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgDimming1EnableActionGetLoadLevelTarget(iHandle, iCallbackGetLoadLevelTarget, ptr);
+            DvProviderUpnpOrgDimming1EnableActionGetLoadLevelTarget(iHandle, iCallbackGetLoadLevelTarget, ptr);
         }
 
         protected unsafe void EnableActionGetLoadLevelStatus()
         {
             iCallbackGetLoadLevelStatus = new CallbackGetLoadLevelStatus(DoGetLoadLevelStatus);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgDimming1EnableActionGetLoadLevelStatus(iHandle, iCallbackGetLoadLevelStatus, ptr);
+            DvProviderUpnpOrgDimming1EnableActionGetLoadLevelStatus(iHandle, iCallbackGetLoadLevelStatus, ptr);
         }
 
         protected unsafe void EnableActionSetOnEffectLevel()
         {
             iCallbackSetOnEffectLevel = new CallbackSetOnEffectLevel(DoSetOnEffectLevel);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgDimming1EnableActionSetOnEffectLevel(iHandle, iCallbackSetOnEffectLevel, ptr);
+            DvProviderUpnpOrgDimming1EnableActionSetOnEffectLevel(iHandle, iCallbackSetOnEffectLevel, ptr);
         }
 
         protected unsafe void EnableActionSetOnEffect()
         {
             iCallbackSetOnEffect = new CallbackSetOnEffect(DoSetOnEffect);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgDimming1EnableActionSetOnEffect(iHandle, iCallbackSetOnEffect, ptr);
+            DvProviderUpnpOrgDimming1EnableActionSetOnEffect(iHandle, iCallbackSetOnEffect, ptr);
         }
 
         protected unsafe void EnableActionGetOnEffectParameters()
         {
             iCallbackGetOnEffectParameters = new CallbackGetOnEffectParameters(DoGetOnEffectParameters);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgDimming1EnableActionGetOnEffectParameters(iHandle, iCallbackGetOnEffectParameters, ptr);
+            DvProviderUpnpOrgDimming1EnableActionGetOnEffectParameters(iHandle, iCallbackGetOnEffectParameters, ptr);
         }
 
         protected unsafe void EnableActionStepUp()
         {
             iCallbackStepUp = new CallbackStepUp(DoStepUp);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgDimming1EnableActionStepUp(iHandle, iCallbackStepUp, ptr);
+            DvProviderUpnpOrgDimming1EnableActionStepUp(iHandle, iCallbackStepUp, ptr);
         }
 
         protected unsafe void EnableActionStepDown()
         {
             iCallbackStepDown = new CallbackStepDown(DoStepDown);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgDimming1EnableActionStepDown(iHandle, iCallbackStepDown, ptr);
+            DvProviderUpnpOrgDimming1EnableActionStepDown(iHandle, iCallbackStepDown, ptr);
         }
 
         protected unsafe void EnableActionStartRampUp()
         {
             iCallbackStartRampUp = new CallbackStartRampUp(DoStartRampUp);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgDimming1EnableActionStartRampUp(iHandle, iCallbackStartRampUp, ptr);
+            DvProviderUpnpOrgDimming1EnableActionStartRampUp(iHandle, iCallbackStartRampUp, ptr);
         }
 
         protected unsafe void EnableActionStartRampDown()
         {
             iCallbackStartRampDown = new CallbackStartRampDown(DoStartRampDown);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgDimming1EnableActionStartRampDown(iHandle, iCallbackStartRampDown, ptr);
+            DvProviderUpnpOrgDimming1EnableActionStartRampDown(iHandle, iCallbackStartRampDown, ptr);
         }
 
         protected unsafe void EnableActionStopRamp()
         {
             iCallbackStopRamp = new CallbackStopRamp(DoStopRamp);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgDimming1EnableActionStopRamp(iHandle, iCallbackStopRamp, ptr);
+            DvProviderUpnpOrgDimming1EnableActionStopRamp(iHandle, iCallbackStopRamp, ptr);
         }
 
         protected unsafe void EnableActionStartRampToLevel()
         {
             iCallbackStartRampToLevel = new CallbackStartRampToLevel(DoStartRampToLevel);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgDimming1EnableActionStartRampToLevel(iHandle, iCallbackStartRampToLevel, ptr);
+            DvProviderUpnpOrgDimming1EnableActionStartRampToLevel(iHandle, iCallbackStartRampToLevel, ptr);
         }
 
         protected unsafe void EnableActionSetStepDelta()
         {
             iCallbackSetStepDelta = new CallbackSetStepDelta(DoSetStepDelta);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgDimming1EnableActionSetStepDelta(iHandle, iCallbackSetStepDelta, ptr);
+            DvProviderUpnpOrgDimming1EnableActionSetStepDelta(iHandle, iCallbackSetStepDelta, ptr);
         }
 
         protected unsafe void EnableActionGetStepDelta()
         {
             iCallbackGetStepDelta = new CallbackGetStepDelta(DoGetStepDelta);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgDimming1EnableActionGetStepDelta(iHandle, iCallbackGetStepDelta, ptr);
+            DvProviderUpnpOrgDimming1EnableActionGetStepDelta(iHandle, iCallbackGetStepDelta, ptr);
         }
 
         protected unsafe void EnableActionSetRampRate()
         {
             iCallbackSetRampRate = new CallbackSetRampRate(DoSetRampRate);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgDimming1EnableActionSetRampRate(iHandle, iCallbackSetRampRate, ptr);
+            DvProviderUpnpOrgDimming1EnableActionSetRampRate(iHandle, iCallbackSetRampRate, ptr);
         }
 
         protected unsafe void EnableActionGetRampRate()
         {
             iCallbackGetRampRate = new CallbackGetRampRate(DoGetRampRate);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgDimming1EnableActionGetRampRate(iHandle, iCallbackGetRampRate, ptr);
+            DvProviderUpnpOrgDimming1EnableActionGetRampRate(iHandle, iCallbackGetRampRate, ptr);
         }
 
         protected unsafe void EnableActionPauseRamp()
         {
             iCallbackPauseRamp = new CallbackPauseRamp(DoPauseRamp);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgDimming1EnableActionPauseRamp(iHandle, iCallbackPauseRamp, ptr);
+            DvProviderUpnpOrgDimming1EnableActionPauseRamp(iHandle, iCallbackPauseRamp, ptr);
         }
 
         protected unsafe void EnableActionResumeRamp()
         {
             iCallbackResumeRamp = new CallbackResumeRamp(DoResumeRamp);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgDimming1EnableActionResumeRamp(iHandle, iCallbackResumeRamp, ptr);
+            DvProviderUpnpOrgDimming1EnableActionResumeRamp(iHandle, iCallbackResumeRamp, ptr);
         }
 
         protected unsafe void EnableActionGetIsRamping()
         {
             iCallbackGetIsRamping = new CallbackGetIsRamping(DoGetIsRamping);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgDimming1EnableActionGetIsRamping(iHandle, iCallbackGetIsRamping, ptr);
+            DvProviderUpnpOrgDimming1EnableActionGetIsRamping(iHandle, iCallbackGetIsRamping, ptr);
         }
 
         protected unsafe void EnableActionGetRampPaused()
         {
             iCallbackGetRampPaused = new CallbackGetRampPaused(DoGetRampPaused);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgDimming1EnableActionGetRampPaused(iHandle, iCallbackGetRampPaused, ptr);
+            DvProviderUpnpOrgDimming1EnableActionGetRampPaused(iHandle, iCallbackGetRampPaused, ptr);
         }
 
         protected unsafe void EnableActionGetRampTime()
         {
             iCallbackGetRampTime = new CallbackGetRampTime(DoGetRampTime);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgDimming1EnableActionGetRampTime(iHandle, iCallbackGetRampTime, ptr);
+            DvProviderUpnpOrgDimming1EnableActionGetRampTime(iHandle, iCallbackGetRampTime, ptr);
         }
 
         protected virtual void SetLoadLevelTarget(uint aVersion, uint anewLoadlevelTarget)
@@ -473,7 +473,7 @@ namespace Zapp
         private static unsafe int DoSetLoadLevelTarget(IntPtr aPtr, uint aVersion, uint anewLoadlevelTarget)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgDimming1 self = (DvServiceUpnpOrgDimming1)gch.Target;
+            DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             self.SetLoadLevelTarget(aVersion, anewLoadlevelTarget);
             return 0;
         }
@@ -481,7 +481,7 @@ namespace Zapp
         private static unsafe int DoGetLoadLevelTarget(IntPtr aPtr, uint aVersion, uint* aGetLoadlevelTarget)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgDimming1 self = (DvServiceUpnpOrgDimming1)gch.Target;
+            DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             uint getLoadlevelTarget;
             self.GetLoadLevelTarget(aVersion, out getLoadlevelTarget);
             *aGetLoadlevelTarget = getLoadlevelTarget;
@@ -491,7 +491,7 @@ namespace Zapp
         private static unsafe int DoGetLoadLevelStatus(IntPtr aPtr, uint aVersion, uint* aretLoadlevelStatus)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgDimming1 self = (DvServiceUpnpOrgDimming1)gch.Target;
+            DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             uint retLoadlevelStatus;
             self.GetLoadLevelStatus(aVersion, out retLoadlevelStatus);
             *aretLoadlevelStatus = retLoadlevelStatus;
@@ -501,7 +501,7 @@ namespace Zapp
         private static unsafe int DoSetOnEffectLevel(IntPtr aPtr, uint aVersion, uint anewOnEffectLevel)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgDimming1 self = (DvServiceUpnpOrgDimming1)gch.Target;
+            DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             self.SetOnEffectLevel(aVersion, anewOnEffectLevel);
             return 0;
         }
@@ -509,7 +509,7 @@ namespace Zapp
         private static unsafe int DoSetOnEffect(IntPtr aPtr, uint aVersion, char* anewOnEffect)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgDimming1 self = (DvServiceUpnpOrgDimming1)gch.Target;
+            DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             string newOnEffect = Marshal.PtrToStringAnsi((IntPtr)anewOnEffect);
             self.SetOnEffect(aVersion, newOnEffect);
             return 0;
@@ -518,7 +518,7 @@ namespace Zapp
         private static unsafe int DoGetOnEffectParameters(IntPtr aPtr, uint aVersion, char** aretOnEffect, uint* aretOnEffectLevel)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgDimming1 self = (DvServiceUpnpOrgDimming1)gch.Target;
+            DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             string retOnEffect;
             uint retOnEffectLevel;
             self.GetOnEffectParameters(aVersion, out retOnEffect, out retOnEffectLevel);
@@ -530,7 +530,7 @@ namespace Zapp
         private static unsafe int DoStepUp(IntPtr aPtr, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgDimming1 self = (DvServiceUpnpOrgDimming1)gch.Target;
+            DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             self.StepUp(aVersion);
             return 0;
         }
@@ -538,7 +538,7 @@ namespace Zapp
         private static unsafe int DoStepDown(IntPtr aPtr, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgDimming1 self = (DvServiceUpnpOrgDimming1)gch.Target;
+            DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             self.StepDown(aVersion);
             return 0;
         }
@@ -546,7 +546,7 @@ namespace Zapp
         private static unsafe int DoStartRampUp(IntPtr aPtr, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgDimming1 self = (DvServiceUpnpOrgDimming1)gch.Target;
+            DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             self.StartRampUp(aVersion);
             return 0;
         }
@@ -554,7 +554,7 @@ namespace Zapp
         private static unsafe int DoStartRampDown(IntPtr aPtr, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgDimming1 self = (DvServiceUpnpOrgDimming1)gch.Target;
+            DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             self.StartRampDown(aVersion);
             return 0;
         }
@@ -562,7 +562,7 @@ namespace Zapp
         private static unsafe int DoStopRamp(IntPtr aPtr, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgDimming1 self = (DvServiceUpnpOrgDimming1)gch.Target;
+            DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             self.StopRamp(aVersion);
             return 0;
         }
@@ -570,7 +570,7 @@ namespace Zapp
         private static unsafe int DoStartRampToLevel(IntPtr aPtr, uint aVersion, uint anewLoadLevelTarget, uint anewRampTime)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgDimming1 self = (DvServiceUpnpOrgDimming1)gch.Target;
+            DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             self.StartRampToLevel(aVersion, anewLoadLevelTarget, anewRampTime);
             return 0;
         }
@@ -578,7 +578,7 @@ namespace Zapp
         private static unsafe int DoSetStepDelta(IntPtr aPtr, uint aVersion, uint anewStepDelta)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgDimming1 self = (DvServiceUpnpOrgDimming1)gch.Target;
+            DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             self.SetStepDelta(aVersion, anewStepDelta);
             return 0;
         }
@@ -586,7 +586,7 @@ namespace Zapp
         private static unsafe int DoGetStepDelta(IntPtr aPtr, uint aVersion, uint* aretStepDelta)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgDimming1 self = (DvServiceUpnpOrgDimming1)gch.Target;
+            DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             uint retStepDelta;
             self.GetStepDelta(aVersion, out retStepDelta);
             *aretStepDelta = retStepDelta;
@@ -596,7 +596,7 @@ namespace Zapp
         private static unsafe int DoSetRampRate(IntPtr aPtr, uint aVersion, uint anewRampRate)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgDimming1 self = (DvServiceUpnpOrgDimming1)gch.Target;
+            DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             self.SetRampRate(aVersion, anewRampRate);
             return 0;
         }
@@ -604,7 +604,7 @@ namespace Zapp
         private static unsafe int DoGetRampRate(IntPtr aPtr, uint aVersion, uint* aretRampRate)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgDimming1 self = (DvServiceUpnpOrgDimming1)gch.Target;
+            DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             uint retRampRate;
             self.GetRampRate(aVersion, out retRampRate);
             *aretRampRate = retRampRate;
@@ -614,7 +614,7 @@ namespace Zapp
         private static unsafe int DoPauseRamp(IntPtr aPtr, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgDimming1 self = (DvServiceUpnpOrgDimming1)gch.Target;
+            DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             self.PauseRamp(aVersion);
             return 0;
         }
@@ -622,7 +622,7 @@ namespace Zapp
         private static unsafe int DoResumeRamp(IntPtr aPtr, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgDimming1 self = (DvServiceUpnpOrgDimming1)gch.Target;
+            DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             self.ResumeRamp(aVersion);
             return 0;
         }
@@ -630,7 +630,7 @@ namespace Zapp
         private static unsafe int DoGetIsRamping(IntPtr aPtr, uint aVersion, int* aretIsRamping)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgDimming1 self = (DvServiceUpnpOrgDimming1)gch.Target;
+            DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             bool retIsRamping;
             self.GetIsRamping(aVersion, out retIsRamping);
             *aretIsRamping = (retIsRamping ? 1 : 0);
@@ -640,7 +640,7 @@ namespace Zapp
         private static unsafe int DoGetRampPaused(IntPtr aPtr, uint aVersion, int* aretRampPaused)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgDimming1 self = (DvServiceUpnpOrgDimming1)gch.Target;
+            DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             bool retRampPaused;
             self.GetRampPaused(aVersion, out retRampPaused);
             *aretRampPaused = (retRampPaused ? 1 : 0);
@@ -650,7 +650,7 @@ namespace Zapp
         private static unsafe int DoGetRampTime(IntPtr aPtr, uint aVersion, uint* aretRampTime)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgDimming1 self = (DvServiceUpnpOrgDimming1)gch.Target;
+            DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             uint retRampTime;
             self.GetRampTime(aVersion, out retRampTime);
             *aretRampTime = retRampTime;
@@ -664,7 +664,7 @@ namespace Zapp
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceUpnpOrgDimming1()
+        ~DvProviderUpnpOrgDimming1()
         {
             DoDispose();
         }
@@ -681,7 +681,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = 0;
             }
-            DvServiceUpnpOrgDimming1Destroy(handle);
+            DvProviderUpnpOrgDimming1Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

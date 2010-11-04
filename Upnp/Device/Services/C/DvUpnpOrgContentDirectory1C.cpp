@@ -7,10 +7,10 @@
 
 using namespace Zapp;
 
-class DvServiceUpnpOrgContentDirectory1C : public DvServiceUpnpOrgContentDirectory1
+class DvProviderUpnpOrgContentDirectory1C : public DvProviderUpnpOrgContentDirectory1
 {
 public:
-    DvServiceUpnpOrgContentDirectory1C(DvDevice& aDevice);
+    DvProviderUpnpOrgContentDirectory1C(DvDevice& aDevice);
     void EnableActionGetSearchCapabilities(CallbackContentDirectory1GetSearchCapabilities aCallback, void* aPtr);
     void EnableActionGetSortCapabilities(CallbackContentDirectory1GetSortCapabilities aCallback, void* aPtr);
     void EnableActionGetSystemUpdateID(CallbackContentDirectory1GetSystemUpdateID aCallback, void* aPtr);
@@ -71,110 +71,110 @@ private:
     void* iPtrCreateReference;
 };
 
-DvServiceUpnpOrgContentDirectory1C::DvServiceUpnpOrgContentDirectory1C(DvDevice& aDevice)
-    : DvServiceUpnpOrgContentDirectory1(aDevice)
+DvProviderUpnpOrgContentDirectory1C::DvProviderUpnpOrgContentDirectory1C(DvDevice& aDevice)
+    : DvProviderUpnpOrgContentDirectory1(aDevice)
 {
 }
 
-void DvServiceUpnpOrgContentDirectory1C::EnableActionGetSearchCapabilities(CallbackContentDirectory1GetSearchCapabilities aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1C::EnableActionGetSearchCapabilities(CallbackContentDirectory1GetSearchCapabilities aCallback, void* aPtr)
 {
     iCallbackGetSearchCapabilities = aCallback;
     iPtrGetSearchCapabilities = aPtr;
-    DvServiceUpnpOrgContentDirectory1::EnableActionGetSearchCapabilities();
+    DvProviderUpnpOrgContentDirectory1::EnableActionGetSearchCapabilities();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::EnableActionGetSortCapabilities(CallbackContentDirectory1GetSortCapabilities aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1C::EnableActionGetSortCapabilities(CallbackContentDirectory1GetSortCapabilities aCallback, void* aPtr)
 {
     iCallbackGetSortCapabilities = aCallback;
     iPtrGetSortCapabilities = aPtr;
-    DvServiceUpnpOrgContentDirectory1::EnableActionGetSortCapabilities();
+    DvProviderUpnpOrgContentDirectory1::EnableActionGetSortCapabilities();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::EnableActionGetSystemUpdateID(CallbackContentDirectory1GetSystemUpdateID aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1C::EnableActionGetSystemUpdateID(CallbackContentDirectory1GetSystemUpdateID aCallback, void* aPtr)
 {
     iCallbackGetSystemUpdateID = aCallback;
     iPtrGetSystemUpdateID = aPtr;
-    DvServiceUpnpOrgContentDirectory1::EnableActionGetSystemUpdateID();
+    DvProviderUpnpOrgContentDirectory1::EnableActionGetSystemUpdateID();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::EnableActionBrowse(CallbackContentDirectory1Browse aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1C::EnableActionBrowse(CallbackContentDirectory1Browse aCallback, void* aPtr)
 {
     iCallbackBrowse = aCallback;
     iPtrBrowse = aPtr;
-    DvServiceUpnpOrgContentDirectory1::EnableActionBrowse();
+    DvProviderUpnpOrgContentDirectory1::EnableActionBrowse();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::EnableActionSearch(CallbackContentDirectory1Search aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1C::EnableActionSearch(CallbackContentDirectory1Search aCallback, void* aPtr)
 {
     iCallbackSearch = aCallback;
     iPtrSearch = aPtr;
-    DvServiceUpnpOrgContentDirectory1::EnableActionSearch();
+    DvProviderUpnpOrgContentDirectory1::EnableActionSearch();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::EnableActionCreateObject(CallbackContentDirectory1CreateObject aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1C::EnableActionCreateObject(CallbackContentDirectory1CreateObject aCallback, void* aPtr)
 {
     iCallbackCreateObject = aCallback;
     iPtrCreateObject = aPtr;
-    DvServiceUpnpOrgContentDirectory1::EnableActionCreateObject();
+    DvProviderUpnpOrgContentDirectory1::EnableActionCreateObject();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::EnableActionDestroyObject(CallbackContentDirectory1DestroyObject aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1C::EnableActionDestroyObject(CallbackContentDirectory1DestroyObject aCallback, void* aPtr)
 {
     iCallbackDestroyObject = aCallback;
     iPtrDestroyObject = aPtr;
-    DvServiceUpnpOrgContentDirectory1::EnableActionDestroyObject();
+    DvProviderUpnpOrgContentDirectory1::EnableActionDestroyObject();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::EnableActionUpdateObject(CallbackContentDirectory1UpdateObject aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1C::EnableActionUpdateObject(CallbackContentDirectory1UpdateObject aCallback, void* aPtr)
 {
     iCallbackUpdateObject = aCallback;
     iPtrUpdateObject = aPtr;
-    DvServiceUpnpOrgContentDirectory1::EnableActionUpdateObject();
+    DvProviderUpnpOrgContentDirectory1::EnableActionUpdateObject();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::EnableActionImportResource(CallbackContentDirectory1ImportResource aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1C::EnableActionImportResource(CallbackContentDirectory1ImportResource aCallback, void* aPtr)
 {
     iCallbackImportResource = aCallback;
     iPtrImportResource = aPtr;
-    DvServiceUpnpOrgContentDirectory1::EnableActionImportResource();
+    DvProviderUpnpOrgContentDirectory1::EnableActionImportResource();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::EnableActionExportResource(CallbackContentDirectory1ExportResource aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1C::EnableActionExportResource(CallbackContentDirectory1ExportResource aCallback, void* aPtr)
 {
     iCallbackExportResource = aCallback;
     iPtrExportResource = aPtr;
-    DvServiceUpnpOrgContentDirectory1::EnableActionExportResource();
+    DvProviderUpnpOrgContentDirectory1::EnableActionExportResource();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::EnableActionStopTransferResource(CallbackContentDirectory1StopTransferResource aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1C::EnableActionStopTransferResource(CallbackContentDirectory1StopTransferResource aCallback, void* aPtr)
 {
     iCallbackStopTransferResource = aCallback;
     iPtrStopTransferResource = aPtr;
-    DvServiceUpnpOrgContentDirectory1::EnableActionStopTransferResource();
+    DvProviderUpnpOrgContentDirectory1::EnableActionStopTransferResource();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::EnableActionGetTransferProgress(CallbackContentDirectory1GetTransferProgress aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1C::EnableActionGetTransferProgress(CallbackContentDirectory1GetTransferProgress aCallback, void* aPtr)
 {
     iCallbackGetTransferProgress = aCallback;
     iPtrGetTransferProgress = aPtr;
-    DvServiceUpnpOrgContentDirectory1::EnableActionGetTransferProgress();
+    DvProviderUpnpOrgContentDirectory1::EnableActionGetTransferProgress();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::EnableActionDeleteResource(CallbackContentDirectory1DeleteResource aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1C::EnableActionDeleteResource(CallbackContentDirectory1DeleteResource aCallback, void* aPtr)
 {
     iCallbackDeleteResource = aCallback;
     iPtrDeleteResource = aPtr;
-    DvServiceUpnpOrgContentDirectory1::EnableActionDeleteResource();
+    DvProviderUpnpOrgContentDirectory1::EnableActionDeleteResource();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::EnableActionCreateReference(CallbackContentDirectory1CreateReference aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1C::EnableActionCreateReference(CallbackContentDirectory1CreateReference aCallback, void* aPtr)
 {
     iCallbackCreateReference = aCallback;
     iPtrCreateReference = aPtr;
-    DvServiceUpnpOrgContentDirectory1::EnableActionCreateReference();
+    DvProviderUpnpOrgContentDirectory1::EnableActionCreateReference();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::GetSearchCapabilities(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aSearchCaps)
+void DvProviderUpnpOrgContentDirectory1C::GetSearchCapabilities(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aSearchCaps)
 {
     char* SearchCaps;
     ASSERT(iCallbackGetSearchCapabilities != NULL);
@@ -190,7 +190,7 @@ void DvServiceUpnpOrgContentDirectory1C::GetSearchCapabilities(IInvocationRespon
     aResponse.End();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::GetSortCapabilities(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aSortCaps)
+void DvProviderUpnpOrgContentDirectory1C::GetSortCapabilities(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aSortCaps)
 {
     char* SortCaps;
     ASSERT(iCallbackGetSortCapabilities != NULL);
@@ -206,7 +206,7 @@ void DvServiceUpnpOrgContentDirectory1C::GetSortCapabilities(IInvocationResponse
     aResponse.End();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::GetSystemUpdateID(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aId)
+void DvProviderUpnpOrgContentDirectory1C::GetSystemUpdateID(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aId)
 {
     uint32_t Id;
     ASSERT(iCallbackGetSystemUpdateID != NULL);
@@ -219,7 +219,7 @@ void DvServiceUpnpOrgContentDirectory1C::GetSystemUpdateID(IInvocationResponse& 
     aResponse.End();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::Browse(IInvocationResponse& aResponse, TUint aVersion, const Brx& aObjectID, const Brx& aBrowseFlag, const Brx& aFilter, TUint aStartingIndex, TUint aRequestedCount, const Brx& aSortCriteria, IInvocationResponseString& aResult, IInvocationResponseUint& aNumberReturned, IInvocationResponseUint& aTotalMatches, IInvocationResponseUint& aUpdateID)
+void DvProviderUpnpOrgContentDirectory1C::Browse(IInvocationResponse& aResponse, TUint aVersion, const Brx& aObjectID, const Brx& aBrowseFlag, const Brx& aFilter, TUint aStartingIndex, TUint aRequestedCount, const Brx& aSortCriteria, IInvocationResponseString& aResult, IInvocationResponseUint& aNumberReturned, IInvocationResponseUint& aTotalMatches, IInvocationResponseUint& aUpdateID)
 {
     char* Result;
     uint32_t NumberReturned;
@@ -241,7 +241,7 @@ void DvServiceUpnpOrgContentDirectory1C::Browse(IInvocationResponse& aResponse, 
     aResponse.End();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::Search(IInvocationResponse& aResponse, TUint aVersion, const Brx& aContainerID, const Brx& aSearchCriteria, const Brx& aFilter, TUint aStartingIndex, TUint aRequestedCount, const Brx& aSortCriteria, IInvocationResponseString& aResult, IInvocationResponseUint& aNumberReturned, IInvocationResponseUint& aTotalMatches, IInvocationResponseUint& aUpdateID)
+void DvProviderUpnpOrgContentDirectory1C::Search(IInvocationResponse& aResponse, TUint aVersion, const Brx& aContainerID, const Brx& aSearchCriteria, const Brx& aFilter, TUint aStartingIndex, TUint aRequestedCount, const Brx& aSortCriteria, IInvocationResponseString& aResult, IInvocationResponseUint& aNumberReturned, IInvocationResponseUint& aTotalMatches, IInvocationResponseUint& aUpdateID)
 {
     char* Result;
     uint32_t NumberReturned;
@@ -263,7 +263,7 @@ void DvServiceUpnpOrgContentDirectory1C::Search(IInvocationResponse& aResponse, 
     aResponse.End();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::CreateObject(IInvocationResponse& aResponse, TUint aVersion, const Brx& aContainerID, const Brx& aElements, IInvocationResponseString& aObjectID, IInvocationResponseString& aResult)
+void DvProviderUpnpOrgContentDirectory1C::CreateObject(IInvocationResponse& aResponse, TUint aVersion, const Brx& aContainerID, const Brx& aElements, IInvocationResponseString& aObjectID, IInvocationResponseString& aResult)
 {
     char* ObjectID;
     char* Result;
@@ -284,7 +284,7 @@ void DvServiceUpnpOrgContentDirectory1C::CreateObject(IInvocationResponse& aResp
     aResponse.End();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::DestroyObject(IInvocationResponse& aResponse, TUint aVersion, const Brx& aObjectID)
+void DvProviderUpnpOrgContentDirectory1C::DestroyObject(IInvocationResponse& aResponse, TUint aVersion, const Brx& aObjectID)
 {
     ASSERT(iCallbackDestroyObject != NULL);
     if (0 != iCallbackDestroyObject(iPtrDestroyObject, aVersion, (const char*)aObjectID.Ptr())) {
@@ -295,7 +295,7 @@ void DvServiceUpnpOrgContentDirectory1C::DestroyObject(IInvocationResponse& aRes
     aResponse.End();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::UpdateObject(IInvocationResponse& aResponse, TUint aVersion, const Brx& aObjectID, const Brx& aCurrentTagValue, const Brx& aNewTagValue)
+void DvProviderUpnpOrgContentDirectory1C::UpdateObject(IInvocationResponse& aResponse, TUint aVersion, const Brx& aObjectID, const Brx& aCurrentTagValue, const Brx& aNewTagValue)
 {
     ASSERT(iCallbackUpdateObject != NULL);
     if (0 != iCallbackUpdateObject(iPtrUpdateObject, aVersion, (const char*)aObjectID.Ptr(), (const char*)aCurrentTagValue.Ptr(), (const char*)aNewTagValue.Ptr())) {
@@ -306,7 +306,7 @@ void DvServiceUpnpOrgContentDirectory1C::UpdateObject(IInvocationResponse& aResp
     aResponse.End();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::ImportResource(IInvocationResponse& aResponse, TUint aVersion, const Brx& aSourceURI, const Brx& aDestinationURI, IInvocationResponseUint& aTransferID)
+void DvProviderUpnpOrgContentDirectory1C::ImportResource(IInvocationResponse& aResponse, TUint aVersion, const Brx& aSourceURI, const Brx& aDestinationURI, IInvocationResponseUint& aTransferID)
 {
     uint32_t TransferID;
     ASSERT(iCallbackImportResource != NULL);
@@ -319,7 +319,7 @@ void DvServiceUpnpOrgContentDirectory1C::ImportResource(IInvocationResponse& aRe
     aResponse.End();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::ExportResource(IInvocationResponse& aResponse, TUint aVersion, const Brx& aSourceURI, const Brx& aDestinationURI, IInvocationResponseUint& aTransferID)
+void DvProviderUpnpOrgContentDirectory1C::ExportResource(IInvocationResponse& aResponse, TUint aVersion, const Brx& aSourceURI, const Brx& aDestinationURI, IInvocationResponseUint& aTransferID)
 {
     uint32_t TransferID;
     ASSERT(iCallbackExportResource != NULL);
@@ -332,7 +332,7 @@ void DvServiceUpnpOrgContentDirectory1C::ExportResource(IInvocationResponse& aRe
     aResponse.End();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::StopTransferResource(IInvocationResponse& aResponse, TUint aVersion, TUint aTransferID)
+void DvProviderUpnpOrgContentDirectory1C::StopTransferResource(IInvocationResponse& aResponse, TUint aVersion, TUint aTransferID)
 {
     ASSERT(iCallbackStopTransferResource != NULL);
     if (0 != iCallbackStopTransferResource(iPtrStopTransferResource, aVersion, aTransferID)) {
@@ -343,7 +343,7 @@ void DvServiceUpnpOrgContentDirectory1C::StopTransferResource(IInvocationRespons
     aResponse.End();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::GetTransferProgress(IInvocationResponse& aResponse, TUint aVersion, TUint aTransferID, IInvocationResponseString& aTransferStatus, IInvocationResponseString& aTransferLength, IInvocationResponseString& aTransferTotal)
+void DvProviderUpnpOrgContentDirectory1C::GetTransferProgress(IInvocationResponse& aResponse, TUint aVersion, TUint aTransferID, IInvocationResponseString& aTransferStatus, IInvocationResponseString& aTransferLength, IInvocationResponseString& aTransferTotal)
 {
     char* TransferStatus;
     char* TransferLength;
@@ -369,7 +369,7 @@ void DvServiceUpnpOrgContentDirectory1C::GetTransferProgress(IInvocationResponse
     aResponse.End();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::DeleteResource(IInvocationResponse& aResponse, TUint aVersion, const Brx& aResourceURI)
+void DvProviderUpnpOrgContentDirectory1C::DeleteResource(IInvocationResponse& aResponse, TUint aVersion, const Brx& aResourceURI)
 {
     ASSERT(iCallbackDeleteResource != NULL);
     if (0 != iCallbackDeleteResource(iPtrDeleteResource, aVersion, (const char*)aResourceURI.Ptr())) {
@@ -380,7 +380,7 @@ void DvServiceUpnpOrgContentDirectory1C::DeleteResource(IInvocationResponse& aRe
     aResponse.End();
 }
 
-void DvServiceUpnpOrgContentDirectory1C::CreateReference(IInvocationResponse& aResponse, TUint aVersion, const Brx& aContainerID, const Brx& aObjectID, IInvocationResponseString& aNewID)
+void DvProviderUpnpOrgContentDirectory1C::CreateReference(IInvocationResponse& aResponse, TUint aVersion, const Brx& aContainerID, const Brx& aObjectID, IInvocationResponseString& aNewID)
 {
     char* NewID;
     ASSERT(iCallbackCreateReference != NULL);
@@ -398,124 +398,124 @@ void DvServiceUpnpOrgContentDirectory1C::CreateReference(IInvocationResponse& aR
 
 
 
-THandle DvServiceUpnpOrgContentDirectory1Create(DvDeviceC aDevice)
+THandle DvProviderUpnpOrgContentDirectory1Create(DvDeviceC aDevice)
 {
-	return new DvServiceUpnpOrgContentDirectory1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderUpnpOrgContentDirectory1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvServiceUpnpOrgContentDirectory1Destroy(THandle aService)
+void DvProviderUpnpOrgContentDirectory1Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService);
+    delete reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aService);
 }
 
-void DvServiceUpnpOrgContentDirectory1EnableActionGetSearchCapabilities(THandle aService, CallbackContentDirectory1GetSearchCapabilities aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1EnableActionGetSearchCapabilities(THandle aService, CallbackContentDirectory1GetSearchCapabilities aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionGetSearchCapabilities(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aService)->EnableActionGetSearchCapabilities(aCallback, aPtr);
 }
 
-void DvServiceUpnpOrgContentDirectory1EnableActionGetSortCapabilities(THandle aService, CallbackContentDirectory1GetSortCapabilities aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1EnableActionGetSortCapabilities(THandle aService, CallbackContentDirectory1GetSortCapabilities aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionGetSortCapabilities(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aService)->EnableActionGetSortCapabilities(aCallback, aPtr);
 }
 
-void DvServiceUpnpOrgContentDirectory1EnableActionGetSystemUpdateID(THandle aService, CallbackContentDirectory1GetSystemUpdateID aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1EnableActionGetSystemUpdateID(THandle aService, CallbackContentDirectory1GetSystemUpdateID aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionGetSystemUpdateID(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aService)->EnableActionGetSystemUpdateID(aCallback, aPtr);
 }
 
-void DvServiceUpnpOrgContentDirectory1EnableActionBrowse(THandle aService, CallbackContentDirectory1Browse aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1EnableActionBrowse(THandle aService, CallbackContentDirectory1Browse aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionBrowse(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aService)->EnableActionBrowse(aCallback, aPtr);
 }
 
-void DvServiceUpnpOrgContentDirectory1EnableActionSearch(THandle aService, CallbackContentDirectory1Search aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1EnableActionSearch(THandle aService, CallbackContentDirectory1Search aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionSearch(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aService)->EnableActionSearch(aCallback, aPtr);
 }
 
-void DvServiceUpnpOrgContentDirectory1EnableActionCreateObject(THandle aService, CallbackContentDirectory1CreateObject aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1EnableActionCreateObject(THandle aService, CallbackContentDirectory1CreateObject aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionCreateObject(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aService)->EnableActionCreateObject(aCallback, aPtr);
 }
 
-void DvServiceUpnpOrgContentDirectory1EnableActionDestroyObject(THandle aService, CallbackContentDirectory1DestroyObject aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1EnableActionDestroyObject(THandle aService, CallbackContentDirectory1DestroyObject aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionDestroyObject(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aService)->EnableActionDestroyObject(aCallback, aPtr);
 }
 
-void DvServiceUpnpOrgContentDirectory1EnableActionUpdateObject(THandle aService, CallbackContentDirectory1UpdateObject aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1EnableActionUpdateObject(THandle aService, CallbackContentDirectory1UpdateObject aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionUpdateObject(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aService)->EnableActionUpdateObject(aCallback, aPtr);
 }
 
-void DvServiceUpnpOrgContentDirectory1EnableActionImportResource(THandle aService, CallbackContentDirectory1ImportResource aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1EnableActionImportResource(THandle aService, CallbackContentDirectory1ImportResource aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionImportResource(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aService)->EnableActionImportResource(aCallback, aPtr);
 }
 
-void DvServiceUpnpOrgContentDirectory1EnableActionExportResource(THandle aService, CallbackContentDirectory1ExportResource aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1EnableActionExportResource(THandle aService, CallbackContentDirectory1ExportResource aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionExportResource(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aService)->EnableActionExportResource(aCallback, aPtr);
 }
 
-void DvServiceUpnpOrgContentDirectory1EnableActionStopTransferResource(THandle aService, CallbackContentDirectory1StopTransferResource aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1EnableActionStopTransferResource(THandle aService, CallbackContentDirectory1StopTransferResource aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionStopTransferResource(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aService)->EnableActionStopTransferResource(aCallback, aPtr);
 }
 
-void DvServiceUpnpOrgContentDirectory1EnableActionGetTransferProgress(THandle aService, CallbackContentDirectory1GetTransferProgress aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1EnableActionGetTransferProgress(THandle aService, CallbackContentDirectory1GetTransferProgress aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionGetTransferProgress(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aService)->EnableActionGetTransferProgress(aCallback, aPtr);
 }
 
-void DvServiceUpnpOrgContentDirectory1EnableActionDeleteResource(THandle aService, CallbackContentDirectory1DeleteResource aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1EnableActionDeleteResource(THandle aService, CallbackContentDirectory1DeleteResource aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionDeleteResource(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aService)->EnableActionDeleteResource(aCallback, aPtr);
 }
 
-void DvServiceUpnpOrgContentDirectory1EnableActionCreateReference(THandle aService, CallbackContentDirectory1CreateReference aCallback, void* aPtr)
+void DvProviderUpnpOrgContentDirectory1EnableActionCreateReference(THandle aService, CallbackContentDirectory1CreateReference aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->EnableActionCreateReference(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aService)->EnableActionCreateReference(aCallback, aPtr);
 }
 
-int32_t DvServiceUpnpOrgContentDirectory1SetPropertyTransferIDs(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderUpnpOrgContentDirectory1SetPropertyTransferIDs(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->SetPropertyTransferIDs(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aService)->SetPropertyTransferIDs(buf)? 1 : 0);
     return 0;
 }
 
-void DvServiceUpnpOrgContentDirectory1GetPropertyTransferIDs(THandle aService, char** aValue)
+void DvProviderUpnpOrgContentDirectory1GetPropertyTransferIDs(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->GetPropertyTransferIDs(buf);
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aService)->GetPropertyTransferIDs(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceUpnpOrgContentDirectory1SetPropertySystemUpdateID(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderUpnpOrgContentDirectory1SetPropertySystemUpdateID(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->SetPropertySystemUpdateID(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aService)->SetPropertySystemUpdateID(aValue)? 1 : 0);
     return 0;
 }
 
-void DvServiceUpnpOrgContentDirectory1GetPropertySystemUpdateID(THandle aService, uint32_t* aValue)
+void DvProviderUpnpOrgContentDirectory1GetPropertySystemUpdateID(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->GetPropertySystemUpdateID(val);
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aService)->GetPropertySystemUpdateID(val);
     *aValue = val;
 }
 
-int32_t DvServiceUpnpOrgContentDirectory1SetPropertyContainerUpdateIDs(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderUpnpOrgContentDirectory1SetPropertyContainerUpdateIDs(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->SetPropertyContainerUpdateIDs(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aService)->SetPropertyContainerUpdateIDs(buf)? 1 : 0);
     return 0;
 }
 
-void DvServiceUpnpOrgContentDirectory1GetPropertyContainerUpdateIDs(THandle aService, char** aValue)
+void DvProviderUpnpOrgContentDirectory1GetPropertyContainerUpdateIDs(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceUpnpOrgContentDirectory1C*>(aService)->GetPropertyContainerUpdateIDs(buf);
+    reinterpret_cast<DvProviderUpnpOrgContentDirectory1C*>(aService)->GetPropertyContainerUpdateIDs(buf);
     *aValue = (char*)buf.Transfer();
 }
 

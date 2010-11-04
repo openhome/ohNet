@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 #include <string>
 
@@ -20,10 +20,10 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Time:1
  */
-class DvServiceLinnCoUkTime1Cpp : public DvService
+class DvProviderLinnCoUkTime1Cpp : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkTime1Cpp() {}
+    virtual ~DvProviderLinnCoUkTime1Cpp() {}
     bool SetPropertyTrackCount(uint32_t aValue);
     void GetPropertyTrackCount(uint32_t& aValue);
     bool SetPropertyDuration(uint32_t aValue);
@@ -31,12 +31,12 @@ public:
     bool SetPropertySeconds(uint32_t aValue);
     void GetPropertySeconds(uint32_t& aValue);
 protected:
-    DvServiceLinnCoUkTime1Cpp(DvDeviceStd& aDevice);
+    DvProviderLinnCoUkTime1Cpp(DvDeviceStd& aDevice);
     void EnableActionTime();
 private:
     virtual void Time(uint32_t aVersion, uint32_t& aaTrackCount, uint32_t& aaDuration, uint32_t& aaSeconds);
 private:
-    DvServiceLinnCoUkTime1Cpp();
+    DvProviderLinnCoUkTime1Cpp();
     void DoTime(IDvInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyUint* iPropertyTrackCount;

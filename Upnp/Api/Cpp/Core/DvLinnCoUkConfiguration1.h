@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,16 +17,16 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Configuration:1
  */
-class DvServiceLinnCoUkConfiguration1 : public DvService
+class DvProviderLinnCoUkConfiguration1 : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkConfiguration1() {}
+    virtual ~DvProviderLinnCoUkConfiguration1() {}
     TBool SetPropertyConfigurationXml(const Brx& aValue);
     void GetPropertyConfigurationXml(Brhz& aValue);
     TBool SetPropertyParameterXml(const Brx& aValue);
     void GetPropertyParameterXml(Brhz& aValue);
 protected:
-    DvServiceLinnCoUkConfiguration1(DvDevice& aDevice);
+    DvProviderLinnCoUkConfiguration1(DvDevice& aDevice);
     void EnableActionConfigurationXml();
     void EnableActionParameterXml();
     void EnableActionSetParameter();
@@ -35,7 +35,7 @@ private:
     virtual void ParameterXml(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaParameterXml);
     virtual void SetParameter(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaTarget, const Brx& aaName, const Brx& aaValue);
 private:
-    DvServiceLinnCoUkConfiguration1();
+    DvProviderLinnCoUkConfiguration1();
     void DoConfigurationXml(IDvInvocation& aInvocation, TUint aVersion);
     void DoParameterXml(IDvInvocation& aInvocation, TUint aVersion);
     void DoSetParameter(IDvInvocation& aInvocation, TUint aVersion);

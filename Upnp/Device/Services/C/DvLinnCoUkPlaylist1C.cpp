@@ -7,10 +7,10 @@
 
 using namespace Zapp;
 
-class DvServiceLinnCoUkPlaylist1C : public DvServiceLinnCoUkPlaylist1
+class DvProviderLinnCoUkPlaylist1C : public DvProviderLinnCoUkPlaylist1
 {
 public:
-    DvServiceLinnCoUkPlaylist1C(DvDevice& aDevice);
+    DvProviderLinnCoUkPlaylist1C(DvDevice& aDevice);
     void EnableActionRead(CallbackPlaylist1Read aCallback, void* aPtr);
     void EnableActionReadList(CallbackPlaylist1ReadList aCallback, void* aPtr);
     void EnableActionInsert(CallbackPlaylist1Insert aCallback, void* aPtr);
@@ -63,96 +63,96 @@ private:
     void* iPtrIdArrayChanged;
 };
 
-DvServiceLinnCoUkPlaylist1C::DvServiceLinnCoUkPlaylist1C(DvDevice& aDevice)
-    : DvServiceLinnCoUkPlaylist1(aDevice)
+DvProviderLinnCoUkPlaylist1C::DvProviderLinnCoUkPlaylist1C(DvDevice& aDevice)
+    : DvProviderLinnCoUkPlaylist1(aDevice)
 {
 }
 
-void DvServiceLinnCoUkPlaylist1C::EnableActionRead(CallbackPlaylist1Read aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1C::EnableActionRead(CallbackPlaylist1Read aCallback, void* aPtr)
 {
     iCallbackRead = aCallback;
     iPtrRead = aPtr;
-    DvServiceLinnCoUkPlaylist1::EnableActionRead();
+    DvProviderLinnCoUkPlaylist1::EnableActionRead();
 }
 
-void DvServiceLinnCoUkPlaylist1C::EnableActionReadList(CallbackPlaylist1ReadList aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1C::EnableActionReadList(CallbackPlaylist1ReadList aCallback, void* aPtr)
 {
     iCallbackReadList = aCallback;
     iPtrReadList = aPtr;
-    DvServiceLinnCoUkPlaylist1::EnableActionReadList();
+    DvProviderLinnCoUkPlaylist1::EnableActionReadList();
 }
 
-void DvServiceLinnCoUkPlaylist1C::EnableActionInsert(CallbackPlaylist1Insert aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1C::EnableActionInsert(CallbackPlaylist1Insert aCallback, void* aPtr)
 {
     iCallbackInsert = aCallback;
     iPtrInsert = aPtr;
-    DvServiceLinnCoUkPlaylist1::EnableActionInsert();
+    DvProviderLinnCoUkPlaylist1::EnableActionInsert();
 }
 
-void DvServiceLinnCoUkPlaylist1C::EnableActionDelete(CallbackPlaylist1Delete aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1C::EnableActionDelete(CallbackPlaylist1Delete aCallback, void* aPtr)
 {
     iCallbackDelete = aCallback;
     iPtrDelete = aPtr;
-    DvServiceLinnCoUkPlaylist1::EnableActionDelete();
+    DvProviderLinnCoUkPlaylist1::EnableActionDelete();
 }
 
-void DvServiceLinnCoUkPlaylist1C::EnableActionDeleteAll(CallbackPlaylist1DeleteAll aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1C::EnableActionDeleteAll(CallbackPlaylist1DeleteAll aCallback, void* aPtr)
 {
     iCallbackDeleteAll = aCallback;
     iPtrDeleteAll = aPtr;
-    DvServiceLinnCoUkPlaylist1::EnableActionDeleteAll();
+    DvProviderLinnCoUkPlaylist1::EnableActionDeleteAll();
 }
 
-void DvServiceLinnCoUkPlaylist1C::EnableActionSetRepeat(CallbackPlaylist1SetRepeat aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1C::EnableActionSetRepeat(CallbackPlaylist1SetRepeat aCallback, void* aPtr)
 {
     iCallbackSetRepeat = aCallback;
     iPtrSetRepeat = aPtr;
-    DvServiceLinnCoUkPlaylist1::EnableActionSetRepeat();
+    DvProviderLinnCoUkPlaylist1::EnableActionSetRepeat();
 }
 
-void DvServiceLinnCoUkPlaylist1C::EnableActionRepeat(CallbackPlaylist1Repeat aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1C::EnableActionRepeat(CallbackPlaylist1Repeat aCallback, void* aPtr)
 {
     iCallbackRepeat = aCallback;
     iPtrRepeat = aPtr;
-    DvServiceLinnCoUkPlaylist1::EnableActionRepeat();
+    DvProviderLinnCoUkPlaylist1::EnableActionRepeat();
 }
 
-void DvServiceLinnCoUkPlaylist1C::EnableActionSetShuffle(CallbackPlaylist1SetShuffle aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1C::EnableActionSetShuffle(CallbackPlaylist1SetShuffle aCallback, void* aPtr)
 {
     iCallbackSetShuffle = aCallback;
     iPtrSetShuffle = aPtr;
-    DvServiceLinnCoUkPlaylist1::EnableActionSetShuffle();
+    DvProviderLinnCoUkPlaylist1::EnableActionSetShuffle();
 }
 
-void DvServiceLinnCoUkPlaylist1C::EnableActionShuffle(CallbackPlaylist1Shuffle aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1C::EnableActionShuffle(CallbackPlaylist1Shuffle aCallback, void* aPtr)
 {
     iCallbackShuffle = aCallback;
     iPtrShuffle = aPtr;
-    DvServiceLinnCoUkPlaylist1::EnableActionShuffle();
+    DvProviderLinnCoUkPlaylist1::EnableActionShuffle();
 }
 
-void DvServiceLinnCoUkPlaylist1C::EnableActionTracksMax(CallbackPlaylist1TracksMax aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1C::EnableActionTracksMax(CallbackPlaylist1TracksMax aCallback, void* aPtr)
 {
     iCallbackTracksMax = aCallback;
     iPtrTracksMax = aPtr;
-    DvServiceLinnCoUkPlaylist1::EnableActionTracksMax();
+    DvProviderLinnCoUkPlaylist1::EnableActionTracksMax();
 }
 
-void DvServiceLinnCoUkPlaylist1C::EnableActionIdArray(CallbackPlaylist1IdArray aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1C::EnableActionIdArray(CallbackPlaylist1IdArray aCallback, void* aPtr)
 {
     iCallbackIdArray = aCallback;
     iPtrIdArray = aPtr;
-    DvServiceLinnCoUkPlaylist1::EnableActionIdArray();
+    DvProviderLinnCoUkPlaylist1::EnableActionIdArray();
 }
 
-void DvServiceLinnCoUkPlaylist1C::EnableActionIdArrayChanged(CallbackPlaylist1IdArrayChanged aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1C::EnableActionIdArrayChanged(CallbackPlaylist1IdArrayChanged aCallback, void* aPtr)
 {
     iCallbackIdArrayChanged = aCallback;
     iPtrIdArrayChanged = aPtr;
-    DvServiceLinnCoUkPlaylist1::EnableActionIdArrayChanged();
+    DvProviderLinnCoUkPlaylist1::EnableActionIdArrayChanged();
 }
 
-void DvServiceLinnCoUkPlaylist1C::Read(IInvocationResponse& aResponse, TUint aVersion, TUint aaId, IInvocationResponseString& aaUri, IInvocationResponseString& aaMetaData)
+void DvProviderLinnCoUkPlaylist1C::Read(IInvocationResponse& aResponse, TUint aVersion, TUint aaId, IInvocationResponseString& aaUri, IInvocationResponseString& aaMetaData)
 {
     char* aUri;
     char* aMetaData;
@@ -173,7 +173,7 @@ void DvServiceLinnCoUkPlaylist1C::Read(IInvocationResponse& aResponse, TUint aVe
     aResponse.End();
 }
 
-void DvServiceLinnCoUkPlaylist1C::ReadList(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaIdList, IInvocationResponseString& aaMetaDataList)
+void DvProviderLinnCoUkPlaylist1C::ReadList(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaIdList, IInvocationResponseString& aaMetaDataList)
 {
     char* aMetaDataList;
     ASSERT(iCallbackReadList != NULL);
@@ -189,7 +189,7 @@ void DvServiceLinnCoUkPlaylist1C::ReadList(IInvocationResponse& aResponse, TUint
     aResponse.End();
 }
 
-void DvServiceLinnCoUkPlaylist1C::Insert(IInvocationResponse& aResponse, TUint aVersion, TUint aaAfterId, const Brx& aaUri, const Brx& aaMetaData, IInvocationResponseUint& aaNewId)
+void DvProviderLinnCoUkPlaylist1C::Insert(IInvocationResponse& aResponse, TUint aVersion, TUint aaAfterId, const Brx& aaUri, const Brx& aaMetaData, IInvocationResponseUint& aaNewId)
 {
     uint32_t aNewId;
     ASSERT(iCallbackInsert != NULL);
@@ -202,7 +202,7 @@ void DvServiceLinnCoUkPlaylist1C::Insert(IInvocationResponse& aResponse, TUint a
     aResponse.End();
 }
 
-void DvServiceLinnCoUkPlaylist1C::Delete(IInvocationResponse& aResponse, TUint aVersion, TUint aaId)
+void DvProviderLinnCoUkPlaylist1C::Delete(IInvocationResponse& aResponse, TUint aVersion, TUint aaId)
 {
     ASSERT(iCallbackDelete != NULL);
     if (0 != iCallbackDelete(iPtrDelete, aVersion, aaId)) {
@@ -213,7 +213,7 @@ void DvServiceLinnCoUkPlaylist1C::Delete(IInvocationResponse& aResponse, TUint a
     aResponse.End();
 }
 
-void DvServiceLinnCoUkPlaylist1C::DeleteAll(IInvocationResponse& aResponse, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1C::DeleteAll(IInvocationResponse& aResponse, TUint aVersion)
 {
     ASSERT(iCallbackDeleteAll != NULL);
     if (0 != iCallbackDeleteAll(iPtrDeleteAll, aVersion)) {
@@ -224,7 +224,7 @@ void DvServiceLinnCoUkPlaylist1C::DeleteAll(IInvocationResponse& aResponse, TUin
     aResponse.End();
 }
 
-void DvServiceLinnCoUkPlaylist1C::SetRepeat(IInvocationResponse& aResponse, TUint aVersion, TBool aaRepeat)
+void DvProviderLinnCoUkPlaylist1C::SetRepeat(IInvocationResponse& aResponse, TUint aVersion, TBool aaRepeat)
 {
     ASSERT(iCallbackSetRepeat != NULL);
     if (0 != iCallbackSetRepeat(iPtrSetRepeat, aVersion, aaRepeat)) {
@@ -235,7 +235,7 @@ void DvServiceLinnCoUkPlaylist1C::SetRepeat(IInvocationResponse& aResponse, TUin
     aResponse.End();
 }
 
-void DvServiceLinnCoUkPlaylist1C::Repeat(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaRepeat)
+void DvProviderLinnCoUkPlaylist1C::Repeat(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaRepeat)
 {
     uint32_t aRepeat;
     ASSERT(iCallbackRepeat != NULL);
@@ -248,7 +248,7 @@ void DvServiceLinnCoUkPlaylist1C::Repeat(IInvocationResponse& aResponse, TUint a
     aResponse.End();
 }
 
-void DvServiceLinnCoUkPlaylist1C::SetShuffle(IInvocationResponse& aResponse, TUint aVersion, TBool aaShuffle)
+void DvProviderLinnCoUkPlaylist1C::SetShuffle(IInvocationResponse& aResponse, TUint aVersion, TBool aaShuffle)
 {
     ASSERT(iCallbackSetShuffle != NULL);
     if (0 != iCallbackSetShuffle(iPtrSetShuffle, aVersion, aaShuffle)) {
@@ -259,7 +259,7 @@ void DvServiceLinnCoUkPlaylist1C::SetShuffle(IInvocationResponse& aResponse, TUi
     aResponse.End();
 }
 
-void DvServiceLinnCoUkPlaylist1C::Shuffle(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaShuffle)
+void DvProviderLinnCoUkPlaylist1C::Shuffle(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaShuffle)
 {
     uint32_t aShuffle;
     ASSERT(iCallbackShuffle != NULL);
@@ -272,7 +272,7 @@ void DvServiceLinnCoUkPlaylist1C::Shuffle(IInvocationResponse& aResponse, TUint 
     aResponse.End();
 }
 
-void DvServiceLinnCoUkPlaylist1C::TracksMax(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaTracksMax)
+void DvProviderLinnCoUkPlaylist1C::TracksMax(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaTracksMax)
 {
     uint32_t aTracksMax;
     ASSERT(iCallbackTracksMax != NULL);
@@ -285,7 +285,7 @@ void DvServiceLinnCoUkPlaylist1C::TracksMax(IInvocationResponse& aResponse, TUin
     aResponse.End();
 }
 
-void DvServiceLinnCoUkPlaylist1C::IdArray(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaIdArrayToken, IInvocationResponseBinary& aaIdArray)
+void DvProviderLinnCoUkPlaylist1C::IdArray(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaIdArrayToken, IInvocationResponseBinary& aaIdArray)
 {
     uint32_t aIdArrayToken;
     char* aIdArray;
@@ -305,7 +305,7 @@ void DvServiceLinnCoUkPlaylist1C::IdArray(IInvocationResponse& aResponse, TUint 
     aResponse.End();
 }
 
-void DvServiceLinnCoUkPlaylist1C::IdArrayChanged(IInvocationResponse& aResponse, TUint aVersion, TUint aaIdArrayToken, IInvocationResponseBool& aaIdArrayChanged)
+void DvProviderLinnCoUkPlaylist1C::IdArrayChanged(IInvocationResponse& aResponse, TUint aVersion, TUint aaIdArrayToken, IInvocationResponseBool& aaIdArrayChanged)
 {
     uint32_t aIdArrayChanged;
     ASSERT(iCallbackIdArrayChanged != NULL);
@@ -320,128 +320,128 @@ void DvServiceLinnCoUkPlaylist1C::IdArrayChanged(IInvocationResponse& aResponse,
 
 
 
-THandle DvServiceLinnCoUkPlaylist1Create(DvDeviceC aDevice)
+THandle DvProviderLinnCoUkPlaylist1Create(DvDeviceC aDevice)
 {
-	return new DvServiceLinnCoUkPlaylist1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderLinnCoUkPlaylist1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvServiceLinnCoUkPlaylist1Destroy(THandle aService)
+void DvProviderLinnCoUkPlaylist1Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService);
+    delete reinterpret_cast<DvProviderLinnCoUkPlaylist1C*>(aService);
 }
 
-void DvServiceLinnCoUkPlaylist1EnableActionRead(THandle aService, CallbackPlaylist1Read aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1EnableActionRead(THandle aService, CallbackPlaylist1Read aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->EnableActionRead(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPlaylist1C*>(aService)->EnableActionRead(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkPlaylist1EnableActionReadList(THandle aService, CallbackPlaylist1ReadList aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1EnableActionReadList(THandle aService, CallbackPlaylist1ReadList aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->EnableActionReadList(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPlaylist1C*>(aService)->EnableActionReadList(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkPlaylist1EnableActionInsert(THandle aService, CallbackPlaylist1Insert aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1EnableActionInsert(THandle aService, CallbackPlaylist1Insert aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->EnableActionInsert(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPlaylist1C*>(aService)->EnableActionInsert(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkPlaylist1EnableActionDelete(THandle aService, CallbackPlaylist1Delete aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1EnableActionDelete(THandle aService, CallbackPlaylist1Delete aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->EnableActionDelete(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPlaylist1C*>(aService)->EnableActionDelete(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkPlaylist1EnableActionDeleteAll(THandle aService, CallbackPlaylist1DeleteAll aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1EnableActionDeleteAll(THandle aService, CallbackPlaylist1DeleteAll aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->EnableActionDeleteAll(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPlaylist1C*>(aService)->EnableActionDeleteAll(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkPlaylist1EnableActionSetRepeat(THandle aService, CallbackPlaylist1SetRepeat aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1EnableActionSetRepeat(THandle aService, CallbackPlaylist1SetRepeat aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->EnableActionSetRepeat(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPlaylist1C*>(aService)->EnableActionSetRepeat(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkPlaylist1EnableActionRepeat(THandle aService, CallbackPlaylist1Repeat aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1EnableActionRepeat(THandle aService, CallbackPlaylist1Repeat aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->EnableActionRepeat(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPlaylist1C*>(aService)->EnableActionRepeat(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkPlaylist1EnableActionSetShuffle(THandle aService, CallbackPlaylist1SetShuffle aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1EnableActionSetShuffle(THandle aService, CallbackPlaylist1SetShuffle aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->EnableActionSetShuffle(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPlaylist1C*>(aService)->EnableActionSetShuffle(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkPlaylist1EnableActionShuffle(THandle aService, CallbackPlaylist1Shuffle aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1EnableActionShuffle(THandle aService, CallbackPlaylist1Shuffle aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->EnableActionShuffle(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPlaylist1C*>(aService)->EnableActionShuffle(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkPlaylist1EnableActionTracksMax(THandle aService, CallbackPlaylist1TracksMax aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1EnableActionTracksMax(THandle aService, CallbackPlaylist1TracksMax aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->EnableActionTracksMax(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPlaylist1C*>(aService)->EnableActionTracksMax(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkPlaylist1EnableActionIdArray(THandle aService, CallbackPlaylist1IdArray aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1EnableActionIdArray(THandle aService, CallbackPlaylist1IdArray aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->EnableActionIdArray(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPlaylist1C*>(aService)->EnableActionIdArray(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkPlaylist1EnableActionIdArrayChanged(THandle aService, CallbackPlaylist1IdArrayChanged aCallback, void* aPtr)
+void DvProviderLinnCoUkPlaylist1EnableActionIdArrayChanged(THandle aService, CallbackPlaylist1IdArrayChanged aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->EnableActionIdArrayChanged(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPlaylist1C*>(aService)->EnableActionIdArrayChanged(aCallback, aPtr);
 }
 
-int32_t DvServiceLinnCoUkPlaylist1SetPropertyIdArray(THandle aService, const char* aValue, uint32_t aValueLen, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkPlaylist1SetPropertyIdArray(THandle aService, const char* aValue, uint32_t aValueLen, uint32_t* aChanged)
 {
     Brh buf;
     buf.Set((const TByte*)aValue, aValueLen);
-    *aChanged = (reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->SetPropertyIdArray(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkPlaylist1C*>(aService)->SetPropertyIdArray(buf)? 1 : 0);
     return 0;
 }
 
-void DvServiceLinnCoUkPlaylist1GetPropertyIdArray(THandle aService, char** aValue, uint32_t* aValueLen)
+void DvProviderLinnCoUkPlaylist1GetPropertyIdArray(THandle aService, char** aValue, uint32_t* aValueLen)
 {
     Brh buf;
-    reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->GetPropertyIdArray(buf);
+    reinterpret_cast<DvProviderLinnCoUkPlaylist1C*>(aService)->GetPropertyIdArray(buf);
     *aValueLen = buf.Bytes();
     *aValue = (char*)buf.Extract();
 }
 
-int32_t DvServiceLinnCoUkPlaylist1SetPropertyRepeat(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkPlaylist1SetPropertyRepeat(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->SetPropertyRepeat((aValue!=0))? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkPlaylist1C*>(aService)->SetPropertyRepeat((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvServiceLinnCoUkPlaylist1GetPropertyRepeat(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkPlaylist1GetPropertyRepeat(THandle aService, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->GetPropertyRepeat(val);
+    reinterpret_cast<DvProviderLinnCoUkPlaylist1C*>(aService)->GetPropertyRepeat(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvServiceLinnCoUkPlaylist1SetPropertyShuffle(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkPlaylist1SetPropertyShuffle(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->SetPropertyShuffle((aValue!=0))? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkPlaylist1C*>(aService)->SetPropertyShuffle((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvServiceLinnCoUkPlaylist1GetPropertyShuffle(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkPlaylist1GetPropertyShuffle(THandle aService, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->GetPropertyShuffle(val);
+    reinterpret_cast<DvProviderLinnCoUkPlaylist1C*>(aService)->GetPropertyShuffle(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvServiceLinnCoUkPlaylist1SetPropertyTracksMax(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkPlaylist1SetPropertyTracksMax(THandle aService, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->SetPropertyTracksMax(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkPlaylist1C*>(aService)->SetPropertyTracksMax(aValue)? 1 : 0);
     return 0;
 }
 
-void DvServiceLinnCoUkPlaylist1GetPropertyTracksMax(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkPlaylist1GetPropertyTracksMax(THandle aService, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkPlaylist1C*>(aService)->GetPropertyTracksMax(val);
+    reinterpret_cast<DvProviderLinnCoUkPlaylist1C*>(aService)->GetPropertyTracksMax(val);
     *aValue = val;
 }
 

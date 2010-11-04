@@ -6,88 +6,88 @@
 
 using namespace Zapp;
 
-TBool DvServiceZappOrgTestWidget1::SetPropertyReadWriteRegister0(TUint aValue)
+TBool DvProviderZappOrgTestWidget1::SetPropertyReadWriteRegister0(TUint aValue)
 {
     return SetPropertyUint(*iPropertyReadWriteRegister0, aValue);
 }
 
-void DvServiceZappOrgTestWidget1::GetPropertyReadWriteRegister0(TUint& aValue)
+void DvProviderZappOrgTestWidget1::GetPropertyReadWriteRegister0(TUint& aValue)
 {
     aValue = iPropertyReadWriteRegister0->Value();
 }
 
-TBool DvServiceZappOrgTestWidget1::SetPropertyReadWriteRegister1(TUint aValue)
+TBool DvProviderZappOrgTestWidget1::SetPropertyReadWriteRegister1(TUint aValue)
 {
     return SetPropertyUint(*iPropertyReadWriteRegister1, aValue);
 }
 
-void DvServiceZappOrgTestWidget1::GetPropertyReadWriteRegister1(TUint& aValue)
+void DvProviderZappOrgTestWidget1::GetPropertyReadWriteRegister1(TUint& aValue)
 {
     aValue = iPropertyReadWriteRegister1->Value();
 }
 
-TBool DvServiceZappOrgTestWidget1::SetPropertyReadWriteRegister2(TUint aValue)
+TBool DvProviderZappOrgTestWidget1::SetPropertyReadWriteRegister2(TUint aValue)
 {
     return SetPropertyUint(*iPropertyReadWriteRegister2, aValue);
 }
 
-void DvServiceZappOrgTestWidget1::GetPropertyReadWriteRegister2(TUint& aValue)
+void DvProviderZappOrgTestWidget1::GetPropertyReadWriteRegister2(TUint& aValue)
 {
     aValue = iPropertyReadWriteRegister2->Value();
 }
 
-TBool DvServiceZappOrgTestWidget1::SetPropertyReadWriteRegister3(TUint aValue)
+TBool DvProviderZappOrgTestWidget1::SetPropertyReadWriteRegister3(TUint aValue)
 {
     return SetPropertyUint(*iPropertyReadWriteRegister3, aValue);
 }
 
-void DvServiceZappOrgTestWidget1::GetPropertyReadWriteRegister3(TUint& aValue)
+void DvProviderZappOrgTestWidget1::GetPropertyReadWriteRegister3(TUint& aValue)
 {
     aValue = iPropertyReadWriteRegister3->Value();
 }
 
-TBool DvServiceZappOrgTestWidget1::SetPropertyReadOnlyRegister4(TUint aValue)
+TBool DvProviderZappOrgTestWidget1::SetPropertyReadOnlyRegister4(TUint aValue)
 {
     return SetPropertyUint(*iPropertyReadOnlyRegister4, aValue);
 }
 
-void DvServiceZappOrgTestWidget1::GetPropertyReadOnlyRegister4(TUint& aValue)
+void DvProviderZappOrgTestWidget1::GetPropertyReadOnlyRegister4(TUint& aValue)
 {
     aValue = iPropertyReadOnlyRegister4->Value();
 }
 
-TBool DvServiceZappOrgTestWidget1::SetPropertyReadOnlyRegister5(TUint aValue)
+TBool DvProviderZappOrgTestWidget1::SetPropertyReadOnlyRegister5(TUint aValue)
 {
     return SetPropertyUint(*iPropertyReadOnlyRegister5, aValue);
 }
 
-void DvServiceZappOrgTestWidget1::GetPropertyReadOnlyRegister5(TUint& aValue)
+void DvProviderZappOrgTestWidget1::GetPropertyReadOnlyRegister5(TUint& aValue)
 {
     aValue = iPropertyReadOnlyRegister5->Value();
 }
 
-TBool DvServiceZappOrgTestWidget1::SetPropertyReadOnlyRegister6(TUint aValue)
+TBool DvProviderZappOrgTestWidget1::SetPropertyReadOnlyRegister6(TUint aValue)
 {
     return SetPropertyUint(*iPropertyReadOnlyRegister6, aValue);
 }
 
-void DvServiceZappOrgTestWidget1::GetPropertyReadOnlyRegister6(TUint& aValue)
+void DvProviderZappOrgTestWidget1::GetPropertyReadOnlyRegister6(TUint& aValue)
 {
     aValue = iPropertyReadOnlyRegister6->Value();
 }
 
-TBool DvServiceZappOrgTestWidget1::SetPropertyReadOnlyRegister7(TUint aValue)
+TBool DvProviderZappOrgTestWidget1::SetPropertyReadOnlyRegister7(TUint aValue)
 {
     return SetPropertyUint(*iPropertyReadOnlyRegister7, aValue);
 }
 
-void DvServiceZappOrgTestWidget1::GetPropertyReadOnlyRegister7(TUint& aValue)
+void DvProviderZappOrgTestWidget1::GetPropertyReadOnlyRegister7(TUint& aValue)
 {
     aValue = iPropertyReadOnlyRegister7->Value();
 }
 
-DvServiceZappOrgTestWidget1::DvServiceZappOrgTestWidget1(DvDevice& aDevice)
-    : DvService(aDevice.Device(), "zapp.org", "TestWidget", 1)
+DvProviderZappOrgTestWidget1::DvProviderZappOrgTestWidget1(DvDevice& aDevice)
+    : DvProvider(aDevice.Device(), "zapp.org", "TestWidget", 1)
 {
     Functor empty;
     iPropertyReadWriteRegister0 = new PropertyUint(new ParameterUint("ReadWriteRegister0"), empty);
@@ -108,16 +108,16 @@ DvServiceZappOrgTestWidget1::DvServiceZappOrgTestWidget1(DvDevice& aDevice)
     iService->AddProperty(iPropertyReadOnlyRegister7); // passes ownership
 }
 
-void DvServiceZappOrgTestWidget1::EnableActionSetReadWriteRegister()
+void DvProviderZappOrgTestWidget1::EnableActionSetReadWriteRegister()
 {
     Zapp::Action* action = new Zapp::Action("SetReadWriteRegister");
     action->AddInputParameter(new ParameterUint("RegisterIndex"));
     action->AddInputParameter(new ParameterUint("RegisterValue"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestWidget1::DoSetReadWriteRegister);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestWidget1::DoSetReadWriteRegister);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestWidget1::DoSetReadWriteRegister(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestWidget1::DoSetReadWriteRegister(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint RegisterIndex = aInvocation.InvocationReadUint("RegisterIndex");
@@ -127,7 +127,7 @@ void DvServiceZappOrgTestWidget1::DoSetReadWriteRegister(IDvInvocation& aInvocat
     SetReadWriteRegister(resp, aVersion, RegisterIndex, RegisterValue);
 }
 
-void DvServiceZappOrgTestWidget1::SetReadWriteRegister(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aRegisterIndex*/, TUint /*aRegisterValue*/)
+void DvProviderZappOrgTestWidget1::SetReadWriteRegister(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aRegisterIndex*/, TUint /*aRegisterValue*/)
 {
     ASSERTS();
 }

@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,10 +17,10 @@ class PropertyBinary;
 /**
  * Base Device for upnp.org:Dimming:1
  */
-class DvServiceUpnpOrgDimming1 : public DvService
+class DvProviderUpnpOrgDimming1 : public DvProvider
 {
 public:
-    virtual ~DvServiceUpnpOrgDimming1() {}
+    virtual ~DvProviderUpnpOrgDimming1() {}
     TBool SetPropertyLoadLevelStatus(TUint aValue);
     void GetPropertyLoadLevelStatus(TUint& aValue);
     TBool SetPropertyStepDelta(TUint aValue);
@@ -32,7 +32,7 @@ public:
     TBool SetPropertyRampPaused(TBool aValue);
     void GetPropertyRampPaused(TBool& aValue);
 protected:
-    DvServiceUpnpOrgDimming1(DvDevice& aDevice);
+    DvProviderUpnpOrgDimming1(DvDevice& aDevice);
     void EnableActionSetLoadLevelTarget();
     void EnableActionGetLoadLevelTarget();
     void EnableActionGetLoadLevelStatus();
@@ -77,7 +77,7 @@ private:
     virtual void GetRampPaused(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aretRampPaused);
     virtual void GetRampTime(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aretRampTime);
 private:
-    DvServiceUpnpOrgDimming1();
+    DvProviderUpnpOrgDimming1();
     void DoSetLoadLevelTarget(IDvInvocation& aInvocation, TUint aVersion);
     void DoGetLoadLevelTarget(IDvInvocation& aInvocation, TUint aVersion);
     void DoGetLoadLevelStatus(IDvInvocation& aInvocation, TUint aVersion);

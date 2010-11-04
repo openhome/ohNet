@@ -5,50 +5,50 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvServiceUpnpOrgAVTransport1 : IDisposable
+    public class DvProviderUpnpOrgAVTransport1 : IDisposable
     {
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern uint DvServiceUpnpOrgAVTransport1Create(uint aDeviceHandle);
+        static extern uint DvProviderUpnpOrgAVTransport1Create(uint aDeviceHandle);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1Destroy(uint aHandle);
+        static extern void DvProviderUpnpOrgAVTransport1Destroy(uint aHandle);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern unsafe int DvServiceUpnpOrgAVTransport1SetPropertyLastChange(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgAVTransport1SetPropertyLastChange(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern unsafe void DvServiceUpnpOrgAVTransport1GetPropertyLastChange(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderUpnpOrgAVTransport1GetPropertyLastChange(uint aHandle, char** aValue);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionSetAVTransportURI(uint aHandle, CallbackSetAVTransportURI aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionSetAVTransportURI(uint aHandle, CallbackSetAVTransportURI aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionSetNextAVTransportURI(uint aHandle, CallbackSetNextAVTransportURI aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionSetNextAVTransportURI(uint aHandle, CallbackSetNextAVTransportURI aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionGetMediaInfo(uint aHandle, CallbackGetMediaInfo aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionGetMediaInfo(uint aHandle, CallbackGetMediaInfo aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionGetTransportInfo(uint aHandle, CallbackGetTransportInfo aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionGetTransportInfo(uint aHandle, CallbackGetTransportInfo aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionGetPositionInfo(uint aHandle, CallbackGetPositionInfo aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionGetPositionInfo(uint aHandle, CallbackGetPositionInfo aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionGetDeviceCapabilities(uint aHandle, CallbackGetDeviceCapabilities aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionGetDeviceCapabilities(uint aHandle, CallbackGetDeviceCapabilities aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionGetTransportSettings(uint aHandle, CallbackGetTransportSettings aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionGetTransportSettings(uint aHandle, CallbackGetTransportSettings aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionStop(uint aHandle, CallbackStop aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionStop(uint aHandle, CallbackStop aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionPlay(uint aHandle, CallbackPlay aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionPlay(uint aHandle, CallbackPlay aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionPause(uint aHandle, CallbackPause aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionPause(uint aHandle, CallbackPause aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionRecord(uint aHandle, CallbackRecord aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionRecord(uint aHandle, CallbackRecord aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionSeek(uint aHandle, CallbackSeek aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionSeek(uint aHandle, CallbackSeek aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionNext(uint aHandle, CallbackNext aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionNext(uint aHandle, CallbackNext aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionPrevious(uint aHandle, CallbackPrevious aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionPrevious(uint aHandle, CallbackPrevious aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionSetPlayMode(uint aHandle, CallbackSetPlayMode aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionSetPlayMode(uint aHandle, CallbackSetPlayMode aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionSetRecordQualityMode(uint aHandle, CallbackSetRecordQualityMode aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionSetRecordQualityMode(uint aHandle, CallbackSetRecordQualityMode aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionGetCurrentTransportActions(uint aHandle, CallbackGetCurrentTransportActions aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionGetCurrentTransportActions(uint aHandle, CallbackGetCurrentTransportActions aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -90,9 +90,9 @@ namespace Zapp
         private CallbackSetRecordQualityMode iCallbackSetRecordQualityMode;
         private CallbackGetCurrentTransportActions iCallbackGetCurrentTransportActions;
 
-        public DvServiceUpnpOrgAVTransport1(DvDevice aDevice)
+        public DvProviderUpnpOrgAVTransport1(DvDevice aDevice)
         {
-            iHandle = DvServiceUpnpOrgAVTransport1Create(aDevice.Handle()); 
+            iHandle = DvProviderUpnpOrgAVTransport1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
@@ -100,7 +100,7 @@ namespace Zapp
         {
         uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgAVTransport1SetPropertyLastChange(iHandle, value, &changed);
+            int err = DvProviderUpnpOrgAVTransport1SetPropertyLastChange(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
@@ -112,7 +112,7 @@ namespace Zapp
         public unsafe void GetPropertyLastChange(out string aValue)
         {
             char* value;
-            DvServiceUpnpOrgAVTransport1GetPropertyLastChange(iHandle, &value);
+            DvProviderUpnpOrgAVTransport1GetPropertyLastChange(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
@@ -121,119 +121,119 @@ namespace Zapp
         {
             iCallbackSetAVTransportURI = new CallbackSetAVTransportURI(DoSetAVTransportURI);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionSetAVTransportURI(iHandle, iCallbackSetAVTransportURI, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionSetAVTransportURI(iHandle, iCallbackSetAVTransportURI, ptr);
         }
 
         protected unsafe void EnableActionSetNextAVTransportURI()
         {
             iCallbackSetNextAVTransportURI = new CallbackSetNextAVTransportURI(DoSetNextAVTransportURI);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionSetNextAVTransportURI(iHandle, iCallbackSetNextAVTransportURI, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionSetNextAVTransportURI(iHandle, iCallbackSetNextAVTransportURI, ptr);
         }
 
         protected unsafe void EnableActionGetMediaInfo()
         {
             iCallbackGetMediaInfo = new CallbackGetMediaInfo(DoGetMediaInfo);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionGetMediaInfo(iHandle, iCallbackGetMediaInfo, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionGetMediaInfo(iHandle, iCallbackGetMediaInfo, ptr);
         }
 
         protected unsafe void EnableActionGetTransportInfo()
         {
             iCallbackGetTransportInfo = new CallbackGetTransportInfo(DoGetTransportInfo);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionGetTransportInfo(iHandle, iCallbackGetTransportInfo, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionGetTransportInfo(iHandle, iCallbackGetTransportInfo, ptr);
         }
 
         protected unsafe void EnableActionGetPositionInfo()
         {
             iCallbackGetPositionInfo = new CallbackGetPositionInfo(DoGetPositionInfo);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionGetPositionInfo(iHandle, iCallbackGetPositionInfo, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionGetPositionInfo(iHandle, iCallbackGetPositionInfo, ptr);
         }
 
         protected unsafe void EnableActionGetDeviceCapabilities()
         {
             iCallbackGetDeviceCapabilities = new CallbackGetDeviceCapabilities(DoGetDeviceCapabilities);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionGetDeviceCapabilities(iHandle, iCallbackGetDeviceCapabilities, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionGetDeviceCapabilities(iHandle, iCallbackGetDeviceCapabilities, ptr);
         }
 
         protected unsafe void EnableActionGetTransportSettings()
         {
             iCallbackGetTransportSettings = new CallbackGetTransportSettings(DoGetTransportSettings);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionGetTransportSettings(iHandle, iCallbackGetTransportSettings, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionGetTransportSettings(iHandle, iCallbackGetTransportSettings, ptr);
         }
 
         protected unsafe void EnableActionStop()
         {
             iCallbackStop = new CallbackStop(DoStop);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionStop(iHandle, iCallbackStop, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionStop(iHandle, iCallbackStop, ptr);
         }
 
         protected unsafe void EnableActionPlay()
         {
             iCallbackPlay = new CallbackPlay(DoPlay);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionPlay(iHandle, iCallbackPlay, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionPlay(iHandle, iCallbackPlay, ptr);
         }
 
         protected unsafe void EnableActionPause()
         {
             iCallbackPause = new CallbackPause(DoPause);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionPause(iHandle, iCallbackPause, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionPause(iHandle, iCallbackPause, ptr);
         }
 
         protected unsafe void EnableActionRecord()
         {
             iCallbackRecord = new CallbackRecord(DoRecord);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionRecord(iHandle, iCallbackRecord, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionRecord(iHandle, iCallbackRecord, ptr);
         }
 
         protected unsafe void EnableActionSeek()
         {
             iCallbackSeek = new CallbackSeek(DoSeek);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionSeek(iHandle, iCallbackSeek, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionSeek(iHandle, iCallbackSeek, ptr);
         }
 
         protected unsafe void EnableActionNext()
         {
             iCallbackNext = new CallbackNext(DoNext);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionNext(iHandle, iCallbackNext, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionNext(iHandle, iCallbackNext, ptr);
         }
 
         protected unsafe void EnableActionPrevious()
         {
             iCallbackPrevious = new CallbackPrevious(DoPrevious);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionPrevious(iHandle, iCallbackPrevious, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionPrevious(iHandle, iCallbackPrevious, ptr);
         }
 
         protected unsafe void EnableActionSetPlayMode()
         {
             iCallbackSetPlayMode = new CallbackSetPlayMode(DoSetPlayMode);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionSetPlayMode(iHandle, iCallbackSetPlayMode, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionSetPlayMode(iHandle, iCallbackSetPlayMode, ptr);
         }
 
         protected unsafe void EnableActionSetRecordQualityMode()
         {
             iCallbackSetRecordQualityMode = new CallbackSetRecordQualityMode(DoSetRecordQualityMode);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionSetRecordQualityMode(iHandle, iCallbackSetRecordQualityMode, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionSetRecordQualityMode(iHandle, iCallbackSetRecordQualityMode, ptr);
         }
 
         protected unsafe void EnableActionGetCurrentTransportActions()
         {
             iCallbackGetCurrentTransportActions = new CallbackGetCurrentTransportActions(DoGetCurrentTransportActions);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionGetCurrentTransportActions(iHandle, iCallbackGetCurrentTransportActions, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionGetCurrentTransportActions(iHandle, iCallbackGetCurrentTransportActions, ptr);
         }
 
         protected virtual void SetAVTransportURI(uint aVersion, uint aInstanceID, string aCurrentURI, string aCurrentURIMetaData)
@@ -324,7 +324,7 @@ namespace Zapp
         private static unsafe int DoSetAVTransportURI(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aCurrentURI, char* aCurrentURIMetaData)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             string currentURI = Marshal.PtrToStringAnsi((IntPtr)aCurrentURI);
             string currentURIMetaData = Marshal.PtrToStringAnsi((IntPtr)aCurrentURIMetaData);
             self.SetAVTransportURI(aVersion, aInstanceID, currentURI, currentURIMetaData);
@@ -334,7 +334,7 @@ namespace Zapp
         private static unsafe int DoSetNextAVTransportURI(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aNextURI, char* aNextURIMetaData)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             string nextURI = Marshal.PtrToStringAnsi((IntPtr)aNextURI);
             string nextURIMetaData = Marshal.PtrToStringAnsi((IntPtr)aNextURIMetaData);
             self.SetNextAVTransportURI(aVersion, aInstanceID, nextURI, nextURIMetaData);
@@ -344,7 +344,7 @@ namespace Zapp
         private static unsafe int DoGetMediaInfo(IntPtr aPtr, uint aVersion, uint aInstanceID, uint* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             uint nrTracks;
             string mediaDuration;
             string currentURI;
@@ -370,7 +370,7 @@ namespace Zapp
         private static unsafe int DoGetTransportInfo(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             string currentTransportState;
             string currentTransportStatus;
             string currentSpeed;
@@ -384,7 +384,7 @@ namespace Zapp
         private static unsafe int DoGetPositionInfo(IntPtr aPtr, uint aVersion, uint aInstanceID, uint* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int* aRelCount, int* aAbsCount)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             uint track;
             string trackDuration;
             string trackMetaData;
@@ -408,7 +408,7 @@ namespace Zapp
         private static unsafe int DoGetDeviceCapabilities(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             string playMedia;
             string recMedia;
             string recQualityModes;
@@ -422,7 +422,7 @@ namespace Zapp
         private static unsafe int DoGetTransportSettings(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aPlayMode, char** aRecQualityMode)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             string playMode;
             string recQualityMode;
             self.GetTransportSettings(aVersion, aInstanceID, out playMode, out recQualityMode);
@@ -434,7 +434,7 @@ namespace Zapp
         private static unsafe int DoStop(IntPtr aPtr, uint aVersion, uint aInstanceID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             self.Stop(aVersion, aInstanceID);
             return 0;
         }
@@ -442,7 +442,7 @@ namespace Zapp
         private static unsafe int DoPlay(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aSpeed)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             string speed = Marshal.PtrToStringAnsi((IntPtr)aSpeed);
             self.Play(aVersion, aInstanceID, speed);
             return 0;
@@ -451,7 +451,7 @@ namespace Zapp
         private static unsafe int DoPause(IntPtr aPtr, uint aVersion, uint aInstanceID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             self.Pause(aVersion, aInstanceID);
             return 0;
         }
@@ -459,7 +459,7 @@ namespace Zapp
         private static unsafe int DoRecord(IntPtr aPtr, uint aVersion, uint aInstanceID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             self.Record(aVersion, aInstanceID);
             return 0;
         }
@@ -467,7 +467,7 @@ namespace Zapp
         private static unsafe int DoSeek(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aUnit, char* aTarget)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             string unit = Marshal.PtrToStringAnsi((IntPtr)aUnit);
             string target = Marshal.PtrToStringAnsi((IntPtr)aTarget);
             self.Seek(aVersion, aInstanceID, unit, target);
@@ -477,7 +477,7 @@ namespace Zapp
         private static unsafe int DoNext(IntPtr aPtr, uint aVersion, uint aInstanceID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             self.Next(aVersion, aInstanceID);
             return 0;
         }
@@ -485,7 +485,7 @@ namespace Zapp
         private static unsafe int DoPrevious(IntPtr aPtr, uint aVersion, uint aInstanceID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             self.Previous(aVersion, aInstanceID);
             return 0;
         }
@@ -493,7 +493,7 @@ namespace Zapp
         private static unsafe int DoSetPlayMode(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aNewPlayMode)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             string newPlayMode = Marshal.PtrToStringAnsi((IntPtr)aNewPlayMode);
             self.SetPlayMode(aVersion, aInstanceID, newPlayMode);
             return 0;
@@ -502,7 +502,7 @@ namespace Zapp
         private static unsafe int DoSetRecordQualityMode(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aNewRecordQualityMode)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             string newRecordQualityMode = Marshal.PtrToStringAnsi((IntPtr)aNewRecordQualityMode);
             self.SetRecordQualityMode(aVersion, aInstanceID, newRecordQualityMode);
             return 0;
@@ -511,7 +511,7 @@ namespace Zapp
         private static unsafe int DoGetCurrentTransportActions(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aActions)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             string actions;
             self.GetCurrentTransportActions(aVersion, aInstanceID, out actions);
             *aActions = (char*)Marshal.StringToHGlobalAnsi(actions).ToPointer();
@@ -525,7 +525,7 @@ namespace Zapp
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceUpnpOrgAVTransport1()
+        ~DvProviderUpnpOrgAVTransport1()
         {
             DoDispose();
         }
@@ -542,7 +542,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = 0;
             }
-            DvServiceUpnpOrgAVTransport1Destroy(handle);
+            DvProviderUpnpOrgAVTransport1Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

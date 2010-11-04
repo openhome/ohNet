@@ -61,36 +61,36 @@ static int32_t echoBinary(void* /*aPtr*/, uint32_t /*aVersion*/, const char* aVa
 static int32_t setUint(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueUint)
 {
     uint32_t changed;
-    return DvServiceZappOrgTestBasic1SetPropertyVarUint((THandle)aPtr, aValueUint, &changed);
+    return DvProviderZappOrgTestBasic1SetPropertyVarUint((THandle)aPtr, aValueUint, &changed);
 }
 
 static int32_t getUint(void* aPtr, uint32_t /*aVersion*/, uint32_t* aValueUint)
 {
-    DvServiceZappOrgTestBasic1GetPropertyVarUint((THandle)aPtr, aValueUint);
+    DvProviderZappOrgTestBasic1GetPropertyVarUint((THandle)aPtr, aValueUint);
     return 0;
 }
 
 static int32_t setInt(void* aPtr, uint32_t /*aVersion*/, int32_t aValueInt)
 {
     uint32_t changed;
-    return DvServiceZappOrgTestBasic1SetPropertyVarInt((THandle)aPtr, aValueInt, &changed);
+    return DvProviderZappOrgTestBasic1SetPropertyVarInt((THandle)aPtr, aValueInt, &changed);
 }
 
 static int32_t getInt(void* aPtr, uint32_t /*aVersion*/, int32_t* aValueInt)
 {
-    DvServiceZappOrgTestBasic1GetPropertyVarInt((THandle)aPtr, aValueInt);
+    DvProviderZappOrgTestBasic1GetPropertyVarInt((THandle)aPtr, aValueInt);
     return 0;
 }
 
 static int32_t setBool(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueBool)
 {
     uint32_t changed;
-    return DvServiceZappOrgTestBasic1SetPropertyVarBool((THandle)aPtr, aValueBool, &changed);
+    return DvProviderZappOrgTestBasic1SetPropertyVarBool((THandle)aPtr, aValueBool, &changed);
 }
 
 static int32_t getBool(void* aPtr, uint32_t /*aVersion*/, uint32_t* aValueBool)
 {
-    DvServiceZappOrgTestBasic1GetPropertyVarBool((THandle)aPtr, aValueBool);
+    DvProviderZappOrgTestBasic1GetPropertyVarBool((THandle)aPtr, aValueBool);
     return 0;
 }
 
@@ -99,9 +99,9 @@ static int32_t setMultiple(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueUin
     uint32_t changed1;
     uint32_t changed2;
     uint32_t changed3;
-    if (0 == DvServiceZappOrgTestBasic1SetPropertyVarUint((THandle)aPtr, aValueUint, &changed1) &&
-        0 == DvServiceZappOrgTestBasic1SetPropertyVarInt((THandle)aPtr, aValueInt, &changed2)   &&
-        0 == DvServiceZappOrgTestBasic1SetPropertyVarBool((THandle)aPtr, aValueBool, &changed3)) {
+    if (0 == DvProviderZappOrgTestBasic1SetPropertyVarUint((THandle)aPtr, aValueUint, &changed1) &&
+        0 == DvProviderZappOrgTestBasic1SetPropertyVarInt((THandle)aPtr, aValueInt, &changed2)   &&
+        0 == DvProviderZappOrgTestBasic1SetPropertyVarBool((THandle)aPtr, aValueBool, &changed3)) {
         return 0;
     }
     return -1;
@@ -110,24 +110,24 @@ static int32_t setMultiple(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueUin
 static int32_t setString(void* aPtr, uint32_t /*aVersion*/, const char* aValueStr)
 {
     uint32_t changed;
-    return DvServiceZappOrgTestBasic1SetPropertyVarStr((THandle)aPtr, aValueStr, &changed);
+    return DvProviderZappOrgTestBasic1SetPropertyVarStr((THandle)aPtr, aValueStr, &changed);
 }
 
 static int32_t getString(void* aPtr, uint32_t /*aVersion*/, char** aValueStr)
 {
-    DvServiceZappOrgTestBasic1GetPropertyVarStr((THandle)aPtr, aValueStr);
+    DvProviderZappOrgTestBasic1GetPropertyVarStr((THandle)aPtr, aValueStr);
     return 0;
 }
 
 static int32_t setBinary(void* aPtr, uint32_t /*aVersion*/, const char* aValueBin, uint32_t aValueBinLen)
 {
     uint32_t changed;
-    return DvServiceZappOrgTestBasic1SetPropertyVarBin((THandle)aPtr, aValueBin, aValueBinLen, &changed);
+    return DvProviderZappOrgTestBasic1SetPropertyVarBin((THandle)aPtr, aValueBin, aValueBinLen, &changed);
 }
 
 static int32_t getBinary(void* aPtr, uint32_t /*aVersion*/, char** aValueBin, uint32_t* aValueBinLen)
 {
-    DvServiceZappOrgTestBasic1GetPropertyVarBin((THandle)aPtr, aValueBin, aValueBinLen);
+    DvProviderZappOrgTestBasic1GetPropertyVarBin((THandle)aPtr, aValueBin, aValueBinLen);
     return 0;
 }
 
@@ -173,37 +173,37 @@ DeviceBasic::DeviceBasic()
     DvDeviceSetAttribute(iDevice, "Upnp.ModelUrl", "http://www.linn.co.uk");
     DvDeviceSetAttribute(iDevice, "Upnp.SerialNumber", "123456");
     DvDeviceSetAttribute(iDevice, "Upnp.Upc", "123456654321");
-    iTestBasic = DvServiceZappOrgTestBasic1Create(iDevice);
+    iTestBasic = DvProviderZappOrgTestBasic1Create(iDevice);
 
     uint32_t ignore;
-    (void)DvServiceZappOrgTestBasic1SetPropertyVarUint(iTestBasic, 0, &ignore);
-    (void)DvServiceZappOrgTestBasic1SetPropertyVarInt(iTestBasic, 0, &ignore);
-    (void)DvServiceZappOrgTestBasic1SetPropertyVarBool(iTestBasic, 0, &ignore);
-    (void)DvServiceZappOrgTestBasic1SetPropertyVarStr(iTestBasic, "", &ignore);
-    (void)DvServiceZappOrgTestBasic1SetPropertyVarBin(iTestBasic, "", 0, &ignore);
-    DvServiceZappOrgTestBasic1EnableActionIncrement(iTestBasic, increment, NULL);
-    DvServiceZappOrgTestBasic1EnableActionDecrement(iTestBasic, decrement, NULL);
-    DvServiceZappOrgTestBasic1EnableActionToggle(iTestBasic, toggle, NULL);
-    DvServiceZappOrgTestBasic1EnableActionEchoString(iTestBasic, echoString, NULL);
-    DvServiceZappOrgTestBasic1EnableActionEchoBinary(iTestBasic, echoBinary, NULL);
-    DvServiceZappOrgTestBasic1EnableActionSetUint(iTestBasic, setUint, (void*)iTestBasic);
-    DvServiceZappOrgTestBasic1EnableActionGetUint(iTestBasic, getUint, (void*)iTestBasic);
-    DvServiceZappOrgTestBasic1EnableActionSetInt(iTestBasic, setInt, (void*)iTestBasic);
-    DvServiceZappOrgTestBasic1EnableActionGetInt(iTestBasic, getInt, (void*)iTestBasic);
-    DvServiceZappOrgTestBasic1EnableActionSetBool(iTestBasic, setBool, (void*)iTestBasic);
-    DvServiceZappOrgTestBasic1EnableActionGetBool(iTestBasic, getBool, (void*)iTestBasic);
-    DvServiceZappOrgTestBasic1EnableActionSetMultiple(iTestBasic, setMultiple, (void*)iTestBasic);
-    DvServiceZappOrgTestBasic1EnableActionSetString(iTestBasic, setString, (void*)iTestBasic);
-    DvServiceZappOrgTestBasic1EnableActionGetString(iTestBasic, getString, (void*)iTestBasic);
-    DvServiceZappOrgTestBasic1EnableActionSetBinary(iTestBasic, setBinary, (void*)iTestBasic);
-    DvServiceZappOrgTestBasic1EnableActionGetBinary(iTestBasic, getBinary, (void*)iTestBasic);
+    (void)DvProviderZappOrgTestBasic1SetPropertyVarUint(iTestBasic, 0, &ignore);
+    (void)DvProviderZappOrgTestBasic1SetPropertyVarInt(iTestBasic, 0, &ignore);
+    (void)DvProviderZappOrgTestBasic1SetPropertyVarBool(iTestBasic, 0, &ignore);
+    (void)DvProviderZappOrgTestBasic1SetPropertyVarStr(iTestBasic, "", &ignore);
+    (void)DvProviderZappOrgTestBasic1SetPropertyVarBin(iTestBasic, "", 0, &ignore);
+    DvProviderZappOrgTestBasic1EnableActionIncrement(iTestBasic, increment, NULL);
+    DvProviderZappOrgTestBasic1EnableActionDecrement(iTestBasic, decrement, NULL);
+    DvProviderZappOrgTestBasic1EnableActionToggle(iTestBasic, toggle, NULL);
+    DvProviderZappOrgTestBasic1EnableActionEchoString(iTestBasic, echoString, NULL);
+    DvProviderZappOrgTestBasic1EnableActionEchoBinary(iTestBasic, echoBinary, NULL);
+    DvProviderZappOrgTestBasic1EnableActionSetUint(iTestBasic, setUint, (void*)iTestBasic);
+    DvProviderZappOrgTestBasic1EnableActionGetUint(iTestBasic, getUint, (void*)iTestBasic);
+    DvProviderZappOrgTestBasic1EnableActionSetInt(iTestBasic, setInt, (void*)iTestBasic);
+    DvProviderZappOrgTestBasic1EnableActionGetInt(iTestBasic, getInt, (void*)iTestBasic);
+    DvProviderZappOrgTestBasic1EnableActionSetBool(iTestBasic, setBool, (void*)iTestBasic);
+    DvProviderZappOrgTestBasic1EnableActionGetBool(iTestBasic, getBool, (void*)iTestBasic);
+    DvProviderZappOrgTestBasic1EnableActionSetMultiple(iTestBasic, setMultiple, (void*)iTestBasic);
+    DvProviderZappOrgTestBasic1EnableActionSetString(iTestBasic, setString, (void*)iTestBasic);
+    DvProviderZappOrgTestBasic1EnableActionGetString(iTestBasic, getString, (void*)iTestBasic);
+    DvProviderZappOrgTestBasic1EnableActionSetBinary(iTestBasic, setBinary, (void*)iTestBasic);
+    DvProviderZappOrgTestBasic1EnableActionGetBinary(iTestBasic, getBinary, (void*)iTestBasic);
 
     DvDeviceSetEnabled(iDevice);
 }
 
 DeviceBasic::~DeviceBasic()
 {
-    DvServiceZappOrgTestBasic1Destroy(iTestBasic);
+    DvProviderZappOrgTestBasic1Destroy(iTestBasic);
     DvDeviceDestroy(iDevice);
 }
 

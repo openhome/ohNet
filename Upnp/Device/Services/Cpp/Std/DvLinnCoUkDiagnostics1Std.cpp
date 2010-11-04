@@ -6,130 +6,130 @@
 
 using namespace Zapp;
 
-bool DvServiceLinnCoUkDiagnostics1Cpp::SetPropertyaStateVariable(uint32_t aValue)
+bool DvProviderLinnCoUkDiagnostics1Cpp::SetPropertyaStateVariable(uint32_t aValue)
 {
     return SetPropertyUint(*iPropertyaStateVariable, aValue);
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::GetPropertyaStateVariable(uint32_t& aValue)
+void DvProviderLinnCoUkDiagnostics1Cpp::GetPropertyaStateVariable(uint32_t& aValue)
 {
     aValue = iPropertyaStateVariable->Value();
 }
 
-DvServiceLinnCoUkDiagnostics1Cpp::DvServiceLinnCoUkDiagnostics1Cpp(DvDeviceStd& aDevice)
-    : DvService(aDevice.Device(), "linn.co.uk", "Diagnostics", 1)
+DvProviderLinnCoUkDiagnostics1Cpp::DvProviderLinnCoUkDiagnostics1Cpp(DvDeviceStd& aDevice)
+    : DvProvider(aDevice.Device(), "linn.co.uk", "Diagnostics", 1)
 {
     Functor empty;
     iPropertyaStateVariable = new PropertyUint(new ParameterUint("aStateVariable"), empty);
     iService->AddProperty(iPropertyaStateVariable); // passes ownership
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::EnableActionEcho()
+void DvProviderLinnCoUkDiagnostics1Cpp::EnableActionEcho()
 {
     Zapp::Action* action = new Zapp::Action("Echo");
     action->AddInputParameter(new ParameterString("aIn"));
     action->AddOutputParameter(new ParameterString("aOut"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkDiagnostics1Cpp::DoEcho);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1Cpp::DoEcho);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::EnableActionElfFile()
+void DvProviderLinnCoUkDiagnostics1Cpp::EnableActionElfFile()
 {
     Zapp::Action* action = new Zapp::Action("ElfFile");
     action->AddOutputParameter(new ParameterString("aElfFile"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkDiagnostics1Cpp::DoElfFile);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1Cpp::DoElfFile);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::EnableActionElfFingerprint()
+void DvProviderLinnCoUkDiagnostics1Cpp::EnableActionElfFingerprint()
 {
     Zapp::Action* action = new Zapp::Action("ElfFingerprint");
     action->AddOutputParameter(new ParameterString("aElfFileFingerprint"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkDiagnostics1Cpp::DoElfFingerprint);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1Cpp::DoElfFingerprint);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::EnableActionCrashDataStatus()
+void DvProviderLinnCoUkDiagnostics1Cpp::EnableActionCrashDataStatus()
 {
     Zapp::Action* action = new Zapp::Action("CrashDataStatus");
     action->AddOutputParameter(new ParameterString("aCrashDataStatus"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkDiagnostics1Cpp::DoCrashDataStatus);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1Cpp::DoCrashDataStatus);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::EnableActionCrashDataFetch()
+void DvProviderLinnCoUkDiagnostics1Cpp::EnableActionCrashDataFetch()
 {
     Zapp::Action* action = new Zapp::Action("CrashDataFetch");
     action->AddOutputParameter(new ParameterBinary("aCrashData"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkDiagnostics1Cpp::DoCrashDataFetch);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1Cpp::DoCrashDataFetch);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::EnableActionCrashDataClear()
+void DvProviderLinnCoUkDiagnostics1Cpp::EnableActionCrashDataClear()
 {
     Zapp::Action* action = new Zapp::Action("CrashDataClear");
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkDiagnostics1Cpp::DoCrashDataClear);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1Cpp::DoCrashDataClear);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::EnableActionSysLog()
+void DvProviderLinnCoUkDiagnostics1Cpp::EnableActionSysLog()
 {
     Zapp::Action* action = new Zapp::Action("SysLog");
     action->AddOutputParameter(new ParameterBinary("aSysLog"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkDiagnostics1Cpp::DoSysLog);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1Cpp::DoSysLog);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::EnableActionDiagnostic()
+void DvProviderLinnCoUkDiagnostics1Cpp::EnableActionDiagnostic()
 {
     Zapp::Action* action = new Zapp::Action("Diagnostic");
     action->AddInputParameter(new ParameterString("aDiagnosticType"));
     action->AddOutputParameter(new ParameterString("aDiagnosticInfo"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkDiagnostics1Cpp::DoDiagnostic);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1Cpp::DoDiagnostic);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::EnableActionStateVariable()
+void DvProviderLinnCoUkDiagnostics1Cpp::EnableActionStateVariable()
 {
     Zapp::Action* action = new Zapp::Action("StateVariable");
     action->AddOutputParameter(new ParameterRelated("aStateVariable", *iPropertyaStateVariable));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkDiagnostics1Cpp::DoStateVariable);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1Cpp::DoStateVariable);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::EnableActionSetStateVariable()
+void DvProviderLinnCoUkDiagnostics1Cpp::EnableActionSetStateVariable()
 {
     Zapp::Action* action = new Zapp::Action("SetStateVariable");
     action->AddInputParameter(new ParameterRelated("aStateVariable", *iPropertyaStateVariable));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkDiagnostics1Cpp::DoSetStateVariable);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1Cpp::DoSetStateVariable);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::EnableActionStateVariablePeriod()
+void DvProviderLinnCoUkDiagnostics1Cpp::EnableActionStateVariablePeriod()
 {
     Zapp::Action* action = new Zapp::Action("StateVariablePeriod");
     action->AddOutputParameter(new ParameterUint("aPeriod"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkDiagnostics1Cpp::DoStateVariablePeriod);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1Cpp::DoStateVariablePeriod);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::EnableActionSetStateVariablePeriod()
+void DvProviderLinnCoUkDiagnostics1Cpp::EnableActionSetStateVariablePeriod()
 {
     Zapp::Action* action = new Zapp::Action("SetStateVariablePeriod");
     action->AddInputParameter(new ParameterUint("aPeriod"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkDiagnostics1Cpp::DoSetStateVariablePeriod);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1Cpp::DoSetStateVariablePeriod);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::EnableActionReboot()
+void DvProviderLinnCoUkDiagnostics1Cpp::EnableActionReboot()
 {
     Zapp::Action* action = new Zapp::Action("Reboot");
     action->AddInputParameter(new ParameterUint("aDelay"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkDiagnostics1Cpp::DoReboot);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1Cpp::DoReboot);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::DoEcho(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1Cpp::DoEcho(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_aIn;
@@ -146,7 +146,7 @@ void DvServiceLinnCoUkDiagnostics1Cpp::DoEcho(IDvInvocation& aInvocation, TUint 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::DoElfFile(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1Cpp::DoElfFile(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -160,7 +160,7 @@ void DvServiceLinnCoUkDiagnostics1Cpp::DoElfFile(IDvInvocation& aInvocation, TUi
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::DoElfFingerprint(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1Cpp::DoElfFingerprint(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -174,7 +174,7 @@ void DvServiceLinnCoUkDiagnostics1Cpp::DoElfFingerprint(IDvInvocation& aInvocati
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::DoCrashDataStatus(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1Cpp::DoCrashDataStatus(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -188,7 +188,7 @@ void DvServiceLinnCoUkDiagnostics1Cpp::DoCrashDataStatus(IDvInvocation& aInvocat
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::DoCrashDataFetch(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1Cpp::DoCrashDataFetch(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -202,7 +202,7 @@ void DvServiceLinnCoUkDiagnostics1Cpp::DoCrashDataFetch(IDvInvocation& aInvocati
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::DoCrashDataClear(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1Cpp::DoCrashDataClear(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -211,7 +211,7 @@ void DvServiceLinnCoUkDiagnostics1Cpp::DoCrashDataClear(IDvInvocation& aInvocati
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::DoSysLog(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1Cpp::DoSysLog(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -225,7 +225,7 @@ void DvServiceLinnCoUkDiagnostics1Cpp::DoSysLog(IDvInvocation& aInvocation, TUin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::DoDiagnostic(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1Cpp::DoDiagnostic(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_aDiagnosticType;
@@ -242,7 +242,7 @@ void DvServiceLinnCoUkDiagnostics1Cpp::DoDiagnostic(IDvInvocation& aInvocation, 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::DoStateVariable(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1Cpp::DoStateVariable(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -254,7 +254,7 @@ void DvServiceLinnCoUkDiagnostics1Cpp::DoStateVariable(IDvInvocation& aInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::DoSetStateVariable(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1Cpp::DoSetStateVariable(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aStateVariable = aInvocation.InvocationReadUint("aStateVariable");
@@ -264,7 +264,7 @@ void DvServiceLinnCoUkDiagnostics1Cpp::DoSetStateVariable(IDvInvocation& aInvoca
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::DoStateVariablePeriod(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1Cpp::DoStateVariablePeriod(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -276,7 +276,7 @@ void DvServiceLinnCoUkDiagnostics1Cpp::DoStateVariablePeriod(IDvInvocation& aInv
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::DoSetStateVariablePeriod(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1Cpp::DoSetStateVariablePeriod(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aPeriod = aInvocation.InvocationReadUint("aPeriod");
@@ -286,7 +286,7 @@ void DvServiceLinnCoUkDiagnostics1Cpp::DoSetStateVariablePeriod(IDvInvocation& a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::DoReboot(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1Cpp::DoReboot(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aDelay = aInvocation.InvocationReadUint("aDelay");
@@ -296,67 +296,67 @@ void DvServiceLinnCoUkDiagnostics1Cpp::DoReboot(IDvInvocation& aInvocation, TUin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::Echo(uint32_t /*aVersion*/, const std::string& /*aaIn*/, std::string& /*aaOut*/)
+void DvProviderLinnCoUkDiagnostics1Cpp::Echo(uint32_t /*aVersion*/, const std::string& /*aaIn*/, std::string& /*aaOut*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::ElfFile(uint32_t /*aVersion*/, std::string& /*aaElfFile*/)
+void DvProviderLinnCoUkDiagnostics1Cpp::ElfFile(uint32_t /*aVersion*/, std::string& /*aaElfFile*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::ElfFingerprint(uint32_t /*aVersion*/, std::string& /*aaElfFileFingerprint*/)
+void DvProviderLinnCoUkDiagnostics1Cpp::ElfFingerprint(uint32_t /*aVersion*/, std::string& /*aaElfFileFingerprint*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::CrashDataStatus(uint32_t /*aVersion*/, std::string& /*aaCrashDataStatus*/)
+void DvProviderLinnCoUkDiagnostics1Cpp::CrashDataStatus(uint32_t /*aVersion*/, std::string& /*aaCrashDataStatus*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::CrashDataFetch(uint32_t /*aVersion*/, std::string& /*aaCrashData*/)
+void DvProviderLinnCoUkDiagnostics1Cpp::CrashDataFetch(uint32_t /*aVersion*/, std::string& /*aaCrashData*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::CrashDataClear(uint32_t /*aVersion*/)
+void DvProviderLinnCoUkDiagnostics1Cpp::CrashDataClear(uint32_t /*aVersion*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::SysLog(uint32_t /*aVersion*/, std::string& /*aaSysLog*/)
+void DvProviderLinnCoUkDiagnostics1Cpp::SysLog(uint32_t /*aVersion*/, std::string& /*aaSysLog*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::Diagnostic(uint32_t /*aVersion*/, const std::string& /*aaDiagnosticType*/, std::string& /*aaDiagnosticInfo*/)
+void DvProviderLinnCoUkDiagnostics1Cpp::Diagnostic(uint32_t /*aVersion*/, const std::string& /*aaDiagnosticType*/, std::string& /*aaDiagnosticInfo*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::StateVariable(uint32_t /*aVersion*/, uint32_t& /*aaStateVariable*/)
+void DvProviderLinnCoUkDiagnostics1Cpp::StateVariable(uint32_t /*aVersion*/, uint32_t& /*aaStateVariable*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::SetStateVariable(uint32_t /*aVersion*/, uint32_t /*aaStateVariable*/)
+void DvProviderLinnCoUkDiagnostics1Cpp::SetStateVariable(uint32_t /*aVersion*/, uint32_t /*aaStateVariable*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::StateVariablePeriod(uint32_t /*aVersion*/, uint32_t& /*aaPeriod*/)
+void DvProviderLinnCoUkDiagnostics1Cpp::StateVariablePeriod(uint32_t /*aVersion*/, uint32_t& /*aaPeriod*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::SetStateVariablePeriod(uint32_t /*aVersion*/, uint32_t /*aaPeriod*/)
+void DvProviderLinnCoUkDiagnostics1Cpp::SetStateVariablePeriod(uint32_t /*aVersion*/, uint32_t /*aaPeriod*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkDiagnostics1Cpp::Reboot(uint32_t /*aVersion*/, uint32_t /*aaDelay*/)
+void DvProviderLinnCoUkDiagnostics1Cpp::Reboot(uint32_t /*aVersion*/, uint32_t /*aaDelay*/)
 {
     ASSERTS();
 }

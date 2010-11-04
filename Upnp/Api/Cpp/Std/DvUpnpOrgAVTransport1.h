@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 #include <string>
 
@@ -20,14 +20,14 @@ class PropertyBinary;
 /**
  * Base Device for upnp.org:AVTransport:1
  */
-class DvServiceUpnpOrgAVTransport1Cpp : public DvService
+class DvProviderUpnpOrgAVTransport1Cpp : public DvProvider
 {
 public:
-    virtual ~DvServiceUpnpOrgAVTransport1Cpp() {}
+    virtual ~DvProviderUpnpOrgAVTransport1Cpp() {}
     bool SetPropertyLastChange(const std::string& aValue);
     void GetPropertyLastChange(std::string& aValue);
 protected:
-    DvServiceUpnpOrgAVTransport1Cpp(DvDeviceStd& aDevice);
+    DvProviderUpnpOrgAVTransport1Cpp(DvDeviceStd& aDevice);
     void EnableActionSetAVTransportURI();
     void EnableActionSetNextAVTransportURI();
     void EnableActionGetMediaInfo();
@@ -64,7 +64,7 @@ private:
     virtual void SetRecordQualityMode(uint32_t aVersion, uint32_t aInstanceID, const std::string& aNewRecordQualityMode);
     virtual void GetCurrentTransportActions(uint32_t aVersion, uint32_t aInstanceID, std::string& aActions);
 private:
-    DvServiceUpnpOrgAVTransport1Cpp();
+    DvProviderUpnpOrgAVTransport1Cpp();
     void DoSetAVTransportURI(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoSetNextAVTransportURI(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoGetMediaInfo(IDvInvocation& aInvocation, uint32_t aVersion);

@@ -6,138 +6,138 @@
 
 using namespace Zapp;
 
-TBool DvServiceLinnCoUkProduct3::SetPropertyProductType(const Brx& aValue)
+TBool DvProviderLinnCoUkProduct3::SetPropertyProductType(const Brx& aValue)
 {
     return SetPropertyString(*iPropertyProductType, aValue);
 }
 
-void DvServiceLinnCoUkProduct3::GetPropertyProductType(Brhz& aValue)
+void DvProviderLinnCoUkProduct3::GetPropertyProductType(Brhz& aValue)
 {
     aValue.Set(iPropertyProductType->Value());
 }
 
-TBool DvServiceLinnCoUkProduct3::SetPropertyProductModel(const Brx& aValue)
+TBool DvProviderLinnCoUkProduct3::SetPropertyProductModel(const Brx& aValue)
 {
     return SetPropertyString(*iPropertyProductModel, aValue);
 }
 
-void DvServiceLinnCoUkProduct3::GetPropertyProductModel(Brhz& aValue)
+void DvProviderLinnCoUkProduct3::GetPropertyProductModel(Brhz& aValue)
 {
     aValue.Set(iPropertyProductModel->Value());
 }
 
-TBool DvServiceLinnCoUkProduct3::SetPropertyProductName(const Brx& aValue)
+TBool DvProviderLinnCoUkProduct3::SetPropertyProductName(const Brx& aValue)
 {
     return SetPropertyString(*iPropertyProductName, aValue);
 }
 
-void DvServiceLinnCoUkProduct3::GetPropertyProductName(Brhz& aValue)
+void DvProviderLinnCoUkProduct3::GetPropertyProductName(Brhz& aValue)
 {
     aValue.Set(iPropertyProductName->Value());
 }
 
-TBool DvServiceLinnCoUkProduct3::SetPropertyProductRoom(const Brx& aValue)
+TBool DvProviderLinnCoUkProduct3::SetPropertyProductRoom(const Brx& aValue)
 {
     return SetPropertyString(*iPropertyProductRoom, aValue);
 }
 
-void DvServiceLinnCoUkProduct3::GetPropertyProductRoom(Brhz& aValue)
+void DvProviderLinnCoUkProduct3::GetPropertyProductRoom(Brhz& aValue)
 {
     aValue.Set(iPropertyProductRoom->Value());
 }
 
-TBool DvServiceLinnCoUkProduct3::SetPropertyProductStandby(TBool aValue)
+TBool DvProviderLinnCoUkProduct3::SetPropertyProductStandby(TBool aValue)
 {
     return SetPropertyBool(*iPropertyProductStandby, aValue);
 }
 
-void DvServiceLinnCoUkProduct3::GetPropertyProductStandby(TBool& aValue)
+void DvProviderLinnCoUkProduct3::GetPropertyProductStandby(TBool& aValue)
 {
     aValue = iPropertyProductStandby->Value();
 }
 
-TBool DvServiceLinnCoUkProduct3::SetPropertyProductSourceIndex(TUint aValue)
+TBool DvProviderLinnCoUkProduct3::SetPropertyProductSourceIndex(TUint aValue)
 {
     return SetPropertyUint(*iPropertyProductSourceIndex, aValue);
 }
 
-void DvServiceLinnCoUkProduct3::GetPropertyProductSourceIndex(TUint& aValue)
+void DvProviderLinnCoUkProduct3::GetPropertyProductSourceIndex(TUint& aValue)
 {
     aValue = iPropertyProductSourceIndex->Value();
 }
 
-TBool DvServiceLinnCoUkProduct3::SetPropertyProductSourceCount(TUint aValue)
+TBool DvProviderLinnCoUkProduct3::SetPropertyProductSourceCount(TUint aValue)
 {
     return SetPropertyUint(*iPropertyProductSourceCount, aValue);
 }
 
-void DvServiceLinnCoUkProduct3::GetPropertyProductSourceCount(TUint& aValue)
+void DvProviderLinnCoUkProduct3::GetPropertyProductSourceCount(TUint& aValue)
 {
     aValue = iPropertyProductSourceCount->Value();
 }
 
-TBool DvServiceLinnCoUkProduct3::SetPropertyProductSourceXml(const Brx& aValue)
+TBool DvProviderLinnCoUkProduct3::SetPropertyProductSourceXml(const Brx& aValue)
 {
     return SetPropertyString(*iPropertyProductSourceXml, aValue);
 }
 
-void DvServiceLinnCoUkProduct3::GetPropertyProductSourceXml(Brhz& aValue)
+void DvProviderLinnCoUkProduct3::GetPropertyProductSourceXml(Brhz& aValue)
 {
     aValue.Set(iPropertyProductSourceXml->Value());
 }
 
-TBool DvServiceLinnCoUkProduct3::SetPropertyStartupSourceIndex(TUint aValue)
+TBool DvProviderLinnCoUkProduct3::SetPropertyStartupSourceIndex(TUint aValue)
 {
     return SetPropertyUint(*iPropertyStartupSourceIndex, aValue);
 }
 
-void DvServiceLinnCoUkProduct3::GetPropertyStartupSourceIndex(TUint& aValue)
+void DvProviderLinnCoUkProduct3::GetPropertyStartupSourceIndex(TUint& aValue)
 {
     aValue = iPropertyStartupSourceIndex->Value();
 }
 
-TBool DvServiceLinnCoUkProduct3::SetPropertyStartupSourceEnabled(TBool aValue)
+TBool DvProviderLinnCoUkProduct3::SetPropertyStartupSourceEnabled(TBool aValue)
 {
     return SetPropertyBool(*iPropertyStartupSourceEnabled, aValue);
 }
 
-void DvServiceLinnCoUkProduct3::GetPropertyStartupSourceEnabled(TBool& aValue)
+void DvProviderLinnCoUkProduct3::GetPropertyStartupSourceEnabled(TBool& aValue)
 {
     aValue = iPropertyStartupSourceEnabled->Value();
 }
 
-TBool DvServiceLinnCoUkProduct3::SetPropertyProductAnySourceName(TUint aValue)
+TBool DvProviderLinnCoUkProduct3::SetPropertyProductAnySourceName(TUint aValue)
 {
     return SetPropertyUint(*iPropertyProductAnySourceName, aValue);
 }
 
-void DvServiceLinnCoUkProduct3::GetPropertyProductAnySourceName(TUint& aValue)
+void DvProviderLinnCoUkProduct3::GetPropertyProductAnySourceName(TUint& aValue)
 {
     aValue = iPropertyProductAnySourceName->Value();
 }
 
-TBool DvServiceLinnCoUkProduct3::SetPropertyProductAnySourceVisible(TUint aValue)
+TBool DvProviderLinnCoUkProduct3::SetPropertyProductAnySourceVisible(TUint aValue)
 {
     return SetPropertyUint(*iPropertyProductAnySourceVisible, aValue);
 }
 
-void DvServiceLinnCoUkProduct3::GetPropertyProductAnySourceVisible(TUint& aValue)
+void DvProviderLinnCoUkProduct3::GetPropertyProductAnySourceVisible(TUint& aValue)
 {
     aValue = iPropertyProductAnySourceVisible->Value();
 }
 
-TBool DvServiceLinnCoUkProduct3::SetPropertyProductAnySourceType(TUint aValue)
+TBool DvProviderLinnCoUkProduct3::SetPropertyProductAnySourceType(TUint aValue)
 {
     return SetPropertyUint(*iPropertyProductAnySourceType, aValue);
 }
 
-void DvServiceLinnCoUkProduct3::GetPropertyProductAnySourceType(TUint& aValue)
+void DvProviderLinnCoUkProduct3::GetPropertyProductAnySourceType(TUint& aValue)
 {
     aValue = iPropertyProductAnySourceType->Value();
 }
 
-DvServiceLinnCoUkProduct3::DvServiceLinnCoUkProduct3(DvDevice& aDevice)
-    : DvService(aDevice.Device(), "linn.co.uk", "Product", 3)
+DvProviderLinnCoUkProduct3::DvProviderLinnCoUkProduct3(DvDevice& aDevice)
+    : DvProvider(aDevice.Device(), "linn.co.uk", "Product", 3)
 {
     Functor empty;
     iPropertyProductType = new PropertyString(new ParameterString("ProductType"), empty);
@@ -168,205 +168,205 @@ DvServiceLinnCoUkProduct3::DvServiceLinnCoUkProduct3(DvDevice& aDevice)
     iService->AddProperty(iPropertyProductAnySourceType); // passes ownership
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionType()
+void DvProviderLinnCoUkProduct3::EnableActionType()
 {
     Zapp::Action* action = new Zapp::Action("Type");
     action->AddOutputParameter(new ParameterRelated("aType", *iPropertyProductType));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoType);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoType);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionModel()
+void DvProviderLinnCoUkProduct3::EnableActionModel()
 {
     Zapp::Action* action = new Zapp::Action("Model");
     action->AddOutputParameter(new ParameterRelated("aModel", *iPropertyProductModel));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoModel);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoModel);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionName()
+void DvProviderLinnCoUkProduct3::EnableActionName()
 {
     Zapp::Action* action = new Zapp::Action("Name");
     action->AddOutputParameter(new ParameterRelated("aName", *iPropertyProductName));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoName);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoName);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionSetName()
+void DvProviderLinnCoUkProduct3::EnableActionSetName()
 {
     Zapp::Action* action = new Zapp::Action("SetName");
     action->AddInputParameter(new ParameterRelated("aName", *iPropertyProductName));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoSetName);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetName);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionRoom()
+void DvProviderLinnCoUkProduct3::EnableActionRoom()
 {
     Zapp::Action* action = new Zapp::Action("Room");
     action->AddOutputParameter(new ParameterRelated("aRoom", *iPropertyProductRoom));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoRoom);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoRoom);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionSetRoom()
+void DvProviderLinnCoUkProduct3::EnableActionSetRoom()
 {
     Zapp::Action* action = new Zapp::Action("SetRoom");
     action->AddInputParameter(new ParameterRelated("aRoom", *iPropertyProductRoom));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoSetRoom);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetRoom);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionStandby()
+void DvProviderLinnCoUkProduct3::EnableActionStandby()
 {
     Zapp::Action* action = new Zapp::Action("Standby");
     action->AddOutputParameter(new ParameterRelated("aStandby", *iPropertyProductStandby));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoStandby);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoStandby);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionSetStandby()
+void DvProviderLinnCoUkProduct3::EnableActionSetStandby()
 {
     Zapp::Action* action = new Zapp::Action("SetStandby");
     action->AddInputParameter(new ParameterRelated("aStandby", *iPropertyProductStandby));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoSetStandby);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetStandby);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionSourceCount()
+void DvProviderLinnCoUkProduct3::EnableActionSourceCount()
 {
     Zapp::Action* action = new Zapp::Action("SourceCount");
     action->AddOutputParameter(new ParameterRelated("aSourceCount", *iPropertyProductSourceCount));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoSourceCount);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSourceCount);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionSourceXml()
+void DvProviderLinnCoUkProduct3::EnableActionSourceXml()
 {
     Zapp::Action* action = new Zapp::Action("SourceXml");
     action->AddOutputParameter(new ParameterRelated("aSourceXml", *iPropertyProductSourceXml));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoSourceXml);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSourceXml);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionSourceIndex()
+void DvProviderLinnCoUkProduct3::EnableActionSourceIndex()
 {
     Zapp::Action* action = new Zapp::Action("SourceIndex");
     action->AddOutputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoSourceIndex);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSourceIndex);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionSetSourceIndex()
+void DvProviderLinnCoUkProduct3::EnableActionSetSourceIndex()
 {
     Zapp::Action* action = new Zapp::Action("SetSourceIndex");
     action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoSetSourceIndex);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetSourceIndex);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionSetSourceIndexByName()
+void DvProviderLinnCoUkProduct3::EnableActionSetSourceIndexByName()
 {
     Zapp::Action* action = new Zapp::Action("SetSourceIndexByName");
     action->AddInputParameter(new ParameterString("aSourceName"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoSetSourceIndexByName);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetSourceIndexByName);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionSetStartupSourceIndexByName()
+void DvProviderLinnCoUkProduct3::EnableActionSetStartupSourceIndexByName()
 {
     Zapp::Action* action = new Zapp::Action("SetStartupSourceIndexByName");
     action->AddInputParameter(new ParameterString("aSourceName"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoSetStartupSourceIndexByName);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetStartupSourceIndexByName);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionStartupSourceIndex()
+void DvProviderLinnCoUkProduct3::EnableActionStartupSourceIndex()
 {
     Zapp::Action* action = new Zapp::Action("StartupSourceIndex");
     action->AddOutputParameter(new ParameterRelated("aSourceIndex", *iPropertyStartupSourceIndex));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoStartupSourceIndex);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoStartupSourceIndex);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionSetStartupSourceIndex()
+void DvProviderLinnCoUkProduct3::EnableActionSetStartupSourceIndex()
 {
     Zapp::Action* action = new Zapp::Action("SetStartupSourceIndex");
     action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyStartupSourceIndex));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoSetStartupSourceIndex);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetStartupSourceIndex);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionStartupSourceEnabled()
+void DvProviderLinnCoUkProduct3::EnableActionStartupSourceEnabled()
 {
     Zapp::Action* action = new Zapp::Action("StartupSourceEnabled");
     action->AddOutputParameter(new ParameterRelated("aStartupSourceEnabled", *iPropertyStartupSourceEnabled));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoStartupSourceEnabled);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoStartupSourceEnabled);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionSetStartupSourceEnabled()
+void DvProviderLinnCoUkProduct3::EnableActionSetStartupSourceEnabled()
 {
     Zapp::Action* action = new Zapp::Action("SetStartupSourceEnabled");
     action->AddInputParameter(new ParameterRelated("aStartupSourceEnabled", *iPropertyStartupSourceEnabled));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoSetStartupSourceEnabled);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetStartupSourceEnabled);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionSourceSystemName()
+void DvProviderLinnCoUkProduct3::EnableActionSourceSystemName()
 {
     Zapp::Action* action = new Zapp::Action("SourceSystemName");
     action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
     action->AddOutputParameter(new ParameterString("aSourceName"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoSourceSystemName);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSourceSystemName);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionSourceName()
+void DvProviderLinnCoUkProduct3::EnableActionSourceName()
 {
     Zapp::Action* action = new Zapp::Action("SourceName");
     action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
     action->AddOutputParameter(new ParameterString("aSourceName"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoSourceName);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSourceName);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionSetSourceName()
+void DvProviderLinnCoUkProduct3::EnableActionSetSourceName()
 {
     Zapp::Action* action = new Zapp::Action("SetSourceName");
     action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
     action->AddInputParameter(new ParameterString("aSourceName"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoSetSourceName);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetSourceName);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionSourceType()
+void DvProviderLinnCoUkProduct3::EnableActionSourceType()
 {
     Zapp::Action* action = new Zapp::Action("SourceType");
     action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
     action->AddOutputParameter(new ParameterString("aSourceType"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoSourceType);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSourceType);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionSourceVisible()
+void DvProviderLinnCoUkProduct3::EnableActionSourceVisible()
 {
     Zapp::Action* action = new Zapp::Action("SourceVisible");
     action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
     action->AddOutputParameter(new ParameterBool("aSourceVisible"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoSourceVisible);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSourceVisible);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::EnableActionSetSourceVisible()
+void DvProviderLinnCoUkProduct3::EnableActionSetSourceVisible()
 {
     Zapp::Action* action = new Zapp::Action("SetSourceVisible");
     action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
     action->AddInputParameter(new ParameterBool("aSourceVisible"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct3::DoSetSourceVisible);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetSourceVisible);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct3::DoType(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoType(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -375,7 +375,7 @@ void DvServiceLinnCoUkProduct3::DoType(IDvInvocation& aInvocation, TUint aVersio
     Type(resp, aVersion, respaType);
 }
 
-void DvServiceLinnCoUkProduct3::DoModel(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoModel(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -384,7 +384,7 @@ void DvServiceLinnCoUkProduct3::DoModel(IDvInvocation& aInvocation, TUint aVersi
     Model(resp, aVersion, respaModel);
 }
 
-void DvServiceLinnCoUkProduct3::DoName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoName(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -393,7 +393,7 @@ void DvServiceLinnCoUkProduct3::DoName(IDvInvocation& aInvocation, TUint aVersio
     Name(resp, aVersion, respaName);
 }
 
-void DvServiceLinnCoUkProduct3::DoSetName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSetName(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz aName;
@@ -403,7 +403,7 @@ void DvServiceLinnCoUkProduct3::DoSetName(IDvInvocation& aInvocation, TUint aVer
     SetName(resp, aVersion, aName);
 }
 
-void DvServiceLinnCoUkProduct3::DoRoom(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoRoom(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -412,7 +412,7 @@ void DvServiceLinnCoUkProduct3::DoRoom(IDvInvocation& aInvocation, TUint aVersio
     Room(resp, aVersion, respaRoom);
 }
 
-void DvServiceLinnCoUkProduct3::DoSetRoom(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSetRoom(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz aRoom;
@@ -422,7 +422,7 @@ void DvServiceLinnCoUkProduct3::DoSetRoom(IDvInvocation& aInvocation, TUint aVer
     SetRoom(resp, aVersion, aRoom);
 }
 
-void DvServiceLinnCoUkProduct3::DoStandby(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoStandby(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -431,7 +431,7 @@ void DvServiceLinnCoUkProduct3::DoStandby(IDvInvocation& aInvocation, TUint aVer
     Standby(resp, aVersion, respaStandby);
 }
 
-void DvServiceLinnCoUkProduct3::DoSetStandby(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSetStandby(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TBool aStandby = aInvocation.InvocationReadBool("aStandby");
@@ -440,7 +440,7 @@ void DvServiceLinnCoUkProduct3::DoSetStandby(IDvInvocation& aInvocation, TUint a
     SetStandby(resp, aVersion, aStandby);
 }
 
-void DvServiceLinnCoUkProduct3::DoSourceCount(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSourceCount(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -449,7 +449,7 @@ void DvServiceLinnCoUkProduct3::DoSourceCount(IDvInvocation& aInvocation, TUint 
     SourceCount(resp, aVersion, respaSourceCount);
 }
 
-void DvServiceLinnCoUkProduct3::DoSourceXml(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSourceXml(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -458,7 +458,7 @@ void DvServiceLinnCoUkProduct3::DoSourceXml(IDvInvocation& aInvocation, TUint aV
     SourceXml(resp, aVersion, respaSourceXml);
 }
 
-void DvServiceLinnCoUkProduct3::DoSourceIndex(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSourceIndex(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -467,7 +467,7 @@ void DvServiceLinnCoUkProduct3::DoSourceIndex(IDvInvocation& aInvocation, TUint 
     SourceIndex(resp, aVersion, respaSourceIndex);
 }
 
-void DvServiceLinnCoUkProduct3::DoSetSourceIndex(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSetSourceIndex(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
@@ -476,7 +476,7 @@ void DvServiceLinnCoUkProduct3::DoSetSourceIndex(IDvInvocation& aInvocation, TUi
     SetSourceIndex(resp, aVersion, aSourceIndex);
 }
 
-void DvServiceLinnCoUkProduct3::DoSetSourceIndexByName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSetSourceIndexByName(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz aSourceName;
@@ -486,7 +486,7 @@ void DvServiceLinnCoUkProduct3::DoSetSourceIndexByName(IDvInvocation& aInvocatio
     SetSourceIndexByName(resp, aVersion, aSourceName);
 }
 
-void DvServiceLinnCoUkProduct3::DoSetStartupSourceIndexByName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSetStartupSourceIndexByName(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz aSourceName;
@@ -496,7 +496,7 @@ void DvServiceLinnCoUkProduct3::DoSetStartupSourceIndexByName(IDvInvocation& aIn
     SetStartupSourceIndexByName(resp, aVersion, aSourceName);
 }
 
-void DvServiceLinnCoUkProduct3::DoStartupSourceIndex(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoStartupSourceIndex(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -505,7 +505,7 @@ void DvServiceLinnCoUkProduct3::DoStartupSourceIndex(IDvInvocation& aInvocation,
     StartupSourceIndex(resp, aVersion, respaSourceIndex);
 }
 
-void DvServiceLinnCoUkProduct3::DoSetStartupSourceIndex(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSetStartupSourceIndex(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
@@ -514,7 +514,7 @@ void DvServiceLinnCoUkProduct3::DoSetStartupSourceIndex(IDvInvocation& aInvocati
     SetStartupSourceIndex(resp, aVersion, aSourceIndex);
 }
 
-void DvServiceLinnCoUkProduct3::DoStartupSourceEnabled(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoStartupSourceEnabled(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -523,7 +523,7 @@ void DvServiceLinnCoUkProduct3::DoStartupSourceEnabled(IDvInvocation& aInvocatio
     StartupSourceEnabled(resp, aVersion, respaStartupSourceEnabled);
 }
 
-void DvServiceLinnCoUkProduct3::DoSetStartupSourceEnabled(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSetStartupSourceEnabled(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TBool aStartupSourceEnabled = aInvocation.InvocationReadBool("aStartupSourceEnabled");
@@ -532,7 +532,7 @@ void DvServiceLinnCoUkProduct3::DoSetStartupSourceEnabled(IDvInvocation& aInvoca
     SetStartupSourceEnabled(resp, aVersion, aStartupSourceEnabled);
 }
 
-void DvServiceLinnCoUkProduct3::DoSourceSystemName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSourceSystemName(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
@@ -542,7 +542,7 @@ void DvServiceLinnCoUkProduct3::DoSourceSystemName(IDvInvocation& aInvocation, T
     SourceSystemName(resp, aVersion, aSourceIndex, respaSourceName);
 }
 
-void DvServiceLinnCoUkProduct3::DoSourceName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSourceName(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
@@ -552,7 +552,7 @@ void DvServiceLinnCoUkProduct3::DoSourceName(IDvInvocation& aInvocation, TUint a
     SourceName(resp, aVersion, aSourceIndex, respaSourceName);
 }
 
-void DvServiceLinnCoUkProduct3::DoSetSourceName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSetSourceName(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
@@ -563,7 +563,7 @@ void DvServiceLinnCoUkProduct3::DoSetSourceName(IDvInvocation& aInvocation, TUin
     SetSourceName(resp, aVersion, aSourceIndex, aSourceName);
 }
 
-void DvServiceLinnCoUkProduct3::DoSourceType(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSourceType(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
@@ -573,7 +573,7 @@ void DvServiceLinnCoUkProduct3::DoSourceType(IDvInvocation& aInvocation, TUint a
     SourceType(resp, aVersion, aSourceIndex, respaSourceType);
 }
 
-void DvServiceLinnCoUkProduct3::DoSourceVisible(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSourceVisible(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
@@ -583,7 +583,7 @@ void DvServiceLinnCoUkProduct3::DoSourceVisible(IDvInvocation& aInvocation, TUin
     SourceVisible(resp, aVersion, aSourceIndex, respaSourceVisible);
 }
 
-void DvServiceLinnCoUkProduct3::DoSetSourceVisible(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSetSourceVisible(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
@@ -593,122 +593,122 @@ void DvServiceLinnCoUkProduct3::DoSetSourceVisible(IDvInvocation& aInvocation, T
     SetSourceVisible(resp, aVersion, aSourceIndex, aSourceVisible);
 }
 
-void DvServiceLinnCoUkProduct3::Type(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaType*/)
+void DvProviderLinnCoUkProduct3::Type(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaType*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::Model(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaModel*/)
+void DvProviderLinnCoUkProduct3::Model(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaModel*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::Name(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaName*/)
+void DvProviderLinnCoUkProduct3::Name(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaName*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::SetName(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aaName*/)
+void DvProviderLinnCoUkProduct3::SetName(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aaName*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::Room(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaRoom*/)
+void DvProviderLinnCoUkProduct3::Room(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaRoom*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::SetRoom(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aaRoom*/)
+void DvProviderLinnCoUkProduct3::SetRoom(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aaRoom*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::Standby(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseBool& /*aaStandby*/)
+void DvProviderLinnCoUkProduct3::Standby(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseBool& /*aaStandby*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::SetStandby(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TBool /*aaStandby*/)
+void DvProviderLinnCoUkProduct3::SetStandby(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TBool /*aaStandby*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::SourceCount(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aaSourceCount*/)
+void DvProviderLinnCoUkProduct3::SourceCount(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aaSourceCount*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::SourceXml(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaSourceXml*/)
+void DvProviderLinnCoUkProduct3::SourceXml(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaSourceXml*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::SourceIndex(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aaSourceIndex*/)
+void DvProviderLinnCoUkProduct3::SourceIndex(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aaSourceIndex*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::SetSourceIndex(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaSourceIndex*/)
+void DvProviderLinnCoUkProduct3::SetSourceIndex(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaSourceIndex*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::SetSourceIndexByName(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aaSourceName*/)
+void DvProviderLinnCoUkProduct3::SetSourceIndexByName(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aaSourceName*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::SetStartupSourceIndexByName(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aaSourceName*/)
+void DvProviderLinnCoUkProduct3::SetStartupSourceIndexByName(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aaSourceName*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::StartupSourceIndex(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aaSourceIndex*/)
+void DvProviderLinnCoUkProduct3::StartupSourceIndex(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aaSourceIndex*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::SetStartupSourceIndex(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaSourceIndex*/)
+void DvProviderLinnCoUkProduct3::SetStartupSourceIndex(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaSourceIndex*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::StartupSourceEnabled(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseBool& /*aaStartupSourceEnabled*/)
+void DvProviderLinnCoUkProduct3::StartupSourceEnabled(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseBool& /*aaStartupSourceEnabled*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::SetStartupSourceEnabled(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TBool /*aaStartupSourceEnabled*/)
+void DvProviderLinnCoUkProduct3::SetStartupSourceEnabled(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TBool /*aaStartupSourceEnabled*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::SourceSystemName(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaSourceIndex*/, IInvocationResponseString& /*aaSourceName*/)
+void DvProviderLinnCoUkProduct3::SourceSystemName(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaSourceIndex*/, IInvocationResponseString& /*aaSourceName*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::SourceName(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaSourceIndex*/, IInvocationResponseString& /*aaSourceName*/)
+void DvProviderLinnCoUkProduct3::SourceName(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaSourceIndex*/, IInvocationResponseString& /*aaSourceName*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::SetSourceName(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaSourceIndex*/, const Brx& /*aaSourceName*/)
+void DvProviderLinnCoUkProduct3::SetSourceName(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaSourceIndex*/, const Brx& /*aaSourceName*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::SourceType(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaSourceIndex*/, IInvocationResponseString& /*aaSourceType*/)
+void DvProviderLinnCoUkProduct3::SourceType(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaSourceIndex*/, IInvocationResponseString& /*aaSourceType*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::SourceVisible(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaSourceIndex*/, IInvocationResponseBool& /*aaSourceVisible*/)
+void DvProviderLinnCoUkProduct3::SourceVisible(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaSourceIndex*/, IInvocationResponseBool& /*aaSourceVisible*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct3::SetSourceVisible(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaSourceIndex*/, TBool /*aaSourceVisible*/)
+void DvProviderLinnCoUkProduct3::SetSourceVisible(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaSourceIndex*/, TBool /*aaSourceVisible*/)
 {
     ASSERTS();
 }

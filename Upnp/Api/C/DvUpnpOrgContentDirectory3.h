@@ -29,38 +29,38 @@ typedef int32_t (*CallbackContentDirectory3CreateReference)(void* aPtr, uint32_t
 typedef int32_t (*CallbackContentDirectory3FreeFormQuery)(void* aPtr, uint32_t aVersion, const char* aContainerID, uint32_t aCDSView, const char* aQueryRequest, char** aQueryResult, uint32_t* aUpdateID);
 typedef int32_t (*CallbackContentDirectory3GetFreeFormQueryCapabilities)(void* aPtr, uint32_t aVersion, char** aFFQCapabilities);
 
-DllExport THandle DvServiceUpnpOrgContentDirectory3Create(DvDeviceC aDevice);
-DllExport void DvServiceUpnpOrgContentDirectory3Destroy(THandle aService);
+DllExport THandle DvProviderUpnpOrgContentDirectory3Create(DvDeviceC aDevice);
+DllExport void DvProviderUpnpOrgContentDirectory3Destroy(THandle aService);
 
-DllExport void DvServiceUpnpOrgContentDirectory3EnableActionGetSearchCapabilities(THandle aService, CallbackContentDirectory3GetSearchCapabilities aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgContentDirectory3EnableActionGetSortCapabilities(THandle aService, CallbackContentDirectory3GetSortCapabilities aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgContentDirectory3EnableActionGetSortExtensionCapabilities(THandle aService, CallbackContentDirectory3GetSortExtensionCapabilities aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgContentDirectory3EnableActionGetFeatureList(THandle aService, CallbackContentDirectory3GetFeatureList aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgContentDirectory3EnableActionGetSystemUpdateID(THandle aService, CallbackContentDirectory3GetSystemUpdateID aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgContentDirectory3EnableActionGetServiceResetToken(THandle aService, CallbackContentDirectory3GetServiceResetToken aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgContentDirectory3EnableActionBrowse(THandle aService, CallbackContentDirectory3Browse aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgContentDirectory3EnableActionSearch(THandle aService, CallbackContentDirectory3Search aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgContentDirectory3EnableActionCreateObject(THandle aService, CallbackContentDirectory3CreateObject aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgContentDirectory3EnableActionDestroyObject(THandle aService, CallbackContentDirectory3DestroyObject aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgContentDirectory3EnableActionUpdateObject(THandle aService, CallbackContentDirectory3UpdateObject aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgContentDirectory3EnableActionMoveObject(THandle aService, CallbackContentDirectory3MoveObject aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgContentDirectory3EnableActionImportResource(THandle aService, CallbackContentDirectory3ImportResource aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgContentDirectory3EnableActionExportResource(THandle aService, CallbackContentDirectory3ExportResource aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgContentDirectory3EnableActionDeleteResource(THandle aService, CallbackContentDirectory3DeleteResource aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgContentDirectory3EnableActionStopTransferResource(THandle aService, CallbackContentDirectory3StopTransferResource aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgContentDirectory3EnableActionGetTransferProgress(THandle aService, CallbackContentDirectory3GetTransferProgress aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgContentDirectory3EnableActionCreateReference(THandle aService, CallbackContentDirectory3CreateReference aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgContentDirectory3EnableActionFreeFormQuery(THandle aService, CallbackContentDirectory3FreeFormQuery aCallback, void* aPtr);
-DllExport void DvServiceUpnpOrgContentDirectory3EnableActionGetFreeFormQueryCapabilities(THandle aService, CallbackContentDirectory3GetFreeFormQueryCapabilities aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetSearchCapabilities(THandle aService, CallbackContentDirectory3GetSearchCapabilities aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetSortCapabilities(THandle aService, CallbackContentDirectory3GetSortCapabilities aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetSortExtensionCapabilities(THandle aService, CallbackContentDirectory3GetSortExtensionCapabilities aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetFeatureList(THandle aService, CallbackContentDirectory3GetFeatureList aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetSystemUpdateID(THandle aService, CallbackContentDirectory3GetSystemUpdateID aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetServiceResetToken(THandle aService, CallbackContentDirectory3GetServiceResetToken aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgContentDirectory3EnableActionBrowse(THandle aService, CallbackContentDirectory3Browse aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgContentDirectory3EnableActionSearch(THandle aService, CallbackContentDirectory3Search aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgContentDirectory3EnableActionCreateObject(THandle aService, CallbackContentDirectory3CreateObject aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgContentDirectory3EnableActionDestroyObject(THandle aService, CallbackContentDirectory3DestroyObject aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgContentDirectory3EnableActionUpdateObject(THandle aService, CallbackContentDirectory3UpdateObject aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgContentDirectory3EnableActionMoveObject(THandle aService, CallbackContentDirectory3MoveObject aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgContentDirectory3EnableActionImportResource(THandle aService, CallbackContentDirectory3ImportResource aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgContentDirectory3EnableActionExportResource(THandle aService, CallbackContentDirectory3ExportResource aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgContentDirectory3EnableActionDeleteResource(THandle aService, CallbackContentDirectory3DeleteResource aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgContentDirectory3EnableActionStopTransferResource(THandle aService, CallbackContentDirectory3StopTransferResource aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetTransferProgress(THandle aService, CallbackContentDirectory3GetTransferProgress aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgContentDirectory3EnableActionCreateReference(THandle aService, CallbackContentDirectory3CreateReference aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgContentDirectory3EnableActionFreeFormQuery(THandle aService, CallbackContentDirectory3FreeFormQuery aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgContentDirectory3EnableActionGetFreeFormQueryCapabilities(THandle aService, CallbackContentDirectory3GetFreeFormQueryCapabilities aCallback, void* aPtr);
 
-DllExport int32_t DvServiceUpnpOrgContentDirectory3SetPropertySystemUpdateID(THandle aService, uint32_t aValue, uint32_t* aChanged);
-DllExport void DvServiceUpnpOrgContentDirectory3GetPropertySystemUpdateID(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceUpnpOrgContentDirectory3SetPropertyContainerUpdateIDs(THandle aService, const char* aValue, uint32_t* aChanged);
-DllExport void DvServiceUpnpOrgContentDirectory3GetPropertyContainerUpdateIDs(THandle aService, char** aValue);
-DllExport int32_t DvServiceUpnpOrgContentDirectory3SetPropertyLastChange(THandle aService, const char* aValue, uint32_t* aChanged);
-DllExport void DvServiceUpnpOrgContentDirectory3GetPropertyLastChange(THandle aService, char** aValue);
-DllExport int32_t DvServiceUpnpOrgContentDirectory3SetPropertyTransferIDs(THandle aService, const char* aValue, uint32_t* aChanged);
-DllExport void DvServiceUpnpOrgContentDirectory3GetPropertyTransferIDs(THandle aService, char** aValue);
+DllExport int32_t DvProviderUpnpOrgContentDirectory3SetPropertySystemUpdateID(THandle aService, uint32_t aValue, uint32_t* aChanged);
+DllExport void DvProviderUpnpOrgContentDirectory3GetPropertySystemUpdateID(THandle aService, uint32_t* aValue);
+DllExport int32_t DvProviderUpnpOrgContentDirectory3SetPropertyContainerUpdateIDs(THandle aService, const char* aValue, uint32_t* aChanged);
+DllExport void DvProviderUpnpOrgContentDirectory3GetPropertyContainerUpdateIDs(THandle aService, char** aValue);
+DllExport int32_t DvProviderUpnpOrgContentDirectory3SetPropertyLastChange(THandle aService, const char* aValue, uint32_t* aChanged);
+DllExport void DvProviderUpnpOrgContentDirectory3GetPropertyLastChange(THandle aService, char** aValue);
+DllExport int32_t DvProviderUpnpOrgContentDirectory3SetPropertyTransferIDs(THandle aService, const char* aValue, uint32_t* aChanged);
+DllExport void DvProviderUpnpOrgContentDirectory3GetPropertyTransferIDs(THandle aService, char** aValue);
 
 #ifdef __cplusplus
 } // extern "C"

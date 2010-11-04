@@ -7,10 +7,10 @@
 
 using namespace Zapp;
 
-class DvServiceUpnpOrgConnectionManager2C : public DvServiceUpnpOrgConnectionManager2
+class DvProviderUpnpOrgConnectionManager2C : public DvProviderUpnpOrgConnectionManager2
 {
 public:
-    DvServiceUpnpOrgConnectionManager2C(DvDevice& aDevice);
+    DvProviderUpnpOrgConnectionManager2C(DvDevice& aDevice);
     void EnableActionGetProtocolInfo(CallbackConnectionManager2GetProtocolInfo aCallback, void* aPtr);
     void EnableActionPrepareForConnection(CallbackConnectionManager2PrepareForConnection aCallback, void* aPtr);
     void EnableActionConnectionComplete(CallbackConnectionManager2ConnectionComplete aCallback, void* aPtr);
@@ -35,47 +35,47 @@ private:
     void* iPtrGetCurrentConnectionInfo;
 };
 
-DvServiceUpnpOrgConnectionManager2C::DvServiceUpnpOrgConnectionManager2C(DvDevice& aDevice)
-    : DvServiceUpnpOrgConnectionManager2(aDevice)
+DvProviderUpnpOrgConnectionManager2C::DvProviderUpnpOrgConnectionManager2C(DvDevice& aDevice)
+    : DvProviderUpnpOrgConnectionManager2(aDevice)
 {
 }
 
-void DvServiceUpnpOrgConnectionManager2C::EnableActionGetProtocolInfo(CallbackConnectionManager2GetProtocolInfo aCallback, void* aPtr)
+void DvProviderUpnpOrgConnectionManager2C::EnableActionGetProtocolInfo(CallbackConnectionManager2GetProtocolInfo aCallback, void* aPtr)
 {
     iCallbackGetProtocolInfo = aCallback;
     iPtrGetProtocolInfo = aPtr;
-    DvServiceUpnpOrgConnectionManager2::EnableActionGetProtocolInfo();
+    DvProviderUpnpOrgConnectionManager2::EnableActionGetProtocolInfo();
 }
 
-void DvServiceUpnpOrgConnectionManager2C::EnableActionPrepareForConnection(CallbackConnectionManager2PrepareForConnection aCallback, void* aPtr)
+void DvProviderUpnpOrgConnectionManager2C::EnableActionPrepareForConnection(CallbackConnectionManager2PrepareForConnection aCallback, void* aPtr)
 {
     iCallbackPrepareForConnection = aCallback;
     iPtrPrepareForConnection = aPtr;
-    DvServiceUpnpOrgConnectionManager2::EnableActionPrepareForConnection();
+    DvProviderUpnpOrgConnectionManager2::EnableActionPrepareForConnection();
 }
 
-void DvServiceUpnpOrgConnectionManager2C::EnableActionConnectionComplete(CallbackConnectionManager2ConnectionComplete aCallback, void* aPtr)
+void DvProviderUpnpOrgConnectionManager2C::EnableActionConnectionComplete(CallbackConnectionManager2ConnectionComplete aCallback, void* aPtr)
 {
     iCallbackConnectionComplete = aCallback;
     iPtrConnectionComplete = aPtr;
-    DvServiceUpnpOrgConnectionManager2::EnableActionConnectionComplete();
+    DvProviderUpnpOrgConnectionManager2::EnableActionConnectionComplete();
 }
 
-void DvServiceUpnpOrgConnectionManager2C::EnableActionGetCurrentConnectionIDs(CallbackConnectionManager2GetCurrentConnectionIDs aCallback, void* aPtr)
+void DvProviderUpnpOrgConnectionManager2C::EnableActionGetCurrentConnectionIDs(CallbackConnectionManager2GetCurrentConnectionIDs aCallback, void* aPtr)
 {
     iCallbackGetCurrentConnectionIDs = aCallback;
     iPtrGetCurrentConnectionIDs = aPtr;
-    DvServiceUpnpOrgConnectionManager2::EnableActionGetCurrentConnectionIDs();
+    DvProviderUpnpOrgConnectionManager2::EnableActionGetCurrentConnectionIDs();
 }
 
-void DvServiceUpnpOrgConnectionManager2C::EnableActionGetCurrentConnectionInfo(CallbackConnectionManager2GetCurrentConnectionInfo aCallback, void* aPtr)
+void DvProviderUpnpOrgConnectionManager2C::EnableActionGetCurrentConnectionInfo(CallbackConnectionManager2GetCurrentConnectionInfo aCallback, void* aPtr)
 {
     iCallbackGetCurrentConnectionInfo = aCallback;
     iPtrGetCurrentConnectionInfo = aPtr;
-    DvServiceUpnpOrgConnectionManager2::EnableActionGetCurrentConnectionInfo();
+    DvProviderUpnpOrgConnectionManager2::EnableActionGetCurrentConnectionInfo();
 }
 
-void DvServiceUpnpOrgConnectionManager2C::GetProtocolInfo(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aSource, IInvocationResponseString& aSink)
+void DvProviderUpnpOrgConnectionManager2C::GetProtocolInfo(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aSource, IInvocationResponseString& aSink)
 {
     char* Source;
     char* Sink;
@@ -96,7 +96,7 @@ void DvServiceUpnpOrgConnectionManager2C::GetProtocolInfo(IInvocationResponse& a
     aResponse.End();
 }
 
-void DvServiceUpnpOrgConnectionManager2C::PrepareForConnection(IInvocationResponse& aResponse, TUint aVersion, const Brx& aRemoteProtocolInfo, const Brx& aPeerConnectionManager, TInt aPeerConnectionID, const Brx& aDirection, IInvocationResponseInt& aConnectionID, IInvocationResponseInt& aAVTransportID, IInvocationResponseInt& aRcsID)
+void DvProviderUpnpOrgConnectionManager2C::PrepareForConnection(IInvocationResponse& aResponse, TUint aVersion, const Brx& aRemoteProtocolInfo, const Brx& aPeerConnectionManager, TInt aPeerConnectionID, const Brx& aDirection, IInvocationResponseInt& aConnectionID, IInvocationResponseInt& aAVTransportID, IInvocationResponseInt& aRcsID)
 {
     int32_t ConnectionID;
     int32_t AVTransportID;
@@ -113,7 +113,7 @@ void DvServiceUpnpOrgConnectionManager2C::PrepareForConnection(IInvocationRespon
     aResponse.End();
 }
 
-void DvServiceUpnpOrgConnectionManager2C::ConnectionComplete(IInvocationResponse& aResponse, TUint aVersion, TInt aConnectionID)
+void DvProviderUpnpOrgConnectionManager2C::ConnectionComplete(IInvocationResponse& aResponse, TUint aVersion, TInt aConnectionID)
 {
     ASSERT(iCallbackConnectionComplete != NULL);
     if (0 != iCallbackConnectionComplete(iPtrConnectionComplete, aVersion, aConnectionID)) {
@@ -124,7 +124,7 @@ void DvServiceUpnpOrgConnectionManager2C::ConnectionComplete(IInvocationResponse
     aResponse.End();
 }
 
-void DvServiceUpnpOrgConnectionManager2C::GetCurrentConnectionIDs(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aConnectionIDs)
+void DvProviderUpnpOrgConnectionManager2C::GetCurrentConnectionIDs(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aConnectionIDs)
 {
     char* ConnectionIDs;
     ASSERT(iCallbackGetCurrentConnectionIDs != NULL);
@@ -140,7 +140,7 @@ void DvServiceUpnpOrgConnectionManager2C::GetCurrentConnectionIDs(IInvocationRes
     aResponse.End();
 }
 
-void DvServiceUpnpOrgConnectionManager2C::GetCurrentConnectionInfo(IInvocationResponse& aResponse, TUint aVersion, TInt aConnectionID, IInvocationResponseInt& aRcsID, IInvocationResponseInt& aAVTransportID, IInvocationResponseString& aProtocolInfo, IInvocationResponseString& aPeerConnectionManager, IInvocationResponseInt& aPeerConnectionID, IInvocationResponseString& aDirection, IInvocationResponseString& aStatus)
+void DvProviderUpnpOrgConnectionManager2C::GetCurrentConnectionInfo(IInvocationResponse& aResponse, TUint aVersion, TInt aConnectionID, IInvocationResponseInt& aRcsID, IInvocationResponseInt& aAVTransportID, IInvocationResponseString& aProtocolInfo, IInvocationResponseString& aPeerConnectionManager, IInvocationResponseInt& aPeerConnectionID, IInvocationResponseString& aDirection, IInvocationResponseString& aStatus)
 {
     int32_t RcsID;
     int32_t AVTransportID;
@@ -179,80 +179,80 @@ void DvServiceUpnpOrgConnectionManager2C::GetCurrentConnectionInfo(IInvocationRe
 
 
 
-THandle DvServiceUpnpOrgConnectionManager2Create(DvDeviceC aDevice)
+THandle DvProviderUpnpOrgConnectionManager2Create(DvDeviceC aDevice)
 {
-	return new DvServiceUpnpOrgConnectionManager2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderUpnpOrgConnectionManager2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvServiceUpnpOrgConnectionManager2Destroy(THandle aService)
+void DvProviderUpnpOrgConnectionManager2Destroy(THandle aService)
 {
-    delete reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService);
+    delete reinterpret_cast<DvProviderUpnpOrgConnectionManager2C*>(aService);
 }
 
-void DvServiceUpnpOrgConnectionManager2EnableActionGetProtocolInfo(THandle aService, CallbackConnectionManager2GetProtocolInfo aCallback, void* aPtr)
+void DvProviderUpnpOrgConnectionManager2EnableActionGetProtocolInfo(THandle aService, CallbackConnectionManager2GetProtocolInfo aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->EnableActionGetProtocolInfo(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgConnectionManager2C*>(aService)->EnableActionGetProtocolInfo(aCallback, aPtr);
 }
 
-void DvServiceUpnpOrgConnectionManager2EnableActionPrepareForConnection(THandle aService, CallbackConnectionManager2PrepareForConnection aCallback, void* aPtr)
+void DvProviderUpnpOrgConnectionManager2EnableActionPrepareForConnection(THandle aService, CallbackConnectionManager2PrepareForConnection aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->EnableActionPrepareForConnection(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgConnectionManager2C*>(aService)->EnableActionPrepareForConnection(aCallback, aPtr);
 }
 
-void DvServiceUpnpOrgConnectionManager2EnableActionConnectionComplete(THandle aService, CallbackConnectionManager2ConnectionComplete aCallback, void* aPtr)
+void DvProviderUpnpOrgConnectionManager2EnableActionConnectionComplete(THandle aService, CallbackConnectionManager2ConnectionComplete aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->EnableActionConnectionComplete(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgConnectionManager2C*>(aService)->EnableActionConnectionComplete(aCallback, aPtr);
 }
 
-void DvServiceUpnpOrgConnectionManager2EnableActionGetCurrentConnectionIDs(THandle aService, CallbackConnectionManager2GetCurrentConnectionIDs aCallback, void* aPtr)
+void DvProviderUpnpOrgConnectionManager2EnableActionGetCurrentConnectionIDs(THandle aService, CallbackConnectionManager2GetCurrentConnectionIDs aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->EnableActionGetCurrentConnectionIDs(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgConnectionManager2C*>(aService)->EnableActionGetCurrentConnectionIDs(aCallback, aPtr);
 }
 
-void DvServiceUpnpOrgConnectionManager2EnableActionGetCurrentConnectionInfo(THandle aService, CallbackConnectionManager2GetCurrentConnectionInfo aCallback, void* aPtr)
+void DvProviderUpnpOrgConnectionManager2EnableActionGetCurrentConnectionInfo(THandle aService, CallbackConnectionManager2GetCurrentConnectionInfo aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->EnableActionGetCurrentConnectionInfo(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgConnectionManager2C*>(aService)->EnableActionGetCurrentConnectionInfo(aCallback, aPtr);
 }
 
-int32_t DvServiceUpnpOrgConnectionManager2SetPropertySourceProtocolInfo(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderUpnpOrgConnectionManager2SetPropertySourceProtocolInfo(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->SetPropertySourceProtocolInfo(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderUpnpOrgConnectionManager2C*>(aService)->SetPropertySourceProtocolInfo(buf)? 1 : 0);
     return 0;
 }
 
-void DvServiceUpnpOrgConnectionManager2GetPropertySourceProtocolInfo(THandle aService, char** aValue)
+void DvProviderUpnpOrgConnectionManager2GetPropertySourceProtocolInfo(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->GetPropertySourceProtocolInfo(buf);
+    reinterpret_cast<DvProviderUpnpOrgConnectionManager2C*>(aService)->GetPropertySourceProtocolInfo(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceUpnpOrgConnectionManager2SetPropertySinkProtocolInfo(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderUpnpOrgConnectionManager2SetPropertySinkProtocolInfo(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->SetPropertySinkProtocolInfo(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderUpnpOrgConnectionManager2C*>(aService)->SetPropertySinkProtocolInfo(buf)? 1 : 0);
     return 0;
 }
 
-void DvServiceUpnpOrgConnectionManager2GetPropertySinkProtocolInfo(THandle aService, char** aValue)
+void DvProviderUpnpOrgConnectionManager2GetPropertySinkProtocolInfo(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->GetPropertySinkProtocolInfo(buf);
+    reinterpret_cast<DvProviderUpnpOrgConnectionManager2C*>(aService)->GetPropertySinkProtocolInfo(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceUpnpOrgConnectionManager2SetPropertyCurrentConnectionIDs(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderUpnpOrgConnectionManager2SetPropertyCurrentConnectionIDs(THandle aService, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->SetPropertyCurrentConnectionIDs(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderUpnpOrgConnectionManager2C*>(aService)->SetPropertyCurrentConnectionIDs(buf)? 1 : 0);
     return 0;
 }
 
-void DvServiceUpnpOrgConnectionManager2GetPropertyCurrentConnectionIDs(THandle aService, char** aValue)
+void DvProviderUpnpOrgConnectionManager2GetPropertyCurrentConnectionIDs(THandle aService, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceUpnpOrgConnectionManager2C*>(aService)->GetPropertyCurrentConnectionIDs(buf);
+    reinterpret_cast<DvProviderUpnpOrgConnectionManager2C*>(aService)->GetPropertyCurrentConnectionIDs(buf);
     *aValue = (char*)buf.Transfer();
 }
 

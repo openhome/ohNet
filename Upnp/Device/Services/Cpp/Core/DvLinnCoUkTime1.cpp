@@ -6,38 +6,38 @@
 
 using namespace Zapp;
 
-TBool DvServiceLinnCoUkTime1::SetPropertyTrackCount(TUint aValue)
+TBool DvProviderLinnCoUkTime1::SetPropertyTrackCount(TUint aValue)
 {
     return SetPropertyUint(*iPropertyTrackCount, aValue);
 }
 
-void DvServiceLinnCoUkTime1::GetPropertyTrackCount(TUint& aValue)
+void DvProviderLinnCoUkTime1::GetPropertyTrackCount(TUint& aValue)
 {
     aValue = iPropertyTrackCount->Value();
 }
 
-TBool DvServiceLinnCoUkTime1::SetPropertyDuration(TUint aValue)
+TBool DvProviderLinnCoUkTime1::SetPropertyDuration(TUint aValue)
 {
     return SetPropertyUint(*iPropertyDuration, aValue);
 }
 
-void DvServiceLinnCoUkTime1::GetPropertyDuration(TUint& aValue)
+void DvProviderLinnCoUkTime1::GetPropertyDuration(TUint& aValue)
 {
     aValue = iPropertyDuration->Value();
 }
 
-TBool DvServiceLinnCoUkTime1::SetPropertySeconds(TUint aValue)
+TBool DvProviderLinnCoUkTime1::SetPropertySeconds(TUint aValue)
 {
     return SetPropertyUint(*iPropertySeconds, aValue);
 }
 
-void DvServiceLinnCoUkTime1::GetPropertySeconds(TUint& aValue)
+void DvProviderLinnCoUkTime1::GetPropertySeconds(TUint& aValue)
 {
     aValue = iPropertySeconds->Value();
 }
 
-DvServiceLinnCoUkTime1::DvServiceLinnCoUkTime1(DvDevice& aDevice)
-    : DvService(aDevice.Device(), "linn.co.uk", "Time", 1)
+DvProviderLinnCoUkTime1::DvProviderLinnCoUkTime1(DvDevice& aDevice)
+    : DvProvider(aDevice.Device(), "linn.co.uk", "Time", 1)
 {
     Functor empty;
     iPropertyTrackCount = new PropertyUint(new ParameterUint("TrackCount"), empty);
@@ -48,17 +48,17 @@ DvServiceLinnCoUkTime1::DvServiceLinnCoUkTime1(DvDevice& aDevice)
     iService->AddProperty(iPropertySeconds); // passes ownership
 }
 
-void DvServiceLinnCoUkTime1::EnableActionTime()
+void DvProviderLinnCoUkTime1::EnableActionTime()
 {
     Zapp::Action* action = new Zapp::Action("Time");
     action->AddOutputParameter(new ParameterRelated("aTrackCount", *iPropertyTrackCount));
     action->AddOutputParameter(new ParameterRelated("aDuration", *iPropertyDuration));
     action->AddOutputParameter(new ParameterRelated("aSeconds", *iPropertySeconds));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkTime1::DoTime);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkTime1::DoTime);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkTime1::DoTime(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkTime1::DoTime(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -69,7 +69,7 @@ void DvServiceLinnCoUkTime1::DoTime(IDvInvocation& aInvocation, TUint aVersion)
     Time(resp, aVersion, respaTrackCount, respaDuration, respaSeconds);
 }
 
-void DvServiceLinnCoUkTime1::Time(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aaTrackCount*/, IInvocationResponseUint& /*aaDuration*/, IInvocationResponseUint& /*aaSeconds*/)
+void DvProviderLinnCoUkTime1::Time(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aaTrackCount*/, IInvocationResponseUint& /*aaDuration*/, IInvocationResponseUint& /*aaSeconds*/)
 {
     ASSERTS();
 }

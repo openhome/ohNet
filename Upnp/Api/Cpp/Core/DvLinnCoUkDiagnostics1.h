@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,14 +17,14 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Diagnostics:1
  */
-class DvServiceLinnCoUkDiagnostics1 : public DvService
+class DvProviderLinnCoUkDiagnostics1 : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkDiagnostics1() {}
+    virtual ~DvProviderLinnCoUkDiagnostics1() {}
     TBool SetPropertyaStateVariable(TUint aValue);
     void GetPropertyaStateVariable(TUint& aValue);
 protected:
-    DvServiceLinnCoUkDiagnostics1(DvDevice& aDevice);
+    DvProviderLinnCoUkDiagnostics1(DvDevice& aDevice);
     void EnableActionEcho();
     void EnableActionElfFile();
     void EnableActionElfFingerprint();
@@ -53,7 +53,7 @@ private:
     virtual void SetStateVariablePeriod(IInvocationResponse& aResponse, TUint aVersion, TUint aaPeriod);
     virtual void Reboot(IInvocationResponse& aResponse, TUint aVersion, TUint aaDelay);
 private:
-    DvServiceLinnCoUkDiagnostics1();
+    DvProviderLinnCoUkDiagnostics1();
     void DoEcho(IDvInvocation& aInvocation, TUint aVersion);
     void DoElfFile(IDvInvocation& aInvocation, TUint aVersion);
     void DoElfFingerprint(IDvInvocation& aInvocation, TUint aVersion);

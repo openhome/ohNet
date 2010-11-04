@@ -17,10 +17,10 @@
 using namespace Zapp;
 using namespace Zapp::TestFramework;
 
-class ServiceTestBasic : public DvServiceZappOrgTestBasic1Cpp
+class ProviderTestBasic : public DvProviderZappOrgTestBasic1Cpp
 {
 public:
-    ServiceTestBasic(DvDeviceStd& aDevice);
+    ProviderTestBasic(DvDeviceStd& aDevice);
 private:
     void Increment(uint32_t aVersion, uint32_t aValue, uint32_t& aResult);
     void Decrement(uint32_t aVersion, int32_t aValue, int32_t& aResult);
@@ -47,12 +47,12 @@ public:
     ~DeviceBasic();
 private:
     DvDeviceStd* iDevice;
-    ServiceTestBasic* iTestBasic;
+    ProviderTestBasic* iTestBasic;
 };
 
 
-ServiceTestBasic::ServiceTestBasic(DvDeviceStd& aDevice)
-    : DvServiceZappOrgTestBasic1Cpp(aDevice)
+ProviderTestBasic::ProviderTestBasic(DvDeviceStd& aDevice)
+    : DvProviderZappOrgTestBasic1Cpp(aDevice)
 {
     SetPropertyVarUint(0);
     SetPropertyVarInt(0);
@@ -79,62 +79,62 @@ ServiceTestBasic::ServiceTestBasic(DvDeviceStd& aDevice)
     EnableActionGetBinary();
 }
 
-void ServiceTestBasic::Increment(uint32_t /*aVersion*/, uint32_t aValue, uint32_t& aResult)
+void ProviderTestBasic::Increment(uint32_t /*aVersion*/, uint32_t aValue, uint32_t& aResult)
 {
     aResult = ++aValue;
 }
 
-void ServiceTestBasic::Decrement(uint32_t /*aVersion*/, int32_t aValue, int32_t& aResult)
+void ProviderTestBasic::Decrement(uint32_t /*aVersion*/, int32_t aValue, int32_t& aResult)
 {
     aResult = --aValue;
 }
 
-void ServiceTestBasic::Toggle(uint32_t /*aVersion*/, bool aValue, bool& aResult)
+void ProviderTestBasic::Toggle(uint32_t /*aVersion*/, bool aValue, bool& aResult)
 {
     aResult = !aValue;
 }
 
-void ServiceTestBasic::EchoString(uint32_t /*aVersion*/, const std::string& aValue, std::string& aResult)
+void ProviderTestBasic::EchoString(uint32_t /*aVersion*/, const std::string& aValue, std::string& aResult)
 {
     aResult.assign(aValue);
 }
 
-void ServiceTestBasic::EchoBinary(uint32_t /*aVersion*/, const std::string& aValue, std::string& aResult)
+void ProviderTestBasic::EchoBinary(uint32_t /*aVersion*/, const std::string& aValue, std::string& aResult)
 {
     aResult.assign(aValue);
 }
 
-void ServiceTestBasic::SetUint(uint32_t /*aVersion*/, uint32_t aValueUint)
+void ProviderTestBasic::SetUint(uint32_t /*aVersion*/, uint32_t aValueUint)
 {
     SetPropertyVarUint(aValueUint);
 }
 
-void ServiceTestBasic::GetUint(uint32_t /*aVersion*/, uint32_t& aValueUint)
+void ProviderTestBasic::GetUint(uint32_t /*aVersion*/, uint32_t& aValueUint)
 {
     GetPropertyVarUint(aValueUint);
 }
 
-void ServiceTestBasic::SetInt(uint32_t /*aVersion*/, int32_t aValueInt)
+void ProviderTestBasic::SetInt(uint32_t /*aVersion*/, int32_t aValueInt)
 {
     SetPropertyVarInt(aValueInt);
 }
 
-void ServiceTestBasic::GetInt(uint32_t /*aVersion*/, int32_t& aValueInt)
+void ProviderTestBasic::GetInt(uint32_t /*aVersion*/, int32_t& aValueInt)
 {
     GetPropertyVarInt(aValueInt);
 }
 
-void ServiceTestBasic::SetBool(uint32_t /*aVersion*/, bool aValueBool)
+void ProviderTestBasic::SetBool(uint32_t /*aVersion*/, bool aValueBool)
 {
     SetPropertyVarBool(aValueBool);
 }
 
-void ServiceTestBasic::GetBool(uint32_t /*aVersion*/, bool& aValueBool)
+void ProviderTestBasic::GetBool(uint32_t /*aVersion*/, bool& aValueBool)
 {
     GetPropertyVarBool(aValueBool);
 }
 
-void ServiceTestBasic::SetMultiple(uint32_t /*aVersion*/, uint32_t aValueUint, int32_t aValueInt, bool aValueBool)
+void ProviderTestBasic::SetMultiple(uint32_t /*aVersion*/, uint32_t aValueUint, int32_t aValueInt, bool aValueBool)
 {
     PropertiesLock();
     SetPropertyVarUint(aValueUint);
@@ -143,22 +143,22 @@ void ServiceTestBasic::SetMultiple(uint32_t /*aVersion*/, uint32_t aValueUint, i
     PropertiesUnlock();
 }
 
-void ServiceTestBasic::SetString(uint32_t /*aVersion*/, const std::string& aValueStr)
+void ProviderTestBasic::SetString(uint32_t /*aVersion*/, const std::string& aValueStr)
 {
     SetPropertyVarStr(aValueStr);
 }
 
-void ServiceTestBasic::GetString(uint32_t /*aVersion*/, std::string& aValueStr)
+void ProviderTestBasic::GetString(uint32_t /*aVersion*/, std::string& aValueStr)
 {
     GetPropertyVarStr(aValueStr);
 }
 
-void ServiceTestBasic::SetBinary(uint32_t /*aVersion*/, const std::string& aValueBin)
+void ProviderTestBasic::SetBinary(uint32_t /*aVersion*/, const std::string& aValueBin)
 {
     SetPropertyVarBin(aValueBin);
 }
 
-void ServiceTestBasic::GetBinary(uint32_t /*aVersion*/, std::string& aValueBin)
+void ProviderTestBasic::GetBinary(uint32_t /*aVersion*/, std::string& aValueBin)
 {
     GetPropertyVarBin(aValueBin);
 }
@@ -199,7 +199,7 @@ DeviceBasic::DeviceBasic()
     iDevice->SetAttribute("Upnp.ModelUrl", "http://www.linn.co.uk");
     iDevice->SetAttribute("Upnp.SerialNumber", "123456");
     iDevice->SetAttribute("Upnp.Upc", "123456654321");
-    iTestBasic = new ServiceTestBasic(*iDevice);
+    iTestBasic = new ProviderTestBasic(*iDevice);
     iDevice->SetEnabled();
 }
 

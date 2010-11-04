@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,10 +17,10 @@ class PropertyBinary;
 /**
  * Base Device for zapp.org:TestBasic:1
  */
-class DvServiceZappOrgTestBasic1 : public DvService
+class DvProviderZappOrgTestBasic1 : public DvProvider
 {
 public:
-    virtual ~DvServiceZappOrgTestBasic1() {}
+    virtual ~DvProviderZappOrgTestBasic1() {}
     TBool SetPropertyVarUint(TUint aValue);
     void GetPropertyVarUint(TUint& aValue);
     TBool SetPropertyVarInt(TInt aValue);
@@ -32,7 +32,7 @@ public:
     TBool SetPropertyVarBin(const Brx& aValue);
     void GetPropertyVarBin(Brh& aValue);
 protected:
-    DvServiceZappOrgTestBasic1(DvDevice& aDevice);
+    DvProviderZappOrgTestBasic1(DvDevice& aDevice);
     void EnableActionIncrement();
     void EnableActionDecrement();
     void EnableActionToggle();
@@ -69,7 +69,7 @@ private:
     virtual void GetBinary(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBinary& aValueBin);
     virtual void ToggleBool(IInvocationResponse& aResponse, TUint aVersion);
 private:
-    DvServiceZappOrgTestBasic1();
+    DvProviderZappOrgTestBasic1();
     void DoIncrement(IDvInvocation& aInvocation, TUint aVersion);
     void DoDecrement(IDvInvocation& aInvocation, TUint aVersion);
     void DoToggle(IDvInvocation& aInvocation, TUint aVersion);

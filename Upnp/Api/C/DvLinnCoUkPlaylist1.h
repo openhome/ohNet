@@ -21,30 +21,30 @@ typedef int32_t (*CallbackPlaylist1TracksMax)(void* aPtr, uint32_t aVersion, uin
 typedef int32_t (*CallbackPlaylist1IdArray)(void* aPtr, uint32_t aVersion, uint32_t* aaIdArrayToken, char** aaIdArray, uint32_t* aaIdArrayLen);
 typedef int32_t (*CallbackPlaylist1IdArrayChanged)(void* aPtr, uint32_t aVersion, uint32_t aaIdArrayToken, uint32_t* aaIdArrayChanged);
 
-DllExport THandle DvServiceLinnCoUkPlaylist1Create(DvDeviceC aDevice);
-DllExport void DvServiceLinnCoUkPlaylist1Destroy(THandle aService);
+DllExport THandle DvProviderLinnCoUkPlaylist1Create(DvDeviceC aDevice);
+DllExport void DvProviderLinnCoUkPlaylist1Destroy(THandle aService);
 
-DllExport void DvServiceLinnCoUkPlaylist1EnableActionRead(THandle aService, CallbackPlaylist1Read aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkPlaylist1EnableActionReadList(THandle aService, CallbackPlaylist1ReadList aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkPlaylist1EnableActionInsert(THandle aService, CallbackPlaylist1Insert aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkPlaylist1EnableActionDelete(THandle aService, CallbackPlaylist1Delete aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkPlaylist1EnableActionDeleteAll(THandle aService, CallbackPlaylist1DeleteAll aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkPlaylist1EnableActionSetRepeat(THandle aService, CallbackPlaylist1SetRepeat aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkPlaylist1EnableActionRepeat(THandle aService, CallbackPlaylist1Repeat aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkPlaylist1EnableActionSetShuffle(THandle aService, CallbackPlaylist1SetShuffle aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkPlaylist1EnableActionShuffle(THandle aService, CallbackPlaylist1Shuffle aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkPlaylist1EnableActionTracksMax(THandle aService, CallbackPlaylist1TracksMax aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkPlaylist1EnableActionIdArray(THandle aService, CallbackPlaylist1IdArray aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkPlaylist1EnableActionIdArrayChanged(THandle aService, CallbackPlaylist1IdArrayChanged aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkPlaylist1EnableActionRead(THandle aService, CallbackPlaylist1Read aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkPlaylist1EnableActionReadList(THandle aService, CallbackPlaylist1ReadList aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkPlaylist1EnableActionInsert(THandle aService, CallbackPlaylist1Insert aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkPlaylist1EnableActionDelete(THandle aService, CallbackPlaylist1Delete aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkPlaylist1EnableActionDeleteAll(THandle aService, CallbackPlaylist1DeleteAll aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkPlaylist1EnableActionSetRepeat(THandle aService, CallbackPlaylist1SetRepeat aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkPlaylist1EnableActionRepeat(THandle aService, CallbackPlaylist1Repeat aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkPlaylist1EnableActionSetShuffle(THandle aService, CallbackPlaylist1SetShuffle aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkPlaylist1EnableActionShuffle(THandle aService, CallbackPlaylist1Shuffle aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkPlaylist1EnableActionTracksMax(THandle aService, CallbackPlaylist1TracksMax aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkPlaylist1EnableActionIdArray(THandle aService, CallbackPlaylist1IdArray aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkPlaylist1EnableActionIdArrayChanged(THandle aService, CallbackPlaylist1IdArrayChanged aCallback, void* aPtr);
 
-DllExport int32_t DvServiceLinnCoUkPlaylist1SetPropertyIdArray(THandle aService, const char* aValue, uint32_t aValueLen, uint32_t* aChanged);
-DllExport void DvServiceLinnCoUkPlaylist1GetPropertyIdArray(THandle aService, char** aValue, uint32_t* aValueLen);
-DllExport int32_t DvServiceLinnCoUkPlaylist1SetPropertyRepeat(THandle aService, uint32_t aValue, uint32_t* aChanged);
-DllExport void DvServiceLinnCoUkPlaylist1GetPropertyRepeat(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkPlaylist1SetPropertyShuffle(THandle aService, uint32_t aValue, uint32_t* aChanged);
-DllExport void DvServiceLinnCoUkPlaylist1GetPropertyShuffle(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkPlaylist1SetPropertyTracksMax(THandle aService, uint32_t aValue, uint32_t* aChanged);
-DllExport void DvServiceLinnCoUkPlaylist1GetPropertyTracksMax(THandle aService, uint32_t* aValue);
+DllExport int32_t DvProviderLinnCoUkPlaylist1SetPropertyIdArray(THandle aService, const char* aValue, uint32_t aValueLen, uint32_t* aChanged);
+DllExport void DvProviderLinnCoUkPlaylist1GetPropertyIdArray(THandle aService, char** aValue, uint32_t* aValueLen);
+DllExport int32_t DvProviderLinnCoUkPlaylist1SetPropertyRepeat(THandle aService, uint32_t aValue, uint32_t* aChanged);
+DllExport void DvProviderLinnCoUkPlaylist1GetPropertyRepeat(THandle aService, uint32_t* aValue);
+DllExport int32_t DvProviderLinnCoUkPlaylist1SetPropertyShuffle(THandle aService, uint32_t aValue, uint32_t* aChanged);
+DllExport void DvProviderLinnCoUkPlaylist1GetPropertyShuffle(THandle aService, uint32_t* aValue);
+DllExport int32_t DvProviderLinnCoUkPlaylist1SetPropertyTracksMax(THandle aService, uint32_t aValue, uint32_t* aChanged);
+DllExport void DvProviderLinnCoUkPlaylist1GetPropertyTracksMax(THandle aService, uint32_t* aValue);
 
 #ifdef __cplusplus
 } // extern "C"
