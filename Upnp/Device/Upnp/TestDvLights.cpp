@@ -292,7 +292,10 @@ void DeviceLights::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/,
     TUint bytes = (TUint)fileStats.st_size;
     //Print("File %s size is %u\n", path, bytes);
     const char* mime = NULL;
-    for (TUint i=filePath.Bytes()-1; i>0, filePath[i] != '/', filePath[i] != '\\'; i--) {
+    for (TUint i=filePath.Bytes()-1; i>0; i--) {
+        if (filePath[i] == '/' || filePath[i] == '\\') {
+            break;
+        }    
         if (filePath[i] == '.') {
             const char* ext = (const char*)filePath.Split(i+1, filePath.Bytes()-i-1).Ptr();
             if (strcmp(ext, "html") == 0 || strcmp(ext, "htm") == 0) {
@@ -313,7 +316,6 @@ void DeviceLights::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/,
     aResourceWriter.WriteResourceEnd();
     (void)fclose(fd);
 }
-
 
 
 void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
@@ -338,9 +340,9 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
 
     Print("TestDvLights - starting\n");
     DeviceLights* device = new DeviceLights(mode.Value(), config.Value());
-    Blocker* blocker = new Blocker;
-    blocker->Wait(60*60*24); // make the device available for 1 day then assume we've been forgotten about and exit
-    delete blocker;
+    while (getchar() != 'q') {
+        ;
+    }
     delete device;
     Print("TestDvLights - exiting\n");
 
