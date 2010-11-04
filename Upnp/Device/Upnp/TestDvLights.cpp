@@ -7,6 +7,7 @@
 #include <Ascii.h>
 #include <Maths.h>
 #include <Stack.h>
+#include <MimeTypes.h>
 
 #include <vector>
 #include <sys/stat.h>
@@ -239,7 +240,7 @@ DeviceLights::DeviceLights(TUint aMode, const Brx& aConfigDir)
     iDevice->SetAttribute("Upnp.Domain", "zapp.org");
     iDevice->SetAttribute("Upnp.Type", "TestLights");
     iDevice->SetAttribute("Upnp.Version", "1");
-    iDevice->SetAttribute("Upnp.FriendlyName", "Zapp Lights");
+    iDevice->SetAttribute("Upnp.FriendlyName", "__Zapp Lights");
     iDevice->SetAttribute("Upnp.Manufacturer", "None");
     iDevice->SetAttribute("Upnp.ManufacturerUrl", "http://www.linn.co.uk");
     iDevice->SetAttribute("Upnp.ModelDescription", "Demo lighting service, enabling simple UI development");
@@ -290,7 +291,17 @@ void DeviceLights::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/,
     (void)stat(path, &fileStats);
     TUint bytes = (TUint)fileStats.st_size;
     //Print("File %s size is %u\n", path, bytes);
-    aResourceWriter.WriteResourceBegin(bytes);
+    const char* mime = NULL;
+    for (TUint i=filePath.Bytes()-1; i>0, filePath[i] != '/', filePath[i] != '\\'; i--) {
+        if (filePath[i] == '.') {
+            const char* ext = (const char*)filePath.Split(i+1, filePath.Bytes()-i-1).Ptr();
+            if (strcmp(ext, "html") == 0 || strcmp(ext, "htm") == 0) {
+                mime = kZappMimeTypeHtml;
+            }
+            break;
+        }
+    }
+    aResourceWriter.WriteResourceBegin(bytes, mime);
     do {
         TByte buf[kMaxReadSize];
         TUint size = (bytes<kMaxReadSize? bytes : kMaxReadSize);
@@ -323,6 +334,7 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
 
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartDv();
+    Debug::SetLevel(Debug::kError);
 
     Print("TestDvLights - starting\n");
     DeviceLights* device = new DeviceLights(mode.Value(), config.Value());

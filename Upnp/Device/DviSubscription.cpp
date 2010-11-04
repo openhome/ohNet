@@ -7,6 +7,7 @@
 #include <Functor.h>
 #include <DviStack.h>
 #include <Debug.h>
+#include <Converter.h>
 
 #include <vector>
 #include <stdlib.h>
@@ -165,6 +166,70 @@ void DviSubscription::Expired()
     iSubscriber.SetAddress(0);
     iLock.Signal();
     iService->RemoveSubscription(iSid);
+}
+
+
+// PropertyWriter
+
+PropertyWriter::PropertyWriter()
+    : iWriter(NULL)
+{
+}
+
+void PropertyWriter::SetWriter(IWriter& aWriter)
+{
+    iWriter = &aWriter;
+}
+
+void PropertyWriter::PropertyWriteString(const Brx& aName, const Brx& aValue)
+{
+    WriterBwh writer(1024);
+    Converter::ToXmlEscaped(writer, aValue);
+    Brh buf;
+    writer.TransferTo(buf);
+    WriteVariable(aName, buf);
+}
+
+void PropertyWriter::PropertyWriteInt(const Brx& aName, TInt aValue)
+{
+    Bws<Ascii::kMaxIntStringBytes> buf;
+    (void)Ascii::AppendDec(buf, aValue);
+    WriteVariable(aName, buf);
+}
+
+void PropertyWriter::PropertyWriteUint(const Brx& aName, TUint aValue)
+{
+    Bws<Ascii::kMaxUintStringBytes> buf;
+    (void)Ascii::AppendDec(buf, aValue);
+    WriteVariable(aName, buf);
+}
+
+void PropertyWriter::PropertyWriteBool(const Brx& aName, TBool aValue)
+{
+    PropertyWriteUint(aName, (aValue? 1 : 0));
+}
+
+void PropertyWriter::PropertyWriteBinary(const Brx& aName, const Brx& aValue)
+{
+    WriterBwh writer(1024);
+    Converter::ToBase64(writer, aValue);
+    Brh buf;
+    writer.TransferTo(buf);
+    WriteVariable(aName, buf);
+}
+
+void PropertyWriter::WriteVariable(const Brx& aName, const Brx& aValue)
+{
+    ASSERT(iWriter != NULL);
+    iWriter->Write(Brn("<e:property>"));
+    iWriter->Write('<');
+    iWriter->Write(aName);
+    iWriter->Write('>');
+    iWriter->Write(aValue);
+    iWriter->Write(Brn("</"));
+    iWriter->Write(aName);
+    iWriter->Write('>');
+    iWriter->Write(Brn("</e:property>"));
 }
 
 

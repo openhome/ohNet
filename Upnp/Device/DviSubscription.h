@@ -48,6 +48,23 @@ private:
     Timer* iTimer;
 };
 
+class PropertyWriter : public IPropertyWriter
+{
+protected:
+    PropertyWriter();
+    void SetWriter(IWriter& aWriter);
+private: // IPropertyWriter
+    void PropertyWriteString(const Brx& aName, const Brx& aValue);
+    void PropertyWriteInt(const Brx& aName, TInt aValue);
+    void PropertyWriteUint(const Brx& aName, TUint aValue);
+    void PropertyWriteBool(const Brx& aName, TBool aValue);
+    void PropertyWriteBinary(const Brx& aName, const Brx& aValue);
+private:
+    void WriteVariable(const Brx& aName, const Brx& aValue);
+private:
+    IWriter* iWriter;
+};
+
 class Publisher : public Thread
 {
 public:

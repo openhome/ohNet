@@ -11,6 +11,7 @@
 #include <Subscription.h>
 #include <Service.h>
 #include <DviServer.h>
+#include <DviSubscription.h>
 
 #include <vector>
 
@@ -58,20 +59,13 @@ private:
     Bwh iUri;
 };
 
-class PropertyWriter : public IPropertyWriter
+class PropertyWriterUpnp : public PropertyWriter
 {
 public:
-    PropertyWriter(const Endpoint& aPublisher, const Endpoint& aSubscriber, const Brx& aSubscriberPath, const Brx& aSid, TUint aSequenceNumber);
+    PropertyWriterUpnp(const Endpoint& aPublisher, const Endpoint& aSubscriber, const Brx& aSubscriberPath, const Brx& aSid, TUint aSequenceNumber);
 private: // IPropertyWriter
-    ~PropertyWriter();
-    void PropertyWriteString(const Brx& aName, const Brx& aValue);
-    void PropertyWriteInt(const Brx& aName, TInt aValue);
-    void PropertyWriteUint(const Brx& aName, TUint aValue);
-    void PropertyWriteBool(const Brx& aName, TBool aValue);
-    void PropertyWriteBinary(const Brx& aName, const Brx& aValue);
+    ~PropertyWriterUpnp();
     void PropertyWriteEnd();
-private:
-    void WriteVariable(const Brx& aName, const Brx& aValue);
 private:
     static const TUint kMaxRequestBytes = 12*1024;
     static const TUint kMaxResponseBytes = 128;
