@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderLinnCoUkJukebox1 : IDisposable
+    public class DvProviderLinnCoUkJukebox1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkJukebox1")]
         static extern uint DvProviderLinnCoUkJukebox1Create(uint aDeviceHandle);
@@ -51,7 +51,6 @@ namespace Zapp
         private unsafe delegate int CallbackPresetMetaData(IntPtr aPtr, uint aVersion, uint aaPreset, char** aaMetaData);
         private unsafe delegate int CallbackLoadManifest(IntPtr aPtr, uint aVersion, uint* aaTotalPresets);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackSetPresetPrefix iCallbackSetPresetPrefix;
         private CallbackPresetPrefix iCallbackPresetPrefix;

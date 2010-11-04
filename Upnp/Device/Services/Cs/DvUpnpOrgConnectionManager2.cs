@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderUpnpOrgConnectionManager2 : IDisposable
+    public class DvProviderUpnpOrgConnectionManager2 : DvProvider, IDisposable
     {
         [DllImport("DvUpnpOrgConnectionManager2")]
         static extern uint DvProviderUpnpOrgConnectionManager2Create(uint aDeviceHandle);
@@ -42,7 +42,6 @@ namespace Zapp
         private unsafe delegate int CallbackGetCurrentConnectionIDs(IntPtr aPtr, uint aVersion, char** aConnectionIDs);
         private unsafe delegate int CallbackGetCurrentConnectionInfo(IntPtr aPtr, uint aVersion, int aConnectionID, int* aRcsID, int* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int* aPeerConnectionID, char** aDirection, char** aStatus);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackGetProtocolInfo iCallbackGetProtocolInfo;
         private CallbackPrepareForConnection iCallbackPrepareForConnection;

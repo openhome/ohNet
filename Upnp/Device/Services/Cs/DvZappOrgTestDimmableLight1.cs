@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderZappOrgTestDimmableLight1 : IDisposable
+    public class DvProviderZappOrgTestDimmableLight1 : DvProvider, IDisposable
     {
         [DllImport("DvZappOrgTestDimmableLight1")]
         static extern uint DvProviderZappOrgTestDimmableLight1Create(uint aDeviceHandle);
@@ -25,7 +25,6 @@ namespace Zapp
         private unsafe delegate int CallbackGetLevel(IntPtr aPtr, uint aVersion, uint* aLevel);
         private unsafe delegate int CallbackSetLevel(IntPtr aPtr, uint aVersion, uint aLevel);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackGetLevel iCallbackGetLevel;
         private CallbackSetLevel iCallbackSetLevel;

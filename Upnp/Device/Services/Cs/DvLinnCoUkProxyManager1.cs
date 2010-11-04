@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderLinnCoUkProxyManager1 : IDisposable
+    public class DvProviderLinnCoUkProxyManager1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkProxyManager1")]
         static extern uint DvProviderLinnCoUkProxyManager1Create(uint aDeviceHandle);
@@ -61,7 +61,6 @@ namespace Zapp
         private unsafe delegate int CallbackTestKontrolProductConnection(IntPtr aPtr, uint aVersion, int* aaResult);
         private unsafe delegate int CallbackTestDiscPlayerConnection(IntPtr aPtr, uint aVersion, int* aaResult);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackKontrolProductConnected iCallbackKontrolProductConnected;
         private CallbackSetKontrolProductConnected iCallbackSetKontrolProductConnected;

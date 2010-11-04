@@ -128,9 +128,11 @@ namespace Zapp
 
         protected override void SetMultiple(uint aVersion, uint aValueUint, int aValueInt, bool aValueBool)
         {
+            PropertiesLock();
             SetPropertyVarUint(aValueUint);
             SetPropertyVarInt(aValueInt);
             SetPropertyVarBool(aValueBool);
+            PropertiesUnlock();
         }
     }
     

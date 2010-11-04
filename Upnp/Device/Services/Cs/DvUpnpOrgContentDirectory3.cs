@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderUpnpOrgContentDirectory3 : IDisposable
+    public class DvProviderUpnpOrgContentDirectory3 : DvProvider, IDisposable
     {
         [DllImport("DvUpnpOrgContentDirectory3")]
         static extern uint DvProviderUpnpOrgContentDirectory3Create(uint aDeviceHandle);
@@ -91,7 +91,6 @@ namespace Zapp
         private unsafe delegate int CallbackFreeFormQuery(IntPtr aPtr, uint aVersion, char* aContainerID, uint aCDSView, char* aQueryRequest, char** aQueryResult, uint* aUpdateID);
         private unsafe delegate int CallbackGetFreeFormQueryCapabilities(IntPtr aPtr, uint aVersion, char** aFFQCapabilities);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackGetSearchCapabilities iCallbackGetSearchCapabilities;
         private CallbackGetSortCapabilities iCallbackGetSortCapabilities;

@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderLinnCoUkDelay1 : IDisposable
+    public class DvProviderLinnCoUkDelay1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkDelay1")]
         static extern uint DvProviderLinnCoUkDelay1Create(uint aDeviceHandle);
@@ -50,7 +50,6 @@ namespace Zapp
         private unsafe delegate int CallbackDelayMaximum(IntPtr aPtr, uint aVersion, uint* aaDelay);
         private unsafe delegate int CallbackPresetCount(IntPtr aPtr, uint aVersion, uint* aaCount);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackPresetXml iCallbackPresetXml;
         private CallbackPresetIndex iCallbackPresetIndex;
