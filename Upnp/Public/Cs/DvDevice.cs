@@ -23,7 +23,7 @@ namespace Zapp
         private DvDevice.CallbackWriteResource iWriteResource;
         private DvDevice.CallbackWriteResourceEnd iWriteEnd;
 
-        public ResourceWriter(IResourceManager aManager, string aUriTail, uint aInterface, IntPtr aWriterData,
+        public ResourceWriter(IntPtr aWriterData,
                               DvDevice.CallbackWriteResourceBegin aWriteBegin,
                               DvDevice.CallbackWriteResource aWriteResource,
                               DvDevice.CallbackWriteResourceEnd aWriteEnd)
@@ -32,9 +32,13 @@ namespace Zapp
             iWriteBegin = aWriteBegin;
             iWriteResource = aWriteResource;
             iWriteEnd = aWriteEnd;
-            aManager.WriteResource(aUriTail, aInterface, this);
         }
 
+        public void Write(IResourceManager aManager, string aUriTail, uint aInterface)
+        {
+            aManager.WriteResource(aUriTail, aInterface, this);
+        }                              
+        
         public unsafe override void WriteResourceBegin(int aTotalBytes, string aMimeType)
         {
             char* mimeType = (char*)Marshal.StringToHGlobalAnsi(aMimeType).ToPointer();
@@ -117,7 +121,8 @@ namespace Zapp
             GCHandle gch = GCHandle.FromIntPtr(aUserData);
             DvDevice self = (DvDevice)gch.Target;
             string uriTail = Marshal.PtrToStringAnsi((IntPtr)aUriTail);
-            ResourceWriter writer = new ResourceWriter(self.iResourceManager, uriTail, aInterface, aWriterData, aWriteBegin, aWriteResource, aWriteEnd);
+            ResourceWriter writer = new ResourceWriter(aWriterData, aWriteBegin, aWriteResource, aWriteEnd);
+            writer.Write(self.iResourceManager, uriTail, aInterface);
         }
 
         public unsafe String Udn()
