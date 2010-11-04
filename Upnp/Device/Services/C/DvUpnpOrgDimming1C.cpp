@@ -510,178 +510,178 @@ THandle DvProviderUpnpOrgDimming1Create(DvDeviceC aDevice)
 	return new DvProviderUpnpOrgDimming1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvProviderUpnpOrgDimming1Destroy(THandle aService)
+void DvProviderUpnpOrgDimming1Destroy(THandle aProvider)
 {
-    delete reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService);
+    delete reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider);
 }
 
-void DvProviderUpnpOrgDimming1EnableActionSetLoadLevelTarget(THandle aService, CallbackDimming1SetLoadLevelTarget aCallback, void* aPtr)
+void DvProviderUpnpOrgDimming1EnableActionSetLoadLevelTarget(THandle aProvider, CallbackDimming1SetLoadLevelTarget aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->EnableActionSetLoadLevelTarget(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnableActionSetLoadLevelTarget(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgDimming1EnableActionGetLoadLevelTarget(THandle aService, CallbackDimming1GetLoadLevelTarget aCallback, void* aPtr)
+void DvProviderUpnpOrgDimming1EnableActionGetLoadLevelTarget(THandle aProvider, CallbackDimming1GetLoadLevelTarget aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->EnableActionGetLoadLevelTarget(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnableActionGetLoadLevelTarget(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgDimming1EnableActionGetLoadLevelStatus(THandle aService, CallbackDimming1GetLoadLevelStatus aCallback, void* aPtr)
+void DvProviderUpnpOrgDimming1EnableActionGetLoadLevelStatus(THandle aProvider, CallbackDimming1GetLoadLevelStatus aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->EnableActionGetLoadLevelStatus(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnableActionGetLoadLevelStatus(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgDimming1EnableActionSetOnEffectLevel(THandle aService, CallbackDimming1SetOnEffectLevel aCallback, void* aPtr)
+void DvProviderUpnpOrgDimming1EnableActionSetOnEffectLevel(THandle aProvider, CallbackDimming1SetOnEffectLevel aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->EnableActionSetOnEffectLevel(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnableActionSetOnEffectLevel(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgDimming1EnableActionSetOnEffect(THandle aService, CallbackDimming1SetOnEffect aCallback, void* aPtr)
+void DvProviderUpnpOrgDimming1EnableActionSetOnEffect(THandle aProvider, CallbackDimming1SetOnEffect aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->EnableActionSetOnEffect(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnableActionSetOnEffect(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgDimming1EnableActionGetOnEffectParameters(THandle aService, CallbackDimming1GetOnEffectParameters aCallback, void* aPtr)
+void DvProviderUpnpOrgDimming1EnableActionGetOnEffectParameters(THandle aProvider, CallbackDimming1GetOnEffectParameters aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->EnableActionGetOnEffectParameters(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnableActionGetOnEffectParameters(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgDimming1EnableActionStepUp(THandle aService, CallbackDimming1StepUp aCallback, void* aPtr)
+void DvProviderUpnpOrgDimming1EnableActionStepUp(THandle aProvider, CallbackDimming1StepUp aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->EnableActionStepUp(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnableActionStepUp(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgDimming1EnableActionStepDown(THandle aService, CallbackDimming1StepDown aCallback, void* aPtr)
+void DvProviderUpnpOrgDimming1EnableActionStepDown(THandle aProvider, CallbackDimming1StepDown aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->EnableActionStepDown(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnableActionStepDown(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgDimming1EnableActionStartRampUp(THandle aService, CallbackDimming1StartRampUp aCallback, void* aPtr)
+void DvProviderUpnpOrgDimming1EnableActionStartRampUp(THandle aProvider, CallbackDimming1StartRampUp aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->EnableActionStartRampUp(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnableActionStartRampUp(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgDimming1EnableActionStartRampDown(THandle aService, CallbackDimming1StartRampDown aCallback, void* aPtr)
+void DvProviderUpnpOrgDimming1EnableActionStartRampDown(THandle aProvider, CallbackDimming1StartRampDown aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->EnableActionStartRampDown(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnableActionStartRampDown(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgDimming1EnableActionStopRamp(THandle aService, CallbackDimming1StopRamp aCallback, void* aPtr)
+void DvProviderUpnpOrgDimming1EnableActionStopRamp(THandle aProvider, CallbackDimming1StopRamp aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->EnableActionStopRamp(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnableActionStopRamp(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgDimming1EnableActionStartRampToLevel(THandle aService, CallbackDimming1StartRampToLevel aCallback, void* aPtr)
+void DvProviderUpnpOrgDimming1EnableActionStartRampToLevel(THandle aProvider, CallbackDimming1StartRampToLevel aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->EnableActionStartRampToLevel(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnableActionStartRampToLevel(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgDimming1EnableActionSetStepDelta(THandle aService, CallbackDimming1SetStepDelta aCallback, void* aPtr)
+void DvProviderUpnpOrgDimming1EnableActionSetStepDelta(THandle aProvider, CallbackDimming1SetStepDelta aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->EnableActionSetStepDelta(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnableActionSetStepDelta(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgDimming1EnableActionGetStepDelta(THandle aService, CallbackDimming1GetStepDelta aCallback, void* aPtr)
+void DvProviderUpnpOrgDimming1EnableActionGetStepDelta(THandle aProvider, CallbackDimming1GetStepDelta aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->EnableActionGetStepDelta(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnableActionGetStepDelta(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgDimming1EnableActionSetRampRate(THandle aService, CallbackDimming1SetRampRate aCallback, void* aPtr)
+void DvProviderUpnpOrgDimming1EnableActionSetRampRate(THandle aProvider, CallbackDimming1SetRampRate aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->EnableActionSetRampRate(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnableActionSetRampRate(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgDimming1EnableActionGetRampRate(THandle aService, CallbackDimming1GetRampRate aCallback, void* aPtr)
+void DvProviderUpnpOrgDimming1EnableActionGetRampRate(THandle aProvider, CallbackDimming1GetRampRate aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->EnableActionGetRampRate(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnableActionGetRampRate(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgDimming1EnableActionPauseRamp(THandle aService, CallbackDimming1PauseRamp aCallback, void* aPtr)
+void DvProviderUpnpOrgDimming1EnableActionPauseRamp(THandle aProvider, CallbackDimming1PauseRamp aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->EnableActionPauseRamp(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnableActionPauseRamp(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgDimming1EnableActionResumeRamp(THandle aService, CallbackDimming1ResumeRamp aCallback, void* aPtr)
+void DvProviderUpnpOrgDimming1EnableActionResumeRamp(THandle aProvider, CallbackDimming1ResumeRamp aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->EnableActionResumeRamp(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnableActionResumeRamp(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgDimming1EnableActionGetIsRamping(THandle aService, CallbackDimming1GetIsRamping aCallback, void* aPtr)
+void DvProviderUpnpOrgDimming1EnableActionGetIsRamping(THandle aProvider, CallbackDimming1GetIsRamping aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->EnableActionGetIsRamping(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnableActionGetIsRamping(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgDimming1EnableActionGetRampPaused(THandle aService, CallbackDimming1GetRampPaused aCallback, void* aPtr)
+void DvProviderUpnpOrgDimming1EnableActionGetRampPaused(THandle aProvider, CallbackDimming1GetRampPaused aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->EnableActionGetRampPaused(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnableActionGetRampPaused(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgDimming1EnableActionGetRampTime(THandle aService, CallbackDimming1GetRampTime aCallback, void* aPtr)
+void DvProviderUpnpOrgDimming1EnableActionGetRampTime(THandle aProvider, CallbackDimming1GetRampTime aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->EnableActionGetRampTime(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->EnableActionGetRampTime(aCallback, aPtr);
 }
 
-int32_t DvProviderUpnpOrgDimming1SetPropertyLoadLevelStatus(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderUpnpOrgDimming1SetPropertyLoadLevelStatus(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->SetPropertyLoadLevelStatus(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->SetPropertyLoadLevelStatus(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderUpnpOrgDimming1GetPropertyLoadLevelStatus(THandle aService, uint32_t* aValue)
+void DvProviderUpnpOrgDimming1GetPropertyLoadLevelStatus(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->GetPropertyLoadLevelStatus(val);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->GetPropertyLoadLevelStatus(val);
     *aValue = val;
 }
 
-int32_t DvProviderUpnpOrgDimming1SetPropertyStepDelta(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderUpnpOrgDimming1SetPropertyStepDelta(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->SetPropertyStepDelta(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->SetPropertyStepDelta(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderUpnpOrgDimming1GetPropertyStepDelta(THandle aService, uint32_t* aValue)
+void DvProviderUpnpOrgDimming1GetPropertyStepDelta(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->GetPropertyStepDelta(val);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->GetPropertyStepDelta(val);
     *aValue = val;
 }
 
-int32_t DvProviderUpnpOrgDimming1SetPropertyRampRate(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderUpnpOrgDimming1SetPropertyRampRate(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->SetPropertyRampRate(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->SetPropertyRampRate(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderUpnpOrgDimming1GetPropertyRampRate(THandle aService, uint32_t* aValue)
+void DvProviderUpnpOrgDimming1GetPropertyRampRate(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->GetPropertyRampRate(val);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->GetPropertyRampRate(val);
     *aValue = val;
 }
 
-int32_t DvProviderUpnpOrgDimming1SetPropertyIsRamping(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderUpnpOrgDimming1SetPropertyIsRamping(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->SetPropertyIsRamping((aValue!=0))? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->SetPropertyIsRamping((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderUpnpOrgDimming1GetPropertyIsRamping(THandle aService, uint32_t* aValue)
+void DvProviderUpnpOrgDimming1GetPropertyIsRamping(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->GetPropertyIsRamping(val);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->GetPropertyIsRamping(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvProviderUpnpOrgDimming1SetPropertyRampPaused(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderUpnpOrgDimming1SetPropertyRampPaused(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->SetPropertyRampPaused((aValue!=0))? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->SetPropertyRampPaused((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderUpnpOrgDimming1GetPropertyRampPaused(THandle aService, uint32_t* aValue)
+void DvProviderUpnpOrgDimming1GetPropertyRampPaused(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aService)->GetPropertyRampPaused(val);
+    reinterpret_cast<DvProviderUpnpOrgDimming1C*>(aProvider)->GetPropertyRampPaused(val);
     *aValue = (val? 1 : 0);
 }
 

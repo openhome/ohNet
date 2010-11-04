@@ -97,36 +97,36 @@ THandle DvProviderUpnpOrgSwitchPower1Create(DvDeviceC aDevice)
 	return new DvProviderUpnpOrgSwitchPower1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvProviderUpnpOrgSwitchPower1Destroy(THandle aService)
+void DvProviderUpnpOrgSwitchPower1Destroy(THandle aProvider)
 {
-    delete reinterpret_cast<DvProviderUpnpOrgSwitchPower1C*>(aService);
+    delete reinterpret_cast<DvProviderUpnpOrgSwitchPower1C*>(aProvider);
 }
 
-void DvProviderUpnpOrgSwitchPower1EnableActionSetTarget(THandle aService, CallbackSwitchPower1SetTarget aCallback, void* aPtr)
+void DvProviderUpnpOrgSwitchPower1EnableActionSetTarget(THandle aProvider, CallbackSwitchPower1SetTarget aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgSwitchPower1C*>(aService)->EnableActionSetTarget(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgSwitchPower1C*>(aProvider)->EnableActionSetTarget(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgSwitchPower1EnableActionGetTarget(THandle aService, CallbackSwitchPower1GetTarget aCallback, void* aPtr)
+void DvProviderUpnpOrgSwitchPower1EnableActionGetTarget(THandle aProvider, CallbackSwitchPower1GetTarget aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgSwitchPower1C*>(aService)->EnableActionGetTarget(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgSwitchPower1C*>(aProvider)->EnableActionGetTarget(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgSwitchPower1EnableActionGetStatus(THandle aService, CallbackSwitchPower1GetStatus aCallback, void* aPtr)
+void DvProviderUpnpOrgSwitchPower1EnableActionGetStatus(THandle aProvider, CallbackSwitchPower1GetStatus aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgSwitchPower1C*>(aService)->EnableActionGetStatus(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgSwitchPower1C*>(aProvider)->EnableActionGetStatus(aCallback, aPtr);
 }
 
-int32_t DvProviderUpnpOrgSwitchPower1SetPropertyStatus(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderUpnpOrgSwitchPower1SetPropertyStatus(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderUpnpOrgSwitchPower1C*>(aService)->SetPropertyStatus((aValue!=0))? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderUpnpOrgSwitchPower1C*>(aProvider)->SetPropertyStatus((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderUpnpOrgSwitchPower1GetPropertyStatus(THandle aService, uint32_t* aValue)
+void DvProviderUpnpOrgSwitchPower1GetPropertyStatus(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvProviderUpnpOrgSwitchPower1C*>(aService)->GetPropertyStatus(val);
+    reinterpret_cast<DvProviderUpnpOrgSwitchPower1C*>(aProvider)->GetPropertyStatus(val);
     *aValue = (val? 1 : 0);
 }
 

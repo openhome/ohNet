@@ -13,11 +13,11 @@ typedef int32_t (*CallbackTestWidgetController1RemoveWidget)(void* aPtr, uint32_
 typedef int32_t (*CallbackTestWidgetController1SetWidgetRegister)(void* aPtr, uint32_t aVersion, const char* aWidgetUdn, uint32_t aRegisterIndex, uint32_t aRegisterValue);
 
 DllExport THandle DvProviderZappOrgTestWidgetController1Create(DvDeviceC aDevice);
-DllExport void DvProviderZappOrgTestWidgetController1Destroy(THandle aService);
+DllExport void DvProviderZappOrgTestWidgetController1Destroy(THandle aProvider);
 
-DllExport void DvProviderZappOrgTestWidgetController1EnableActionCreateWidget(THandle aService, CallbackTestWidgetController1CreateWidget aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestWidgetController1EnableActionRemoveWidget(THandle aService, CallbackTestWidgetController1RemoveWidget aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestWidgetController1EnableActionSetWidgetRegister(THandle aService, CallbackTestWidgetController1SetWidgetRegister aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestWidgetController1EnableActionCreateWidget(THandle aProvider, CallbackTestWidgetController1CreateWidget aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestWidgetController1EnableActionRemoveWidget(THandle aProvider, CallbackTestWidgetController1RemoveWidget aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestWidgetController1EnableActionSetWidgetRegister(THandle aProvider, CallbackTestWidgetController1SetWidgetRegister aCallback, void* aPtr);
 
 
 #ifdef __cplusplus

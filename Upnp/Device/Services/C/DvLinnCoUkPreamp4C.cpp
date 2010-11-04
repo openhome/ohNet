@@ -347,156 +347,156 @@ THandle DvProviderLinnCoUkPreamp4Create(DvDeviceC aDevice)
 	return new DvProviderLinnCoUkPreamp4C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvProviderLinnCoUkPreamp4Destroy(THandle aService)
+void DvProviderLinnCoUkPreamp4Destroy(THandle aProvider)
 {
-    delete reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService);
+    delete reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider);
 }
 
-void DvProviderLinnCoUkPreamp4EnableActionVolumeInc(THandle aService, CallbackPreamp4VolumeInc aCallback, void* aPtr)
+void DvProviderLinnCoUkPreamp4EnableActionVolumeInc(THandle aProvider, CallbackPreamp4VolumeInc aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->EnableActionVolumeInc(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->EnableActionVolumeInc(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkPreamp4EnableActionVolumeDec(THandle aService, CallbackPreamp4VolumeDec aCallback, void* aPtr)
+void DvProviderLinnCoUkPreamp4EnableActionVolumeDec(THandle aProvider, CallbackPreamp4VolumeDec aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->EnableActionVolumeDec(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->EnableActionVolumeDec(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkPreamp4EnableActionSetVolume(THandle aService, CallbackPreamp4SetVolume aCallback, void* aPtr)
+void DvProviderLinnCoUkPreamp4EnableActionSetVolume(THandle aProvider, CallbackPreamp4SetVolume aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->EnableActionSetVolume(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->EnableActionSetVolume(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkPreamp4EnableActionVolume(THandle aService, CallbackPreamp4Volume aCallback, void* aPtr)
+void DvProviderLinnCoUkPreamp4EnableActionVolume(THandle aProvider, CallbackPreamp4Volume aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->EnableActionVolume(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->EnableActionVolume(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkPreamp4EnableActionSetMute(THandle aService, CallbackPreamp4SetMute aCallback, void* aPtr)
+void DvProviderLinnCoUkPreamp4EnableActionSetMute(THandle aProvider, CallbackPreamp4SetMute aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->EnableActionSetMute(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->EnableActionSetMute(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkPreamp4EnableActionMute(THandle aService, CallbackPreamp4Mute aCallback, void* aPtr)
+void DvProviderLinnCoUkPreamp4EnableActionMute(THandle aProvider, CallbackPreamp4Mute aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->EnableActionMute(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->EnableActionMute(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkPreamp4EnableActionSetBalance(THandle aService, CallbackPreamp4SetBalance aCallback, void* aPtr)
+void DvProviderLinnCoUkPreamp4EnableActionSetBalance(THandle aProvider, CallbackPreamp4SetBalance aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->EnableActionSetBalance(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->EnableActionSetBalance(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkPreamp4EnableActionBalance(THandle aService, CallbackPreamp4Balance aCallback, void* aPtr)
+void DvProviderLinnCoUkPreamp4EnableActionBalance(THandle aProvider, CallbackPreamp4Balance aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->EnableActionBalance(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->EnableActionBalance(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkPreamp4EnableActionSetVolumeLimit(THandle aService, CallbackPreamp4SetVolumeLimit aCallback, void* aPtr)
+void DvProviderLinnCoUkPreamp4EnableActionSetVolumeLimit(THandle aProvider, CallbackPreamp4SetVolumeLimit aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->EnableActionSetVolumeLimit(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->EnableActionSetVolumeLimit(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkPreamp4EnableActionVolumeLimit(THandle aService, CallbackPreamp4VolumeLimit aCallback, void* aPtr)
+void DvProviderLinnCoUkPreamp4EnableActionVolumeLimit(THandle aProvider, CallbackPreamp4VolumeLimit aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->EnableActionVolumeLimit(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->EnableActionVolumeLimit(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkPreamp4EnableActionSetStartupVolume(THandle aService, CallbackPreamp4SetStartupVolume aCallback, void* aPtr)
+void DvProviderLinnCoUkPreamp4EnableActionSetStartupVolume(THandle aProvider, CallbackPreamp4SetStartupVolume aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->EnableActionSetStartupVolume(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->EnableActionSetStartupVolume(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkPreamp4EnableActionStartupVolume(THandle aService, CallbackPreamp4StartupVolume aCallback, void* aPtr)
+void DvProviderLinnCoUkPreamp4EnableActionStartupVolume(THandle aProvider, CallbackPreamp4StartupVolume aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->EnableActionStartupVolume(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->EnableActionStartupVolume(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkPreamp4EnableActionSetStartupVolumeEnabled(THandle aService, CallbackPreamp4SetStartupVolumeEnabled aCallback, void* aPtr)
+void DvProviderLinnCoUkPreamp4EnableActionSetStartupVolumeEnabled(THandle aProvider, CallbackPreamp4SetStartupVolumeEnabled aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->EnableActionSetStartupVolumeEnabled(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->EnableActionSetStartupVolumeEnabled(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkPreamp4EnableActionStartupVolumeEnabled(THandle aService, CallbackPreamp4StartupVolumeEnabled aCallback, void* aPtr)
+void DvProviderLinnCoUkPreamp4EnableActionStartupVolumeEnabled(THandle aProvider, CallbackPreamp4StartupVolumeEnabled aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->EnableActionStartupVolumeEnabled(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->EnableActionStartupVolumeEnabled(aCallback, aPtr);
 }
 
-int32_t DvProviderLinnCoUkPreamp4SetPropertyVolume(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkPreamp4SetPropertyVolume(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->SetPropertyVolume(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->SetPropertyVolume(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkPreamp4GetPropertyVolume(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkPreamp4GetPropertyVolume(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->GetPropertyVolume(val);
+    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->GetPropertyVolume(val);
     *aValue = val;
 }
 
-int32_t DvProviderLinnCoUkPreamp4SetPropertyMute(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkPreamp4SetPropertyMute(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->SetPropertyMute((aValue!=0))? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->SetPropertyMute((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkPreamp4GetPropertyMute(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkPreamp4GetPropertyMute(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->GetPropertyMute(val);
+    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->GetPropertyMute(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvProviderLinnCoUkPreamp4SetPropertyBalance(THandle aService, int32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkPreamp4SetPropertyBalance(THandle aProvider, int32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->SetPropertyBalance(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->SetPropertyBalance(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkPreamp4GetPropertyBalance(THandle aService, int32_t* aValue)
+void DvProviderLinnCoUkPreamp4GetPropertyBalance(THandle aProvider, int32_t* aValue)
 {
     int32_t val;
-    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->GetPropertyBalance(val);
+    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->GetPropertyBalance(val);
     *aValue = val;
 }
 
-int32_t DvProviderLinnCoUkPreamp4SetPropertyVolumeLimit(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkPreamp4SetPropertyVolumeLimit(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->SetPropertyVolumeLimit(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->SetPropertyVolumeLimit(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkPreamp4GetPropertyVolumeLimit(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkPreamp4GetPropertyVolumeLimit(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->GetPropertyVolumeLimit(val);
+    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->GetPropertyVolumeLimit(val);
     *aValue = val;
 }
 
-int32_t DvProviderLinnCoUkPreamp4SetPropertyStartupVolume(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkPreamp4SetPropertyStartupVolume(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->SetPropertyStartupVolume(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->SetPropertyStartupVolume(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkPreamp4GetPropertyStartupVolume(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkPreamp4GetPropertyStartupVolume(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->GetPropertyStartupVolume(val);
+    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->GetPropertyStartupVolume(val);
     *aValue = val;
 }
 
-int32_t DvProviderLinnCoUkPreamp4SetPropertyStartupVolumeEnabled(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkPreamp4SetPropertyStartupVolumeEnabled(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->SetPropertyStartupVolumeEnabled((aValue!=0))? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->SetPropertyStartupVolumeEnabled((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkPreamp4GetPropertyStartupVolumeEnabled(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkPreamp4GetPropertyStartupVolumeEnabled(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aService)->GetPropertyStartupVolumeEnabled(val);
+    reinterpret_cast<DvProviderLinnCoUkPreamp4C*>(aProvider)->GetPropertyStartupVolumeEnabled(val);
     *aValue = (val? 1 : 0);
 }
 

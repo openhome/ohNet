@@ -151,188 +151,188 @@ THandle DvProviderLinnCoUkInfo1Create(DvDeviceC aDevice)
 	return new DvProviderLinnCoUkInfo1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvProviderLinnCoUkInfo1Destroy(THandle aService)
+void DvProviderLinnCoUkInfo1Destroy(THandle aProvider)
 {
-    delete reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService);
+    delete reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider);
 }
 
-void DvProviderLinnCoUkInfo1EnableActionCounters(THandle aService, CallbackInfo1Counters aCallback, void* aPtr)
+void DvProviderLinnCoUkInfo1EnableActionCounters(THandle aProvider, CallbackInfo1Counters aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->EnableActionCounters(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->EnableActionCounters(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkInfo1EnableActionTrack(THandle aService, CallbackInfo1Track aCallback, void* aPtr)
+void DvProviderLinnCoUkInfo1EnableActionTrack(THandle aProvider, CallbackInfo1Track aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->EnableActionTrack(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->EnableActionTrack(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkInfo1EnableActionDetails(THandle aService, CallbackInfo1Details aCallback, void* aPtr)
+void DvProviderLinnCoUkInfo1EnableActionDetails(THandle aProvider, CallbackInfo1Details aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->EnableActionDetails(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->EnableActionDetails(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkInfo1EnableActionMetatext(THandle aService, CallbackInfo1Metatext aCallback, void* aPtr)
+void DvProviderLinnCoUkInfo1EnableActionMetatext(THandle aProvider, CallbackInfo1Metatext aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->EnableActionMetatext(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->EnableActionMetatext(aCallback, aPtr);
 }
 
-int32_t DvProviderLinnCoUkInfo1SetPropertyTrackCount(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkInfo1SetPropertyTrackCount(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->SetPropertyTrackCount(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->SetPropertyTrackCount(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkInfo1GetPropertyTrackCount(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkInfo1GetPropertyTrackCount(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->GetPropertyTrackCount(val);
+    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->GetPropertyTrackCount(val);
     *aValue = val;
 }
 
-int32_t DvProviderLinnCoUkInfo1SetPropertyDetailsCount(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkInfo1SetPropertyDetailsCount(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->SetPropertyDetailsCount(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->SetPropertyDetailsCount(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkInfo1GetPropertyDetailsCount(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkInfo1GetPropertyDetailsCount(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->GetPropertyDetailsCount(val);
+    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->GetPropertyDetailsCount(val);
     *aValue = val;
 }
 
-int32_t DvProviderLinnCoUkInfo1SetPropertyMetatextCount(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkInfo1SetPropertyMetatextCount(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->SetPropertyMetatextCount(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->SetPropertyMetatextCount(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkInfo1GetPropertyMetatextCount(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkInfo1GetPropertyMetatextCount(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->GetPropertyMetatextCount(val);
+    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->GetPropertyMetatextCount(val);
     *aValue = val;
 }
 
-int32_t DvProviderLinnCoUkInfo1SetPropertyUri(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkInfo1SetPropertyUri(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->SetPropertyUri(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->SetPropertyUri(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkInfo1GetPropertyUri(THandle aService, char** aValue)
+void DvProviderLinnCoUkInfo1GetPropertyUri(THandle aProvider, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->GetPropertyUri(buf);
+    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->GetPropertyUri(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderLinnCoUkInfo1SetPropertyMetadata(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkInfo1SetPropertyMetadata(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->SetPropertyMetadata(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->SetPropertyMetadata(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkInfo1GetPropertyMetadata(THandle aService, char** aValue)
+void DvProviderLinnCoUkInfo1GetPropertyMetadata(THandle aProvider, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->GetPropertyMetadata(buf);
+    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->GetPropertyMetadata(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderLinnCoUkInfo1SetPropertyDuration(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkInfo1SetPropertyDuration(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->SetPropertyDuration(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->SetPropertyDuration(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkInfo1GetPropertyDuration(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkInfo1GetPropertyDuration(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->GetPropertyDuration(val);
+    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->GetPropertyDuration(val);
     *aValue = val;
 }
 
-int32_t DvProviderLinnCoUkInfo1SetPropertyBitRate(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkInfo1SetPropertyBitRate(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->SetPropertyBitRate(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->SetPropertyBitRate(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkInfo1GetPropertyBitRate(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkInfo1GetPropertyBitRate(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->GetPropertyBitRate(val);
+    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->GetPropertyBitRate(val);
     *aValue = val;
 }
 
-int32_t DvProviderLinnCoUkInfo1SetPropertyBitDepth(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkInfo1SetPropertyBitDepth(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->SetPropertyBitDepth(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->SetPropertyBitDepth(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkInfo1GetPropertyBitDepth(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkInfo1GetPropertyBitDepth(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->GetPropertyBitDepth(val);
+    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->GetPropertyBitDepth(val);
     *aValue = val;
 }
 
-int32_t DvProviderLinnCoUkInfo1SetPropertySampleRate(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkInfo1SetPropertySampleRate(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->SetPropertySampleRate(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->SetPropertySampleRate(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkInfo1GetPropertySampleRate(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkInfo1GetPropertySampleRate(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->GetPropertySampleRate(val);
+    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->GetPropertySampleRate(val);
     *aValue = val;
 }
 
-int32_t DvProviderLinnCoUkInfo1SetPropertyLossless(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkInfo1SetPropertyLossless(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->SetPropertyLossless((aValue!=0))? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->SetPropertyLossless((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkInfo1GetPropertyLossless(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkInfo1GetPropertyLossless(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->GetPropertyLossless(val);
+    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->GetPropertyLossless(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvProviderLinnCoUkInfo1SetPropertyCodecName(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkInfo1SetPropertyCodecName(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->SetPropertyCodecName(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->SetPropertyCodecName(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkInfo1GetPropertyCodecName(THandle aService, char** aValue)
+void DvProviderLinnCoUkInfo1GetPropertyCodecName(THandle aProvider, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->GetPropertyCodecName(buf);
+    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->GetPropertyCodecName(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderLinnCoUkInfo1SetPropertyMetatext(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkInfo1SetPropertyMetatext(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->SetPropertyMetatext(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->SetPropertyMetatext(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkInfo1GetPropertyMetatext(THandle aService, char** aValue)
+void DvProviderLinnCoUkInfo1GetPropertyMetatext(THandle aProvider, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aService)->GetPropertyMetatext(buf);
+    reinterpret_cast<DvProviderLinnCoUkInfo1C*>(aProvider)->GetPropertyMetatext(buf);
     *aValue = (char*)buf.Transfer();
 }
 

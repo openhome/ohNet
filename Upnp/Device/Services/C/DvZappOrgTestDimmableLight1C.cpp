@@ -73,31 +73,31 @@ THandle DvProviderZappOrgTestDimmableLight1Create(DvDeviceC aDevice)
 	return new DvProviderZappOrgTestDimmableLight1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvProviderZappOrgTestDimmableLight1Destroy(THandle aService)
+void DvProviderZappOrgTestDimmableLight1Destroy(THandle aProvider)
 {
-    delete reinterpret_cast<DvProviderZappOrgTestDimmableLight1C*>(aService);
+    delete reinterpret_cast<DvProviderZappOrgTestDimmableLight1C*>(aProvider);
 }
 
-void DvProviderZappOrgTestDimmableLight1EnableActionGetLevel(THandle aService, CallbackTestDimmableLight1GetLevel aCallback, void* aPtr)
+void DvProviderZappOrgTestDimmableLight1EnableActionGetLevel(THandle aProvider, CallbackTestDimmableLight1GetLevel aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestDimmableLight1C*>(aService)->EnableActionGetLevel(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestDimmableLight1C*>(aProvider)->EnableActionGetLevel(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestDimmableLight1EnableActionSetLevel(THandle aService, CallbackTestDimmableLight1SetLevel aCallback, void* aPtr)
+void DvProviderZappOrgTestDimmableLight1EnableActionSetLevel(THandle aProvider, CallbackTestDimmableLight1SetLevel aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestDimmableLight1C*>(aService)->EnableActionSetLevel(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestDimmableLight1C*>(aProvider)->EnableActionSetLevel(aCallback, aPtr);
 }
 
-int32_t DvProviderZappOrgTestDimmableLight1SetPropertyA_ARG_Level(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderZappOrgTestDimmableLight1SetPropertyA_ARG_Level(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderZappOrgTestDimmableLight1C*>(aService)->SetPropertyA_ARG_Level(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderZappOrgTestDimmableLight1C*>(aProvider)->SetPropertyA_ARG_Level(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderZappOrgTestDimmableLight1GetPropertyA_ARG_Level(THandle aService, uint32_t* aValue)
+void DvProviderZappOrgTestDimmableLight1GetPropertyA_ARG_Level(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvProviderZappOrgTestDimmableLight1C*>(aService)->GetPropertyA_ARG_Level(val);
+    reinterpret_cast<DvProviderZappOrgTestDimmableLight1C*>(aProvider)->GetPropertyA_ARG_Level(val);
     *aValue = val;
 }
 

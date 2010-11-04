@@ -11,7 +11,7 @@ using namespace Zapp;
 class SyncCountersLinnCoUkInfo1 : public SyncProxyAction
 {
 public:
-    SyncCountersLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aService, TUint& aaTrackCount, TUint& aaDetailsCount, TUint& aaMetatextCount);
+    SyncCountersLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aProxy, TUint& aaTrackCount, TUint& aaDetailsCount, TUint& aaMetatextCount);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkInfo1& iService;
@@ -20,8 +20,8 @@ private:
     TUint& iaMetatextCount;
 };
 
-SyncCountersLinnCoUkInfo1::SyncCountersLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aService, TUint& aaTrackCount, TUint& aaDetailsCount, TUint& aaMetatextCount)
-    : iService(aService)
+SyncCountersLinnCoUkInfo1::SyncCountersLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aProxy, TUint& aaTrackCount, TUint& aaDetailsCount, TUint& aaMetatextCount)
+    : iService(aProxy)
     , iaTrackCount(aaTrackCount)
     , iaDetailsCount(aaDetailsCount)
     , iaMetatextCount(aaMetatextCount)
@@ -37,7 +37,7 @@ void SyncCountersLinnCoUkInfo1::CompleteRequest(IAsync& aAsync)
 class SyncTrackLinnCoUkInfo1 : public SyncProxyAction
 {
 public:
-    SyncTrackLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aService, Brh& aaUri, Brh& aaMetadata);
+    SyncTrackLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aProxy, Brh& aaUri, Brh& aaMetadata);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkInfo1& iService;
@@ -45,8 +45,8 @@ private:
     Brh& iaMetadata;
 };
 
-SyncTrackLinnCoUkInfo1::SyncTrackLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aService, Brh& aaUri, Brh& aaMetadata)
-    : iService(aService)
+SyncTrackLinnCoUkInfo1::SyncTrackLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aProxy, Brh& aaUri, Brh& aaMetadata)
+    : iService(aProxy)
     , iaUri(aaUri)
     , iaMetadata(aaMetadata)
 {
@@ -61,7 +61,7 @@ void SyncTrackLinnCoUkInfo1::CompleteRequest(IAsync& aAsync)
 class SyncDetailsLinnCoUkInfo1 : public SyncProxyAction
 {
 public:
-    SyncDetailsLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aService, TUint& aaDuration, TUint& aaBitRate, TUint& aaBitDepth, TUint& aaSampleRate, TBool& aaLossless, Brh& aaCodecName);
+    SyncDetailsLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aProxy, TUint& aaDuration, TUint& aaBitRate, TUint& aaBitDepth, TUint& aaSampleRate, TBool& aaLossless, Brh& aaCodecName);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkInfo1& iService;
@@ -73,8 +73,8 @@ private:
     Brh& iaCodecName;
 };
 
-SyncDetailsLinnCoUkInfo1::SyncDetailsLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aService, TUint& aaDuration, TUint& aaBitRate, TUint& aaBitDepth, TUint& aaSampleRate, TBool& aaLossless, Brh& aaCodecName)
-    : iService(aService)
+SyncDetailsLinnCoUkInfo1::SyncDetailsLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aProxy, TUint& aaDuration, TUint& aaBitRate, TUint& aaBitDepth, TUint& aaSampleRate, TBool& aaLossless, Brh& aaCodecName)
+    : iService(aProxy)
     , iaDuration(aaDuration)
     , iaBitRate(aaBitRate)
     , iaBitDepth(aaBitDepth)
@@ -93,15 +93,15 @@ void SyncDetailsLinnCoUkInfo1::CompleteRequest(IAsync& aAsync)
 class SyncMetatextLinnCoUkInfo1 : public SyncProxyAction
 {
 public:
-    SyncMetatextLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aService, Brh& aaMetatext);
+    SyncMetatextLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aProxy, Brh& aaMetatext);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkInfo1& iService;
     Brh& iaMetatext;
 };
 
-SyncMetatextLinnCoUkInfo1::SyncMetatextLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aService, Brh& aaMetatext)
-    : iService(aService)
+SyncMetatextLinnCoUkInfo1::SyncMetatextLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aProxy, Brh& aaMetatext)
+    : iService(aProxy)
     , iaMetatext(aaMetatext)
 {
 }

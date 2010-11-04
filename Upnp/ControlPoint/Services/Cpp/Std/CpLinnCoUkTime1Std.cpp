@@ -14,7 +14,7 @@ using namespace Zapp;
 class SyncTimeLinnCoUkTime1Cpp : public SyncProxyAction
 {
 public:
-    SyncTimeLinnCoUkTime1Cpp(CpProxyLinnCoUkTime1Cpp& aService, uint32_t& aaTrackCount, uint32_t& aaDuration, uint32_t& aaSeconds);
+    SyncTimeLinnCoUkTime1Cpp(CpProxyLinnCoUkTime1Cpp& aProxy, uint32_t& aaTrackCount, uint32_t& aaDuration, uint32_t& aaSeconds);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkTime1Cpp& iService;
@@ -23,8 +23,8 @@ private:
     uint32_t& iaSeconds;
 };
 
-SyncTimeLinnCoUkTime1Cpp::SyncTimeLinnCoUkTime1Cpp(CpProxyLinnCoUkTime1Cpp& aService, uint32_t& aaTrackCount, uint32_t& aaDuration, uint32_t& aaSeconds)
-    : iService(aService)
+SyncTimeLinnCoUkTime1Cpp::SyncTimeLinnCoUkTime1Cpp(CpProxyLinnCoUkTime1Cpp& aProxy, uint32_t& aaTrackCount, uint32_t& aaDuration, uint32_t& aaSeconds)
+    : iService(aProxy)
     , iaTrackCount(aaTrackCount)
     , iaDuration(aaDuration)
     , iaSeconds(aaSeconds)

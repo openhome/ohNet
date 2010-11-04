@@ -14,15 +14,15 @@ using namespace Zapp;
 class SyncAmplifierEnabledLinnCoUkComponent1Cpp : public SyncProxyAction
 {
 public:
-    SyncAmplifierEnabledLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService, bool& aaEnabled);
+    SyncAmplifierEnabledLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy, bool& aaEnabled);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkComponent1Cpp& iService;
     bool& iaEnabled;
 };
 
-SyncAmplifierEnabledLinnCoUkComponent1Cpp::SyncAmplifierEnabledLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService, bool& aaEnabled)
-    : iService(aService)
+SyncAmplifierEnabledLinnCoUkComponent1Cpp::SyncAmplifierEnabledLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy, bool& aaEnabled)
+    : iService(aProxy)
     , iaEnabled(aaEnabled)
 {
 }
@@ -36,14 +36,14 @@ void SyncAmplifierEnabledLinnCoUkComponent1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetAmplifierEnabledLinnCoUkComponent1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetAmplifierEnabledLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService);
+    SyncSetAmplifierEnabledLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkComponent1Cpp& iService;
 };
 
-SyncSetAmplifierEnabledLinnCoUkComponent1Cpp::SyncSetAmplifierEnabledLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService)
-    : iService(aService)
+SyncSetAmplifierEnabledLinnCoUkComponent1Cpp::SyncSetAmplifierEnabledLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -56,15 +56,15 @@ void SyncSetAmplifierEnabledLinnCoUkComponent1Cpp::CompleteRequest(IAsync& aAsyn
 class SyncAmplifierAttenuationLinnCoUkComponent1Cpp : public SyncProxyAction
 {
 public:
-    SyncAmplifierAttenuationLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService, std::string& aaAttenuation);
+    SyncAmplifierAttenuationLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy, std::string& aaAttenuation);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkComponent1Cpp& iService;
     std::string& iaAttenuation;
 };
 
-SyncAmplifierAttenuationLinnCoUkComponent1Cpp::SyncAmplifierAttenuationLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService, std::string& aaAttenuation)
-    : iService(aService)
+SyncAmplifierAttenuationLinnCoUkComponent1Cpp::SyncAmplifierAttenuationLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy, std::string& aaAttenuation)
+    : iService(aProxy)
     , iaAttenuation(aaAttenuation)
 {
 }
@@ -78,14 +78,14 @@ void SyncAmplifierAttenuationLinnCoUkComponent1Cpp::CompleteRequest(IAsync& aAsy
 class SyncSetAmplifierAttenuationLinnCoUkComponent1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetAmplifierAttenuationLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService);
+    SyncSetAmplifierAttenuationLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkComponent1Cpp& iService;
 };
 
-SyncSetAmplifierAttenuationLinnCoUkComponent1Cpp::SyncSetAmplifierAttenuationLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService)
-    : iService(aService)
+SyncSetAmplifierAttenuationLinnCoUkComponent1Cpp::SyncSetAmplifierAttenuationLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -98,14 +98,14 @@ void SyncSetAmplifierAttenuationLinnCoUkComponent1Cpp::CompleteRequest(IAsync& a
 class SyncSetVolumeControlEnabledLinnCoUkComponent1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetVolumeControlEnabledLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService);
+    SyncSetVolumeControlEnabledLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkComponent1Cpp& iService;
 };
 
-SyncSetVolumeControlEnabledLinnCoUkComponent1Cpp::SyncSetVolumeControlEnabledLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService)
-    : iService(aService)
+SyncSetVolumeControlEnabledLinnCoUkComponent1Cpp::SyncSetVolumeControlEnabledLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -118,15 +118,15 @@ void SyncSetVolumeControlEnabledLinnCoUkComponent1Cpp::CompleteRequest(IAsync& a
 class SyncVolumeControlEnabledLinnCoUkComponent1Cpp : public SyncProxyAction
 {
 public:
-    SyncVolumeControlEnabledLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService, bool& aaEnabled);
+    SyncVolumeControlEnabledLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy, bool& aaEnabled);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkComponent1Cpp& iService;
     bool& iaEnabled;
 };
 
-SyncVolumeControlEnabledLinnCoUkComponent1Cpp::SyncVolumeControlEnabledLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService, bool& aaEnabled)
-    : iService(aService)
+SyncVolumeControlEnabledLinnCoUkComponent1Cpp::SyncVolumeControlEnabledLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy, bool& aaEnabled)
+    : iService(aProxy)
     , iaEnabled(aaEnabled)
 {
 }
@@ -140,14 +140,14 @@ void SyncVolumeControlEnabledLinnCoUkComponent1Cpp::CompleteRequest(IAsync& aAsy
 class SyncSetDigitalAudioOutputRawLinnCoUkComponent1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetDigitalAudioOutputRawLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService);
+    SyncSetDigitalAudioOutputRawLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkComponent1Cpp& iService;
 };
 
-SyncSetDigitalAudioOutputRawLinnCoUkComponent1Cpp::SyncSetDigitalAudioOutputRawLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService)
-    : iService(aService)
+SyncSetDigitalAudioOutputRawLinnCoUkComponent1Cpp::SyncSetDigitalAudioOutputRawLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -160,15 +160,15 @@ void SyncSetDigitalAudioOutputRawLinnCoUkComponent1Cpp::CompleteRequest(IAsync& 
 class SyncDigitalAudioOutputRawLinnCoUkComponent1Cpp : public SyncProxyAction
 {
 public:
-    SyncDigitalAudioOutputRawLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService, bool& aaRaw);
+    SyncDigitalAudioOutputRawLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy, bool& aaRaw);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkComponent1Cpp& iService;
     bool& iaRaw;
 };
 
-SyncDigitalAudioOutputRawLinnCoUkComponent1Cpp::SyncDigitalAudioOutputRawLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService, bool& aaRaw)
-    : iService(aService)
+SyncDigitalAudioOutputRawLinnCoUkComponent1Cpp::SyncDigitalAudioOutputRawLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy, bool& aaRaw)
+    : iService(aProxy)
     , iaRaw(aaRaw)
 {
 }
@@ -182,15 +182,15 @@ void SyncDigitalAudioOutputRawLinnCoUkComponent1Cpp::CompleteRequest(IAsync& aAs
 class SyncAmplifierOverTemperatureLinnCoUkComponent1Cpp : public SyncProxyAction
 {
 public:
-    SyncAmplifierOverTemperatureLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService, bool& aaOverTemperature);
+    SyncAmplifierOverTemperatureLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy, bool& aaOverTemperature);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkComponent1Cpp& iService;
     bool& iaOverTemperature;
 };
 
-SyncAmplifierOverTemperatureLinnCoUkComponent1Cpp::SyncAmplifierOverTemperatureLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService, bool& aaOverTemperature)
-    : iService(aService)
+SyncAmplifierOverTemperatureLinnCoUkComponent1Cpp::SyncAmplifierOverTemperatureLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy, bool& aaOverTemperature)
+    : iService(aProxy)
     , iaOverTemperature(aaOverTemperature)
 {
 }
@@ -204,15 +204,15 @@ void SyncAmplifierOverTemperatureLinnCoUkComponent1Cpp::CompleteRequest(IAsync& 
 class SyncEthernetLinkConnectedLinnCoUkComponent1Cpp : public SyncProxyAction
 {
 public:
-    SyncEthernetLinkConnectedLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService, bool& aaLinkConnected);
+    SyncEthernetLinkConnectedLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy, bool& aaLinkConnected);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkComponent1Cpp& iService;
     bool& iaLinkConnected;
 };
 
-SyncEthernetLinkConnectedLinnCoUkComponent1Cpp::SyncEthernetLinkConnectedLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService, bool& aaLinkConnected)
-    : iService(aService)
+SyncEthernetLinkConnectedLinnCoUkComponent1Cpp::SyncEthernetLinkConnectedLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy, bool& aaLinkConnected)
+    : iService(aProxy)
     , iaLinkConnected(aaLinkConnected)
 {
 }
@@ -226,14 +226,14 @@ void SyncEthernetLinkConnectedLinnCoUkComponent1Cpp::CompleteRequest(IAsync& aAs
 class SyncLocateLinnCoUkComponent1Cpp : public SyncProxyAction
 {
 public:
-    SyncLocateLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService);
+    SyncLocateLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkComponent1Cpp& iService;
 };
 
-SyncLocateLinnCoUkComponent1Cpp::SyncLocateLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aService)
-    : iService(aService)
+SyncLocateLinnCoUkComponent1Cpp::SyncLocateLinnCoUkComponent1Cpp(CpProxyLinnCoUkComponent1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 

@@ -11,7 +11,7 @@ using namespace Zapp;
 class SyncReadLinnCoUkPlaylist1 : public SyncProxyAction
 {
 public:
-    SyncReadLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService, Brh& aaUri, Brh& aaMetaData);
+    SyncReadLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy, Brh& aaUri, Brh& aaMetaData);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkPlaylist1& iService;
@@ -19,8 +19,8 @@ private:
     Brh& iaMetaData;
 };
 
-SyncReadLinnCoUkPlaylist1::SyncReadLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService, Brh& aaUri, Brh& aaMetaData)
-    : iService(aService)
+SyncReadLinnCoUkPlaylist1::SyncReadLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy, Brh& aaUri, Brh& aaMetaData)
+    : iService(aProxy)
     , iaUri(aaUri)
     , iaMetaData(aaMetaData)
 {
@@ -35,15 +35,15 @@ void SyncReadLinnCoUkPlaylist1::CompleteRequest(IAsync& aAsync)
 class SyncReadListLinnCoUkPlaylist1 : public SyncProxyAction
 {
 public:
-    SyncReadListLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService, Brh& aaMetaDataList);
+    SyncReadListLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy, Brh& aaMetaDataList);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkPlaylist1& iService;
     Brh& iaMetaDataList;
 };
 
-SyncReadListLinnCoUkPlaylist1::SyncReadListLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService, Brh& aaMetaDataList)
-    : iService(aService)
+SyncReadListLinnCoUkPlaylist1::SyncReadListLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy, Brh& aaMetaDataList)
+    : iService(aProxy)
     , iaMetaDataList(aaMetaDataList)
 {
 }
@@ -57,15 +57,15 @@ void SyncReadListLinnCoUkPlaylist1::CompleteRequest(IAsync& aAsync)
 class SyncInsertLinnCoUkPlaylist1 : public SyncProxyAction
 {
 public:
-    SyncInsertLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService, TUint& aaNewId);
+    SyncInsertLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy, TUint& aaNewId);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkPlaylist1& iService;
     TUint& iaNewId;
 };
 
-SyncInsertLinnCoUkPlaylist1::SyncInsertLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService, TUint& aaNewId)
-    : iService(aService)
+SyncInsertLinnCoUkPlaylist1::SyncInsertLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy, TUint& aaNewId)
+    : iService(aProxy)
     , iaNewId(aaNewId)
 {
 }
@@ -79,14 +79,14 @@ void SyncInsertLinnCoUkPlaylist1::CompleteRequest(IAsync& aAsync)
 class SyncDeleteLinnCoUkPlaylist1 : public SyncProxyAction
 {
 public:
-    SyncDeleteLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService);
+    SyncDeleteLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkPlaylist1& iService;
 };
 
-SyncDeleteLinnCoUkPlaylist1::SyncDeleteLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService)
-    : iService(aService)
+SyncDeleteLinnCoUkPlaylist1::SyncDeleteLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -99,14 +99,14 @@ void SyncDeleteLinnCoUkPlaylist1::CompleteRequest(IAsync& aAsync)
 class SyncDeleteAllLinnCoUkPlaylist1 : public SyncProxyAction
 {
 public:
-    SyncDeleteAllLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService);
+    SyncDeleteAllLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkPlaylist1& iService;
 };
 
-SyncDeleteAllLinnCoUkPlaylist1::SyncDeleteAllLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService)
-    : iService(aService)
+SyncDeleteAllLinnCoUkPlaylist1::SyncDeleteAllLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -119,14 +119,14 @@ void SyncDeleteAllLinnCoUkPlaylist1::CompleteRequest(IAsync& aAsync)
 class SyncSetRepeatLinnCoUkPlaylist1 : public SyncProxyAction
 {
 public:
-    SyncSetRepeatLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService);
+    SyncSetRepeatLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkPlaylist1& iService;
 };
 
-SyncSetRepeatLinnCoUkPlaylist1::SyncSetRepeatLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService)
-    : iService(aService)
+SyncSetRepeatLinnCoUkPlaylist1::SyncSetRepeatLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -139,15 +139,15 @@ void SyncSetRepeatLinnCoUkPlaylist1::CompleteRequest(IAsync& aAsync)
 class SyncRepeatLinnCoUkPlaylist1 : public SyncProxyAction
 {
 public:
-    SyncRepeatLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService, TBool& aaRepeat);
+    SyncRepeatLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy, TBool& aaRepeat);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkPlaylist1& iService;
     TBool& iaRepeat;
 };
 
-SyncRepeatLinnCoUkPlaylist1::SyncRepeatLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService, TBool& aaRepeat)
-    : iService(aService)
+SyncRepeatLinnCoUkPlaylist1::SyncRepeatLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy, TBool& aaRepeat)
+    : iService(aProxy)
     , iaRepeat(aaRepeat)
 {
 }
@@ -161,14 +161,14 @@ void SyncRepeatLinnCoUkPlaylist1::CompleteRequest(IAsync& aAsync)
 class SyncSetShuffleLinnCoUkPlaylist1 : public SyncProxyAction
 {
 public:
-    SyncSetShuffleLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService);
+    SyncSetShuffleLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkPlaylist1& iService;
 };
 
-SyncSetShuffleLinnCoUkPlaylist1::SyncSetShuffleLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService)
-    : iService(aService)
+SyncSetShuffleLinnCoUkPlaylist1::SyncSetShuffleLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -181,15 +181,15 @@ void SyncSetShuffleLinnCoUkPlaylist1::CompleteRequest(IAsync& aAsync)
 class SyncShuffleLinnCoUkPlaylist1 : public SyncProxyAction
 {
 public:
-    SyncShuffleLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService, TBool& aaShuffle);
+    SyncShuffleLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy, TBool& aaShuffle);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkPlaylist1& iService;
     TBool& iaShuffle;
 };
 
-SyncShuffleLinnCoUkPlaylist1::SyncShuffleLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService, TBool& aaShuffle)
-    : iService(aService)
+SyncShuffleLinnCoUkPlaylist1::SyncShuffleLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy, TBool& aaShuffle)
+    : iService(aProxy)
     , iaShuffle(aaShuffle)
 {
 }
@@ -203,15 +203,15 @@ void SyncShuffleLinnCoUkPlaylist1::CompleteRequest(IAsync& aAsync)
 class SyncTracksMaxLinnCoUkPlaylist1 : public SyncProxyAction
 {
 public:
-    SyncTracksMaxLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService, TUint& aaTracksMax);
+    SyncTracksMaxLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy, TUint& aaTracksMax);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkPlaylist1& iService;
     TUint& iaTracksMax;
 };
 
-SyncTracksMaxLinnCoUkPlaylist1::SyncTracksMaxLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService, TUint& aaTracksMax)
-    : iService(aService)
+SyncTracksMaxLinnCoUkPlaylist1::SyncTracksMaxLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy, TUint& aaTracksMax)
+    : iService(aProxy)
     , iaTracksMax(aaTracksMax)
 {
 }
@@ -225,7 +225,7 @@ void SyncTracksMaxLinnCoUkPlaylist1::CompleteRequest(IAsync& aAsync)
 class SyncIdArrayLinnCoUkPlaylist1 : public SyncProxyAction
 {
 public:
-    SyncIdArrayLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService, TUint& aaIdArrayToken, Brh& aaIdArray);
+    SyncIdArrayLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy, TUint& aaIdArrayToken, Brh& aaIdArray);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkPlaylist1& iService;
@@ -233,8 +233,8 @@ private:
     Brh& iaIdArray;
 };
 
-SyncIdArrayLinnCoUkPlaylist1::SyncIdArrayLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService, TUint& aaIdArrayToken, Brh& aaIdArray)
-    : iService(aService)
+SyncIdArrayLinnCoUkPlaylist1::SyncIdArrayLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy, TUint& aaIdArrayToken, Brh& aaIdArray)
+    : iService(aProxy)
     , iaIdArrayToken(aaIdArrayToken)
     , iaIdArray(aaIdArray)
 {
@@ -249,15 +249,15 @@ void SyncIdArrayLinnCoUkPlaylist1::CompleteRequest(IAsync& aAsync)
 class SyncIdArrayChangedLinnCoUkPlaylist1 : public SyncProxyAction
 {
 public:
-    SyncIdArrayChangedLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService, TBool& aaIdArrayChanged);
+    SyncIdArrayChangedLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy, TBool& aaIdArrayChanged);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkPlaylist1& iService;
     TBool& iaIdArrayChanged;
 };
 
-SyncIdArrayChangedLinnCoUkPlaylist1::SyncIdArrayChangedLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aService, TBool& aaIdArrayChanged)
-    : iService(aService)
+SyncIdArrayChangedLinnCoUkPlaylist1::SyncIdArrayChangedLinnCoUkPlaylist1(CpProxyLinnCoUkPlaylist1& aProxy, TBool& aaIdArrayChanged)
+    : iService(aProxy)
     , iaIdArrayChanged(aaIdArrayChanged)
 {
 }

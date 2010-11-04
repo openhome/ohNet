@@ -356,86 +356,86 @@ THandle DvProviderLinnCoUkDiagnostics1Create(DvDeviceC aDevice)
 	return new DvProviderLinnCoUkDiagnostics1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvProviderLinnCoUkDiagnostics1Destroy(THandle aService)
+void DvProviderLinnCoUkDiagnostics1Destroy(THandle aProvider)
 {
-    delete reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aService);
+    delete reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aProvider);
 }
 
-void DvProviderLinnCoUkDiagnostics1EnableActionEcho(THandle aService, CallbackDiagnostics1Echo aCallback, void* aPtr)
+void DvProviderLinnCoUkDiagnostics1EnableActionEcho(THandle aProvider, CallbackDiagnostics1Echo aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aService)->EnableActionEcho(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aProvider)->EnableActionEcho(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkDiagnostics1EnableActionElfFile(THandle aService, CallbackDiagnostics1ElfFile aCallback, void* aPtr)
+void DvProviderLinnCoUkDiagnostics1EnableActionElfFile(THandle aProvider, CallbackDiagnostics1ElfFile aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aService)->EnableActionElfFile(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aProvider)->EnableActionElfFile(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkDiagnostics1EnableActionElfFingerprint(THandle aService, CallbackDiagnostics1ElfFingerprint aCallback, void* aPtr)
+void DvProviderLinnCoUkDiagnostics1EnableActionElfFingerprint(THandle aProvider, CallbackDiagnostics1ElfFingerprint aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aService)->EnableActionElfFingerprint(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aProvider)->EnableActionElfFingerprint(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkDiagnostics1EnableActionCrashDataStatus(THandle aService, CallbackDiagnostics1CrashDataStatus aCallback, void* aPtr)
+void DvProviderLinnCoUkDiagnostics1EnableActionCrashDataStatus(THandle aProvider, CallbackDiagnostics1CrashDataStatus aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aService)->EnableActionCrashDataStatus(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aProvider)->EnableActionCrashDataStatus(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkDiagnostics1EnableActionCrashDataFetch(THandle aService, CallbackDiagnostics1CrashDataFetch aCallback, void* aPtr)
+void DvProviderLinnCoUkDiagnostics1EnableActionCrashDataFetch(THandle aProvider, CallbackDiagnostics1CrashDataFetch aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aService)->EnableActionCrashDataFetch(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aProvider)->EnableActionCrashDataFetch(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkDiagnostics1EnableActionCrashDataClear(THandle aService, CallbackDiagnostics1CrashDataClear aCallback, void* aPtr)
+void DvProviderLinnCoUkDiagnostics1EnableActionCrashDataClear(THandle aProvider, CallbackDiagnostics1CrashDataClear aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aService)->EnableActionCrashDataClear(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aProvider)->EnableActionCrashDataClear(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkDiagnostics1EnableActionSysLog(THandle aService, CallbackDiagnostics1SysLog aCallback, void* aPtr)
+void DvProviderLinnCoUkDiagnostics1EnableActionSysLog(THandle aProvider, CallbackDiagnostics1SysLog aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aService)->EnableActionSysLog(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aProvider)->EnableActionSysLog(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkDiagnostics1EnableActionDiagnostic(THandle aService, CallbackDiagnostics1Diagnostic aCallback, void* aPtr)
+void DvProviderLinnCoUkDiagnostics1EnableActionDiagnostic(THandle aProvider, CallbackDiagnostics1Diagnostic aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aService)->EnableActionDiagnostic(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aProvider)->EnableActionDiagnostic(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkDiagnostics1EnableActionStateVariable(THandle aService, CallbackDiagnostics1StateVariable aCallback, void* aPtr)
+void DvProviderLinnCoUkDiagnostics1EnableActionStateVariable(THandle aProvider, CallbackDiagnostics1StateVariable aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aService)->EnableActionStateVariable(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aProvider)->EnableActionStateVariable(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkDiagnostics1EnableActionSetStateVariable(THandle aService, CallbackDiagnostics1SetStateVariable aCallback, void* aPtr)
+void DvProviderLinnCoUkDiagnostics1EnableActionSetStateVariable(THandle aProvider, CallbackDiagnostics1SetStateVariable aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aService)->EnableActionSetStateVariable(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aProvider)->EnableActionSetStateVariable(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkDiagnostics1EnableActionStateVariablePeriod(THandle aService, CallbackDiagnostics1StateVariablePeriod aCallback, void* aPtr)
+void DvProviderLinnCoUkDiagnostics1EnableActionStateVariablePeriod(THandle aProvider, CallbackDiagnostics1StateVariablePeriod aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aService)->EnableActionStateVariablePeriod(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aProvider)->EnableActionStateVariablePeriod(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkDiagnostics1EnableActionSetStateVariablePeriod(THandle aService, CallbackDiagnostics1SetStateVariablePeriod aCallback, void* aPtr)
+void DvProviderLinnCoUkDiagnostics1EnableActionSetStateVariablePeriod(THandle aProvider, CallbackDiagnostics1SetStateVariablePeriod aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aService)->EnableActionSetStateVariablePeriod(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aProvider)->EnableActionSetStateVariablePeriod(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkDiagnostics1EnableActionReboot(THandle aService, CallbackDiagnostics1Reboot aCallback, void* aPtr)
+void DvProviderLinnCoUkDiagnostics1EnableActionReboot(THandle aProvider, CallbackDiagnostics1Reboot aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aService)->EnableActionReboot(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aProvider)->EnableActionReboot(aCallback, aPtr);
 }
 
-int32_t DvProviderLinnCoUkDiagnostics1SetPropertyaStateVariable(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkDiagnostics1SetPropertyaStateVariable(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aService)->SetPropertyaStateVariable(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aProvider)->SetPropertyaStateVariable(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkDiagnostics1GetPropertyaStateVariable(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkDiagnostics1GetPropertyaStateVariable(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aService)->GetPropertyaStateVariable(val);
+    reinterpret_cast<DvProviderLinnCoUkDiagnostics1C*>(aProvider)->GetPropertyaStateVariable(val);
     *aValue = val;
 }
 

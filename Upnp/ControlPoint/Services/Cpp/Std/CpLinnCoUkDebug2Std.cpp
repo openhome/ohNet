@@ -14,14 +14,14 @@ using namespace Zapp;
 class SyncSetDebugLevelLinnCoUkDebug2Cpp : public SyncProxyAction
 {
 public:
-    SyncSetDebugLevelLinnCoUkDebug2Cpp(CpProxyLinnCoUkDebug2Cpp& aService);
+    SyncSetDebugLevelLinnCoUkDebug2Cpp(CpProxyLinnCoUkDebug2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDebug2Cpp& iService;
 };
 
-SyncSetDebugLevelLinnCoUkDebug2Cpp::SyncSetDebugLevelLinnCoUkDebug2Cpp(CpProxyLinnCoUkDebug2Cpp& aService)
-    : iService(aService)
+SyncSetDebugLevelLinnCoUkDebug2Cpp::SyncSetDebugLevelLinnCoUkDebug2Cpp(CpProxyLinnCoUkDebug2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -34,15 +34,15 @@ void SyncSetDebugLevelLinnCoUkDebug2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncDebugLevelLinnCoUkDebug2Cpp : public SyncProxyAction
 {
 public:
-    SyncDebugLevelLinnCoUkDebug2Cpp(CpProxyLinnCoUkDebug2Cpp& aService, uint32_t& aaDebugLevel);
+    SyncDebugLevelLinnCoUkDebug2Cpp(CpProxyLinnCoUkDebug2Cpp& aProxy, uint32_t& aaDebugLevel);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDebug2Cpp& iService;
     uint32_t& iaDebugLevel;
 };
 
-SyncDebugLevelLinnCoUkDebug2Cpp::SyncDebugLevelLinnCoUkDebug2Cpp(CpProxyLinnCoUkDebug2Cpp& aService, uint32_t& aaDebugLevel)
-    : iService(aService)
+SyncDebugLevelLinnCoUkDebug2Cpp::SyncDebugLevelLinnCoUkDebug2Cpp(CpProxyLinnCoUkDebug2Cpp& aProxy, uint32_t& aaDebugLevel)
+    : iService(aProxy)
     , iaDebugLevel(aaDebugLevel)
 {
 }
@@ -56,14 +56,14 @@ void SyncDebugLevelLinnCoUkDebug2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncMemWriteLinnCoUkDebug2Cpp : public SyncProxyAction
 {
 public:
-    SyncMemWriteLinnCoUkDebug2Cpp(CpProxyLinnCoUkDebug2Cpp& aService);
+    SyncMemWriteLinnCoUkDebug2Cpp(CpProxyLinnCoUkDebug2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDebug2Cpp& iService;
 };
 
-SyncMemWriteLinnCoUkDebug2Cpp::SyncMemWriteLinnCoUkDebug2Cpp(CpProxyLinnCoUkDebug2Cpp& aService)
-    : iService(aService)
+SyncMemWriteLinnCoUkDebug2Cpp::SyncMemWriteLinnCoUkDebug2Cpp(CpProxyLinnCoUkDebug2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 

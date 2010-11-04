@@ -14,14 +14,14 @@ using namespace Zapp;
 class SyncPlayLinnCoUkRadio1Cpp : public SyncProxyAction
 {
 public:
-    SyncPlayLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService);
+    SyncPlayLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkRadio1Cpp& iService;
 };
 
-SyncPlayLinnCoUkRadio1Cpp::SyncPlayLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService)
-    : iService(aService)
+SyncPlayLinnCoUkRadio1Cpp::SyncPlayLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -34,14 +34,14 @@ void SyncPlayLinnCoUkRadio1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncPauseLinnCoUkRadio1Cpp : public SyncProxyAction
 {
 public:
-    SyncPauseLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService);
+    SyncPauseLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkRadio1Cpp& iService;
 };
 
-SyncPauseLinnCoUkRadio1Cpp::SyncPauseLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService)
-    : iService(aService)
+SyncPauseLinnCoUkRadio1Cpp::SyncPauseLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -54,14 +54,14 @@ void SyncPauseLinnCoUkRadio1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncStopLinnCoUkRadio1Cpp : public SyncProxyAction
 {
 public:
-    SyncStopLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService);
+    SyncStopLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkRadio1Cpp& iService;
 };
 
-SyncStopLinnCoUkRadio1Cpp::SyncStopLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService)
-    : iService(aService)
+SyncStopLinnCoUkRadio1Cpp::SyncStopLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -74,14 +74,14 @@ void SyncStopLinnCoUkRadio1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSeekSecondAbsoluteLinnCoUkRadio1Cpp : public SyncProxyAction
 {
 public:
-    SyncSeekSecondAbsoluteLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService);
+    SyncSeekSecondAbsoluteLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkRadio1Cpp& iService;
 };
 
-SyncSeekSecondAbsoluteLinnCoUkRadio1Cpp::SyncSeekSecondAbsoluteLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService)
-    : iService(aService)
+SyncSeekSecondAbsoluteLinnCoUkRadio1Cpp::SyncSeekSecondAbsoluteLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -94,14 +94,14 @@ void SyncSeekSecondAbsoluteLinnCoUkRadio1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSeekSecondRelativeLinnCoUkRadio1Cpp : public SyncProxyAction
 {
 public:
-    SyncSeekSecondRelativeLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService);
+    SyncSeekSecondRelativeLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkRadio1Cpp& iService;
 };
 
-SyncSeekSecondRelativeLinnCoUkRadio1Cpp::SyncSeekSecondRelativeLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService)
-    : iService(aService)
+SyncSeekSecondRelativeLinnCoUkRadio1Cpp::SyncSeekSecondRelativeLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -114,7 +114,7 @@ void SyncSeekSecondRelativeLinnCoUkRadio1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncChannelLinnCoUkRadio1Cpp : public SyncProxyAction
 {
 public:
-    SyncChannelLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService, std::string& aaUri, std::string& aaMetadata);
+    SyncChannelLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy, std::string& aaUri, std::string& aaMetadata);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkRadio1Cpp& iService;
@@ -122,8 +122,8 @@ private:
     std::string& iaMetadata;
 };
 
-SyncChannelLinnCoUkRadio1Cpp::SyncChannelLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService, std::string& aaUri, std::string& aaMetadata)
-    : iService(aService)
+SyncChannelLinnCoUkRadio1Cpp::SyncChannelLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy, std::string& aaUri, std::string& aaMetadata)
+    : iService(aProxy)
     , iaUri(aaUri)
     , iaMetadata(aaMetadata)
 {
@@ -138,14 +138,14 @@ void SyncChannelLinnCoUkRadio1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetChannelLinnCoUkRadio1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetChannelLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService);
+    SyncSetChannelLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkRadio1Cpp& iService;
 };
 
-SyncSetChannelLinnCoUkRadio1Cpp::SyncSetChannelLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService)
-    : iService(aService)
+SyncSetChannelLinnCoUkRadio1Cpp::SyncSetChannelLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -158,15 +158,15 @@ void SyncSetChannelLinnCoUkRadio1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncProtocolInfoLinnCoUkRadio1Cpp : public SyncProxyAction
 {
 public:
-    SyncProtocolInfoLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService, std::string& aaInfo);
+    SyncProtocolInfoLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy, std::string& aaInfo);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkRadio1Cpp& iService;
     std::string& iaInfo;
 };
 
-SyncProtocolInfoLinnCoUkRadio1Cpp::SyncProtocolInfoLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService, std::string& aaInfo)
-    : iService(aService)
+SyncProtocolInfoLinnCoUkRadio1Cpp::SyncProtocolInfoLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy, std::string& aaInfo)
+    : iService(aProxy)
     , iaInfo(aaInfo)
 {
 }
@@ -180,15 +180,15 @@ void SyncProtocolInfoLinnCoUkRadio1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncTransportStateLinnCoUkRadio1Cpp : public SyncProxyAction
 {
 public:
-    SyncTransportStateLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService, std::string& aaState);
+    SyncTransportStateLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy, std::string& aaState);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkRadio1Cpp& iService;
     std::string& iaState;
 };
 
-SyncTransportStateLinnCoUkRadio1Cpp::SyncTransportStateLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService, std::string& aaState)
-    : iService(aService)
+SyncTransportStateLinnCoUkRadio1Cpp::SyncTransportStateLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy, std::string& aaState)
+    : iService(aProxy)
     , iaState(aaState)
 {
 }
@@ -202,15 +202,15 @@ void SyncTransportStateLinnCoUkRadio1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncIdLinnCoUkRadio1Cpp : public SyncProxyAction
 {
 public:
-    SyncIdLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService, uint32_t& aaId);
+    SyncIdLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy, uint32_t& aaId);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkRadio1Cpp& iService;
     uint32_t& iaId;
 };
 
-SyncIdLinnCoUkRadio1Cpp::SyncIdLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService, uint32_t& aaId)
-    : iService(aService)
+SyncIdLinnCoUkRadio1Cpp::SyncIdLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy, uint32_t& aaId)
+    : iService(aProxy)
     , iaId(aaId)
 {
 }
@@ -224,14 +224,14 @@ void SyncIdLinnCoUkRadio1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetIdLinnCoUkRadio1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetIdLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService);
+    SyncSetIdLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkRadio1Cpp& iService;
 };
 
-SyncSetIdLinnCoUkRadio1Cpp::SyncSetIdLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService)
-    : iService(aService)
+SyncSetIdLinnCoUkRadio1Cpp::SyncSetIdLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -244,15 +244,15 @@ void SyncSetIdLinnCoUkRadio1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncReadLinnCoUkRadio1Cpp : public SyncProxyAction
 {
 public:
-    SyncReadLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService, std::string& aaMetadata);
+    SyncReadLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy, std::string& aaMetadata);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkRadio1Cpp& iService;
     std::string& iaMetadata;
 };
 
-SyncReadLinnCoUkRadio1Cpp::SyncReadLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService, std::string& aaMetadata)
-    : iService(aService)
+SyncReadLinnCoUkRadio1Cpp::SyncReadLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy, std::string& aaMetadata)
+    : iService(aProxy)
     , iaMetadata(aaMetadata)
 {
 }
@@ -266,15 +266,15 @@ void SyncReadLinnCoUkRadio1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncReadListLinnCoUkRadio1Cpp : public SyncProxyAction
 {
 public:
-    SyncReadListLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService, std::string& aaMetadataList);
+    SyncReadListLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy, std::string& aaMetadataList);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkRadio1Cpp& iService;
     std::string& iaMetadataList;
 };
 
-SyncReadListLinnCoUkRadio1Cpp::SyncReadListLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService, std::string& aaMetadataList)
-    : iService(aService)
+SyncReadListLinnCoUkRadio1Cpp::SyncReadListLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy, std::string& aaMetadataList)
+    : iService(aProxy)
     , iaMetadataList(aaMetadataList)
 {
 }
@@ -288,7 +288,7 @@ void SyncReadListLinnCoUkRadio1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncIdArrayLinnCoUkRadio1Cpp : public SyncProxyAction
 {
 public:
-    SyncIdArrayLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService, uint32_t& aaIdArrayToken, std::string& aaIdArray);
+    SyncIdArrayLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy, uint32_t& aaIdArrayToken, std::string& aaIdArray);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkRadio1Cpp& iService;
@@ -296,8 +296,8 @@ private:
     std::string& iaIdArray;
 };
 
-SyncIdArrayLinnCoUkRadio1Cpp::SyncIdArrayLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService, uint32_t& aaIdArrayToken, std::string& aaIdArray)
-    : iService(aService)
+SyncIdArrayLinnCoUkRadio1Cpp::SyncIdArrayLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy, uint32_t& aaIdArrayToken, std::string& aaIdArray)
+    : iService(aProxy)
     , iaIdArrayToken(aaIdArrayToken)
     , iaIdArray(aaIdArray)
 {
@@ -312,15 +312,15 @@ void SyncIdArrayLinnCoUkRadio1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncIdArrayChangedLinnCoUkRadio1Cpp : public SyncProxyAction
 {
 public:
-    SyncIdArrayChangedLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService, bool& aaIdArrayChanged);
+    SyncIdArrayChangedLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy, bool& aaIdArrayChanged);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkRadio1Cpp& iService;
     bool& iaIdArrayChanged;
 };
 
-SyncIdArrayChangedLinnCoUkRadio1Cpp::SyncIdArrayChangedLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService, bool& aaIdArrayChanged)
-    : iService(aService)
+SyncIdArrayChangedLinnCoUkRadio1Cpp::SyncIdArrayChangedLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy, bool& aaIdArrayChanged)
+    : iService(aProxy)
     , iaIdArrayChanged(aaIdArrayChanged)
 {
 }
@@ -334,15 +334,15 @@ void SyncIdArrayChangedLinnCoUkRadio1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncIdsMaxLinnCoUkRadio1Cpp : public SyncProxyAction
 {
 public:
-    SyncIdsMaxLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService, uint32_t& aaIdsMax);
+    SyncIdsMaxLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy, uint32_t& aaIdsMax);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkRadio1Cpp& iService;
     uint32_t& iaIdsMax;
 };
 
-SyncIdsMaxLinnCoUkRadio1Cpp::SyncIdsMaxLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aService, uint32_t& aaIdsMax)
-    : iService(aService)
+SyncIdsMaxLinnCoUkRadio1Cpp::SyncIdsMaxLinnCoUkRadio1Cpp(CpProxyLinnCoUkRadio1Cpp& aProxy, uint32_t& aaIdsMax)
+    : iService(aProxy)
     , iaIdsMax(aaIdsMax)
 {
 }

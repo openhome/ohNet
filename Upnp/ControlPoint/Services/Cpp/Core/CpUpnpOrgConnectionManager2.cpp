@@ -11,7 +11,7 @@ using namespace Zapp;
 class SyncGetProtocolInfoUpnpOrgConnectionManager2 : public SyncProxyAction
 {
 public:
-    SyncGetProtocolInfoUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aService, Brh& aSource, Brh& aSink);
+    SyncGetProtocolInfoUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aProxy, Brh& aSource, Brh& aSink);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgConnectionManager2& iService;
@@ -19,8 +19,8 @@ private:
     Brh& iSink;
 };
 
-SyncGetProtocolInfoUpnpOrgConnectionManager2::SyncGetProtocolInfoUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aService, Brh& aSource, Brh& aSink)
-    : iService(aService)
+SyncGetProtocolInfoUpnpOrgConnectionManager2::SyncGetProtocolInfoUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aProxy, Brh& aSource, Brh& aSink)
+    : iService(aProxy)
     , iSource(aSource)
     , iSink(aSink)
 {
@@ -35,7 +35,7 @@ void SyncGetProtocolInfoUpnpOrgConnectionManager2::CompleteRequest(IAsync& aAsyn
 class SyncPrepareForConnectionUpnpOrgConnectionManager2 : public SyncProxyAction
 {
 public:
-    SyncPrepareForConnectionUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aService, TInt& aConnectionID, TInt& aAVTransportID, TInt& aRcsID);
+    SyncPrepareForConnectionUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aProxy, TInt& aConnectionID, TInt& aAVTransportID, TInt& aRcsID);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgConnectionManager2& iService;
@@ -44,8 +44,8 @@ private:
     TInt& iRcsID;
 };
 
-SyncPrepareForConnectionUpnpOrgConnectionManager2::SyncPrepareForConnectionUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aService, TInt& aConnectionID, TInt& aAVTransportID, TInt& aRcsID)
-    : iService(aService)
+SyncPrepareForConnectionUpnpOrgConnectionManager2::SyncPrepareForConnectionUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aProxy, TInt& aConnectionID, TInt& aAVTransportID, TInt& aRcsID)
+    : iService(aProxy)
     , iConnectionID(aConnectionID)
     , iAVTransportID(aAVTransportID)
     , iRcsID(aRcsID)
@@ -61,14 +61,14 @@ void SyncPrepareForConnectionUpnpOrgConnectionManager2::CompleteRequest(IAsync& 
 class SyncConnectionCompleteUpnpOrgConnectionManager2 : public SyncProxyAction
 {
 public:
-    SyncConnectionCompleteUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aService);
+    SyncConnectionCompleteUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgConnectionManager2& iService;
 };
 
-SyncConnectionCompleteUpnpOrgConnectionManager2::SyncConnectionCompleteUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aService)
-    : iService(aService)
+SyncConnectionCompleteUpnpOrgConnectionManager2::SyncConnectionCompleteUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -81,15 +81,15 @@ void SyncConnectionCompleteUpnpOrgConnectionManager2::CompleteRequest(IAsync& aA
 class SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2 : public SyncProxyAction
 {
 public:
-    SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aService, Brh& aConnectionIDs);
+    SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aProxy, Brh& aConnectionIDs);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgConnectionManager2& iService;
     Brh& iConnectionIDs;
 };
 
-SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2::SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aService, Brh& aConnectionIDs)
-    : iService(aService)
+SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2::SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aProxy, Brh& aConnectionIDs)
+    : iService(aProxy)
     , iConnectionIDs(aConnectionIDs)
 {
 }
@@ -103,7 +103,7 @@ void SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2::CompleteRequest(IAsyn
 class SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2 : public SyncProxyAction
 {
 public:
-    SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aService, TInt& aRcsID, TInt& aAVTransportID, Brh& aProtocolInfo, Brh& aPeerConnectionManager, TInt& aPeerConnectionID, Brh& aDirection, Brh& aStatus);
+    SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aProxy, TInt& aRcsID, TInt& aAVTransportID, Brh& aProtocolInfo, Brh& aPeerConnectionManager, TInt& aPeerConnectionID, Brh& aDirection, Brh& aStatus);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgConnectionManager2& iService;
@@ -116,8 +116,8 @@ private:
     Brh& iStatus;
 };
 
-SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2::SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aService, TInt& aRcsID, TInt& aAVTransportID, Brh& aProtocolInfo, Brh& aPeerConnectionManager, TInt& aPeerConnectionID, Brh& aDirection, Brh& aStatus)
-    : iService(aService)
+SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2::SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aProxy, TInt& aRcsID, TInt& aAVTransportID, Brh& aProtocolInfo, Brh& aPeerConnectionManager, TInt& aPeerConnectionID, Brh& aDirection, Brh& aStatus)
+    : iService(aProxy)
     , iRcsID(aRcsID)
     , iAVTransportID(aAVTransportID)
     , iProtocolInfo(aProtocolInfo)

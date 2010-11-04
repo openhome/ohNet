@@ -58,17 +58,17 @@ typedef int32_t (*<#=callbackPrefix#><#=a.name#>)(void* aPtr, uint32_t aVersion<
 <#  } #>
 
 DllExport THandle <#=className#>Create(DvDeviceC aDevice);
-DllExport void <#=className#>Destroy(THandle aService);
+DllExport void <#=className#>Destroy(THandle aProvider);
 
 <#  foreach (Method a in u.methods) #>
 <#  { #>
-DllExport void <#=className#>EnableAction<#=a.name#>(THandle aService, <#=callbackPrefix#><#=a.name#> aCallback, void* aPtr);
+DllExport void <#=className#>EnableAction<#=a.name#>(THandle aProvider, <#=callbackPrefix#><#=a.name#> aCallback, void* aPtr);
 <#  } #>
 
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
-DllExport int32_t <#=className#>SetProperty<#=s.name#>(THandle aService, <#=PropertyInArgs(s)#>, uint32_t* aChanged);
-DllExport void <#=className#>GetProperty<#=s.name#>(THandle aService, <#=PropertyOutArgs(s)#>);
+DllExport int32_t <#=className#>SetProperty<#=s.name#>(THandle aProvider, <#=PropertyInArgs(s)#>, uint32_t* aChanged);
+DllExport void <#=className#>GetProperty<#=s.name#>(THandle aProvider, <#=PropertyOutArgs(s)#>);
 <#  } #>
 
 #ifdef __cplusplus

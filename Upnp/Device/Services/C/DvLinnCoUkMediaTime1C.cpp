@@ -51,26 +51,26 @@ THandle DvProviderLinnCoUkMediaTime1Create(DvDeviceC aDevice)
 	return new DvProviderLinnCoUkMediaTime1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvProviderLinnCoUkMediaTime1Destroy(THandle aService)
+void DvProviderLinnCoUkMediaTime1Destroy(THandle aProvider)
 {
-    delete reinterpret_cast<DvProviderLinnCoUkMediaTime1C*>(aService);
+    delete reinterpret_cast<DvProviderLinnCoUkMediaTime1C*>(aProvider);
 }
 
-void DvProviderLinnCoUkMediaTime1EnableActionSeconds(THandle aService, CallbackMediaTime1Seconds aCallback, void* aPtr)
+void DvProviderLinnCoUkMediaTime1EnableActionSeconds(THandle aProvider, CallbackMediaTime1Seconds aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkMediaTime1C*>(aService)->EnableActionSeconds(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkMediaTime1C*>(aProvider)->EnableActionSeconds(aCallback, aPtr);
 }
 
-int32_t DvProviderLinnCoUkMediaTime1SetPropertySeconds(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkMediaTime1SetPropertySeconds(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkMediaTime1C*>(aService)->SetPropertySeconds(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkMediaTime1C*>(aProvider)->SetPropertySeconds(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkMediaTime1GetPropertySeconds(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkMediaTime1GetPropertySeconds(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvProviderLinnCoUkMediaTime1C*>(aService)->GetPropertySeconds(val);
+    reinterpret_cast<DvProviderLinnCoUkMediaTime1C*>(aProvider)->GetPropertySeconds(val);
     *aValue = val;
 }
 
