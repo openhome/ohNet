@@ -4,7 +4,7 @@
 #include <OptionParser.h>
 #include <Network.h>
 #include <Debug.h>
-#include <Os.h>
+#include <OsWrapper.h>
 #include <Arch.h>
 
 using namespace Zapp;

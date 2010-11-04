@@ -26,7 +26,7 @@
 #include <unistd.h>
 #include <ifaddrs.h>
 
-#include <C/Os.h>
+#include <Os.h>
 
 #define kMinStackBytes (1024 * 512)
 #define kThreadSchedPolicy (SCHED_RR)

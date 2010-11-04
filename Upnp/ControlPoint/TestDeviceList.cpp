@@ -8,7 +8,7 @@
 #include <Discovery.h>
 #include <Thread.h>
 #include <Timer.h>
-#include <Os.h>
+#include <OsWrapper.h>
 #include <Core/CpDeviceUpnp.h>
 #include <Core/FunctorCpDevice.h>
 

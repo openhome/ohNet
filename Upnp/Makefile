@@ -83,7 +83,6 @@ copy_build_includes:
 	cp -u Ssdp/*.h $(inc_build)
 	cp -u Os/*.h $(inc_build)
 	cp -u Os/*.inl $(inc_build)
-	cp -u Os/C/Os.h $(inc_build)/C
 	cp -u Public/C/*.h $(inc_build)/C
 	cp -u Thread/Thread.h $(inc_build)
 	cp -u Timer/Timer.h $(inc_build)

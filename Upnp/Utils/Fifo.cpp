@@ -1,6 +1,4 @@
 #include <Fifo.h>
-//#include <Zapp/Os/Os.h>
-//#include <Zapp/Arch/Arch.h>
 
 
 using namespace Zapp;

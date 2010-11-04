@@ -4,7 +4,7 @@
 #include <TestFramework.h>
 #include <Debug.h>
 #include <Stream.h>
-#include <Os.h>
+#include <OsWrapper.h>
 
 using namespace Zapp;
 using namespace Zapp::TestFramework;

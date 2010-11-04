@@ -1,6 +1,6 @@
 #include <Network.h>
 #include <Arch.h>
-#include <Os.h>
+#include <OsWrapper.h>
 #include <Debug.h>
 #include <Functor.h>
 #include <Stream.h>
