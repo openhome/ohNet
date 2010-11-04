@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderZappOrgTestWidgetController1 : IDisposable
+    public class DvProviderZappOrgTestWidgetController1 : DvProvider, IDisposable
     {
         [DllImport("DvZappOrgTestWidgetController1")]
         static extern uint DvProviderZappOrgTestWidgetController1Create(uint aDeviceHandle);
@@ -24,7 +24,6 @@ namespace Zapp
         private unsafe delegate int CallbackRemoveWidget(IntPtr aPtr, uint aVersion, char* aWidgetUdn);
         private unsafe delegate int CallbackSetWidgetRegister(IntPtr aPtr, uint aVersion, char* aWidgetUdn, uint aRegisterIndex, uint aRegisterValue);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackCreateWidget iCallbackCreateWidget;
         private CallbackRemoveWidget iCallbackRemoveWidget;

@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderZappOrgTestWidget1 : IDisposable
+    public class DvProviderZappOrgTestWidget1 : DvProvider, IDisposable
     {
         [DllImport("DvZappOrgTestWidget1")]
         static extern uint DvProviderZappOrgTestWidget1Create(uint aDeviceHandle);
@@ -50,7 +50,6 @@ namespace Zapp
 
         private unsafe delegate int CallbackSetReadWriteRegister(IntPtr aPtr, uint aVersion, uint aRegisterIndex, uint aRegisterValue);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackSetReadWriteRegister iCallbackSetReadWriteRegister;
 

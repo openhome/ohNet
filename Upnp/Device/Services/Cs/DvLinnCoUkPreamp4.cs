@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderLinnCoUkPreamp4 : IDisposable
+    public class DvProviderLinnCoUkPreamp4 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkPreamp4")]
         static extern uint DvProviderLinnCoUkPreamp4Create(uint aDeviceHandle);
@@ -81,7 +81,6 @@ namespace Zapp
         private unsafe delegate int CallbackSetStartupVolumeEnabled(IntPtr aPtr, uint aVersion, int aaStartupVolumeEnabled);
         private unsafe delegate int CallbackStartupVolumeEnabled(IntPtr aPtr, uint aVersion, int* aaStartupVolumeEnabled);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackVolumeInc iCallbackVolumeInc;
         private CallbackVolumeDec iCallbackVolumeDec;

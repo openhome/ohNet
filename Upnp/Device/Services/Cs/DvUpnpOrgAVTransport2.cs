@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderUpnpOrgAVTransport2 : IDisposable
+    public class DvProviderUpnpOrgAVTransport2 : DvProvider, IDisposable
     {
         [DllImport("DvUpnpOrgAVTransport2")]
         static extern uint DvProviderUpnpOrgAVTransport2Create(uint aDeviceHandle);
@@ -86,7 +86,6 @@ namespace Zapp
         private unsafe delegate int CallbackGetStateVariables(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aStateVariableList, char** aStateVariableValuePairs);
         private unsafe delegate int CallbackSetStateVariables(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aAVTransportUDN, char* aServiceType, char* aServiceId, char* aStateVariableValuePairs, char** aStateVariableList);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackSetAVTransportURI iCallbackSetAVTransportURI;
         private CallbackSetNextAVTransportURI iCallbackSetNextAVTransportURI;

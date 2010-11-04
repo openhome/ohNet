@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderZappOrgTestLights1 : IDisposable
+    public class DvProviderZappOrgTestLights1 : DvProvider, IDisposable
     {
         [DllImport("DvZappOrgTestLights1")]
         static extern uint DvProviderZappOrgTestLights1Create(uint aDeviceHandle);
@@ -36,7 +36,6 @@ namespace Zapp
         private unsafe delegate int CallbackGetColor(IntPtr aPtr, uint aVersion, uint aIndex, uint* aColor);
         private unsafe delegate int CallbackGetColorComponents(IntPtr aPtr, uint aVersion, uint aColor, uint* aBrightness, uint* aRed, uint* aGreen, uint* aBlue);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackGetCount iCallbackGetCount;
         private CallbackGetRoom iCallbackGetRoom;

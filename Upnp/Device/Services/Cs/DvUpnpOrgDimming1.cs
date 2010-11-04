@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderUpnpOrgDimming1 : IDisposable
+    public class DvProviderUpnpOrgDimming1 : DvProvider, IDisposable
     {
         [DllImport("DvUpnpOrgDimming1")]
         static extern uint DvProviderUpnpOrgDimming1Create(uint aDeviceHandle);
@@ -98,7 +98,6 @@ namespace Zapp
         private unsafe delegate int CallbackGetRampPaused(IntPtr aPtr, uint aVersion, int* aretRampPaused);
         private unsafe delegate int CallbackGetRampTime(IntPtr aPtr, uint aVersion, uint* aretRampTime);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackSetLoadLevelTarget iCallbackSetLoadLevelTarget;
         private CallbackGetLoadLevelTarget iCallbackGetLoadLevelTarget;

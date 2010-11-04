@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderLinnCoUkDs1 : IDisposable
+    public class DvProviderLinnCoUkDs1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkDs1")]
         static extern uint DvProviderLinnCoUkDs1Create(uint aDeviceHandle);
@@ -81,7 +81,6 @@ namespace Zapp
         private unsafe delegate int CallbackState(IntPtr aPtr, uint aVersion, char** aaTransportState, uint* aaTrackDuration, uint* aaTrackBitRate, int* aaTrackLossless, uint* aaTrackBitDepth, uint* aaTrackSampleRate, char** aaTrackCodecName, uint* aaTrackId);
         private unsafe delegate int CallbackProtocolInfo(IntPtr aPtr, uint aVersion, char** aaSupportedProtocols);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackPlay iCallbackPlay;
         private CallbackPause iCallbackPause;

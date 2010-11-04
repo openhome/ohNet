@@ -56,7 +56,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class <#=className#> : IDisposable
+    public class <#=className#> : DvProvider, IDisposable
     {
         [DllImport("<#=dllName#>")]
         static extern uint <#=className#>Create(uint aDeviceHandle);
@@ -92,7 +92,6 @@ namespace Zapp
         private unsafe delegate int Callback<#=a.name#>(IntPtr aPtr, uint aVersion<#=ArgsCFull(a)#>);
 <#  } #>
 
-        private uint iHandle;
         private GCHandle iGch;
 <#  foreach (Method a in u.methods) #>
 <#  { #>
