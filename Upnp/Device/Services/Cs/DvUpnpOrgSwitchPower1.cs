@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderUpnpOrgSwitchPower1 : IDisposable
+    public class DvProviderUpnpOrgSwitchPower1 : DvProvider, IDisposable
     {
         [DllImport("DvUpnpOrgSwitchPower1")]
         static extern uint DvProviderUpnpOrgSwitchPower1Create(uint aDeviceHandle);
@@ -28,7 +28,6 @@ namespace Zapp
         private unsafe delegate int CallbackGetTarget(IntPtr aPtr, uint aVersion, int* aRetTargetValue);
         private unsafe delegate int CallbackGetStatus(IntPtr aPtr, uint aVersion, int* aResultStatus);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackSetTarget iCallbackSetTarget;
         private CallbackGetTarget iCallbackGetTarget;

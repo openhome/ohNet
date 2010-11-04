@@ -14,14 +14,14 @@ using namespace Zapp;
 class SyncCreateWidgetZappOrgTestWidgetController1Cpp : public SyncProxyAction
 {
 public:
-    SyncCreateWidgetZappOrgTestWidgetController1Cpp(CpProxyZappOrgTestWidgetController1Cpp& aService);
+    SyncCreateWidgetZappOrgTestWidgetController1Cpp(CpProxyZappOrgTestWidgetController1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestWidgetController1Cpp& iService;
 };
 
-SyncCreateWidgetZappOrgTestWidgetController1Cpp::SyncCreateWidgetZappOrgTestWidgetController1Cpp(CpProxyZappOrgTestWidgetController1Cpp& aService)
-    : iService(aService)
+SyncCreateWidgetZappOrgTestWidgetController1Cpp::SyncCreateWidgetZappOrgTestWidgetController1Cpp(CpProxyZappOrgTestWidgetController1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -34,14 +34,14 @@ void SyncCreateWidgetZappOrgTestWidgetController1Cpp::CompleteRequest(IAsync& aA
 class SyncRemoveWidgetZappOrgTestWidgetController1Cpp : public SyncProxyAction
 {
 public:
-    SyncRemoveWidgetZappOrgTestWidgetController1Cpp(CpProxyZappOrgTestWidgetController1Cpp& aService);
+    SyncRemoveWidgetZappOrgTestWidgetController1Cpp(CpProxyZappOrgTestWidgetController1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestWidgetController1Cpp& iService;
 };
 
-SyncRemoveWidgetZappOrgTestWidgetController1Cpp::SyncRemoveWidgetZappOrgTestWidgetController1Cpp(CpProxyZappOrgTestWidgetController1Cpp& aService)
-    : iService(aService)
+SyncRemoveWidgetZappOrgTestWidgetController1Cpp::SyncRemoveWidgetZappOrgTestWidgetController1Cpp(CpProxyZappOrgTestWidgetController1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -54,14 +54,14 @@ void SyncRemoveWidgetZappOrgTestWidgetController1Cpp::CompleteRequest(IAsync& aA
 class SyncSetWidgetRegisterZappOrgTestWidgetController1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetWidgetRegisterZappOrgTestWidgetController1Cpp(CpProxyZappOrgTestWidgetController1Cpp& aService);
+    SyncSetWidgetRegisterZappOrgTestWidgetController1Cpp(CpProxyZappOrgTestWidgetController1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestWidgetController1Cpp& iService;
 };
 
-SyncSetWidgetRegisterZappOrgTestWidgetController1Cpp::SyncSetWidgetRegisterZappOrgTestWidgetController1Cpp(CpProxyZappOrgTestWidgetController1Cpp& aService)
-    : iService(aService)
+SyncSetWidgetRegisterZappOrgTestWidgetController1Cpp::SyncSetWidgetRegisterZappOrgTestWidgetController1Cpp(CpProxyZappOrgTestWidgetController1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 

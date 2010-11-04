@@ -11,14 +11,14 @@ using namespace Zapp;
 class SyncCreateWidgetZappOrgTestWidgetController1 : public SyncProxyAction
 {
 public:
-    SyncCreateWidgetZappOrgTestWidgetController1(CpProxyZappOrgTestWidgetController1& aService);
+    SyncCreateWidgetZappOrgTestWidgetController1(CpProxyZappOrgTestWidgetController1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestWidgetController1& iService;
 };
 
-SyncCreateWidgetZappOrgTestWidgetController1::SyncCreateWidgetZappOrgTestWidgetController1(CpProxyZappOrgTestWidgetController1& aService)
-    : iService(aService)
+SyncCreateWidgetZappOrgTestWidgetController1::SyncCreateWidgetZappOrgTestWidgetController1(CpProxyZappOrgTestWidgetController1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -31,14 +31,14 @@ void SyncCreateWidgetZappOrgTestWidgetController1::CompleteRequest(IAsync& aAsyn
 class SyncRemoveWidgetZappOrgTestWidgetController1 : public SyncProxyAction
 {
 public:
-    SyncRemoveWidgetZappOrgTestWidgetController1(CpProxyZappOrgTestWidgetController1& aService);
+    SyncRemoveWidgetZappOrgTestWidgetController1(CpProxyZappOrgTestWidgetController1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestWidgetController1& iService;
 };
 
-SyncRemoveWidgetZappOrgTestWidgetController1::SyncRemoveWidgetZappOrgTestWidgetController1(CpProxyZappOrgTestWidgetController1& aService)
-    : iService(aService)
+SyncRemoveWidgetZappOrgTestWidgetController1::SyncRemoveWidgetZappOrgTestWidgetController1(CpProxyZappOrgTestWidgetController1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -51,14 +51,14 @@ void SyncRemoveWidgetZappOrgTestWidgetController1::CompleteRequest(IAsync& aAsyn
 class SyncSetWidgetRegisterZappOrgTestWidgetController1 : public SyncProxyAction
 {
 public:
-    SyncSetWidgetRegisterZappOrgTestWidgetController1(CpProxyZappOrgTestWidgetController1& aService);
+    SyncSetWidgetRegisterZappOrgTestWidgetController1(CpProxyZappOrgTestWidgetController1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestWidgetController1& iService;
 };
 
-SyncSetWidgetRegisterZappOrgTestWidgetController1::SyncSetWidgetRegisterZappOrgTestWidgetController1(CpProxyZappOrgTestWidgetController1& aService)
-    : iService(aService)
+SyncSetWidgetRegisterZappOrgTestWidgetController1::SyncSetWidgetRegisterZappOrgTestWidgetController1(CpProxyZappOrgTestWidgetController1& aProxy)
+    : iService(aProxy)
 {
 }
 

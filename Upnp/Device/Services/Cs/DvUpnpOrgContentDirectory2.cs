@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderUpnpOrgContentDirectory2 : IDisposable
+    public class DvProviderUpnpOrgContentDirectory2 : DvProvider, IDisposable
     {
         [DllImport("DvUpnpOrgContentDirectory2")]
         static extern uint DvProviderUpnpOrgContentDirectory2Create(uint aDeviceHandle);
@@ -78,7 +78,6 @@ namespace Zapp
         private unsafe delegate int CallbackGetTransferProgress(IntPtr aPtr, uint aVersion, uint aTransferID, char** aTransferStatus, char** aTransferLength, char** aTransferTotal);
         private unsafe delegate int CallbackCreateReference(IntPtr aPtr, uint aVersion, char* aContainerID, char* aObjectID, char** aNewID);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackGetSearchCapabilities iCallbackGetSearchCapabilities;
         private CallbackGetSortCapabilities iCallbackGetSortCapabilities;

@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderUpnpOrgRenderingControl1 : IDisposable
+    public class DvProviderUpnpOrgRenderingControl1 : DvProvider, IDisposable
     {
         [DllImport("DvUpnpOrgRenderingControl1")]
         static extern uint DvProviderUpnpOrgRenderingControl1Create(uint aDeviceHandle);
@@ -124,7 +124,6 @@ namespace Zapp
         private unsafe delegate int CallbackGetLoudness(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aChannel, int* aCurrentLoudness);
         private unsafe delegate int CallbackSetLoudness(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aChannel, int aDesiredLoudness);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackListPresets iCallbackListPresets;
         private CallbackSelectPreset iCallbackSelectPreset;

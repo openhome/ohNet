@@ -209,43 +209,43 @@ THandle DvProviderZappOrgTestLights1Create(DvDeviceC aDevice)
 	return new DvProviderZappOrgTestLights1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvProviderZappOrgTestLights1Destroy(THandle aService)
+void DvProviderZappOrgTestLights1Destroy(THandle aProvider)
 {
-    delete reinterpret_cast<DvProviderZappOrgTestLights1C*>(aService);
+    delete reinterpret_cast<DvProviderZappOrgTestLights1C*>(aProvider);
 }
 
-void DvProviderZappOrgTestLights1EnableActionGetCount(THandle aService, CallbackTestLights1GetCount aCallback, void* aPtr)
+void DvProviderZappOrgTestLights1EnableActionGetCount(THandle aProvider, CallbackTestLights1GetCount aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestLights1C*>(aService)->EnableActionGetCount(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestLights1C*>(aProvider)->EnableActionGetCount(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestLights1EnableActionGetRoom(THandle aService, CallbackTestLights1GetRoom aCallback, void* aPtr)
+void DvProviderZappOrgTestLights1EnableActionGetRoom(THandle aProvider, CallbackTestLights1GetRoom aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestLights1C*>(aService)->EnableActionGetRoom(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestLights1C*>(aProvider)->EnableActionGetRoom(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestLights1EnableActionGetName(THandle aService, CallbackTestLights1GetName aCallback, void* aPtr)
+void DvProviderZappOrgTestLights1EnableActionGetName(THandle aProvider, CallbackTestLights1GetName aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestLights1C*>(aService)->EnableActionGetName(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestLights1C*>(aProvider)->EnableActionGetName(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestLights1EnableActionGetPosition(THandle aService, CallbackTestLights1GetPosition aCallback, void* aPtr)
+void DvProviderZappOrgTestLights1EnableActionGetPosition(THandle aProvider, CallbackTestLights1GetPosition aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestLights1C*>(aService)->EnableActionGetPosition(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestLights1C*>(aProvider)->EnableActionGetPosition(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestLights1EnableActionSetColor(THandle aService, CallbackTestLights1SetColor aCallback, void* aPtr)
+void DvProviderZappOrgTestLights1EnableActionSetColor(THandle aProvider, CallbackTestLights1SetColor aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestLights1C*>(aService)->EnableActionSetColor(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestLights1C*>(aProvider)->EnableActionSetColor(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestLights1EnableActionGetColor(THandle aService, CallbackTestLights1GetColor aCallback, void* aPtr)
+void DvProviderZappOrgTestLights1EnableActionGetColor(THandle aProvider, CallbackTestLights1GetColor aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestLights1C*>(aService)->EnableActionGetColor(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestLights1C*>(aProvider)->EnableActionGetColor(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestLights1EnableActionGetColorComponents(THandle aService, CallbackTestLights1GetColorComponents aCallback, void* aPtr)
+void DvProviderZappOrgTestLights1EnableActionGetColorComponents(THandle aProvider, CallbackTestLights1GetColorComponents aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestLights1C*>(aService)->EnableActionGetColorComponents(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestLights1C*>(aProvider)->EnableActionGetColorComponents(aCallback, aPtr);
 }
 

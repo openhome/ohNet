@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderUpnpOrgScheduledRecording1 : IDisposable
+    public class DvProviderUpnpOrgScheduledRecording1 : DvProvider, IDisposable
     {
         [DllImport("DvUpnpOrgScheduledRecording1")]
         static extern uint DvProviderUpnpOrgScheduledRecording1Create(uint aDeviceHandle);
@@ -73,7 +73,6 @@ namespace Zapp
         private unsafe delegate int CallbackGetRecordScheduleConflicts(IntPtr aPtr, uint aVersion, char* aRecordScheduleID, char** aRecordScheduleConflictIDList, uint* aUpdateID);
         private unsafe delegate int CallbackGetRecordTaskConflicts(IntPtr aPtr, uint aVersion, char* aRecordTaskID, char** aRecordTaskConflictIDList, uint* aUpdateID);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackGetSortCapabilities iCallbackGetSortCapabilities;
         private CallbackGetPropertyList iCallbackGetPropertyList;

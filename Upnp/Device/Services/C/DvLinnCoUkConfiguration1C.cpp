@@ -103,51 +103,51 @@ THandle DvProviderLinnCoUkConfiguration1Create(DvDeviceC aDevice)
 	return new DvProviderLinnCoUkConfiguration1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvProviderLinnCoUkConfiguration1Destroy(THandle aService)
+void DvProviderLinnCoUkConfiguration1Destroy(THandle aProvider)
 {
-    delete reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aService);
+    delete reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aProvider);
 }
 
-void DvProviderLinnCoUkConfiguration1EnableActionConfigurationXml(THandle aService, CallbackConfiguration1ConfigurationXml aCallback, void* aPtr)
+void DvProviderLinnCoUkConfiguration1EnableActionConfigurationXml(THandle aProvider, CallbackConfiguration1ConfigurationXml aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aService)->EnableActionConfigurationXml(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aProvider)->EnableActionConfigurationXml(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkConfiguration1EnableActionParameterXml(THandle aService, CallbackConfiguration1ParameterXml aCallback, void* aPtr)
+void DvProviderLinnCoUkConfiguration1EnableActionParameterXml(THandle aProvider, CallbackConfiguration1ParameterXml aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aService)->EnableActionParameterXml(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aProvider)->EnableActionParameterXml(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkConfiguration1EnableActionSetParameter(THandle aService, CallbackConfiguration1SetParameter aCallback, void* aPtr)
+void DvProviderLinnCoUkConfiguration1EnableActionSetParameter(THandle aProvider, CallbackConfiguration1SetParameter aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aService)->EnableActionSetParameter(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aProvider)->EnableActionSetParameter(aCallback, aPtr);
 }
 
-int32_t DvProviderLinnCoUkConfiguration1SetPropertyConfigurationXml(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkConfiguration1SetPropertyConfigurationXml(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aService)->SetPropertyConfigurationXml(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aProvider)->SetPropertyConfigurationXml(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkConfiguration1GetPropertyConfigurationXml(THandle aService, char** aValue)
+void DvProviderLinnCoUkConfiguration1GetPropertyConfigurationXml(THandle aProvider, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aService)->GetPropertyConfigurationXml(buf);
+    reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aProvider)->GetPropertyConfigurationXml(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderLinnCoUkConfiguration1SetPropertyParameterXml(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkConfiguration1SetPropertyParameterXml(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aService)->SetPropertyParameterXml(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aProvider)->SetPropertyParameterXml(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkConfiguration1GetPropertyParameterXml(THandle aService, char** aValue)
+void DvProviderLinnCoUkConfiguration1GetPropertyParameterXml(THandle aProvider, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aService)->GetPropertyParameterXml(buf);
+    reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aProvider)->GetPropertyParameterXml(buf);
     *aValue = (char*)buf.Transfer();
 }
 

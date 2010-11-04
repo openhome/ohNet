@@ -14,7 +14,7 @@ using namespace Zapp;
 class SyncGetSortCapabilitiesUpnpOrgScheduledRecording2Cpp : public SyncProxyAction
 {
 public:
-    SyncGetSortCapabilitiesUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, std::string& aSortCaps, uint32_t& aSortLevelCap);
+    SyncGetSortCapabilitiesUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, std::string& aSortCaps, uint32_t& aSortLevelCap);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgScheduledRecording2Cpp& iService;
@@ -22,8 +22,8 @@ private:
     uint32_t& iSortLevelCap;
 };
 
-SyncGetSortCapabilitiesUpnpOrgScheduledRecording2Cpp::SyncGetSortCapabilitiesUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, std::string& aSortCaps, uint32_t& aSortLevelCap)
-    : iService(aService)
+SyncGetSortCapabilitiesUpnpOrgScheduledRecording2Cpp::SyncGetSortCapabilitiesUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, std::string& aSortCaps, uint32_t& aSortLevelCap)
+    : iService(aProxy)
     , iSortCaps(aSortCaps)
     , iSortLevelCap(aSortLevelCap)
 {
@@ -38,15 +38,15 @@ void SyncGetSortCapabilitiesUpnpOrgScheduledRecording2Cpp::CompleteRequest(IAsyn
 class SyncGetPropertyListUpnpOrgScheduledRecording2Cpp : public SyncProxyAction
 {
 public:
-    SyncGetPropertyListUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, std::string& aPropertyList);
+    SyncGetPropertyListUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, std::string& aPropertyList);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgScheduledRecording2Cpp& iService;
     std::string& iPropertyList;
 };
 
-SyncGetPropertyListUpnpOrgScheduledRecording2Cpp::SyncGetPropertyListUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, std::string& aPropertyList)
-    : iService(aService)
+SyncGetPropertyListUpnpOrgScheduledRecording2Cpp::SyncGetPropertyListUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, std::string& aPropertyList)
+    : iService(aProxy)
     , iPropertyList(aPropertyList)
 {
 }
@@ -60,15 +60,15 @@ void SyncGetPropertyListUpnpOrgScheduledRecording2Cpp::CompleteRequest(IAsync& a
 class SyncGetAllowedValuesUpnpOrgScheduledRecording2Cpp : public SyncProxyAction
 {
 public:
-    SyncGetAllowedValuesUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, std::string& aPropertyInfo);
+    SyncGetAllowedValuesUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, std::string& aPropertyInfo);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgScheduledRecording2Cpp& iService;
     std::string& iPropertyInfo;
 };
 
-SyncGetAllowedValuesUpnpOrgScheduledRecording2Cpp::SyncGetAllowedValuesUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, std::string& aPropertyInfo)
-    : iService(aService)
+SyncGetAllowedValuesUpnpOrgScheduledRecording2Cpp::SyncGetAllowedValuesUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, std::string& aPropertyInfo)
+    : iService(aProxy)
     , iPropertyInfo(aPropertyInfo)
 {
 }
@@ -82,15 +82,15 @@ void SyncGetAllowedValuesUpnpOrgScheduledRecording2Cpp::CompleteRequest(IAsync& 
 class SyncGetStateUpdateIDUpnpOrgScheduledRecording2Cpp : public SyncProxyAction
 {
 public:
-    SyncGetStateUpdateIDUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, uint32_t& aId);
+    SyncGetStateUpdateIDUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, uint32_t& aId);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgScheduledRecording2Cpp& iService;
     uint32_t& iId;
 };
 
-SyncGetStateUpdateIDUpnpOrgScheduledRecording2Cpp::SyncGetStateUpdateIDUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, uint32_t& aId)
-    : iService(aService)
+SyncGetStateUpdateIDUpnpOrgScheduledRecording2Cpp::SyncGetStateUpdateIDUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, uint32_t& aId)
+    : iService(aProxy)
     , iId(aId)
 {
 }
@@ -104,7 +104,7 @@ void SyncGetStateUpdateIDUpnpOrgScheduledRecording2Cpp::CompleteRequest(IAsync& 
 class SyncBrowseRecordSchedulesUpnpOrgScheduledRecording2Cpp : public SyncProxyAction
 {
 public:
-    SyncBrowseRecordSchedulesUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, std::string& aResult, uint32_t& aNumberReturned, uint32_t& aTotalMatches, uint32_t& aUpdateID);
+    SyncBrowseRecordSchedulesUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, std::string& aResult, uint32_t& aNumberReturned, uint32_t& aTotalMatches, uint32_t& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgScheduledRecording2Cpp& iService;
@@ -114,8 +114,8 @@ private:
     uint32_t& iUpdateID;
 };
 
-SyncBrowseRecordSchedulesUpnpOrgScheduledRecording2Cpp::SyncBrowseRecordSchedulesUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, std::string& aResult, uint32_t& aNumberReturned, uint32_t& aTotalMatches, uint32_t& aUpdateID)
-    : iService(aService)
+SyncBrowseRecordSchedulesUpnpOrgScheduledRecording2Cpp::SyncBrowseRecordSchedulesUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, std::string& aResult, uint32_t& aNumberReturned, uint32_t& aTotalMatches, uint32_t& aUpdateID)
+    : iService(aProxy)
     , iResult(aResult)
     , iNumberReturned(aNumberReturned)
     , iTotalMatches(aTotalMatches)
@@ -132,7 +132,7 @@ void SyncBrowseRecordSchedulesUpnpOrgScheduledRecording2Cpp::CompleteRequest(IAs
 class SyncBrowseRecordTasksUpnpOrgScheduledRecording2Cpp : public SyncProxyAction
 {
 public:
-    SyncBrowseRecordTasksUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, std::string& aResult, uint32_t& aNumberReturned, uint32_t& aTotalMatches, uint32_t& aUpdateID);
+    SyncBrowseRecordTasksUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, std::string& aResult, uint32_t& aNumberReturned, uint32_t& aTotalMatches, uint32_t& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgScheduledRecording2Cpp& iService;
@@ -142,8 +142,8 @@ private:
     uint32_t& iUpdateID;
 };
 
-SyncBrowseRecordTasksUpnpOrgScheduledRecording2Cpp::SyncBrowseRecordTasksUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, std::string& aResult, uint32_t& aNumberReturned, uint32_t& aTotalMatches, uint32_t& aUpdateID)
-    : iService(aService)
+SyncBrowseRecordTasksUpnpOrgScheduledRecording2Cpp::SyncBrowseRecordTasksUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, std::string& aResult, uint32_t& aNumberReturned, uint32_t& aTotalMatches, uint32_t& aUpdateID)
+    : iService(aProxy)
     , iResult(aResult)
     , iNumberReturned(aNumberReturned)
     , iTotalMatches(aTotalMatches)
@@ -160,7 +160,7 @@ void SyncBrowseRecordTasksUpnpOrgScheduledRecording2Cpp::CompleteRequest(IAsync&
 class SyncCreateRecordScheduleUpnpOrgScheduledRecording2Cpp : public SyncProxyAction
 {
 public:
-    SyncCreateRecordScheduleUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, std::string& aRecordScheduleID, std::string& aResult, uint32_t& aUpdateID);
+    SyncCreateRecordScheduleUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, std::string& aRecordScheduleID, std::string& aResult, uint32_t& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgScheduledRecording2Cpp& iService;
@@ -169,8 +169,8 @@ private:
     uint32_t& iUpdateID;
 };
 
-SyncCreateRecordScheduleUpnpOrgScheduledRecording2Cpp::SyncCreateRecordScheduleUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, std::string& aRecordScheduleID, std::string& aResult, uint32_t& aUpdateID)
-    : iService(aService)
+SyncCreateRecordScheduleUpnpOrgScheduledRecording2Cpp::SyncCreateRecordScheduleUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, std::string& aRecordScheduleID, std::string& aResult, uint32_t& aUpdateID)
+    : iService(aProxy)
     , iRecordScheduleID(aRecordScheduleID)
     , iResult(aResult)
     , iUpdateID(aUpdateID)
@@ -186,14 +186,14 @@ void SyncCreateRecordScheduleUpnpOrgScheduledRecording2Cpp::CompleteRequest(IAsy
 class SyncDeleteRecordScheduleUpnpOrgScheduledRecording2Cpp : public SyncProxyAction
 {
 public:
-    SyncDeleteRecordScheduleUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService);
+    SyncDeleteRecordScheduleUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgScheduledRecording2Cpp& iService;
 };
 
-SyncDeleteRecordScheduleUpnpOrgScheduledRecording2Cpp::SyncDeleteRecordScheduleUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService)
-    : iService(aService)
+SyncDeleteRecordScheduleUpnpOrgScheduledRecording2Cpp::SyncDeleteRecordScheduleUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -206,7 +206,7 @@ void SyncDeleteRecordScheduleUpnpOrgScheduledRecording2Cpp::CompleteRequest(IAsy
 class SyncGetRecordScheduleUpnpOrgScheduledRecording2Cpp : public SyncProxyAction
 {
 public:
-    SyncGetRecordScheduleUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, std::string& aResult, uint32_t& aUpdateID);
+    SyncGetRecordScheduleUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, std::string& aResult, uint32_t& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgScheduledRecording2Cpp& iService;
@@ -214,8 +214,8 @@ private:
     uint32_t& iUpdateID;
 };
 
-SyncGetRecordScheduleUpnpOrgScheduledRecording2Cpp::SyncGetRecordScheduleUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, std::string& aResult, uint32_t& aUpdateID)
-    : iService(aService)
+SyncGetRecordScheduleUpnpOrgScheduledRecording2Cpp::SyncGetRecordScheduleUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, std::string& aResult, uint32_t& aUpdateID)
+    : iService(aProxy)
     , iResult(aResult)
     , iUpdateID(aUpdateID)
 {
@@ -230,14 +230,14 @@ void SyncGetRecordScheduleUpnpOrgScheduledRecording2Cpp::CompleteRequest(IAsync&
 class SyncEnableRecordScheduleUpnpOrgScheduledRecording2Cpp : public SyncProxyAction
 {
 public:
-    SyncEnableRecordScheduleUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService);
+    SyncEnableRecordScheduleUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgScheduledRecording2Cpp& iService;
 };
 
-SyncEnableRecordScheduleUpnpOrgScheduledRecording2Cpp::SyncEnableRecordScheduleUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService)
-    : iService(aService)
+SyncEnableRecordScheduleUpnpOrgScheduledRecording2Cpp::SyncEnableRecordScheduleUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -250,14 +250,14 @@ void SyncEnableRecordScheduleUpnpOrgScheduledRecording2Cpp::CompleteRequest(IAsy
 class SyncDisableRecordScheduleUpnpOrgScheduledRecording2Cpp : public SyncProxyAction
 {
 public:
-    SyncDisableRecordScheduleUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService);
+    SyncDisableRecordScheduleUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgScheduledRecording2Cpp& iService;
 };
 
-SyncDisableRecordScheduleUpnpOrgScheduledRecording2Cpp::SyncDisableRecordScheduleUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService)
-    : iService(aService)
+SyncDisableRecordScheduleUpnpOrgScheduledRecording2Cpp::SyncDisableRecordScheduleUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -270,14 +270,14 @@ void SyncDisableRecordScheduleUpnpOrgScheduledRecording2Cpp::CompleteRequest(IAs
 class SyncDeleteRecordTaskUpnpOrgScheduledRecording2Cpp : public SyncProxyAction
 {
 public:
-    SyncDeleteRecordTaskUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService);
+    SyncDeleteRecordTaskUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgScheduledRecording2Cpp& iService;
 };
 
-SyncDeleteRecordTaskUpnpOrgScheduledRecording2Cpp::SyncDeleteRecordTaskUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService)
-    : iService(aService)
+SyncDeleteRecordTaskUpnpOrgScheduledRecording2Cpp::SyncDeleteRecordTaskUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -290,7 +290,7 @@ void SyncDeleteRecordTaskUpnpOrgScheduledRecording2Cpp::CompleteRequest(IAsync& 
 class SyncGetRecordTaskUpnpOrgScheduledRecording2Cpp : public SyncProxyAction
 {
 public:
-    SyncGetRecordTaskUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, std::string& aResult, uint32_t& aUpdateID);
+    SyncGetRecordTaskUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, std::string& aResult, uint32_t& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgScheduledRecording2Cpp& iService;
@@ -298,8 +298,8 @@ private:
     uint32_t& iUpdateID;
 };
 
-SyncGetRecordTaskUpnpOrgScheduledRecording2Cpp::SyncGetRecordTaskUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, std::string& aResult, uint32_t& aUpdateID)
-    : iService(aService)
+SyncGetRecordTaskUpnpOrgScheduledRecording2Cpp::SyncGetRecordTaskUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, std::string& aResult, uint32_t& aUpdateID)
+    : iService(aProxy)
     , iResult(aResult)
     , iUpdateID(aUpdateID)
 {
@@ -314,14 +314,14 @@ void SyncGetRecordTaskUpnpOrgScheduledRecording2Cpp::CompleteRequest(IAsync& aAs
 class SyncEnableRecordTaskUpnpOrgScheduledRecording2Cpp : public SyncProxyAction
 {
 public:
-    SyncEnableRecordTaskUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService);
+    SyncEnableRecordTaskUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgScheduledRecording2Cpp& iService;
 };
 
-SyncEnableRecordTaskUpnpOrgScheduledRecording2Cpp::SyncEnableRecordTaskUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService)
-    : iService(aService)
+SyncEnableRecordTaskUpnpOrgScheduledRecording2Cpp::SyncEnableRecordTaskUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -334,14 +334,14 @@ void SyncEnableRecordTaskUpnpOrgScheduledRecording2Cpp::CompleteRequest(IAsync& 
 class SyncDisableRecordTaskUpnpOrgScheduledRecording2Cpp : public SyncProxyAction
 {
 public:
-    SyncDisableRecordTaskUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService);
+    SyncDisableRecordTaskUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgScheduledRecording2Cpp& iService;
 };
 
-SyncDisableRecordTaskUpnpOrgScheduledRecording2Cpp::SyncDisableRecordTaskUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService)
-    : iService(aService)
+SyncDisableRecordTaskUpnpOrgScheduledRecording2Cpp::SyncDisableRecordTaskUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -354,14 +354,14 @@ void SyncDisableRecordTaskUpnpOrgScheduledRecording2Cpp::CompleteRequest(IAsync&
 class SyncResetRecordTaskUpnpOrgScheduledRecording2Cpp : public SyncProxyAction
 {
 public:
-    SyncResetRecordTaskUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService);
+    SyncResetRecordTaskUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgScheduledRecording2Cpp& iService;
 };
 
-SyncResetRecordTaskUpnpOrgScheduledRecording2Cpp::SyncResetRecordTaskUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService)
-    : iService(aService)
+SyncResetRecordTaskUpnpOrgScheduledRecording2Cpp::SyncResetRecordTaskUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -374,7 +374,7 @@ void SyncResetRecordTaskUpnpOrgScheduledRecording2Cpp::CompleteRequest(IAsync& a
 class SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording2Cpp : public SyncProxyAction
 {
 public:
-    SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, std::string& aRecordScheduleConflictIDList, uint32_t& aUpdateID);
+    SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, std::string& aRecordScheduleConflictIDList, uint32_t& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgScheduledRecording2Cpp& iService;
@@ -382,8 +382,8 @@ private:
     uint32_t& iUpdateID;
 };
 
-SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording2Cpp::SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, std::string& aRecordScheduleConflictIDList, uint32_t& aUpdateID)
-    : iService(aService)
+SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording2Cpp::SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, std::string& aRecordScheduleConflictIDList, uint32_t& aUpdateID)
+    : iService(aProxy)
     , iRecordScheduleConflictIDList(aRecordScheduleConflictIDList)
     , iUpdateID(aUpdateID)
 {
@@ -398,7 +398,7 @@ void SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording2Cpp::CompleteReques
 class SyncGetRecordTaskConflictsUpnpOrgScheduledRecording2Cpp : public SyncProxyAction
 {
 public:
-    SyncGetRecordTaskConflictsUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, std::string& aRecordTaskConflictIDList, uint32_t& aUpdateID);
+    SyncGetRecordTaskConflictsUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, std::string& aRecordTaskConflictIDList, uint32_t& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgScheduledRecording2Cpp& iService;
@@ -406,8 +406,8 @@ private:
     uint32_t& iUpdateID;
 };
 
-SyncGetRecordTaskConflictsUpnpOrgScheduledRecording2Cpp::SyncGetRecordTaskConflictsUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aService, std::string& aRecordTaskConflictIDList, uint32_t& aUpdateID)
-    : iService(aService)
+SyncGetRecordTaskConflictsUpnpOrgScheduledRecording2Cpp::SyncGetRecordTaskConflictsUpnpOrgScheduledRecording2Cpp(CpProxyUpnpOrgScheduledRecording2Cpp& aProxy, std::string& aRecordTaskConflictIDList, uint32_t& aUpdateID)
+    : iService(aProxy)
     , iRecordTaskConflictIDList(aRecordTaskConflictIDList)
     , iUpdateID(aUpdateID)
 {

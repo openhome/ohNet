@@ -350,8 +350,10 @@ TBool CpListenerMsearch::LogUdn(const Brx& aUuid, const Brx& aLocation)
 #if 0
         Print("Discarding advertisement from ");
         Print(aUuid);
+        Endpoint::EndpointBuf buf;
+        endpt.GetEndpoint(buf);
         TIpAddress addr = endpt.Address();
-        Print(" at %u.%u.%u.%u:%u\n", addr&0xff, ((addr>>8)&0xff), ((addr>>16)&0xff), (addr>>24), endpt.Port());
+        Print(" at %s\n", buf.Ptr());
 #endif
         return false;
     }

@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderLinnCoUkComponent1 : IDisposable
+    public class DvProviderLinnCoUkComponent1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkComponent1")]
         static extern uint DvProviderLinnCoUkComponent1Create(uint aDeviceHandle);
@@ -64,7 +64,6 @@ namespace Zapp
         private unsafe delegate int CallbackEthernetLinkConnected(IntPtr aPtr, uint aVersion, int* aaLinkConnected);
         private unsafe delegate int CallbackLocate(IntPtr aPtr, uint aVersion);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackAmplifierEnabled iCallbackAmplifierEnabled;
         private CallbackSetAmplifierEnabled iCallbackSetAmplifierEnabled;

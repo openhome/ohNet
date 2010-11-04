@@ -14,15 +14,15 @@ using namespace Zapp;
 class SyncGetCountZappOrgTestLights1Cpp : public SyncProxyAction
 {
 public:
-    SyncGetCountZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aService, uint32_t& aCount);
+    SyncGetCountZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aProxy, uint32_t& aCount);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestLights1Cpp& iService;
     uint32_t& iCount;
 };
 
-SyncGetCountZappOrgTestLights1Cpp::SyncGetCountZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aService, uint32_t& aCount)
-    : iService(aService)
+SyncGetCountZappOrgTestLights1Cpp::SyncGetCountZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aProxy, uint32_t& aCount)
+    : iService(aProxy)
     , iCount(aCount)
 {
 }
@@ -36,15 +36,15 @@ void SyncGetCountZappOrgTestLights1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncGetRoomZappOrgTestLights1Cpp : public SyncProxyAction
 {
 public:
-    SyncGetRoomZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aService, std::string& aRoomName);
+    SyncGetRoomZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aProxy, std::string& aRoomName);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestLights1Cpp& iService;
     std::string& iRoomName;
 };
 
-SyncGetRoomZappOrgTestLights1Cpp::SyncGetRoomZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aService, std::string& aRoomName)
-    : iService(aService)
+SyncGetRoomZappOrgTestLights1Cpp::SyncGetRoomZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aProxy, std::string& aRoomName)
+    : iService(aProxy)
     , iRoomName(aRoomName)
 {
 }
@@ -58,15 +58,15 @@ void SyncGetRoomZappOrgTestLights1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncGetNameZappOrgTestLights1Cpp : public SyncProxyAction
 {
 public:
-    SyncGetNameZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aService, std::string& aFriendlyName);
+    SyncGetNameZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aProxy, std::string& aFriendlyName);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestLights1Cpp& iService;
     std::string& iFriendlyName;
 };
 
-SyncGetNameZappOrgTestLights1Cpp::SyncGetNameZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aService, std::string& aFriendlyName)
-    : iService(aService)
+SyncGetNameZappOrgTestLights1Cpp::SyncGetNameZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aProxy, std::string& aFriendlyName)
+    : iService(aProxy)
     , iFriendlyName(aFriendlyName)
 {
 }
@@ -80,7 +80,7 @@ void SyncGetNameZappOrgTestLights1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncGetPositionZappOrgTestLights1Cpp : public SyncProxyAction
 {
 public:
-    SyncGetPositionZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aService, uint32_t& aX, uint32_t& aY, uint32_t& aZ);
+    SyncGetPositionZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aProxy, uint32_t& aX, uint32_t& aY, uint32_t& aZ);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestLights1Cpp& iService;
@@ -89,8 +89,8 @@ private:
     uint32_t& iZ;
 };
 
-SyncGetPositionZappOrgTestLights1Cpp::SyncGetPositionZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aService, uint32_t& aX, uint32_t& aY, uint32_t& aZ)
-    : iService(aService)
+SyncGetPositionZappOrgTestLights1Cpp::SyncGetPositionZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aProxy, uint32_t& aX, uint32_t& aY, uint32_t& aZ)
+    : iService(aProxy)
     , iX(aX)
     , iY(aY)
     , iZ(aZ)
@@ -106,14 +106,14 @@ void SyncGetPositionZappOrgTestLights1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetColorZappOrgTestLights1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetColorZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aService);
+    SyncSetColorZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestLights1Cpp& iService;
 };
 
-SyncSetColorZappOrgTestLights1Cpp::SyncSetColorZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aService)
-    : iService(aService)
+SyncSetColorZappOrgTestLights1Cpp::SyncSetColorZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -126,15 +126,15 @@ void SyncSetColorZappOrgTestLights1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncGetColorZappOrgTestLights1Cpp : public SyncProxyAction
 {
 public:
-    SyncGetColorZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aService, uint32_t& aColor);
+    SyncGetColorZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aProxy, uint32_t& aColor);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestLights1Cpp& iService;
     uint32_t& iColor;
 };
 
-SyncGetColorZappOrgTestLights1Cpp::SyncGetColorZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aService, uint32_t& aColor)
-    : iService(aService)
+SyncGetColorZappOrgTestLights1Cpp::SyncGetColorZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aProxy, uint32_t& aColor)
+    : iService(aProxy)
     , iColor(aColor)
 {
 }
@@ -148,7 +148,7 @@ void SyncGetColorZappOrgTestLights1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncGetColorComponentsZappOrgTestLights1Cpp : public SyncProxyAction
 {
 public:
-    SyncGetColorComponentsZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aService, uint32_t& aBrightness, uint32_t& aRed, uint32_t& aGreen, uint32_t& aBlue);
+    SyncGetColorComponentsZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aProxy, uint32_t& aBrightness, uint32_t& aRed, uint32_t& aGreen, uint32_t& aBlue);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestLights1Cpp& iService;
@@ -158,8 +158,8 @@ private:
     uint32_t& iBlue;
 };
 
-SyncGetColorComponentsZappOrgTestLights1Cpp::SyncGetColorComponentsZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aService, uint32_t& aBrightness, uint32_t& aRed, uint32_t& aGreen, uint32_t& aBlue)
-    : iService(aService)
+SyncGetColorComponentsZappOrgTestLights1Cpp::SyncGetColorComponentsZappOrgTestLights1Cpp(CpProxyZappOrgTestLights1Cpp& aProxy, uint32_t& aBrightness, uint32_t& aRed, uint32_t& aGreen, uint32_t& aBlue)
+    : iService(aProxy)
     , iBrightness(aBrightness)
     , iRed(aRed)
     , iGreen(aGreen)

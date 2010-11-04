@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderLinnCoUkTime1 : IDisposable
+    public class DvProviderLinnCoUkTime1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkTime1")]
         static extern uint DvProviderLinnCoUkTime1Create(uint aDeviceHandle);
@@ -30,7 +30,6 @@ namespace Zapp
 
         private unsafe delegate int CallbackTime(IntPtr aPtr, uint aVersion, uint* aaTrackCount, uint* aaDuration, uint* aaSeconds);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackTime iCallbackTime;
 

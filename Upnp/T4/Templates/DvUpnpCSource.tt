@@ -154,76 +154,76 @@ THandle <#=className#>Create(DvDeviceC aDevice)
 	return new <#=className#>C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void <#=className#>Destroy(THandle aService)
+void <#=className#>Destroy(THandle aProvider)
 {
-    delete reinterpret_cast<<#=className#>C*>(aService);
+    delete reinterpret_cast<<#=className#>C*>(aProvider);
 }
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-void <#=className#>EnableAction<#=a.name#>(THandle aService, <#=callbackPrefix#><#=a.name#> aCallback, void* aPtr)
+void <#=className#>EnableAction<#=a.name#>(THandle aProvider, <#=callbackPrefix#><#=a.name#> aCallback, void* aPtr)
 {
-    reinterpret_cast<<#=className#>C*>(aService)->EnableAction<#=a.name#>(aCallback, aPtr);
+    reinterpret_cast<<#=className#>C*>(aProvider)->EnableAction<#=a.name#>(aCallback, aPtr);
 }
 <#  } #>
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
 
-int32_t <#=className#>SetProperty<#=s.name#>(THandle aService, <#=PropertyInArgs(s)#>, uint32_t* aChanged)
+int32_t <#=className#>SetProperty<#=s.name#>(THandle aProvider, <#=PropertyInArgs(s)#>, uint32_t* aChanged)
 {
 <#      if (s.type=="bin.base64") #>
 <#      { #>
     Brh buf;
     buf.Set((const TByte*)aValue, aValueLen);
-    *aChanged = (reinterpret_cast<<#=className#>C*>(aService)->SetProperty<#=s.name#>(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<<#=className#>C*>(aProvider)->SetProperty<#=s.name#>(buf)? 1 : 0);
 <#      } #>
 <#      else if (s.type=="string" || s.type=="uri") #>
 <#      { #>
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<<#=className#>C*>(aService)->SetProperty<#=s.name#>(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<<#=className#>C*>(aProvider)->SetProperty<#=s.name#>(buf)? 1 : 0);
 <#      } #>
 <#      else if (s.type=="boolean") #>
 <#      { #>
-    *aChanged = (reinterpret_cast<<#=className#>C*>(aService)->SetProperty<#=s.name#>((aValue!=0))? 1 : 0);
+    *aChanged = (reinterpret_cast<<#=className#>C*>(aProvider)->SetProperty<#=s.name#>((aValue!=0))? 1 : 0);
 <#      } #>
 <#      else #>
 <#      { #>
-    *aChanged = (reinterpret_cast<<#=className#>C*>(aService)->SetProperty<#=s.name#>(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<<#=className#>C*>(aProvider)->SetProperty<#=s.name#>(aValue)? 1 : 0);
 <#      } #>
     return 0;
 }
 
-void <#=className#>GetProperty<#=s.name#>(THandle aService, <#=PropertyOutArgs(s)#>)
+void <#=className#>GetProperty<#=s.name#>(THandle aProvider, <#=PropertyOutArgs(s)#>)
 {
 <#      if (s.type=="bin.base64") #>
 <#      { #>
     Brh buf;
-    reinterpret_cast<<#=className#>C*>(aService)->GetProperty<#=s.name#>(buf);
+    reinterpret_cast<<#=className#>C*>(aProvider)->GetProperty<#=s.name#>(buf);
     *aValueLen = buf.Bytes();
     *aValue = (char*)buf.Extract();
 <#      } #>
 <#      else if (s.type=="string" || s.type=="uri") #>
 <#      { #>
     Brhz buf;
-    reinterpret_cast<<#=className#>C*>(aService)->GetProperty<#=s.name#>(buf);
+    reinterpret_cast<<#=className#>C*>(aProvider)->GetProperty<#=s.name#>(buf);
     *aValue = (char*)buf.Transfer();
 <#      } #>
 <#      else if (s.type=="boolean") #>
 <#      { #>
     TBool val;
-    reinterpret_cast<<#=className#>C*>(aService)->GetProperty<#=s.name#>(val);
+    reinterpret_cast<<#=className#>C*>(aProvider)->GetProperty<#=s.name#>(val);
     *aValue = (val? 1 : 0);
 <#      } #>
 <#      else if (s.type=="i1" || s.type=="i2" || s.type=="i4") #>
 <#      { #>
     int32_t val;
-    reinterpret_cast<<#=className#>C*>(aService)->GetProperty<#=s.name#>(val);
+    reinterpret_cast<<#=className#>C*>(aProvider)->GetProperty<#=s.name#>(val);
     *aValue = val;
 <#      } #>
 <#      else #>
 <#      { #>
     uint32_t val;
-    reinterpret_cast<<#=className#>C*>(aService)->GetProperty<#=s.name#>(val);
+    reinterpret_cast<<#=className#>C*>(aProvider)->GetProperty<#=s.name#>(val);
     *aValue = val;
 <#      } #>
 }

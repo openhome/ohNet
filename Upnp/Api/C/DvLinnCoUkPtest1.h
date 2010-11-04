@@ -13,11 +13,11 @@ typedef int32_t (*CallbackPtest1LedsOn)(void* aPtr, uint32_t aVersion);
 typedef int32_t (*CallbackPtest1LedsOff)(void* aPtr, uint32_t aVersion);
 
 DllExport THandle DvProviderLinnCoUkPtest1Create(DvDeviceC aDevice);
-DllExport void DvProviderLinnCoUkPtest1Destroy(THandle aService);
+DllExport void DvProviderLinnCoUkPtest1Destroy(THandle aProvider);
 
-DllExport void DvProviderLinnCoUkPtest1EnableActionTestComPort(THandle aService, CallbackPtest1TestComPort aCallback, void* aPtr);
-DllExport void DvProviderLinnCoUkPtest1EnableActionLedsOn(THandle aService, CallbackPtest1LedsOn aCallback, void* aPtr);
-DllExport void DvProviderLinnCoUkPtest1EnableActionLedsOff(THandle aService, CallbackPtest1LedsOff aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkPtest1EnableActionTestComPort(THandle aProvider, CallbackPtest1TestComPort aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkPtest1EnableActionLedsOn(THandle aProvider, CallbackPtest1LedsOn aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkPtest1EnableActionLedsOff(THandle aProvider, CallbackPtest1LedsOff aCallback, void* aPtr);
 
 
 #ifdef __cplusplus

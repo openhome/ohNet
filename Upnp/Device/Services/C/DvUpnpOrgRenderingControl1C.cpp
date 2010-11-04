@@ -838,197 +838,197 @@ THandle DvProviderUpnpOrgRenderingControl1Create(DvDeviceC aDevice)
 	return new DvProviderUpnpOrgRenderingControl1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvProviderUpnpOrgRenderingControl1Destroy(THandle aService)
+void DvProviderUpnpOrgRenderingControl1Destroy(THandle aProvider)
 {
-    delete reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService);
+    delete reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionListPresets(THandle aService, CallbackRenderingControl1ListPresets aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionListPresets(THandle aProvider, CallbackRenderingControl1ListPresets aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionListPresets(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionListPresets(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionSelectPreset(THandle aService, CallbackRenderingControl1SelectPreset aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionSelectPreset(THandle aProvider, CallbackRenderingControl1SelectPreset aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionSelectPreset(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionSelectPreset(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionGetBrightness(THandle aService, CallbackRenderingControl1GetBrightness aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionGetBrightness(THandle aProvider, CallbackRenderingControl1GetBrightness aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionGetBrightness(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionGetBrightness(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionSetBrightness(THandle aService, CallbackRenderingControl1SetBrightness aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionSetBrightness(THandle aProvider, CallbackRenderingControl1SetBrightness aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionSetBrightness(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionSetBrightness(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionGetContrast(THandle aService, CallbackRenderingControl1GetContrast aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionGetContrast(THandle aProvider, CallbackRenderingControl1GetContrast aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionGetContrast(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionGetContrast(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionSetContrast(THandle aService, CallbackRenderingControl1SetContrast aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionSetContrast(THandle aProvider, CallbackRenderingControl1SetContrast aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionSetContrast(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionSetContrast(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionGetSharpness(THandle aService, CallbackRenderingControl1GetSharpness aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionGetSharpness(THandle aProvider, CallbackRenderingControl1GetSharpness aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionGetSharpness(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionGetSharpness(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionSetSharpness(THandle aService, CallbackRenderingControl1SetSharpness aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionSetSharpness(THandle aProvider, CallbackRenderingControl1SetSharpness aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionSetSharpness(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionSetSharpness(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionGetRedVideoGain(THandle aService, CallbackRenderingControl1GetRedVideoGain aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionGetRedVideoGain(THandle aProvider, CallbackRenderingControl1GetRedVideoGain aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionGetRedVideoGain(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionGetRedVideoGain(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionSetRedVideoGain(THandle aService, CallbackRenderingControl1SetRedVideoGain aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionSetRedVideoGain(THandle aProvider, CallbackRenderingControl1SetRedVideoGain aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionSetRedVideoGain(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionSetRedVideoGain(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionGetGreenVideoGain(THandle aService, CallbackRenderingControl1GetGreenVideoGain aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionGetGreenVideoGain(THandle aProvider, CallbackRenderingControl1GetGreenVideoGain aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionGetGreenVideoGain(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionGetGreenVideoGain(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionSetGreenVideoGain(THandle aService, CallbackRenderingControl1SetGreenVideoGain aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionSetGreenVideoGain(THandle aProvider, CallbackRenderingControl1SetGreenVideoGain aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionSetGreenVideoGain(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionSetGreenVideoGain(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionGetBlueVideoGain(THandle aService, CallbackRenderingControl1GetBlueVideoGain aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionGetBlueVideoGain(THandle aProvider, CallbackRenderingControl1GetBlueVideoGain aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionGetBlueVideoGain(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionGetBlueVideoGain(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionSetBlueVideoGain(THandle aService, CallbackRenderingControl1SetBlueVideoGain aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionSetBlueVideoGain(THandle aProvider, CallbackRenderingControl1SetBlueVideoGain aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionSetBlueVideoGain(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionSetBlueVideoGain(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionGetRedVideoBlackLevel(THandle aService, CallbackRenderingControl1GetRedVideoBlackLevel aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionGetRedVideoBlackLevel(THandle aProvider, CallbackRenderingControl1GetRedVideoBlackLevel aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionGetRedVideoBlackLevel(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionGetRedVideoBlackLevel(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionSetRedVideoBlackLevel(THandle aService, CallbackRenderingControl1SetRedVideoBlackLevel aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionSetRedVideoBlackLevel(THandle aProvider, CallbackRenderingControl1SetRedVideoBlackLevel aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionSetRedVideoBlackLevel(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionSetRedVideoBlackLevel(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionGetGreenVideoBlackLevel(THandle aService, CallbackRenderingControl1GetGreenVideoBlackLevel aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionGetGreenVideoBlackLevel(THandle aProvider, CallbackRenderingControl1GetGreenVideoBlackLevel aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionGetGreenVideoBlackLevel(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionGetGreenVideoBlackLevel(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionSetGreenVideoBlackLevel(THandle aService, CallbackRenderingControl1SetGreenVideoBlackLevel aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionSetGreenVideoBlackLevel(THandle aProvider, CallbackRenderingControl1SetGreenVideoBlackLevel aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionSetGreenVideoBlackLevel(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionSetGreenVideoBlackLevel(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionGetBlueVideoBlackLevel(THandle aService, CallbackRenderingControl1GetBlueVideoBlackLevel aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionGetBlueVideoBlackLevel(THandle aProvider, CallbackRenderingControl1GetBlueVideoBlackLevel aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionGetBlueVideoBlackLevel(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionGetBlueVideoBlackLevel(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionSetBlueVideoBlackLevel(THandle aService, CallbackRenderingControl1SetBlueVideoBlackLevel aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionSetBlueVideoBlackLevel(THandle aProvider, CallbackRenderingControl1SetBlueVideoBlackLevel aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionSetBlueVideoBlackLevel(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionSetBlueVideoBlackLevel(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionGetColorTemperature(THandle aService, CallbackRenderingControl1GetColorTemperature aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionGetColorTemperature(THandle aProvider, CallbackRenderingControl1GetColorTemperature aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionGetColorTemperature(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionGetColorTemperature(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionSetColorTemperature(THandle aService, CallbackRenderingControl1SetColorTemperature aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionSetColorTemperature(THandle aProvider, CallbackRenderingControl1SetColorTemperature aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionSetColorTemperature(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionSetColorTemperature(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionGetHorizontalKeystone(THandle aService, CallbackRenderingControl1GetHorizontalKeystone aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionGetHorizontalKeystone(THandle aProvider, CallbackRenderingControl1GetHorizontalKeystone aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionGetHorizontalKeystone(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionGetHorizontalKeystone(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionSetHorizontalKeystone(THandle aService, CallbackRenderingControl1SetHorizontalKeystone aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionSetHorizontalKeystone(THandle aProvider, CallbackRenderingControl1SetHorizontalKeystone aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionSetHorizontalKeystone(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionSetHorizontalKeystone(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionGetVerticalKeystone(THandle aService, CallbackRenderingControl1GetVerticalKeystone aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionGetVerticalKeystone(THandle aProvider, CallbackRenderingControl1GetVerticalKeystone aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionGetVerticalKeystone(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionGetVerticalKeystone(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionSetVerticalKeystone(THandle aService, CallbackRenderingControl1SetVerticalKeystone aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionSetVerticalKeystone(THandle aProvider, CallbackRenderingControl1SetVerticalKeystone aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionSetVerticalKeystone(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionSetVerticalKeystone(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionGetMute(THandle aService, CallbackRenderingControl1GetMute aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionGetMute(THandle aProvider, CallbackRenderingControl1GetMute aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionGetMute(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionGetMute(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionSetMute(THandle aService, CallbackRenderingControl1SetMute aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionSetMute(THandle aProvider, CallbackRenderingControl1SetMute aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionSetMute(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionSetMute(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionGetVolume(THandle aService, CallbackRenderingControl1GetVolume aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionGetVolume(THandle aProvider, CallbackRenderingControl1GetVolume aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionGetVolume(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionGetVolume(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionSetVolume(THandle aService, CallbackRenderingControl1SetVolume aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionSetVolume(THandle aProvider, CallbackRenderingControl1SetVolume aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionSetVolume(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionSetVolume(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionGetVolumeDB(THandle aService, CallbackRenderingControl1GetVolumeDB aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionGetVolumeDB(THandle aProvider, CallbackRenderingControl1GetVolumeDB aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionGetVolumeDB(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionGetVolumeDB(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionSetVolumeDB(THandle aService, CallbackRenderingControl1SetVolumeDB aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionSetVolumeDB(THandle aProvider, CallbackRenderingControl1SetVolumeDB aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionSetVolumeDB(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionSetVolumeDB(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionGetVolumeDBRange(THandle aService, CallbackRenderingControl1GetVolumeDBRange aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionGetVolumeDBRange(THandle aProvider, CallbackRenderingControl1GetVolumeDBRange aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionGetVolumeDBRange(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionGetVolumeDBRange(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionGetLoudness(THandle aService, CallbackRenderingControl1GetLoudness aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionGetLoudness(THandle aProvider, CallbackRenderingControl1GetLoudness aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionGetLoudness(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionGetLoudness(aCallback, aPtr);
 }
 
-void DvProviderUpnpOrgRenderingControl1EnableActionSetLoudness(THandle aService, CallbackRenderingControl1SetLoudness aCallback, void* aPtr)
+void DvProviderUpnpOrgRenderingControl1EnableActionSetLoudness(THandle aProvider, CallbackRenderingControl1SetLoudness aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->EnableActionSetLoudness(aCallback, aPtr);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->EnableActionSetLoudness(aCallback, aPtr);
 }
 
-int32_t DvProviderUpnpOrgRenderingControl1SetPropertyLastChange(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderUpnpOrgRenderingControl1SetPropertyLastChange(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->SetPropertyLastChange(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->SetPropertyLastChange(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderUpnpOrgRenderingControl1GetPropertyLastChange(THandle aService, char** aValue)
+void DvProviderUpnpOrgRenderingControl1GetPropertyLastChange(THandle aProvider, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aService)->GetPropertyLastChange(buf);
+    reinterpret_cast<DvProviderUpnpOrgRenderingControl1C*>(aProvider)->GetPropertyLastChange(buf);
     *aValue = (char*)buf.Transfer();
 }
 

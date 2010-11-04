@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderLinnCoUkDebug2 : IDisposable
+    public class DvProviderLinnCoUkDebug2 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkDebug2")]
         static extern uint DvProviderLinnCoUkDebug2Create(uint aDeviceHandle);
@@ -24,7 +24,6 @@ namespace Zapp
         private unsafe delegate int CallbackDebugLevel(IntPtr aPtr, uint aVersion, uint* aaDebugLevel);
         private unsafe delegate int CallbackMemWrite(IntPtr aPtr, uint aVersion, uint aaMemAddress, char* aaMemData, int aaMemDataLen);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackSetDebugLevel iCallbackSetDebugLevel;
         private CallbackDebugLevel iCallbackDebugLevel;

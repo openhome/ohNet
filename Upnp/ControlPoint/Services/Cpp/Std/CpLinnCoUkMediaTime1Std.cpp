@@ -14,15 +14,15 @@ using namespace Zapp;
 class SyncSecondsLinnCoUkMediaTime1Cpp : public SyncProxyAction
 {
 public:
-    SyncSecondsLinnCoUkMediaTime1Cpp(CpProxyLinnCoUkMediaTime1Cpp& aService, uint32_t& aaSeconds);
+    SyncSecondsLinnCoUkMediaTime1Cpp(CpProxyLinnCoUkMediaTime1Cpp& aProxy, uint32_t& aaSeconds);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkMediaTime1Cpp& iService;
     uint32_t& iaSeconds;
 };
 
-SyncSecondsLinnCoUkMediaTime1Cpp::SyncSecondsLinnCoUkMediaTime1Cpp(CpProxyLinnCoUkMediaTime1Cpp& aService, uint32_t& aaSeconds)
-    : iService(aService)
+SyncSecondsLinnCoUkMediaTime1Cpp::SyncSecondsLinnCoUkMediaTime1Cpp(CpProxyLinnCoUkMediaTime1Cpp& aProxy, uint32_t& aaSeconds)
+    : iService(aProxy)
     , iaSeconds(aaSeconds)
 {
 }

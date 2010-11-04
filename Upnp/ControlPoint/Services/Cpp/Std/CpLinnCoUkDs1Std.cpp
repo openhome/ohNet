@@ -14,14 +14,14 @@ using namespace Zapp;
 class SyncPlayLinnCoUkDs1Cpp : public SyncProxyAction
 {
 public:
-    SyncPlayLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aService);
+    SyncPlayLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDs1Cpp& iService;
 };
 
-SyncPlayLinnCoUkDs1Cpp::SyncPlayLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aService)
-    : iService(aService)
+SyncPlayLinnCoUkDs1Cpp::SyncPlayLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -34,14 +34,14 @@ void SyncPlayLinnCoUkDs1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncPauseLinnCoUkDs1Cpp : public SyncProxyAction
 {
 public:
-    SyncPauseLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aService);
+    SyncPauseLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDs1Cpp& iService;
 };
 
-SyncPauseLinnCoUkDs1Cpp::SyncPauseLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aService)
-    : iService(aService)
+SyncPauseLinnCoUkDs1Cpp::SyncPauseLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -54,14 +54,14 @@ void SyncPauseLinnCoUkDs1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncStopLinnCoUkDs1Cpp : public SyncProxyAction
 {
 public:
-    SyncStopLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aService);
+    SyncStopLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDs1Cpp& iService;
 };
 
-SyncStopLinnCoUkDs1Cpp::SyncStopLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aService)
-    : iService(aService)
+SyncStopLinnCoUkDs1Cpp::SyncStopLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -74,14 +74,14 @@ void SyncStopLinnCoUkDs1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSeekSecondAbsoluteLinnCoUkDs1Cpp : public SyncProxyAction
 {
 public:
-    SyncSeekSecondAbsoluteLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aService);
+    SyncSeekSecondAbsoluteLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDs1Cpp& iService;
 };
 
-SyncSeekSecondAbsoluteLinnCoUkDs1Cpp::SyncSeekSecondAbsoluteLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aService)
-    : iService(aService)
+SyncSeekSecondAbsoluteLinnCoUkDs1Cpp::SyncSeekSecondAbsoluteLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -94,14 +94,14 @@ void SyncSeekSecondAbsoluteLinnCoUkDs1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSeekSecondRelativeLinnCoUkDs1Cpp : public SyncProxyAction
 {
 public:
-    SyncSeekSecondRelativeLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aService);
+    SyncSeekSecondRelativeLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDs1Cpp& iService;
 };
 
-SyncSeekSecondRelativeLinnCoUkDs1Cpp::SyncSeekSecondRelativeLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aService)
-    : iService(aService)
+SyncSeekSecondRelativeLinnCoUkDs1Cpp::SyncSeekSecondRelativeLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -114,14 +114,14 @@ void SyncSeekSecondRelativeLinnCoUkDs1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSeekTrackIdLinnCoUkDs1Cpp : public SyncProxyAction
 {
 public:
-    SyncSeekTrackIdLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aService);
+    SyncSeekTrackIdLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDs1Cpp& iService;
 };
 
-SyncSeekTrackIdLinnCoUkDs1Cpp::SyncSeekTrackIdLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aService)
-    : iService(aService)
+SyncSeekTrackIdLinnCoUkDs1Cpp::SyncSeekTrackIdLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -134,14 +134,14 @@ void SyncSeekTrackIdLinnCoUkDs1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSeekTrackAbsoluteLinnCoUkDs1Cpp : public SyncProxyAction
 {
 public:
-    SyncSeekTrackAbsoluteLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aService);
+    SyncSeekTrackAbsoluteLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDs1Cpp& iService;
 };
 
-SyncSeekTrackAbsoluteLinnCoUkDs1Cpp::SyncSeekTrackAbsoluteLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aService)
-    : iService(aService)
+SyncSeekTrackAbsoluteLinnCoUkDs1Cpp::SyncSeekTrackAbsoluteLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -154,14 +154,14 @@ void SyncSeekTrackAbsoluteLinnCoUkDs1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSeekTrackRelativeLinnCoUkDs1Cpp : public SyncProxyAction
 {
 public:
-    SyncSeekTrackRelativeLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aService);
+    SyncSeekTrackRelativeLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDs1Cpp& iService;
 };
 
-SyncSeekTrackRelativeLinnCoUkDs1Cpp::SyncSeekTrackRelativeLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aService)
-    : iService(aService)
+SyncSeekTrackRelativeLinnCoUkDs1Cpp::SyncSeekTrackRelativeLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -174,7 +174,7 @@ void SyncSeekTrackRelativeLinnCoUkDs1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncStateLinnCoUkDs1Cpp : public SyncProxyAction
 {
 public:
-    SyncStateLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aService, std::string& aaTransportState, uint32_t& aaTrackDuration, uint32_t& aaTrackBitRate, bool& aaTrackLossless, uint32_t& aaTrackBitDepth, uint32_t& aaTrackSampleRate, std::string& aaTrackCodecName, uint32_t& aaTrackId);
+    SyncStateLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aProxy, std::string& aaTransportState, uint32_t& aaTrackDuration, uint32_t& aaTrackBitRate, bool& aaTrackLossless, uint32_t& aaTrackBitDepth, uint32_t& aaTrackSampleRate, std::string& aaTrackCodecName, uint32_t& aaTrackId);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDs1Cpp& iService;
@@ -188,8 +188,8 @@ private:
     uint32_t& iaTrackId;
 };
 
-SyncStateLinnCoUkDs1Cpp::SyncStateLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aService, std::string& aaTransportState, uint32_t& aaTrackDuration, uint32_t& aaTrackBitRate, bool& aaTrackLossless, uint32_t& aaTrackBitDepth, uint32_t& aaTrackSampleRate, std::string& aaTrackCodecName, uint32_t& aaTrackId)
-    : iService(aService)
+SyncStateLinnCoUkDs1Cpp::SyncStateLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aProxy, std::string& aaTransportState, uint32_t& aaTrackDuration, uint32_t& aaTrackBitRate, bool& aaTrackLossless, uint32_t& aaTrackBitDepth, uint32_t& aaTrackSampleRate, std::string& aaTrackCodecName, uint32_t& aaTrackId)
+    : iService(aProxy)
     , iaTransportState(aaTransportState)
     , iaTrackDuration(aaTrackDuration)
     , iaTrackBitRate(aaTrackBitRate)
@@ -210,15 +210,15 @@ void SyncStateLinnCoUkDs1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncProtocolInfoLinnCoUkDs1Cpp : public SyncProxyAction
 {
 public:
-    SyncProtocolInfoLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aService, std::string& aaSupportedProtocols);
+    SyncProtocolInfoLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aProxy, std::string& aaSupportedProtocols);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDs1Cpp& iService;
     std::string& iaSupportedProtocols;
 };
 
-SyncProtocolInfoLinnCoUkDs1Cpp::SyncProtocolInfoLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aService, std::string& aaSupportedProtocols)
-    : iService(aService)
+SyncProtocolInfoLinnCoUkDs1Cpp::SyncProtocolInfoLinnCoUkDs1Cpp(CpProxyLinnCoUkDs1Cpp& aProxy, std::string& aaSupportedProtocols)
+    : iService(aProxy)
     , iaSupportedProtocols(aaSupportedProtocols)
 {
 }

@@ -7,6 +7,7 @@
 #include <ZappTypes.h>
 #include <TestFramework.h>
 #include <DviDevice.h>
+#include <C/DvProvider.h>
 #include <C/DvZappOrgTestBasic1.h>
 #include <C/CpProxy.h>
 #include <C/CpZappOrgTestBasic1.h>
@@ -99,12 +100,12 @@ static int32_t setMultiple(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueUin
     uint32_t changed1;
     uint32_t changed2;
     uint32_t changed3;
-    if (0 == DvProviderZappOrgTestBasic1SetPropertyVarUint((THandle)aPtr, aValueUint, &changed1) &&
-        0 == DvProviderZappOrgTestBasic1SetPropertyVarInt((THandle)aPtr, aValueInt, &changed2)   &&
-        0 == DvProviderZappOrgTestBasic1SetPropertyVarBool((THandle)aPtr, aValueBool, &changed3)) {
-        return 0;
-    }
-    return -1;
+    DvProviderPropertiesLock((THandle)aPtr);
+    int32_t err = (0 == DvProviderZappOrgTestBasic1SetPropertyVarUint((THandle)aPtr, aValueUint, &changed1) &&
+                   0 == DvProviderZappOrgTestBasic1SetPropertyVarInt((THandle)aPtr, aValueInt, &changed2)   &&
+                   0 == DvProviderZappOrgTestBasic1SetPropertyVarBool((THandle)aPtr, aValueBool, &changed3)) ? 0 : -1;
+    DvProviderPropertiesUnlock((THandle)aPtr);
+    return err;
 }
 
 static int32_t setString(void* aPtr, uint32_t /*aVersion*/, const char* aValueStr)

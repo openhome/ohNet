@@ -238,15 +238,10 @@ void DviDevice::GetUriBase(Bwh& aUriBase, TIpAddress aInterface, TUint aPort, ID
     const Brx& name = aProtocol.ProtocolName();
     aUriBase.Grow(Http::kUriPrefix.Bytes() + kMaxAddressBytes + iUdn.Bytes() + name.Bytes() + 3); // +2 for slashes after port, udn & name
     aUriBase.Append(Http::kUriPrefix);
-    (void)Ascii::AppendDec(aUriBase, aInterface&0xff);
-    aUriBase.Append('.');
-    (void)Ascii::AppendDec(aUriBase, (aInterface>>8)&0xff);
-    aUriBase.Append('.');
-    (void)Ascii::AppendDec(aUriBase, (aInterface>>16)&0xff);
-    aUriBase.Append('.');
-    (void)Ascii::AppendDec(aUriBase, (aInterface>>24)&0xff);
-    aUriBase.Append(':');
-    (void)Ascii::AppendDec(aUriBase, aPort);
+    Endpoint endpt(aPort, aInterface);
+    Endpoint::EndpointBuf buf;
+    endpt.GetEndpoint(buf);
+    aUriBase.Append(buf);
     aUriBase.Append('/');
     aUriBase.Append(iUdn);
     aUriBase.Append('/');

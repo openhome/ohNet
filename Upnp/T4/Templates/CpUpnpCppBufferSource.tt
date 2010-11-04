@@ -64,7 +64,7 @@ using namespace Zapp;
 class Sync<#=a.name#><#=syncClassSuffix#> : public SyncProxyAction
 {
 public:
-    Sync<#=a.name#><#=syncClassSuffix#>(<#=className#>& aService<#=OutArgTypesAndNamesCommaPrefix(a)#>);
+    Sync<#=a.name#><#=syncClassSuffix#>(<#=className#>& aProxy<#=OutArgTypesAndNamesCommaPrefix(a)#>);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     <#=className#>& iService;
@@ -74,8 +74,8 @@ private:
 <#      } #>
 };
 
-Sync<#=a.name#><#=syncClassSuffix#>::Sync<#=a.name#><#=syncClassSuffix#>(<#=className#>& aService<#=OutArgTypesAndNamesCommaPrefix(a)#>)
-    : iService(aService)
+Sync<#=a.name#><#=syncClassSuffix#>::Sync<#=a.name#><#=syncClassSuffix#>(<#=className#>& aProxy<#=OutArgTypesAndNamesCommaPrefix(a)#>)
+    : iService(aProxy)
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
     , i<#=o.name#>(a<#=o.name#>)

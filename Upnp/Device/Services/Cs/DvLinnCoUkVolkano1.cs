@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderLinnCoUkVolkano1 : IDisposable
+    public class DvProviderLinnCoUkVolkano1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkVolkano1")]
         static extern uint DvProviderLinnCoUkVolkano1Create(uint aDeviceHandle);
@@ -48,7 +48,6 @@ namespace Zapp
         private unsafe delegate int CallbackMaxBoards(IntPtr aPtr, uint aVersion, uint* aaMaxBoards);
         private unsafe delegate int CallbackSoftwareVersion(IntPtr aPtr, uint aVersion, char** aaSoftwareVersion);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackReboot iCallbackReboot;
         private CallbackBootMode iCallbackBootMode;

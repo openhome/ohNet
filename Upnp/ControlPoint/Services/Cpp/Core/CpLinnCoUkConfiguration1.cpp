@@ -11,15 +11,15 @@ using namespace Zapp;
 class SyncConfigurationXmlLinnCoUkConfiguration1 : public SyncProxyAction
 {
 public:
-    SyncConfigurationXmlLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aService, Brh& aaConfigurationXml);
+    SyncConfigurationXmlLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aProxy, Brh& aaConfigurationXml);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkConfiguration1& iService;
     Brh& iaConfigurationXml;
 };
 
-SyncConfigurationXmlLinnCoUkConfiguration1::SyncConfigurationXmlLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aService, Brh& aaConfigurationXml)
-    : iService(aService)
+SyncConfigurationXmlLinnCoUkConfiguration1::SyncConfigurationXmlLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aProxy, Brh& aaConfigurationXml)
+    : iService(aProxy)
     , iaConfigurationXml(aaConfigurationXml)
 {
 }
@@ -33,15 +33,15 @@ void SyncConfigurationXmlLinnCoUkConfiguration1::CompleteRequest(IAsync& aAsync)
 class SyncParameterXmlLinnCoUkConfiguration1 : public SyncProxyAction
 {
 public:
-    SyncParameterXmlLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aService, Brh& aaParameterXml);
+    SyncParameterXmlLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aProxy, Brh& aaParameterXml);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkConfiguration1& iService;
     Brh& iaParameterXml;
 };
 
-SyncParameterXmlLinnCoUkConfiguration1::SyncParameterXmlLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aService, Brh& aaParameterXml)
-    : iService(aService)
+SyncParameterXmlLinnCoUkConfiguration1::SyncParameterXmlLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aProxy, Brh& aaParameterXml)
+    : iService(aProxy)
     , iaParameterXml(aaParameterXml)
 {
 }
@@ -55,14 +55,14 @@ void SyncParameterXmlLinnCoUkConfiguration1::CompleteRequest(IAsync& aAsync)
 class SyncSetParameterLinnCoUkConfiguration1 : public SyncProxyAction
 {
 public:
-    SyncSetParameterLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aService);
+    SyncSetParameterLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkConfiguration1& iService;
 };
 
-SyncSetParameterLinnCoUkConfiguration1::SyncSetParameterLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aService)
-    : iService(aService)
+SyncSetParameterLinnCoUkConfiguration1::SyncSetParameterLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aProxy)
+    : iService(aProxy)
 {
 }
 

@@ -14,7 +14,7 @@ using namespace Zapp;
 class SyncCountersLinnCoUkInfo1Cpp : public SyncProxyAction
 {
 public:
-    SyncCountersLinnCoUkInfo1Cpp(CpProxyLinnCoUkInfo1Cpp& aService, uint32_t& aaTrackCount, uint32_t& aaDetailsCount, uint32_t& aaMetatextCount);
+    SyncCountersLinnCoUkInfo1Cpp(CpProxyLinnCoUkInfo1Cpp& aProxy, uint32_t& aaTrackCount, uint32_t& aaDetailsCount, uint32_t& aaMetatextCount);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkInfo1Cpp& iService;
@@ -23,8 +23,8 @@ private:
     uint32_t& iaMetatextCount;
 };
 
-SyncCountersLinnCoUkInfo1Cpp::SyncCountersLinnCoUkInfo1Cpp(CpProxyLinnCoUkInfo1Cpp& aService, uint32_t& aaTrackCount, uint32_t& aaDetailsCount, uint32_t& aaMetatextCount)
-    : iService(aService)
+SyncCountersLinnCoUkInfo1Cpp::SyncCountersLinnCoUkInfo1Cpp(CpProxyLinnCoUkInfo1Cpp& aProxy, uint32_t& aaTrackCount, uint32_t& aaDetailsCount, uint32_t& aaMetatextCount)
+    : iService(aProxy)
     , iaTrackCount(aaTrackCount)
     , iaDetailsCount(aaDetailsCount)
     , iaMetatextCount(aaMetatextCount)
@@ -40,7 +40,7 @@ void SyncCountersLinnCoUkInfo1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncTrackLinnCoUkInfo1Cpp : public SyncProxyAction
 {
 public:
-    SyncTrackLinnCoUkInfo1Cpp(CpProxyLinnCoUkInfo1Cpp& aService, std::string& aaUri, std::string& aaMetadata);
+    SyncTrackLinnCoUkInfo1Cpp(CpProxyLinnCoUkInfo1Cpp& aProxy, std::string& aaUri, std::string& aaMetadata);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkInfo1Cpp& iService;
@@ -48,8 +48,8 @@ private:
     std::string& iaMetadata;
 };
 
-SyncTrackLinnCoUkInfo1Cpp::SyncTrackLinnCoUkInfo1Cpp(CpProxyLinnCoUkInfo1Cpp& aService, std::string& aaUri, std::string& aaMetadata)
-    : iService(aService)
+SyncTrackLinnCoUkInfo1Cpp::SyncTrackLinnCoUkInfo1Cpp(CpProxyLinnCoUkInfo1Cpp& aProxy, std::string& aaUri, std::string& aaMetadata)
+    : iService(aProxy)
     , iaUri(aaUri)
     , iaMetadata(aaMetadata)
 {
@@ -64,7 +64,7 @@ void SyncTrackLinnCoUkInfo1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncDetailsLinnCoUkInfo1Cpp : public SyncProxyAction
 {
 public:
-    SyncDetailsLinnCoUkInfo1Cpp(CpProxyLinnCoUkInfo1Cpp& aService, uint32_t& aaDuration, uint32_t& aaBitRate, uint32_t& aaBitDepth, uint32_t& aaSampleRate, bool& aaLossless, std::string& aaCodecName);
+    SyncDetailsLinnCoUkInfo1Cpp(CpProxyLinnCoUkInfo1Cpp& aProxy, uint32_t& aaDuration, uint32_t& aaBitRate, uint32_t& aaBitDepth, uint32_t& aaSampleRate, bool& aaLossless, std::string& aaCodecName);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkInfo1Cpp& iService;
@@ -76,8 +76,8 @@ private:
     std::string& iaCodecName;
 };
 
-SyncDetailsLinnCoUkInfo1Cpp::SyncDetailsLinnCoUkInfo1Cpp(CpProxyLinnCoUkInfo1Cpp& aService, uint32_t& aaDuration, uint32_t& aaBitRate, uint32_t& aaBitDepth, uint32_t& aaSampleRate, bool& aaLossless, std::string& aaCodecName)
-    : iService(aService)
+SyncDetailsLinnCoUkInfo1Cpp::SyncDetailsLinnCoUkInfo1Cpp(CpProxyLinnCoUkInfo1Cpp& aProxy, uint32_t& aaDuration, uint32_t& aaBitRate, uint32_t& aaBitDepth, uint32_t& aaSampleRate, bool& aaLossless, std::string& aaCodecName)
+    : iService(aProxy)
     , iaDuration(aaDuration)
     , iaBitRate(aaBitRate)
     , iaBitDepth(aaBitDepth)
@@ -96,15 +96,15 @@ void SyncDetailsLinnCoUkInfo1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncMetatextLinnCoUkInfo1Cpp : public SyncProxyAction
 {
 public:
-    SyncMetatextLinnCoUkInfo1Cpp(CpProxyLinnCoUkInfo1Cpp& aService, std::string& aaMetatext);
+    SyncMetatextLinnCoUkInfo1Cpp(CpProxyLinnCoUkInfo1Cpp& aProxy, std::string& aaMetatext);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkInfo1Cpp& iService;
     std::string& iaMetatext;
 };
 
-SyncMetatextLinnCoUkInfo1Cpp::SyncMetatextLinnCoUkInfo1Cpp(CpProxyLinnCoUkInfo1Cpp& aService, std::string& aaMetatext)
-    : iService(aService)
+SyncMetatextLinnCoUkInfo1Cpp::SyncMetatextLinnCoUkInfo1Cpp(CpProxyLinnCoUkInfo1Cpp& aProxy, std::string& aaMetatext)
+    : iService(aProxy)
     , iaMetatext(aaMetatext)
 {
 }

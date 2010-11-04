@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderZappOrgTestBasic1 : IDisposable
+    public class DvProviderZappOrgTestBasic1 : DvProvider, IDisposable
     {
         [DllImport("DvZappOrgTestBasic1")]
         static extern uint DvProviderZappOrgTestBasic1Create(uint aDeviceHandle);
@@ -86,7 +86,6 @@ namespace Zapp
         private unsafe delegate int CallbackGetBinary(IntPtr aPtr, uint aVersion, char** aValueBin, int* aValueBinLen);
         private unsafe delegate int CallbackToggleBool(IntPtr aPtr, uint aVersion);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackIncrement iCallbackIncrement;
         private CallbackDecrement iCallbackDecrement;

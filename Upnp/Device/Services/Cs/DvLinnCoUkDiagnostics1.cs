@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvProviderLinnCoUkDiagnostics1 : IDisposable
+    public class DvProviderLinnCoUkDiagnostics1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkDiagnostics1")]
         static extern uint DvProviderLinnCoUkDiagnostics1Create(uint aDeviceHandle);
@@ -58,7 +58,6 @@ namespace Zapp
         private unsafe delegate int CallbackSetStateVariablePeriod(IntPtr aPtr, uint aVersion, uint aaPeriod);
         private unsafe delegate int CallbackReboot(IntPtr aPtr, uint aVersion, uint aaDelay);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackEcho iCallbackEcho;
         private CallbackElfFile iCallbackElfFile;

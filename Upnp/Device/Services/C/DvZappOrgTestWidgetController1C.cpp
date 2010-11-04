@@ -93,23 +93,23 @@ THandle DvProviderZappOrgTestWidgetController1Create(DvDeviceC aDevice)
 	return new DvProviderZappOrgTestWidgetController1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvProviderZappOrgTestWidgetController1Destroy(THandle aService)
+void DvProviderZappOrgTestWidgetController1Destroy(THandle aProvider)
 {
-    delete reinterpret_cast<DvProviderZappOrgTestWidgetController1C*>(aService);
+    delete reinterpret_cast<DvProviderZappOrgTestWidgetController1C*>(aProvider);
 }
 
-void DvProviderZappOrgTestWidgetController1EnableActionCreateWidget(THandle aService, CallbackTestWidgetController1CreateWidget aCallback, void* aPtr)
+void DvProviderZappOrgTestWidgetController1EnableActionCreateWidget(THandle aProvider, CallbackTestWidgetController1CreateWidget aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestWidgetController1C*>(aService)->EnableActionCreateWidget(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestWidgetController1C*>(aProvider)->EnableActionCreateWidget(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestWidgetController1EnableActionRemoveWidget(THandle aService, CallbackTestWidgetController1RemoveWidget aCallback, void* aPtr)
+void DvProviderZappOrgTestWidgetController1EnableActionRemoveWidget(THandle aProvider, CallbackTestWidgetController1RemoveWidget aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestWidgetController1C*>(aService)->EnableActionRemoveWidget(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestWidgetController1C*>(aProvider)->EnableActionRemoveWidget(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestWidgetController1EnableActionSetWidgetRegister(THandle aService, CallbackTestWidgetController1SetWidgetRegister aCallback, void* aPtr)
+void DvProviderZappOrgTestWidgetController1EnableActionSetWidgetRegister(THandle aProvider, CallbackTestWidgetController1SetWidgetRegister aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestWidgetController1C*>(aService)->EnableActionSetWidgetRegister(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestWidgetController1C*>(aProvider)->EnableActionSetWidgetRegister(aCallback, aPtr);
 }
 

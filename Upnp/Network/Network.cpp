@@ -109,6 +109,7 @@ void Endpoint::GetAddress(Bwx& aAddress) const
 #else
 # error No endianess defined
 #endif
+    aAddress.PtrZ();
 }
 
 void Endpoint::GetEndpoint(Bwx& aEndpoint) const
@@ -117,6 +118,7 @@ void Endpoint::GetEndpoint(Bwx& aEndpoint) const
     GetAddress(aEndpoint);
     aEndpoint.Append(':');
     (void)Ascii::AppendDec(aEndpoint, iPort);
+    aEndpoint.PtrZ();
 }
 
 // Replace the endpoint with the supplied endpoint

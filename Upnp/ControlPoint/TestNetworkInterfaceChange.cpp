@@ -106,7 +106,10 @@ void setTestNifIndex(TInt aIndex, Blocker& aBlocker)
     NetworkInterface* nif = Stack::NetworkInterfaceList().CurrentInterface();
     TIpAddress addr = (nif==NULL? 0 : nif->Address());
     delete nif;
-    Print("Current network interface %d.%d.%d.%d\n\n", addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
+    Endpoint endpt(0, addr);
+    Endpoint::AddressBuf buf;
+    endpt.GetAddress(buf);
+    Print("Current network interface %s\n\n", buf.Ptr());
 }
 
 

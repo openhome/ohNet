@@ -14,14 +14,14 @@ using namespace Zapp;
 class SyncSetAVTransportURIUpnpOrgAVTransport1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetAVTransportURIUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService);
+    SyncSetAVTransportURIUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport1Cpp& iService;
 };
 
-SyncSetAVTransportURIUpnpOrgAVTransport1Cpp::SyncSetAVTransportURIUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService)
-    : iService(aService)
+SyncSetAVTransportURIUpnpOrgAVTransport1Cpp::SyncSetAVTransportURIUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -34,14 +34,14 @@ void SyncSetAVTransportURIUpnpOrgAVTransport1Cpp::CompleteRequest(IAsync& aAsync
 class SyncSetNextAVTransportURIUpnpOrgAVTransport1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetNextAVTransportURIUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService);
+    SyncSetNextAVTransportURIUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport1Cpp& iService;
 };
 
-SyncSetNextAVTransportURIUpnpOrgAVTransport1Cpp::SyncSetNextAVTransportURIUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService)
-    : iService(aService)
+SyncSetNextAVTransportURIUpnpOrgAVTransport1Cpp::SyncSetNextAVTransportURIUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -54,7 +54,7 @@ void SyncSetNextAVTransportURIUpnpOrgAVTransport1Cpp::CompleteRequest(IAsync& aA
 class SyncGetMediaInfoUpnpOrgAVTransport1Cpp : public SyncProxyAction
 {
 public:
-    SyncGetMediaInfoUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService, uint32_t& aNrTracks, std::string& aMediaDuration, std::string& aCurrentURI, std::string& aCurrentURIMetaData, std::string& aNextURI, std::string& aNextURIMetaData, std::string& aPlayMedium, std::string& aRecordMedium, std::string& aWriteStatus);
+    SyncGetMediaInfoUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy, uint32_t& aNrTracks, std::string& aMediaDuration, std::string& aCurrentURI, std::string& aCurrentURIMetaData, std::string& aNextURI, std::string& aNextURIMetaData, std::string& aPlayMedium, std::string& aRecordMedium, std::string& aWriteStatus);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport1Cpp& iService;
@@ -69,8 +69,8 @@ private:
     std::string& iWriteStatus;
 };
 
-SyncGetMediaInfoUpnpOrgAVTransport1Cpp::SyncGetMediaInfoUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService, uint32_t& aNrTracks, std::string& aMediaDuration, std::string& aCurrentURI, std::string& aCurrentURIMetaData, std::string& aNextURI, std::string& aNextURIMetaData, std::string& aPlayMedium, std::string& aRecordMedium, std::string& aWriteStatus)
-    : iService(aService)
+SyncGetMediaInfoUpnpOrgAVTransport1Cpp::SyncGetMediaInfoUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy, uint32_t& aNrTracks, std::string& aMediaDuration, std::string& aCurrentURI, std::string& aCurrentURIMetaData, std::string& aNextURI, std::string& aNextURIMetaData, std::string& aPlayMedium, std::string& aRecordMedium, std::string& aWriteStatus)
+    : iService(aProxy)
     , iNrTracks(aNrTracks)
     , iMediaDuration(aMediaDuration)
     , iCurrentURI(aCurrentURI)
@@ -92,7 +92,7 @@ void SyncGetMediaInfoUpnpOrgAVTransport1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncGetTransportInfoUpnpOrgAVTransport1Cpp : public SyncProxyAction
 {
 public:
-    SyncGetTransportInfoUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService, std::string& aCurrentTransportState, std::string& aCurrentTransportStatus, std::string& aCurrentSpeed);
+    SyncGetTransportInfoUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy, std::string& aCurrentTransportState, std::string& aCurrentTransportStatus, std::string& aCurrentSpeed);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport1Cpp& iService;
@@ -101,8 +101,8 @@ private:
     std::string& iCurrentSpeed;
 };
 
-SyncGetTransportInfoUpnpOrgAVTransport1Cpp::SyncGetTransportInfoUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService, std::string& aCurrentTransportState, std::string& aCurrentTransportStatus, std::string& aCurrentSpeed)
-    : iService(aService)
+SyncGetTransportInfoUpnpOrgAVTransport1Cpp::SyncGetTransportInfoUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy, std::string& aCurrentTransportState, std::string& aCurrentTransportStatus, std::string& aCurrentSpeed)
+    : iService(aProxy)
     , iCurrentTransportState(aCurrentTransportState)
     , iCurrentTransportStatus(aCurrentTransportStatus)
     , iCurrentSpeed(aCurrentSpeed)
@@ -118,7 +118,7 @@ void SyncGetTransportInfoUpnpOrgAVTransport1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncGetPositionInfoUpnpOrgAVTransport1Cpp : public SyncProxyAction
 {
 public:
-    SyncGetPositionInfoUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService, uint32_t& aTrack, std::string& aTrackDuration, std::string& aTrackMetaData, std::string& aTrackURI, std::string& aRelTime, std::string& aAbsTime, int32_t& aRelCount, int32_t& aAbsCount);
+    SyncGetPositionInfoUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy, uint32_t& aTrack, std::string& aTrackDuration, std::string& aTrackMetaData, std::string& aTrackURI, std::string& aRelTime, std::string& aAbsTime, int32_t& aRelCount, int32_t& aAbsCount);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport1Cpp& iService;
@@ -132,8 +132,8 @@ private:
     int32_t& iAbsCount;
 };
 
-SyncGetPositionInfoUpnpOrgAVTransport1Cpp::SyncGetPositionInfoUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService, uint32_t& aTrack, std::string& aTrackDuration, std::string& aTrackMetaData, std::string& aTrackURI, std::string& aRelTime, std::string& aAbsTime, int32_t& aRelCount, int32_t& aAbsCount)
-    : iService(aService)
+SyncGetPositionInfoUpnpOrgAVTransport1Cpp::SyncGetPositionInfoUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy, uint32_t& aTrack, std::string& aTrackDuration, std::string& aTrackMetaData, std::string& aTrackURI, std::string& aRelTime, std::string& aAbsTime, int32_t& aRelCount, int32_t& aAbsCount)
+    : iService(aProxy)
     , iTrack(aTrack)
     , iTrackDuration(aTrackDuration)
     , iTrackMetaData(aTrackMetaData)
@@ -154,7 +154,7 @@ void SyncGetPositionInfoUpnpOrgAVTransport1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncGetDeviceCapabilitiesUpnpOrgAVTransport1Cpp : public SyncProxyAction
 {
 public:
-    SyncGetDeviceCapabilitiesUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService, std::string& aPlayMedia, std::string& aRecMedia, std::string& aRecQualityModes);
+    SyncGetDeviceCapabilitiesUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy, std::string& aPlayMedia, std::string& aRecMedia, std::string& aRecQualityModes);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport1Cpp& iService;
@@ -163,8 +163,8 @@ private:
     std::string& iRecQualityModes;
 };
 
-SyncGetDeviceCapabilitiesUpnpOrgAVTransport1Cpp::SyncGetDeviceCapabilitiesUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService, std::string& aPlayMedia, std::string& aRecMedia, std::string& aRecQualityModes)
-    : iService(aService)
+SyncGetDeviceCapabilitiesUpnpOrgAVTransport1Cpp::SyncGetDeviceCapabilitiesUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy, std::string& aPlayMedia, std::string& aRecMedia, std::string& aRecQualityModes)
+    : iService(aProxy)
     , iPlayMedia(aPlayMedia)
     , iRecMedia(aRecMedia)
     , iRecQualityModes(aRecQualityModes)
@@ -180,7 +180,7 @@ void SyncGetDeviceCapabilitiesUpnpOrgAVTransport1Cpp::CompleteRequest(IAsync& aA
 class SyncGetTransportSettingsUpnpOrgAVTransport1Cpp : public SyncProxyAction
 {
 public:
-    SyncGetTransportSettingsUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService, std::string& aPlayMode, std::string& aRecQualityMode);
+    SyncGetTransportSettingsUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy, std::string& aPlayMode, std::string& aRecQualityMode);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport1Cpp& iService;
@@ -188,8 +188,8 @@ private:
     std::string& iRecQualityMode;
 };
 
-SyncGetTransportSettingsUpnpOrgAVTransport1Cpp::SyncGetTransportSettingsUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService, std::string& aPlayMode, std::string& aRecQualityMode)
-    : iService(aService)
+SyncGetTransportSettingsUpnpOrgAVTransport1Cpp::SyncGetTransportSettingsUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy, std::string& aPlayMode, std::string& aRecQualityMode)
+    : iService(aProxy)
     , iPlayMode(aPlayMode)
     , iRecQualityMode(aRecQualityMode)
 {
@@ -204,14 +204,14 @@ void SyncGetTransportSettingsUpnpOrgAVTransport1Cpp::CompleteRequest(IAsync& aAs
 class SyncStopUpnpOrgAVTransport1Cpp : public SyncProxyAction
 {
 public:
-    SyncStopUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService);
+    SyncStopUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport1Cpp& iService;
 };
 
-SyncStopUpnpOrgAVTransport1Cpp::SyncStopUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService)
-    : iService(aService)
+SyncStopUpnpOrgAVTransport1Cpp::SyncStopUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -224,14 +224,14 @@ void SyncStopUpnpOrgAVTransport1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncPlayUpnpOrgAVTransport1Cpp : public SyncProxyAction
 {
 public:
-    SyncPlayUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService);
+    SyncPlayUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport1Cpp& iService;
 };
 
-SyncPlayUpnpOrgAVTransport1Cpp::SyncPlayUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService)
-    : iService(aService)
+SyncPlayUpnpOrgAVTransport1Cpp::SyncPlayUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -244,14 +244,14 @@ void SyncPlayUpnpOrgAVTransport1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncPauseUpnpOrgAVTransport1Cpp : public SyncProxyAction
 {
 public:
-    SyncPauseUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService);
+    SyncPauseUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport1Cpp& iService;
 };
 
-SyncPauseUpnpOrgAVTransport1Cpp::SyncPauseUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService)
-    : iService(aService)
+SyncPauseUpnpOrgAVTransport1Cpp::SyncPauseUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -264,14 +264,14 @@ void SyncPauseUpnpOrgAVTransport1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncRecordUpnpOrgAVTransport1Cpp : public SyncProxyAction
 {
 public:
-    SyncRecordUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService);
+    SyncRecordUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport1Cpp& iService;
 };
 
-SyncRecordUpnpOrgAVTransport1Cpp::SyncRecordUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService)
-    : iService(aService)
+SyncRecordUpnpOrgAVTransport1Cpp::SyncRecordUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -284,14 +284,14 @@ void SyncRecordUpnpOrgAVTransport1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSeekUpnpOrgAVTransport1Cpp : public SyncProxyAction
 {
 public:
-    SyncSeekUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService);
+    SyncSeekUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport1Cpp& iService;
 };
 
-SyncSeekUpnpOrgAVTransport1Cpp::SyncSeekUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService)
-    : iService(aService)
+SyncSeekUpnpOrgAVTransport1Cpp::SyncSeekUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -304,14 +304,14 @@ void SyncSeekUpnpOrgAVTransport1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncNextUpnpOrgAVTransport1Cpp : public SyncProxyAction
 {
 public:
-    SyncNextUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService);
+    SyncNextUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport1Cpp& iService;
 };
 
-SyncNextUpnpOrgAVTransport1Cpp::SyncNextUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService)
-    : iService(aService)
+SyncNextUpnpOrgAVTransport1Cpp::SyncNextUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -324,14 +324,14 @@ void SyncNextUpnpOrgAVTransport1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncPreviousUpnpOrgAVTransport1Cpp : public SyncProxyAction
 {
 public:
-    SyncPreviousUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService);
+    SyncPreviousUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport1Cpp& iService;
 };
 
-SyncPreviousUpnpOrgAVTransport1Cpp::SyncPreviousUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService)
-    : iService(aService)
+SyncPreviousUpnpOrgAVTransport1Cpp::SyncPreviousUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -344,14 +344,14 @@ void SyncPreviousUpnpOrgAVTransport1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetPlayModeUpnpOrgAVTransport1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetPlayModeUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService);
+    SyncSetPlayModeUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport1Cpp& iService;
 };
 
-SyncSetPlayModeUpnpOrgAVTransport1Cpp::SyncSetPlayModeUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService)
-    : iService(aService)
+SyncSetPlayModeUpnpOrgAVTransport1Cpp::SyncSetPlayModeUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -364,14 +364,14 @@ void SyncSetPlayModeUpnpOrgAVTransport1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetRecordQualityModeUpnpOrgAVTransport1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetRecordQualityModeUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService);
+    SyncSetRecordQualityModeUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport1Cpp& iService;
 };
 
-SyncSetRecordQualityModeUpnpOrgAVTransport1Cpp::SyncSetRecordQualityModeUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService)
-    : iService(aService)
+SyncSetRecordQualityModeUpnpOrgAVTransport1Cpp::SyncSetRecordQualityModeUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -384,15 +384,15 @@ void SyncSetRecordQualityModeUpnpOrgAVTransport1Cpp::CompleteRequest(IAsync& aAs
 class SyncGetCurrentTransportActionsUpnpOrgAVTransport1Cpp : public SyncProxyAction
 {
 public:
-    SyncGetCurrentTransportActionsUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService, std::string& aActions);
+    SyncGetCurrentTransportActionsUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy, std::string& aActions);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport1Cpp& iService;
     std::string& iActions;
 };
 
-SyncGetCurrentTransportActionsUpnpOrgAVTransport1Cpp::SyncGetCurrentTransportActionsUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aService, std::string& aActions)
-    : iService(aService)
+SyncGetCurrentTransportActionsUpnpOrgAVTransport1Cpp::SyncGetCurrentTransportActionsUpnpOrgAVTransport1Cpp(CpProxyUpnpOrgAVTransport1Cpp& aProxy, std::string& aActions)
+    : iService(aProxy)
     , iActions(aActions)
 {
 }

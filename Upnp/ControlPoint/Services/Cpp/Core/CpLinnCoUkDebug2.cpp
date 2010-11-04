@@ -11,14 +11,14 @@ using namespace Zapp;
 class SyncSetDebugLevelLinnCoUkDebug2 : public SyncProxyAction
 {
 public:
-    SyncSetDebugLevelLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aService);
+    SyncSetDebugLevelLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDebug2& iService;
 };
 
-SyncSetDebugLevelLinnCoUkDebug2::SyncSetDebugLevelLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aService)
-    : iService(aService)
+SyncSetDebugLevelLinnCoUkDebug2::SyncSetDebugLevelLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -31,15 +31,15 @@ void SyncSetDebugLevelLinnCoUkDebug2::CompleteRequest(IAsync& aAsync)
 class SyncDebugLevelLinnCoUkDebug2 : public SyncProxyAction
 {
 public:
-    SyncDebugLevelLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aService, TUint& aaDebugLevel);
+    SyncDebugLevelLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aProxy, TUint& aaDebugLevel);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDebug2& iService;
     TUint& iaDebugLevel;
 };
 
-SyncDebugLevelLinnCoUkDebug2::SyncDebugLevelLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aService, TUint& aaDebugLevel)
-    : iService(aService)
+SyncDebugLevelLinnCoUkDebug2::SyncDebugLevelLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aProxy, TUint& aaDebugLevel)
+    : iService(aProxy)
     , iaDebugLevel(aaDebugLevel)
 {
 }
@@ -53,14 +53,14 @@ void SyncDebugLevelLinnCoUkDebug2::CompleteRequest(IAsync& aAsync)
 class SyncMemWriteLinnCoUkDebug2 : public SyncProxyAction
 {
 public:
-    SyncMemWriteLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aService);
+    SyncMemWriteLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDebug2& iService;
 };
 
-SyncMemWriteLinnCoUkDebug2::SyncMemWriteLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aService)
-    : iService(aService)
+SyncMemWriteLinnCoUkDebug2::SyncMemWriteLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aProxy)
+    : iService(aProxy)
 {
 }
 
