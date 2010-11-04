@@ -11,15 +11,15 @@ using namespace Zapp;
 class SyncTestComPortLinnCoUkPtest1 : public SyncProxyAction
 {
 public:
-    SyncTestComPortLinnCoUkPtest1(CpProxyLinnCoUkPtest1& aService, TBool& aaResult);
+    SyncTestComPortLinnCoUkPtest1(CpProxyLinnCoUkPtest1& aProxy, TBool& aaResult);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkPtest1& iService;
     TBool& iaResult;
 };
 
-SyncTestComPortLinnCoUkPtest1::SyncTestComPortLinnCoUkPtest1(CpProxyLinnCoUkPtest1& aService, TBool& aaResult)
-    : iService(aService)
+SyncTestComPortLinnCoUkPtest1::SyncTestComPortLinnCoUkPtest1(CpProxyLinnCoUkPtest1& aProxy, TBool& aaResult)
+    : iService(aProxy)
     , iaResult(aaResult)
 {
 }
@@ -33,14 +33,14 @@ void SyncTestComPortLinnCoUkPtest1::CompleteRequest(IAsync& aAsync)
 class SyncLedsOnLinnCoUkPtest1 : public SyncProxyAction
 {
 public:
-    SyncLedsOnLinnCoUkPtest1(CpProxyLinnCoUkPtest1& aService);
+    SyncLedsOnLinnCoUkPtest1(CpProxyLinnCoUkPtest1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkPtest1& iService;
 };
 
-SyncLedsOnLinnCoUkPtest1::SyncLedsOnLinnCoUkPtest1(CpProxyLinnCoUkPtest1& aService)
-    : iService(aService)
+SyncLedsOnLinnCoUkPtest1::SyncLedsOnLinnCoUkPtest1(CpProxyLinnCoUkPtest1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -53,14 +53,14 @@ void SyncLedsOnLinnCoUkPtest1::CompleteRequest(IAsync& aAsync)
 class SyncLedsOffLinnCoUkPtest1 : public SyncProxyAction
 {
 public:
-    SyncLedsOffLinnCoUkPtest1(CpProxyLinnCoUkPtest1& aService);
+    SyncLedsOffLinnCoUkPtest1(CpProxyLinnCoUkPtest1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkPtest1& iService;
 };
 
-SyncLedsOffLinnCoUkPtest1::SyncLedsOffLinnCoUkPtest1(CpProxyLinnCoUkPtest1& aService)
-    : iService(aService)
+SyncLedsOffLinnCoUkPtest1::SyncLedsOffLinnCoUkPtest1(CpProxyLinnCoUkPtest1& aProxy)
+    : iService(aProxy)
 {
 }
 

@@ -311,63 +311,63 @@ THandle DvProviderLinnCoUkVolkano1Create(DvDeviceC aDevice)
 	return new DvProviderLinnCoUkVolkano1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvProviderLinnCoUkVolkano1Destroy(THandle aService)
+void DvProviderLinnCoUkVolkano1Destroy(THandle aProvider)
 {
-    delete reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aService);
+    delete reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aProvider);
 }
 
-void DvProviderLinnCoUkVolkano1EnableActionReboot(THandle aService, CallbackVolkano1Reboot aCallback, void* aPtr)
+void DvProviderLinnCoUkVolkano1EnableActionReboot(THandle aProvider, CallbackVolkano1Reboot aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aService)->EnableActionReboot(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aProvider)->EnableActionReboot(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkVolkano1EnableActionBootMode(THandle aService, CallbackVolkano1BootMode aCallback, void* aPtr)
+void DvProviderLinnCoUkVolkano1EnableActionBootMode(THandle aProvider, CallbackVolkano1BootMode aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aService)->EnableActionBootMode(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aProvider)->EnableActionBootMode(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkVolkano1EnableActionSetBootMode(THandle aService, CallbackVolkano1SetBootMode aCallback, void* aPtr)
+void DvProviderLinnCoUkVolkano1EnableActionSetBootMode(THandle aProvider, CallbackVolkano1SetBootMode aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aService)->EnableActionSetBootMode(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aProvider)->EnableActionSetBootMode(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkVolkano1EnableActionBspType(THandle aService, CallbackVolkano1BspType aCallback, void* aPtr)
+void DvProviderLinnCoUkVolkano1EnableActionBspType(THandle aProvider, CallbackVolkano1BspType aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aService)->EnableActionBspType(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aProvider)->EnableActionBspType(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkVolkano1EnableActionUglyName(THandle aService, CallbackVolkano1UglyName aCallback, void* aPtr)
+void DvProviderLinnCoUkVolkano1EnableActionUglyName(THandle aProvider, CallbackVolkano1UglyName aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aService)->EnableActionUglyName(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aProvider)->EnableActionUglyName(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkVolkano1EnableActionMacAddress(THandle aService, CallbackVolkano1MacAddress aCallback, void* aPtr)
+void DvProviderLinnCoUkVolkano1EnableActionMacAddress(THandle aProvider, CallbackVolkano1MacAddress aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aService)->EnableActionMacAddress(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aProvider)->EnableActionMacAddress(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkVolkano1EnableActionProductId(THandle aService, CallbackVolkano1ProductId aCallback, void* aPtr)
+void DvProviderLinnCoUkVolkano1EnableActionProductId(THandle aProvider, CallbackVolkano1ProductId aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aService)->EnableActionProductId(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aProvider)->EnableActionProductId(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkVolkano1EnableActionBoardId(THandle aService, CallbackVolkano1BoardId aCallback, void* aPtr)
+void DvProviderLinnCoUkVolkano1EnableActionBoardId(THandle aProvider, CallbackVolkano1BoardId aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aService)->EnableActionBoardId(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aProvider)->EnableActionBoardId(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkVolkano1EnableActionBoardType(THandle aService, CallbackVolkano1BoardType aCallback, void* aPtr)
+void DvProviderLinnCoUkVolkano1EnableActionBoardType(THandle aProvider, CallbackVolkano1BoardType aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aService)->EnableActionBoardType(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aProvider)->EnableActionBoardType(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkVolkano1EnableActionMaxBoards(THandle aService, CallbackVolkano1MaxBoards aCallback, void* aPtr)
+void DvProviderLinnCoUkVolkano1EnableActionMaxBoards(THandle aProvider, CallbackVolkano1MaxBoards aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aService)->EnableActionMaxBoards(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aProvider)->EnableActionMaxBoards(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkVolkano1EnableActionSoftwareVersion(THandle aService, CallbackVolkano1SoftwareVersion aCallback, void* aPtr)
+void DvProviderLinnCoUkVolkano1EnableActionSoftwareVersion(THandle aProvider, CallbackVolkano1SoftwareVersion aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aService)->EnableActionSoftwareVersion(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkVolkano1C*>(aProvider)->EnableActionSoftwareVersion(aCallback, aPtr);
 }
 

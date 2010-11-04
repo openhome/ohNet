@@ -579,276 +579,276 @@ THandle DvProviderLinnCoUkUi2Create(DvDeviceC aDevice)
 	return new DvProviderLinnCoUkUi2C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvProviderLinnCoUkUi2Destroy(THandle aService)
+void DvProviderLinnCoUkUi2Destroy(THandle aProvider)
 {
-    delete reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService);
+    delete reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider);
 }
 
-void DvProviderLinnCoUkUi2EnableActionDisplayTestPattern(THandle aService, CallbackUi2DisplayTestPattern aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionDisplayTestPattern(THandle aProvider, CallbackUi2DisplayTestPattern aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionDisplayTestPattern(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionDisplayTestPattern(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionDisplayFill(THandle aService, CallbackUi2DisplayFill aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionDisplayFill(THandle aProvider, CallbackUi2DisplayFill aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionDisplayFill(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionDisplayFill(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionDisplayClear(THandle aService, CallbackUi2DisplayClear aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionDisplayClear(THandle aProvider, CallbackUi2DisplayClear aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionDisplayClear(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionDisplayClear(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionSetTestModeEnabled(THandle aService, CallbackUi2SetTestModeEnabled aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionSetTestModeEnabled(THandle aProvider, CallbackUi2SetTestModeEnabled aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionSetTestModeEnabled(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionSetTestModeEnabled(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionSimulateInfraredInput(THandle aService, CallbackUi2SimulateInfraredInput aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionSimulateInfraredInput(THandle aProvider, CallbackUi2SimulateInfraredInput aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionSimulateInfraredInput(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionSimulateInfraredInput(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionSimulateButtonInput(THandle aService, CallbackUi2SimulateButtonInput aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionSimulateButtonInput(THandle aProvider, CallbackUi2SimulateButtonInput aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionSimulateButtonInput(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionSimulateButtonInput(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionSimulateLightSensor(THandle aService, CallbackUi2SimulateLightSensor aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionSimulateLightSensor(THandle aProvider, CallbackUi2SimulateLightSensor aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionSimulateLightSensor(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionSimulateLightSensor(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionGetLightSensorData(THandle aService, CallbackUi2GetLightSensorData aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionGetLightSensorData(THandle aProvider, CallbackUi2GetLightSensorData aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionGetLightSensorData(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionGetLightSensorData(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionSetDisplayBrightness(THandle aService, CallbackUi2SetDisplayBrightness aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionSetDisplayBrightness(THandle aProvider, CallbackUi2SetDisplayBrightness aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionSetDisplayBrightness(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionSetDisplayBrightness(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionSetDisplayBrightnessAuto(THandle aService, CallbackUi2SetDisplayBrightnessAuto aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionSetDisplayBrightnessAuto(THandle aProvider, CallbackUi2SetDisplayBrightnessAuto aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionSetDisplayBrightnessAuto(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionSetDisplayBrightnessAuto(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionSetInfraredCommands(THandle aService, CallbackUi2SetInfraredCommands aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionSetInfraredCommands(THandle aProvider, CallbackUi2SetInfraredCommands aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionSetInfraredCommands(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionSetInfraredCommands(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionInfraredCommands(THandle aService, CallbackUi2InfraredCommands aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionInfraredCommands(THandle aProvider, CallbackUi2InfraredCommands aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionInfraredCommands(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionInfraredCommands(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionSetInfraredTerminalCommands(THandle aService, CallbackUi2SetInfraredTerminalCommands aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionSetInfraredTerminalCommands(THandle aProvider, CallbackUi2SetInfraredTerminalCommands aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionSetInfraredTerminalCommands(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionSetInfraredTerminalCommands(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionInfraredTerminalCommands(THandle aService, CallbackUi2InfraredTerminalCommands aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionInfraredTerminalCommands(THandle aProvider, CallbackUi2InfraredTerminalCommands aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionInfraredTerminalCommands(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionInfraredTerminalCommands(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionDisplayBrightness(THandle aService, CallbackUi2DisplayBrightness aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionDisplayBrightness(THandle aProvider, CallbackUi2DisplayBrightness aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionDisplayBrightness(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionDisplayBrightness(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionDisplayBrightnessAuto(THandle aService, CallbackUi2DisplayBrightnessAuto aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionDisplayBrightnessAuto(THandle aProvider, CallbackUi2DisplayBrightnessAuto aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionDisplayBrightnessAuto(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionDisplayBrightnessAuto(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionDisplayUpsideDown(THandle aService, CallbackUi2DisplayUpsideDown aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionDisplayUpsideDown(THandle aProvider, CallbackUi2DisplayUpsideDown aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionDisplayUpsideDown(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionDisplayUpsideDown(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionSetDisplayUpsideDown(THandle aService, CallbackUi2SetDisplayUpsideDown aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionSetDisplayUpsideDown(THandle aProvider, CallbackUi2SetDisplayUpsideDown aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionSetDisplayUpsideDown(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionSetDisplayUpsideDown(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionSetDisplayScrollText(THandle aService, CallbackUi2SetDisplayScrollText aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionSetDisplayScrollText(THandle aProvider, CallbackUi2SetDisplayScrollText aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionSetDisplayScrollText(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionSetDisplayScrollText(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionDisplayScrollText(THandle aService, CallbackUi2DisplayScrollText aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionDisplayScrollText(THandle aProvider, CallbackUi2DisplayScrollText aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionDisplayScrollText(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionDisplayScrollText(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionSetDisplaySleep(THandle aService, CallbackUi2SetDisplaySleep aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionSetDisplaySleep(THandle aProvider, CallbackUi2SetDisplaySleep aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionSetDisplaySleep(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionSetDisplaySleep(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionDisplaySleep(THandle aService, CallbackUi2DisplaySleep aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionDisplaySleep(THandle aProvider, CallbackUi2DisplaySleep aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionDisplaySleep(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionDisplaySleep(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionSetDisplayLedOff(THandle aService, CallbackUi2SetDisplayLedOff aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionSetDisplayLedOff(THandle aProvider, CallbackUi2SetDisplayLedOff aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionSetDisplayLedOff(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionSetDisplayLedOff(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkUi2EnableActionDisplayLedOff(THandle aService, CallbackUi2DisplayLedOff aCallback, void* aPtr)
+void DvProviderLinnCoUkUi2EnableActionDisplayLedOff(THandle aProvider, CallbackUi2DisplayLedOff aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->EnableActionDisplayLedOff(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->EnableActionDisplayLedOff(aCallback, aPtr);
 }
 
-int32_t DvProviderLinnCoUkUi2SetPropertyDisplayBrightness(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkUi2SetPropertyDisplayBrightness(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->SetPropertyDisplayBrightness(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->SetPropertyDisplayBrightness(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkUi2GetPropertyDisplayBrightness(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkUi2GetPropertyDisplayBrightness(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->GetPropertyDisplayBrightness(val);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->GetPropertyDisplayBrightness(val);
     *aValue = val;
 }
 
-int32_t DvProviderLinnCoUkUi2SetPropertyDisplayBrightnessAuto(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkUi2SetPropertyDisplayBrightnessAuto(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->SetPropertyDisplayBrightnessAuto((aValue!=0))? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->SetPropertyDisplayBrightnessAuto((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkUi2GetPropertyDisplayBrightnessAuto(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkUi2GetPropertyDisplayBrightnessAuto(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->GetPropertyDisplayBrightnessAuto(val);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->GetPropertyDisplayBrightnessAuto(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvProviderLinnCoUkUi2SetPropertyInfraredCommands(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkUi2SetPropertyInfraredCommands(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->SetPropertyInfraredCommands(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->SetPropertyInfraredCommands(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkUi2GetPropertyInfraredCommands(THandle aService, char** aValue)
+void DvProviderLinnCoUkUi2GetPropertyInfraredCommands(THandle aProvider, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->GetPropertyInfraredCommands(buf);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->GetPropertyInfraredCommands(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderLinnCoUkUi2SetPropertyInfraredTerminalCommands(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkUi2SetPropertyInfraredTerminalCommands(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->SetPropertyInfraredTerminalCommands(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->SetPropertyInfraredTerminalCommands(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkUi2GetPropertyInfraredTerminalCommands(THandle aService, char** aValue)
+void DvProviderLinnCoUkUi2GetPropertyInfraredTerminalCommands(THandle aProvider, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->GetPropertyInfraredTerminalCommands(buf);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->GetPropertyInfraredTerminalCommands(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderLinnCoUkUi2SetPropertyDisplayUpsideDown(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkUi2SetPropertyDisplayUpsideDown(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->SetPropertyDisplayUpsideDown((aValue!=0))? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->SetPropertyDisplayUpsideDown((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkUi2GetPropertyDisplayUpsideDown(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkUi2GetPropertyDisplayUpsideDown(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->GetPropertyDisplayUpsideDown(val);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->GetPropertyDisplayUpsideDown(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvProviderLinnCoUkUi2SetPropertyDisplayScrollText(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkUi2SetPropertyDisplayScrollText(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->SetPropertyDisplayScrollText((aValue!=0))? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->SetPropertyDisplayScrollText((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkUi2GetPropertyDisplayScrollText(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkUi2GetPropertyDisplayScrollText(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->GetPropertyDisplayScrollText(val);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->GetPropertyDisplayScrollText(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvProviderLinnCoUkUi2SetPropertyDisplaySleep(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkUi2SetPropertyDisplaySleep(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->SetPropertyDisplaySleep((aValue!=0))? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->SetPropertyDisplaySleep((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkUi2GetPropertyDisplaySleep(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkUi2GetPropertyDisplaySleep(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->GetPropertyDisplaySleep(val);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->GetPropertyDisplaySleep(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvProviderLinnCoUkUi2SetPropertyDisplayLedOff(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkUi2SetPropertyDisplayLedOff(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->SetPropertyDisplayLedOff((aValue!=0))? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->SetPropertyDisplayLedOff((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkUi2GetPropertyDisplayLedOff(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkUi2GetPropertyDisplayLedOff(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->GetPropertyDisplayLedOff(val);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->GetPropertyDisplayLedOff(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvProviderLinnCoUkUi2SetPropertyTerminalInputCode(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkUi2SetPropertyTerminalInputCode(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->SetPropertyTerminalInputCode(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->SetPropertyTerminalInputCode(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkUi2GetPropertyTerminalInputCode(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkUi2GetPropertyTerminalInputCode(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->GetPropertyTerminalInputCode(val);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->GetPropertyTerminalInputCode(val);
     *aValue = val;
 }
 
-int32_t DvProviderLinnCoUkUi2SetPropertyTerminalInputName(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkUi2SetPropertyTerminalInputName(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->SetPropertyTerminalInputName(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->SetPropertyTerminalInputName(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkUi2GetPropertyTerminalInputName(THandle aService, char** aValue)
+void DvProviderLinnCoUkUi2GetPropertyTerminalInputName(THandle aProvider, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->GetPropertyTerminalInputName(buf);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->GetPropertyTerminalInputName(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderLinnCoUkUi2SetPropertyDisplayPixels(THandle aService, const char* aValue, uint32_t aValueLen, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkUi2SetPropertyDisplayPixels(THandle aProvider, const char* aValue, uint32_t aValueLen, uint32_t* aChanged)
 {
     Brh buf;
     buf.Set((const TByte*)aValue, aValueLen);
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->SetPropertyDisplayPixels(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->SetPropertyDisplayPixels(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkUi2GetPropertyDisplayPixels(THandle aService, char** aValue, uint32_t* aValueLen)
+void DvProviderLinnCoUkUi2GetPropertyDisplayPixels(THandle aProvider, char** aValue, uint32_t* aValueLen)
 {
     Brh buf;
-    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aService)->GetPropertyDisplayPixels(buf);
+    reinterpret_cast<DvProviderLinnCoUkUi2C*>(aProvider)->GetPropertyDisplayPixels(buf);
     *aValueLen = buf.Bytes();
     *aValue = (char*)buf.Extract();
 }

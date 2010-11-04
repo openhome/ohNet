@@ -14,14 +14,14 @@ using namespace Zapp;
 class SyncSetTargetUpnpOrgSwitchPower1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetTargetUpnpOrgSwitchPower1Cpp(CpProxyUpnpOrgSwitchPower1Cpp& aService);
+    SyncSetTargetUpnpOrgSwitchPower1Cpp(CpProxyUpnpOrgSwitchPower1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgSwitchPower1Cpp& iService;
 };
 
-SyncSetTargetUpnpOrgSwitchPower1Cpp::SyncSetTargetUpnpOrgSwitchPower1Cpp(CpProxyUpnpOrgSwitchPower1Cpp& aService)
-    : iService(aService)
+SyncSetTargetUpnpOrgSwitchPower1Cpp::SyncSetTargetUpnpOrgSwitchPower1Cpp(CpProxyUpnpOrgSwitchPower1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -34,15 +34,15 @@ void SyncSetTargetUpnpOrgSwitchPower1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncGetTargetUpnpOrgSwitchPower1Cpp : public SyncProxyAction
 {
 public:
-    SyncGetTargetUpnpOrgSwitchPower1Cpp(CpProxyUpnpOrgSwitchPower1Cpp& aService, bool& aRetTargetValue);
+    SyncGetTargetUpnpOrgSwitchPower1Cpp(CpProxyUpnpOrgSwitchPower1Cpp& aProxy, bool& aRetTargetValue);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgSwitchPower1Cpp& iService;
     bool& iRetTargetValue;
 };
 
-SyncGetTargetUpnpOrgSwitchPower1Cpp::SyncGetTargetUpnpOrgSwitchPower1Cpp(CpProxyUpnpOrgSwitchPower1Cpp& aService, bool& aRetTargetValue)
-    : iService(aService)
+SyncGetTargetUpnpOrgSwitchPower1Cpp::SyncGetTargetUpnpOrgSwitchPower1Cpp(CpProxyUpnpOrgSwitchPower1Cpp& aProxy, bool& aRetTargetValue)
+    : iService(aProxy)
     , iRetTargetValue(aRetTargetValue)
 {
 }
@@ -56,15 +56,15 @@ void SyncGetTargetUpnpOrgSwitchPower1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncGetStatusUpnpOrgSwitchPower1Cpp : public SyncProxyAction
 {
 public:
-    SyncGetStatusUpnpOrgSwitchPower1Cpp(CpProxyUpnpOrgSwitchPower1Cpp& aService, bool& aResultStatus);
+    SyncGetStatusUpnpOrgSwitchPower1Cpp(CpProxyUpnpOrgSwitchPower1Cpp& aProxy, bool& aResultStatus);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgSwitchPower1Cpp& iService;
     bool& iResultStatus;
 };
 
-SyncGetStatusUpnpOrgSwitchPower1Cpp::SyncGetStatusUpnpOrgSwitchPower1Cpp(CpProxyUpnpOrgSwitchPower1Cpp& aService, bool& aResultStatus)
-    : iService(aService)
+SyncGetStatusUpnpOrgSwitchPower1Cpp::SyncGetStatusUpnpOrgSwitchPower1Cpp(CpProxyUpnpOrgSwitchPower1Cpp& aProxy, bool& aResultStatus)
+    : iService(aProxy)
     , iResultStatus(aResultStatus)
 {
 }

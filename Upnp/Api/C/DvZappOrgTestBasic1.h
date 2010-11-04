@@ -27,36 +27,36 @@ typedef int32_t (*CallbackTestBasic1GetBinary)(void* aPtr, uint32_t aVersion, ch
 typedef int32_t (*CallbackTestBasic1ToggleBool)(void* aPtr, uint32_t aVersion);
 
 DllExport THandle DvProviderZappOrgTestBasic1Create(DvDeviceC aDevice);
-DllExport void DvProviderZappOrgTestBasic1Destroy(THandle aService);
+DllExport void DvProviderZappOrgTestBasic1Destroy(THandle aProvider);
 
-DllExport void DvProviderZappOrgTestBasic1EnableActionIncrement(THandle aService, CallbackTestBasic1Increment aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestBasic1EnableActionDecrement(THandle aService, CallbackTestBasic1Decrement aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestBasic1EnableActionToggle(THandle aService, CallbackTestBasic1Toggle aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestBasic1EnableActionEchoString(THandle aService, CallbackTestBasic1EchoString aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestBasic1EnableActionEchoBinary(THandle aService, CallbackTestBasic1EchoBinary aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestBasic1EnableActionSetUint(THandle aService, CallbackTestBasic1SetUint aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestBasic1EnableActionGetUint(THandle aService, CallbackTestBasic1GetUint aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestBasic1EnableActionSetInt(THandle aService, CallbackTestBasic1SetInt aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestBasic1EnableActionGetInt(THandle aService, CallbackTestBasic1GetInt aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestBasic1EnableActionSetBool(THandle aService, CallbackTestBasic1SetBool aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestBasic1EnableActionGetBool(THandle aService, CallbackTestBasic1GetBool aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestBasic1EnableActionSetMultiple(THandle aService, CallbackTestBasic1SetMultiple aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestBasic1EnableActionSetString(THandle aService, CallbackTestBasic1SetString aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestBasic1EnableActionGetString(THandle aService, CallbackTestBasic1GetString aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestBasic1EnableActionSetBinary(THandle aService, CallbackTestBasic1SetBinary aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestBasic1EnableActionGetBinary(THandle aService, CallbackTestBasic1GetBinary aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestBasic1EnableActionToggleBool(THandle aService, CallbackTestBasic1ToggleBool aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestBasic1EnableActionIncrement(THandle aProvider, CallbackTestBasic1Increment aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestBasic1EnableActionDecrement(THandle aProvider, CallbackTestBasic1Decrement aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestBasic1EnableActionToggle(THandle aProvider, CallbackTestBasic1Toggle aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestBasic1EnableActionEchoString(THandle aProvider, CallbackTestBasic1EchoString aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestBasic1EnableActionEchoBinary(THandle aProvider, CallbackTestBasic1EchoBinary aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestBasic1EnableActionSetUint(THandle aProvider, CallbackTestBasic1SetUint aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestBasic1EnableActionGetUint(THandle aProvider, CallbackTestBasic1GetUint aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestBasic1EnableActionSetInt(THandle aProvider, CallbackTestBasic1SetInt aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestBasic1EnableActionGetInt(THandle aProvider, CallbackTestBasic1GetInt aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestBasic1EnableActionSetBool(THandle aProvider, CallbackTestBasic1SetBool aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestBasic1EnableActionGetBool(THandle aProvider, CallbackTestBasic1GetBool aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestBasic1EnableActionSetMultiple(THandle aProvider, CallbackTestBasic1SetMultiple aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestBasic1EnableActionSetString(THandle aProvider, CallbackTestBasic1SetString aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestBasic1EnableActionGetString(THandle aProvider, CallbackTestBasic1GetString aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestBasic1EnableActionSetBinary(THandle aProvider, CallbackTestBasic1SetBinary aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestBasic1EnableActionGetBinary(THandle aProvider, CallbackTestBasic1GetBinary aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestBasic1EnableActionToggleBool(THandle aProvider, CallbackTestBasic1ToggleBool aCallback, void* aPtr);
 
-DllExport int32_t DvProviderZappOrgTestBasic1SetPropertyVarUint(THandle aService, uint32_t aValue, uint32_t* aChanged);
-DllExport void DvProviderZappOrgTestBasic1GetPropertyVarUint(THandle aService, uint32_t* aValue);
-DllExport int32_t DvProviderZappOrgTestBasic1SetPropertyVarInt(THandle aService, int32_t aValue, uint32_t* aChanged);
-DllExport void DvProviderZappOrgTestBasic1GetPropertyVarInt(THandle aService, int32_t* aValue);
-DllExport int32_t DvProviderZappOrgTestBasic1SetPropertyVarBool(THandle aService, uint32_t aValue, uint32_t* aChanged);
-DllExport void DvProviderZappOrgTestBasic1GetPropertyVarBool(THandle aService, uint32_t* aValue);
-DllExport int32_t DvProviderZappOrgTestBasic1SetPropertyVarStr(THandle aService, const char* aValue, uint32_t* aChanged);
-DllExport void DvProviderZappOrgTestBasic1GetPropertyVarStr(THandle aService, char** aValue);
-DllExport int32_t DvProviderZappOrgTestBasic1SetPropertyVarBin(THandle aService, const char* aValue, uint32_t aValueLen, uint32_t* aChanged);
-DllExport void DvProviderZappOrgTestBasic1GetPropertyVarBin(THandle aService, char** aValue, uint32_t* aValueLen);
+DllExport int32_t DvProviderZappOrgTestBasic1SetPropertyVarUint(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
+DllExport void DvProviderZappOrgTestBasic1GetPropertyVarUint(THandle aProvider, uint32_t* aValue);
+DllExport int32_t DvProviderZappOrgTestBasic1SetPropertyVarInt(THandle aProvider, int32_t aValue, uint32_t* aChanged);
+DllExport void DvProviderZappOrgTestBasic1GetPropertyVarInt(THandle aProvider, int32_t* aValue);
+DllExport int32_t DvProviderZappOrgTestBasic1SetPropertyVarBool(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
+DllExport void DvProviderZappOrgTestBasic1GetPropertyVarBool(THandle aProvider, uint32_t* aValue);
+DllExport int32_t DvProviderZappOrgTestBasic1SetPropertyVarStr(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport void DvProviderZappOrgTestBasic1GetPropertyVarStr(THandle aProvider, char** aValue);
+DllExport int32_t DvProviderZappOrgTestBasic1SetPropertyVarBin(THandle aProvider, const char* aValue, uint32_t aValueLen, uint32_t* aChanged);
+DllExport void DvProviderZappOrgTestBasic1GetPropertyVarBin(THandle aProvider, char** aValue, uint32_t* aValueLen);
 
 #ifdef __cplusplus
 } // extern "C"

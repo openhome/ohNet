@@ -17,15 +17,15 @@ typedef int32_t (*CallbackTestLights1GetColor)(void* aPtr, uint32_t aVersion, ui
 typedef int32_t (*CallbackTestLights1GetColorComponents)(void* aPtr, uint32_t aVersion, uint32_t aColor, uint32_t* aBrightness, uint32_t* aRed, uint32_t* aGreen, uint32_t* aBlue);
 
 DllExport THandle DvProviderZappOrgTestLights1Create(DvDeviceC aDevice);
-DllExport void DvProviderZappOrgTestLights1Destroy(THandle aService);
+DllExport void DvProviderZappOrgTestLights1Destroy(THandle aProvider);
 
-DllExport void DvProviderZappOrgTestLights1EnableActionGetCount(THandle aService, CallbackTestLights1GetCount aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestLights1EnableActionGetRoom(THandle aService, CallbackTestLights1GetRoom aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestLights1EnableActionGetName(THandle aService, CallbackTestLights1GetName aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestLights1EnableActionGetPosition(THandle aService, CallbackTestLights1GetPosition aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestLights1EnableActionSetColor(THandle aService, CallbackTestLights1SetColor aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestLights1EnableActionGetColor(THandle aService, CallbackTestLights1GetColor aCallback, void* aPtr);
-DllExport void DvProviderZappOrgTestLights1EnableActionGetColorComponents(THandle aService, CallbackTestLights1GetColorComponents aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestLights1EnableActionGetCount(THandle aProvider, CallbackTestLights1GetCount aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestLights1EnableActionGetRoom(THandle aProvider, CallbackTestLights1GetRoom aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestLights1EnableActionGetName(THandle aProvider, CallbackTestLights1GetName aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestLights1EnableActionGetPosition(THandle aProvider, CallbackTestLights1GetPosition aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestLights1EnableActionSetColor(THandle aProvider, CallbackTestLights1SetColor aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestLights1EnableActionGetColor(THandle aProvider, CallbackTestLights1GetColor aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestLights1EnableActionGetColorComponents(THandle aProvider, CallbackTestLights1GetColorComponents aCallback, void* aPtr);
 
 
 #ifdef __cplusplus

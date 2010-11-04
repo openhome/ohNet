@@ -13,11 +13,11 @@ typedef int32_t (*CallbackDebug2DebugLevel)(void* aPtr, uint32_t aVersion, uint3
 typedef int32_t (*CallbackDebug2MemWrite)(void* aPtr, uint32_t aVersion, uint32_t aaMemAddress, const char* aaMemData, uint32_t aaMemDataLen);
 
 DllExport THandle DvProviderLinnCoUkDebug2Create(DvDeviceC aDevice);
-DllExport void DvProviderLinnCoUkDebug2Destroy(THandle aService);
+DllExport void DvProviderLinnCoUkDebug2Destroy(THandle aProvider);
 
-DllExport void DvProviderLinnCoUkDebug2EnableActionSetDebugLevel(THandle aService, CallbackDebug2SetDebugLevel aCallback, void* aPtr);
-DllExport void DvProviderLinnCoUkDebug2EnableActionDebugLevel(THandle aService, CallbackDebug2DebugLevel aCallback, void* aPtr);
-DllExport void DvProviderLinnCoUkDebug2EnableActionMemWrite(THandle aService, CallbackDebug2MemWrite aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDebug2EnableActionSetDebugLevel(THandle aProvider, CallbackDebug2SetDebugLevel aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDebug2EnableActionDebugLevel(THandle aProvider, CallbackDebug2DebugLevel aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkDebug2EnableActionMemWrite(THandle aProvider, CallbackDebug2MemWrite aCallback, void* aPtr);
 
 
 #ifdef __cplusplus

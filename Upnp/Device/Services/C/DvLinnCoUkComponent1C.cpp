@@ -284,116 +284,116 @@ THandle DvProviderLinnCoUkComponent1Create(DvDeviceC aDevice)
 	return new DvProviderLinnCoUkComponent1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvProviderLinnCoUkComponent1Destroy(THandle aService)
+void DvProviderLinnCoUkComponent1Destroy(THandle aProvider)
 {
-    delete reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aService);
+    delete reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aProvider);
 }
 
-void DvProviderLinnCoUkComponent1EnableActionAmplifierEnabled(THandle aService, CallbackComponent1AmplifierEnabled aCallback, void* aPtr)
+void DvProviderLinnCoUkComponent1EnableActionAmplifierEnabled(THandle aProvider, CallbackComponent1AmplifierEnabled aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aService)->EnableActionAmplifierEnabled(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aProvider)->EnableActionAmplifierEnabled(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkComponent1EnableActionSetAmplifierEnabled(THandle aService, CallbackComponent1SetAmplifierEnabled aCallback, void* aPtr)
+void DvProviderLinnCoUkComponent1EnableActionSetAmplifierEnabled(THandle aProvider, CallbackComponent1SetAmplifierEnabled aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aService)->EnableActionSetAmplifierEnabled(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aProvider)->EnableActionSetAmplifierEnabled(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkComponent1EnableActionAmplifierAttenuation(THandle aService, CallbackComponent1AmplifierAttenuation aCallback, void* aPtr)
+void DvProviderLinnCoUkComponent1EnableActionAmplifierAttenuation(THandle aProvider, CallbackComponent1AmplifierAttenuation aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aService)->EnableActionAmplifierAttenuation(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aProvider)->EnableActionAmplifierAttenuation(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkComponent1EnableActionSetAmplifierAttenuation(THandle aService, CallbackComponent1SetAmplifierAttenuation aCallback, void* aPtr)
+void DvProviderLinnCoUkComponent1EnableActionSetAmplifierAttenuation(THandle aProvider, CallbackComponent1SetAmplifierAttenuation aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aService)->EnableActionSetAmplifierAttenuation(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aProvider)->EnableActionSetAmplifierAttenuation(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkComponent1EnableActionSetVolumeControlEnabled(THandle aService, CallbackComponent1SetVolumeControlEnabled aCallback, void* aPtr)
+void DvProviderLinnCoUkComponent1EnableActionSetVolumeControlEnabled(THandle aProvider, CallbackComponent1SetVolumeControlEnabled aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aService)->EnableActionSetVolumeControlEnabled(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aProvider)->EnableActionSetVolumeControlEnabled(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkComponent1EnableActionVolumeControlEnabled(THandle aService, CallbackComponent1VolumeControlEnabled aCallback, void* aPtr)
+void DvProviderLinnCoUkComponent1EnableActionVolumeControlEnabled(THandle aProvider, CallbackComponent1VolumeControlEnabled aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aService)->EnableActionVolumeControlEnabled(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aProvider)->EnableActionVolumeControlEnabled(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkComponent1EnableActionSetDigitalAudioOutputRaw(THandle aService, CallbackComponent1SetDigitalAudioOutputRaw aCallback, void* aPtr)
+void DvProviderLinnCoUkComponent1EnableActionSetDigitalAudioOutputRaw(THandle aProvider, CallbackComponent1SetDigitalAudioOutputRaw aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aService)->EnableActionSetDigitalAudioOutputRaw(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aProvider)->EnableActionSetDigitalAudioOutputRaw(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkComponent1EnableActionDigitalAudioOutputRaw(THandle aService, CallbackComponent1DigitalAudioOutputRaw aCallback, void* aPtr)
+void DvProviderLinnCoUkComponent1EnableActionDigitalAudioOutputRaw(THandle aProvider, CallbackComponent1DigitalAudioOutputRaw aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aService)->EnableActionDigitalAudioOutputRaw(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aProvider)->EnableActionDigitalAudioOutputRaw(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkComponent1EnableActionAmplifierOverTemperature(THandle aService, CallbackComponent1AmplifierOverTemperature aCallback, void* aPtr)
+void DvProviderLinnCoUkComponent1EnableActionAmplifierOverTemperature(THandle aProvider, CallbackComponent1AmplifierOverTemperature aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aService)->EnableActionAmplifierOverTemperature(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aProvider)->EnableActionAmplifierOverTemperature(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkComponent1EnableActionEthernetLinkConnected(THandle aService, CallbackComponent1EthernetLinkConnected aCallback, void* aPtr)
+void DvProviderLinnCoUkComponent1EnableActionEthernetLinkConnected(THandle aProvider, CallbackComponent1EthernetLinkConnected aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aService)->EnableActionEthernetLinkConnected(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aProvider)->EnableActionEthernetLinkConnected(aCallback, aPtr);
 }
 
-void DvProviderLinnCoUkComponent1EnableActionLocate(THandle aService, CallbackComponent1Locate aCallback, void* aPtr)
+void DvProviderLinnCoUkComponent1EnableActionLocate(THandle aProvider, CallbackComponent1Locate aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aService)->EnableActionLocate(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aProvider)->EnableActionLocate(aCallback, aPtr);
 }
 
-int32_t DvProviderLinnCoUkComponent1SetPropertyAmplifierEnabled(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkComponent1SetPropertyAmplifierEnabled(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aService)->SetPropertyAmplifierEnabled((aValue!=0))? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aProvider)->SetPropertyAmplifierEnabled((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkComponent1GetPropertyAmplifierEnabled(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkComponent1GetPropertyAmplifierEnabled(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aService)->GetPropertyAmplifierEnabled(val);
+    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aProvider)->GetPropertyAmplifierEnabled(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvProviderLinnCoUkComponent1SetPropertyAmplifierAttenuation(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkComponent1SetPropertyAmplifierAttenuation(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aService)->SetPropertyAmplifierAttenuation(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aProvider)->SetPropertyAmplifierAttenuation(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkComponent1GetPropertyAmplifierAttenuation(THandle aService, char** aValue)
+void DvProviderLinnCoUkComponent1GetPropertyAmplifierAttenuation(THandle aProvider, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aService)->GetPropertyAmplifierAttenuation(buf);
+    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aProvider)->GetPropertyAmplifierAttenuation(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderLinnCoUkComponent1SetPropertyVolumeControlEnabled(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkComponent1SetPropertyVolumeControlEnabled(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aService)->SetPropertyVolumeControlEnabled((aValue!=0))? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aProvider)->SetPropertyVolumeControlEnabled((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkComponent1GetPropertyVolumeControlEnabled(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkComponent1GetPropertyVolumeControlEnabled(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aService)->GetPropertyVolumeControlEnabled(val);
+    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aProvider)->GetPropertyVolumeControlEnabled(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvProviderLinnCoUkComponent1SetPropertyDigitalAudioOutputRaw(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkComponent1SetPropertyDigitalAudioOutputRaw(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aService)->SetPropertyDigitalAudioOutputRaw((aValue!=0))? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aProvider)->SetPropertyDigitalAudioOutputRaw((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderLinnCoUkComponent1GetPropertyDigitalAudioOutputRaw(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkComponent1GetPropertyDigitalAudioOutputRaw(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aService)->GetPropertyDigitalAudioOutputRaw(val);
+    reinterpret_cast<DvProviderLinnCoUkComponent1C*>(aProvider)->GetPropertyDigitalAudioOutputRaw(val);
     *aValue = (val? 1 : 0);
 }
 

@@ -437,161 +437,161 @@ THandle DvProviderZappOrgTestBasic1Create(DvDeviceC aDevice)
 	return new DvProviderZappOrgTestBasic1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvProviderZappOrgTestBasic1Destroy(THandle aService)
+void DvProviderZappOrgTestBasic1Destroy(THandle aProvider)
 {
-    delete reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService);
+    delete reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider);
 }
 
-void DvProviderZappOrgTestBasic1EnableActionIncrement(THandle aService, CallbackTestBasic1Increment aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionIncrement(THandle aProvider, CallbackTestBasic1Increment aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->EnableActionIncrement(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionIncrement(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestBasic1EnableActionDecrement(THandle aService, CallbackTestBasic1Decrement aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionDecrement(THandle aProvider, CallbackTestBasic1Decrement aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->EnableActionDecrement(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionDecrement(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestBasic1EnableActionToggle(THandle aService, CallbackTestBasic1Toggle aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionToggle(THandle aProvider, CallbackTestBasic1Toggle aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->EnableActionToggle(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionToggle(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestBasic1EnableActionEchoString(THandle aService, CallbackTestBasic1EchoString aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionEchoString(THandle aProvider, CallbackTestBasic1EchoString aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->EnableActionEchoString(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionEchoString(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestBasic1EnableActionEchoBinary(THandle aService, CallbackTestBasic1EchoBinary aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionEchoBinary(THandle aProvider, CallbackTestBasic1EchoBinary aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->EnableActionEchoBinary(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionEchoBinary(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestBasic1EnableActionSetUint(THandle aService, CallbackTestBasic1SetUint aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionSetUint(THandle aProvider, CallbackTestBasic1SetUint aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->EnableActionSetUint(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionSetUint(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestBasic1EnableActionGetUint(THandle aService, CallbackTestBasic1GetUint aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionGetUint(THandle aProvider, CallbackTestBasic1GetUint aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->EnableActionGetUint(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionGetUint(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestBasic1EnableActionSetInt(THandle aService, CallbackTestBasic1SetInt aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionSetInt(THandle aProvider, CallbackTestBasic1SetInt aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->EnableActionSetInt(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionSetInt(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestBasic1EnableActionGetInt(THandle aService, CallbackTestBasic1GetInt aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionGetInt(THandle aProvider, CallbackTestBasic1GetInt aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->EnableActionGetInt(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionGetInt(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestBasic1EnableActionSetBool(THandle aService, CallbackTestBasic1SetBool aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionSetBool(THandle aProvider, CallbackTestBasic1SetBool aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->EnableActionSetBool(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionSetBool(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestBasic1EnableActionGetBool(THandle aService, CallbackTestBasic1GetBool aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionGetBool(THandle aProvider, CallbackTestBasic1GetBool aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->EnableActionGetBool(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionGetBool(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestBasic1EnableActionSetMultiple(THandle aService, CallbackTestBasic1SetMultiple aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionSetMultiple(THandle aProvider, CallbackTestBasic1SetMultiple aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->EnableActionSetMultiple(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionSetMultiple(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestBasic1EnableActionSetString(THandle aService, CallbackTestBasic1SetString aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionSetString(THandle aProvider, CallbackTestBasic1SetString aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->EnableActionSetString(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionSetString(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestBasic1EnableActionGetString(THandle aService, CallbackTestBasic1GetString aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionGetString(THandle aProvider, CallbackTestBasic1GetString aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->EnableActionGetString(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionGetString(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestBasic1EnableActionSetBinary(THandle aService, CallbackTestBasic1SetBinary aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionSetBinary(THandle aProvider, CallbackTestBasic1SetBinary aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->EnableActionSetBinary(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionSetBinary(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestBasic1EnableActionGetBinary(THandle aService, CallbackTestBasic1GetBinary aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionGetBinary(THandle aProvider, CallbackTestBasic1GetBinary aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->EnableActionGetBinary(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionGetBinary(aCallback, aPtr);
 }
 
-void DvProviderZappOrgTestBasic1EnableActionToggleBool(THandle aService, CallbackTestBasic1ToggleBool aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionToggleBool(THandle aProvider, CallbackTestBasic1ToggleBool aCallback, void* aPtr)
 {
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->EnableActionToggleBool(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionToggleBool(aCallback, aPtr);
 }
 
-int32_t DvProviderZappOrgTestBasic1SetPropertyVarUint(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderZappOrgTestBasic1SetPropertyVarUint(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->SetPropertyVarUint(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->SetPropertyVarUint(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderZappOrgTestBasic1GetPropertyVarUint(THandle aService, uint32_t* aValue)
+void DvProviderZappOrgTestBasic1GetPropertyVarUint(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->GetPropertyVarUint(val);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->GetPropertyVarUint(val);
     *aValue = val;
 }
 
-int32_t DvProviderZappOrgTestBasic1SetPropertyVarInt(THandle aService, int32_t aValue, uint32_t* aChanged)
+int32_t DvProviderZappOrgTestBasic1SetPropertyVarInt(THandle aProvider, int32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->SetPropertyVarInt(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->SetPropertyVarInt(aValue)? 1 : 0);
     return 0;
 }
 
-void DvProviderZappOrgTestBasic1GetPropertyVarInt(THandle aService, int32_t* aValue)
+void DvProviderZappOrgTestBasic1GetPropertyVarInt(THandle aProvider, int32_t* aValue)
 {
     int32_t val;
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->GetPropertyVarInt(val);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->GetPropertyVarInt(val);
     *aValue = val;
 }
 
-int32_t DvProviderZappOrgTestBasic1SetPropertyVarBool(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderZappOrgTestBasic1SetPropertyVarBool(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->SetPropertyVarBool((aValue!=0))? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->SetPropertyVarBool((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvProviderZappOrgTestBasic1GetPropertyVarBool(THandle aService, uint32_t* aValue)
+void DvProviderZappOrgTestBasic1GetPropertyVarBool(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->GetPropertyVarBool(val);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->GetPropertyVarBool(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvProviderZappOrgTestBasic1SetPropertyVarStr(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderZappOrgTestBasic1SetPropertyVarStr(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->SetPropertyVarStr(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->SetPropertyVarStr(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderZappOrgTestBasic1GetPropertyVarStr(THandle aService, char** aValue)
+void DvProviderZappOrgTestBasic1GetPropertyVarStr(THandle aProvider, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->GetPropertyVarStr(buf);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->GetPropertyVarStr(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvProviderZappOrgTestBasic1SetPropertyVarBin(THandle aService, const char* aValue, uint32_t aValueLen, uint32_t* aChanged)
+int32_t DvProviderZappOrgTestBasic1SetPropertyVarBin(THandle aProvider, const char* aValue, uint32_t aValueLen, uint32_t* aChanged)
 {
     Brh buf;
     buf.Set((const TByte*)aValue, aValueLen);
-    *aChanged = (reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->SetPropertyVarBin(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->SetPropertyVarBin(buf)? 1 : 0);
     return 0;
 }
 
-void DvProviderZappOrgTestBasic1GetPropertyVarBin(THandle aService, char** aValue, uint32_t* aValueLen)
+void DvProviderZappOrgTestBasic1GetPropertyVarBin(THandle aProvider, char** aValue, uint32_t* aValueLen)
 {
     Brh buf;
-    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aService)->GetPropertyVarBin(buf);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->GetPropertyVarBin(buf);
     *aValueLen = buf.Bytes();
     *aValue = (char*)buf.Extract();
 }

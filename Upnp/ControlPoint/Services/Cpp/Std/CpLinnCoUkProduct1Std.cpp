@@ -14,15 +14,15 @@ using namespace Zapp;
 class SyncRoomLinnCoUkProduct1Cpp : public SyncProxyAction
 {
 public:
-    SyncRoomLinnCoUkProduct1Cpp(CpProxyLinnCoUkProduct1Cpp& aService, std::string& aaRoom);
+    SyncRoomLinnCoUkProduct1Cpp(CpProxyLinnCoUkProduct1Cpp& aProxy, std::string& aaRoom);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct1Cpp& iService;
     std::string& iaRoom;
 };
 
-SyncRoomLinnCoUkProduct1Cpp::SyncRoomLinnCoUkProduct1Cpp(CpProxyLinnCoUkProduct1Cpp& aService, std::string& aaRoom)
-    : iService(aService)
+SyncRoomLinnCoUkProduct1Cpp::SyncRoomLinnCoUkProduct1Cpp(CpProxyLinnCoUkProduct1Cpp& aProxy, std::string& aaRoom)
+    : iService(aProxy)
     , iaRoom(aaRoom)
 {
 }
@@ -36,14 +36,14 @@ void SyncRoomLinnCoUkProduct1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetRoomLinnCoUkProduct1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetRoomLinnCoUkProduct1Cpp(CpProxyLinnCoUkProduct1Cpp& aService);
+    SyncSetRoomLinnCoUkProduct1Cpp(CpProxyLinnCoUkProduct1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct1Cpp& iService;
 };
 
-SyncSetRoomLinnCoUkProduct1Cpp::SyncSetRoomLinnCoUkProduct1Cpp(CpProxyLinnCoUkProduct1Cpp& aService)
-    : iService(aService)
+SyncSetRoomLinnCoUkProduct1Cpp::SyncSetRoomLinnCoUkProduct1Cpp(CpProxyLinnCoUkProduct1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -56,15 +56,15 @@ void SyncSetRoomLinnCoUkProduct1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncStandbyLinnCoUkProduct1Cpp : public SyncProxyAction
 {
 public:
-    SyncStandbyLinnCoUkProduct1Cpp(CpProxyLinnCoUkProduct1Cpp& aService, bool& aaStandby);
+    SyncStandbyLinnCoUkProduct1Cpp(CpProxyLinnCoUkProduct1Cpp& aProxy, bool& aaStandby);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct1Cpp& iService;
     bool& iaStandby;
 };
 
-SyncStandbyLinnCoUkProduct1Cpp::SyncStandbyLinnCoUkProduct1Cpp(CpProxyLinnCoUkProduct1Cpp& aService, bool& aaStandby)
-    : iService(aService)
+SyncStandbyLinnCoUkProduct1Cpp::SyncStandbyLinnCoUkProduct1Cpp(CpProxyLinnCoUkProduct1Cpp& aProxy, bool& aaStandby)
+    : iService(aProxy)
     , iaStandby(aaStandby)
 {
 }
@@ -78,14 +78,14 @@ void SyncStandbyLinnCoUkProduct1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetStandbyLinnCoUkProduct1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetStandbyLinnCoUkProduct1Cpp(CpProxyLinnCoUkProduct1Cpp& aService);
+    SyncSetStandbyLinnCoUkProduct1Cpp(CpProxyLinnCoUkProduct1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct1Cpp& iService;
 };
 
-SyncSetStandbyLinnCoUkProduct1Cpp::SyncSetStandbyLinnCoUkProduct1Cpp(CpProxyLinnCoUkProduct1Cpp& aService)
-    : iService(aService)
+SyncSetStandbyLinnCoUkProduct1Cpp::SyncSetStandbyLinnCoUkProduct1Cpp(CpProxyLinnCoUkProduct1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 

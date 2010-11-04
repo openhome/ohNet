@@ -27,28 +27,28 @@ typedef int32_t (*CallbackAVTransport1SetRecordQualityMode)(void* aPtr, uint32_t
 typedef int32_t (*CallbackAVTransport1GetCurrentTransportActions)(void* aPtr, uint32_t aVersion, uint32_t aInstanceID, char** aActions);
 
 DllExport THandle DvProviderUpnpOrgAVTransport1Create(DvDeviceC aDevice);
-DllExport void DvProviderUpnpOrgAVTransport1Destroy(THandle aService);
+DllExport void DvProviderUpnpOrgAVTransport1Destroy(THandle aProvider);
 
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionSetAVTransportURI(THandle aService, CallbackAVTransport1SetAVTransportURI aCallback, void* aPtr);
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionSetNextAVTransportURI(THandle aService, CallbackAVTransport1SetNextAVTransportURI aCallback, void* aPtr);
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetMediaInfo(THandle aService, CallbackAVTransport1GetMediaInfo aCallback, void* aPtr);
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetTransportInfo(THandle aService, CallbackAVTransport1GetTransportInfo aCallback, void* aPtr);
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetPositionInfo(THandle aService, CallbackAVTransport1GetPositionInfo aCallback, void* aPtr);
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetDeviceCapabilities(THandle aService, CallbackAVTransport1GetDeviceCapabilities aCallback, void* aPtr);
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetTransportSettings(THandle aService, CallbackAVTransport1GetTransportSettings aCallback, void* aPtr);
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionStop(THandle aService, CallbackAVTransport1Stop aCallback, void* aPtr);
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionPlay(THandle aService, CallbackAVTransport1Play aCallback, void* aPtr);
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionPause(THandle aService, CallbackAVTransport1Pause aCallback, void* aPtr);
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionRecord(THandle aService, CallbackAVTransport1Record aCallback, void* aPtr);
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionSeek(THandle aService, CallbackAVTransport1Seek aCallback, void* aPtr);
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionNext(THandle aService, CallbackAVTransport1Next aCallback, void* aPtr);
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionPrevious(THandle aService, CallbackAVTransport1Previous aCallback, void* aPtr);
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionSetPlayMode(THandle aService, CallbackAVTransport1SetPlayMode aCallback, void* aPtr);
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionSetRecordQualityMode(THandle aService, CallbackAVTransport1SetRecordQualityMode aCallback, void* aPtr);
-DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetCurrentTransportActions(THandle aService, CallbackAVTransport1GetCurrentTransportActions aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgAVTransport1EnableActionSetAVTransportURI(THandle aProvider, CallbackAVTransport1SetAVTransportURI aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgAVTransport1EnableActionSetNextAVTransportURI(THandle aProvider, CallbackAVTransport1SetNextAVTransportURI aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetMediaInfo(THandle aProvider, CallbackAVTransport1GetMediaInfo aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetTransportInfo(THandle aProvider, CallbackAVTransport1GetTransportInfo aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetPositionInfo(THandle aProvider, CallbackAVTransport1GetPositionInfo aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetDeviceCapabilities(THandle aProvider, CallbackAVTransport1GetDeviceCapabilities aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetTransportSettings(THandle aProvider, CallbackAVTransport1GetTransportSettings aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgAVTransport1EnableActionStop(THandle aProvider, CallbackAVTransport1Stop aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgAVTransport1EnableActionPlay(THandle aProvider, CallbackAVTransport1Play aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgAVTransport1EnableActionPause(THandle aProvider, CallbackAVTransport1Pause aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgAVTransport1EnableActionRecord(THandle aProvider, CallbackAVTransport1Record aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgAVTransport1EnableActionSeek(THandle aProvider, CallbackAVTransport1Seek aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgAVTransport1EnableActionNext(THandle aProvider, CallbackAVTransport1Next aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgAVTransport1EnableActionPrevious(THandle aProvider, CallbackAVTransport1Previous aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgAVTransport1EnableActionSetPlayMode(THandle aProvider, CallbackAVTransport1SetPlayMode aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgAVTransport1EnableActionSetRecordQualityMode(THandle aProvider, CallbackAVTransport1SetRecordQualityMode aCallback, void* aPtr);
+DllExport void DvProviderUpnpOrgAVTransport1EnableActionGetCurrentTransportActions(THandle aProvider, CallbackAVTransport1GetCurrentTransportActions aCallback, void* aPtr);
 
-DllExport int32_t DvProviderUpnpOrgAVTransport1SetPropertyLastChange(THandle aService, const char* aValue, uint32_t* aChanged);
-DllExport void DvProviderUpnpOrgAVTransport1GetPropertyLastChange(THandle aService, char** aValue);
+DllExport int32_t DvProviderUpnpOrgAVTransport1SetPropertyLastChange(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport void DvProviderUpnpOrgAVTransport1GetPropertyLastChange(THandle aProvider, char** aValue);
 
 #ifdef __cplusplus
 } // extern "C"

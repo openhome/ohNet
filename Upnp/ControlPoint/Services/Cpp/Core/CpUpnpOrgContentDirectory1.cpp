@@ -11,15 +11,15 @@ using namespace Zapp;
 class SyncGetSearchCapabilitiesUpnpOrgContentDirectory1 : public SyncProxyAction
 {
 public:
-    SyncGetSearchCapabilitiesUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService, Brh& aSearchCaps);
+    SyncGetSearchCapabilitiesUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy, Brh& aSearchCaps);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgContentDirectory1& iService;
     Brh& iSearchCaps;
 };
 
-SyncGetSearchCapabilitiesUpnpOrgContentDirectory1::SyncGetSearchCapabilitiesUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService, Brh& aSearchCaps)
-    : iService(aService)
+SyncGetSearchCapabilitiesUpnpOrgContentDirectory1::SyncGetSearchCapabilitiesUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy, Brh& aSearchCaps)
+    : iService(aProxy)
     , iSearchCaps(aSearchCaps)
 {
 }
@@ -33,15 +33,15 @@ void SyncGetSearchCapabilitiesUpnpOrgContentDirectory1::CompleteRequest(IAsync& 
 class SyncGetSortCapabilitiesUpnpOrgContentDirectory1 : public SyncProxyAction
 {
 public:
-    SyncGetSortCapabilitiesUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService, Brh& aSortCaps);
+    SyncGetSortCapabilitiesUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy, Brh& aSortCaps);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgContentDirectory1& iService;
     Brh& iSortCaps;
 };
 
-SyncGetSortCapabilitiesUpnpOrgContentDirectory1::SyncGetSortCapabilitiesUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService, Brh& aSortCaps)
-    : iService(aService)
+SyncGetSortCapabilitiesUpnpOrgContentDirectory1::SyncGetSortCapabilitiesUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy, Brh& aSortCaps)
+    : iService(aProxy)
     , iSortCaps(aSortCaps)
 {
 }
@@ -55,15 +55,15 @@ void SyncGetSortCapabilitiesUpnpOrgContentDirectory1::CompleteRequest(IAsync& aA
 class SyncGetSystemUpdateIDUpnpOrgContentDirectory1 : public SyncProxyAction
 {
 public:
-    SyncGetSystemUpdateIDUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService, TUint& aId);
+    SyncGetSystemUpdateIDUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy, TUint& aId);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgContentDirectory1& iService;
     TUint& iId;
 };
 
-SyncGetSystemUpdateIDUpnpOrgContentDirectory1::SyncGetSystemUpdateIDUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService, TUint& aId)
-    : iService(aService)
+SyncGetSystemUpdateIDUpnpOrgContentDirectory1::SyncGetSystemUpdateIDUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy, TUint& aId)
+    : iService(aProxy)
     , iId(aId)
 {
 }
@@ -77,7 +77,7 @@ void SyncGetSystemUpdateIDUpnpOrgContentDirectory1::CompleteRequest(IAsync& aAsy
 class SyncBrowseUpnpOrgContentDirectory1 : public SyncProxyAction
 {
 public:
-    SyncBrowseUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService, Brh& aResult, TUint& aNumberReturned, TUint& aTotalMatches, TUint& aUpdateID);
+    SyncBrowseUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy, Brh& aResult, TUint& aNumberReturned, TUint& aTotalMatches, TUint& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgContentDirectory1& iService;
@@ -87,8 +87,8 @@ private:
     TUint& iUpdateID;
 };
 
-SyncBrowseUpnpOrgContentDirectory1::SyncBrowseUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService, Brh& aResult, TUint& aNumberReturned, TUint& aTotalMatches, TUint& aUpdateID)
-    : iService(aService)
+SyncBrowseUpnpOrgContentDirectory1::SyncBrowseUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy, Brh& aResult, TUint& aNumberReturned, TUint& aTotalMatches, TUint& aUpdateID)
+    : iService(aProxy)
     , iResult(aResult)
     , iNumberReturned(aNumberReturned)
     , iTotalMatches(aTotalMatches)
@@ -105,7 +105,7 @@ void SyncBrowseUpnpOrgContentDirectory1::CompleteRequest(IAsync& aAsync)
 class SyncSearchUpnpOrgContentDirectory1 : public SyncProxyAction
 {
 public:
-    SyncSearchUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService, Brh& aResult, TUint& aNumberReturned, TUint& aTotalMatches, TUint& aUpdateID);
+    SyncSearchUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy, Brh& aResult, TUint& aNumberReturned, TUint& aTotalMatches, TUint& aUpdateID);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgContentDirectory1& iService;
@@ -115,8 +115,8 @@ private:
     TUint& iUpdateID;
 };
 
-SyncSearchUpnpOrgContentDirectory1::SyncSearchUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService, Brh& aResult, TUint& aNumberReturned, TUint& aTotalMatches, TUint& aUpdateID)
-    : iService(aService)
+SyncSearchUpnpOrgContentDirectory1::SyncSearchUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy, Brh& aResult, TUint& aNumberReturned, TUint& aTotalMatches, TUint& aUpdateID)
+    : iService(aProxy)
     , iResult(aResult)
     , iNumberReturned(aNumberReturned)
     , iTotalMatches(aTotalMatches)
@@ -133,7 +133,7 @@ void SyncSearchUpnpOrgContentDirectory1::CompleteRequest(IAsync& aAsync)
 class SyncCreateObjectUpnpOrgContentDirectory1 : public SyncProxyAction
 {
 public:
-    SyncCreateObjectUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService, Brh& aObjectID, Brh& aResult);
+    SyncCreateObjectUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy, Brh& aObjectID, Brh& aResult);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgContentDirectory1& iService;
@@ -141,8 +141,8 @@ private:
     Brh& iResult;
 };
 
-SyncCreateObjectUpnpOrgContentDirectory1::SyncCreateObjectUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService, Brh& aObjectID, Brh& aResult)
-    : iService(aService)
+SyncCreateObjectUpnpOrgContentDirectory1::SyncCreateObjectUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy, Brh& aObjectID, Brh& aResult)
+    : iService(aProxy)
     , iObjectID(aObjectID)
     , iResult(aResult)
 {
@@ -157,14 +157,14 @@ void SyncCreateObjectUpnpOrgContentDirectory1::CompleteRequest(IAsync& aAsync)
 class SyncDestroyObjectUpnpOrgContentDirectory1 : public SyncProxyAction
 {
 public:
-    SyncDestroyObjectUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService);
+    SyncDestroyObjectUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgContentDirectory1& iService;
 };
 
-SyncDestroyObjectUpnpOrgContentDirectory1::SyncDestroyObjectUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService)
-    : iService(aService)
+SyncDestroyObjectUpnpOrgContentDirectory1::SyncDestroyObjectUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -177,14 +177,14 @@ void SyncDestroyObjectUpnpOrgContentDirectory1::CompleteRequest(IAsync& aAsync)
 class SyncUpdateObjectUpnpOrgContentDirectory1 : public SyncProxyAction
 {
 public:
-    SyncUpdateObjectUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService);
+    SyncUpdateObjectUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgContentDirectory1& iService;
 };
 
-SyncUpdateObjectUpnpOrgContentDirectory1::SyncUpdateObjectUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService)
-    : iService(aService)
+SyncUpdateObjectUpnpOrgContentDirectory1::SyncUpdateObjectUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -197,15 +197,15 @@ void SyncUpdateObjectUpnpOrgContentDirectory1::CompleteRequest(IAsync& aAsync)
 class SyncImportResourceUpnpOrgContentDirectory1 : public SyncProxyAction
 {
 public:
-    SyncImportResourceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService, TUint& aTransferID);
+    SyncImportResourceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy, TUint& aTransferID);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgContentDirectory1& iService;
     TUint& iTransferID;
 };
 
-SyncImportResourceUpnpOrgContentDirectory1::SyncImportResourceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService, TUint& aTransferID)
-    : iService(aService)
+SyncImportResourceUpnpOrgContentDirectory1::SyncImportResourceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy, TUint& aTransferID)
+    : iService(aProxy)
     , iTransferID(aTransferID)
 {
 }
@@ -219,15 +219,15 @@ void SyncImportResourceUpnpOrgContentDirectory1::CompleteRequest(IAsync& aAsync)
 class SyncExportResourceUpnpOrgContentDirectory1 : public SyncProxyAction
 {
 public:
-    SyncExportResourceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService, TUint& aTransferID);
+    SyncExportResourceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy, TUint& aTransferID);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgContentDirectory1& iService;
     TUint& iTransferID;
 };
 
-SyncExportResourceUpnpOrgContentDirectory1::SyncExportResourceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService, TUint& aTransferID)
-    : iService(aService)
+SyncExportResourceUpnpOrgContentDirectory1::SyncExportResourceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy, TUint& aTransferID)
+    : iService(aProxy)
     , iTransferID(aTransferID)
 {
 }
@@ -241,14 +241,14 @@ void SyncExportResourceUpnpOrgContentDirectory1::CompleteRequest(IAsync& aAsync)
 class SyncStopTransferResourceUpnpOrgContentDirectory1 : public SyncProxyAction
 {
 public:
-    SyncStopTransferResourceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService);
+    SyncStopTransferResourceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgContentDirectory1& iService;
 };
 
-SyncStopTransferResourceUpnpOrgContentDirectory1::SyncStopTransferResourceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService)
-    : iService(aService)
+SyncStopTransferResourceUpnpOrgContentDirectory1::SyncStopTransferResourceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -261,7 +261,7 @@ void SyncStopTransferResourceUpnpOrgContentDirectory1::CompleteRequest(IAsync& a
 class SyncGetTransferProgressUpnpOrgContentDirectory1 : public SyncProxyAction
 {
 public:
-    SyncGetTransferProgressUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService, Brh& aTransferStatus, Brh& aTransferLength, Brh& aTransferTotal);
+    SyncGetTransferProgressUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy, Brh& aTransferStatus, Brh& aTransferLength, Brh& aTransferTotal);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgContentDirectory1& iService;
@@ -270,8 +270,8 @@ private:
     Brh& iTransferTotal;
 };
 
-SyncGetTransferProgressUpnpOrgContentDirectory1::SyncGetTransferProgressUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService, Brh& aTransferStatus, Brh& aTransferLength, Brh& aTransferTotal)
-    : iService(aService)
+SyncGetTransferProgressUpnpOrgContentDirectory1::SyncGetTransferProgressUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy, Brh& aTransferStatus, Brh& aTransferLength, Brh& aTransferTotal)
+    : iService(aProxy)
     , iTransferStatus(aTransferStatus)
     , iTransferLength(aTransferLength)
     , iTransferTotal(aTransferTotal)
@@ -287,14 +287,14 @@ void SyncGetTransferProgressUpnpOrgContentDirectory1::CompleteRequest(IAsync& aA
 class SyncDeleteResourceUpnpOrgContentDirectory1 : public SyncProxyAction
 {
 public:
-    SyncDeleteResourceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService);
+    SyncDeleteResourceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgContentDirectory1& iService;
 };
 
-SyncDeleteResourceUpnpOrgContentDirectory1::SyncDeleteResourceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService)
-    : iService(aService)
+SyncDeleteResourceUpnpOrgContentDirectory1::SyncDeleteResourceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -307,15 +307,15 @@ void SyncDeleteResourceUpnpOrgContentDirectory1::CompleteRequest(IAsync& aAsync)
 class SyncCreateReferenceUpnpOrgContentDirectory1 : public SyncProxyAction
 {
 public:
-    SyncCreateReferenceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService, Brh& aNewID);
+    SyncCreateReferenceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy, Brh& aNewID);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgContentDirectory1& iService;
     Brh& iNewID;
 };
 
-SyncCreateReferenceUpnpOrgContentDirectory1::SyncCreateReferenceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aService, Brh& aNewID)
-    : iService(aService)
+SyncCreateReferenceUpnpOrgContentDirectory1::SyncCreateReferenceUpnpOrgContentDirectory1(CpProxyUpnpOrgContentDirectory1& aProxy, Brh& aNewID)
+    : iService(aProxy)
     , iNewID(aNewID)
 {
 }
