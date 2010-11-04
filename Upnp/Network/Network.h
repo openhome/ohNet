@@ -28,8 +28,8 @@ enum ESocketType
 class Endpoint
 {
 public:
-    static const TUint kMaxAddressBytes = 15;
-    static const TUint kMaxEndpointBytes = 21;
+    static const TUint kMaxAddressBytes = 16;
+    static const TUint kMaxEndpointBytes = 22;
     typedef Bws<kMaxAddressBytes> AddressBuf;
     typedef Bws<kMaxEndpointBytes> EndpointBuf;
 public:

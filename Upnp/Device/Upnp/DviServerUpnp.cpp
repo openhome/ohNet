@@ -136,8 +136,9 @@ const Brx& HeaderCallback::Uri() const
 
 void HeaderCallback::Log()
 {
-    TIpAddress addr = iEndpoint.Address();
-    LOG(kDvEvent, "%u.%u.%u.%u:%u", addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff, iEndpoint.Port());
+    Endpoint::EndpointBuf buf;
+    iEndpoint.GetEndpoint(buf);
+    LOG(kDvEvent, buf);
     LOG(kDvEvent, iUri);
 }
 
@@ -191,19 +192,9 @@ PropertyWriterUpnp::PropertyWriterUpnp(const Endpoint& aPublisher, const Endpoin
     iWriterEvent->WriteMethod(kUpnpMethodNotify, aSubscriberPath, Http::eHttp11);
 
     IWriterAscii& writer = iWriterEvent->WriteHeaderField(Http::kHeaderHost);
-    static const TUint kMaxAddressBytes = 21; // xxx.xxx.xxx.xxx:xxxxx
-    Bws<kMaxAddressBytes> host;
-    TIpAddress addr = aPublisher.Address();
-    (void)Ascii::AppendDec(host, addr&0xff);
-    host.Append('.');
-    (void)Ascii::AppendDec(host, (addr>>8)&0xff);
-    host.Append('.');
-    (void)Ascii::AppendDec(host, (addr>>16)&0xff);
-    host.Append('.');
-    (void)Ascii::AppendDec(host, (addr>>24)&0xff);
-    host.Append(':');
-    (void)Ascii::AppendDec(host, aPublisher.Port());
-    writer.Write(host);
+    Endpoint::EndpointBuf buf;
+    aPublisher.GetEndpoint(buf);
+    writer.Write(buf);
     writer.WriteFlush();
 
     iWriterEvent->WriteHeader(Http::kHeaderContentType, Brn("text/xml; charset=\"utf-8\""));
