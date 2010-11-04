@@ -316,9 +316,9 @@ void DeviceList::TestActions()
     for (i=0; i<kTestIterations; i++) {
         char* result;
         uint32_t resultLen;
-        CpProxyZappOrgTestBasic1SyncEchoBinary(proxy, valStr, 256, &result, &resultLen);
+        CpProxyZappOrgTestBasic1SyncEchoBinary(proxy, valBin, 256, &result, &resultLen);
         ASSERT(resultLen == 256);
-        ASSERT(strncmp(result, valStr, resultLen) == 0);
+        ASSERT(strncmp(result, valBin, resultLen) == 0);
     }
 
     CpProxyZappOrgTestBasic1Destroy(proxy);

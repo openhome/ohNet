@@ -296,8 +296,9 @@ void CpDevices::TestActions()
     std::string valBin(&bin[0], 256);
     for (i=0; i<kTestIterations; i++) {
         std::string result;
-        proxy->SyncEchoBinary(valStr, result);
-        ASSERT(result == valStr);
+        proxy->SyncEchoBinary(valBin, result);
+        ASSERT(result == valBin);
+        ASSERT(result.length() == 256);
     }
 
     delete proxy;

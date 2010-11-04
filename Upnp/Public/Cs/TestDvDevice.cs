@@ -254,8 +254,8 @@ namespace Zapp
             string valBin = new string(bin);
             for (i=0; i<kTestIterations; i++) {
                 string result;
-                proxy.SyncEchoBinary(valStr, out result);
-                Debug.Assert(result == valStr);
+                proxy.SyncEchoBinary(valBin, out result);
+                Debug.Assert(result == valBin);
             }
 
             proxy.Dispose();

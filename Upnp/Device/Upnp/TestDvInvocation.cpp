@@ -217,8 +217,8 @@ void CpDevices::Test()
     Brn valBin((const TByte*)&bin[0], 256);
     for (i=0; i<kTestIterations; i++) {
         Brh result;
-        proxy->SyncEchoBinary(valStr, result);
-        ASSERT(result == valStr);
+        proxy->SyncEchoBinary(valBin, result);
+        ASSERT(result == valBin);
     }
 
     delete proxy;
