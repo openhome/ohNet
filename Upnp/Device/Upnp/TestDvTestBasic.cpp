@@ -211,7 +211,7 @@ void ProviderTestBasic::GetBinary(IInvocationResponse& aResponse, TUint /*aVersi
 DeviceBasic::DeviceBasic(const Brx& aConfigDir)
     : iConfigDir(aConfigDir)
 {
-    iDevice = new DvDevice(Brn("device-ZappTestBasic"));
+    iDevice = new DvDevice(Brn("device-ZappTestBasic"), *this);
     iDevice->SetAttribute("Upnp.Domain", "zapp.org");
     iDevice->SetAttribute("Upnp.Type", "Test");
     iDevice->SetAttribute("Upnp.Version", "1");
