@@ -306,6 +306,18 @@ DllExport void ZappInitParamsSetDvMaxUpdateTime(ZappHandleInitParams aParams, ui
 DllExport void ZappInitParamsSetDvNumPublisherThreads(ZappHandleInitParams aParams, uint32_t aNumThreads);
 
 /**
+ * Set the number of threads which will be dedicated to published changes to state
+ * variables via WebSockets.
+ *
+ * One thread will be used per active (web browser) connection so a higher number of threads
+ * will allow more concurrent clients but will also require more system resources.
+ *
+ * @param[in] aParams          Initialisation params
+ * @param[in] aNumThreads      Number of threads.  Must be greater than zero.
+ */
+DllExport void ZappInitParamsSetDvNumWebSocketThreads(ZappHandleInitParams aParams, uint32_t aNumThreads);
+
+/**
  * Query the tcp connection timeout
  *
  * @param[in] aParams          Initialisation params
@@ -404,6 +416,15 @@ DllExport uint32_t ZappInitParamsDvMaxUpdateTimeSecs(ZappHandleInitParams aParam
  * @return  number of threads
  */
 DllExport uint32_t ZappInitParamsDvNumPublisherThreads(ZappHandleInitParams aParams);
+
+/**
+ * Query the number of device stack WebSocket threads
+ *
+ * @param[in] aParams          Initialisation params
+ *
+ * @return  number of threads
+ */
+DllExport uint32_t ZappInitParamsDvNumWebSocketThreads(ZappHandleInitParams aParams);
 
 /**
  * Query the address of a network interface
