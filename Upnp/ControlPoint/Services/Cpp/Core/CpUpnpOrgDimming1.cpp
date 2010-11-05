@@ -504,7 +504,7 @@ CpProxyUpnpOrgDimming1::CpProxyUpnpOrgDimming1(CpDevice& aDevice)
     iActionStartRampToLevel = new Action("StartRampToLevel");
     param = new Zapp::ParameterUint("newLoadLevelTarget", 0, 100);
     iActionStartRampToLevel->AddInputParameter(param);
-    param = new Zapp::ParameterUint("newRampTime", 0, 4294967295);
+    param = new Zapp::ParameterUint("newRampTime");
     iActionStartRampToLevel->AddInputParameter(param);
 
     iActionSetStepDelta = new Action("SetStepDelta");
@@ -536,7 +536,7 @@ CpProxyUpnpOrgDimming1::CpProxyUpnpOrgDimming1(CpDevice& aDevice)
     iActionGetRampPaused->AddOutputParameter(param);
 
     iActionGetRampTime = new Action("GetRampTime");
-    param = new Zapp::ParameterUint("retRampTime", 0, 4294967295);
+    param = new Zapp::ParameterUint("retRampTime");
     iActionGetRampTime->AddOutputParameter(param);
 
     Functor functor;

@@ -50,6 +50,7 @@ def runTestsValgrind():
     testsToRun = [test for test in gAllTests if test.quick and test.native]
     if gFullTests == 1:
         testsToRun = [test for test in gAllTests if test.native]
+    os.system('export GLIBCXX_FORCE_NEW')
     for test in testsToRun:
         print '\nTest: ' + test.name
         cmdLine = []

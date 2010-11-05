@@ -143,6 +143,7 @@ private:
     TBool iResponseStarted;
     TBool iResponseEnded;
     Brn iSoapRequest;
+    Semaphore iShutdownSem;
 };
 
 class DviServerUpnp : public DviServer

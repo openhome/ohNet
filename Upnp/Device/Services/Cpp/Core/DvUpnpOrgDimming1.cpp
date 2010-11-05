@@ -176,7 +176,7 @@ void DvProviderUpnpOrgDimming1::EnableActionStartRampToLevel()
 {
     Zapp::Action* action = new Zapp::Action("StartRampToLevel");
     action->AddInputParameter(new ParameterUint("newLoadLevelTarget", 0, 100));
-    action->AddInputParameter(new ParameterUint("newRampTime", 0, 4294967295));
+    action->AddInputParameter(new ParameterUint("newRampTime"));
     FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgDimming1::DoStartRampToLevel);
     iService->AddAction(action, functor);
 }
@@ -246,7 +246,7 @@ void DvProviderUpnpOrgDimming1::EnableActionGetRampPaused()
 void DvProviderUpnpOrgDimming1::EnableActionGetRampTime()
 {
     Zapp::Action* action = new Zapp::Action("GetRampTime");
-    action->AddOutputParameter(new ParameterUint("retRampTime", 0, 4294967295));
+    action->AddOutputParameter(new ParameterUint("retRampTime"));
     FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgDimming1::DoGetRampTime);
     iService->AddAction(action, functor);
 }
