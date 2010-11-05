@@ -250,6 +250,7 @@ void PropertyWriterUpnp::PropertyWriteEnd()
 DviSessionUpnp::DviSessionUpnp(TIpAddress aInterface, TUint aPort)
     : iInterface(aInterface)
     , iPort(aPort)
+    , iShutdownSem("DSUS", 1)
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
     iReaderRequest = new ReaderHttpRequest(*iReadBuffer);
@@ -276,6 +277,8 @@ DviSessionUpnp::DviSessionUpnp(TIpAddress aInterface, TUint aPort)
 
 DviSessionUpnp::~DviSessionUpnp()
 {
+    Interrupt(true);
+    iShutdownSem.Wait();
     delete iWriterResponse;
     delete iWriterBuffer;
     delete iWriterChunked;
@@ -285,6 +288,7 @@ DviSessionUpnp::~DviSessionUpnp()
 
 void DviSessionUpnp::Run()
 {
+    iShutdownSem.Wait();
     iErrorStatus = &HttpStatus::kOk;
     iReaderRequest->Flush();
     iWriterChunked->SetChunked(false);
@@ -339,6 +343,7 @@ void DviSessionUpnp::Run()
         }
     }
     catch (WriterError&) {}
+    iShutdownSem.Signal();
 }
 
 void DviSessionUpnp::Error(const HttpStatus& aStatus)
