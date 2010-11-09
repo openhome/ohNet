@@ -5,22 +5,22 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvServiceUpnpOrgSwitchPower1 : IDisposable
+    public class DvProviderUpnpOrgSwitchPower1 : DvProvider, IDisposable
     {
         [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern uint DvServiceUpnpOrgSwitchPower1Create(uint aDeviceHandle);
+        static extern uint DvProviderUpnpOrgSwitchPower1Create(uint aDeviceHandle);
         [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern void DvServiceUpnpOrgSwitchPower1Destroy(uint aHandle);
+        static extern void DvProviderUpnpOrgSwitchPower1Destroy(uint aHandle);
         [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern unsafe int DvServiceUpnpOrgSwitchPower1SetPropertyStatus(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgSwitchPower1SetPropertyStatus(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern unsafe void DvServiceUpnpOrgSwitchPower1GetPropertyStatus(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderUpnpOrgSwitchPower1GetPropertyStatus(uint aHandle, int* aValue);
         [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern void DvServiceUpnpOrgSwitchPower1EnableActionSetTarget(uint aHandle, CallbackSetTarget aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgSwitchPower1EnableActionSetTarget(uint aHandle, CallbackSetTarget aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern void DvServiceUpnpOrgSwitchPower1EnableActionGetTarget(uint aHandle, CallbackGetTarget aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgSwitchPower1EnableActionGetTarget(uint aHandle, CallbackGetTarget aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgSwitchPower1")]
-        static extern void DvServiceUpnpOrgSwitchPower1EnableActionGetStatus(uint aHandle, CallbackGetStatus aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgSwitchPower1EnableActionGetStatus(uint aHandle, CallbackGetStatus aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -28,15 +28,14 @@ namespace Zapp
         private unsafe delegate int CallbackGetTarget(IntPtr aPtr, uint aVersion, int* aRetTargetValue);
         private unsafe delegate int CallbackGetStatus(IntPtr aPtr, uint aVersion, int* aResultStatus);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackSetTarget iCallbackSetTarget;
         private CallbackGetTarget iCallbackGetTarget;
         private CallbackGetStatus iCallbackGetStatus;
 
-        public DvServiceUpnpOrgSwitchPower1(DvDevice aDevice)
+        public DvProviderUpnpOrgSwitchPower1(DvDevice aDevice)
         {
-            iHandle = DvServiceUpnpOrgSwitchPower1Create(aDevice.Handle()); 
+            iHandle = DvProviderUpnpOrgSwitchPower1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
@@ -44,7 +43,7 @@ namespace Zapp
         {
         uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceUpnpOrgSwitchPower1SetPropertyStatus(iHandle, value, &changed))
+            if (0 != DvProviderUpnpOrgSwitchPower1SetPropertyStatus(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -54,7 +53,7 @@ namespace Zapp
         public unsafe void GetPropertyStatus(out bool aValue)
         {
             int value;
-            DvServiceUpnpOrgSwitchPower1GetPropertyStatus(iHandle, &value);
+            DvProviderUpnpOrgSwitchPower1GetPropertyStatus(iHandle, &value);
             aValue = (value != 0);
         }
 
@@ -62,21 +61,21 @@ namespace Zapp
         {
             iCallbackSetTarget = new CallbackSetTarget(DoSetTarget);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgSwitchPower1EnableActionSetTarget(iHandle, iCallbackSetTarget, ptr);
+            DvProviderUpnpOrgSwitchPower1EnableActionSetTarget(iHandle, iCallbackSetTarget, ptr);
         }
 
         protected unsafe void EnableActionGetTarget()
         {
             iCallbackGetTarget = new CallbackGetTarget(DoGetTarget);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgSwitchPower1EnableActionGetTarget(iHandle, iCallbackGetTarget, ptr);
+            DvProviderUpnpOrgSwitchPower1EnableActionGetTarget(iHandle, iCallbackGetTarget, ptr);
         }
 
         protected unsafe void EnableActionGetStatus()
         {
             iCallbackGetStatus = new CallbackGetStatus(DoGetStatus);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgSwitchPower1EnableActionGetStatus(iHandle, iCallbackGetStatus, ptr);
+            DvProviderUpnpOrgSwitchPower1EnableActionGetStatus(iHandle, iCallbackGetStatus, ptr);
         }
 
         protected virtual void SetTarget(uint aVersion, bool anewTargetValue)
@@ -97,7 +96,7 @@ namespace Zapp
         private static unsafe int DoSetTarget(IntPtr aPtr, uint aVersion, int anewTargetValue)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgSwitchPower1 self = (DvServiceUpnpOrgSwitchPower1)gch.Target;
+            DvProviderUpnpOrgSwitchPower1 self = (DvProviderUpnpOrgSwitchPower1)gch.Target;
             bool newTargetValue = (anewTargetValue != 0);
             self.SetTarget(aVersion, newTargetValue);
             return 0;
@@ -106,7 +105,7 @@ namespace Zapp
         private static unsafe int DoGetTarget(IntPtr aPtr, uint aVersion, int* aRetTargetValue)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgSwitchPower1 self = (DvServiceUpnpOrgSwitchPower1)gch.Target;
+            DvProviderUpnpOrgSwitchPower1 self = (DvProviderUpnpOrgSwitchPower1)gch.Target;
             bool retTargetValue;
             self.GetTarget(aVersion, out retTargetValue);
             *aRetTargetValue = (retTargetValue ? 1 : 0);
@@ -116,7 +115,7 @@ namespace Zapp
         private static unsafe int DoGetStatus(IntPtr aPtr, uint aVersion, int* aResultStatus)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgSwitchPower1 self = (DvServiceUpnpOrgSwitchPower1)gch.Target;
+            DvProviderUpnpOrgSwitchPower1 self = (DvProviderUpnpOrgSwitchPower1)gch.Target;
             bool resultStatus;
             self.GetStatus(aVersion, out resultStatus);
             *aResultStatus = (resultStatus ? 1 : 0);
@@ -130,7 +129,7 @@ namespace Zapp
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceUpnpOrgSwitchPower1()
+        ~DvProviderUpnpOrgSwitchPower1()
         {
             DoDispose();
         }
@@ -147,7 +146,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = 0;
             }
-            DvServiceUpnpOrgSwitchPower1Destroy(handle);
+            DvProviderUpnpOrgSwitchPower1Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

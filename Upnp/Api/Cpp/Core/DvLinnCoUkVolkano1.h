@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,12 +17,12 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Volkano:1
  */
-class DvServiceLinnCoUkVolkano1 : public DvService
+class DvProviderLinnCoUkVolkano1 : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkVolkano1() {}
+    virtual ~DvProviderLinnCoUkVolkano1() {}
 protected:
-    DvServiceLinnCoUkVolkano1(DvDevice& aDevice);
+    DvProviderLinnCoUkVolkano1(DvDevice& aDevice);
     void EnableActionReboot();
     void EnableActionBootMode();
     void EnableActionSetBootMode();
@@ -47,7 +47,7 @@ private:
     virtual void MaxBoards(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaMaxBoards);
     virtual void SoftwareVersion(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaSoftwareVersion);
 private:
-    DvServiceLinnCoUkVolkano1();
+    DvProviderLinnCoUkVolkano1();
     void DoReboot(IDvInvocation& aInvocation, TUint aVersion);
     void DoBootMode(IDvInvocation& aInvocation, TUint aVersion);
     void DoSetBootMode(IDvInvocation& aInvocation, TUint aVersion);

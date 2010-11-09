@@ -14,15 +14,15 @@ using namespace Zapp;
 class SyncTestComPortLinnCoUkPtest1Cpp : public SyncProxyAction
 {
 public:
-    SyncTestComPortLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aService, bool& aaResult);
+    SyncTestComPortLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aProxy, bool& aaResult);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkPtest1Cpp& iService;
     bool& iaResult;
 };
 
-SyncTestComPortLinnCoUkPtest1Cpp::SyncTestComPortLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aService, bool& aaResult)
-    : iService(aService)
+SyncTestComPortLinnCoUkPtest1Cpp::SyncTestComPortLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aProxy, bool& aaResult)
+    : iService(aProxy)
     , iaResult(aaResult)
 {
 }
@@ -36,14 +36,14 @@ void SyncTestComPortLinnCoUkPtest1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncLedsOnLinnCoUkPtest1Cpp : public SyncProxyAction
 {
 public:
-    SyncLedsOnLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aService);
+    SyncLedsOnLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkPtest1Cpp& iService;
 };
 
-SyncLedsOnLinnCoUkPtest1Cpp::SyncLedsOnLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aService)
-    : iService(aService)
+SyncLedsOnLinnCoUkPtest1Cpp::SyncLedsOnLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -56,14 +56,14 @@ void SyncLedsOnLinnCoUkPtest1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncLedsOffLinnCoUkPtest1Cpp : public SyncProxyAction
 {
 public:
-    SyncLedsOffLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aService);
+    SyncLedsOffLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkPtest1Cpp& iService;
 };
 
-SyncLedsOffLinnCoUkPtest1Cpp::SyncLedsOffLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aService)
-    : iService(aService)
+SyncLedsOffLinnCoUkPtest1Cpp::SyncLedsOffLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 

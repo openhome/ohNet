@@ -1,7 +1,7 @@
 #include <ZappTypes.h>
 #include <Exception.h>
+#include <OsWrapper.h>
 #include <Os.h>
-#include <C/Os.h>
 #include <Network.h>
 #include <Debug.h>
 

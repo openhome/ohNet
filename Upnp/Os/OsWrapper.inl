@@ -1,5 +1,5 @@
-#ifndef HEADER_OS_INL
-#define HEADER_OS_INL
+#ifndef HEADER_OSWRAPPER_INL
+#define HEADER_OSWRAPPER_INL
 
 inline TInt Os::Create()
 { return OsCreate(); }
@@ -80,4 +80,4 @@ inline THandle Os::NetworkAccept(THandle aHandle)
 void Os::NetworkSetInterfaceChangedObserver(InterfaceListChanged aCallback, void* aArg)
 { OsNetworkSetInterfaceChangedObserver(aCallback, aArg); }
 
-#endif // HEADER_OS_INL
+#endif // HEADER_OSWRAPPER_INL

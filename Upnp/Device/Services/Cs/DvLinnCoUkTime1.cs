@@ -5,45 +5,44 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvServiceLinnCoUkTime1 : IDisposable
+    public class DvProviderLinnCoUkTime1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkTime1")]
-        static extern uint DvServiceLinnCoUkTime1Create(uint aDeviceHandle);
+        static extern uint DvProviderLinnCoUkTime1Create(uint aDeviceHandle);
         [DllImport("DvLinnCoUkTime1")]
-        static extern void DvServiceLinnCoUkTime1Destroy(uint aHandle);
+        static extern void DvProviderLinnCoUkTime1Destroy(uint aHandle);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe int DvServiceLinnCoUkTime1SetPropertyTrackCount(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkTime1SetPropertyTrackCount(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe void DvServiceLinnCoUkTime1GetPropertyTrackCount(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkTime1GetPropertyTrackCount(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe int DvServiceLinnCoUkTime1SetPropertyDuration(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkTime1SetPropertyDuration(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe void DvServiceLinnCoUkTime1GetPropertyDuration(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkTime1GetPropertyDuration(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe int DvServiceLinnCoUkTime1SetPropertySeconds(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkTime1SetPropertySeconds(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe void DvServiceLinnCoUkTime1GetPropertySeconds(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkTime1GetPropertySeconds(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkTime1")]
-        static extern void DvServiceLinnCoUkTime1EnableActionTime(uint aHandle, CallbackTime aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkTime1EnableActionTime(uint aHandle, CallbackTime aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
         private unsafe delegate int CallbackTime(IntPtr aPtr, uint aVersion, uint* aaTrackCount, uint* aaDuration, uint* aaSeconds);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackTime iCallbackTime;
 
-        public DvServiceLinnCoUkTime1(DvDevice aDevice)
+        public DvProviderLinnCoUkTime1(DvDevice aDevice)
         {
-            iHandle = DvServiceLinnCoUkTime1Create(aDevice.Handle()); 
+            iHandle = DvProviderLinnCoUkTime1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
         public unsafe bool SetPropertyTrackCount(uint aValue)
         {
         uint changed;
-            if (0 != DvServiceLinnCoUkTime1SetPropertyTrackCount(iHandle, aValue, &changed))
+            if (0 != DvProviderLinnCoUkTime1SetPropertyTrackCount(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -54,14 +53,14 @@ namespace Zapp
         {
             fixed (uint* value = &aValue)
 			{
-                DvServiceLinnCoUkTime1GetPropertyTrackCount(iHandle, value);
+                DvProviderLinnCoUkTime1GetPropertyTrackCount(iHandle, value);
             }
         }
 
         public unsafe bool SetPropertyDuration(uint aValue)
         {
         uint changed;
-            if (0 != DvServiceLinnCoUkTime1SetPropertyDuration(iHandle, aValue, &changed))
+            if (0 != DvProviderLinnCoUkTime1SetPropertyDuration(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -72,14 +71,14 @@ namespace Zapp
         {
             fixed (uint* value = &aValue)
 			{
-                DvServiceLinnCoUkTime1GetPropertyDuration(iHandle, value);
+                DvProviderLinnCoUkTime1GetPropertyDuration(iHandle, value);
             }
         }
 
         public unsafe bool SetPropertySeconds(uint aValue)
         {
         uint changed;
-            if (0 != DvServiceLinnCoUkTime1SetPropertySeconds(iHandle, aValue, &changed))
+            if (0 != DvProviderLinnCoUkTime1SetPropertySeconds(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -90,7 +89,7 @@ namespace Zapp
         {
             fixed (uint* value = &aValue)
 			{
-                DvServiceLinnCoUkTime1GetPropertySeconds(iHandle, value);
+                DvProviderLinnCoUkTime1GetPropertySeconds(iHandle, value);
             }
         }
 
@@ -98,7 +97,7 @@ namespace Zapp
         {
             iCallbackTime = new CallbackTime(DoTime);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkTime1EnableActionTime(iHandle, iCallbackTime, ptr);
+            DvProviderLinnCoUkTime1EnableActionTime(iHandle, iCallbackTime, ptr);
         }
 
         protected virtual void Time(uint aVersion, out uint aaTrackCount, out uint aaDuration, out uint aaSeconds)
@@ -109,7 +108,7 @@ namespace Zapp
         private static unsafe int DoTime(IntPtr aPtr, uint aVersion, uint* aaTrackCount, uint* aaDuration, uint* aaSeconds)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkTime1 self = (DvServiceLinnCoUkTime1)gch.Target;
+            DvProviderLinnCoUkTime1 self = (DvProviderLinnCoUkTime1)gch.Target;
             uint aTrackCount;
             uint aDuration;
             uint aSeconds;
@@ -127,7 +126,7 @@ namespace Zapp
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceLinnCoUkTime1()
+        ~DvProviderLinnCoUkTime1()
         {
             DoDispose();
         }
@@ -144,7 +143,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = 0;
             }
-            DvServiceLinnCoUkTime1Destroy(handle);
+            DvProviderLinnCoUkTime1Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

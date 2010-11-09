@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 #include <string>
 
@@ -20,10 +20,10 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Jukebox:1
  */
-class DvServiceLinnCoUkJukebox1Cpp : public DvService
+class DvProviderLinnCoUkJukebox1Cpp : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkJukebox1Cpp() {}
+    virtual ~DvProviderLinnCoUkJukebox1Cpp() {}
     bool SetPropertyCurrentPreset(uint32_t aValue);
     void GetPropertyCurrentPreset(uint32_t& aValue);
     bool SetPropertyPresetPrefix(const std::string& aValue);
@@ -31,7 +31,7 @@ public:
     bool SetPropertyAlbumArtFileName(const std::string& aValue);
     void GetPropertyAlbumArtFileName(std::string& aValue);
 protected:
-    DvServiceLinnCoUkJukebox1Cpp(DvDeviceStd& aDevice);
+    DvProviderLinnCoUkJukebox1Cpp(DvDeviceStd& aDevice);
     void EnableActionSetPresetPrefix();
     void EnableActionPresetPrefix();
     void EnableActionSetAlbumArtFileName();
@@ -50,7 +50,7 @@ private:
     virtual void PresetMetaData(uint32_t aVersion, uint32_t aaPreset, std::string& aaMetaData);
     virtual void LoadManifest(uint32_t aVersion, uint32_t& aaTotalPresets);
 private:
-    DvServiceLinnCoUkJukebox1Cpp();
+    DvProviderLinnCoUkJukebox1Cpp();
     void DoSetPresetPrefix(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoPresetPrefix(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoSetAlbumArtFileName(IDvInvocation& aInvocation, uint32_t aVersion);

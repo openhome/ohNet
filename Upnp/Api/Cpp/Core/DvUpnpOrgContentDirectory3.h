@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,10 +17,10 @@ class PropertyBinary;
 /**
  * Base Device for upnp.org:ContentDirectory:3
  */
-class DvServiceUpnpOrgContentDirectory3 : public DvService
+class DvProviderUpnpOrgContentDirectory3 : public DvProvider
 {
 public:
-    virtual ~DvServiceUpnpOrgContentDirectory3() {}
+    virtual ~DvProviderUpnpOrgContentDirectory3() {}
     TBool SetPropertySystemUpdateID(TUint aValue);
     void GetPropertySystemUpdateID(TUint& aValue);
     TBool SetPropertyContainerUpdateIDs(const Brx& aValue);
@@ -30,7 +30,7 @@ public:
     TBool SetPropertyTransferIDs(const Brx& aValue);
     void GetPropertyTransferIDs(Brhz& aValue);
 protected:
-    DvServiceUpnpOrgContentDirectory3(DvDevice& aDevice);
+    DvProviderUpnpOrgContentDirectory3(DvDevice& aDevice);
     void EnableActionGetSearchCapabilities();
     void EnableActionGetSortCapabilities();
     void EnableActionGetSortExtensionCapabilities();
@@ -73,7 +73,7 @@ private:
     virtual void FreeFormQuery(IInvocationResponse& aResponse, TUint aVersion, const Brx& aContainerID, TUint aCDSView, const Brx& aQueryRequest, IInvocationResponseString& aQueryResult, IInvocationResponseUint& aUpdateID);
     virtual void GetFreeFormQueryCapabilities(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aFFQCapabilities);
 private:
-    DvServiceUpnpOrgContentDirectory3();
+    DvProviderUpnpOrgContentDirectory3();
     void DoGetSearchCapabilities(IDvInvocation& aInvocation, TUint aVersion);
     void DoGetSortCapabilities(IDvInvocation& aInvocation, TUint aVersion);
     void DoGetSortExtensionCapabilities(IDvInvocation& aInvocation, TUint aVersion);

@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 #include <string>
 
@@ -20,10 +20,10 @@ class PropertyBinary;
 /**
  * Base Device for upnp.org:Dimming:1
  */
-class DvServiceUpnpOrgDimming1Cpp : public DvService
+class DvProviderUpnpOrgDimming1Cpp : public DvProvider
 {
 public:
-    virtual ~DvServiceUpnpOrgDimming1Cpp() {}
+    virtual ~DvProviderUpnpOrgDimming1Cpp() {}
     bool SetPropertyLoadLevelStatus(uint32_t aValue);
     void GetPropertyLoadLevelStatus(uint32_t& aValue);
     bool SetPropertyStepDelta(uint32_t aValue);
@@ -35,7 +35,7 @@ public:
     bool SetPropertyRampPaused(bool aValue);
     void GetPropertyRampPaused(bool& aValue);
 protected:
-    DvServiceUpnpOrgDimming1Cpp(DvDeviceStd& aDevice);
+    DvProviderUpnpOrgDimming1Cpp(DvDeviceStd& aDevice);
     void EnableActionSetLoadLevelTarget();
     void EnableActionGetLoadLevelTarget();
     void EnableActionGetLoadLevelStatus();
@@ -80,7 +80,7 @@ private:
     virtual void GetRampPaused(uint32_t aVersion, bool& aretRampPaused);
     virtual void GetRampTime(uint32_t aVersion, uint32_t& aretRampTime);
 private:
-    DvServiceUpnpOrgDimming1Cpp();
+    DvProviderUpnpOrgDimming1Cpp();
     void DoSetLoadLevelTarget(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoGetLoadLevelTarget(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoGetLoadLevelStatus(IDvInvocation& aInvocation, uint32_t aVersion);

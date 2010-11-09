@@ -26,7 +26,7 @@
 #include <unistd.h>
 #include <ifaddrs.h>
 
-#include <C/Os.h>
+#include <Os.h>
 
 #define kMinStackBytes (1024 * 512)
 #define kThreadSchedPolicy (SCHED_RR)
@@ -643,16 +643,19 @@ THandle OsNetworkAccept(THandle aHandle)
 int32_t OsNetworkGetHostByName(const char* aAddress, TIpAddress* aHost)
 {
     int32_t ret = 0;
-    (void)OsMutexLock(gMutex);
-    struct hostent* dns = gethostbyname(aAddress);
-    if (dns == NULL) {
+    struct addrinfo *res;
+    struct addrinfo hints;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    if (0 != getaddrinfo(aAddress, NULL, &hints, &res)) {
         ret = -1;
+        *aHost = 0;
     }
     else {
-        *aHost = *((uint32_t*)(dns->h_addr_list[0]));
-    }
-    (void)OsMutexUnlock(gMutex);
-
+        struct sockaddr_in* s = (struct sockaddr_in*)res->ai_addr;
+        *aHost = s->sin_addr.s_addr;
+        freeaddrinfo(res);
+    }    
     return ret;
 }
 

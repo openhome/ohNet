@@ -35,7 +35,7 @@
     }
     fileName += type;
     fileName += version;
-    string className = "DvService" + fileName;
+    string className = "DvProvider" + fileName;
 
     Initialise();
 
@@ -70,7 +70,7 @@ void <#=className#>::GetProperty<#=s.name#>(<#=inArgType[s.type]#>& aValue)
 <#  } #>
 
 <#=className#>::<#=className#>(DvDevice& aDevice)
-    : DvService(aDevice.Device(), "<#=domain#>", "<#=type#>", <#=version#>)
+    : DvProvider(aDevice.Device(), "<#=domain#>", "<#=type#>", <#=version#>)
 {
     Functor empty;<#=DeclareAllowedValuesForProperties(u)#>
 <#  foreach (Variable s in u.evented) #>

@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 #include <string>
 
@@ -20,10 +20,10 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Preamp:4
  */
-class DvServiceLinnCoUkPreamp4Cpp : public DvService
+class DvProviderLinnCoUkPreamp4Cpp : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkPreamp4Cpp() {}
+    virtual ~DvProviderLinnCoUkPreamp4Cpp() {}
     bool SetPropertyVolume(uint32_t aValue);
     void GetPropertyVolume(uint32_t& aValue);
     bool SetPropertyMute(bool aValue);
@@ -37,7 +37,7 @@ public:
     bool SetPropertyStartupVolumeEnabled(bool aValue);
     void GetPropertyStartupVolumeEnabled(bool& aValue);
 protected:
-    DvServiceLinnCoUkPreamp4Cpp(DvDeviceStd& aDevice);
+    DvProviderLinnCoUkPreamp4Cpp(DvDeviceStd& aDevice);
     void EnableActionVolumeInc();
     void EnableActionVolumeDec();
     void EnableActionSetVolume();
@@ -68,7 +68,7 @@ private:
     virtual void SetStartupVolumeEnabled(uint32_t aVersion, bool aaStartupVolumeEnabled);
     virtual void StartupVolumeEnabled(uint32_t aVersion, bool& aaStartupVolumeEnabled);
 private:
-    DvServiceLinnCoUkPreamp4Cpp();
+    DvProviderLinnCoUkPreamp4Cpp();
     void DoVolumeInc(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoVolumeDec(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoSetVolume(IDvInvocation& aInvocation, uint32_t aVersion);

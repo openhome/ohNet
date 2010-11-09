@@ -5,41 +5,40 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvServiceZappOrgTestDimmableLight1 : IDisposable
+    public class DvProviderZappOrgTestDimmableLight1 : DvProvider, IDisposable
     {
         [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern uint DvServiceZappOrgTestDimmableLight1Create(uint aDeviceHandle);
+        static extern uint DvProviderZappOrgTestDimmableLight1Create(uint aDeviceHandle);
         [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern void DvServiceZappOrgTestDimmableLight1Destroy(uint aHandle);
+        static extern void DvProviderZappOrgTestDimmableLight1Destroy(uint aHandle);
         [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern unsafe int DvServiceZappOrgTestDimmableLight1SetPropertyA_ARG_Level(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderZappOrgTestDimmableLight1SetPropertyA_ARG_Level(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern unsafe void DvServiceZappOrgTestDimmableLight1GetPropertyA_ARG_Level(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderZappOrgTestDimmableLight1GetPropertyA_ARG_Level(uint aHandle, uint* aValue);
         [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern void DvServiceZappOrgTestDimmableLight1EnableActionGetLevel(uint aHandle, CallbackGetLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderZappOrgTestDimmableLight1EnableActionGetLevel(uint aHandle, CallbackGetLevel aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern void DvServiceZappOrgTestDimmableLight1EnableActionSetLevel(uint aHandle, CallbackSetLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderZappOrgTestDimmableLight1EnableActionSetLevel(uint aHandle, CallbackSetLevel aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
         private unsafe delegate int CallbackGetLevel(IntPtr aPtr, uint aVersion, uint* aLevel);
         private unsafe delegate int CallbackSetLevel(IntPtr aPtr, uint aVersion, uint aLevel);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackGetLevel iCallbackGetLevel;
         private CallbackSetLevel iCallbackSetLevel;
 
-        public DvServiceZappOrgTestDimmableLight1(DvDevice aDevice)
+        public DvProviderZappOrgTestDimmableLight1(DvDevice aDevice)
         {
-            iHandle = DvServiceZappOrgTestDimmableLight1Create(aDevice.Handle()); 
+            iHandle = DvProviderZappOrgTestDimmableLight1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
         public unsafe bool SetPropertyA_ARG_Level(uint aValue)
         {
         uint changed;
-            if (0 != DvServiceZappOrgTestDimmableLight1SetPropertyA_ARG_Level(iHandle, aValue, &changed))
+            if (0 != DvProviderZappOrgTestDimmableLight1SetPropertyA_ARG_Level(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -50,7 +49,7 @@ namespace Zapp
         {
             fixed (uint* value = &aValue)
 			{
-                DvServiceZappOrgTestDimmableLight1GetPropertyA_ARG_Level(iHandle, value);
+                DvProviderZappOrgTestDimmableLight1GetPropertyA_ARG_Level(iHandle, value);
             }
         }
 
@@ -58,14 +57,14 @@ namespace Zapp
         {
             iCallbackGetLevel = new CallbackGetLevel(DoGetLevel);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceZappOrgTestDimmableLight1EnableActionGetLevel(iHandle, iCallbackGetLevel, ptr);
+            DvProviderZappOrgTestDimmableLight1EnableActionGetLevel(iHandle, iCallbackGetLevel, ptr);
         }
 
         protected unsafe void EnableActionSetLevel()
         {
             iCallbackSetLevel = new CallbackSetLevel(DoSetLevel);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceZappOrgTestDimmableLight1EnableActionSetLevel(iHandle, iCallbackSetLevel, ptr);
+            DvProviderZappOrgTestDimmableLight1EnableActionSetLevel(iHandle, iCallbackSetLevel, ptr);
         }
 
         protected virtual void GetLevel(uint aVersion, out uint aLevel)
@@ -81,7 +80,7 @@ namespace Zapp
         private static unsafe int DoGetLevel(IntPtr aPtr, uint aVersion, uint* aLevel)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceZappOrgTestDimmableLight1 self = (DvServiceZappOrgTestDimmableLight1)gch.Target;
+            DvProviderZappOrgTestDimmableLight1 self = (DvProviderZappOrgTestDimmableLight1)gch.Target;
             uint level;
             self.GetLevel(aVersion, out level);
             *aLevel = level;
@@ -91,7 +90,7 @@ namespace Zapp
         private static unsafe int DoSetLevel(IntPtr aPtr, uint aVersion, uint aLevel)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceZappOrgTestDimmableLight1 self = (DvServiceZappOrgTestDimmableLight1)gch.Target;
+            DvProviderZappOrgTestDimmableLight1 self = (DvProviderZappOrgTestDimmableLight1)gch.Target;
             self.SetLevel(aVersion, aLevel);
             return 0;
         }
@@ -103,7 +102,7 @@ namespace Zapp
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceZappOrgTestDimmableLight1()
+        ~DvProviderZappOrgTestDimmableLight1()
         {
             DoDispose();
         }
@@ -120,7 +119,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = 0;
             }
-            DvServiceZappOrgTestDimmableLight1Destroy(handle);
+            DvProviderZappOrgTestDimmableLight1Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

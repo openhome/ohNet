@@ -1,6 +1,6 @@
 #include <Thread.h>
 #include <Debug.h>
-#include <Os.h>
+#include <OsWrapper.h>
 #include <exception>
 
 using namespace Zapp;

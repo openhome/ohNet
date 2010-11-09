@@ -6,33 +6,33 @@
 
 using namespace Zapp;
 
-TBool DvServiceLinnCoUkMediaTime1::SetPropertySeconds(TUint aValue)
+TBool DvProviderLinnCoUkMediaTime1::SetPropertySeconds(TUint aValue)
 {
     return SetPropertyUint(*iPropertySeconds, aValue);
 }
 
-void DvServiceLinnCoUkMediaTime1::GetPropertySeconds(TUint& aValue)
+void DvProviderLinnCoUkMediaTime1::GetPropertySeconds(TUint& aValue)
 {
     aValue = iPropertySeconds->Value();
 }
 
-DvServiceLinnCoUkMediaTime1::DvServiceLinnCoUkMediaTime1(DvDevice& aDevice)
-    : DvService(aDevice.Device(), "linn.co.uk", "MediaTime", 1)
+DvProviderLinnCoUkMediaTime1::DvProviderLinnCoUkMediaTime1(DvDevice& aDevice)
+    : DvProvider(aDevice.Device(), "linn.co.uk", "MediaTime", 1)
 {
     Functor empty;
     iPropertySeconds = new PropertyUint(new ParameterUint("Seconds"), empty);
     iService->AddProperty(iPropertySeconds); // passes ownership
 }
 
-void DvServiceLinnCoUkMediaTime1::EnableActionSeconds()
+void DvProviderLinnCoUkMediaTime1::EnableActionSeconds()
 {
     Zapp::Action* action = new Zapp::Action("Seconds");
     action->AddOutputParameter(new ParameterRelated("aSeconds", *iPropertySeconds));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkMediaTime1::DoSeconds);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkMediaTime1::DoSeconds);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkMediaTime1::DoSeconds(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkMediaTime1::DoSeconds(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -41,7 +41,7 @@ void DvServiceLinnCoUkMediaTime1::DoSeconds(IDvInvocation& aInvocation, TUint aV
     Seconds(resp, aVersion, respaSeconds);
 }
 
-void DvServiceLinnCoUkMediaTime1::Seconds(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aaSeconds*/)
+void DvProviderLinnCoUkMediaTime1::Seconds(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aaSeconds*/)
 {
     ASSERTS();
 }

@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 #include <string>
 
@@ -20,16 +20,16 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Delay:1
  */
-class DvServiceLinnCoUkDelay1Cpp : public DvService
+class DvProviderLinnCoUkDelay1Cpp : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkDelay1Cpp() {}
+    virtual ~DvProviderLinnCoUkDelay1Cpp() {}
     bool SetPropertyPresetXml(const std::string& aValue);
     void GetPropertyPresetXml(std::string& aValue);
     bool SetPropertyPresetIndex(uint32_t aValue);
     void GetPropertyPresetIndex(uint32_t& aValue);
 protected:
-    DvServiceLinnCoUkDelay1Cpp(DvDeviceStd& aDevice);
+    DvProviderLinnCoUkDelay1Cpp(DvDeviceStd& aDevice);
     void EnableActionPresetXml();
     void EnableActionPresetIndex();
     void EnableActionSetPresetIndex();
@@ -50,7 +50,7 @@ private:
     virtual void DelayMaximum(uint32_t aVersion, uint32_t& aaDelay);
     virtual void PresetCount(uint32_t aVersion, uint32_t& aaCount);
 private:
-    DvServiceLinnCoUkDelay1Cpp();
+    DvProviderLinnCoUkDelay1Cpp();
     void DoPresetXml(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoPresetIndex(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoSetPresetIndex(IDvInvocation& aInvocation, uint32_t aVersion);

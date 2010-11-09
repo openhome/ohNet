@@ -5,26 +5,26 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvServiceLinnCoUkConfiguration1 : IDisposable
+    public class DvProviderLinnCoUkConfiguration1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern uint DvServiceLinnCoUkConfiguration1Create(uint aDeviceHandle);
+        static extern uint DvProviderLinnCoUkConfiguration1Create(uint aDeviceHandle);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern void DvServiceLinnCoUkConfiguration1Destroy(uint aHandle);
+        static extern void DvProviderLinnCoUkConfiguration1Destroy(uint aHandle);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern unsafe int DvServiceLinnCoUkConfiguration1SetPropertyConfigurationXml(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkConfiguration1SetPropertyConfigurationXml(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern unsafe void DvServiceLinnCoUkConfiguration1GetPropertyConfigurationXml(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkConfiguration1GetPropertyConfigurationXml(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern unsafe int DvServiceLinnCoUkConfiguration1SetPropertyParameterXml(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkConfiguration1SetPropertyParameterXml(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern unsafe void DvServiceLinnCoUkConfiguration1GetPropertyParameterXml(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkConfiguration1GetPropertyParameterXml(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern void DvServiceLinnCoUkConfiguration1EnableActionConfigurationXml(uint aHandle, CallbackConfigurationXml aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkConfiguration1EnableActionConfigurationXml(uint aHandle, CallbackConfigurationXml aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern void DvServiceLinnCoUkConfiguration1EnableActionParameterXml(uint aHandle, CallbackParameterXml aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkConfiguration1EnableActionParameterXml(uint aHandle, CallbackParameterXml aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern void DvServiceLinnCoUkConfiguration1EnableActionSetParameter(uint aHandle, CallbackSetParameter aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkConfiguration1EnableActionSetParameter(uint aHandle, CallbackSetParameter aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -32,15 +32,14 @@ namespace Zapp
         private unsafe delegate int CallbackParameterXml(IntPtr aPtr, uint aVersion, char** aaParameterXml);
         private unsafe delegate int CallbackSetParameter(IntPtr aPtr, uint aVersion, char* aaTarget, char* aaName, char* aaValue);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackConfigurationXml iCallbackConfigurationXml;
         private CallbackParameterXml iCallbackParameterXml;
         private CallbackSetParameter iCallbackSetParameter;
 
-        public DvServiceLinnCoUkConfiguration1(DvDevice aDevice)
+        public DvProviderLinnCoUkConfiguration1(DvDevice aDevice)
         {
-            iHandle = DvServiceLinnCoUkConfiguration1Create(aDevice.Handle()); 
+            iHandle = DvProviderLinnCoUkConfiguration1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
@@ -48,7 +47,7 @@ namespace Zapp
         {
         uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkConfiguration1SetPropertyConfigurationXml(iHandle, value, &changed);
+            int err = DvProviderLinnCoUkConfiguration1SetPropertyConfigurationXml(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
@@ -60,7 +59,7 @@ namespace Zapp
         public unsafe void GetPropertyConfigurationXml(out string aValue)
         {
             char* value;
-            DvServiceLinnCoUkConfiguration1GetPropertyConfigurationXml(iHandle, &value);
+            DvProviderLinnCoUkConfiguration1GetPropertyConfigurationXml(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
@@ -69,7 +68,7 @@ namespace Zapp
         {
         uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkConfiguration1SetPropertyParameterXml(iHandle, value, &changed);
+            int err = DvProviderLinnCoUkConfiguration1SetPropertyParameterXml(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
@@ -81,7 +80,7 @@ namespace Zapp
         public unsafe void GetPropertyParameterXml(out string aValue)
         {
             char* value;
-            DvServiceLinnCoUkConfiguration1GetPropertyParameterXml(iHandle, &value);
+            DvProviderLinnCoUkConfiguration1GetPropertyParameterXml(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
@@ -90,21 +89,21 @@ namespace Zapp
         {
             iCallbackConfigurationXml = new CallbackConfigurationXml(DoConfigurationXml);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkConfiguration1EnableActionConfigurationXml(iHandle, iCallbackConfigurationXml, ptr);
+            DvProviderLinnCoUkConfiguration1EnableActionConfigurationXml(iHandle, iCallbackConfigurationXml, ptr);
         }
 
         protected unsafe void EnableActionParameterXml()
         {
             iCallbackParameterXml = new CallbackParameterXml(DoParameterXml);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkConfiguration1EnableActionParameterXml(iHandle, iCallbackParameterXml, ptr);
+            DvProviderLinnCoUkConfiguration1EnableActionParameterXml(iHandle, iCallbackParameterXml, ptr);
         }
 
         protected unsafe void EnableActionSetParameter()
         {
             iCallbackSetParameter = new CallbackSetParameter(DoSetParameter);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkConfiguration1EnableActionSetParameter(iHandle, iCallbackSetParameter, ptr);
+            DvProviderLinnCoUkConfiguration1EnableActionSetParameter(iHandle, iCallbackSetParameter, ptr);
         }
 
         protected virtual void ConfigurationXml(uint aVersion, out string aaConfigurationXml)
@@ -125,7 +124,7 @@ namespace Zapp
         private static unsafe int DoConfigurationXml(IntPtr aPtr, uint aVersion, char** aaConfigurationXml)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkConfiguration1 self = (DvServiceLinnCoUkConfiguration1)gch.Target;
+            DvProviderLinnCoUkConfiguration1 self = (DvProviderLinnCoUkConfiguration1)gch.Target;
             string aConfigurationXml;
             self.ConfigurationXml(aVersion, out aConfigurationXml);
             *aaConfigurationXml = (char*)Marshal.StringToHGlobalAnsi(aConfigurationXml).ToPointer();
@@ -135,7 +134,7 @@ namespace Zapp
         private static unsafe int DoParameterXml(IntPtr aPtr, uint aVersion, char** aaParameterXml)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkConfiguration1 self = (DvServiceLinnCoUkConfiguration1)gch.Target;
+            DvProviderLinnCoUkConfiguration1 self = (DvProviderLinnCoUkConfiguration1)gch.Target;
             string aParameterXml;
             self.ParameterXml(aVersion, out aParameterXml);
             *aaParameterXml = (char*)Marshal.StringToHGlobalAnsi(aParameterXml).ToPointer();
@@ -145,7 +144,7 @@ namespace Zapp
         private static unsafe int DoSetParameter(IntPtr aPtr, uint aVersion, char* aaTarget, char* aaName, char* aaValue)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkConfiguration1 self = (DvServiceLinnCoUkConfiguration1)gch.Target;
+            DvProviderLinnCoUkConfiguration1 self = (DvProviderLinnCoUkConfiguration1)gch.Target;
             string aTarget = Marshal.PtrToStringAnsi((IntPtr)aaTarget);
             string aName = Marshal.PtrToStringAnsi((IntPtr)aaName);
             string aValue = Marshal.PtrToStringAnsi((IntPtr)aaValue);
@@ -160,7 +159,7 @@ namespace Zapp
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceLinnCoUkConfiguration1()
+        ~DvProviderLinnCoUkConfiguration1()
         {
             DoDispose();
         }
@@ -177,7 +176,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = 0;
             }
-            DvServiceLinnCoUkConfiguration1Destroy(handle);
+            DvProviderLinnCoUkConfiguration1Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

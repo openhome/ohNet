@@ -2,13 +2,18 @@
 #define HEADER_DVI_SERVER_WEBSOCKET
 
 #include <DviServer.h>
+#include <Buffer.h>
+#include <Thread.h>
 #include <Network.h>
 #include <Service.h>
 #include <Zapp.h>
 #include <Stream.h>
 #include <Http.h>
 #include <Exception.h>
-#include <DvResourceWriter.h>
+#include <Fifo.h>
+#include <DviSubscription.h>
+
+#include <map>
 
 EXCEPTION(WebSocketError);
 
@@ -22,6 +27,22 @@ public:
     static const Brn kHeaderResponseOrigin;
     static const Brn kHeaderLocation;
     static const Brn kUpgradeWebSocket;
+    static const Brn kTagRoot;
+    static const Brn kTagMethod;
+    static const Brn kTagUdn;
+    static const Brn kTagService;
+    static const Brn kTagSid;
+    static const Brn kTagNt;
+    static const Brn kTagTimeout;
+    static const Brn kTagNts;
+    static const Brn kTagSeq;
+    static const Brn kMethodSubscribe;
+    static const Brn kMethodUnsubscribe;
+    static const Brn kMethodRenew;
+    static const Brn kMethodSubscriptionTimeout;
+    static const Brn kMethodPropertyUpdate;
+    static const Brn kValueNt;
+    static const Brn kValuePropChange;
 };
 
 class HttpHeaderUpgrade : public HttpHeader
@@ -83,11 +104,29 @@ private:
     Brh iOrigin;
 };
 
+class DviSessionWebSocket;
+
+class PropertyWriterWs : public PropertyWriter
+{
+public:
+    PropertyWriterWs(DviSessionWebSocket& aSession, const Brx& aSid, TUint aSequenceNumber);
+private: // IPropertyWriter
+    ~PropertyWriterWs();
+    void PropertyWriteEnd();
+private:
+    static const TUint kWriteBufGranularity = 1024;
+    DviSessionWebSocket& iSession;
+    WriterBwh iWriter;
+};
+
+class DviService;
+
 class DviSessionWebSocket : public SocketTcpSession, private IPropertyWriterFactory
 {
 public:
     DviSessionWebSocket(TIpAddress aInterface, TUint aPort);
     ~DviSessionWebSocket();
+    void QueuePropertyUpdate(Brh* aUpdate);
 private:
     enum WsOpcode
     {
@@ -104,13 +143,36 @@ private:
     void Handshake();
     void Read();
     void Write(WsOpcode aOpcode, const Brx& aData);
-    void Close();
+    void WriteConnectionClose();
+    void Subscribe(const Brx& aRequest);
+    void Unsubscribe(const Brx& aRequest);
+    void Renew(const Brx& aRequest);
+    void WriteSubscriptionTimeout(const Brx& aSid, TUint aSeconds);
+    void WritePropertyUpdates();
 private: // IPropertyWriterFactory
     IPropertyWriter* CreateWriter(const Endpoint& aSubscriber, const Brx& aSubscriberPath,
                                   const Brx& aSid, TUint aSequenceNumber);
 private:
+    class SubscriptionWrapper
+    {
+    public:
+        SubscriptionWrapper(DviSubscription& aSubscription, const Brx& aSid, DviService& aService);
+        ~SubscriptionWrapper();
+        DviSubscription& Subscription() { return iSubscription; }
+        const Brx& Sid() const { return iSid; }
+    private:
+        DviSubscription& iSubscription;
+        Brh iSid;
+        DviService& iService;
+    };
+private:
     static const TUint kMaxRequestBytes = 4*1024;
     static const TUint kMaxWriteBytes = 4*1024;
+    static const TUint kMaxPropertyUpdates = 20;
+    static const TByte kFrameMsgStart = (TByte)'\0';
+    static const TByte kMsgEnd = (TByte)'\xff';
+    static const TByte kFrameCloseStart = (TByte)'\xff';
+    static const TByte kMsgCloseEnd = (TByte)'\0';
 private:
     Endpoint iEndpoint;
     Srs<kMaxRequestBytes>* iReadBuffer;
@@ -126,6 +188,11 @@ private:
     WsHeaderOrigin iHeaderOrigin;
     const HttpStatus* iErrorStatus;
     TBool iExit;
+    typedef std::map<Brn,SubscriptionWrapper*,BufferCmp> Map;
+    Map iMap;
+    Mutex iInterruptLock;
+    Semaphore iShutdownSem;
+    Fifo<Brh*> iPropertyUpdates;
 };
 
 class DviServerWebSocket : public DviServer

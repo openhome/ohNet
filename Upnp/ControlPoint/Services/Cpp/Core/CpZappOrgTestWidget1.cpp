@@ -11,14 +11,14 @@ using namespace Zapp;
 class SyncSetReadWriteRegisterZappOrgTestWidget1 : public SyncProxyAction
 {
 public:
-    SyncSetReadWriteRegisterZappOrgTestWidget1(CpProxyZappOrgTestWidget1& aService);
+    SyncSetReadWriteRegisterZappOrgTestWidget1(CpProxyZappOrgTestWidget1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestWidget1& iService;
 };
 
-SyncSetReadWriteRegisterZappOrgTestWidget1::SyncSetReadWriteRegisterZappOrgTestWidget1(CpProxyZappOrgTestWidget1& aService)
-    : iService(aService)
+SyncSetReadWriteRegisterZappOrgTestWidget1::SyncSetReadWriteRegisterZappOrgTestWidget1(CpProxyZappOrgTestWidget1& aProxy)
+    : iService(aProxy)
 {
 }
 

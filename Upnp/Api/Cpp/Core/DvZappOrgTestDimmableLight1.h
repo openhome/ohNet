@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,21 +17,21 @@ class PropertyBinary;
 /**
  * Base Device for zapp.org:TestDimmableLight:1
  */
-class DvServiceZappOrgTestDimmableLight1 : public DvService
+class DvProviderZappOrgTestDimmableLight1 : public DvProvider
 {
 public:
-    virtual ~DvServiceZappOrgTestDimmableLight1() {}
+    virtual ~DvProviderZappOrgTestDimmableLight1() {}
     TBool SetPropertyA_ARG_Level(TUint aValue);
     void GetPropertyA_ARG_Level(TUint& aValue);
 protected:
-    DvServiceZappOrgTestDimmableLight1(DvDevice& aDevice);
+    DvProviderZappOrgTestDimmableLight1(DvDevice& aDevice);
     void EnableActionGetLevel();
     void EnableActionSetLevel();
 private:
     virtual void GetLevel(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aLevel);
     virtual void SetLevel(IInvocationResponse& aResponse, TUint aVersion, TUint aLevel);
 private:
-    DvServiceZappOrgTestDimmableLight1();
+    DvProviderZappOrgTestDimmableLight1();
     void DoGetLevel(IDvInvocation& aInvocation, TUint aVersion);
     void DoSetLevel(IDvInvocation& aInvocation, TUint aVersion);
 private:

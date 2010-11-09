@@ -136,8 +136,9 @@ const Brx& HeaderCallback::Uri() const
 
 void HeaderCallback::Log()
 {
-    TIpAddress addr = iEndpoint.Address();
-    LOG(kDvEvent, "%u.%u.%u.%u:%u", addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff, iEndpoint.Port());
+    Endpoint::EndpointBuf buf;
+    iEndpoint.GetEndpoint(buf);
+    LOG(kDvEvent, buf);
     LOG(kDvEvent, iUri);
 }
 
@@ -176,33 +177,24 @@ void HeaderCallback::Process(const Brx& aValue)
 }
 
 
-// PropertyWriter
+// PropertyWriterUpnp
 
-PropertyWriter::PropertyWriter(const Endpoint& aPublisher, const Endpoint& aSubscriber, const Brx& aSubscriberPath,
-                               const Brx& aSid, TUint aSequenceNumber)
+PropertyWriterUpnp::PropertyWriterUpnp(const Endpoint& aPublisher, const Endpoint& aSubscriber, const Brx& aSubscriberPath,
+                                       const Brx& aSid, TUint aSequenceNumber)
 {
     iSocket.Open();
     iSocket.Connect(aSubscriber, Stack::InitParams().TcpConnectTimeoutMs());
     iWriterChunked = new WriterHttpChunked(iSocket);
     iWriteBuffer = new Sws<kMaxRequestBytes>(*iWriterChunked);
     iWriterEvent = new WriterHttpRequest(*iWriteBuffer);
+    SetWriter(*iWriteBuffer);
 
     iWriterEvent->WriteMethod(kUpnpMethodNotify, aSubscriberPath, Http::eHttp11);
 
     IWriterAscii& writer = iWriterEvent->WriteHeaderField(Http::kHeaderHost);
-    static const TUint kMaxAddressBytes = 21; // xxx.xxx.xxx.xxx:xxxxx
-    Bws<kMaxAddressBytes> host;
-    TIpAddress addr = aPublisher.Address();
-    (void)Ascii::AppendDec(host, addr&0xff);
-    host.Append('.');
-    (void)Ascii::AppendDec(host, (addr>>8)&0xff);
-    host.Append('.');
-    (void)Ascii::AppendDec(host, (addr>>16)&0xff);
-    host.Append('.');
-    (void)Ascii::AppendDec(host, (addr>>24)&0xff);
-    host.Append(':');
-    (void)Ascii::AppendDec(host, aPublisher.Port());
-    writer.Write(host);
+    Endpoint::EndpointBuf buf;
+    aPublisher.GetEndpoint(buf);
+    writer.Write(buf);
     writer.WriteFlush();
 
     iWriterEvent->WriteHeader(Http::kHeaderContentType, Brn("text/xml; charset=\"utf-8\""));
@@ -228,7 +220,7 @@ PropertyWriter::PropertyWriter(const Endpoint& aPublisher, const Endpoint& aSubs
     iWriteBuffer->Write(Brn("<e:propertyset xmlns:e=\"urn:schemas-upnp-org:event-1-0\">"));
 }
 
-PropertyWriter::~PropertyWriter()
+PropertyWriterUpnp::~PropertyWriterUpnp()
 {
     delete iWriterEvent;
     delete iWriteBuffer;
@@ -236,44 +228,7 @@ PropertyWriter::~PropertyWriter()
     iSocket.Close();
 }
 
-void PropertyWriter::PropertyWriteString(const Brx& aName, const Brx& aValue)
-{
-    WriterBwh writer(1024);
-    Converter::ToXmlEscaped(writer, aValue);
-    Brh buf;
-    writer.TransferTo(buf);
-    WriteVariable(aName, buf);
-}
-
-void PropertyWriter::PropertyWriteInt(const Brx& aName, TInt aValue)
-{
-    Bws<Ascii::kMaxIntStringBytes> buf;
-    (void)Ascii::AppendDec(buf, aValue);
-    WriteVariable(aName, buf);
-}
-
-void PropertyWriter::PropertyWriteUint(const Brx& aName, TUint aValue)
-{
-    Bws<Ascii::kMaxUintStringBytes> buf;
-    (void)Ascii::AppendDec(buf, aValue);
-    WriteVariable(aName, buf);
-}
-
-void PropertyWriter::PropertyWriteBool(const Brx& aName, TBool aValue)
-{
-    PropertyWriteUint(aName, (aValue? 1 : 0));
-}
-
-void PropertyWriter::PropertyWriteBinary(const Brx& aName, const Brx& aValue)
-{
-    WriterBwh writer(1024);
-    Converter::ToBase64(writer, aValue);
-    Brh buf;
-    writer.TransferTo(buf);
-    WriteVariable(aName, buf);
-}
-
-void PropertyWriter::PropertyWriteEnd()
+void PropertyWriterUpnp::PropertyWriteEnd()
 {
     iWriteBuffer->Write(Brn("</e:propertyset>"));
     iWriteBuffer->WriteFlush();
@@ -289,25 +244,13 @@ void PropertyWriter::PropertyWriteEnd()
     }
 }
 
-void PropertyWriter::WriteVariable(const Brx& aName, const Brx& aValue)
-{
-    iWriteBuffer->Write(Brn("<e:property>"));
-    iWriteBuffer->Write('<');
-    iWriteBuffer->Write(aName);
-    iWriteBuffer->Write('>');
-    iWriteBuffer->Write(aValue);
-    iWriteBuffer->Write(Brn("</"));
-    iWriteBuffer->Write(aName);
-    iWriteBuffer->Write('>');
-    iWriteBuffer->Write(Brn("</e:property>"));
-}
-
 
 // DviSessionUpnp
 
 DviSessionUpnp::DviSessionUpnp(TIpAddress aInterface, TUint aPort)
     : iInterface(aInterface)
     , iPort(aPort)
+    , iShutdownSem("DSUS", 1)
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
     iReaderRequest = new ReaderHttpRequest(*iReadBuffer);
@@ -334,6 +277,8 @@ DviSessionUpnp::DviSessionUpnp(TIpAddress aInterface, TUint aPort)
 
 DviSessionUpnp::~DviSessionUpnp()
 {
+    Interrupt(true);
+    iShutdownSem.Wait();
     delete iWriterResponse;
     delete iWriterBuffer;
     delete iWriterChunked;
@@ -343,6 +288,7 @@ DviSessionUpnp::~DviSessionUpnp()
 
 void DviSessionUpnp::Run()
 {
+    iShutdownSem.Wait();
     iErrorStatus = &HttpStatus::kOk;
     iReaderRequest->Flush();
     iWriterChunked->SetChunked(false);
@@ -397,6 +343,7 @@ void DviSessionUpnp::Run()
         }
     }
     catch (WriterError&) {}
+    iShutdownSem.Signal();
 }
 
 void DviSessionUpnp::Error(const HttpStatus& aStatus)
@@ -967,7 +914,7 @@ IPropertyWriter* DviSessionUpnp::CreateWriter(const Endpoint& aSubscriber, const
                                               const Brx& aSid, TUint aSequenceNumber)
 {
     Endpoint publisher(iPort, iInterface);
-    return new PropertyWriter(publisher, aSubscriber, aSubscriberPath, aSid, aSequenceNumber);
+    return new PropertyWriterUpnp(publisher, aSubscriber, aSubscriberPath, aSid, aSequenceNumber);
 }
 
 

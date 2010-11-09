@@ -14,15 +14,15 @@ using namespace Zapp;
 class SyncIncrementZappOrgTestBasic1Cpp : public SyncProxyAction
 {
 public:
-    SyncIncrementZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService, uint32_t& aResult);
+    SyncIncrementZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy, uint32_t& aResult);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestBasic1Cpp& iService;
     uint32_t& iResult;
 };
 
-SyncIncrementZappOrgTestBasic1Cpp::SyncIncrementZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService, uint32_t& aResult)
-    : iService(aService)
+SyncIncrementZappOrgTestBasic1Cpp::SyncIncrementZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy, uint32_t& aResult)
+    : iService(aProxy)
     , iResult(aResult)
 {
 }
@@ -36,15 +36,15 @@ void SyncIncrementZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncDecrementZappOrgTestBasic1Cpp : public SyncProxyAction
 {
 public:
-    SyncDecrementZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService, int32_t& aResult);
+    SyncDecrementZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy, int32_t& aResult);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestBasic1Cpp& iService;
     int32_t& iResult;
 };
 
-SyncDecrementZappOrgTestBasic1Cpp::SyncDecrementZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService, int32_t& aResult)
-    : iService(aService)
+SyncDecrementZappOrgTestBasic1Cpp::SyncDecrementZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy, int32_t& aResult)
+    : iService(aProxy)
     , iResult(aResult)
 {
 }
@@ -58,15 +58,15 @@ void SyncDecrementZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncToggleZappOrgTestBasic1Cpp : public SyncProxyAction
 {
 public:
-    SyncToggleZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService, bool& aResult);
+    SyncToggleZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy, bool& aResult);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestBasic1Cpp& iService;
     bool& iResult;
 };
 
-SyncToggleZappOrgTestBasic1Cpp::SyncToggleZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService, bool& aResult)
-    : iService(aService)
+SyncToggleZappOrgTestBasic1Cpp::SyncToggleZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy, bool& aResult)
+    : iService(aProxy)
     , iResult(aResult)
 {
 }
@@ -80,15 +80,15 @@ void SyncToggleZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncEchoStringZappOrgTestBasic1Cpp : public SyncProxyAction
 {
 public:
-    SyncEchoStringZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService, std::string& aResult);
+    SyncEchoStringZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy, std::string& aResult);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestBasic1Cpp& iService;
     std::string& iResult;
 };
 
-SyncEchoStringZappOrgTestBasic1Cpp::SyncEchoStringZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService, std::string& aResult)
-    : iService(aService)
+SyncEchoStringZappOrgTestBasic1Cpp::SyncEchoStringZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy, std::string& aResult)
+    : iService(aProxy)
     , iResult(aResult)
 {
 }
@@ -102,15 +102,15 @@ void SyncEchoStringZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncEchoBinaryZappOrgTestBasic1Cpp : public SyncProxyAction
 {
 public:
-    SyncEchoBinaryZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService, std::string& aResult);
+    SyncEchoBinaryZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy, std::string& aResult);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestBasic1Cpp& iService;
     std::string& iResult;
 };
 
-SyncEchoBinaryZappOrgTestBasic1Cpp::SyncEchoBinaryZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService, std::string& aResult)
-    : iService(aService)
+SyncEchoBinaryZappOrgTestBasic1Cpp::SyncEchoBinaryZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy, std::string& aResult)
+    : iService(aProxy)
     , iResult(aResult)
 {
 }
@@ -124,14 +124,14 @@ void SyncEchoBinaryZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetUintZappOrgTestBasic1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetUintZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService);
+    SyncSetUintZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestBasic1Cpp& iService;
 };
 
-SyncSetUintZappOrgTestBasic1Cpp::SyncSetUintZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService)
-    : iService(aService)
+SyncSetUintZappOrgTestBasic1Cpp::SyncSetUintZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -144,15 +144,15 @@ void SyncSetUintZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncGetUintZappOrgTestBasic1Cpp : public SyncProxyAction
 {
 public:
-    SyncGetUintZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService, uint32_t& aValueUint);
+    SyncGetUintZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy, uint32_t& aValueUint);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestBasic1Cpp& iService;
     uint32_t& iValueUint;
 };
 
-SyncGetUintZappOrgTestBasic1Cpp::SyncGetUintZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService, uint32_t& aValueUint)
-    : iService(aService)
+SyncGetUintZappOrgTestBasic1Cpp::SyncGetUintZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy, uint32_t& aValueUint)
+    : iService(aProxy)
     , iValueUint(aValueUint)
 {
 }
@@ -166,14 +166,14 @@ void SyncGetUintZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetIntZappOrgTestBasic1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetIntZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService);
+    SyncSetIntZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestBasic1Cpp& iService;
 };
 
-SyncSetIntZappOrgTestBasic1Cpp::SyncSetIntZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService)
-    : iService(aService)
+SyncSetIntZappOrgTestBasic1Cpp::SyncSetIntZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -186,15 +186,15 @@ void SyncSetIntZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncGetIntZappOrgTestBasic1Cpp : public SyncProxyAction
 {
 public:
-    SyncGetIntZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService, int32_t& aValueInt);
+    SyncGetIntZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy, int32_t& aValueInt);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestBasic1Cpp& iService;
     int32_t& iValueInt;
 };
 
-SyncGetIntZappOrgTestBasic1Cpp::SyncGetIntZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService, int32_t& aValueInt)
-    : iService(aService)
+SyncGetIntZappOrgTestBasic1Cpp::SyncGetIntZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy, int32_t& aValueInt)
+    : iService(aProxy)
     , iValueInt(aValueInt)
 {
 }
@@ -208,14 +208,14 @@ void SyncGetIntZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetBoolZappOrgTestBasic1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetBoolZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService);
+    SyncSetBoolZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestBasic1Cpp& iService;
 };
 
-SyncSetBoolZappOrgTestBasic1Cpp::SyncSetBoolZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService)
-    : iService(aService)
+SyncSetBoolZappOrgTestBasic1Cpp::SyncSetBoolZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -228,15 +228,15 @@ void SyncSetBoolZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncGetBoolZappOrgTestBasic1Cpp : public SyncProxyAction
 {
 public:
-    SyncGetBoolZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService, bool& aValueBool);
+    SyncGetBoolZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy, bool& aValueBool);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestBasic1Cpp& iService;
     bool& iValueBool;
 };
 
-SyncGetBoolZappOrgTestBasic1Cpp::SyncGetBoolZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService, bool& aValueBool)
-    : iService(aService)
+SyncGetBoolZappOrgTestBasic1Cpp::SyncGetBoolZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy, bool& aValueBool)
+    : iService(aProxy)
     , iValueBool(aValueBool)
 {
 }
@@ -250,14 +250,14 @@ void SyncGetBoolZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetMultipleZappOrgTestBasic1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetMultipleZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService);
+    SyncSetMultipleZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestBasic1Cpp& iService;
 };
 
-SyncSetMultipleZappOrgTestBasic1Cpp::SyncSetMultipleZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService)
-    : iService(aService)
+SyncSetMultipleZappOrgTestBasic1Cpp::SyncSetMultipleZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -270,14 +270,14 @@ void SyncSetMultipleZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetStringZappOrgTestBasic1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetStringZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService);
+    SyncSetStringZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestBasic1Cpp& iService;
 };
 
-SyncSetStringZappOrgTestBasic1Cpp::SyncSetStringZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService)
-    : iService(aService)
+SyncSetStringZappOrgTestBasic1Cpp::SyncSetStringZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -290,15 +290,15 @@ void SyncSetStringZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncGetStringZappOrgTestBasic1Cpp : public SyncProxyAction
 {
 public:
-    SyncGetStringZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService, std::string& aValueStr);
+    SyncGetStringZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy, std::string& aValueStr);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestBasic1Cpp& iService;
     std::string& iValueStr;
 };
 
-SyncGetStringZappOrgTestBasic1Cpp::SyncGetStringZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService, std::string& aValueStr)
-    : iService(aService)
+SyncGetStringZappOrgTestBasic1Cpp::SyncGetStringZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy, std::string& aValueStr)
+    : iService(aProxy)
     , iValueStr(aValueStr)
 {
 }
@@ -312,14 +312,14 @@ void SyncGetStringZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetBinaryZappOrgTestBasic1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetBinaryZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService);
+    SyncSetBinaryZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestBasic1Cpp& iService;
 };
 
-SyncSetBinaryZappOrgTestBasic1Cpp::SyncSetBinaryZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService)
-    : iService(aService)
+SyncSetBinaryZappOrgTestBasic1Cpp::SyncSetBinaryZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -332,15 +332,15 @@ void SyncSetBinaryZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncGetBinaryZappOrgTestBasic1Cpp : public SyncProxyAction
 {
 public:
-    SyncGetBinaryZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService, std::string& aValueBin);
+    SyncGetBinaryZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy, std::string& aValueBin);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestBasic1Cpp& iService;
     std::string& iValueBin;
 };
 
-SyncGetBinaryZappOrgTestBasic1Cpp::SyncGetBinaryZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService, std::string& aValueBin)
-    : iService(aService)
+SyncGetBinaryZappOrgTestBasic1Cpp::SyncGetBinaryZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy, std::string& aValueBin)
+    : iService(aProxy)
     , iValueBin(aValueBin)
 {
 }
@@ -354,14 +354,14 @@ void SyncGetBinaryZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncToggleBoolZappOrgTestBasic1Cpp : public SyncProxyAction
 {
 public:
-    SyncToggleBoolZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService);
+    SyncToggleBoolZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestBasic1Cpp& iService;
 };
 
-SyncToggleBoolZappOrgTestBasic1Cpp::SyncToggleBoolZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aService)
-    : iService(aService)
+SyncToggleBoolZappOrgTestBasic1Cpp::SyncToggleBoolZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 

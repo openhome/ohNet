@@ -16,10 +16,10 @@
 using namespace Zapp;
 using namespace Zapp::TestFramework;
 
-class ServiceTestBasic : public DvServiceZappOrgTestBasic1
+class ProviderTestBasic : public DvProviderZappOrgTestBasic1
 {
 public:
-    ServiceTestBasic(DvDevice& aDevice);
+    ProviderTestBasic(DvDevice& aDevice);
 private:
     void SetUint(IInvocationResponse& aResponse, TUint aVersion, TUint aValueUint);
     void GetUint(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aValueUint);
@@ -41,12 +41,12 @@ public:
     ~DeviceBasic();
 private:
     DvDevice* iDevice;
-    ServiceTestBasic* iTestBasic;
+    ProviderTestBasic* iTestBasic;
 };
 
 
-ServiceTestBasic::ServiceTestBasic(DvDevice& aDevice)
-    : DvServiceZappOrgTestBasic1(aDevice)
+ProviderTestBasic::ProviderTestBasic(DvDevice& aDevice)
+    : DvProviderZappOrgTestBasic1(aDevice)
 {
     SetPropertyVarUint(0);
     SetPropertyVarInt(0);
@@ -67,14 +67,14 @@ ServiceTestBasic::ServiceTestBasic(DvDevice& aDevice)
     EnableActionGetBinary();
 }
 
-void ServiceTestBasic::SetUint(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aValueUint)
+void ProviderTestBasic::SetUint(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aValueUint)
 {
     SetPropertyVarUint(aValueUint);
     aResponse.Start();
     aResponse.End();
 }
 
-void ServiceTestBasic::GetUint(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseUint& aValueUint)
+void ProviderTestBasic::GetUint(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseUint& aValueUint)
 {
     aResponse.Start();
     TUint val;
@@ -83,14 +83,14 @@ void ServiceTestBasic::GetUint(IInvocationResponse& aResponse, TUint /*aVersion*
     aResponse.End();
 }
 
-void ServiceTestBasic::SetInt(IInvocationResponse& aResponse, TUint /*aVersion*/, TInt aValueInt)
+void ProviderTestBasic::SetInt(IInvocationResponse& aResponse, TUint /*aVersion*/, TInt aValueInt)
 {
     SetPropertyVarInt(aValueInt);
     aResponse.Start();
     aResponse.End();
 }
 
-void ServiceTestBasic::GetInt(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseInt& aValueInt)
+void ProviderTestBasic::GetInt(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseInt& aValueInt)
 {
     aResponse.Start();
     TInt val;
@@ -99,14 +99,14 @@ void ServiceTestBasic::GetInt(IInvocationResponse& aResponse, TUint /*aVersion*/
     aResponse.End();
 }
 
-void ServiceTestBasic::SetBool(IInvocationResponse& aResponse, TUint /*aVersion*/, TBool aValueBool)
+void ProviderTestBasic::SetBool(IInvocationResponse& aResponse, TUint /*aVersion*/, TBool aValueBool)
 {
     SetPropertyVarBool(aValueBool);
     aResponse.Start();
     aResponse.End();
 }
 
-void ServiceTestBasic::GetBool(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseBool& aValueBool)
+void ProviderTestBasic::GetBool(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseBool& aValueBool)
 {
     aResponse.Start();
     TBool val;
@@ -115,7 +115,7 @@ void ServiceTestBasic::GetBool(IInvocationResponse& aResponse, TUint /*aVersion*
     aResponse.End();
 }
 
-void ServiceTestBasic::SetMultiple(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aValueUint, TInt aValueInt, TBool aValueBool)
+void ProviderTestBasic::SetMultiple(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aValueUint, TInt aValueInt, TBool aValueBool)
 {
     PropertiesLock();
     SetPropertyVarUint(aValueUint);
@@ -126,14 +126,14 @@ void ServiceTestBasic::SetMultiple(IInvocationResponse& aResponse, TUint /*aVers
     aResponse.End();
 }
 
-void ServiceTestBasic::SetString(IInvocationResponse& aResponse, TUint /*aVersion*/, const Brx& aValueStr)
+void ProviderTestBasic::SetString(IInvocationResponse& aResponse, TUint /*aVersion*/, const Brx& aValueStr)
 {
     SetPropertyVarStr(aValueStr);
     aResponse.Start();
     aResponse.End();
 }
 
-void ServiceTestBasic::GetString(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseString& aValueStr)
+void ProviderTestBasic::GetString(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseString& aValueStr)
 {
     aResponse.Start();
     Brhz val;
@@ -143,14 +143,14 @@ void ServiceTestBasic::GetString(IInvocationResponse& aResponse, TUint /*aVersio
     aResponse.End();
 }
 
-void ServiceTestBasic::SetBinary(IInvocationResponse& aResponse, TUint /*aVersion*/, const Brx& aValueBin)
+void ProviderTestBasic::SetBinary(IInvocationResponse& aResponse, TUint /*aVersion*/, const Brx& aValueBin)
 {
     SetPropertyVarBin(aValueBin);
     aResponse.Start();
     aResponse.End();
 }
 
-void ServiceTestBasic::GetBinary(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseBinary& aValueBin)
+void ProviderTestBasic::GetBinary(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseBinary& aValueBin)
 {
     aResponse.Start();
     Brh val;
@@ -192,7 +192,7 @@ DeviceBasic::DeviceBasic()
     iDevice->SetAttribute("Upnp.ModelUrl", "http://www.linn.co.uk");
     iDevice->SetAttribute("Upnp.SerialNumber", "123456");
     iDevice->SetAttribute("Upnp.Upc", "123456654321");
-    iTestBasic = new ServiceTestBasic(*iDevice);
+    iTestBasic = new ProviderTestBasic(*iDevice);
     iDevice->SetEnabled();
 }
 

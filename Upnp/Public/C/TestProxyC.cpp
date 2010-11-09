@@ -11,7 +11,7 @@
 #include <C/Async.h>
 #include <ZappTypes.h>
 #include <TestFramework.h>
-#include <Os.h>
+#include <OsWrapper.h>
 #include <Thread.h>
 #include <Stack.h>
 #include <Debug.h>

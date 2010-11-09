@@ -1,6 +1,6 @@
 #include <Network.h>
 #include <Arch.h>
-#include <Os.h>
+#include <OsWrapper.h>
 #include <Debug.h>
 #include <Functor.h>
 #include <Stream.h>
@@ -109,6 +109,7 @@ void Endpoint::GetAddress(Bwx& aAddress) const
 #else
 # error No endianess defined
 #endif
+    aAddress.PtrZ();
 }
 
 void Endpoint::GetEndpoint(Bwx& aEndpoint) const
@@ -117,6 +118,7 @@ void Endpoint::GetEndpoint(Bwx& aEndpoint) const
     GetAddress(aEndpoint);
     aEndpoint.Append(':');
     (void)Ascii::AppendDec(aEndpoint, iPort);
+    aEndpoint.PtrZ();
 }
 
 // Replace the endpoint with the supplied endpoint
@@ -142,6 +144,9 @@ Socket::Socket()
 
 void Socket::Interrupt(TBool aInterrupt)
 {
+    if (iHandle == kHandleNull) {
+        return;
+    }
     LOGF(kNetwork, "Socket::Interrupt H = %d\n", iHandle);
     TInt err = Zapp::Os::NetworkInterrupt(iHandle, aInterrupt);
     if(err != 0) {
@@ -338,7 +343,7 @@ void Socket::Log(const char* aPrefix, const Brx& aBuffer)
             buf[len] = '\0';
             Brn buf2(buf);
             Log::Print(buf2);
-            bytes -= len;
+            bytes -= (TUint)len;
             ptr += len;
         }
         Log::Print("\n");

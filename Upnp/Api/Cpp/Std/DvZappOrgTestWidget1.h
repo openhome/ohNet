@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 #include <string>
 
@@ -20,10 +20,10 @@ class PropertyBinary;
 /**
  * Base Device for zapp.org:TestWidget:1
  */
-class DvServiceZappOrgTestWidget1Cpp : public DvService
+class DvProviderZappOrgTestWidget1Cpp : public DvProvider
 {
 public:
-    virtual ~DvServiceZappOrgTestWidget1Cpp() {}
+    virtual ~DvProviderZappOrgTestWidget1Cpp() {}
     bool SetPropertyReadWriteRegister0(uint32_t aValue);
     void GetPropertyReadWriteRegister0(uint32_t& aValue);
     bool SetPropertyReadWriteRegister1(uint32_t aValue);
@@ -41,12 +41,12 @@ public:
     bool SetPropertyReadOnlyRegister7(uint32_t aValue);
     void GetPropertyReadOnlyRegister7(uint32_t& aValue);
 protected:
-    DvServiceZappOrgTestWidget1Cpp(DvDeviceStd& aDevice);
+    DvProviderZappOrgTestWidget1Cpp(DvDeviceStd& aDevice);
     void EnableActionSetReadWriteRegister();
 private:
     virtual void SetReadWriteRegister(uint32_t aVersion, uint32_t aRegisterIndex, uint32_t aRegisterValue);
 private:
-    DvServiceZappOrgTestWidget1Cpp();
+    DvProviderZappOrgTestWidget1Cpp();
     void DoSetReadWriteRegister(IDvInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyUint* iPropertyReadWriteRegister0;

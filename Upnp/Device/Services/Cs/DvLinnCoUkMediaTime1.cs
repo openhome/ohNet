@@ -5,37 +5,36 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvServiceLinnCoUkMediaTime1 : IDisposable
+    public class DvProviderLinnCoUkMediaTime1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkMediaTime1")]
-        static extern uint DvServiceLinnCoUkMediaTime1Create(uint aDeviceHandle);
+        static extern uint DvProviderLinnCoUkMediaTime1Create(uint aDeviceHandle);
         [DllImport("DvLinnCoUkMediaTime1")]
-        static extern void DvServiceLinnCoUkMediaTime1Destroy(uint aHandle);
+        static extern void DvProviderLinnCoUkMediaTime1Destroy(uint aHandle);
         [DllImport("DvLinnCoUkMediaTime1")]
-        static extern unsafe int DvServiceLinnCoUkMediaTime1SetPropertySeconds(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkMediaTime1SetPropertySeconds(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkMediaTime1")]
-        static extern unsafe void DvServiceLinnCoUkMediaTime1GetPropertySeconds(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkMediaTime1GetPropertySeconds(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkMediaTime1")]
-        static extern void DvServiceLinnCoUkMediaTime1EnableActionSeconds(uint aHandle, CallbackSeconds aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkMediaTime1EnableActionSeconds(uint aHandle, CallbackSeconds aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
         private unsafe delegate int CallbackSeconds(IntPtr aPtr, uint aVersion, uint* aaSeconds);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackSeconds iCallbackSeconds;
 
-        public DvServiceLinnCoUkMediaTime1(DvDevice aDevice)
+        public DvProviderLinnCoUkMediaTime1(DvDevice aDevice)
         {
-            iHandle = DvServiceLinnCoUkMediaTime1Create(aDevice.Handle()); 
+            iHandle = DvProviderLinnCoUkMediaTime1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
         public unsafe bool SetPropertySeconds(uint aValue)
         {
         uint changed;
-            if (0 != DvServiceLinnCoUkMediaTime1SetPropertySeconds(iHandle, aValue, &changed))
+            if (0 != DvProviderLinnCoUkMediaTime1SetPropertySeconds(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -46,7 +45,7 @@ namespace Zapp
         {
             fixed (uint* value = &aValue)
 			{
-                DvServiceLinnCoUkMediaTime1GetPropertySeconds(iHandle, value);
+                DvProviderLinnCoUkMediaTime1GetPropertySeconds(iHandle, value);
             }
         }
 
@@ -54,7 +53,7 @@ namespace Zapp
         {
             iCallbackSeconds = new CallbackSeconds(DoSeconds);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkMediaTime1EnableActionSeconds(iHandle, iCallbackSeconds, ptr);
+            DvProviderLinnCoUkMediaTime1EnableActionSeconds(iHandle, iCallbackSeconds, ptr);
         }
 
         protected virtual void Seconds(uint aVersion, out uint aaSeconds)
@@ -65,7 +64,7 @@ namespace Zapp
         private static unsafe int DoSeconds(IntPtr aPtr, uint aVersion, uint* aaSeconds)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkMediaTime1 self = (DvServiceLinnCoUkMediaTime1)gch.Target;
+            DvProviderLinnCoUkMediaTime1 self = (DvProviderLinnCoUkMediaTime1)gch.Target;
             uint aSeconds;
             self.Seconds(aVersion, out aSeconds);
             *aaSeconds = aSeconds;
@@ -79,7 +78,7 @@ namespace Zapp
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceLinnCoUkMediaTime1()
+        ~DvProviderLinnCoUkMediaTime1()
         {
             DoDispose();
         }
@@ -96,7 +95,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = 0;
             }
-            DvServiceLinnCoUkMediaTime1Destroy(handle);
+            DvProviderLinnCoUkMediaTime1Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,14 +17,14 @@ class PropertyBinary;
 /**
  * Base Device for upnp.org:AVTransport:1
  */
-class DvServiceUpnpOrgAVTransport1 : public DvService
+class DvProviderUpnpOrgAVTransport1 : public DvProvider
 {
 public:
-    virtual ~DvServiceUpnpOrgAVTransport1() {}
+    virtual ~DvProviderUpnpOrgAVTransport1() {}
     TBool SetPropertyLastChange(const Brx& aValue);
     void GetPropertyLastChange(Brhz& aValue);
 protected:
-    DvServiceUpnpOrgAVTransport1(DvDevice& aDevice);
+    DvProviderUpnpOrgAVTransport1(DvDevice& aDevice);
     void EnableActionSetAVTransportURI();
     void EnableActionSetNextAVTransportURI();
     void EnableActionGetMediaInfo();
@@ -61,7 +61,7 @@ private:
     virtual void SetRecordQualityMode(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aNewRecordQualityMode);
     virtual void GetCurrentTransportActions(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, IInvocationResponseString& aActions);
 private:
-    DvServiceUpnpOrgAVTransport1();
+    DvProviderUpnpOrgAVTransport1();
     void DoSetAVTransportURI(IDvInvocation& aInvocation, TUint aVersion);
     void DoSetNextAVTransportURI(IDvInvocation& aInvocation, TUint aVersion);
     void DoGetMediaInfo(IDvInvocation& aInvocation, TUint aVersion);

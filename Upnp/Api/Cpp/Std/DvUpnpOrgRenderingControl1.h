@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 #include <string>
 
@@ -20,14 +20,14 @@ class PropertyBinary;
 /**
  * Base Device for upnp.org:RenderingControl:1
  */
-class DvServiceUpnpOrgRenderingControl1Cpp : public DvService
+class DvProviderUpnpOrgRenderingControl1Cpp : public DvProvider
 {
 public:
-    virtual ~DvServiceUpnpOrgRenderingControl1Cpp() {}
+    virtual ~DvProviderUpnpOrgRenderingControl1Cpp() {}
     bool SetPropertyLastChange(const std::string& aValue);
     void GetPropertyLastChange(std::string& aValue);
 protected:
-    DvServiceUpnpOrgRenderingControl1Cpp(DvDeviceStd& aDevice);
+    DvProviderUpnpOrgRenderingControl1Cpp(DvDeviceStd& aDevice);
     void EnableActionListPresets();
     void EnableActionSelectPreset();
     void EnableActionGetBrightness();
@@ -100,7 +100,7 @@ private:
     virtual void GetLoudness(uint32_t aVersion, uint32_t aInstanceID, const std::string& aChannel, bool& aCurrentLoudness);
     virtual void SetLoudness(uint32_t aVersion, uint32_t aInstanceID, const std::string& aChannel, bool aDesiredLoudness);
 private:
-    DvServiceUpnpOrgRenderingControl1Cpp();
+    DvProviderUpnpOrgRenderingControl1Cpp();
     void DoListPresets(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoSelectPreset(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoGetBrightness(IDvInvocation& aInvocation, uint32_t aVersion);

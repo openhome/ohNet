@@ -7,10 +7,10 @@
 
 using namespace Zapp;
 
-class DvServiceLinnCoUkJukebox1C : public DvServiceLinnCoUkJukebox1
+class DvProviderLinnCoUkJukebox1C : public DvProviderLinnCoUkJukebox1
 {
 public:
-    DvServiceLinnCoUkJukebox1C(DvDevice& aDevice);
+    DvProviderLinnCoUkJukebox1C(DvDevice& aDevice);
     void EnableActionSetPresetPrefix(CallbackJukebox1SetPresetPrefix aCallback, void* aPtr);
     void EnableActionPresetPrefix(CallbackJukebox1PresetPrefix aCallback, void* aPtr);
     void EnableActionSetAlbumArtFileName(CallbackJukebox1SetAlbumArtFileName aCallback, void* aPtr);
@@ -47,68 +47,68 @@ private:
     void* iPtrLoadManifest;
 };
 
-DvServiceLinnCoUkJukebox1C::DvServiceLinnCoUkJukebox1C(DvDevice& aDevice)
-    : DvServiceLinnCoUkJukebox1(aDevice)
+DvProviderLinnCoUkJukebox1C::DvProviderLinnCoUkJukebox1C(DvDevice& aDevice)
+    : DvProviderLinnCoUkJukebox1(aDevice)
 {
 }
 
-void DvServiceLinnCoUkJukebox1C::EnableActionSetPresetPrefix(CallbackJukebox1SetPresetPrefix aCallback, void* aPtr)
+void DvProviderLinnCoUkJukebox1C::EnableActionSetPresetPrefix(CallbackJukebox1SetPresetPrefix aCallback, void* aPtr)
 {
     iCallbackSetPresetPrefix = aCallback;
     iPtrSetPresetPrefix = aPtr;
-    DvServiceLinnCoUkJukebox1::EnableActionSetPresetPrefix();
+    DvProviderLinnCoUkJukebox1::EnableActionSetPresetPrefix();
 }
 
-void DvServiceLinnCoUkJukebox1C::EnableActionPresetPrefix(CallbackJukebox1PresetPrefix aCallback, void* aPtr)
+void DvProviderLinnCoUkJukebox1C::EnableActionPresetPrefix(CallbackJukebox1PresetPrefix aCallback, void* aPtr)
 {
     iCallbackPresetPrefix = aCallback;
     iPtrPresetPrefix = aPtr;
-    DvServiceLinnCoUkJukebox1::EnableActionPresetPrefix();
+    DvProviderLinnCoUkJukebox1::EnableActionPresetPrefix();
 }
 
-void DvServiceLinnCoUkJukebox1C::EnableActionSetAlbumArtFileName(CallbackJukebox1SetAlbumArtFileName aCallback, void* aPtr)
+void DvProviderLinnCoUkJukebox1C::EnableActionSetAlbumArtFileName(CallbackJukebox1SetAlbumArtFileName aCallback, void* aPtr)
 {
     iCallbackSetAlbumArtFileName = aCallback;
     iPtrSetAlbumArtFileName = aPtr;
-    DvServiceLinnCoUkJukebox1::EnableActionSetAlbumArtFileName();
+    DvProviderLinnCoUkJukebox1::EnableActionSetAlbumArtFileName();
 }
 
-void DvServiceLinnCoUkJukebox1C::EnableActionAlbumArtFileName(CallbackJukebox1AlbumArtFileName aCallback, void* aPtr)
+void DvProviderLinnCoUkJukebox1C::EnableActionAlbumArtFileName(CallbackJukebox1AlbumArtFileName aCallback, void* aPtr)
 {
     iCallbackAlbumArtFileName = aCallback;
     iPtrAlbumArtFileName = aPtr;
-    DvServiceLinnCoUkJukebox1::EnableActionAlbumArtFileName();
+    DvProviderLinnCoUkJukebox1::EnableActionAlbumArtFileName();
 }
 
-void DvServiceLinnCoUkJukebox1C::EnableActionSetCurrentPreset(CallbackJukebox1SetCurrentPreset aCallback, void* aPtr)
+void DvProviderLinnCoUkJukebox1C::EnableActionSetCurrentPreset(CallbackJukebox1SetCurrentPreset aCallback, void* aPtr)
 {
     iCallbackSetCurrentPreset = aCallback;
     iPtrSetCurrentPreset = aPtr;
-    DvServiceLinnCoUkJukebox1::EnableActionSetCurrentPreset();
+    DvProviderLinnCoUkJukebox1::EnableActionSetCurrentPreset();
 }
 
-void DvServiceLinnCoUkJukebox1C::EnableActionCurrentPreset(CallbackJukebox1CurrentPreset aCallback, void* aPtr)
+void DvProviderLinnCoUkJukebox1C::EnableActionCurrentPreset(CallbackJukebox1CurrentPreset aCallback, void* aPtr)
 {
     iCallbackCurrentPreset = aCallback;
     iPtrCurrentPreset = aPtr;
-    DvServiceLinnCoUkJukebox1::EnableActionCurrentPreset();
+    DvProviderLinnCoUkJukebox1::EnableActionCurrentPreset();
 }
 
-void DvServiceLinnCoUkJukebox1C::EnableActionPresetMetaData(CallbackJukebox1PresetMetaData aCallback, void* aPtr)
+void DvProviderLinnCoUkJukebox1C::EnableActionPresetMetaData(CallbackJukebox1PresetMetaData aCallback, void* aPtr)
 {
     iCallbackPresetMetaData = aCallback;
     iPtrPresetMetaData = aPtr;
-    DvServiceLinnCoUkJukebox1::EnableActionPresetMetaData();
+    DvProviderLinnCoUkJukebox1::EnableActionPresetMetaData();
 }
 
-void DvServiceLinnCoUkJukebox1C::EnableActionLoadManifest(CallbackJukebox1LoadManifest aCallback, void* aPtr)
+void DvProviderLinnCoUkJukebox1C::EnableActionLoadManifest(CallbackJukebox1LoadManifest aCallback, void* aPtr)
 {
     iCallbackLoadManifest = aCallback;
     iPtrLoadManifest = aPtr;
-    DvServiceLinnCoUkJukebox1::EnableActionLoadManifest();
+    DvProviderLinnCoUkJukebox1::EnableActionLoadManifest();
 }
 
-void DvServiceLinnCoUkJukebox1C::SetPresetPrefix(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaUri)
+void DvProviderLinnCoUkJukebox1C::SetPresetPrefix(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaUri)
 {
     ASSERT(iCallbackSetPresetPrefix != NULL);
     if (0 != iCallbackSetPresetPrefix(iPtrSetPresetPrefix, aVersion, (const char*)aaUri.Ptr())) {
@@ -119,7 +119,7 @@ void DvServiceLinnCoUkJukebox1C::SetPresetPrefix(IInvocationResponse& aResponse,
     aResponse.End();
 }
 
-void DvServiceLinnCoUkJukebox1C::PresetPrefix(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaUri)
+void DvProviderLinnCoUkJukebox1C::PresetPrefix(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaUri)
 {
     char* aUri;
     ASSERT(iCallbackPresetPrefix != NULL);
@@ -135,7 +135,7 @@ void DvServiceLinnCoUkJukebox1C::PresetPrefix(IInvocationResponse& aResponse, TU
     aResponse.End();
 }
 
-void DvServiceLinnCoUkJukebox1C::SetAlbumArtFileName(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaName)
+void DvProviderLinnCoUkJukebox1C::SetAlbumArtFileName(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaName)
 {
     ASSERT(iCallbackSetAlbumArtFileName != NULL);
     if (0 != iCallbackSetAlbumArtFileName(iPtrSetAlbumArtFileName, aVersion, (const char*)aaName.Ptr())) {
@@ -146,7 +146,7 @@ void DvServiceLinnCoUkJukebox1C::SetAlbumArtFileName(IInvocationResponse& aRespo
     aResponse.End();
 }
 
-void DvServiceLinnCoUkJukebox1C::AlbumArtFileName(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaName)
+void DvProviderLinnCoUkJukebox1C::AlbumArtFileName(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaName)
 {
     char* aName;
     ASSERT(iCallbackAlbumArtFileName != NULL);
@@ -162,7 +162,7 @@ void DvServiceLinnCoUkJukebox1C::AlbumArtFileName(IInvocationResponse& aResponse
     aResponse.End();
 }
 
-void DvServiceLinnCoUkJukebox1C::SetCurrentPreset(IInvocationResponse& aResponse, TUint aVersion, TUint aaPreset)
+void DvProviderLinnCoUkJukebox1C::SetCurrentPreset(IInvocationResponse& aResponse, TUint aVersion, TUint aaPreset)
 {
     ASSERT(iCallbackSetCurrentPreset != NULL);
     if (0 != iCallbackSetCurrentPreset(iPtrSetCurrentPreset, aVersion, aaPreset)) {
@@ -173,7 +173,7 @@ void DvServiceLinnCoUkJukebox1C::SetCurrentPreset(IInvocationResponse& aResponse
     aResponse.End();
 }
 
-void DvServiceLinnCoUkJukebox1C::CurrentPreset(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaPreset)
+void DvProviderLinnCoUkJukebox1C::CurrentPreset(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaPreset)
 {
     uint32_t aPreset;
     ASSERT(iCallbackCurrentPreset != NULL);
@@ -186,7 +186,7 @@ void DvServiceLinnCoUkJukebox1C::CurrentPreset(IInvocationResponse& aResponse, T
     aResponse.End();
 }
 
-void DvServiceLinnCoUkJukebox1C::PresetMetaData(IInvocationResponse& aResponse, TUint aVersion, TUint aaPreset, IInvocationResponseString& aaMetaData)
+void DvProviderLinnCoUkJukebox1C::PresetMetaData(IInvocationResponse& aResponse, TUint aVersion, TUint aaPreset, IInvocationResponseString& aaMetaData)
 {
     char* aMetaData;
     ASSERT(iCallbackPresetMetaData != NULL);
@@ -202,7 +202,7 @@ void DvServiceLinnCoUkJukebox1C::PresetMetaData(IInvocationResponse& aResponse, 
     aResponse.End();
 }
 
-void DvServiceLinnCoUkJukebox1C::LoadManifest(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaTotalPresets)
+void DvProviderLinnCoUkJukebox1C::LoadManifest(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaTotalPresets)
 {
     uint32_t aTotalPresets;
     ASSERT(iCallbackLoadManifest != NULL);
@@ -217,94 +217,94 @@ void DvServiceLinnCoUkJukebox1C::LoadManifest(IInvocationResponse& aResponse, TU
 
 
 
-THandle DvServiceLinnCoUkJukebox1Create(DvDeviceC aDevice)
+THandle DvProviderLinnCoUkJukebox1Create(DvDeviceC aDevice)
 {
-	return new DvServiceLinnCoUkJukebox1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderLinnCoUkJukebox1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvServiceLinnCoUkJukebox1Destroy(THandle aService)
+void DvProviderLinnCoUkJukebox1Destroy(THandle aProvider)
 {
-    delete reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService);
+    delete reinterpret_cast<DvProviderLinnCoUkJukebox1C*>(aProvider);
 }
 
-void DvServiceLinnCoUkJukebox1EnableActionSetPresetPrefix(THandle aService, CallbackJukebox1SetPresetPrefix aCallback, void* aPtr)
+void DvProviderLinnCoUkJukebox1EnableActionSetPresetPrefix(THandle aProvider, CallbackJukebox1SetPresetPrefix aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService)->EnableActionSetPresetPrefix(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkJukebox1C*>(aProvider)->EnableActionSetPresetPrefix(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkJukebox1EnableActionPresetPrefix(THandle aService, CallbackJukebox1PresetPrefix aCallback, void* aPtr)
+void DvProviderLinnCoUkJukebox1EnableActionPresetPrefix(THandle aProvider, CallbackJukebox1PresetPrefix aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService)->EnableActionPresetPrefix(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkJukebox1C*>(aProvider)->EnableActionPresetPrefix(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkJukebox1EnableActionSetAlbumArtFileName(THandle aService, CallbackJukebox1SetAlbumArtFileName aCallback, void* aPtr)
+void DvProviderLinnCoUkJukebox1EnableActionSetAlbumArtFileName(THandle aProvider, CallbackJukebox1SetAlbumArtFileName aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService)->EnableActionSetAlbumArtFileName(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkJukebox1C*>(aProvider)->EnableActionSetAlbumArtFileName(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkJukebox1EnableActionAlbumArtFileName(THandle aService, CallbackJukebox1AlbumArtFileName aCallback, void* aPtr)
+void DvProviderLinnCoUkJukebox1EnableActionAlbumArtFileName(THandle aProvider, CallbackJukebox1AlbumArtFileName aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService)->EnableActionAlbumArtFileName(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkJukebox1C*>(aProvider)->EnableActionAlbumArtFileName(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkJukebox1EnableActionSetCurrentPreset(THandle aService, CallbackJukebox1SetCurrentPreset aCallback, void* aPtr)
+void DvProviderLinnCoUkJukebox1EnableActionSetCurrentPreset(THandle aProvider, CallbackJukebox1SetCurrentPreset aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService)->EnableActionSetCurrentPreset(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkJukebox1C*>(aProvider)->EnableActionSetCurrentPreset(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkJukebox1EnableActionCurrentPreset(THandle aService, CallbackJukebox1CurrentPreset aCallback, void* aPtr)
+void DvProviderLinnCoUkJukebox1EnableActionCurrentPreset(THandle aProvider, CallbackJukebox1CurrentPreset aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService)->EnableActionCurrentPreset(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkJukebox1C*>(aProvider)->EnableActionCurrentPreset(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkJukebox1EnableActionPresetMetaData(THandle aService, CallbackJukebox1PresetMetaData aCallback, void* aPtr)
+void DvProviderLinnCoUkJukebox1EnableActionPresetMetaData(THandle aProvider, CallbackJukebox1PresetMetaData aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService)->EnableActionPresetMetaData(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkJukebox1C*>(aProvider)->EnableActionPresetMetaData(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkJukebox1EnableActionLoadManifest(THandle aService, CallbackJukebox1LoadManifest aCallback, void* aPtr)
+void DvProviderLinnCoUkJukebox1EnableActionLoadManifest(THandle aProvider, CallbackJukebox1LoadManifest aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService)->EnableActionLoadManifest(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkJukebox1C*>(aProvider)->EnableActionLoadManifest(aCallback, aPtr);
 }
 
-int32_t DvServiceLinnCoUkJukebox1SetPropertyCurrentPreset(THandle aService, uint32_t aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkJukebox1SetPropertyCurrentPreset(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    *aChanged = (reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService)->SetPropertyCurrentPreset(aValue)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkJukebox1C*>(aProvider)->SetPropertyCurrentPreset(aValue)? 1 : 0);
     return 0;
 }
 
-void DvServiceLinnCoUkJukebox1GetPropertyCurrentPreset(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkJukebox1GetPropertyCurrentPreset(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService)->GetPropertyCurrentPreset(val);
+    reinterpret_cast<DvProviderLinnCoUkJukebox1C*>(aProvider)->GetPropertyCurrentPreset(val);
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkJukebox1SetPropertyPresetPrefix(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkJukebox1SetPropertyPresetPrefix(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService)->SetPropertyPresetPrefix(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkJukebox1C*>(aProvider)->SetPropertyPresetPrefix(buf)? 1 : 0);
     return 0;
 }
 
-void DvServiceLinnCoUkJukebox1GetPropertyPresetPrefix(THandle aService, char** aValue)
+void DvProviderLinnCoUkJukebox1GetPropertyPresetPrefix(THandle aProvider, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService)->GetPropertyPresetPrefix(buf);
+    reinterpret_cast<DvProviderLinnCoUkJukebox1C*>(aProvider)->GetPropertyPresetPrefix(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkJukebox1SetPropertyAlbumArtFileName(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkJukebox1SetPropertyAlbumArtFileName(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService)->SetPropertyAlbumArtFileName(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkJukebox1C*>(aProvider)->SetPropertyAlbumArtFileName(buf)? 1 : 0);
     return 0;
 }
 
-void DvServiceLinnCoUkJukebox1GetPropertyAlbumArtFileName(THandle aService, char** aValue)
+void DvProviderLinnCoUkJukebox1GetPropertyAlbumArtFileName(THandle aProvider, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkJukebox1C*>(aService)->GetPropertyAlbumArtFileName(buf);
+    reinterpret_cast<DvProviderLinnCoUkJukebox1C*>(aProvider)->GetPropertyAlbumArtFileName(buf);
     *aValue = (char*)buf.Transfer();
 }
 

@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,14 +17,14 @@ class PropertyBinary;
 /**
  * Base Device for upnp.org:ScheduledRecording:1
  */
-class DvServiceUpnpOrgScheduledRecording1 : public DvService
+class DvProviderUpnpOrgScheduledRecording1 : public DvProvider
 {
 public:
-    virtual ~DvServiceUpnpOrgScheduledRecording1() {}
+    virtual ~DvProviderUpnpOrgScheduledRecording1() {}
     TBool SetPropertyLastChange(const Brx& aValue);
     void GetPropertyLastChange(Brhz& aValue);
 protected:
-    DvServiceUpnpOrgScheduledRecording1(DvDevice& aDevice);
+    DvProviderUpnpOrgScheduledRecording1(DvDevice& aDevice);
     void EnableActionGetSortCapabilities();
     void EnableActionGetPropertyList();
     void EnableActionGetAllowedValues();
@@ -63,7 +63,7 @@ private:
     virtual void GetRecordScheduleConflicts(IInvocationResponse& aResponse, TUint aVersion, const Brx& aRecordScheduleID, IInvocationResponseString& aRecordScheduleConflictIDList, IInvocationResponseUint& aUpdateID);
     virtual void GetRecordTaskConflicts(IInvocationResponse& aResponse, TUint aVersion, const Brx& aRecordTaskID, IInvocationResponseString& aRecordTaskConflictIDList, IInvocationResponseUint& aUpdateID);
 private:
-    DvServiceUpnpOrgScheduledRecording1();
+    DvProviderUpnpOrgScheduledRecording1();
     void DoGetSortCapabilities(IDvInvocation& aInvocation, TUint aVersion);
     void DoGetPropertyList(IDvInvocation& aInvocation, TUint aVersion);
     void DoGetAllowedValues(IDvInvocation& aInvocation, TUint aVersion);

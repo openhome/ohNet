@@ -185,17 +185,11 @@ void Subscription::DoSubscribe()
     if (nif == NULL) {
         THROW(NetworkError);
     }
-    TIpAddress addr = nif->Address();
+    Endpoint endpt(SubscriptionManager::EventServer()->Port(), nif->Address());
     delete nif;
-    (void)Ascii::AppendDec(uri, addr&0xff);
-    uri.Append('.');
-    (void)Ascii::AppendDec(uri, (addr>>8)&0xff);
-    uri.Append('.');
-    (void)Ascii::AppendDec(uri, (addr>>16)&0xff);
-    uri.Append('.');
-    (void)Ascii::AppendDec(uri, (addr>>24)&0xff);
-    uri.Append(':');
-    (void)Ascii::AppendDec(uri, SubscriptionManager::EventServer()->Port());
+    Endpoint::EndpointBuf buf;
+    endpt.GetEndpoint(buf);
+    uri.Append(buf);
     uri.Append('/');
     Uri subscriber(uri);
 

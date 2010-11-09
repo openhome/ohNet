@@ -6,39 +6,39 @@
 
 using namespace Zapp;
 
-DvServiceZappOrgTestWidgetController1::DvServiceZappOrgTestWidgetController1(DvDevice& aDevice)
-    : DvService(aDevice.Device(), "zapp.org", "TestWidgetController", 1)
+DvProviderZappOrgTestWidgetController1::DvProviderZappOrgTestWidgetController1(DvDevice& aDevice)
+    : DvProvider(aDevice.Device(), "zapp.org", "TestWidgetController", 1)
 {
     Functor empty;
 }
 
-void DvServiceZappOrgTestWidgetController1::EnableActionCreateWidget()
+void DvProviderZappOrgTestWidgetController1::EnableActionCreateWidget()
 {
     Zapp::Action* action = new Zapp::Action("CreateWidget");
     action->AddInputParameter(new ParameterString("WidgetUdn"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestWidgetController1::DoCreateWidget);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestWidgetController1::DoCreateWidget);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestWidgetController1::EnableActionRemoveWidget()
+void DvProviderZappOrgTestWidgetController1::EnableActionRemoveWidget()
 {
     Zapp::Action* action = new Zapp::Action("RemoveWidget");
     action->AddInputParameter(new ParameterString("WidgetUdn"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestWidgetController1::DoRemoveWidget);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestWidgetController1::DoRemoveWidget);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestWidgetController1::EnableActionSetWidgetRegister()
+void DvProviderZappOrgTestWidgetController1::EnableActionSetWidgetRegister()
 {
     Zapp::Action* action = new Zapp::Action("SetWidgetRegister");
     action->AddInputParameter(new ParameterString("WidgetUdn"));
     action->AddInputParameter(new ParameterUint("RegisterIndex"));
     action->AddInputParameter(new ParameterUint("RegisterValue"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestWidgetController1::DoSetWidgetRegister);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestWidgetController1::DoSetWidgetRegister);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestWidgetController1::DoCreateWidget(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestWidgetController1::DoCreateWidget(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz WidgetUdn;
@@ -48,7 +48,7 @@ void DvServiceZappOrgTestWidgetController1::DoCreateWidget(IDvInvocation& aInvoc
     CreateWidget(resp, aVersion, WidgetUdn);
 }
 
-void DvServiceZappOrgTestWidgetController1::DoRemoveWidget(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestWidgetController1::DoRemoveWidget(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz WidgetUdn;
@@ -58,7 +58,7 @@ void DvServiceZappOrgTestWidgetController1::DoRemoveWidget(IDvInvocation& aInvoc
     RemoveWidget(resp, aVersion, WidgetUdn);
 }
 
-void DvServiceZappOrgTestWidgetController1::DoSetWidgetRegister(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestWidgetController1::DoSetWidgetRegister(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz WidgetUdn;
@@ -70,17 +70,17 @@ void DvServiceZappOrgTestWidgetController1::DoSetWidgetRegister(IDvInvocation& a
     SetWidgetRegister(resp, aVersion, WidgetUdn, RegisterIndex, RegisterValue);
 }
 
-void DvServiceZappOrgTestWidgetController1::CreateWidget(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aWidgetUdn*/)
+void DvProviderZappOrgTestWidgetController1::CreateWidget(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aWidgetUdn*/)
 {
     ASSERTS();
 }
 
-void DvServiceZappOrgTestWidgetController1::RemoveWidget(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aWidgetUdn*/)
+void DvProviderZappOrgTestWidgetController1::RemoveWidget(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aWidgetUdn*/)
 {
     ASSERTS();
 }
 
-void DvServiceZappOrgTestWidgetController1::SetWidgetRegister(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aWidgetUdn*/, TUint /*aRegisterIndex*/, TUint /*aRegisterValue*/)
+void DvProviderZappOrgTestWidgetController1::SetWidgetRegister(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aWidgetUdn*/, TUint /*aRegisterIndex*/, TUint /*aRegisterValue*/)
 {
     ASSERTS();
 }

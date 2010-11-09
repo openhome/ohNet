@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 #include <string>
 
@@ -20,16 +20,16 @@ class PropertyBinary;
 /**
  * Base Device for upnp.org:AVTransport:2
  */
-class DvServiceUpnpOrgAVTransport2Cpp : public DvService
+class DvProviderUpnpOrgAVTransport2Cpp : public DvProvider
 {
 public:
-    virtual ~DvServiceUpnpOrgAVTransport2Cpp() {}
+    virtual ~DvProviderUpnpOrgAVTransport2Cpp() {}
     bool SetPropertyLastChange(const std::string& aValue);
     void GetPropertyLastChange(std::string& aValue);
     bool SetPropertyDRMState(const std::string& aValue);
     void GetPropertyDRMState(std::string& aValue);
 protected:
-    DvServiceUpnpOrgAVTransport2Cpp(DvDeviceStd& aDevice);
+    DvProviderUpnpOrgAVTransport2Cpp(DvDeviceStd& aDevice);
     void EnableActionSetAVTransportURI();
     void EnableActionSetNextAVTransportURI();
     void EnableActionGetMediaInfo();
@@ -74,7 +74,7 @@ private:
     virtual void GetStateVariables(uint32_t aVersion, uint32_t aInstanceID, const std::string& aStateVariableList, std::string& aStateVariableValuePairs);
     virtual void SetStateVariables(uint32_t aVersion, uint32_t aInstanceID, const std::string& aAVTransportUDN, const std::string& aServiceType, const std::string& aServiceId, const std::string& aStateVariableValuePairs, std::string& aStateVariableList);
 private:
-    DvServiceUpnpOrgAVTransport2Cpp();
+    DvProviderUpnpOrgAVTransport2Cpp();
     void DoSetAVTransportURI(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoSetNextAVTransportURI(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoGetMediaInfo(IDvInvocation& aInvocation, uint32_t aVersion);

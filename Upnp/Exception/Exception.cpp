@@ -3,7 +3,7 @@
 #include <ZappTypes.h>
 #include <Stack.h>
 #include <Zapp.h>
-#include <Os.h>
+#include <OsWrapper.h>
 
 #include <stdio.h>
 

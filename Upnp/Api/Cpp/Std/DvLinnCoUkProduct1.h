@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 #include <string>
 
@@ -20,16 +20,16 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Product:1
  */
-class DvServiceLinnCoUkProduct1Cpp : public DvService
+class DvProviderLinnCoUkProduct1Cpp : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkProduct1Cpp() {}
+    virtual ~DvProviderLinnCoUkProduct1Cpp() {}
     bool SetPropertyRoom(const std::string& aValue);
     void GetPropertyRoom(std::string& aValue);
     bool SetPropertyStandby(bool aValue);
     void GetPropertyStandby(bool& aValue);
 protected:
-    DvServiceLinnCoUkProduct1Cpp(DvDeviceStd& aDevice);
+    DvProviderLinnCoUkProduct1Cpp(DvDeviceStd& aDevice);
     void EnableActionRoom();
     void EnableActionSetRoom();
     void EnableActionStandby();
@@ -40,7 +40,7 @@ private:
     virtual void Standby(uint32_t aVersion, bool& aaStandby);
     virtual void SetStandby(uint32_t aVersion, bool aaStandby);
 private:
-    DvServiceLinnCoUkProduct1Cpp();
+    DvProviderLinnCoUkProduct1Cpp();
     void DoRoom(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoSetRoom(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoStandby(IDvInvocation& aInvocation, uint32_t aVersion);

@@ -5,68 +5,68 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvServiceLinnCoUkDs1 : IDisposable
+    public class DvProviderLinnCoUkDs1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkDs1")]
-        static extern uint DvServiceLinnCoUkDs1Create(uint aDeviceHandle);
+        static extern uint DvProviderLinnCoUkDs1Create(uint aDeviceHandle);
         [DllImport("DvLinnCoUkDs1")]
-        static extern void DvServiceLinnCoUkDs1Destroy(uint aHandle);
+        static extern void DvProviderLinnCoUkDs1Destroy(uint aHandle);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvServiceLinnCoUkDs1SetPropertySupportedProtocols(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkDs1SetPropertySupportedProtocols(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe void DvServiceLinnCoUkDs1GetPropertySupportedProtocols(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkDs1GetPropertySupportedProtocols(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTrackDuration(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkDs1SetPropertyTrackDuration(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe void DvServiceLinnCoUkDs1GetPropertyTrackDuration(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkDs1GetPropertyTrackDuration(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTrackBitRate(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkDs1SetPropertyTrackBitRate(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe void DvServiceLinnCoUkDs1GetPropertyTrackBitRate(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkDs1GetPropertyTrackBitRate(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTrackLossless(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkDs1SetPropertyTrackLossless(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe void DvServiceLinnCoUkDs1GetPropertyTrackLossless(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkDs1GetPropertyTrackLossless(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTrackBitDepth(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkDs1SetPropertyTrackBitDepth(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe void DvServiceLinnCoUkDs1GetPropertyTrackBitDepth(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkDs1GetPropertyTrackBitDepth(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTrackSampleRate(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkDs1SetPropertyTrackSampleRate(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe void DvServiceLinnCoUkDs1GetPropertyTrackSampleRate(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkDs1GetPropertyTrackSampleRate(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTrackCodecName(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkDs1SetPropertyTrackCodecName(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe void DvServiceLinnCoUkDs1GetPropertyTrackCodecName(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkDs1GetPropertyTrackCodecName(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTrackId(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkDs1SetPropertyTrackId(uint aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe void DvServiceLinnCoUkDs1GetPropertyTrackId(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkDs1GetPropertyTrackId(uint aHandle, uint* aValue);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe int DvServiceLinnCoUkDs1SetPropertyTransportState(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkDs1SetPropertyTransportState(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDs1")]
-        static extern unsafe void DvServiceLinnCoUkDs1GetPropertyTransportState(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkDs1GetPropertyTransportState(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkDs1")]
-        static extern void DvServiceLinnCoUkDs1EnableActionPlay(uint aHandle, CallbackPlay aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDs1EnableActionPlay(uint aHandle, CallbackPlay aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDs1")]
-        static extern void DvServiceLinnCoUkDs1EnableActionPause(uint aHandle, CallbackPause aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDs1EnableActionPause(uint aHandle, CallbackPause aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDs1")]
-        static extern void DvServiceLinnCoUkDs1EnableActionStop(uint aHandle, CallbackStop aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDs1EnableActionStop(uint aHandle, CallbackStop aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDs1")]
-        static extern void DvServiceLinnCoUkDs1EnableActionSeekSecondAbsolute(uint aHandle, CallbackSeekSecondAbsolute aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDs1EnableActionSeekSecondAbsolute(uint aHandle, CallbackSeekSecondAbsolute aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDs1")]
-        static extern void DvServiceLinnCoUkDs1EnableActionSeekSecondRelative(uint aHandle, CallbackSeekSecondRelative aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDs1EnableActionSeekSecondRelative(uint aHandle, CallbackSeekSecondRelative aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDs1")]
-        static extern void DvServiceLinnCoUkDs1EnableActionSeekTrackId(uint aHandle, CallbackSeekTrackId aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDs1EnableActionSeekTrackId(uint aHandle, CallbackSeekTrackId aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDs1")]
-        static extern void DvServiceLinnCoUkDs1EnableActionSeekTrackAbsolute(uint aHandle, CallbackSeekTrackAbsolute aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDs1EnableActionSeekTrackAbsolute(uint aHandle, CallbackSeekTrackAbsolute aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDs1")]
-        static extern void DvServiceLinnCoUkDs1EnableActionSeekTrackRelative(uint aHandle, CallbackSeekTrackRelative aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDs1EnableActionSeekTrackRelative(uint aHandle, CallbackSeekTrackRelative aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDs1")]
-        static extern void DvServiceLinnCoUkDs1EnableActionState(uint aHandle, CallbackState aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDs1EnableActionState(uint aHandle, CallbackState aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDs1")]
-        static extern void DvServiceLinnCoUkDs1EnableActionProtocolInfo(uint aHandle, CallbackProtocolInfo aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDs1EnableActionProtocolInfo(uint aHandle, CallbackProtocolInfo aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -81,7 +81,6 @@ namespace Zapp
         private unsafe delegate int CallbackState(IntPtr aPtr, uint aVersion, char** aaTransportState, uint* aaTrackDuration, uint* aaTrackBitRate, int* aaTrackLossless, uint* aaTrackBitDepth, uint* aaTrackSampleRate, char** aaTrackCodecName, uint* aaTrackId);
         private unsafe delegate int CallbackProtocolInfo(IntPtr aPtr, uint aVersion, char** aaSupportedProtocols);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackPlay iCallbackPlay;
         private CallbackPause iCallbackPause;
@@ -94,9 +93,9 @@ namespace Zapp
         private CallbackState iCallbackState;
         private CallbackProtocolInfo iCallbackProtocolInfo;
 
-        public DvServiceLinnCoUkDs1(DvDevice aDevice)
+        public DvProviderLinnCoUkDs1(DvDevice aDevice)
         {
-            iHandle = DvServiceLinnCoUkDs1Create(aDevice.Handle()); 
+            iHandle = DvProviderLinnCoUkDs1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
@@ -104,7 +103,7 @@ namespace Zapp
         {
         uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkDs1SetPropertySupportedProtocols(iHandle, value, &changed);
+            int err = DvProviderLinnCoUkDs1SetPropertySupportedProtocols(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
@@ -116,7 +115,7 @@ namespace Zapp
         public unsafe void GetPropertySupportedProtocols(out string aValue)
         {
             char* value;
-            DvServiceLinnCoUkDs1GetPropertySupportedProtocols(iHandle, &value);
+            DvProviderLinnCoUkDs1GetPropertySupportedProtocols(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
@@ -124,7 +123,7 @@ namespace Zapp
         public unsafe bool SetPropertyTrackDuration(uint aValue)
         {
         uint changed;
-            if (0 != DvServiceLinnCoUkDs1SetPropertyTrackDuration(iHandle, aValue, &changed))
+            if (0 != DvProviderLinnCoUkDs1SetPropertyTrackDuration(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -135,14 +134,14 @@ namespace Zapp
         {
             fixed (uint* value = &aValue)
 			{
-                DvServiceLinnCoUkDs1GetPropertyTrackDuration(iHandle, value);
+                DvProviderLinnCoUkDs1GetPropertyTrackDuration(iHandle, value);
             }
         }
 
         public unsafe bool SetPropertyTrackBitRate(uint aValue)
         {
         uint changed;
-            if (0 != DvServiceLinnCoUkDs1SetPropertyTrackBitRate(iHandle, aValue, &changed))
+            if (0 != DvProviderLinnCoUkDs1SetPropertyTrackBitRate(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -153,7 +152,7 @@ namespace Zapp
         {
             fixed (uint* value = &aValue)
 			{
-                DvServiceLinnCoUkDs1GetPropertyTrackBitRate(iHandle, value);
+                DvProviderLinnCoUkDs1GetPropertyTrackBitRate(iHandle, value);
             }
         }
 
@@ -161,7 +160,7 @@ namespace Zapp
         {
         uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkDs1SetPropertyTrackLossless(iHandle, value, &changed))
+            if (0 != DvProviderLinnCoUkDs1SetPropertyTrackLossless(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -171,14 +170,14 @@ namespace Zapp
         public unsafe void GetPropertyTrackLossless(out bool aValue)
         {
             int value;
-            DvServiceLinnCoUkDs1GetPropertyTrackLossless(iHandle, &value);
+            DvProviderLinnCoUkDs1GetPropertyTrackLossless(iHandle, &value);
             aValue = (value != 0);
         }
 
         public unsafe bool SetPropertyTrackBitDepth(uint aValue)
         {
         uint changed;
-            if (0 != DvServiceLinnCoUkDs1SetPropertyTrackBitDepth(iHandle, aValue, &changed))
+            if (0 != DvProviderLinnCoUkDs1SetPropertyTrackBitDepth(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -189,14 +188,14 @@ namespace Zapp
         {
             fixed (uint* value = &aValue)
 			{
-                DvServiceLinnCoUkDs1GetPropertyTrackBitDepth(iHandle, value);
+                DvProviderLinnCoUkDs1GetPropertyTrackBitDepth(iHandle, value);
             }
         }
 
         public unsafe bool SetPropertyTrackSampleRate(uint aValue)
         {
         uint changed;
-            if (0 != DvServiceLinnCoUkDs1SetPropertyTrackSampleRate(iHandle, aValue, &changed))
+            if (0 != DvProviderLinnCoUkDs1SetPropertyTrackSampleRate(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -207,7 +206,7 @@ namespace Zapp
         {
             fixed (uint* value = &aValue)
 			{
-                DvServiceLinnCoUkDs1GetPropertyTrackSampleRate(iHandle, value);
+                DvProviderLinnCoUkDs1GetPropertyTrackSampleRate(iHandle, value);
             }
         }
 
@@ -215,7 +214,7 @@ namespace Zapp
         {
         uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkDs1SetPropertyTrackCodecName(iHandle, value, &changed);
+            int err = DvProviderLinnCoUkDs1SetPropertyTrackCodecName(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
@@ -227,7 +226,7 @@ namespace Zapp
         public unsafe void GetPropertyTrackCodecName(out string aValue)
         {
             char* value;
-            DvServiceLinnCoUkDs1GetPropertyTrackCodecName(iHandle, &value);
+            DvProviderLinnCoUkDs1GetPropertyTrackCodecName(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
@@ -235,7 +234,7 @@ namespace Zapp
         public unsafe bool SetPropertyTrackId(uint aValue)
         {
         uint changed;
-            if (0 != DvServiceLinnCoUkDs1SetPropertyTrackId(iHandle, aValue, &changed))
+            if (0 != DvProviderLinnCoUkDs1SetPropertyTrackId(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -246,7 +245,7 @@ namespace Zapp
         {
             fixed (uint* value = &aValue)
 			{
-                DvServiceLinnCoUkDs1GetPropertyTrackId(iHandle, value);
+                DvProviderLinnCoUkDs1GetPropertyTrackId(iHandle, value);
             }
         }
 
@@ -254,7 +253,7 @@ namespace Zapp
         {
         uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkDs1SetPropertyTransportState(iHandle, value, &changed);
+            int err = DvProviderLinnCoUkDs1SetPropertyTransportState(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
@@ -266,7 +265,7 @@ namespace Zapp
         public unsafe void GetPropertyTransportState(out string aValue)
         {
             char* value;
-            DvServiceLinnCoUkDs1GetPropertyTransportState(iHandle, &value);
+            DvProviderLinnCoUkDs1GetPropertyTransportState(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
@@ -275,70 +274,70 @@ namespace Zapp
         {
             iCallbackPlay = new CallbackPlay(DoPlay);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDs1EnableActionPlay(iHandle, iCallbackPlay, ptr);
+            DvProviderLinnCoUkDs1EnableActionPlay(iHandle, iCallbackPlay, ptr);
         }
 
         protected unsafe void EnableActionPause()
         {
             iCallbackPause = new CallbackPause(DoPause);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDs1EnableActionPause(iHandle, iCallbackPause, ptr);
+            DvProviderLinnCoUkDs1EnableActionPause(iHandle, iCallbackPause, ptr);
         }
 
         protected unsafe void EnableActionStop()
         {
             iCallbackStop = new CallbackStop(DoStop);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDs1EnableActionStop(iHandle, iCallbackStop, ptr);
+            DvProviderLinnCoUkDs1EnableActionStop(iHandle, iCallbackStop, ptr);
         }
 
         protected unsafe void EnableActionSeekSecondAbsolute()
         {
             iCallbackSeekSecondAbsolute = new CallbackSeekSecondAbsolute(DoSeekSecondAbsolute);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDs1EnableActionSeekSecondAbsolute(iHandle, iCallbackSeekSecondAbsolute, ptr);
+            DvProviderLinnCoUkDs1EnableActionSeekSecondAbsolute(iHandle, iCallbackSeekSecondAbsolute, ptr);
         }
 
         protected unsafe void EnableActionSeekSecondRelative()
         {
             iCallbackSeekSecondRelative = new CallbackSeekSecondRelative(DoSeekSecondRelative);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDs1EnableActionSeekSecondRelative(iHandle, iCallbackSeekSecondRelative, ptr);
+            DvProviderLinnCoUkDs1EnableActionSeekSecondRelative(iHandle, iCallbackSeekSecondRelative, ptr);
         }
 
         protected unsafe void EnableActionSeekTrackId()
         {
             iCallbackSeekTrackId = new CallbackSeekTrackId(DoSeekTrackId);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDs1EnableActionSeekTrackId(iHandle, iCallbackSeekTrackId, ptr);
+            DvProviderLinnCoUkDs1EnableActionSeekTrackId(iHandle, iCallbackSeekTrackId, ptr);
         }
 
         protected unsafe void EnableActionSeekTrackAbsolute()
         {
             iCallbackSeekTrackAbsolute = new CallbackSeekTrackAbsolute(DoSeekTrackAbsolute);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDs1EnableActionSeekTrackAbsolute(iHandle, iCallbackSeekTrackAbsolute, ptr);
+            DvProviderLinnCoUkDs1EnableActionSeekTrackAbsolute(iHandle, iCallbackSeekTrackAbsolute, ptr);
         }
 
         protected unsafe void EnableActionSeekTrackRelative()
         {
             iCallbackSeekTrackRelative = new CallbackSeekTrackRelative(DoSeekTrackRelative);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDs1EnableActionSeekTrackRelative(iHandle, iCallbackSeekTrackRelative, ptr);
+            DvProviderLinnCoUkDs1EnableActionSeekTrackRelative(iHandle, iCallbackSeekTrackRelative, ptr);
         }
 
         protected unsafe void EnableActionState()
         {
             iCallbackState = new CallbackState(DoState);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDs1EnableActionState(iHandle, iCallbackState, ptr);
+            DvProviderLinnCoUkDs1EnableActionState(iHandle, iCallbackState, ptr);
         }
 
         protected unsafe void EnableActionProtocolInfo()
         {
             iCallbackProtocolInfo = new CallbackProtocolInfo(DoProtocolInfo);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkDs1EnableActionProtocolInfo(iHandle, iCallbackProtocolInfo, ptr);
+            DvProviderLinnCoUkDs1EnableActionProtocolInfo(iHandle, iCallbackProtocolInfo, ptr);
         }
 
         protected virtual void Play(uint aVersion)
@@ -394,7 +393,7 @@ namespace Zapp
         private static unsafe int DoPlay(IntPtr aPtr, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDs1 self = (DvServiceLinnCoUkDs1)gch.Target;
+            DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             self.Play(aVersion);
             return 0;
         }
@@ -402,7 +401,7 @@ namespace Zapp
         private static unsafe int DoPause(IntPtr aPtr, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDs1 self = (DvServiceLinnCoUkDs1)gch.Target;
+            DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             self.Pause(aVersion);
             return 0;
         }
@@ -410,7 +409,7 @@ namespace Zapp
         private static unsafe int DoStop(IntPtr aPtr, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDs1 self = (DvServiceLinnCoUkDs1)gch.Target;
+            DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             self.Stop(aVersion);
             return 0;
         }
@@ -418,7 +417,7 @@ namespace Zapp
         private static unsafe int DoSeekSecondAbsolute(IntPtr aPtr, uint aVersion, uint aaSecond)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDs1 self = (DvServiceLinnCoUkDs1)gch.Target;
+            DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             self.SeekSecondAbsolute(aVersion, aaSecond);
             return 0;
         }
@@ -426,7 +425,7 @@ namespace Zapp
         private static unsafe int DoSeekSecondRelative(IntPtr aPtr, uint aVersion, int aaSecond)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDs1 self = (DvServiceLinnCoUkDs1)gch.Target;
+            DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             self.SeekSecondRelative(aVersion, aaSecond);
             return 0;
         }
@@ -434,7 +433,7 @@ namespace Zapp
         private static unsafe int DoSeekTrackId(IntPtr aPtr, uint aVersion, uint aaTrackId)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDs1 self = (DvServiceLinnCoUkDs1)gch.Target;
+            DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             self.SeekTrackId(aVersion, aaTrackId);
             return 0;
         }
@@ -442,7 +441,7 @@ namespace Zapp
         private static unsafe int DoSeekTrackAbsolute(IntPtr aPtr, uint aVersion, uint aaTrack)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDs1 self = (DvServiceLinnCoUkDs1)gch.Target;
+            DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             self.SeekTrackAbsolute(aVersion, aaTrack);
             return 0;
         }
@@ -450,7 +449,7 @@ namespace Zapp
         private static unsafe int DoSeekTrackRelative(IntPtr aPtr, uint aVersion, int aaTrack)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDs1 self = (DvServiceLinnCoUkDs1)gch.Target;
+            DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             self.SeekTrackRelative(aVersion, aaTrack);
             return 0;
         }
@@ -458,7 +457,7 @@ namespace Zapp
         private static unsafe int DoState(IntPtr aPtr, uint aVersion, char** aaTransportState, uint* aaTrackDuration, uint* aaTrackBitRate, int* aaTrackLossless, uint* aaTrackBitDepth, uint* aaTrackSampleRate, char** aaTrackCodecName, uint* aaTrackId)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDs1 self = (DvServiceLinnCoUkDs1)gch.Target;
+            DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             string aTransportState;
             uint aTrackDuration;
             uint aTrackBitRate;
@@ -482,7 +481,7 @@ namespace Zapp
         private static unsafe int DoProtocolInfo(IntPtr aPtr, uint aVersion, char** aaSupportedProtocols)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkDs1 self = (DvServiceLinnCoUkDs1)gch.Target;
+            DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             string aSupportedProtocols;
             self.ProtocolInfo(aVersion, out aSupportedProtocols);
             *aaSupportedProtocols = (char*)Marshal.StringToHGlobalAnsi(aSupportedProtocols).ToPointer();
@@ -496,7 +495,7 @@ namespace Zapp
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceLinnCoUkDs1()
+        ~DvProviderLinnCoUkDs1()
         {
             DoDispose();
         }
@@ -513,7 +512,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = 0;
             }
-            DvServiceLinnCoUkDs1Destroy(handle);
+            DvProviderLinnCoUkDs1Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

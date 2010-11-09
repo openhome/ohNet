@@ -10,7 +10,7 @@
 #include <ZappTypes.h>
 #include <Thread.h>
 #include <Timer.h>
-#include <Os.h>
+#include <OsWrapper.h>
 #include <NetworkInterfaceList.h>
 #include <Discovery.h>
 #include <Zapp.h>

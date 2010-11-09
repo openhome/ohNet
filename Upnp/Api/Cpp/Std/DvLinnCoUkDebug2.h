@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 #include <string>
 
@@ -20,12 +20,12 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Debug:2
  */
-class DvServiceLinnCoUkDebug2Cpp : public DvService
+class DvProviderLinnCoUkDebug2Cpp : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkDebug2Cpp() {}
+    virtual ~DvProviderLinnCoUkDebug2Cpp() {}
 protected:
-    DvServiceLinnCoUkDebug2Cpp(DvDeviceStd& aDevice);
+    DvProviderLinnCoUkDebug2Cpp(DvDeviceStd& aDevice);
     void EnableActionSetDebugLevel();
     void EnableActionDebugLevel();
     void EnableActionMemWrite();
@@ -34,7 +34,7 @@ private:
     virtual void DebugLevel(uint32_t aVersion, uint32_t& aaDebugLevel);
     virtual void MemWrite(uint32_t aVersion, uint32_t aaMemAddress, const std::string& aaMemData);
 private:
-    DvServiceLinnCoUkDebug2Cpp();
+    DvProviderLinnCoUkDebug2Cpp();
     void DoSetDebugLevel(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoDebugLevel(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoMemWrite(IDvInvocation& aInvocation, uint32_t aVersion);

@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,16 +17,16 @@ class PropertyBinary;
 /**
  * Base Device for upnp.org:AVTransport:2
  */
-class DvServiceUpnpOrgAVTransport2 : public DvService
+class DvProviderUpnpOrgAVTransport2 : public DvProvider
 {
 public:
-    virtual ~DvServiceUpnpOrgAVTransport2() {}
+    virtual ~DvProviderUpnpOrgAVTransport2() {}
     TBool SetPropertyLastChange(const Brx& aValue);
     void GetPropertyLastChange(Brhz& aValue);
     TBool SetPropertyDRMState(const Brx& aValue);
     void GetPropertyDRMState(Brhz& aValue);
 protected:
-    DvServiceUpnpOrgAVTransport2(DvDevice& aDevice);
+    DvProviderUpnpOrgAVTransport2(DvDevice& aDevice);
     void EnableActionSetAVTransportURI();
     void EnableActionSetNextAVTransportURI();
     void EnableActionGetMediaInfo();
@@ -71,7 +71,7 @@ private:
     virtual void GetStateVariables(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aStateVariableList, IInvocationResponseString& aStateVariableValuePairs);
     virtual void SetStateVariables(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aAVTransportUDN, const Brx& aServiceType, const Brx& aServiceId, const Brx& aStateVariableValuePairs, IInvocationResponseString& aStateVariableList);
 private:
-    DvServiceUpnpOrgAVTransport2();
+    DvProviderUpnpOrgAVTransport2();
     void DoSetAVTransportURI(IDvInvocation& aInvocation, TUint aVersion);
     void DoSetNextAVTransportURI(IDvInvocation& aInvocation, TUint aVersion);
     void DoGetMediaInfo(IDvInvocation& aInvocation, TUint aVersion);

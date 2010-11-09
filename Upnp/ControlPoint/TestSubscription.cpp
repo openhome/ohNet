@@ -11,7 +11,7 @@
 #include <Core/CpDevice.h>
 #include <Core/CpDeviceUpnp.h>
 #include <Stack.h>
-#include <Os.h>
+#include <OsWrapper.h>
 #include <Core/FunctorCpDevice.h>
 #include <Core/CpUpnpOrgConnectionManager1.h>
 

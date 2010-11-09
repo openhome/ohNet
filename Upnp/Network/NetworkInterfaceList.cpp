@@ -1,6 +1,6 @@
 #include <NetworkInterfaceList.h>
 #include <ZappTypes.h>
-#include <Os.h>
+#include <OsWrapper.h>
 #include <Thread.h>
 #include <Stack.h>
 

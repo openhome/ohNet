@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 #include <string>
 
@@ -20,10 +20,10 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Component:1
  */
-class DvServiceLinnCoUkComponent1Cpp : public DvService
+class DvProviderLinnCoUkComponent1Cpp : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkComponent1Cpp() {}
+    virtual ~DvProviderLinnCoUkComponent1Cpp() {}
     bool SetPropertyAmplifierEnabled(bool aValue);
     void GetPropertyAmplifierEnabled(bool& aValue);
     bool SetPropertyAmplifierAttenuation(const std::string& aValue);
@@ -33,7 +33,7 @@ public:
     bool SetPropertyDigitalAudioOutputRaw(bool aValue);
     void GetPropertyDigitalAudioOutputRaw(bool& aValue);
 protected:
-    DvServiceLinnCoUkComponent1Cpp(DvDeviceStd& aDevice);
+    DvProviderLinnCoUkComponent1Cpp(DvDeviceStd& aDevice);
     void EnableActionAmplifierEnabled();
     void EnableActionSetAmplifierEnabled();
     void EnableActionAmplifierAttenuation();
@@ -58,7 +58,7 @@ private:
     virtual void EthernetLinkConnected(uint32_t aVersion, bool& aaLinkConnected);
     virtual void Locate(uint32_t aVersion);
 private:
-    DvServiceLinnCoUkComponent1Cpp();
+    DvProviderLinnCoUkComponent1Cpp();
     void DoAmplifierEnabled(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoSetAmplifierEnabled(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoAmplifierAttenuation(IDvInvocation& aInvocation, uint32_t aVersion);

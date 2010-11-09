@@ -4,7 +4,7 @@
 #include <OptionParser.h>
 #include <Network.h>
 #include <Debug.h>
-#include <Os.h>
+#include <OsWrapper.h>
 #include <Arch.h>
 
 using namespace Zapp;
@@ -718,7 +718,10 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
         delete (*ifs)[i];
     }
     delete ifs;
-    Print("Using network interface %d.%d.%d.%d\n", addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
+    Endpoint endpt(0, addr);
+    Endpoint::AddressBuf buf;
+    endpt.GetAddress(buf);
+    Print("Using network interface %s\n\n", buf.Ptr());
     MainTestThread th(addr);
     th.Start();
     th.Wait();

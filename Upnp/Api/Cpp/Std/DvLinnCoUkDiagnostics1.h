@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 #include <string>
 
@@ -20,14 +20,14 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Diagnostics:1
  */
-class DvServiceLinnCoUkDiagnostics1Cpp : public DvService
+class DvProviderLinnCoUkDiagnostics1Cpp : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkDiagnostics1Cpp() {}
+    virtual ~DvProviderLinnCoUkDiagnostics1Cpp() {}
     bool SetPropertyaStateVariable(uint32_t aValue);
     void GetPropertyaStateVariable(uint32_t& aValue);
 protected:
-    DvServiceLinnCoUkDiagnostics1Cpp(DvDeviceStd& aDevice);
+    DvProviderLinnCoUkDiagnostics1Cpp(DvDeviceStd& aDevice);
     void EnableActionEcho();
     void EnableActionElfFile();
     void EnableActionElfFingerprint();
@@ -56,7 +56,7 @@ private:
     virtual void SetStateVariablePeriod(uint32_t aVersion, uint32_t aaPeriod);
     virtual void Reboot(uint32_t aVersion, uint32_t aaDelay);
 private:
-    DvServiceLinnCoUkDiagnostics1Cpp();
+    DvProviderLinnCoUkDiagnostics1Cpp();
     void DoEcho(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoElfFile(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoElfFingerprint(IDvInvocation& aInvocation, uint32_t aVersion);

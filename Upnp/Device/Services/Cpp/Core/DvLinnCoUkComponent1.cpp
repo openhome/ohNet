@@ -6,48 +6,48 @@
 
 using namespace Zapp;
 
-TBool DvServiceLinnCoUkComponent1::SetPropertyAmplifierEnabled(TBool aValue)
+TBool DvProviderLinnCoUkComponent1::SetPropertyAmplifierEnabled(TBool aValue)
 {
     return SetPropertyBool(*iPropertyAmplifierEnabled, aValue);
 }
 
-void DvServiceLinnCoUkComponent1::GetPropertyAmplifierEnabled(TBool& aValue)
+void DvProviderLinnCoUkComponent1::GetPropertyAmplifierEnabled(TBool& aValue)
 {
     aValue = iPropertyAmplifierEnabled->Value();
 }
 
-TBool DvServiceLinnCoUkComponent1::SetPropertyAmplifierAttenuation(const Brx& aValue)
+TBool DvProviderLinnCoUkComponent1::SetPropertyAmplifierAttenuation(const Brx& aValue)
 {
     return SetPropertyString(*iPropertyAmplifierAttenuation, aValue);
 }
 
-void DvServiceLinnCoUkComponent1::GetPropertyAmplifierAttenuation(Brhz& aValue)
+void DvProviderLinnCoUkComponent1::GetPropertyAmplifierAttenuation(Brhz& aValue)
 {
     aValue.Set(iPropertyAmplifierAttenuation->Value());
 }
 
-TBool DvServiceLinnCoUkComponent1::SetPropertyVolumeControlEnabled(TBool aValue)
+TBool DvProviderLinnCoUkComponent1::SetPropertyVolumeControlEnabled(TBool aValue)
 {
     return SetPropertyBool(*iPropertyVolumeControlEnabled, aValue);
 }
 
-void DvServiceLinnCoUkComponent1::GetPropertyVolumeControlEnabled(TBool& aValue)
+void DvProviderLinnCoUkComponent1::GetPropertyVolumeControlEnabled(TBool& aValue)
 {
     aValue = iPropertyVolumeControlEnabled->Value();
 }
 
-TBool DvServiceLinnCoUkComponent1::SetPropertyDigitalAudioOutputRaw(TBool aValue)
+TBool DvProviderLinnCoUkComponent1::SetPropertyDigitalAudioOutputRaw(TBool aValue)
 {
     return SetPropertyBool(*iPropertyDigitalAudioOutputRaw, aValue);
 }
 
-void DvServiceLinnCoUkComponent1::GetPropertyDigitalAudioOutputRaw(TBool& aValue)
+void DvProviderLinnCoUkComponent1::GetPropertyDigitalAudioOutputRaw(TBool& aValue)
 {
     aValue = iPropertyDigitalAudioOutputRaw->Value();
 }
 
-DvServiceLinnCoUkComponent1::DvServiceLinnCoUkComponent1(DvDevice& aDevice)
-    : DvService(aDevice.Device(), "linn.co.uk", "Component", 1)
+DvProviderLinnCoUkComponent1::DvProviderLinnCoUkComponent1(DvDevice& aDevice)
+    : DvProvider(aDevice.Device(), "linn.co.uk", "Component", 1)
 {
     Functor empty;
     TChar** allowedValues;
@@ -69,94 +69,94 @@ DvServiceLinnCoUkComponent1::DvServiceLinnCoUkComponent1(DvDevice& aDevice)
     iService->AddProperty(iPropertyDigitalAudioOutputRaw); // passes ownership
 }
 
-void DvServiceLinnCoUkComponent1::EnableActionAmplifierEnabled()
+void DvProviderLinnCoUkComponent1::EnableActionAmplifierEnabled()
 {
     Zapp::Action* action = new Zapp::Action("AmplifierEnabled");
     action->AddOutputParameter(new ParameterRelated("aEnabled", *iPropertyAmplifierEnabled));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkComponent1::DoAmplifierEnabled);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkComponent1::DoAmplifierEnabled);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkComponent1::EnableActionSetAmplifierEnabled()
+void DvProviderLinnCoUkComponent1::EnableActionSetAmplifierEnabled()
 {
     Zapp::Action* action = new Zapp::Action("SetAmplifierEnabled");
     action->AddInputParameter(new ParameterRelated("aEnabled", *iPropertyAmplifierEnabled));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkComponent1::DoSetAmplifierEnabled);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkComponent1::DoSetAmplifierEnabled);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkComponent1::EnableActionAmplifierAttenuation()
+void DvProviderLinnCoUkComponent1::EnableActionAmplifierAttenuation()
 {
     Zapp::Action* action = new Zapp::Action("AmplifierAttenuation");
     action->AddOutputParameter(new ParameterRelated("aAttenuation", *iPropertyAmplifierAttenuation));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkComponent1::DoAmplifierAttenuation);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkComponent1::DoAmplifierAttenuation);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkComponent1::EnableActionSetAmplifierAttenuation()
+void DvProviderLinnCoUkComponent1::EnableActionSetAmplifierAttenuation()
 {
     Zapp::Action* action = new Zapp::Action("SetAmplifierAttenuation");
     action->AddInputParameter(new ParameterRelated("aAttenuation", *iPropertyAmplifierAttenuation));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkComponent1::DoSetAmplifierAttenuation);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkComponent1::DoSetAmplifierAttenuation);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkComponent1::EnableActionSetVolumeControlEnabled()
+void DvProviderLinnCoUkComponent1::EnableActionSetVolumeControlEnabled()
 {
     Zapp::Action* action = new Zapp::Action("SetVolumeControlEnabled");
     action->AddInputParameter(new ParameterRelated("aEnabled", *iPropertyVolumeControlEnabled));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkComponent1::DoSetVolumeControlEnabled);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkComponent1::DoSetVolumeControlEnabled);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkComponent1::EnableActionVolumeControlEnabled()
+void DvProviderLinnCoUkComponent1::EnableActionVolumeControlEnabled()
 {
     Zapp::Action* action = new Zapp::Action("VolumeControlEnabled");
     action->AddOutputParameter(new ParameterRelated("aEnabled", *iPropertyVolumeControlEnabled));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkComponent1::DoVolumeControlEnabled);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkComponent1::DoVolumeControlEnabled);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkComponent1::EnableActionSetDigitalAudioOutputRaw()
+void DvProviderLinnCoUkComponent1::EnableActionSetDigitalAudioOutputRaw()
 {
     Zapp::Action* action = new Zapp::Action("SetDigitalAudioOutputRaw");
     action->AddInputParameter(new ParameterRelated("aRaw", *iPropertyDigitalAudioOutputRaw));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkComponent1::DoSetDigitalAudioOutputRaw);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkComponent1::DoSetDigitalAudioOutputRaw);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkComponent1::EnableActionDigitalAudioOutputRaw()
+void DvProviderLinnCoUkComponent1::EnableActionDigitalAudioOutputRaw()
 {
     Zapp::Action* action = new Zapp::Action("DigitalAudioOutputRaw");
     action->AddOutputParameter(new ParameterRelated("aRaw", *iPropertyDigitalAudioOutputRaw));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkComponent1::DoDigitalAudioOutputRaw);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkComponent1::DoDigitalAudioOutputRaw);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkComponent1::EnableActionAmplifierOverTemperature()
+void DvProviderLinnCoUkComponent1::EnableActionAmplifierOverTemperature()
 {
     Zapp::Action* action = new Zapp::Action("AmplifierOverTemperature");
     action->AddOutputParameter(new ParameterBool("aOverTemperature"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkComponent1::DoAmplifierOverTemperature);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkComponent1::DoAmplifierOverTemperature);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkComponent1::EnableActionEthernetLinkConnected()
+void DvProviderLinnCoUkComponent1::EnableActionEthernetLinkConnected()
 {
     Zapp::Action* action = new Zapp::Action("EthernetLinkConnected");
     action->AddOutputParameter(new ParameterBool("aLinkConnected"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkComponent1::DoEthernetLinkConnected);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkComponent1::DoEthernetLinkConnected);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkComponent1::EnableActionLocate()
+void DvProviderLinnCoUkComponent1::EnableActionLocate()
 {
     Zapp::Action* action = new Zapp::Action("Locate");
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkComponent1::DoLocate);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkComponent1::DoLocate);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkComponent1::DoAmplifierEnabled(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkComponent1::DoAmplifierEnabled(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -165,7 +165,7 @@ void DvServiceLinnCoUkComponent1::DoAmplifierEnabled(IDvInvocation& aInvocation,
     AmplifierEnabled(resp, aVersion, respaEnabled);
 }
 
-void DvServiceLinnCoUkComponent1::DoSetAmplifierEnabled(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkComponent1::DoSetAmplifierEnabled(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TBool aEnabled = aInvocation.InvocationReadBool("aEnabled");
@@ -174,7 +174,7 @@ void DvServiceLinnCoUkComponent1::DoSetAmplifierEnabled(IDvInvocation& aInvocati
     SetAmplifierEnabled(resp, aVersion, aEnabled);
 }
 
-void DvServiceLinnCoUkComponent1::DoAmplifierAttenuation(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkComponent1::DoAmplifierAttenuation(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -183,7 +183,7 @@ void DvServiceLinnCoUkComponent1::DoAmplifierAttenuation(IDvInvocation& aInvocat
     AmplifierAttenuation(resp, aVersion, respaAttenuation);
 }
 
-void DvServiceLinnCoUkComponent1::DoSetAmplifierAttenuation(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkComponent1::DoSetAmplifierAttenuation(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz aAttenuation;
@@ -193,7 +193,7 @@ void DvServiceLinnCoUkComponent1::DoSetAmplifierAttenuation(IDvInvocation& aInvo
     SetAmplifierAttenuation(resp, aVersion, aAttenuation);
 }
 
-void DvServiceLinnCoUkComponent1::DoSetVolumeControlEnabled(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkComponent1::DoSetVolumeControlEnabled(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TBool aEnabled = aInvocation.InvocationReadBool("aEnabled");
@@ -202,7 +202,7 @@ void DvServiceLinnCoUkComponent1::DoSetVolumeControlEnabled(IDvInvocation& aInvo
     SetVolumeControlEnabled(resp, aVersion, aEnabled);
 }
 
-void DvServiceLinnCoUkComponent1::DoVolumeControlEnabled(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkComponent1::DoVolumeControlEnabled(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -211,7 +211,7 @@ void DvServiceLinnCoUkComponent1::DoVolumeControlEnabled(IDvInvocation& aInvocat
     VolumeControlEnabled(resp, aVersion, respaEnabled);
 }
 
-void DvServiceLinnCoUkComponent1::DoSetDigitalAudioOutputRaw(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkComponent1::DoSetDigitalAudioOutputRaw(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TBool aRaw = aInvocation.InvocationReadBool("aRaw");
@@ -220,7 +220,7 @@ void DvServiceLinnCoUkComponent1::DoSetDigitalAudioOutputRaw(IDvInvocation& aInv
     SetDigitalAudioOutputRaw(resp, aVersion, aRaw);
 }
 
-void DvServiceLinnCoUkComponent1::DoDigitalAudioOutputRaw(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkComponent1::DoDigitalAudioOutputRaw(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -229,7 +229,7 @@ void DvServiceLinnCoUkComponent1::DoDigitalAudioOutputRaw(IDvInvocation& aInvoca
     DigitalAudioOutputRaw(resp, aVersion, respaRaw);
 }
 
-void DvServiceLinnCoUkComponent1::DoAmplifierOverTemperature(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkComponent1::DoAmplifierOverTemperature(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -238,7 +238,7 @@ void DvServiceLinnCoUkComponent1::DoAmplifierOverTemperature(IDvInvocation& aInv
     AmplifierOverTemperature(resp, aVersion, respaOverTemperature);
 }
 
-void DvServiceLinnCoUkComponent1::DoEthernetLinkConnected(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkComponent1::DoEthernetLinkConnected(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -247,7 +247,7 @@ void DvServiceLinnCoUkComponent1::DoEthernetLinkConnected(IDvInvocation& aInvoca
     EthernetLinkConnected(resp, aVersion, respaLinkConnected);
 }
 
-void DvServiceLinnCoUkComponent1::DoLocate(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkComponent1::DoLocate(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -255,57 +255,57 @@ void DvServiceLinnCoUkComponent1::DoLocate(IDvInvocation& aInvocation, TUint aVe
     Locate(resp, aVersion);
 }
 
-void DvServiceLinnCoUkComponent1::AmplifierEnabled(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseBool& /*aaEnabled*/)
+void DvProviderLinnCoUkComponent1::AmplifierEnabled(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseBool& /*aaEnabled*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkComponent1::SetAmplifierEnabled(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TBool /*aaEnabled*/)
+void DvProviderLinnCoUkComponent1::SetAmplifierEnabled(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TBool /*aaEnabled*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkComponent1::AmplifierAttenuation(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaAttenuation*/)
+void DvProviderLinnCoUkComponent1::AmplifierAttenuation(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aaAttenuation*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkComponent1::SetAmplifierAttenuation(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aaAttenuation*/)
+void DvProviderLinnCoUkComponent1::SetAmplifierAttenuation(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aaAttenuation*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkComponent1::SetVolumeControlEnabled(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TBool /*aaEnabled*/)
+void DvProviderLinnCoUkComponent1::SetVolumeControlEnabled(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TBool /*aaEnabled*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkComponent1::VolumeControlEnabled(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseBool& /*aaEnabled*/)
+void DvProviderLinnCoUkComponent1::VolumeControlEnabled(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseBool& /*aaEnabled*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkComponent1::SetDigitalAudioOutputRaw(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TBool /*aaRaw*/)
+void DvProviderLinnCoUkComponent1::SetDigitalAudioOutputRaw(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TBool /*aaRaw*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkComponent1::DigitalAudioOutputRaw(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseBool& /*aaRaw*/)
+void DvProviderLinnCoUkComponent1::DigitalAudioOutputRaw(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseBool& /*aaRaw*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkComponent1::AmplifierOverTemperature(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseBool& /*aaOverTemperature*/)
+void DvProviderLinnCoUkComponent1::AmplifierOverTemperature(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseBool& /*aaOverTemperature*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkComponent1::EthernetLinkConnected(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseBool& /*aaLinkConnected*/)
+void DvProviderLinnCoUkComponent1::EthernetLinkConnected(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseBool& /*aaLinkConnected*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkComponent1::Locate(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/)
+void DvProviderLinnCoUkComponent1::Locate(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/)
 {
     ASSERTS();
 }

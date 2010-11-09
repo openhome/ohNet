@@ -6,12 +6,31 @@
 #include <Printer.h>
 #include <Arch.h>
 #include <md5.h>
+#include <XmlParser.h>
+#include <DviStack.h>
+#include <DviDevice.h>
+#include <DviSubscription.h>
+#include <Fifo.h>
+#include <Debug.h>
 
 using namespace Zapp;
 
 #define WS_76_HANDSHAKE
 #undef  WS_DRAFT03_READ
 #undef  WS_DRAFT03_WRITE
+
+static void WriteTag(IWriter& aWriter, const Brx& aTag, const Brx& aValue)
+{
+    aWriter.Write('<');
+    aWriter.Write(aTag);
+    aWriter.Write('>');
+    aWriter.Write(aValue);
+    aWriter.Write('<');
+    aWriter.Write('/');
+    aWriter.Write(aTag);
+    aWriter.Write('>');
+}
+
 
 // WebSocket
 
@@ -26,6 +45,22 @@ const Brn WebSocket::kHeaderLocation("WebSocket-Location");
 #endif
 const Brn WebSocket::kHeaderOrigin("Origin");
 const Brn WebSocket::kUpgradeWebSocket("WebSocket");
+const Brn WebSocket::kTagRoot("ROOT");
+const Brn WebSocket::kTagMethod("METHOD");
+const Brn WebSocket::kTagUdn("UDN");
+const Brn WebSocket::kTagService("SERVICE");
+const Brn WebSocket::kTagSid("SID");
+const Brn WebSocket::kTagNt("NT");
+const Brn WebSocket::kTagTimeout("TIMEOUT");
+const Brn WebSocket::kTagNts("NTS");
+const Brn WebSocket::kTagSeq("SEQ");
+const Brn WebSocket::kMethodSubscribe("Subscribe");
+const Brn WebSocket::kMethodUnsubscribe("Unsubscribe");
+const Brn WebSocket::kMethodRenew("Renew");
+const Brn WebSocket::kMethodSubscriptionTimeout("SubscriptionTimeout");
+const Brn WebSocket::kMethodPropertyUpdate("PropertyUpdate");
+const Brn WebSocket::kValueNt("upnp:event");
+const Brn WebSocket::kValuePropChange("upnp:propchange");
 
 
 // HttpHeaderUpgrade
@@ -142,10 +177,45 @@ void WsHeaderOrigin::Process(const Brx& aValue)
 }
 
 
+// PropertyWriterWs
+
+PropertyWriterWs::PropertyWriterWs(DviSessionWebSocket& aSession, const Brx& aSid, TUint aSequenceNumber)
+    : iSession(aSession)
+    , iWriter(kWriteBufGranularity)
+{
+    SetWriter(iWriter);
+    iWriter.Write(Brn("<?xml version=\"1.0\"?>"));
+    iWriter.Write(Brn("<root>"));
+    WriteTag(iWriter, WebSocket::kTagMethod, WebSocket::kMethodPropertyUpdate);
+    WriteTag(iWriter, WebSocket::kTagNt, WebSocket::kValueNt);
+    WriteTag(iWriter, WebSocket::kTagNts, WebSocket::kValuePropChange);
+    WriteTag(iWriter, WebSocket::kTagSid, aSid);
+    Bws<Ascii::kMaxUintStringBytes> seq;
+    (void)Ascii::AppendDec(seq, aSequenceNumber);
+    WriteTag(iWriter, WebSocket::kTagSeq, seq);
+    iWriter.Write(Brn("<e:propertyset xmlns:e=\"urn:schemas-upnp-org:event-1-0\">"));
+}
+
+PropertyWriterWs::~PropertyWriterWs()
+{
+}
+
+void PropertyWriterWs::PropertyWriteEnd()
+{
+    iWriter.Write(Brn("</root>"));
+    Brh* buf = new Brh;
+    iWriter.TransferTo(*buf);
+    iSession.QueuePropertyUpdate(buf);
+}
+
+
 // DviSessionWebSocket
 
 DviSessionWebSocket::DviSessionWebSocket(TIpAddress aInterface, TUint aPort)
     : iEndpoint(aPort, aInterface)
+    , iInterruptLock("WSIM")
+    , iShutdownSem("WSIS", 1)
+    , iPropertyUpdates(kMaxPropertyUpdates)
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
     iReaderRequest = new ReaderHttpRequest(*iReadBuffer);
@@ -165,14 +235,25 @@ DviSessionWebSocket::DviSessionWebSocket(TIpAddress aInterface, TUint aPort)
 
 DviSessionWebSocket::~DviSessionWebSocket()
 {
+    Interrupt(true);
+    iShutdownSem.Wait();
     delete iWriterResponse;
     delete iWriterBuffer;
     delete iReaderRequest;
     delete iReadBuffer;
 }
 
+void DviSessionWebSocket::QueuePropertyUpdate(Brh* aUpdate)
+{
+    iInterruptLock.Wait();
+    iPropertyUpdates.Write(aUpdate);
+    Interrupt(true);
+    iInterruptLock.Signal();
+}
+
 void DviSessionWebSocket::Run()
 {
+    iShutdownSem.Wait();
     iErrorStatus = &HttpStatus::kOk;
     iReaderRequest->Flush();
     iExit = false;
@@ -211,15 +292,44 @@ void DviSessionWebSocket::Run()
     else {
         while (!iExit) {
             try {
+                Interrupt(false);
+                WritePropertyUpdates();
+                LOG(kDvWebSocket, "WS: Wait for next request (or interrupt)\n");
                 Read();
             }
-            catch (ReaderError&) {}
-            catch (WebSocketError&) {}
+            catch (ReaderError&) {
+                if (iPropertyUpdates.SlotsUsed() == 0) {
+                    LOG2(kDvWebSocket, kError, "WS: Exception - ReaderError\n");
+                    WriteConnectionClose();
+                    iExit = true;
+                }
+            }
+            catch (WebSocketError&) {
+                LOG2(kDvWebSocket, kError, "WS: Exception - WebSocketError\n");
+                WriteConnectionClose();
+                iExit = true;
+            }
             catch (WriterError&) {
+                LOG2(kDvWebSocket, kError, "WS: Exception - WriterError\n");
+                iExit = true;
+            }
+            catch (XmlError&) {
+                LOG2(kDvWebSocket, kError, "WS: Exception - XmlError\n");
+                WriteConnectionClose();
                 iExit = true;
             }
         }
+        while (iPropertyUpdates.SlotsUsed() > 0) {
+            delete iPropertyUpdates.Read();
+        }
+        Map::iterator it = iMap.begin();
+        while (it != iMap.end()) {
+            delete it->second;
+            it++;
+        }
+        iMap.clear();
     }
+    iShutdownSem.Signal();
 }
 
 void DviSessionWebSocket::Error(const HttpStatus& aStatus)
@@ -231,10 +341,10 @@ void DviSessionWebSocket::Error(const HttpStatus& aStatus)
 #ifdef WS_76_HANDSHAKE
 void DviSessionWebSocket::Handshake()
 {
-    // !!!! Add check for sub-protocol upnp-event being set
     if (!iHeaderConnection.Upgrade() || iHeaderUpgrade.Upgrade() != WebSocket::kUpgradeWebSocket ||
-        !iHeaderKey1.Received() || !iHeaderKey2.Received()) {
-        Log::Print("WS: Missing expected header\n");
+        !iHeaderKey1.Received() || !iHeaderKey2.Received() ||
+        !iHeaderProtocol.Received() || iHeaderProtocol.Protocol() != WebSocket::kValueNt) {
+        LOG2(kDvWebSocket, kError, "WS: Handshake missing expected header\n");
         Error(HttpStatus::kBadRequest);
     }
     Bws<16> buf;
@@ -269,9 +379,7 @@ void DviSessionWebSocket::Handshake()
     writer.WriteNewline();
     iWriterResponse->WriteHeader(Brn("Upgrade"), Brn("WebSocket"));
     iWriterResponse->WriteHeader(Brn("Connection"), Brn("Upgrade"));
-    if (iHeaderProtocol.Protocol().Bytes() > 0) {
-        iWriterResponse->WriteHeader(WebSocket::kHeaderProtocol, iHeaderProtocol.Protocol());
-    }
+    iWriterResponse->WriteHeader(WebSocket::kHeaderProtocol, WebSocket::kValueNt);
     if (iHeaderOrigin.Origin().Bytes() > 0) {
         iWriterResponse->WriteHeader(WebSocket::kHeaderResponseOrigin, iHeaderOrigin.Origin());
     }
@@ -288,10 +396,9 @@ void DviSessionWebSocket::Handshake()
 #else
 void DviSessionWebSocket::Handshake()
 {
-    Log::Print("WS: Handshake for ws75\n");
     // !!!! Add check for sub-protocol upnp-event being set
     if (!iHeaderConnection.Upgrade() || iHeaderUpgrade.Upgrade() != WebSocket::kUpgradeWebSocket) {
-        Log::Print("WS: Missing expected header\n");
+        LOG2(kDvWebSocket, kError, "WS: Handshake missing expected header\n");
         Error(HttpStatus::kBadRequest);
     }
 
@@ -345,11 +452,11 @@ void DviSessionWebSocket::Read()
     const TByte& byte1 = ctrl.At(0);
     const TByte& byte2 = ctrl.At(1);
     if (byte1 & kBitMaskMore) {
-        Log::Print("WS: MORE bit set - fragmented packets not supported (but should be if you're seeing this error)\n");
+        LOG2(kDvWebSocket, kError, "WS: MORE bit set - fragmented packets not supported (but should be if you're seeing this error)\n");
         THROW(WebSocketError);
     }
     if ((byte1 & kBitMaskRsv123) || (byte2 & kBitMaskRsv4)) {
-        Log::Print("WS: RSV bit(s) set - %u, %u - but no extension negotiated\n", (byte1 & kBitMaskRsv123) >> 4, byte2 & kBitMaskRsv4);
+        LOG2(kDvWebSocket, kError, "WS: RSV bit(s) set - %u, %u - but no extension negotiated\n", (byte1 & kBitMaskRsv123) >> 4, byte2 & kBitMaskRsv4);
         THROW(WebSocketError);
     }
     WsOpcode opcode = (WsOpcode)(byte1 & kBitMaskOpcode);
@@ -382,7 +489,7 @@ void DviSessionWebSocket::Read()
     switch (opcode)
     {
     case eContinuation:
-        Log::Print("WS: Continuation opcode not yet supported\n");
+        LOG2(kDvWebSocket, kError, "WS: Continuation opcode not yet supported\n");
         break;
     case eClose:
         // !!!! check that this isn't a reply to a close we initiated
@@ -393,35 +500,56 @@ void DviSessionWebSocket::Read()
         Write(ePong, data);
         break;
     case ePong:
-        Log::Print("WS: Pong - ");
-        Log::Print(data);
-        Log::Print("\n");
+        LOG(kDvWebSocket, "WS: Pong - ");
+        LOG(kDvWebSocket, data);
+        LOG(kDvWebSocket, "\n");
         break;
     case eText:
         Log::Print("WS: eText\n");
         // subscribe, renew, unsubscribe
         break;
     case eBinary:
-        Log::Print("WS: Binary opcode not supported\n");
+        LOG2(kDvWebSocket, kError, "WS: Binary opcode not supported\n");
         break;
     default:
-        Log::Print("WS: Unexpected reserved opcode %u received\n", opcode);
+        LOG2(kDvWebSocket, kError, "WS: Unexpected reserved opcode %u received\n", opcode);
         break;
     }
 }
 #else // !WS_DRAFT03_READ
 void DviSessionWebSocket::Read()
 {
-    static const TByte kMsgTerminator = 0xff;
-    Brn data = iReadBuffer->ReadUntil(kMsgTerminator);
-    if (data[0] != 0) {
-        Log::Print("WS: Unexpected leading byte - %u\n", data[0]);
+    Brn data = iReadBuffer->ReadUntil(kMsgEnd);
+    if (data.Bytes() == 1 && data[0] == kFrameCloseStart) {
+        Brn msg = iReadBuffer->Read(1);
+        if (msg[0] != kMsgCloseEnd) {
+            THROW(WebSocketError);
+        }
+        WriteConnectionClose();
+        iExit = true;
+        return;
+    }
+    if (data[0] != kFrameMsgStart) {
+        LOG2(kDvWebSocket, kError, "WS: Unexpected leading byte - %u\n", data[0]);
         THROW(WebSocketError);
     }
     data.Set(data.Split(1, data.Bytes()-1));
-    Log::Print("WS: Received data - ");
-    Log::Print(data);
-    Log::Print("\n");
+    AutoMutex a(iInterruptLock);
+
+    Brn doc = XmlParserBasic::Find(WebSocket::kTagRoot, data);
+    Brn method = XmlParserBasic::Find(WebSocket::kTagMethod, doc);
+    if (method == WebSocket::kMethodSubscribe) {
+        Subscribe(data);
+    }
+    else if (method == WebSocket::kMethodUnsubscribe) {
+        Unsubscribe(data);
+    }
+    else if (method == WebSocket::kMethodRenew) {
+        Renew(data);
+    }
+    else {
+        THROW(WebSocketError);
+    }
 }
 #endif // WS_DRAFT03_READ
 
@@ -457,27 +585,174 @@ void DviSessionWebSocket::Write(WsOpcode aOpcode, const Brx& aData)
 #else // !WS_DRAFT03_WRITE
 void DviSessionWebSocket::Write(WsOpcode /*aOpcode*/, const Brx& aData)
 {
-    static const TByte kWriteBufStart = (TByte)'\0';
-    static const TByte kWriteBufEnd = (TByte)'\xff';
-    iWriterBuffer->Write(kWriteBufStart);
+    //LogVerbose(true, true);
+    iWriterBuffer->Write(kFrameMsgStart);
     iWriterBuffer->Write(aData);
-    iWriterBuffer->Write(kWriteBufEnd);
+    iWriterBuffer->Write(kMsgEnd);
     iWriterBuffer->WriteFlush();
+    //LogVerbose(true, false);
 }
 #endif // WS_DRAFT03_WRITE
 
-void DviSessionWebSocket::Close()
+void DviSessionWebSocket::WriteConnectionClose()
 {
-    static const TByte kFrameClose = (TByte)'\xff';
-    iWriterBuffer->Write(kFrameClose);
-    iWriterBuffer->WriteFlush();
+    // !!!! will need a different implementation for draft03
+    try {
+        iWriterBuffer->Write(kFrameCloseStart);
+        iWriterBuffer->Write(kMsgCloseEnd);
+        iWriterBuffer->WriteFlush();
+    }
+    catch (WriterError&) {}
     iExit = true;
 }
 
-IPropertyWriter* DviSessionWebSocket::CreateWriter(const Endpoint& /*aSubscriber*/, const Brx& /*aSubscriberPath*/,
-                                                   const Brx& /*aSid*/, TUint /*aSequenceNumber*/)
+void DviSessionWebSocket::Subscribe(const Brx& aRequest)
 {
-    return NULL;
+    LOG(kDvWebSocket, "WS: Subscribe\n");
+    Brn udn = XmlParserBasic::Find(WebSocket::kTagUdn, aRequest);
+    Brn serviceId = XmlParserBasic::Find(WebSocket::kTagService, aRequest);
+    Brn sid = XmlParserBasic::Find(WebSocket::kTagSid, aRequest);
+    Brn nt = XmlParserBasic::Find(WebSocket::kTagNt, aRequest);
+    if (nt != WebSocket::kValueNt) {
+        THROW(WebSocketError);
+    }
+    TUint timeout;
+    try {
+        timeout = Ascii::Uint(XmlParserBasic::Find(WebSocket::kTagTimeout, aRequest));
+    }
+    catch (AsciiError&) {
+        THROW(XmlError);
+    }
+    timeout += 10;
+
+    DviDevice* device = DviStack::DeviceMap().Find(udn);
+    if (device == NULL) {
+        THROW(WebSocketError);
+    }
+    DviService* service = NULL;
+    const TUint serviceCount = device->ServiceCount();
+    for (TUint i=0; i<serviceCount; i++) {
+        DviService* s = &device->Service(i);
+        if (s->ServiceType().PathUpnp() == serviceId) {
+            service = s;
+            break;
+        }
+    }
+    if (service == NULL) {
+        THROW(WebSocketError);
+    }
+    Brh sid2;
+    device->CreateSid(sid2);
+    /* cheat slightly by passing the subscriber's sid as aSubscriberPath
+       we get away with this as DviSubscription dowsn't use it internally and merely passes it back to CreateWriter */
+    DviSubscription* subscription = new DviSubscription(*device, *this, Endpoint(), sid, sid2, timeout);
+
+    try {
+        WriteSubscriptionTimeout(sid, timeout);
+    }
+    catch (WriterError&) {
+        subscription->RemoveRef();
+        THROW(WriterError);
+    }
+
+    // Start subscription, prompting delivery of the first update (covering all state variables)
+    DviSubscriptionManager::AddSubscription(*subscription);
+    service->AddSubscription(subscription);
+    DviSessionWebSocket::SubscriptionWrapper* wrapper = new DviSessionWebSocket::SubscriptionWrapper(*subscription, sid, *service);
+    Brn key(wrapper->Sid());
+    iMap.insert(std::pair<Brn,DviSessionWebSocket::SubscriptionWrapper*>(key, wrapper));
+}
+
+void DviSessionWebSocket::Unsubscribe(const Brx& aRequest)
+{
+    LOG(kDvWebSocket, "WS: Unsubscribe\n");
+    Brn sid = XmlParserBasic::Find(WebSocket::kTagSid, aRequest);
+    Map::iterator it = iMap.find(sid);
+    if (it != iMap.end()) {
+        delete it->second;
+        iMap.erase(it);
+    }
+}
+
+void DviSessionWebSocket::Renew(const Brx& aRequest)
+{
+    LOG(kDvWebSocket, "WS: Renew\n");
+    Brn sid = XmlParserBasic::Find(WebSocket::kTagSid, aRequest);
+    Map::iterator it = iMap.find(sid);
+    if (it == iMap.end()) {
+        LOG2(kDvWebSocket, kError, "Attempt to renew an unknown subscription - ");
+        LOG2(kDvWebSocket, kError, sid);
+        LOG2(kDvWebSocket, kError, "\n");
+        THROW(WebSocketError);
+    }
+    TUint timeout;
+    try {
+        timeout = Ascii::Uint(XmlParserBasic::Find(WebSocket::kTagTimeout, aRequest));
+    }
+    catch (AsciiError&) {
+        THROW(XmlError);
+    }
+    DviSessionWebSocket::SubscriptionWrapper* wrapper = it->second;
+    if (wrapper->Subscription().HasExpired()) {
+        LOG2(kDvWebSocket, kError, "Attempt made to renew an expired subscription - ");
+        LOG2(kDvWebSocket, kError, sid);
+        LOG2(kDvWebSocket, kError, "\n");
+        THROW(WebSocketError);
+    }
+    wrapper->Subscription().Renew(timeout);
+    WriteSubscriptionTimeout(wrapper->Sid(), timeout);
+}
+
+void DviSessionWebSocket::WriteSubscriptionTimeout(const Brx& aSid, TUint aSeconds)
+{
+    WriterBwh writer(1024);
+    writer.Write(Brn("<?xml version=\"1.0\"?>"));
+    writer.Write(Brn("<root>"));
+    WriteTag(writer, WebSocket::kTagMethod, WebSocket::kMethodSubscriptionTimeout);
+    WriteTag(writer, WebSocket::kTagSid, aSid);
+    Bws<Ascii::kMaxUintStringBytes> timeout;
+    (void)Ascii::AppendDec(timeout, aSeconds);
+    WriteTag(writer, WebSocket::kTagTimeout, timeout);
+    writer.Write(Brn("</root>"));
+    Brh resp;
+    writer.TransferTo(resp);
+    Write(eText, resp);
+}
+
+void DviSessionWebSocket::WritePropertyUpdates()
+{
+    AutoMutex a(iInterruptLock);
+    while (iPropertyUpdates.SlotsUsed() > 0) {
+        LOG(kDvWebSocket, "WS: Write property update\n");
+        Brh* msg = iPropertyUpdates.Read();
+        Write(eText, *msg);
+        delete msg;
+    }
+}
+
+IPropertyWriter* DviSessionWebSocket::CreateWriter(const Endpoint& /*aSubscriber*/, const Brx& aSubscriberPath,
+                                                   const Brx& /*aSid*/, TUint aSequenceNumber)
+{
+    return new PropertyWriterWs(*this, aSubscriberPath, aSequenceNumber);
+}
+
+    
+// DviSessionWebSocket::SubscriptionWrapper
+
+DviSessionWebSocket::SubscriptionWrapper::SubscriptionWrapper(DviSubscription& aSubscription, const Brx& aSid, DviService& aService)
+    : iSubscription(aSubscription)
+    , iSid(aSid)
+    , iService(aService)
+{
+    iSubscription.AddRef();
+    iService.AddRef();
+}
+
+DviSessionWebSocket::SubscriptionWrapper::~SubscriptionWrapper()
+{
+    iService.RemoveSubscription(iSubscription.Sid());
+    iService.RemoveRef();
+    iSubscription.RemoveRef();
 }
 
     
@@ -491,6 +766,11 @@ DviServerWebSocket::DviServerWebSocket()
 SocketTcpServer* DviServerWebSocket::CreateServer(const NetworkInterface& aNif)
 {
     SocketTcpServer* server = new SocketTcpServer("WSSV", 54321, aNif.Address());
-    server->Add("DSES", new DviSessionWebSocket(aNif.Address(), server->Port()));
+    TChar thName[5];
+	const TUint numWsThreads = Stack::InitParams().DvNumWebSocketThreads();
+    for (TUint i=0; i<numWsThreads; i++) {
+        (void)sprintf(&thName[0], "WS%2u", i);
+        server->Add(&thName[0], new DviSessionWebSocket(aNif.Address(), server->Port()));
+    }
     return server;
 }

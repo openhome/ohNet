@@ -35,7 +35,7 @@
     }
     fileName += type;
     fileName += version;
-    string className = "DvService" + fileName + "Cpp";
+    string className = "DvProvider" + fileName + "Cpp";
 
     Initialise();
 
@@ -47,7 +47,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 #include <string>
 
@@ -63,7 +63,7 @@ class PropertyBinary;
 /**
  * Base Device for <#=domain#>:<#=type#>:<#=version#>
  */
-class <#=className#> : public DvService
+class <#=className#> : public DvProvider
 {
 public:
     virtual ~<#=className#>() {}

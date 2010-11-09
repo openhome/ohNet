@@ -21,9 +21,9 @@ namespace Zapp
         }
     }
 
-    class ServiceTestBasic : DvServiceZappOrgTestBasic1
+    class ProviderTestBasic : DvProviderZappOrgTestBasic1
     {
-        public ServiceTestBasic(DvDevice aDevice)
+        public ProviderTestBasic(DvDevice aDevice)
             : base(aDevice)
         {
             SetPropertyVarUint(0);
@@ -128,9 +128,11 @@ namespace Zapp
 
         protected override void SetMultiple(uint aVersion, uint aValueUint, int aValueInt, bool aValueBool)
         {
+            PropertiesLock();
             SetPropertyVarUint(aValueUint);
             SetPropertyVarInt(aValueInt);
             SetPropertyVarBool(aValueBool);
+            PropertiesUnlock();
         }
     }
     
@@ -138,7 +140,7 @@ namespace Zapp
     {
         public static string gDeviceName = "device";
         private DvDevice iDevice;
-        private DvServiceZappOrgTestBasic1 iTestBasic;
+        private DvProviderZappOrgTestBasic1 iTestBasic;
 
         private static void RandomiseUdn(out string aUdn)
         {
@@ -164,7 +166,7 @@ namespace Zapp
             iDevice.SetAttribute("Upnp.ModelUrl", "http://www.linn.co.uk");
             iDevice.SetAttribute("Upnp.SerialNumber", "123456");
             iDevice.SetAttribute("Upnp.Upc", "123456654321");
-            iTestBasic = new ServiceTestBasic(iDevice);
+            iTestBasic = new ProviderTestBasic(iDevice);
             iDevice.SetEnabled();
         }
         
@@ -254,8 +256,8 @@ namespace Zapp
             string valBin = new string(bin);
             for (i=0; i<kTestIterations; i++) {
                 string result;
-                proxy.SyncEchoBinary(valStr, out result);
-                Debug.Assert(result == valStr);
+                proxy.SyncEchoBinary(valBin, out result);
+                Debug.Assert(result == valBin);
             }
 
             proxy.Dispose();

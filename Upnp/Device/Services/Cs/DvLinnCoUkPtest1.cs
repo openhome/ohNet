@@ -5,18 +5,18 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvServiceLinnCoUkPtest1 : IDisposable
+    public class DvProviderLinnCoUkPtest1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkPtest1")]
-        static extern uint DvServiceLinnCoUkPtest1Create(uint aDeviceHandle);
+        static extern uint DvProviderLinnCoUkPtest1Create(uint aDeviceHandle);
         [DllImport("DvLinnCoUkPtest1")]
-        static extern void DvServiceLinnCoUkPtest1Destroy(uint aHandle);
+        static extern void DvProviderLinnCoUkPtest1Destroy(uint aHandle);
         [DllImport("DvLinnCoUkPtest1")]
-        static extern void DvServiceLinnCoUkPtest1EnableActionTestComPort(uint aHandle, CallbackTestComPort aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPtest1EnableActionTestComPort(uint aHandle, CallbackTestComPort aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPtest1")]
-        static extern void DvServiceLinnCoUkPtest1EnableActionLedsOn(uint aHandle, CallbackLedsOn aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPtest1EnableActionLedsOn(uint aHandle, CallbackLedsOn aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPtest1")]
-        static extern void DvServiceLinnCoUkPtest1EnableActionLedsOff(uint aHandle, CallbackLedsOff aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPtest1EnableActionLedsOff(uint aHandle, CallbackLedsOff aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -24,15 +24,14 @@ namespace Zapp
         private unsafe delegate int CallbackLedsOn(IntPtr aPtr, uint aVersion);
         private unsafe delegate int CallbackLedsOff(IntPtr aPtr, uint aVersion);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackTestComPort iCallbackTestComPort;
         private CallbackLedsOn iCallbackLedsOn;
         private CallbackLedsOff iCallbackLedsOff;
 
-        public DvServiceLinnCoUkPtest1(DvDevice aDevice)
+        public DvProviderLinnCoUkPtest1(DvDevice aDevice)
         {
-            iHandle = DvServiceLinnCoUkPtest1Create(aDevice.Handle()); 
+            iHandle = DvProviderLinnCoUkPtest1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
@@ -40,21 +39,21 @@ namespace Zapp
         {
             iCallbackTestComPort = new CallbackTestComPort(DoTestComPort);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkPtest1EnableActionTestComPort(iHandle, iCallbackTestComPort, ptr);
+            DvProviderLinnCoUkPtest1EnableActionTestComPort(iHandle, iCallbackTestComPort, ptr);
         }
 
         protected unsafe void EnableActionLedsOn()
         {
             iCallbackLedsOn = new CallbackLedsOn(DoLedsOn);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkPtest1EnableActionLedsOn(iHandle, iCallbackLedsOn, ptr);
+            DvProviderLinnCoUkPtest1EnableActionLedsOn(iHandle, iCallbackLedsOn, ptr);
         }
 
         protected unsafe void EnableActionLedsOff()
         {
             iCallbackLedsOff = new CallbackLedsOff(DoLedsOff);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkPtest1EnableActionLedsOff(iHandle, iCallbackLedsOff, ptr);
+            DvProviderLinnCoUkPtest1EnableActionLedsOff(iHandle, iCallbackLedsOff, ptr);
         }
 
         protected virtual void TestComPort(uint aVersion, uint aaPort, out bool aaResult)
@@ -75,7 +74,7 @@ namespace Zapp
         private static unsafe int DoTestComPort(IntPtr aPtr, uint aVersion, uint aaPort, int* aaResult)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkPtest1 self = (DvServiceLinnCoUkPtest1)gch.Target;
+            DvProviderLinnCoUkPtest1 self = (DvProviderLinnCoUkPtest1)gch.Target;
             bool aResult;
             self.TestComPort(aVersion, aaPort, out aResult);
             *aaResult = (aResult ? 1 : 0);
@@ -85,7 +84,7 @@ namespace Zapp
         private static unsafe int DoLedsOn(IntPtr aPtr, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkPtest1 self = (DvServiceLinnCoUkPtest1)gch.Target;
+            DvProviderLinnCoUkPtest1 self = (DvProviderLinnCoUkPtest1)gch.Target;
             self.LedsOn(aVersion);
             return 0;
         }
@@ -93,7 +92,7 @@ namespace Zapp
         private static unsafe int DoLedsOff(IntPtr aPtr, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkPtest1 self = (DvServiceLinnCoUkPtest1)gch.Target;
+            DvProviderLinnCoUkPtest1 self = (DvProviderLinnCoUkPtest1)gch.Target;
             self.LedsOff(aVersion);
             return 0;
         }
@@ -105,7 +104,7 @@ namespace Zapp
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceLinnCoUkPtest1()
+        ~DvProviderLinnCoUkPtest1()
         {
             DoDispose();
         }
@@ -122,7 +121,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = 0;
             }
-            DvServiceLinnCoUkPtest1Destroy(handle);
+            DvProviderLinnCoUkPtest1Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

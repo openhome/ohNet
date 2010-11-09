@@ -10,7 +10,7 @@
 #include <Std/CpDevice.h>
 #include <Std/CpDeviceUpnp.h>
 #include <Stack.h>
-#include <Os.h>
+#include <OsWrapper.h>
 #include <Std/FunctorCpDevice.h>
 #include <Std/CpUpnpOrgConnectionManager1.h>
 

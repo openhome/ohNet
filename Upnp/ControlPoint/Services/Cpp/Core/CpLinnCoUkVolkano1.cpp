@@ -11,14 +11,14 @@ using namespace Zapp;
 class SyncRebootLinnCoUkVolkano1 : public SyncProxyAction
 {
 public:
-    SyncRebootLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService);
+    SyncRebootLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkVolkano1& iService;
 };
 
-SyncRebootLinnCoUkVolkano1::SyncRebootLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService)
-    : iService(aService)
+SyncRebootLinnCoUkVolkano1::SyncRebootLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -31,15 +31,15 @@ void SyncRebootLinnCoUkVolkano1::CompleteRequest(IAsync& aAsync)
 class SyncBootModeLinnCoUkVolkano1 : public SyncProxyAction
 {
 public:
-    SyncBootModeLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService, Brh& aaMode);
+    SyncBootModeLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy, Brh& aaMode);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkVolkano1& iService;
     Brh& iaMode;
 };
 
-SyncBootModeLinnCoUkVolkano1::SyncBootModeLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService, Brh& aaMode)
-    : iService(aService)
+SyncBootModeLinnCoUkVolkano1::SyncBootModeLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy, Brh& aaMode)
+    : iService(aProxy)
     , iaMode(aaMode)
 {
 }
@@ -53,14 +53,14 @@ void SyncBootModeLinnCoUkVolkano1::CompleteRequest(IAsync& aAsync)
 class SyncSetBootModeLinnCoUkVolkano1 : public SyncProxyAction
 {
 public:
-    SyncSetBootModeLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService);
+    SyncSetBootModeLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkVolkano1& iService;
 };
 
-SyncSetBootModeLinnCoUkVolkano1::SyncSetBootModeLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService)
-    : iService(aService)
+SyncSetBootModeLinnCoUkVolkano1::SyncSetBootModeLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -73,15 +73,15 @@ void SyncSetBootModeLinnCoUkVolkano1::CompleteRequest(IAsync& aAsync)
 class SyncBspTypeLinnCoUkVolkano1 : public SyncProxyAction
 {
 public:
-    SyncBspTypeLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService, Brh& aaBspType);
+    SyncBspTypeLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy, Brh& aaBspType);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkVolkano1& iService;
     Brh& iaBspType;
 };
 
-SyncBspTypeLinnCoUkVolkano1::SyncBspTypeLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService, Brh& aaBspType)
-    : iService(aService)
+SyncBspTypeLinnCoUkVolkano1::SyncBspTypeLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy, Brh& aaBspType)
+    : iService(aProxy)
     , iaBspType(aaBspType)
 {
 }
@@ -95,15 +95,15 @@ void SyncBspTypeLinnCoUkVolkano1::CompleteRequest(IAsync& aAsync)
 class SyncUglyNameLinnCoUkVolkano1 : public SyncProxyAction
 {
 public:
-    SyncUglyNameLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService, Brh& aaUglyName);
+    SyncUglyNameLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy, Brh& aaUglyName);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkVolkano1& iService;
     Brh& iaUglyName;
 };
 
-SyncUglyNameLinnCoUkVolkano1::SyncUglyNameLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService, Brh& aaUglyName)
-    : iService(aService)
+SyncUglyNameLinnCoUkVolkano1::SyncUglyNameLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy, Brh& aaUglyName)
+    : iService(aProxy)
     , iaUglyName(aaUglyName)
 {
 }
@@ -117,15 +117,15 @@ void SyncUglyNameLinnCoUkVolkano1::CompleteRequest(IAsync& aAsync)
 class SyncMacAddressLinnCoUkVolkano1 : public SyncProxyAction
 {
 public:
-    SyncMacAddressLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService, Brh& aaMacAddress);
+    SyncMacAddressLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy, Brh& aaMacAddress);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkVolkano1& iService;
     Brh& iaMacAddress;
 };
 
-SyncMacAddressLinnCoUkVolkano1::SyncMacAddressLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService, Brh& aaMacAddress)
-    : iService(aService)
+SyncMacAddressLinnCoUkVolkano1::SyncMacAddressLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy, Brh& aaMacAddress)
+    : iService(aProxy)
     , iaMacAddress(aaMacAddress)
 {
 }
@@ -139,15 +139,15 @@ void SyncMacAddressLinnCoUkVolkano1::CompleteRequest(IAsync& aAsync)
 class SyncProductIdLinnCoUkVolkano1 : public SyncProxyAction
 {
 public:
-    SyncProductIdLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService, Brh& aaProductNumber);
+    SyncProductIdLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy, Brh& aaProductNumber);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkVolkano1& iService;
     Brh& iaProductNumber;
 };
 
-SyncProductIdLinnCoUkVolkano1::SyncProductIdLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService, Brh& aaProductNumber)
-    : iService(aService)
+SyncProductIdLinnCoUkVolkano1::SyncProductIdLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy, Brh& aaProductNumber)
+    : iService(aProxy)
     , iaProductNumber(aaProductNumber)
 {
 }
@@ -161,15 +161,15 @@ void SyncProductIdLinnCoUkVolkano1::CompleteRequest(IAsync& aAsync)
 class SyncBoardIdLinnCoUkVolkano1 : public SyncProxyAction
 {
 public:
-    SyncBoardIdLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService, Brh& aaBoardNumber);
+    SyncBoardIdLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy, Brh& aaBoardNumber);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkVolkano1& iService;
     Brh& iaBoardNumber;
 };
 
-SyncBoardIdLinnCoUkVolkano1::SyncBoardIdLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService, Brh& aaBoardNumber)
-    : iService(aService)
+SyncBoardIdLinnCoUkVolkano1::SyncBoardIdLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy, Brh& aaBoardNumber)
+    : iService(aProxy)
     , iaBoardNumber(aaBoardNumber)
 {
 }
@@ -183,15 +183,15 @@ void SyncBoardIdLinnCoUkVolkano1::CompleteRequest(IAsync& aAsync)
 class SyncBoardTypeLinnCoUkVolkano1 : public SyncProxyAction
 {
 public:
-    SyncBoardTypeLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService, Brh& aaBoardNumber);
+    SyncBoardTypeLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy, Brh& aaBoardNumber);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkVolkano1& iService;
     Brh& iaBoardNumber;
 };
 
-SyncBoardTypeLinnCoUkVolkano1::SyncBoardTypeLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService, Brh& aaBoardNumber)
-    : iService(aService)
+SyncBoardTypeLinnCoUkVolkano1::SyncBoardTypeLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy, Brh& aaBoardNumber)
+    : iService(aProxy)
     , iaBoardNumber(aaBoardNumber)
 {
 }
@@ -205,15 +205,15 @@ void SyncBoardTypeLinnCoUkVolkano1::CompleteRequest(IAsync& aAsync)
 class SyncMaxBoardsLinnCoUkVolkano1 : public SyncProxyAction
 {
 public:
-    SyncMaxBoardsLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService, TUint& aaMaxBoards);
+    SyncMaxBoardsLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy, TUint& aaMaxBoards);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkVolkano1& iService;
     TUint& iaMaxBoards;
 };
 
-SyncMaxBoardsLinnCoUkVolkano1::SyncMaxBoardsLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService, TUint& aaMaxBoards)
-    : iService(aService)
+SyncMaxBoardsLinnCoUkVolkano1::SyncMaxBoardsLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy, TUint& aaMaxBoards)
+    : iService(aProxy)
     , iaMaxBoards(aaMaxBoards)
 {
 }
@@ -227,15 +227,15 @@ void SyncMaxBoardsLinnCoUkVolkano1::CompleteRequest(IAsync& aAsync)
 class SyncSoftwareVersionLinnCoUkVolkano1 : public SyncProxyAction
 {
 public:
-    SyncSoftwareVersionLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService, Brh& aaSoftwareVersion);
+    SyncSoftwareVersionLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy, Brh& aaSoftwareVersion);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkVolkano1& iService;
     Brh& iaSoftwareVersion;
 };
 
-SyncSoftwareVersionLinnCoUkVolkano1::SyncSoftwareVersionLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aService, Brh& aaSoftwareVersion)
-    : iService(aService)
+SyncSoftwareVersionLinnCoUkVolkano1::SyncSoftwareVersionLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1& aProxy, Brh& aaSoftwareVersion)
+    : iService(aProxy)
     , iaSoftwareVersion(aaSoftwareVersion)
 {
 }

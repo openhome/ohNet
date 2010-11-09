@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,10 +17,10 @@ class PropertyBinary;
 /**
  * Base Device for upnp.org:ConnectionManager:2
  */
-class DvServiceUpnpOrgConnectionManager2 : public DvService
+class DvProviderUpnpOrgConnectionManager2 : public DvProvider
 {
 public:
-    virtual ~DvServiceUpnpOrgConnectionManager2() {}
+    virtual ~DvProviderUpnpOrgConnectionManager2() {}
     TBool SetPropertySourceProtocolInfo(const Brx& aValue);
     void GetPropertySourceProtocolInfo(Brhz& aValue);
     TBool SetPropertySinkProtocolInfo(const Brx& aValue);
@@ -28,7 +28,7 @@ public:
     TBool SetPropertyCurrentConnectionIDs(const Brx& aValue);
     void GetPropertyCurrentConnectionIDs(Brhz& aValue);
 protected:
-    DvServiceUpnpOrgConnectionManager2(DvDevice& aDevice);
+    DvProviderUpnpOrgConnectionManager2(DvDevice& aDevice);
     void EnableActionGetProtocolInfo();
     void EnableActionPrepareForConnection();
     void EnableActionConnectionComplete();
@@ -41,7 +41,7 @@ private:
     virtual void GetCurrentConnectionIDs(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aConnectionIDs);
     virtual void GetCurrentConnectionInfo(IInvocationResponse& aResponse, TUint aVersion, TInt aConnectionID, IInvocationResponseInt& aRcsID, IInvocationResponseInt& aAVTransportID, IInvocationResponseString& aProtocolInfo, IInvocationResponseString& aPeerConnectionManager, IInvocationResponseInt& aPeerConnectionID, IInvocationResponseString& aDirection, IInvocationResponseString& aStatus);
 private:
-    DvServiceUpnpOrgConnectionManager2();
+    DvProviderUpnpOrgConnectionManager2();
     void DoGetProtocolInfo(IDvInvocation& aInvocation, TUint aVersion);
     void DoPrepareForConnection(IDvInvocation& aInvocation, TUint aVersion);
     void DoConnectionComplete(IDvInvocation& aInvocation, TUint aVersion);

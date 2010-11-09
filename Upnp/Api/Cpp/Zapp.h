@@ -133,6 +133,14 @@ public:
      * but will also require more system resources.
      */
     void SetDvNumPublisherThreads(uint32_t aNumThreads);
+    /**
+     * Set the number of threads which will be dedicated to published
+     * changes to state variables via WebSockets
+     * One thread will be used per active (web browser) connection so a higher
+     * number of threads will allow more concurrent clients but will also
+     * require more system resources.
+     */
+    void SetDvNumWebSocketThreads(uint32_t aNumThreads);
 
     FunctorMsg& LogOutput();
     FunctorMsg& FatalErrorHandler();
@@ -154,6 +162,7 @@ public:
     bool UseLoopbackNetworkInterface() const;
 	uint32_t DvMaxUpdateTimeSecs() const;
     uint32_t DvNumPublisherThreads() const;
+    uint32_t DvNumWebSocketThreads() const;
 private:
     InitialisationParams();
     void FatalErrorHandlerDefault(const char* aMsg);
@@ -180,6 +189,7 @@ private:
     bool iUseLoopbackNetworkInterface;
 	uint32_t iDvMaxUpdateTimeSecs;
 	uint32_t iDvNumPublisherThreads;
+    uint32_t iDvNumWebSocketThreads;
 };
 
 class UpnpLibrary

@@ -5,90 +5,90 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvServiceUpnpOrgRenderingControl2 : IDisposable
+    public class DvProviderUpnpOrgRenderingControl2 : DvProvider, IDisposable
     {
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern uint DvServiceUpnpOrgRenderingControl2Create(uint aDeviceHandle);
+        static extern uint DvProviderUpnpOrgRenderingControl2Create(uint aDeviceHandle);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2Destroy(uint aHandle);
+        static extern void DvProviderUpnpOrgRenderingControl2Destroy(uint aHandle);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern unsafe int DvServiceUpnpOrgRenderingControl2SetPropertyLastChange(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgRenderingControl2SetPropertyLastChange(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern unsafe void DvServiceUpnpOrgRenderingControl2GetPropertyLastChange(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderUpnpOrgRenderingControl2GetPropertyLastChange(uint aHandle, char** aValue);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionListPresets(uint aHandle, CallbackListPresets aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionListPresets(uint aHandle, CallbackListPresets aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionSelectPreset(uint aHandle, CallbackSelectPreset aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionSelectPreset(uint aHandle, CallbackSelectPreset aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionGetBrightness(uint aHandle, CallbackGetBrightness aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionGetBrightness(uint aHandle, CallbackGetBrightness aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionSetBrightness(uint aHandle, CallbackSetBrightness aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionSetBrightness(uint aHandle, CallbackSetBrightness aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionGetContrast(uint aHandle, CallbackGetContrast aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionGetContrast(uint aHandle, CallbackGetContrast aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionSetContrast(uint aHandle, CallbackSetContrast aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionSetContrast(uint aHandle, CallbackSetContrast aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionGetSharpness(uint aHandle, CallbackGetSharpness aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionGetSharpness(uint aHandle, CallbackGetSharpness aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionSetSharpness(uint aHandle, CallbackSetSharpness aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionSetSharpness(uint aHandle, CallbackSetSharpness aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionGetRedVideoGain(uint aHandle, CallbackGetRedVideoGain aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionGetRedVideoGain(uint aHandle, CallbackGetRedVideoGain aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionSetRedVideoGain(uint aHandle, CallbackSetRedVideoGain aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionSetRedVideoGain(uint aHandle, CallbackSetRedVideoGain aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionGetGreenVideoGain(uint aHandle, CallbackGetGreenVideoGain aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionGetGreenVideoGain(uint aHandle, CallbackGetGreenVideoGain aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionSetGreenVideoGain(uint aHandle, CallbackSetGreenVideoGain aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionSetGreenVideoGain(uint aHandle, CallbackSetGreenVideoGain aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionGetBlueVideoGain(uint aHandle, CallbackGetBlueVideoGain aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionGetBlueVideoGain(uint aHandle, CallbackGetBlueVideoGain aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionSetBlueVideoGain(uint aHandle, CallbackSetBlueVideoGain aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionSetBlueVideoGain(uint aHandle, CallbackSetBlueVideoGain aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionGetRedVideoBlackLevel(uint aHandle, CallbackGetRedVideoBlackLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionGetRedVideoBlackLevel(uint aHandle, CallbackGetRedVideoBlackLevel aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionSetRedVideoBlackLevel(uint aHandle, CallbackSetRedVideoBlackLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionSetRedVideoBlackLevel(uint aHandle, CallbackSetRedVideoBlackLevel aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionGetGreenVideoBlackLevel(uint aHandle, CallbackGetGreenVideoBlackLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionGetGreenVideoBlackLevel(uint aHandle, CallbackGetGreenVideoBlackLevel aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionSetGreenVideoBlackLevel(uint aHandle, CallbackSetGreenVideoBlackLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionSetGreenVideoBlackLevel(uint aHandle, CallbackSetGreenVideoBlackLevel aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionGetBlueVideoBlackLevel(uint aHandle, CallbackGetBlueVideoBlackLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionGetBlueVideoBlackLevel(uint aHandle, CallbackGetBlueVideoBlackLevel aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionSetBlueVideoBlackLevel(uint aHandle, CallbackSetBlueVideoBlackLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionSetBlueVideoBlackLevel(uint aHandle, CallbackSetBlueVideoBlackLevel aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionGetColorTemperature(uint aHandle, CallbackGetColorTemperature aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionGetColorTemperature(uint aHandle, CallbackGetColorTemperature aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionSetColorTemperature(uint aHandle, CallbackSetColorTemperature aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionSetColorTemperature(uint aHandle, CallbackSetColorTemperature aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionGetHorizontalKeystone(uint aHandle, CallbackGetHorizontalKeystone aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionGetHorizontalKeystone(uint aHandle, CallbackGetHorizontalKeystone aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionSetHorizontalKeystone(uint aHandle, CallbackSetHorizontalKeystone aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionSetHorizontalKeystone(uint aHandle, CallbackSetHorizontalKeystone aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionGetVerticalKeystone(uint aHandle, CallbackGetVerticalKeystone aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionGetVerticalKeystone(uint aHandle, CallbackGetVerticalKeystone aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionSetVerticalKeystone(uint aHandle, CallbackSetVerticalKeystone aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionSetVerticalKeystone(uint aHandle, CallbackSetVerticalKeystone aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionGetMute(uint aHandle, CallbackGetMute aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionGetMute(uint aHandle, CallbackGetMute aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionSetMute(uint aHandle, CallbackSetMute aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionSetMute(uint aHandle, CallbackSetMute aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionGetVolume(uint aHandle, CallbackGetVolume aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionGetVolume(uint aHandle, CallbackGetVolume aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionSetVolume(uint aHandle, CallbackSetVolume aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionSetVolume(uint aHandle, CallbackSetVolume aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionGetVolumeDB(uint aHandle, CallbackGetVolumeDB aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionGetVolumeDB(uint aHandle, CallbackGetVolumeDB aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionSetVolumeDB(uint aHandle, CallbackSetVolumeDB aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionSetVolumeDB(uint aHandle, CallbackSetVolumeDB aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionGetVolumeDBRange(uint aHandle, CallbackGetVolumeDBRange aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionGetVolumeDBRange(uint aHandle, CallbackGetVolumeDBRange aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionGetLoudness(uint aHandle, CallbackGetLoudness aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionGetLoudness(uint aHandle, CallbackGetLoudness aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionSetLoudness(uint aHandle, CallbackSetLoudness aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionSetLoudness(uint aHandle, CallbackSetLoudness aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionGetStateVariables(uint aHandle, CallbackGetStateVariables aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionGetStateVariables(uint aHandle, CallbackGetStateVariables aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl2")]
-        static extern void DvServiceUpnpOrgRenderingControl2EnableActionSetStateVariables(uint aHandle, CallbackSetStateVariables aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl2EnableActionSetStateVariables(uint aHandle, CallbackSetStateVariables aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -130,7 +130,6 @@ namespace Zapp
         private unsafe delegate int CallbackGetStateVariables(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aStateVariableList, char** aStateVariableValuePairs);
         private unsafe delegate int CallbackSetStateVariables(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aRenderingControlUDN, char* aServiceType, char* aServiceId, char* aStateVariableValuePairs, char** aStateVariableList);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackListPresets iCallbackListPresets;
         private CallbackSelectPreset iCallbackSelectPreset;
@@ -170,9 +169,9 @@ namespace Zapp
         private CallbackGetStateVariables iCallbackGetStateVariables;
         private CallbackSetStateVariables iCallbackSetStateVariables;
 
-        public DvServiceUpnpOrgRenderingControl2(DvDevice aDevice)
+        public DvProviderUpnpOrgRenderingControl2(DvDevice aDevice)
         {
-            iHandle = DvServiceUpnpOrgRenderingControl2Create(aDevice.Handle()); 
+            iHandle = DvProviderUpnpOrgRenderingControl2Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
@@ -180,7 +179,7 @@ namespace Zapp
         {
         uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgRenderingControl2SetPropertyLastChange(iHandle, value, &changed);
+            int err = DvProviderUpnpOrgRenderingControl2SetPropertyLastChange(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
@@ -192,7 +191,7 @@ namespace Zapp
         public unsafe void GetPropertyLastChange(out string aValue)
         {
             char* value;
-            DvServiceUpnpOrgRenderingControl2GetPropertyLastChange(iHandle, &value);
+            DvProviderUpnpOrgRenderingControl2GetPropertyLastChange(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
@@ -201,259 +200,259 @@ namespace Zapp
         {
             iCallbackListPresets = new CallbackListPresets(DoListPresets);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionListPresets(iHandle, iCallbackListPresets, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionListPresets(iHandle, iCallbackListPresets, ptr);
         }
 
         protected unsafe void EnableActionSelectPreset()
         {
             iCallbackSelectPreset = new CallbackSelectPreset(DoSelectPreset);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionSelectPreset(iHandle, iCallbackSelectPreset, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionSelectPreset(iHandle, iCallbackSelectPreset, ptr);
         }
 
         protected unsafe void EnableActionGetBrightness()
         {
             iCallbackGetBrightness = new CallbackGetBrightness(DoGetBrightness);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionGetBrightness(iHandle, iCallbackGetBrightness, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionGetBrightness(iHandle, iCallbackGetBrightness, ptr);
         }
 
         protected unsafe void EnableActionSetBrightness()
         {
             iCallbackSetBrightness = new CallbackSetBrightness(DoSetBrightness);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionSetBrightness(iHandle, iCallbackSetBrightness, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionSetBrightness(iHandle, iCallbackSetBrightness, ptr);
         }
 
         protected unsafe void EnableActionGetContrast()
         {
             iCallbackGetContrast = new CallbackGetContrast(DoGetContrast);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionGetContrast(iHandle, iCallbackGetContrast, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionGetContrast(iHandle, iCallbackGetContrast, ptr);
         }
 
         protected unsafe void EnableActionSetContrast()
         {
             iCallbackSetContrast = new CallbackSetContrast(DoSetContrast);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionSetContrast(iHandle, iCallbackSetContrast, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionSetContrast(iHandle, iCallbackSetContrast, ptr);
         }
 
         protected unsafe void EnableActionGetSharpness()
         {
             iCallbackGetSharpness = new CallbackGetSharpness(DoGetSharpness);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionGetSharpness(iHandle, iCallbackGetSharpness, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionGetSharpness(iHandle, iCallbackGetSharpness, ptr);
         }
 
         protected unsafe void EnableActionSetSharpness()
         {
             iCallbackSetSharpness = new CallbackSetSharpness(DoSetSharpness);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionSetSharpness(iHandle, iCallbackSetSharpness, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionSetSharpness(iHandle, iCallbackSetSharpness, ptr);
         }
 
         protected unsafe void EnableActionGetRedVideoGain()
         {
             iCallbackGetRedVideoGain = new CallbackGetRedVideoGain(DoGetRedVideoGain);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionGetRedVideoGain(iHandle, iCallbackGetRedVideoGain, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionGetRedVideoGain(iHandle, iCallbackGetRedVideoGain, ptr);
         }
 
         protected unsafe void EnableActionSetRedVideoGain()
         {
             iCallbackSetRedVideoGain = new CallbackSetRedVideoGain(DoSetRedVideoGain);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionSetRedVideoGain(iHandle, iCallbackSetRedVideoGain, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionSetRedVideoGain(iHandle, iCallbackSetRedVideoGain, ptr);
         }
 
         protected unsafe void EnableActionGetGreenVideoGain()
         {
             iCallbackGetGreenVideoGain = new CallbackGetGreenVideoGain(DoGetGreenVideoGain);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionGetGreenVideoGain(iHandle, iCallbackGetGreenVideoGain, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionGetGreenVideoGain(iHandle, iCallbackGetGreenVideoGain, ptr);
         }
 
         protected unsafe void EnableActionSetGreenVideoGain()
         {
             iCallbackSetGreenVideoGain = new CallbackSetGreenVideoGain(DoSetGreenVideoGain);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionSetGreenVideoGain(iHandle, iCallbackSetGreenVideoGain, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionSetGreenVideoGain(iHandle, iCallbackSetGreenVideoGain, ptr);
         }
 
         protected unsafe void EnableActionGetBlueVideoGain()
         {
             iCallbackGetBlueVideoGain = new CallbackGetBlueVideoGain(DoGetBlueVideoGain);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionGetBlueVideoGain(iHandle, iCallbackGetBlueVideoGain, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionGetBlueVideoGain(iHandle, iCallbackGetBlueVideoGain, ptr);
         }
 
         protected unsafe void EnableActionSetBlueVideoGain()
         {
             iCallbackSetBlueVideoGain = new CallbackSetBlueVideoGain(DoSetBlueVideoGain);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionSetBlueVideoGain(iHandle, iCallbackSetBlueVideoGain, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionSetBlueVideoGain(iHandle, iCallbackSetBlueVideoGain, ptr);
         }
 
         protected unsafe void EnableActionGetRedVideoBlackLevel()
         {
             iCallbackGetRedVideoBlackLevel = new CallbackGetRedVideoBlackLevel(DoGetRedVideoBlackLevel);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionGetRedVideoBlackLevel(iHandle, iCallbackGetRedVideoBlackLevel, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionGetRedVideoBlackLevel(iHandle, iCallbackGetRedVideoBlackLevel, ptr);
         }
 
         protected unsafe void EnableActionSetRedVideoBlackLevel()
         {
             iCallbackSetRedVideoBlackLevel = new CallbackSetRedVideoBlackLevel(DoSetRedVideoBlackLevel);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionSetRedVideoBlackLevel(iHandle, iCallbackSetRedVideoBlackLevel, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionSetRedVideoBlackLevel(iHandle, iCallbackSetRedVideoBlackLevel, ptr);
         }
 
         protected unsafe void EnableActionGetGreenVideoBlackLevel()
         {
             iCallbackGetGreenVideoBlackLevel = new CallbackGetGreenVideoBlackLevel(DoGetGreenVideoBlackLevel);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionGetGreenVideoBlackLevel(iHandle, iCallbackGetGreenVideoBlackLevel, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionGetGreenVideoBlackLevel(iHandle, iCallbackGetGreenVideoBlackLevel, ptr);
         }
 
         protected unsafe void EnableActionSetGreenVideoBlackLevel()
         {
             iCallbackSetGreenVideoBlackLevel = new CallbackSetGreenVideoBlackLevel(DoSetGreenVideoBlackLevel);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionSetGreenVideoBlackLevel(iHandle, iCallbackSetGreenVideoBlackLevel, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionSetGreenVideoBlackLevel(iHandle, iCallbackSetGreenVideoBlackLevel, ptr);
         }
 
         protected unsafe void EnableActionGetBlueVideoBlackLevel()
         {
             iCallbackGetBlueVideoBlackLevel = new CallbackGetBlueVideoBlackLevel(DoGetBlueVideoBlackLevel);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionGetBlueVideoBlackLevel(iHandle, iCallbackGetBlueVideoBlackLevel, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionGetBlueVideoBlackLevel(iHandle, iCallbackGetBlueVideoBlackLevel, ptr);
         }
 
         protected unsafe void EnableActionSetBlueVideoBlackLevel()
         {
             iCallbackSetBlueVideoBlackLevel = new CallbackSetBlueVideoBlackLevel(DoSetBlueVideoBlackLevel);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionSetBlueVideoBlackLevel(iHandle, iCallbackSetBlueVideoBlackLevel, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionSetBlueVideoBlackLevel(iHandle, iCallbackSetBlueVideoBlackLevel, ptr);
         }
 
         protected unsafe void EnableActionGetColorTemperature()
         {
             iCallbackGetColorTemperature = new CallbackGetColorTemperature(DoGetColorTemperature);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionGetColorTemperature(iHandle, iCallbackGetColorTemperature, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionGetColorTemperature(iHandle, iCallbackGetColorTemperature, ptr);
         }
 
         protected unsafe void EnableActionSetColorTemperature()
         {
             iCallbackSetColorTemperature = new CallbackSetColorTemperature(DoSetColorTemperature);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionSetColorTemperature(iHandle, iCallbackSetColorTemperature, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionSetColorTemperature(iHandle, iCallbackSetColorTemperature, ptr);
         }
 
         protected unsafe void EnableActionGetHorizontalKeystone()
         {
             iCallbackGetHorizontalKeystone = new CallbackGetHorizontalKeystone(DoGetHorizontalKeystone);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionGetHorizontalKeystone(iHandle, iCallbackGetHorizontalKeystone, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionGetHorizontalKeystone(iHandle, iCallbackGetHorizontalKeystone, ptr);
         }
 
         protected unsafe void EnableActionSetHorizontalKeystone()
         {
             iCallbackSetHorizontalKeystone = new CallbackSetHorizontalKeystone(DoSetHorizontalKeystone);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionSetHorizontalKeystone(iHandle, iCallbackSetHorizontalKeystone, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionSetHorizontalKeystone(iHandle, iCallbackSetHorizontalKeystone, ptr);
         }
 
         protected unsafe void EnableActionGetVerticalKeystone()
         {
             iCallbackGetVerticalKeystone = new CallbackGetVerticalKeystone(DoGetVerticalKeystone);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionGetVerticalKeystone(iHandle, iCallbackGetVerticalKeystone, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionGetVerticalKeystone(iHandle, iCallbackGetVerticalKeystone, ptr);
         }
 
         protected unsafe void EnableActionSetVerticalKeystone()
         {
             iCallbackSetVerticalKeystone = new CallbackSetVerticalKeystone(DoSetVerticalKeystone);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionSetVerticalKeystone(iHandle, iCallbackSetVerticalKeystone, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionSetVerticalKeystone(iHandle, iCallbackSetVerticalKeystone, ptr);
         }
 
         protected unsafe void EnableActionGetMute()
         {
             iCallbackGetMute = new CallbackGetMute(DoGetMute);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionGetMute(iHandle, iCallbackGetMute, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionGetMute(iHandle, iCallbackGetMute, ptr);
         }
 
         protected unsafe void EnableActionSetMute()
         {
             iCallbackSetMute = new CallbackSetMute(DoSetMute);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionSetMute(iHandle, iCallbackSetMute, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionSetMute(iHandle, iCallbackSetMute, ptr);
         }
 
         protected unsafe void EnableActionGetVolume()
         {
             iCallbackGetVolume = new CallbackGetVolume(DoGetVolume);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionGetVolume(iHandle, iCallbackGetVolume, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionGetVolume(iHandle, iCallbackGetVolume, ptr);
         }
 
         protected unsafe void EnableActionSetVolume()
         {
             iCallbackSetVolume = new CallbackSetVolume(DoSetVolume);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionSetVolume(iHandle, iCallbackSetVolume, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionSetVolume(iHandle, iCallbackSetVolume, ptr);
         }
 
         protected unsafe void EnableActionGetVolumeDB()
         {
             iCallbackGetVolumeDB = new CallbackGetVolumeDB(DoGetVolumeDB);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionGetVolumeDB(iHandle, iCallbackGetVolumeDB, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionGetVolumeDB(iHandle, iCallbackGetVolumeDB, ptr);
         }
 
         protected unsafe void EnableActionSetVolumeDB()
         {
             iCallbackSetVolumeDB = new CallbackSetVolumeDB(DoSetVolumeDB);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionSetVolumeDB(iHandle, iCallbackSetVolumeDB, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionSetVolumeDB(iHandle, iCallbackSetVolumeDB, ptr);
         }
 
         protected unsafe void EnableActionGetVolumeDBRange()
         {
             iCallbackGetVolumeDBRange = new CallbackGetVolumeDBRange(DoGetVolumeDBRange);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionGetVolumeDBRange(iHandle, iCallbackGetVolumeDBRange, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionGetVolumeDBRange(iHandle, iCallbackGetVolumeDBRange, ptr);
         }
 
         protected unsafe void EnableActionGetLoudness()
         {
             iCallbackGetLoudness = new CallbackGetLoudness(DoGetLoudness);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionGetLoudness(iHandle, iCallbackGetLoudness, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionGetLoudness(iHandle, iCallbackGetLoudness, ptr);
         }
 
         protected unsafe void EnableActionSetLoudness()
         {
             iCallbackSetLoudness = new CallbackSetLoudness(DoSetLoudness);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionSetLoudness(iHandle, iCallbackSetLoudness, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionSetLoudness(iHandle, iCallbackSetLoudness, ptr);
         }
 
         protected unsafe void EnableActionGetStateVariables()
         {
             iCallbackGetStateVariables = new CallbackGetStateVariables(DoGetStateVariables);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionGetStateVariables(iHandle, iCallbackGetStateVariables, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionGetStateVariables(iHandle, iCallbackGetStateVariables, ptr);
         }
 
         protected unsafe void EnableActionSetStateVariables()
         {
             iCallbackSetStateVariables = new CallbackSetStateVariables(DoSetStateVariables);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgRenderingControl2EnableActionSetStateVariables(iHandle, iCallbackSetStateVariables, ptr);
+            DvProviderUpnpOrgRenderingControl2EnableActionSetStateVariables(iHandle, iCallbackSetStateVariables, ptr);
         }
 
         protected virtual void ListPresets(uint aVersion, uint aInstanceID, out string aCurrentPresetNameList)
@@ -644,7 +643,7 @@ namespace Zapp
         private static unsafe int DoListPresets(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aCurrentPresetNameList)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             string currentPresetNameList;
             self.ListPresets(aVersion, aInstanceID, out currentPresetNameList);
             *aCurrentPresetNameList = (char*)Marshal.StringToHGlobalAnsi(currentPresetNameList).ToPointer();
@@ -654,7 +653,7 @@ namespace Zapp
         private static unsafe int DoSelectPreset(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aPresetName)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             string presetName = Marshal.PtrToStringAnsi((IntPtr)aPresetName);
             self.SelectPreset(aVersion, aInstanceID, presetName);
             return 0;
@@ -663,7 +662,7 @@ namespace Zapp
         private static unsafe int DoGetBrightness(IntPtr aPtr, uint aVersion, uint aInstanceID, uint* aCurrentBrightness)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             uint currentBrightness;
             self.GetBrightness(aVersion, aInstanceID, out currentBrightness);
             *aCurrentBrightness = currentBrightness;
@@ -673,7 +672,7 @@ namespace Zapp
         private static unsafe int DoSetBrightness(IntPtr aPtr, uint aVersion, uint aInstanceID, uint aDesiredBrightness)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             self.SetBrightness(aVersion, aInstanceID, aDesiredBrightness);
             return 0;
         }
@@ -681,7 +680,7 @@ namespace Zapp
         private static unsafe int DoGetContrast(IntPtr aPtr, uint aVersion, uint aInstanceID, uint* aCurrentContrast)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             uint currentContrast;
             self.GetContrast(aVersion, aInstanceID, out currentContrast);
             *aCurrentContrast = currentContrast;
@@ -691,7 +690,7 @@ namespace Zapp
         private static unsafe int DoSetContrast(IntPtr aPtr, uint aVersion, uint aInstanceID, uint aDesiredContrast)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             self.SetContrast(aVersion, aInstanceID, aDesiredContrast);
             return 0;
         }
@@ -699,7 +698,7 @@ namespace Zapp
         private static unsafe int DoGetSharpness(IntPtr aPtr, uint aVersion, uint aInstanceID, uint* aCurrentSharpness)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             uint currentSharpness;
             self.GetSharpness(aVersion, aInstanceID, out currentSharpness);
             *aCurrentSharpness = currentSharpness;
@@ -709,7 +708,7 @@ namespace Zapp
         private static unsafe int DoSetSharpness(IntPtr aPtr, uint aVersion, uint aInstanceID, uint aDesiredSharpness)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             self.SetSharpness(aVersion, aInstanceID, aDesiredSharpness);
             return 0;
         }
@@ -717,7 +716,7 @@ namespace Zapp
         private static unsafe int DoGetRedVideoGain(IntPtr aPtr, uint aVersion, uint aInstanceID, uint* aCurrentRedVideoGain)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             uint currentRedVideoGain;
             self.GetRedVideoGain(aVersion, aInstanceID, out currentRedVideoGain);
             *aCurrentRedVideoGain = currentRedVideoGain;
@@ -727,7 +726,7 @@ namespace Zapp
         private static unsafe int DoSetRedVideoGain(IntPtr aPtr, uint aVersion, uint aInstanceID, uint aDesiredRedVideoGain)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             self.SetRedVideoGain(aVersion, aInstanceID, aDesiredRedVideoGain);
             return 0;
         }
@@ -735,7 +734,7 @@ namespace Zapp
         private static unsafe int DoGetGreenVideoGain(IntPtr aPtr, uint aVersion, uint aInstanceID, uint* aCurrentGreenVideoGain)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             uint currentGreenVideoGain;
             self.GetGreenVideoGain(aVersion, aInstanceID, out currentGreenVideoGain);
             *aCurrentGreenVideoGain = currentGreenVideoGain;
@@ -745,7 +744,7 @@ namespace Zapp
         private static unsafe int DoSetGreenVideoGain(IntPtr aPtr, uint aVersion, uint aInstanceID, uint aDesiredGreenVideoGain)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             self.SetGreenVideoGain(aVersion, aInstanceID, aDesiredGreenVideoGain);
             return 0;
         }
@@ -753,7 +752,7 @@ namespace Zapp
         private static unsafe int DoGetBlueVideoGain(IntPtr aPtr, uint aVersion, uint aInstanceID, uint* aCurrentBlueVideoGain)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             uint currentBlueVideoGain;
             self.GetBlueVideoGain(aVersion, aInstanceID, out currentBlueVideoGain);
             *aCurrentBlueVideoGain = currentBlueVideoGain;
@@ -763,7 +762,7 @@ namespace Zapp
         private static unsafe int DoSetBlueVideoGain(IntPtr aPtr, uint aVersion, uint aInstanceID, uint aDesiredBlueVideoGain)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             self.SetBlueVideoGain(aVersion, aInstanceID, aDesiredBlueVideoGain);
             return 0;
         }
@@ -771,7 +770,7 @@ namespace Zapp
         private static unsafe int DoGetRedVideoBlackLevel(IntPtr aPtr, uint aVersion, uint aInstanceID, uint* aCurrentRedVideoBlackLevel)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             uint currentRedVideoBlackLevel;
             self.GetRedVideoBlackLevel(aVersion, aInstanceID, out currentRedVideoBlackLevel);
             *aCurrentRedVideoBlackLevel = currentRedVideoBlackLevel;
@@ -781,7 +780,7 @@ namespace Zapp
         private static unsafe int DoSetRedVideoBlackLevel(IntPtr aPtr, uint aVersion, uint aInstanceID, uint aDesiredRedVideoBlackLevel)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             self.SetRedVideoBlackLevel(aVersion, aInstanceID, aDesiredRedVideoBlackLevel);
             return 0;
         }
@@ -789,7 +788,7 @@ namespace Zapp
         private static unsafe int DoGetGreenVideoBlackLevel(IntPtr aPtr, uint aVersion, uint aInstanceID, uint* aCurrentGreenVideoBlackLevel)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             uint currentGreenVideoBlackLevel;
             self.GetGreenVideoBlackLevel(aVersion, aInstanceID, out currentGreenVideoBlackLevel);
             *aCurrentGreenVideoBlackLevel = currentGreenVideoBlackLevel;
@@ -799,7 +798,7 @@ namespace Zapp
         private static unsafe int DoSetGreenVideoBlackLevel(IntPtr aPtr, uint aVersion, uint aInstanceID, uint aDesiredGreenVideoBlackLevel)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             self.SetGreenVideoBlackLevel(aVersion, aInstanceID, aDesiredGreenVideoBlackLevel);
             return 0;
         }
@@ -807,7 +806,7 @@ namespace Zapp
         private static unsafe int DoGetBlueVideoBlackLevel(IntPtr aPtr, uint aVersion, uint aInstanceID, uint* aCurrentBlueVideoBlackLevel)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             uint currentBlueVideoBlackLevel;
             self.GetBlueVideoBlackLevel(aVersion, aInstanceID, out currentBlueVideoBlackLevel);
             *aCurrentBlueVideoBlackLevel = currentBlueVideoBlackLevel;
@@ -817,7 +816,7 @@ namespace Zapp
         private static unsafe int DoSetBlueVideoBlackLevel(IntPtr aPtr, uint aVersion, uint aInstanceID, uint aDesiredBlueVideoBlackLevel)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             self.SetBlueVideoBlackLevel(aVersion, aInstanceID, aDesiredBlueVideoBlackLevel);
             return 0;
         }
@@ -825,7 +824,7 @@ namespace Zapp
         private static unsafe int DoGetColorTemperature(IntPtr aPtr, uint aVersion, uint aInstanceID, uint* aCurrentColorTemperature)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             uint currentColorTemperature;
             self.GetColorTemperature(aVersion, aInstanceID, out currentColorTemperature);
             *aCurrentColorTemperature = currentColorTemperature;
@@ -835,7 +834,7 @@ namespace Zapp
         private static unsafe int DoSetColorTemperature(IntPtr aPtr, uint aVersion, uint aInstanceID, uint aDesiredColorTemperature)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             self.SetColorTemperature(aVersion, aInstanceID, aDesiredColorTemperature);
             return 0;
         }
@@ -843,7 +842,7 @@ namespace Zapp
         private static unsafe int DoGetHorizontalKeystone(IntPtr aPtr, uint aVersion, uint aInstanceID, int* aCurrentHorizontalKeystone)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             int currentHorizontalKeystone;
             self.GetHorizontalKeystone(aVersion, aInstanceID, out currentHorizontalKeystone);
             *aCurrentHorizontalKeystone = currentHorizontalKeystone;
@@ -853,7 +852,7 @@ namespace Zapp
         private static unsafe int DoSetHorizontalKeystone(IntPtr aPtr, uint aVersion, uint aInstanceID, int aDesiredHorizontalKeystone)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             self.SetHorizontalKeystone(aVersion, aInstanceID, aDesiredHorizontalKeystone);
             return 0;
         }
@@ -861,7 +860,7 @@ namespace Zapp
         private static unsafe int DoGetVerticalKeystone(IntPtr aPtr, uint aVersion, uint aInstanceID, int* aCurrentVerticalKeystone)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             int currentVerticalKeystone;
             self.GetVerticalKeystone(aVersion, aInstanceID, out currentVerticalKeystone);
             *aCurrentVerticalKeystone = currentVerticalKeystone;
@@ -871,7 +870,7 @@ namespace Zapp
         private static unsafe int DoSetVerticalKeystone(IntPtr aPtr, uint aVersion, uint aInstanceID, int aDesiredVerticalKeystone)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             self.SetVerticalKeystone(aVersion, aInstanceID, aDesiredVerticalKeystone);
             return 0;
         }
@@ -879,7 +878,7 @@ namespace Zapp
         private static unsafe int DoGetMute(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aChannel, int* aCurrentMute)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             string channel = Marshal.PtrToStringAnsi((IntPtr)aChannel);
             bool currentMute;
             self.GetMute(aVersion, aInstanceID, channel, out currentMute);
@@ -890,7 +889,7 @@ namespace Zapp
         private static unsafe int DoSetMute(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aChannel, int aDesiredMute)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             string channel = Marshal.PtrToStringAnsi((IntPtr)aChannel);
             bool desiredMute = (aDesiredMute != 0);
             self.SetMute(aVersion, aInstanceID, channel, desiredMute);
@@ -900,7 +899,7 @@ namespace Zapp
         private static unsafe int DoGetVolume(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aChannel, uint* aCurrentVolume)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             string channel = Marshal.PtrToStringAnsi((IntPtr)aChannel);
             uint currentVolume;
             self.GetVolume(aVersion, aInstanceID, channel, out currentVolume);
@@ -911,7 +910,7 @@ namespace Zapp
         private static unsafe int DoSetVolume(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aChannel, uint aDesiredVolume)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             string channel = Marshal.PtrToStringAnsi((IntPtr)aChannel);
             self.SetVolume(aVersion, aInstanceID, channel, aDesiredVolume);
             return 0;
@@ -920,7 +919,7 @@ namespace Zapp
         private static unsafe int DoGetVolumeDB(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aChannel, int* aCurrentVolume)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             string channel = Marshal.PtrToStringAnsi((IntPtr)aChannel);
             int currentVolume;
             self.GetVolumeDB(aVersion, aInstanceID, channel, out currentVolume);
@@ -931,7 +930,7 @@ namespace Zapp
         private static unsafe int DoSetVolumeDB(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aChannel, int aDesiredVolume)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             string channel = Marshal.PtrToStringAnsi((IntPtr)aChannel);
             self.SetVolumeDB(aVersion, aInstanceID, channel, aDesiredVolume);
             return 0;
@@ -940,7 +939,7 @@ namespace Zapp
         private static unsafe int DoGetVolumeDBRange(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aChannel, int* aMinValue, int* aMaxValue)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             string channel = Marshal.PtrToStringAnsi((IntPtr)aChannel);
             int minValue;
             int maxValue;
@@ -953,7 +952,7 @@ namespace Zapp
         private static unsafe int DoGetLoudness(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aChannel, int* aCurrentLoudness)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             string channel = Marshal.PtrToStringAnsi((IntPtr)aChannel);
             bool currentLoudness;
             self.GetLoudness(aVersion, aInstanceID, channel, out currentLoudness);
@@ -964,7 +963,7 @@ namespace Zapp
         private static unsafe int DoSetLoudness(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aChannel, int aDesiredLoudness)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             string channel = Marshal.PtrToStringAnsi((IntPtr)aChannel);
             bool desiredLoudness = (aDesiredLoudness != 0);
             self.SetLoudness(aVersion, aInstanceID, channel, desiredLoudness);
@@ -974,7 +973,7 @@ namespace Zapp
         private static unsafe int DoGetStateVariables(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aStateVariableList, char** aStateVariableValuePairs)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             string stateVariableList = Marshal.PtrToStringAnsi((IntPtr)aStateVariableList);
             string stateVariableValuePairs;
             self.GetStateVariables(aVersion, aInstanceID, stateVariableList, out stateVariableValuePairs);
@@ -985,7 +984,7 @@ namespace Zapp
         private static unsafe int DoSetStateVariables(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aRenderingControlUDN, char* aServiceType, char* aServiceId, char* aStateVariableValuePairs, char** aStateVariableList)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgRenderingControl2 self = (DvServiceUpnpOrgRenderingControl2)gch.Target;
+            DvProviderUpnpOrgRenderingControl2 self = (DvProviderUpnpOrgRenderingControl2)gch.Target;
             string renderingControlUDN = Marshal.PtrToStringAnsi((IntPtr)aRenderingControlUDN);
             string serviceType = Marshal.PtrToStringAnsi((IntPtr)aServiceType);
             string serviceId = Marshal.PtrToStringAnsi((IntPtr)aServiceId);
@@ -1003,7 +1002,7 @@ namespace Zapp
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceUpnpOrgRenderingControl2()
+        ~DvProviderUpnpOrgRenderingControl2()
         {
             DoDispose();
         }
@@ -1020,7 +1019,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = 0;
             }
-            DvServiceUpnpOrgRenderingControl2Destroy(handle);
+            DvProviderUpnpOrgRenderingControl2Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

@@ -71,11 +71,11 @@ namespace Zapp
         }
     }
 
-    class ServiceLights : DvServiceZappOrgTestLights1
+    class ProviderLights : DvProviderZappOrgTestLights1
     {
         public List<Light> iLights;
 
-        public ServiceLights(DvDevice aDevice, int aMode)
+        public ProviderLights(DvDevice aDevice, int aMode)
             : base(aDevice)
         {
             EnableActionGetCount();
@@ -189,7 +189,7 @@ namespace Zapp
     class DeviceLights : IResourceManager, IDisposable
     {
         private DvDevice iDevice;
-        private ServiceLights iLights;
+        private ProviderLights iLights;
         private string iConfigDir;
         public string iDeviceName;
 
@@ -210,7 +210,7 @@ namespace Zapp
             iDevice.SetAttribute("Upnp.ModelUrl", "http://www.linn.co.uk");
             iDevice.SetAttribute("Upnp.SerialNumber", "123456");
             iDevice.SetAttribute("Upnp.Upc", "123456654321");
-            iLights = new ServiceLights(iDevice, aMode);
+            iLights = new ProviderLights(iDevice, aMode);
             iDevice.SetEnabled();
         }
 

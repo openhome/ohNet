@@ -4,7 +4,7 @@
 #include <TestFramework.h>
 #include <Debug.h>
 #include <Stream.h>
-#include <Os.h>
+#include <OsWrapper.h>
 
 using namespace Zapp;
 using namespace Zapp::TestFramework;
@@ -57,7 +57,10 @@ void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Initi
     std::vector<NetworkInterface*>* ifs = Os::NetworkListInterfaces(false);
     ASSERT(ifs->size() > 0);
     TIpAddress addr = (*ifs)[0]->Address();
-    Print("Using network interface %d.%d.%d.%d\n", addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
+    Endpoint endpt(0, addr);
+    Endpoint::AddressBuf buf;
+    endpt.GetAddress(buf);
+    Print("Using network interface %s\n\n", buf.Ptr());
     Semaphore sem("", 0);
     SocketTcpServer* server = new SocketTcpServer("ECHO", 1025, addr);
     server->Add("ECHO", new EchoSession(sem));

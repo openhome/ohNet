@@ -4,7 +4,7 @@
 #include <Discovery.h>
 #include <Thread.h>
 #include <Timer.h>
-#include <Os.h>
+#include <OsWrapper.h>
 #include <CpDeviceUpnp.h>
 #include <FunctorCpDevice.h>
 #include <Cpp/Core/CpUpnpOrgSwitchPower1.h>

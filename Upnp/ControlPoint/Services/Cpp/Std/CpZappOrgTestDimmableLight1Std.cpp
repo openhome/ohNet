@@ -14,15 +14,15 @@ using namespace Zapp;
 class SyncGetLevelZappOrgTestDimmableLight1Cpp : public SyncProxyAction
 {
 public:
-    SyncGetLevelZappOrgTestDimmableLight1Cpp(CpProxyZappOrgTestDimmableLight1Cpp& aService, uint32_t& aLevel);
+    SyncGetLevelZappOrgTestDimmableLight1Cpp(CpProxyZappOrgTestDimmableLight1Cpp& aProxy, uint32_t& aLevel);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestDimmableLight1Cpp& iService;
     uint32_t& iLevel;
 };
 
-SyncGetLevelZappOrgTestDimmableLight1Cpp::SyncGetLevelZappOrgTestDimmableLight1Cpp(CpProxyZappOrgTestDimmableLight1Cpp& aService, uint32_t& aLevel)
-    : iService(aService)
+SyncGetLevelZappOrgTestDimmableLight1Cpp::SyncGetLevelZappOrgTestDimmableLight1Cpp(CpProxyZappOrgTestDimmableLight1Cpp& aProxy, uint32_t& aLevel)
+    : iService(aProxy)
     , iLevel(aLevel)
 {
 }
@@ -36,14 +36,14 @@ void SyncGetLevelZappOrgTestDimmableLight1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetLevelZappOrgTestDimmableLight1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetLevelZappOrgTestDimmableLight1Cpp(CpProxyZappOrgTestDimmableLight1Cpp& aService);
+    SyncSetLevelZappOrgTestDimmableLight1Cpp(CpProxyZappOrgTestDimmableLight1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestDimmableLight1Cpp& iService;
 };
 
-SyncSetLevelZappOrgTestDimmableLight1Cpp::SyncSetLevelZappOrgTestDimmableLight1Cpp(CpProxyZappOrgTestDimmableLight1Cpp& aService)
-    : iService(aService)
+SyncSetLevelZappOrgTestDimmableLight1Cpp::SyncSetLevelZappOrgTestDimmableLight1Cpp(CpProxyZappOrgTestDimmableLight1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 

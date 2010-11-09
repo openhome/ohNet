@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,10 +17,10 @@ class PropertyBinary;
 /**
  * Base Device for upnp.org:ContentDirectory:1
  */
-class DvServiceUpnpOrgContentDirectory1 : public DvService
+class DvProviderUpnpOrgContentDirectory1 : public DvProvider
 {
 public:
-    virtual ~DvServiceUpnpOrgContentDirectory1() {}
+    virtual ~DvProviderUpnpOrgContentDirectory1() {}
     TBool SetPropertyTransferIDs(const Brx& aValue);
     void GetPropertyTransferIDs(Brhz& aValue);
     TBool SetPropertySystemUpdateID(TUint aValue);
@@ -28,7 +28,7 @@ public:
     TBool SetPropertyContainerUpdateIDs(const Brx& aValue);
     void GetPropertyContainerUpdateIDs(Brhz& aValue);
 protected:
-    DvServiceUpnpOrgContentDirectory1(DvDevice& aDevice);
+    DvProviderUpnpOrgContentDirectory1(DvDevice& aDevice);
     void EnableActionGetSearchCapabilities();
     void EnableActionGetSortCapabilities();
     void EnableActionGetSystemUpdateID();
@@ -59,7 +59,7 @@ private:
     virtual void DeleteResource(IInvocationResponse& aResponse, TUint aVersion, const Brx& aResourceURI);
     virtual void CreateReference(IInvocationResponse& aResponse, TUint aVersion, const Brx& aContainerID, const Brx& aObjectID, IInvocationResponseString& aNewID);
 private:
-    DvServiceUpnpOrgContentDirectory1();
+    DvProviderUpnpOrgContentDirectory1();
     void DoGetSearchCapabilities(IDvInvocation& aInvocation, TUint aVersion);
     void DoGetSortCapabilities(IDvInvocation& aInvocation, TUint aVersion);
     void DoGetSystemUpdateID(IDvInvocation& aInvocation, TUint aVersion);

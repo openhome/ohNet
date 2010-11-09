@@ -21,30 +21,30 @@ typedef int32_t (*CallbackProduct2SourceIndex)(void* aPtr, uint32_t aVersion, ui
 typedef int32_t (*CallbackProduct2SetSourceIndex)(void* aPtr, uint32_t aVersion, uint32_t aaSourceIndex);
 typedef int32_t (*CallbackProduct2SourceType)(void* aPtr, uint32_t aVersion, uint32_t aaSourceIndex, char** aaSourceType);
 
-DllExport THandle DvServiceLinnCoUkProduct2Create(DvDeviceC aDevice);
-DllExport void DvServiceLinnCoUkProduct2Destroy(THandle aService);
+DllExport THandle DvProviderLinnCoUkProduct2Create(DvDeviceC aDevice);
+DllExport void DvProviderLinnCoUkProduct2Destroy(THandle aProvider);
 
-DllExport void DvServiceLinnCoUkProduct2EnableActionType(THandle aService, CallbackProduct2Type aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkProduct2EnableActionModel(THandle aService, CallbackProduct2Model aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkProduct2EnableActionName(THandle aService, CallbackProduct2Name aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkProduct2EnableActionSetName(THandle aService, CallbackProduct2SetName aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkProduct2EnableActionRoom(THandle aService, CallbackProduct2Room aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkProduct2EnableActionSetRoom(THandle aService, CallbackProduct2SetRoom aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkProduct2EnableActionStandby(THandle aService, CallbackProduct2Standby aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkProduct2EnableActionSetStandby(THandle aService, CallbackProduct2SetStandby aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkProduct2EnableActionSourceCount(THandle aService, CallbackProduct2SourceCount aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkProduct2EnableActionSourceIndex(THandle aService, CallbackProduct2SourceIndex aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkProduct2EnableActionSetSourceIndex(THandle aService, CallbackProduct2SetSourceIndex aCallback, void* aPtr);
-DllExport void DvServiceLinnCoUkProduct2EnableActionSourceType(THandle aService, CallbackProduct2SourceType aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkProduct2EnableActionType(THandle aProvider, CallbackProduct2Type aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkProduct2EnableActionModel(THandle aProvider, CallbackProduct2Model aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkProduct2EnableActionName(THandle aProvider, CallbackProduct2Name aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkProduct2EnableActionSetName(THandle aProvider, CallbackProduct2SetName aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkProduct2EnableActionRoom(THandle aProvider, CallbackProduct2Room aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkProduct2EnableActionSetRoom(THandle aProvider, CallbackProduct2SetRoom aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkProduct2EnableActionStandby(THandle aProvider, CallbackProduct2Standby aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkProduct2EnableActionSetStandby(THandle aProvider, CallbackProduct2SetStandby aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkProduct2EnableActionSourceCount(THandle aProvider, CallbackProduct2SourceCount aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkProduct2EnableActionSourceIndex(THandle aProvider, CallbackProduct2SourceIndex aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkProduct2EnableActionSetSourceIndex(THandle aProvider, CallbackProduct2SetSourceIndex aCallback, void* aPtr);
+DllExport void DvProviderLinnCoUkProduct2EnableActionSourceType(THandle aProvider, CallbackProduct2SourceType aCallback, void* aPtr);
 
-DllExport int32_t DvServiceLinnCoUkProduct2SetPropertyProductName(THandle aService, const char* aValue, uint32_t* aChanged);
-DllExport void DvServiceLinnCoUkProduct2GetPropertyProductName(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkProduct2SetPropertyProductRoom(THandle aService, const char* aValue, uint32_t* aChanged);
-DllExport void DvServiceLinnCoUkProduct2GetPropertyProductRoom(THandle aService, char** aValue);
-DllExport int32_t DvServiceLinnCoUkProduct2SetPropertyProductStandby(THandle aService, uint32_t aValue, uint32_t* aChanged);
-DllExport void DvServiceLinnCoUkProduct2GetPropertyProductStandby(THandle aService, uint32_t* aValue);
-DllExport int32_t DvServiceLinnCoUkProduct2SetPropertyProductSourceIndex(THandle aService, uint32_t aValue, uint32_t* aChanged);
-DllExport void DvServiceLinnCoUkProduct2GetPropertyProductSourceIndex(THandle aService, uint32_t* aValue);
+DllExport int32_t DvProviderLinnCoUkProduct2SetPropertyProductName(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport void DvProviderLinnCoUkProduct2GetPropertyProductName(THandle aProvider, char** aValue);
+DllExport int32_t DvProviderLinnCoUkProduct2SetPropertyProductRoom(THandle aProvider, const char* aValue, uint32_t* aChanged);
+DllExport void DvProviderLinnCoUkProduct2GetPropertyProductRoom(THandle aProvider, char** aValue);
+DllExport int32_t DvProviderLinnCoUkProduct2SetPropertyProductStandby(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
+DllExport void DvProviderLinnCoUkProduct2GetPropertyProductStandby(THandle aProvider, uint32_t* aValue);
+DllExport int32_t DvProviderLinnCoUkProduct2SetPropertyProductSourceIndex(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
+DllExport void DvProviderLinnCoUkProduct2GetPropertyProductSourceIndex(THandle aProvider, uint32_t* aValue);
 
 #ifdef __cplusplus
 } // extern "C"

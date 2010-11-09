@@ -6,52 +6,52 @@
 
 using namespace Zapp;
 
-bool DvServiceLinnCoUkProduct2Cpp::SetPropertyProductName(const std::string& aValue)
+bool DvProviderLinnCoUkProduct2Cpp::SetPropertyProductName(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyProductName, buf);
 }
 
-void DvServiceLinnCoUkProduct2Cpp::GetPropertyProductName(std::string& aValue)
+void DvProviderLinnCoUkProduct2Cpp::GetPropertyProductName(std::string& aValue)
 {
     const Brx& val = iPropertyProductName->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-bool DvServiceLinnCoUkProduct2Cpp::SetPropertyProductRoom(const std::string& aValue)
+bool DvProviderLinnCoUkProduct2Cpp::SetPropertyProductRoom(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
     return SetPropertyString(*iPropertyProductRoom, buf);
 }
 
-void DvServiceLinnCoUkProduct2Cpp::GetPropertyProductRoom(std::string& aValue)
+void DvProviderLinnCoUkProduct2Cpp::GetPropertyProductRoom(std::string& aValue)
 {
     const Brx& val = iPropertyProductRoom->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-bool DvServiceLinnCoUkProduct2Cpp::SetPropertyProductStandby(bool aValue)
+bool DvProviderLinnCoUkProduct2Cpp::SetPropertyProductStandby(bool aValue)
 {
     return SetPropertyBool(*iPropertyProductStandby, aValue);
 }
 
-void DvServiceLinnCoUkProduct2Cpp::GetPropertyProductStandby(bool& aValue)
+void DvProviderLinnCoUkProduct2Cpp::GetPropertyProductStandby(bool& aValue)
 {
     aValue = iPropertyProductStandby->Value();
 }
 
-bool DvServiceLinnCoUkProduct2Cpp::SetPropertyProductSourceIndex(uint32_t aValue)
+bool DvProviderLinnCoUkProduct2Cpp::SetPropertyProductSourceIndex(uint32_t aValue)
 {
     return SetPropertyUint(*iPropertyProductSourceIndex, aValue);
 }
 
-void DvServiceLinnCoUkProduct2Cpp::GetPropertyProductSourceIndex(uint32_t& aValue)
+void DvProviderLinnCoUkProduct2Cpp::GetPropertyProductSourceIndex(uint32_t& aValue)
 {
     aValue = iPropertyProductSourceIndex->Value();
 }
 
-DvServiceLinnCoUkProduct2Cpp::DvServiceLinnCoUkProduct2Cpp(DvDeviceStd& aDevice)
-    : DvService(aDevice.Device(), "linn.co.uk", "Product", 2)
+DvProviderLinnCoUkProduct2Cpp::DvProviderLinnCoUkProduct2Cpp(DvDeviceStd& aDevice)
+    : DvProvider(aDevice.Device(), "linn.co.uk", "Product", 2)
 {
     Functor empty;
     iPropertyProductName = new PropertyString(new ParameterString("ProductName"), empty);
@@ -64,104 +64,104 @@ DvServiceLinnCoUkProduct2Cpp::DvServiceLinnCoUkProduct2Cpp(DvDeviceStd& aDevice)
     iService->AddProperty(iPropertyProductSourceIndex); // passes ownership
 }
 
-void DvServiceLinnCoUkProduct2Cpp::EnableActionType()
+void DvProviderLinnCoUkProduct2Cpp::EnableActionType()
 {
     Zapp::Action* action = new Zapp::Action("Type");
     action->AddOutputParameter(new ParameterString("aType"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct2Cpp::DoType);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct2Cpp::DoType);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct2Cpp::EnableActionModel()
+void DvProviderLinnCoUkProduct2Cpp::EnableActionModel()
 {
     Zapp::Action* action = new Zapp::Action("Model");
     action->AddOutputParameter(new ParameterString("aModel"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct2Cpp::DoModel);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct2Cpp::DoModel);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct2Cpp::EnableActionName()
+void DvProviderLinnCoUkProduct2Cpp::EnableActionName()
 {
     Zapp::Action* action = new Zapp::Action("Name");
     action->AddOutputParameter(new ParameterRelated("aName", *iPropertyProductName));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct2Cpp::DoName);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct2Cpp::DoName);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct2Cpp::EnableActionSetName()
+void DvProviderLinnCoUkProduct2Cpp::EnableActionSetName()
 {
     Zapp::Action* action = new Zapp::Action("SetName");
     action->AddInputParameter(new ParameterRelated("aName", *iPropertyProductName));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct2Cpp::DoSetName);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct2Cpp::DoSetName);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct2Cpp::EnableActionRoom()
+void DvProviderLinnCoUkProduct2Cpp::EnableActionRoom()
 {
     Zapp::Action* action = new Zapp::Action("Room");
     action->AddOutputParameter(new ParameterRelated("aRoom", *iPropertyProductRoom));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct2Cpp::DoRoom);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct2Cpp::DoRoom);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct2Cpp::EnableActionSetRoom()
+void DvProviderLinnCoUkProduct2Cpp::EnableActionSetRoom()
 {
     Zapp::Action* action = new Zapp::Action("SetRoom");
     action->AddInputParameter(new ParameterRelated("aRoom", *iPropertyProductRoom));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct2Cpp::DoSetRoom);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct2Cpp::DoSetRoom);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct2Cpp::EnableActionStandby()
+void DvProviderLinnCoUkProduct2Cpp::EnableActionStandby()
 {
     Zapp::Action* action = new Zapp::Action("Standby");
     action->AddOutputParameter(new ParameterRelated("aStandby", *iPropertyProductStandby));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct2Cpp::DoStandby);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct2Cpp::DoStandby);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct2Cpp::EnableActionSetStandby()
+void DvProviderLinnCoUkProduct2Cpp::EnableActionSetStandby()
 {
     Zapp::Action* action = new Zapp::Action("SetStandby");
     action->AddInputParameter(new ParameterRelated("aStandby", *iPropertyProductStandby));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct2Cpp::DoSetStandby);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct2Cpp::DoSetStandby);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct2Cpp::EnableActionSourceCount()
+void DvProviderLinnCoUkProduct2Cpp::EnableActionSourceCount()
 {
     Zapp::Action* action = new Zapp::Action("SourceCount");
     action->AddOutputParameter(new ParameterRelated("aSourceCount", *iPropertyProductSourceIndex));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct2Cpp::DoSourceCount);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct2Cpp::DoSourceCount);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct2Cpp::EnableActionSourceIndex()
+void DvProviderLinnCoUkProduct2Cpp::EnableActionSourceIndex()
 {
     Zapp::Action* action = new Zapp::Action("SourceIndex");
     action->AddOutputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct2Cpp::DoSourceIndex);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct2Cpp::DoSourceIndex);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct2Cpp::EnableActionSetSourceIndex()
+void DvProviderLinnCoUkProduct2Cpp::EnableActionSetSourceIndex()
 {
     Zapp::Action* action = new Zapp::Action("SetSourceIndex");
     action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct2Cpp::DoSetSourceIndex);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct2Cpp::DoSetSourceIndex);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct2Cpp::EnableActionSourceType()
+void DvProviderLinnCoUkProduct2Cpp::EnableActionSourceType()
 {
     Zapp::Action* action = new Zapp::Action("SourceType");
     action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
     action->AddOutputParameter(new ParameterString("aSourceType"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct2Cpp::DoSourceType);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct2Cpp::DoSourceType);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct2Cpp::DoType(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct2Cpp::DoType(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -175,7 +175,7 @@ void DvServiceLinnCoUkProduct2Cpp::DoType(IDvInvocation& aInvocation, TUint aVer
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::DoModel(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct2Cpp::DoModel(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -189,7 +189,7 @@ void DvServiceLinnCoUkProduct2Cpp::DoModel(IDvInvocation& aInvocation, TUint aVe
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::DoName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct2Cpp::DoName(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -203,7 +203,7 @@ void DvServiceLinnCoUkProduct2Cpp::DoName(IDvInvocation& aInvocation, TUint aVer
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::DoSetName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct2Cpp::DoSetName(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_aName;
@@ -215,7 +215,7 @@ void DvServiceLinnCoUkProduct2Cpp::DoSetName(IDvInvocation& aInvocation, TUint a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::DoRoom(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct2Cpp::DoRoom(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -229,7 +229,7 @@ void DvServiceLinnCoUkProduct2Cpp::DoRoom(IDvInvocation& aInvocation, TUint aVer
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::DoSetRoom(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct2Cpp::DoSetRoom(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_aRoom;
@@ -241,7 +241,7 @@ void DvServiceLinnCoUkProduct2Cpp::DoSetRoom(IDvInvocation& aInvocation, TUint a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::DoStandby(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct2Cpp::DoStandby(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -253,7 +253,7 @@ void DvServiceLinnCoUkProduct2Cpp::DoStandby(IDvInvocation& aInvocation, TUint a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::DoSetStandby(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct2Cpp::DoSetStandby(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     bool aStandby = aInvocation.InvocationReadBool("aStandby");
@@ -263,7 +263,7 @@ void DvServiceLinnCoUkProduct2Cpp::DoSetStandby(IDvInvocation& aInvocation, TUin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::DoSourceCount(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct2Cpp::DoSourceCount(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -275,7 +275,7 @@ void DvServiceLinnCoUkProduct2Cpp::DoSourceCount(IDvInvocation& aInvocation, TUi
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::DoSourceIndex(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct2Cpp::DoSourceIndex(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -287,7 +287,7 @@ void DvServiceLinnCoUkProduct2Cpp::DoSourceIndex(IDvInvocation& aInvocation, TUi
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::DoSetSourceIndex(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct2Cpp::DoSetSourceIndex(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
@@ -297,7 +297,7 @@ void DvServiceLinnCoUkProduct2Cpp::DoSetSourceIndex(IDvInvocation& aInvocation, 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::DoSourceType(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct2Cpp::DoSourceType(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
@@ -312,62 +312,62 @@ void DvServiceLinnCoUkProduct2Cpp::DoSourceType(IDvInvocation& aInvocation, TUin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::Type(uint32_t /*aVersion*/, std::string& /*aaType*/)
+void DvProviderLinnCoUkProduct2Cpp::Type(uint32_t /*aVersion*/, std::string& /*aaType*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::Model(uint32_t /*aVersion*/, std::string& /*aaModel*/)
+void DvProviderLinnCoUkProduct2Cpp::Model(uint32_t /*aVersion*/, std::string& /*aaModel*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::Name(uint32_t /*aVersion*/, std::string& /*aaName*/)
+void DvProviderLinnCoUkProduct2Cpp::Name(uint32_t /*aVersion*/, std::string& /*aaName*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::SetName(uint32_t /*aVersion*/, const std::string& /*aaName*/)
+void DvProviderLinnCoUkProduct2Cpp::SetName(uint32_t /*aVersion*/, const std::string& /*aaName*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::Room(uint32_t /*aVersion*/, std::string& /*aaRoom*/)
+void DvProviderLinnCoUkProduct2Cpp::Room(uint32_t /*aVersion*/, std::string& /*aaRoom*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::SetRoom(uint32_t /*aVersion*/, const std::string& /*aaRoom*/)
+void DvProviderLinnCoUkProduct2Cpp::SetRoom(uint32_t /*aVersion*/, const std::string& /*aaRoom*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::Standby(uint32_t /*aVersion*/, bool& /*aaStandby*/)
+void DvProviderLinnCoUkProduct2Cpp::Standby(uint32_t /*aVersion*/, bool& /*aaStandby*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::SetStandby(uint32_t /*aVersion*/, bool /*aaStandby*/)
+void DvProviderLinnCoUkProduct2Cpp::SetStandby(uint32_t /*aVersion*/, bool /*aaStandby*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::SourceCount(uint32_t /*aVersion*/, uint32_t& /*aaSourceCount*/)
+void DvProviderLinnCoUkProduct2Cpp::SourceCount(uint32_t /*aVersion*/, uint32_t& /*aaSourceCount*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::SourceIndex(uint32_t /*aVersion*/, uint32_t& /*aaSourceIndex*/)
+void DvProviderLinnCoUkProduct2Cpp::SourceIndex(uint32_t /*aVersion*/, uint32_t& /*aaSourceIndex*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::SetSourceIndex(uint32_t /*aVersion*/, uint32_t /*aaSourceIndex*/)
+void DvProviderLinnCoUkProduct2Cpp::SetSourceIndex(uint32_t /*aVersion*/, uint32_t /*aaSourceIndex*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct2Cpp::SourceType(uint32_t /*aVersion*/, uint32_t /*aaSourceIndex*/, std::string& /*aaSourceType*/)
+void DvProviderLinnCoUkProduct2Cpp::SourceType(uint32_t /*aVersion*/, uint32_t /*aaSourceIndex*/, std::string& /*aaSourceType*/)
 {
     ASSERTS();
 }

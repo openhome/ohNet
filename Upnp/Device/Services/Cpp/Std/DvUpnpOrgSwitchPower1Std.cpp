@@ -6,49 +6,49 @@
 
 using namespace Zapp;
 
-bool DvServiceUpnpOrgSwitchPower1Cpp::SetPropertyStatus(bool aValue)
+bool DvProviderUpnpOrgSwitchPower1Cpp::SetPropertyStatus(bool aValue)
 {
     return SetPropertyBool(*iPropertyStatus, aValue);
 }
 
-void DvServiceUpnpOrgSwitchPower1Cpp::GetPropertyStatus(bool& aValue)
+void DvProviderUpnpOrgSwitchPower1Cpp::GetPropertyStatus(bool& aValue)
 {
     aValue = iPropertyStatus->Value();
 }
 
-DvServiceUpnpOrgSwitchPower1Cpp::DvServiceUpnpOrgSwitchPower1Cpp(DvDeviceStd& aDevice)
-    : DvService(aDevice.Device(), "upnp.org", "SwitchPower", 1)
+DvProviderUpnpOrgSwitchPower1Cpp::DvProviderUpnpOrgSwitchPower1Cpp(DvDeviceStd& aDevice)
+    : DvProvider(aDevice.Device(), "upnp.org", "SwitchPower", 1)
 {
     Functor empty;
     iPropertyStatus = new PropertyBool(new ParameterBool("Status"), empty);
     iService->AddProperty(iPropertyStatus); // passes ownership
 }
 
-void DvServiceUpnpOrgSwitchPower1Cpp::EnableActionSetTarget()
+void DvProviderUpnpOrgSwitchPower1Cpp::EnableActionSetTarget()
 {
     Zapp::Action* action = new Zapp::Action("SetTarget");
     action->AddInputParameter(new ParameterBool("newTargetValue"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgSwitchPower1Cpp::DoSetTarget);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgSwitchPower1Cpp::DoSetTarget);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgSwitchPower1Cpp::EnableActionGetTarget()
+void DvProviderUpnpOrgSwitchPower1Cpp::EnableActionGetTarget()
 {
     Zapp::Action* action = new Zapp::Action("GetTarget");
     action->AddOutputParameter(new ParameterBool("RetTargetValue"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgSwitchPower1Cpp::DoGetTarget);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgSwitchPower1Cpp::DoGetTarget);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgSwitchPower1Cpp::EnableActionGetStatus()
+void DvProviderUpnpOrgSwitchPower1Cpp::EnableActionGetStatus()
 {
     Zapp::Action* action = new Zapp::Action("GetStatus");
     action->AddOutputParameter(new ParameterRelated("ResultStatus", *iPropertyStatus));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgSwitchPower1Cpp::DoGetStatus);
+    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgSwitchPower1Cpp::DoGetStatus);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgSwitchPower1Cpp::DoSetTarget(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgSwitchPower1Cpp::DoSetTarget(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     bool newTargetValue = aInvocation.InvocationReadBool("newTargetValue");
@@ -58,7 +58,7 @@ void DvServiceUpnpOrgSwitchPower1Cpp::DoSetTarget(IDvInvocation& aInvocation, TU
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgSwitchPower1Cpp::DoGetTarget(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgSwitchPower1Cpp::DoGetTarget(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -70,7 +70,7 @@ void DvServiceUpnpOrgSwitchPower1Cpp::DoGetTarget(IDvInvocation& aInvocation, TU
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgSwitchPower1Cpp::DoGetStatus(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgSwitchPower1Cpp::DoGetStatus(IDvInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -82,17 +82,17 @@ void DvServiceUpnpOrgSwitchPower1Cpp::DoGetStatus(IDvInvocation& aInvocation, TU
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgSwitchPower1Cpp::SetTarget(uint32_t /*aVersion*/, bool /*anewTargetValue*/)
+void DvProviderUpnpOrgSwitchPower1Cpp::SetTarget(uint32_t /*aVersion*/, bool /*anewTargetValue*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgSwitchPower1Cpp::GetTarget(uint32_t /*aVersion*/, bool& /*aRetTargetValue*/)
+void DvProviderUpnpOrgSwitchPower1Cpp::GetTarget(uint32_t /*aVersion*/, bool& /*aRetTargetValue*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgSwitchPower1Cpp::GetStatus(uint32_t /*aVersion*/, bool& /*aResultStatus*/)
+void DvProviderUpnpOrgSwitchPower1Cpp::GetStatus(uint32_t /*aVersion*/, bool& /*aResultStatus*/)
 {
     ASSERTS();
 }

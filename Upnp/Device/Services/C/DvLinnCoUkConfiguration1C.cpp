@@ -7,10 +7,10 @@
 
 using namespace Zapp;
 
-class DvServiceLinnCoUkConfiguration1C : public DvServiceLinnCoUkConfiguration1
+class DvProviderLinnCoUkConfiguration1C : public DvProviderLinnCoUkConfiguration1
 {
 public:
-    DvServiceLinnCoUkConfiguration1C(DvDevice& aDevice);
+    DvProviderLinnCoUkConfiguration1C(DvDevice& aDevice);
     void EnableActionConfigurationXml(CallbackConfiguration1ConfigurationXml aCallback, void* aPtr);
     void EnableActionParameterXml(CallbackConfiguration1ParameterXml aCallback, void* aPtr);
     void EnableActionSetParameter(CallbackConfiguration1SetParameter aCallback, void* aPtr);
@@ -27,33 +27,33 @@ private:
     void* iPtrSetParameter;
 };
 
-DvServiceLinnCoUkConfiguration1C::DvServiceLinnCoUkConfiguration1C(DvDevice& aDevice)
-    : DvServiceLinnCoUkConfiguration1(aDevice)
+DvProviderLinnCoUkConfiguration1C::DvProviderLinnCoUkConfiguration1C(DvDevice& aDevice)
+    : DvProviderLinnCoUkConfiguration1(aDevice)
 {
 }
 
-void DvServiceLinnCoUkConfiguration1C::EnableActionConfigurationXml(CallbackConfiguration1ConfigurationXml aCallback, void* aPtr)
+void DvProviderLinnCoUkConfiguration1C::EnableActionConfigurationXml(CallbackConfiguration1ConfigurationXml aCallback, void* aPtr)
 {
     iCallbackConfigurationXml = aCallback;
     iPtrConfigurationXml = aPtr;
-    DvServiceLinnCoUkConfiguration1::EnableActionConfigurationXml();
+    DvProviderLinnCoUkConfiguration1::EnableActionConfigurationXml();
 }
 
-void DvServiceLinnCoUkConfiguration1C::EnableActionParameterXml(CallbackConfiguration1ParameterXml aCallback, void* aPtr)
+void DvProviderLinnCoUkConfiguration1C::EnableActionParameterXml(CallbackConfiguration1ParameterXml aCallback, void* aPtr)
 {
     iCallbackParameterXml = aCallback;
     iPtrParameterXml = aPtr;
-    DvServiceLinnCoUkConfiguration1::EnableActionParameterXml();
+    DvProviderLinnCoUkConfiguration1::EnableActionParameterXml();
 }
 
-void DvServiceLinnCoUkConfiguration1C::EnableActionSetParameter(CallbackConfiguration1SetParameter aCallback, void* aPtr)
+void DvProviderLinnCoUkConfiguration1C::EnableActionSetParameter(CallbackConfiguration1SetParameter aCallback, void* aPtr)
 {
     iCallbackSetParameter = aCallback;
     iPtrSetParameter = aPtr;
-    DvServiceLinnCoUkConfiguration1::EnableActionSetParameter();
+    DvProviderLinnCoUkConfiguration1::EnableActionSetParameter();
 }
 
-void DvServiceLinnCoUkConfiguration1C::ConfigurationXml(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaConfigurationXml)
+void DvProviderLinnCoUkConfiguration1C::ConfigurationXml(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaConfigurationXml)
 {
     char* aConfigurationXml;
     ASSERT(iCallbackConfigurationXml != NULL);
@@ -69,7 +69,7 @@ void DvServiceLinnCoUkConfiguration1C::ConfigurationXml(IInvocationResponse& aRe
     aResponse.End();
 }
 
-void DvServiceLinnCoUkConfiguration1C::ParameterXml(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaParameterXml)
+void DvProviderLinnCoUkConfiguration1C::ParameterXml(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaParameterXml)
 {
     char* aParameterXml;
     ASSERT(iCallbackParameterXml != NULL);
@@ -85,7 +85,7 @@ void DvServiceLinnCoUkConfiguration1C::ParameterXml(IInvocationResponse& aRespon
     aResponse.End();
 }
 
-void DvServiceLinnCoUkConfiguration1C::SetParameter(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaTarget, const Brx& aaName, const Brx& aaValue)
+void DvProviderLinnCoUkConfiguration1C::SetParameter(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaTarget, const Brx& aaName, const Brx& aaValue)
 {
     ASSERT(iCallbackSetParameter != NULL);
     if (0 != iCallbackSetParameter(iPtrSetParameter, aVersion, (const char*)aaTarget.Ptr(), (const char*)aaName.Ptr(), (const char*)aaValue.Ptr())) {
@@ -98,56 +98,56 @@ void DvServiceLinnCoUkConfiguration1C::SetParameter(IInvocationResponse& aRespon
 
 
 
-THandle DvServiceLinnCoUkConfiguration1Create(DvDeviceC aDevice)
+THandle DvProviderLinnCoUkConfiguration1Create(DvDeviceC aDevice)
 {
-	return new DvServiceLinnCoUkConfiguration1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderLinnCoUkConfiguration1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvServiceLinnCoUkConfiguration1Destroy(THandle aService)
+void DvProviderLinnCoUkConfiguration1Destroy(THandle aProvider)
 {
-    delete reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService);
+    delete reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aProvider);
 }
 
-void DvServiceLinnCoUkConfiguration1EnableActionConfigurationXml(THandle aService, CallbackConfiguration1ConfigurationXml aCallback, void* aPtr)
+void DvProviderLinnCoUkConfiguration1EnableActionConfigurationXml(THandle aProvider, CallbackConfiguration1ConfigurationXml aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService)->EnableActionConfigurationXml(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aProvider)->EnableActionConfigurationXml(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkConfiguration1EnableActionParameterXml(THandle aService, CallbackConfiguration1ParameterXml aCallback, void* aPtr)
+void DvProviderLinnCoUkConfiguration1EnableActionParameterXml(THandle aProvider, CallbackConfiguration1ParameterXml aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService)->EnableActionParameterXml(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aProvider)->EnableActionParameterXml(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkConfiguration1EnableActionSetParameter(THandle aService, CallbackConfiguration1SetParameter aCallback, void* aPtr)
+void DvProviderLinnCoUkConfiguration1EnableActionSetParameter(THandle aProvider, CallbackConfiguration1SetParameter aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService)->EnableActionSetParameter(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aProvider)->EnableActionSetParameter(aCallback, aPtr);
 }
 
-int32_t DvServiceLinnCoUkConfiguration1SetPropertyConfigurationXml(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkConfiguration1SetPropertyConfigurationXml(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService)->SetPropertyConfigurationXml(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aProvider)->SetPropertyConfigurationXml(buf)? 1 : 0);
     return 0;
 }
 
-void DvServiceLinnCoUkConfiguration1GetPropertyConfigurationXml(THandle aService, char** aValue)
+void DvProviderLinnCoUkConfiguration1GetPropertyConfigurationXml(THandle aProvider, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService)->GetPropertyConfigurationXml(buf);
+    reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aProvider)->GetPropertyConfigurationXml(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkConfiguration1SetPropertyParameterXml(THandle aService, const char* aValue, uint32_t* aChanged)
+int32_t DvProviderLinnCoUkConfiguration1SetPropertyParameterXml(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    *aChanged = (reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService)->SetPropertyParameterXml(buf)? 1 : 0);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aProvider)->SetPropertyParameterXml(buf)? 1 : 0);
     return 0;
 }
 
-void DvServiceLinnCoUkConfiguration1GetPropertyParameterXml(THandle aService, char** aValue)
+void DvProviderLinnCoUkConfiguration1GetPropertyParameterXml(THandle aProvider, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkConfiguration1C*>(aService)->GetPropertyParameterXml(buf);
+    reinterpret_cast<DvProviderLinnCoUkConfiguration1C*>(aProvider)->GetPropertyParameterXml(buf);
     *aValue = (char*)buf.Transfer();
 }
 

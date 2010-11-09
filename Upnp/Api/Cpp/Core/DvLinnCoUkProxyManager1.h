@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,10 +17,10 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:ProxyManager:1
  */
-class DvServiceLinnCoUkProxyManager1 : public DvService
+class DvProviderLinnCoUkProxyManager1 : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkProxyManager1() {}
+    virtual ~DvProviderLinnCoUkProxyManager1() {}
     TBool SetPropertyKontrolProductConnected(const Brx& aValue);
     void GetPropertyKontrolProductConnected(Brhz& aValue);
     TBool SetPropertyKontrolProductComPort(TUint aValue);
@@ -30,7 +30,7 @@ public:
     TBool SetPropertyDiscPlayerComPort(TUint aValue);
     void GetPropertyDiscPlayerComPort(TUint& aValue);
 protected:
-    DvServiceLinnCoUkProxyManager1(DvDevice& aDevice);
+    DvProviderLinnCoUkProxyManager1(DvDevice& aDevice);
     void EnableActionKontrolProductConnected();
     void EnableActionSetKontrolProductConnected();
     void EnableActionKontrolProductComPort();
@@ -53,7 +53,7 @@ private:
     virtual void TestKontrolProductConnection(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaResult);
     virtual void TestDiscPlayerConnection(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaResult);
 private:
-    DvServiceLinnCoUkProxyManager1();
+    DvProviderLinnCoUkProxyManager1();
     void DoKontrolProductConnected(IDvInvocation& aInvocation, TUint aVersion);
     void DoSetKontrolProductConnected(IDvInvocation& aInvocation, TUint aVersion);
     void DoKontrolProductComPort(IDvInvocation& aInvocation, TUint aVersion);

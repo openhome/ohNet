@@ -5,28 +5,28 @@ using Zapp;
 
 namespace Zapp
 {
-    public class DvServiceLinnCoUkProduct1 : IDisposable
+    public class DvProviderLinnCoUkProduct1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkProduct1")]
-        static extern uint DvServiceLinnCoUkProduct1Create(uint aDeviceHandle);
+        static extern uint DvProviderLinnCoUkProduct1Create(uint aDeviceHandle);
         [DllImport("DvLinnCoUkProduct1")]
-        static extern void DvServiceLinnCoUkProduct1Destroy(uint aHandle);
+        static extern void DvProviderLinnCoUkProduct1Destroy(uint aHandle);
         [DllImport("DvLinnCoUkProduct1")]
-        static extern unsafe int DvServiceLinnCoUkProduct1SetPropertyRoom(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkProduct1SetPropertyRoom(uint aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct1")]
-        static extern unsafe void DvServiceLinnCoUkProduct1GetPropertyRoom(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkProduct1GetPropertyRoom(uint aHandle, char** aValue);
         [DllImport("DvLinnCoUkProduct1")]
-        static extern unsafe int DvServiceLinnCoUkProduct1SetPropertyStandby(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkProduct1SetPropertyStandby(uint aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct1")]
-        static extern unsafe void DvServiceLinnCoUkProduct1GetPropertyStandby(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkProduct1GetPropertyStandby(uint aHandle, int* aValue);
         [DllImport("DvLinnCoUkProduct1")]
-        static extern void DvServiceLinnCoUkProduct1EnableActionRoom(uint aHandle, CallbackRoom aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct1EnableActionRoom(uint aHandle, CallbackRoom aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct1")]
-        static extern void DvServiceLinnCoUkProduct1EnableActionSetRoom(uint aHandle, CallbackSetRoom aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct1EnableActionSetRoom(uint aHandle, CallbackSetRoom aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct1")]
-        static extern void DvServiceLinnCoUkProduct1EnableActionStandby(uint aHandle, CallbackStandby aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct1EnableActionStandby(uint aHandle, CallbackStandby aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct1")]
-        static extern void DvServiceLinnCoUkProduct1EnableActionSetStandby(uint aHandle, CallbackSetStandby aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct1EnableActionSetStandby(uint aHandle, CallbackSetStandby aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -35,16 +35,15 @@ namespace Zapp
         private unsafe delegate int CallbackStandby(IntPtr aPtr, uint aVersion, int* aaStandby);
         private unsafe delegate int CallbackSetStandby(IntPtr aPtr, uint aVersion, int aaStandby);
 
-        private uint iHandle;
         private GCHandle iGch;
         private CallbackRoom iCallbackRoom;
         private CallbackSetRoom iCallbackSetRoom;
         private CallbackStandby iCallbackStandby;
         private CallbackSetStandby iCallbackSetStandby;
 
-        public DvServiceLinnCoUkProduct1(DvDevice aDevice)
+        public DvProviderLinnCoUkProduct1(DvDevice aDevice)
         {
-            iHandle = DvServiceLinnCoUkProduct1Create(aDevice.Handle()); 
+            iHandle = DvProviderLinnCoUkProduct1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
@@ -52,7 +51,7 @@ namespace Zapp
         {
         uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkProduct1SetPropertyRoom(iHandle, value, &changed);
+            int err = DvProviderLinnCoUkProduct1SetPropertyRoom(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
@@ -64,7 +63,7 @@ namespace Zapp
         public unsafe void GetPropertyRoom(out string aValue)
         {
             char* value;
-            DvServiceLinnCoUkProduct1GetPropertyRoom(iHandle, &value);
+            DvProviderLinnCoUkProduct1GetPropertyRoom(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
@@ -73,7 +72,7 @@ namespace Zapp
         {
         uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkProduct1SetPropertyStandby(iHandle, value, &changed))
+            if (0 != DvProviderLinnCoUkProduct1SetPropertyStandby(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
@@ -83,7 +82,7 @@ namespace Zapp
         public unsafe void GetPropertyStandby(out bool aValue)
         {
             int value;
-            DvServiceLinnCoUkProduct1GetPropertyStandby(iHandle, &value);
+            DvProviderLinnCoUkProduct1GetPropertyStandby(iHandle, &value);
             aValue = (value != 0);
         }
 
@@ -91,28 +90,28 @@ namespace Zapp
         {
             iCallbackRoom = new CallbackRoom(DoRoom);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct1EnableActionRoom(iHandle, iCallbackRoom, ptr);
+            DvProviderLinnCoUkProduct1EnableActionRoom(iHandle, iCallbackRoom, ptr);
         }
 
         protected unsafe void EnableActionSetRoom()
         {
             iCallbackSetRoom = new CallbackSetRoom(DoSetRoom);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct1EnableActionSetRoom(iHandle, iCallbackSetRoom, ptr);
+            DvProviderLinnCoUkProduct1EnableActionSetRoom(iHandle, iCallbackSetRoom, ptr);
         }
 
         protected unsafe void EnableActionStandby()
         {
             iCallbackStandby = new CallbackStandby(DoStandby);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct1EnableActionStandby(iHandle, iCallbackStandby, ptr);
+            DvProviderLinnCoUkProduct1EnableActionStandby(iHandle, iCallbackStandby, ptr);
         }
 
         protected unsafe void EnableActionSetStandby()
         {
             iCallbackSetStandby = new CallbackSetStandby(DoSetStandby);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct1EnableActionSetStandby(iHandle, iCallbackSetStandby, ptr);
+            DvProviderLinnCoUkProduct1EnableActionSetStandby(iHandle, iCallbackSetStandby, ptr);
         }
 
         protected virtual void Room(uint aVersion, out string aaRoom)
@@ -138,7 +137,7 @@ namespace Zapp
         private static unsafe int DoRoom(IntPtr aPtr, uint aVersion, char** aaRoom)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct1 self = (DvServiceLinnCoUkProduct1)gch.Target;
+            DvProviderLinnCoUkProduct1 self = (DvProviderLinnCoUkProduct1)gch.Target;
             string aRoom;
             self.Room(aVersion, out aRoom);
             *aaRoom = (char*)Marshal.StringToHGlobalAnsi(aRoom).ToPointer();
@@ -148,7 +147,7 @@ namespace Zapp
         private static unsafe int DoSetRoom(IntPtr aPtr, uint aVersion, char* aaRoom)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct1 self = (DvServiceLinnCoUkProduct1)gch.Target;
+            DvProviderLinnCoUkProduct1 self = (DvProviderLinnCoUkProduct1)gch.Target;
             string aRoom = Marshal.PtrToStringAnsi((IntPtr)aaRoom);
             self.SetRoom(aVersion, aRoom);
             return 0;
@@ -157,7 +156,7 @@ namespace Zapp
         private static unsafe int DoStandby(IntPtr aPtr, uint aVersion, int* aaStandby)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct1 self = (DvServiceLinnCoUkProduct1)gch.Target;
+            DvProviderLinnCoUkProduct1 self = (DvProviderLinnCoUkProduct1)gch.Target;
             bool aStandby;
             self.Standby(aVersion, out aStandby);
             *aaStandby = (aStandby ? 1 : 0);
@@ -167,7 +166,7 @@ namespace Zapp
         private static unsafe int DoSetStandby(IntPtr aPtr, uint aVersion, int aaStandby)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct1 self = (DvServiceLinnCoUkProduct1)gch.Target;
+            DvProviderLinnCoUkProduct1 self = (DvProviderLinnCoUkProduct1)gch.Target;
             bool aStandby = (aaStandby != 0);
             self.SetStandby(aVersion, aStandby);
             return 0;
@@ -180,7 +179,7 @@ namespace Zapp
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceLinnCoUkProduct1()
+        ~DvProviderLinnCoUkProduct1()
         {
             DoDispose();
         }
@@ -197,7 +196,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = 0;
             }
-            DvServiceLinnCoUkProduct1Destroy(handle);
+            DvProviderLinnCoUkProduct1Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

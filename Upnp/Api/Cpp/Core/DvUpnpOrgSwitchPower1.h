@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,14 +17,14 @@ class PropertyBinary;
 /**
  * Base Device for upnp.org:SwitchPower:1
  */
-class DvServiceUpnpOrgSwitchPower1 : public DvService
+class DvProviderUpnpOrgSwitchPower1 : public DvProvider
 {
 public:
-    virtual ~DvServiceUpnpOrgSwitchPower1() {}
+    virtual ~DvProviderUpnpOrgSwitchPower1() {}
     TBool SetPropertyStatus(TBool aValue);
     void GetPropertyStatus(TBool& aValue);
 protected:
-    DvServiceUpnpOrgSwitchPower1(DvDevice& aDevice);
+    DvProviderUpnpOrgSwitchPower1(DvDevice& aDevice);
     void EnableActionSetTarget();
     void EnableActionGetTarget();
     void EnableActionGetStatus();
@@ -33,7 +33,7 @@ private:
     virtual void GetTarget(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aRetTargetValue);
     virtual void GetStatus(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aResultStatus);
 private:
-    DvServiceUpnpOrgSwitchPower1();
+    DvProviderUpnpOrgSwitchPower1();
     void DoSetTarget(IDvInvocation& aInvocation, TUint aVersion);
     void DoGetTarget(IDvInvocation& aInvocation, TUint aVersion);
     void DoGetStatus(IDvInvocation& aInvocation, TUint aVersion);

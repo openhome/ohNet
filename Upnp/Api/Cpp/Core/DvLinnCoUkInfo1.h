@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,10 +17,10 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Info:1
  */
-class DvServiceLinnCoUkInfo1 : public DvService
+class DvProviderLinnCoUkInfo1 : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkInfo1() {}
+    virtual ~DvProviderLinnCoUkInfo1() {}
     TBool SetPropertyTrackCount(TUint aValue);
     void GetPropertyTrackCount(TUint& aValue);
     TBool SetPropertyDetailsCount(TUint aValue);
@@ -46,7 +46,7 @@ public:
     TBool SetPropertyMetatext(const Brx& aValue);
     void GetPropertyMetatext(Brhz& aValue);
 protected:
-    DvServiceLinnCoUkInfo1(DvDevice& aDevice);
+    DvProviderLinnCoUkInfo1(DvDevice& aDevice);
     void EnableActionCounters();
     void EnableActionTrack();
     void EnableActionDetails();
@@ -57,7 +57,7 @@ private:
     virtual void Details(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaDuration, IInvocationResponseUint& aaBitRate, IInvocationResponseUint& aaBitDepth, IInvocationResponseUint& aaSampleRate, IInvocationResponseBool& aaLossless, IInvocationResponseString& aaCodecName);
     virtual void Metatext(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaMetatext);
 private:
-    DvServiceLinnCoUkInfo1();
+    DvProviderLinnCoUkInfo1();
     void DoCounters(IDvInvocation& aInvocation, TUint aVersion);
     void DoTrack(IDvInvocation& aInvocation, TUint aVersion);
     void DoDetails(IDvInvocation& aInvocation, TUint aVersion);

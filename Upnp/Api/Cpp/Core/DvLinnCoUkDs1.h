@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,10 +17,10 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Ds:1
  */
-class DvServiceLinnCoUkDs1 : public DvService
+class DvProviderLinnCoUkDs1 : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkDs1() {}
+    virtual ~DvProviderLinnCoUkDs1() {}
     TBool SetPropertySupportedProtocols(const Brx& aValue);
     void GetPropertySupportedProtocols(Brhz& aValue);
     TBool SetPropertyTrackDuration(TUint aValue);
@@ -40,7 +40,7 @@ public:
     TBool SetPropertyTransportState(const Brx& aValue);
     void GetPropertyTransportState(Brhz& aValue);
 protected:
-    DvServiceLinnCoUkDs1(DvDevice& aDevice);
+    DvProviderLinnCoUkDs1(DvDevice& aDevice);
     void EnableActionPlay();
     void EnableActionPause();
     void EnableActionStop();
@@ -63,7 +63,7 @@ private:
     virtual void State(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaTransportState, IInvocationResponseUint& aaTrackDuration, IInvocationResponseUint& aaTrackBitRate, IInvocationResponseBool& aaTrackLossless, IInvocationResponseUint& aaTrackBitDepth, IInvocationResponseUint& aaTrackSampleRate, IInvocationResponseString& aaTrackCodecName, IInvocationResponseUint& aaTrackId);
     virtual void ProtocolInfo(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaSupportedProtocols);
 private:
-    DvServiceLinnCoUkDs1();
+    DvProviderLinnCoUkDs1();
     void DoPlay(IDvInvocation& aInvocation, TUint aVersion);
     void DoPause(IDvInvocation& aInvocation, TUint aVersion);
     void DoStop(IDvInvocation& aInvocation, TUint aVersion);

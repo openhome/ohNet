@@ -46,6 +46,8 @@ namespace Zapp
         [DllImport("ZappUpnp")]
         static extern void ZappInitParamsSetDvNumPublisherThreads(uint aParams, uint aNumThreads);
         [DllImport("ZappUpnp")]
+        static extern void ZappInitParamsSetDvNumWebSocketThreads(uint aParams, uint aNumThreads);
+        [DllImport("ZappUpnp")]
         static extern void ZappInitParamsSetUseLoopbackNetworkInterface(uint aParams);
         [DllImport("ZappUpnp")]
         static extern int ZappInitParamsTcpConnectTimeoutMs(uint aParams);
@@ -69,6 +71,8 @@ namespace Zapp
         static extern int ZappInitParamsDvMaxUpdateTimeSecs(uint aParams);
         [DllImport("ZappUpnp")]
         static extern int ZappInitParamsDvNumPublisherThreads(uint aParams);
+        [DllImport("ZappUpnp")]
+        static extern int ZappInitParamsDvNumWebSocketThreads(uint aParams);
 
         public InitParams()
         {
@@ -172,6 +176,11 @@ namespace Zapp
             ZappInitParamsSetDvNumPublisherThreads(iHandle, aNumThreads);
         }
 
+        public void SetDvNumWebSocketThreads(uint aNumThreads)
+        {
+            ZappInitParamsSetDvNumWebSocketThreads(iHandle, aNumThreads);
+        }
+
         public void SetUseLoopbackNetworkInterface()
         {
             ZappInitParamsSetUseLoopbackNetworkInterface(iHandle);
@@ -230,6 +239,11 @@ namespace Zapp
         public int DvNumPublisherThreads()
         {
             return ZappInitParamsDvNumPublisherThreads(iHandle);
+        }
+
+        public int DvNumWebSocketThreads()
+        {
+            return ZappInitParamsDvNumWebSocketThreads(iHandle);
         }
 
         public void Dispose()

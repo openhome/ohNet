@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,10 +17,10 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Playlist:1
  */
-class DvServiceLinnCoUkPlaylist1 : public DvService
+class DvProviderLinnCoUkPlaylist1 : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkPlaylist1() {}
+    virtual ~DvProviderLinnCoUkPlaylist1() {}
     TBool SetPropertyIdArray(const Brx& aValue);
     void GetPropertyIdArray(Brh& aValue);
     TBool SetPropertyRepeat(TBool aValue);
@@ -30,7 +30,7 @@ public:
     TBool SetPropertyTracksMax(TUint aValue);
     void GetPropertyTracksMax(TUint& aValue);
 protected:
-    DvServiceLinnCoUkPlaylist1(DvDevice& aDevice);
+    DvProviderLinnCoUkPlaylist1(DvDevice& aDevice);
     void EnableActionRead();
     void EnableActionReadList();
     void EnableActionInsert();
@@ -57,7 +57,7 @@ private:
     virtual void IdArray(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaIdArrayToken, IInvocationResponseBinary& aaIdArray);
     virtual void IdArrayChanged(IInvocationResponse& aResponse, TUint aVersion, TUint aaIdArrayToken, IInvocationResponseBool& aaIdArrayChanged);
 private:
-    DvServiceLinnCoUkPlaylist1();
+    DvProviderLinnCoUkPlaylist1();
     void DoRead(IDvInvocation& aInvocation, TUint aVersion);
     void DoReadList(IDvInvocation& aInvocation, TUint aVersion);
     void DoInsert(IDvInvocation& aInvocation, TUint aVersion);

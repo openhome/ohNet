@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Std/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 #include <string>
 
@@ -20,10 +20,10 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Ui:2
  */
-class DvServiceLinnCoUkUi2Cpp : public DvService
+class DvProviderLinnCoUkUi2Cpp : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkUi2Cpp() {}
+    virtual ~DvProviderLinnCoUkUi2Cpp() {}
     bool SetPropertyDisplayBrightness(uint32_t aValue);
     void GetPropertyDisplayBrightness(uint32_t& aValue);
     bool SetPropertyDisplayBrightnessAuto(bool aValue);
@@ -47,7 +47,7 @@ public:
     bool SetPropertyDisplayPixels(const std::string& aValue);
     void GetPropertyDisplayPixels(std::string& aValue);
 protected:
-    DvServiceLinnCoUkUi2Cpp(DvDeviceStd& aDevice);
+    DvProviderLinnCoUkUi2Cpp(DvDeviceStd& aDevice);
     void EnableActionDisplayTestPattern();
     void EnableActionDisplayFill();
     void EnableActionDisplayClear();
@@ -98,7 +98,7 @@ private:
     virtual void SetDisplayLedOff(uint32_t aVersion, bool aaOff);
     virtual void DisplayLedOff(uint32_t aVersion, bool& aaOff);
 private:
-    DvServiceLinnCoUkUi2Cpp();
+    DvProviderLinnCoUkUi2Cpp();
     void DoDisplayTestPattern(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoDisplayFill(IDvInvocation& aInvocation, uint32_t aVersion);
     void DoDisplayClear(IDvInvocation& aInvocation, uint32_t aVersion);

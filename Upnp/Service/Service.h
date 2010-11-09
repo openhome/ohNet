@@ -171,7 +171,6 @@ public:
 class IPropertyWriter
 {
 public:
-//    virtual void PropertyWriteBegin(const Endpoint& aSubscriber, const Brx& aSid, TUint aSequenceNumber) = 0;
     virtual void PropertyWriteString(const Brx& aName, const Brx& aValue) = 0;
     virtual void PropertyWriteInt(const Brx& aName, TInt aValue) = 0;
     virtual void PropertyWriteUint(const Brx& aName, TUint aValue) = 0;

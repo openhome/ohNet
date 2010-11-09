@@ -4,7 +4,7 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
@@ -17,12 +17,12 @@ class PropertyBinary;
 /**
  * Base Device for linn.co.uk:Ptest:1
  */
-class DvServiceLinnCoUkPtest1 : public DvService
+class DvProviderLinnCoUkPtest1 : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkPtest1() {}
+    virtual ~DvProviderLinnCoUkPtest1() {}
 protected:
-    DvServiceLinnCoUkPtest1(DvDevice& aDevice);
+    DvProviderLinnCoUkPtest1(DvDevice& aDevice);
     void EnableActionTestComPort();
     void EnableActionLedsOn();
     void EnableActionLedsOff();
@@ -31,7 +31,7 @@ private:
     virtual void LedsOn(IInvocationResponse& aResponse, TUint aVersion);
     virtual void LedsOff(IInvocationResponse& aResponse, TUint aVersion);
 private:
-    DvServiceLinnCoUkPtest1();
+    DvProviderLinnCoUkPtest1();
     void DoTestComPort(IDvInvocation& aInvocation, TUint aVersion);
     void DoLedsOn(IDvInvocation& aInvocation, TUint aVersion);
     void DoLedsOff(IDvInvocation& aInvocation, TUint aVersion);
