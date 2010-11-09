@@ -219,10 +219,14 @@ OhmSocket::~OhmSocket()
 }
 
 
+////////////////////////////////////////////////////////
+// OHM Protocol                        
+    
+
+
 // OhmHeader
 
-
-const Brn OhmHeader::kMpus("Mpus");
+const Brn OhmHeader::kOhm("Mpus");
 
 OhmHeader::OhmHeader()
     : iMsgType(kMsgTypeJoin)
@@ -240,28 +244,28 @@ void OhmHeader::Internalise(IReader& aReader)
 {
     ReaderBinary reader(aReader);
 
-    Brn mpus = reader.Read(4);
+    Brn ohm = reader.Read(4);
     
-    if(mpus != kMpus) {
-        THROW(OhmHeaderInvalid);
+    if(ohm != kOhm) {
+        THROW(OhmError);
     }
 
     TUint major = reader.ReadUintBe(1);
 
     if(major != kMajor) {
-        THROW(OhmHeaderInvalid);
+        THROW(OhmError);
     }
 
     iMsgType  = reader.ReadUintBe(1);
 
     if(iMsgType > kMsgTypeMetatext) {
-        THROW(OhmHeaderInvalid);
+        THROW(OhmError);
     }
 
     iBytes = reader.ReadUintBe(2);
     
     if (iBytes < kHeaderBytes) {
-        THROW(OhmHeaderInvalid);
+        THROW(OhmError);
     }
 }
 
@@ -269,7 +273,7 @@ void OhmHeader::Externalise(IWriter& aWriter) const
 {
     WriterBinary writer(aWriter);
 
-    writer.Write(kMpus);
+    writer.Write(kOhm);
     writer.WriteUint8(kMajor);
     writer.WriteUint8(iMsgType);
     writer.WriteUint16Be(iBytes);
@@ -320,7 +324,7 @@ void OhmHeaderAudio::Internalise(IReader& aReader, const OhmHeader& aHeader)
     TUint headerBytes = readerBinary.ReadUintBe(1);
 
     if (headerBytes != kHeaderBytes) {
-        THROW(OhmHeaderInvalid);
+        THROW(OhmError);
     }
 
     iHalt = false;
@@ -349,7 +353,7 @@ void OhmHeaderAudio::Internalise(IReader& aReader, const OhmHeader& aHeader)
     TUint reserved = readerBinary.ReadUintBe(1);
     
     if(reserved != kReserved) {
-        THROW(OhmHeaderInvalid);
+        THROW(OhmError);
     }
     
     TUint bytes = readerBinary.ReadUintBe(1);
@@ -456,4 +460,123 @@ void OhmHeaderMetatext::Externalise(IWriter& aWriter) const
 
     writer.WriteUint32Be(iMetatextBytes);
 }
+    
+
+////////////////////////////////////////////////////////
+// OHZ Protocol                        
+    
+    
+// OhzHeader
+
+const Brn OhzHeader::kOhz("Zpus");
+
+OhzHeader::OhzHeader()
+    : iMsgType(kMsgTypeQuery)
+    , iBytes(kHeaderBytes)
+{
+}
+
+OhzHeader::OhzHeader(TUint aMsgType, TUint aMsgBytes)
+    : iMsgType(aMsgType)
+    , iBytes(kHeaderBytes + aMsgBytes)
+{
+}
+
+void OhzHeader::Internalise(IReader& aReader)
+{
+    ReaderBinary reader(aReader);
+
+    Brn ohz = reader.Read(4);
+
+    if(ohz != kOhz) {
+        THROW(OhzError);
+    }
+
+    TUint major = reader.ReadUintBe(1);
+
+    if(major != kMajor) {
+        THROW(OhzError);
+    }
+
+    iMsgType  = reader.ReadUintBe(1);
+
+    if(iMsgType > kMsgTypeUri) {
+        THROW(OhzError);
+    }
+
+    iBytes = reader.ReadUintBe(2);
+    
+    if (iBytes < kHeaderBytes) {
+        THROW(OhzError);
+    }
+}
+
+void OhzHeader::Externalise(IWriter& aWriter) const
+{
+    WriterBinary writer(aWriter);
+
+    writer.Write(kOhz);
+    writer.WriteUint8(kMajor);
+    writer.WriteUint8(iMsgType);
+    writer.WriteUint16Be(iBytes);
+}
+
+// OhzHeaderUri
+
+OhzHeaderUri::OhzHeaderUri()
+{
+}
+
+OhzHeaderUri::OhzHeaderUri(const Brx& aZone, const Brx& aUri)
+{
+    iZoneBytes = aZone.Bytes();
+    iUriBytes = aUri.Bytes();
+}
+
+void OhzHeaderUri::Internalise(IReader& aReader, const OhzHeader& aHeader)
+{
+    ASSERT (aHeader.MsgType() == OhzHeader::kMsgTypeUri);
+    
+    ReaderBinary readerBinary(aReader);
+
+    iZoneBytes = readerBinary.ReadUintBe(4);
+    iUriBytes = readerBinary.ReadUintBe(4);
+}
+
+void OhzHeaderUri::Externalise(IWriter& aWriter) const
+{
+    WriterBinary writer(aWriter);
+
+    writer.WriteUint32Be(iZoneBytes);
+    writer.WriteUint32Be(iUriBytes);
+}
+
+// OhzHeaderQuery
+
+OhzHeaderQuery::OhzHeaderQuery()
+{
+}
+    
+OhzHeaderQuery::OhzHeaderQuery(const Brx& aQuery)
+{
+    iZoneBytes = aQuery.Bytes();
+}
+
+void OhzHeaderQuery::Internalise(IReader& aReader, const OhzHeader& aHeader)
+{
+    ASSERT (aHeader.MsgType() == OhzHeader::kMsgTypeQuery);
+    
+    ReaderBinary readerBinary(aReader);
+
+    iZoneBytes = readerBinary.ReadUintBe(4);
+}
+
+void OhzHeaderQuery::Externalise(IWriter& aWriter) const
+{
+    WriterBinary writer(aWriter);
+
+    writer.WriteUint32Be(iZoneBytes);
+}
+    
+    
     

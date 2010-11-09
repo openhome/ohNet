@@ -8,7 +8,6 @@
 #include <Thread.h>
 
 #include "Ohm.h"
-#include "DvMusicOpenhomeOrgSender1.h"
 
 namespace Zapp {
 
@@ -45,14 +44,12 @@ public:
     void StartTrack(TUint64 aSampleStart, TUint64 aSamplesTotal, const Brx& aUri, const Brx& aMetadata);
     
 	void SendAudio(const TByte* aData, TUint aBytes);
-	
-    //void Play(const Brx& aAudioBuffer);
-    //void SetTrack(const Brx& aUri, const Brx& aMetadata);
-    //void SetMetatext(const Brx& aValue);
+
+	void SetMetatext(const Brx& aValue);
     
 private:
     void RunPipeline();
-    void RunAudio();
+    void RunNetwork();
 
     void UpdateChannel();
     void UpdateMetadata();
@@ -73,9 +70,9 @@ private:
     Bws<kMaxNameBytes> iName;
     TUint iChannel;
     TBool iEnabled;
-    OhmSocket iSocketAudio;
-    Srs<kMaxAudioFrameBytes> iAudioRxBuf;
-    Bws<kMaxAudioFrameBytes> iAudioTxBuf;
+    OhmSocket iSocket;
+    Srs<kMaxAudioFrameBytes> iRxBuffer;
+    Bws<kMaxAudioFrameBytes> iTxBuffer;
     Mutex iMutexStartStop;
     Mutex iMutexActive;
     Semaphore iNetworkAudioDeactivated;
@@ -87,7 +84,7 @@ private:
     Endpoint iEndpoint;
     TBool iAliveJoined;
     TBool iAliveBlocked;
-    ThreadFunctor* iThreadAudio;
+    ThreadFunctor* iThreadNetwork;
     TUint iFrame;
     Bws<Ohm::kMaxUriBytes> iUri;
     Bws<kMaxMetadataBytes> iMetadata;
@@ -96,12 +93,12 @@ private:
     Bws<Ohm::kMaxTrackUriBytes> iTrackUri;
     Bws<Ohm::kMaxTrackMetadataBytes> iTrackMetadata;
     Bws<Ohm::kMaxTrackMetatextBytes> iTrackMetatext;
+    Bws<Ohm::kMaxCodecNameBytes> iCodecName;
     TUint iSampleRate;
     TUint iBitRate;
     TUint iChannels;
     TUint iBitDepth;
     TBool iLossless;
-    Bws<Ohm::kMaxCodecNameBytes> iCodecName;
     TUint64 iSampleStart;
     TUint64 iSamplesTotal;
     TUint iTimestamp;
