@@ -181,7 +181,6 @@ namespace Zapp
     {
         private List<CpDevice> iDeviceList;
         private Semaphore iUpdatesComplete;
-        private Semaphore iSingleChanged;
         private const uint kTestIterations = 10;
 
         public Runner()
@@ -189,7 +188,6 @@ namespace Zapp
             Console.Write("TestDvDeviceCs - starting\n");
 
             iUpdatesComplete = new Semaphore(0, Int32.MaxValue);
-            iSingleChanged = new Semaphore(0, Int32.MaxValue);
             DeviceBasic device = new DeviceBasic();
             iDeviceList = new List<CpDevice>();
             CpDeviceList.ChangeHandler added = new CpDeviceList.ChangeHandler(DeviceAdded);
@@ -272,14 +270,6 @@ namespace Zapp
             proxy.Subscribe();
             iUpdatesComplete.WaitOne(); // wait for initial event
 
-            // set callbacks for individual property changes now to avoid all being run by initial event
-            proxy.SetPropertyVarUintChanged(SingleChanged);
-            proxy.SetPropertyVarIntChanged(SingleChanged);
-            proxy.SetPropertyVarBoolChanged(SingleChanged);
-            proxy.SetPropertyVarStrChanged(SingleChanged);
-            proxy.SetPropertyVarBinChanged(SingleChanged);
-
-
             /* For each property,
                  call its setter action
                  wait on a property being updated
@@ -289,7 +279,7 @@ namespace Zapp
 
             Console.Write("    Uint...\n");
             proxy.SyncSetUint(1);
-            iSingleChanged.WaitOne();
+            iUpdatesComplete.WaitOne();
             uint propUint;
             proxy.PropertyVarUint(out propUint);
             Debug.Assert(propUint == 1);
@@ -299,7 +289,7 @@ namespace Zapp
 
             Console.Write("    Int...\n");
             proxy.SyncSetInt(-99);
-            iSingleChanged.WaitOne();
+            iUpdatesComplete.WaitOne();
             int propInt;
             proxy.PropertyVarInt(out propInt);
             Debug.Assert(propInt == -99);
@@ -309,7 +299,7 @@ namespace Zapp
 
             Console.Write("    Bool...\n");
             proxy.SyncSetBool(true);
-            iSingleChanged.WaitOne();
+            iUpdatesComplete.WaitOne();
             bool propBool;
             proxy.PropertyVarBool(out propBool);
             Debug.Assert(propBool);
@@ -320,7 +310,7 @@ namespace Zapp
             Console.Write("    String...\n");
             string str = "<&'tag\">";
             proxy.SyncSetString(str);
-            iSingleChanged.WaitOne();
+            iUpdatesComplete.WaitOne();
             string propStr;
             proxy.PropertyVarStr(out propStr);
             Debug.Assert(propStr == str);
@@ -340,7 +330,7 @@ namespace Zapp
             bin[127] = '\0';
             string bufBin = new string(bin);
             proxy.SyncSetBinary(bufBin);
-            iSingleChanged.WaitOne();
+            iUpdatesComplete.WaitOne();
             string propBin;
             proxy.PropertyVarBin(out propBin);
             Debug.Assert(propBin == bufBin);
@@ -352,13 +342,6 @@ namespace Zapp
             Debug.Assert(propBin == valBin);
 
             Console.Write("    Multiple...\n");
-            int waitCount = iUpdatesComplete.Release();
-            waitCount++;
-            while (waitCount > 0)
-            {
-                iUpdatesComplete.WaitOne();
-                waitCount--;
-            }
             proxy.SyncSetMultiple(15, 658, false);
             iUpdatesComplete.WaitOne();
             proxy.PropertyVarUint(out propUint);
@@ -382,11 +365,6 @@ namespace Zapp
             iUpdatesComplete.Release();
         }
 
-        private void SingleChanged()
-        {
-            iSingleChanged.Release();
-        }
-        
         private void DeviceAdded(CpDeviceList aList, CpDevice aDevice)
         {
             lock (this)
