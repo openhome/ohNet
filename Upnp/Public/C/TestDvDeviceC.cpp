@@ -220,12 +220,10 @@ public:
     void TestSubscriptions();
     void Added(CpDeviceC aDevice);
     void Removed(CpDeviceC aDevice);
-    void SingleChanged();
     void UpdatesComplete();
 private:
     Mutex iLock;
     std::vector<CpDeviceC> iList;
-    Semaphore iSingleChanged;
     Semaphore iUpdatesComplete;
 };
 
@@ -240,11 +238,6 @@ static void removed(void* aPtr, CpDeviceC aDevice)
     reinterpret_cast<DeviceList*>(aPtr)->Removed(aDevice);
 }
 
-static void singleChanged(void* aPtr)
-{
-    reinterpret_cast<DeviceList*>(aPtr)->SingleChanged();
-}
-
 static void updatesComplete(void* aPtr)
 {
     reinterpret_cast<DeviceList*>(aPtr)->UpdatesComplete();
@@ -253,7 +246,6 @@ static void updatesComplete(void* aPtr)
 
 DeviceList::DeviceList()
     : iLock("DLMX")
-    , iSingleChanged("DSB1", 0)
     , iUpdatesComplete("DSB2", 0)
 {
 }
@@ -334,14 +326,6 @@ void DeviceList::TestSubscriptions()
     CpProxyCSubscribe(proxy);
     iUpdatesComplete.Wait(); // wait for initial event
 
-    // set callbacks for individual property changes now to avoid all being run by initial event
-    CpProxyZappOrgTestBasic1SetPropertyVarUintChanged(proxy, singleChanged, this);
-    CpProxyZappOrgTestBasic1SetPropertyVarIntChanged(proxy, singleChanged, this);
-    CpProxyZappOrgTestBasic1SetPropertyVarBoolChanged(proxy, singleChanged, this);
-    CpProxyZappOrgTestBasic1SetPropertyVarStrChanged(proxy, singleChanged, this);
-    CpProxyZappOrgTestBasic1SetPropertyVarBinChanged(proxy, singleChanged, this);
-
-
     /* For each property,
          call the setter action it
          wait on a property being updated
@@ -351,7 +335,7 @@ void DeviceList::TestSubscriptions()
 
     Print("    Uint...\n");
     CpProxyZappOrgTestBasic1SyncSetUint(proxy, 1);
-    iSingleChanged.Wait();
+    iUpdatesComplete.Wait();
     uint32_t propUint;
     CpProxyZappOrgTestBasic1PropertyVarUint(proxy, &propUint);
     ASSERT(propUint == 1);
@@ -361,7 +345,7 @@ void DeviceList::TestSubscriptions()
 
     Print("    Int...\n");
     CpProxyZappOrgTestBasic1SyncSetInt(proxy, -99);
-    iSingleChanged.Wait();
+    iUpdatesComplete.Wait();
     int32_t propInt;
     CpProxyZappOrgTestBasic1PropertyVarInt(proxy, &propInt);
     ASSERT(propInt == -99);
@@ -371,7 +355,7 @@ void DeviceList::TestSubscriptions()
 
     Print("    Bool...\n");
     CpProxyZappOrgTestBasic1SyncSetBool(proxy, 1);
-    iSingleChanged.Wait();
+    iUpdatesComplete.Wait();
     uint32_t propBool;
     CpProxyZappOrgTestBasic1PropertyVarBool(proxy, &propBool);
     ASSERT(propBool == 1);
@@ -382,7 +366,7 @@ void DeviceList::TestSubscriptions()
     Print("    String...\n");
     const char* str = "<&'tag\">";
     CpProxyZappOrgTestBasic1SyncSetString(proxy, str);
-    iSingleChanged.Wait();
+    iUpdatesComplete.Wait();
     char* propStr;
     CpProxyZappOrgTestBasic1PropertyVarStr(proxy, &propStr);
     ASSERT(strcmp(propStr, str) == 0);
@@ -402,7 +386,7 @@ void DeviceList::TestSubscriptions()
         bufBin[i] = (char)i;
     }
     CpProxyZappOrgTestBasic1SyncSetBinary(proxy, &bufBin[0], 256);
-    iSingleChanged.Wait();
+    iUpdatesComplete.Wait();
     char* propBin;
     uint32_t propBinLen;
     CpProxyZappOrgTestBasic1PropertyVarBin(proxy, &propBin, &propBinLen);
@@ -422,7 +406,6 @@ void DeviceList::TestSubscriptions()
     free(valBin);
 
     Print("    Multiple...\n");
-    (void)iUpdatesComplete.Clear();
     CpProxyZappOrgTestBasic1SyncSetMultiple(proxy, 15, 658, 0);
     iUpdatesComplete.Wait();
     CpProxyZappOrgTestBasic1PropertyVarUint(proxy, &propUint);
@@ -463,15 +446,8 @@ void DeviceList::Removed(CpDeviceC aDevice)
     }
 }
 
-void DeviceList::SingleChanged()
-{
-    //Print("SingleChanged\n");
-    iSingleChanged.Signal();
-}
-
 void DeviceList::UpdatesComplete()
 {
-    //Print("UpdatesComplete\n");
     iUpdatesComplete.Signal();
 }
 

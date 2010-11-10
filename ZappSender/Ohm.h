@@ -6,10 +6,10 @@
 #include <Stream.h>
 #include <Network.h>
 
-EXCEPTION(OhmHeaderInvalid);
+EXCEPTION(OhmError);
+EXCEPTION(OhzError);
 
 namespace Zapp {
-
 
 class Ohm
 {
@@ -55,7 +55,7 @@ private:
 class OhmHeader
 {
 public:
-    static const Brn kMpus;
+    static const Brn kOhm;
     static const TUint8 kMajor = 1;
     static const TUint kHeaderBytes = 8;
     
@@ -83,7 +83,7 @@ private:
 private:
     //OhmHeader
     //ByteStart Bytes                   Desc
-    //0         4                       Ascii representation of "Mpus"
+    //0         4                       "Ohm "
     //4         1                       OhmHeader Major Version
     //5         1                       Msg Type (1 = OhmMsgAudio)
     //6         2                       Total Bytes (Absolutely all bytes in the entire frame)
@@ -215,6 +215,92 @@ private:
     //4         n                       n bytes of metatext
 
     TUint iMetatextBytes;
+};
+
+class OhzHeader
+{
+public:
+    static const Brn kOhz;
+    static const TUint8 kMajor = 1;
+    static const TUint kHeaderBytes = 8;
+    
+public:
+    static const TUint8 kMsgTypeQuery = 0;
+    static const TUint8 kMsgTypeUri = 1;
+
+public:
+    OhzHeader();
+    OhzHeader(TUint aMsgType, TUint aMsgBytes);
+    
+    void Internalise(IReader& aReader);
+    void Externalise(IWriter& aWriter) const;
+
+    TUint MsgType() const {return (iMsgType);}
+    TUint MsgBytes() const {return (iBytes - kHeaderBytes);}
+    
+private:
+    TUint iMsgType;
+    TUint iBytes;
+    
+private:
+    //OhzHeader
+    //ByteStart Bytes                   Desc
+    //0         4                       "Ohz "
+    //4         1                       OhzHeader Major Version
+    //5         1                       Msg Type (0 = Query, 1 = Uri)
+    //6         2                       Total Bytes (Absolutely all bytes in the entire frame)
+};
+
+class OhzHeaderQuery
+{
+public:
+    static const TUint kHeaderBytes = 4;
+
+public:
+    OhzHeaderQuery();
+    OhzHeaderQuery(const Brx& aZone);
+    
+    void Internalise(IReader& aReader, const OhzHeader& aHeader);
+    void Externalise(IWriter& aWriter) const;
+    
+    TUint ZoneBytes() const {return (iZoneBytes);}
+    TUint MsgBytes() const {return (kHeaderBytes + iZoneBytes);}
+
+private:
+    //OhzMsgQuery
+    //ByteStart Bytes                   Desc
+    //0         4                       Query Bytes (n)
+    //4         n                       n bytes of zone
+
+    TUint iZoneBytes;
+};
+
+class OhzHeaderUri
+{
+public:
+    static const TUint kHeaderBytes = 8;
+
+public:
+    OhzHeaderUri();
+    OhzHeaderUri(const Brx& aZone, const Brx& aUri);
+    
+    void Internalise(IReader& aReader, const OhzHeader& aHeader);
+    void Externalise(IWriter& aWriter) const;
+    
+    TUint ZoneBytes() const {return (iZoneBytes);}
+    TUint UriBytes() const {return (iUriBytes);}
+    TUint MsgBytes() const {return (kHeaderBytes + iZoneBytes + iUriBytes);}
+
+private:
+    //OhzHeaderUri
+    //ByteStart Bytes                   Desc
+    //0         4                       Zone Bytes (n)
+    //4         4                       Uri Bytes (m)
+    //8         n                       n bytes of zone
+    //8 + n     m                       m bytes of uri
+
+    TUint iZoneBytes;
+    TUint iUriBytes;
 };
 
 } // namespace Zapp

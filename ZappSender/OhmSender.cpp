@@ -1,4 +1,5 @@
 #include "OhmSender.h"
+#include "DvMusicOpenhomeOrgSender1.h"
 #include <Ascii.h>
 #include <Maths.h>
 #include <Arch.h>
@@ -7,39 +8,39 @@
 
 namespace Zapp {
 
-    class ProviderSender : public DvServiceMusicOpenhomeOrgSender1
-    {
-        static const TUint kMaxMetadataBytes = 4096;
-        static const TUint kTimeoutAudioPresentMs = 1000;
-    
-    public:
-        ProviderSender(DvDevice& aDevice);
-        
-        void SetMetadata(const Brx& aValue);
-        
-        void SetStatusReady();
-        void SetStatusSending();
-        void SetStatusBlocked();
-        void SetStatusInactive();
-        
-        void InformAudioPresent();
-        
-        ~ProviderSender() {}
-        
-    private:
-        virtual void Metadata(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
-        virtual void Audio(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aValue);
-        virtual void Status(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
-        virtual void Attributes(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
-    
-        void UpdateMetadata();
-        void TimerAudioPresentExpired();
-    
-    private:
-        Bws<kMaxMetadataBytes> iMetadata;
-        mutable Mutex iMutex;
-        Timer iTimerAudioPresent;
-    };
+	class ProviderSender : public DvServiceMusicOpenhomeOrgSender1
+	{
+	    static const TUint kMaxMetadataBytes = 4096;
+	    static const TUint kTimeoutAudioPresentMs = 1000;
+	
+	public:
+	    ProviderSender(DvDevice& aDevice);
+	    
+	    void SetMetadata(const Brx& aValue);
+	    
+	    void SetStatusReady();
+	    void SetStatusSending();
+	    void SetStatusBlocked();
+	    void SetStatusInactive();
+	    
+	    void InformAudioPresent();
+	    
+	    ~ProviderSender() {}
+	    
+	private:
+	    virtual void Metadata(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
+	    virtual void Audio(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aValue);
+	    virtual void Status(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
+	    virtual void Attributes(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
+	
+	    void UpdateMetadata();
+	    void TimerAudioPresentExpired();
+	
+	private:
+	    Bws<kMaxMetadataBytes> iMetadata;
+	    mutable Mutex iMutex;
+	    Timer iTimerAudioPresent;
+	};
 
 }
 
@@ -151,8 +152,8 @@ OhmSender::OhmSender(DvDevice& aDevice, TIpAddress aInterface, const Brx& aName,
     , iName(aName)
     , iChannel(aChannel)
     , iEnabled(false)
-    , iSocketAudio(kTtl, aInterface)
-    , iAudioRxBuf(iSocketAudio)
+    , iSocket(kTtl, aInterface)
+    , iRxBuffer(iSocket)
     , iMutexStartStop("OHMS")
     , iMutexActive("OHMA")
     , iNetworkAudioDeactivated("OHMD", 0)
@@ -171,8 +172,8 @@ OhmSender::OhmSender(DvDevice& aDevice, TIpAddress aInterface, const Brx& aName,
     
     UpdateChannel();
 
-    iThreadAudio = new ThreadFunctor("MPAU", MakeFunctor(*this, &OhmSender::RunAudio), kThreadPriorityAudio, kThreadStackBytesAudio);
-    iThreadAudio->Start();
+    iThreadNetwork = new ThreadFunctor("MPAU", MakeFunctor(*this, &OhmSender::RunNetwork), kThreadPriorityAudio, kThreadStackBytesAudio);
+    iThreadNetwork->Start();
 }
 
 void OhmSender::SetName(const Brx& aValue)
@@ -239,7 +240,16 @@ void OhmSender::StartTrack(TUint64 aSampleStart, TUint64 aSamplesTotal, const Br
     iSamplesTotal = aSamplesTotal;
     iTrackUri.Replace(aUri);
     iTrackMetadata.Replace(aMetadata);
+    iTrackMetatext.Replace(Brx::Empty());
     iSendTrack = true;
+    iSendMetatext = true;
+    iMutexActive.Signal();
+}
+
+void OhmSender::SetMetatext(const Brx& aValue)
+{
+    iMutexActive.Wait();
+    iTrackMetatext.Replace(aValue);
     iSendMetatext = true;
     iMutexActive.Signal();
 }
@@ -282,7 +292,7 @@ void OhmSender::SendAudio(const TByte* aData, TUint aBytes)
     
     OhmHeader header(OhmHeader::kMsgTypeAudio, headerAudio.MsgBytes());
     
-    WriterBuffer writer(iAudioTxBuf);
+    WriterBuffer writer(iTxBuffer);
     
     writer.Flush();
     header.Externalise(writer);
@@ -291,8 +301,8 @@ void OhmSender::SendAudio(const TByte* aData, TUint aBytes)
     writer.Write(Brn(aData, aBytes));
     
     try {
-        iSocketAudio.Write(iAudioTxBuf);
-        iSocketAudio.WriteFlush();
+        iSocket.Write(iTxBuffer);
+        iSocket.WriteFlush();
     }
     catch (WriterError&) {
     }
@@ -311,7 +321,7 @@ OhmSender::~OhmSender()
     Stop();
     iMutexStartStop.Signal();
 
-    delete iThreadAudio;
+    delete iThreadNetwork;
 }
 
 // Start always called with the start/stop mutex locked
@@ -321,13 +331,13 @@ void OhmSender::Start()
     if (!iStarted) {
         iFrame = 0;
         try {
-	        iSocketAudio.AddMembership(iEndpoint);
+	        iSocket.AddMembership(iEndpoint);
 	    }
 	    catch (NetworkError&) {
 	    	printf("Start network error %x:%d\n", iEndpoint.Address(), iEndpoint.Port());
 	    	throw;
 	    }
-        iThreadAudio->Signal();
+        iThreadNetwork->Signal();
         iStarted = true;
     }
 }
@@ -337,9 +347,9 @@ void OhmSender::Start()
 void OhmSender::Stop()
 {
     if (iStarted) {
-        iSocketAudio.ReadInterrupt();
+        iSocket.ReadInterrupt();
         iNetworkAudioDeactivated.Wait();
-        iSocketAudio.DropMembership();
+        iSocket.DropMembership();
         iStarted = false;
     }
 }
@@ -368,7 +378,7 @@ void OhmSender::RunPipeline()
 //  The state machine ensures that iActive is only true when iAliveJoined is true and iAliveBlocked is false
 //
 
-void OhmSender::RunAudio()
+void OhmSender::RunNetwork()
 {
     while (true) {
         iMutexActive.Wait();
@@ -380,7 +390,7 @@ void OhmSender::RunAudio()
 
         iMutexActive.Signal();
         
-        iThreadAudio->Wait();
+        iThreadNetwork->Wait();
 
         iProvider->SetStatusReady();
         
@@ -390,7 +400,7 @@ void OhmSender::RunAudio()
                     printf("waiting for message\n");
 
                     OhmHeader header;
-                    header.Internalise(iAudioRxBuf);
+                    header.Internalise(iRxBuffer);
                     
                     printf("message received\n");
                     
@@ -429,18 +439,18 @@ void OhmSender::RunAudio()
                         iProvider->SetStatusBlocked();
                     }
                 }
-                catch (OhmHeaderInvalid)
+                catch (OhmError)
                 {
                 }
                 
-                iAudioRxBuf.ReadFlush();
+                iRxBuffer.ReadFlush();
             }
         }
         catch (ReaderError) {
             // LOG(kMedia, "OhmSender::RunNetwork reader error\n");
         }
 
-        iAudioRxBuf.ReadFlush();
+        iRxBuffer.ReadFlush();
 
         iMutexActive.Wait();
         iActive = false;
@@ -506,25 +516,25 @@ void OhmSender::ProcessOutMsgIbAudio(MsgIbAudio* aMsg)
         OhmHeaderAudio headerAudio(aMsg, iFrame, txTimestampPrev);
         OhmHeader header(OhmHeader::kMsgTypeAudio, headerAudio.MsgBytes());
         
-        WriterBuffer writer(iAudioTxBuf);
+        WriterBuffer writer(iTxBuffer);
         
         writer.Flush();
         header.Externalise(writer);
         headerAudio.Externalise(writer);
         
-        TByte* ptr = (TByte*)iAudioTxBuf.Ptr();
-        TUint max = iAudioTxBuf.MaxBytes();
-        TUint bytes = iAudioTxBuf.Bytes();
+        TByte* ptr = (TByte*)iTxBuffer.Ptr();
+        TUint max = iTxBuffer.MaxBytes();
+        TUint bytes = iTxBuffer.Bytes();
         
         Bwn audio(ptr + bytes, max - bytes);
         
         MsgIbAudio::PackBigEndian(audio, *aMsg);
         
-        iAudioTxBuf.SetBytes(bytes + audio.Bytes());
+        iTxBuffer.SetBytes(bytes + audio.Bytes());
         
         try {
-            iSocketAudio.Write(iAudioTxBuf);
-            iSocketAudio.WriteFlush();
+            iSocket.Write(iTxBuffer);
+            iSocket.WriteFlush();
         }
         catch (WriterError&) {
             LOG(kMedia, "OhmSender::ProcessOutMsgIbAudio WriterError\n");
@@ -600,7 +610,7 @@ void OhmSender::SendTrack()
     OhmHeaderTrack headerTrack(iTrackUri, iTrackMetadata);
     OhmHeader header(OhmHeader::kMsgTypeTrack, headerTrack.MsgBytes());
     
-    WriterBuffer writer(iAudioTxBuf);
+    WriterBuffer writer(iTxBuffer);
     
     writer.Flush();
     header.Externalise(writer);
@@ -608,8 +618,8 @@ void OhmSender::SendTrack()
     writer.Write(iTrackUri);
     writer.Write(iTrackMetadata);
     
-    iSocketAudio.Write(iAudioTxBuf);
-    iSocketAudio.WriteFlush();
+    iSocket.Write(iTxBuffer);
+    iSocket.WriteFlush();
     
     iSendTrack = false;
 }
@@ -621,15 +631,15 @@ void OhmSender::SendMetatext()
     OhmHeaderMetatext headerMetatext(iTrackMetatext);
     OhmHeader header(OhmHeader::kMsgTypeMetatext, headerMetatext.MsgBytes());
     
-    WriterBuffer writer(iAudioTxBuf);
+    WriterBuffer writer(iTxBuffer);
     
     writer.Flush();
     header.Externalise(writer);
     headerMetatext.Externalise(writer);
     writer.Write(iTrackMetatext);
     
-    iSocketAudio.Write(iAudioTxBuf);
-    iSocketAudio.WriteFlush();
+    iSocket.Write(iTxBuffer);
+    iSocket.WriteFlush();
 
     iSendMetatext = false;
 }

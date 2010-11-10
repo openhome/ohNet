@@ -151,6 +151,7 @@ void WavSender::TimerExpired()
 	if (!iPaused) {
 	    if (iIndex == 0) {
             iSender->StartTrack(0, iSampleCount, iUri, Brx::Empty());
+            iSender->SetMetatext(Brn("WavSender repeated play"));
 	    }
 	    
 		if (iIndex + iPacketBytes <= iTotalBytes) {
