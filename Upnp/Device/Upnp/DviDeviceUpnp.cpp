@@ -686,13 +686,14 @@ DviDeviceUpnp::MulticastListener::MulticastListener(DviDeviceUpnp& aDevice, cons
     iListener = &Stack::MulticastListenerClaim(aNif.Address());
     iId = iListener->AddMsearchHandler(this);
     iSubnet = aNif.Subnet();
+    iInterface = aNif.Address();
     aUriBase.TransferTo(iUriBase);
 }
 
 DviDeviceUpnp::MulticastListener::~MulticastListener()
 {
     iListener->RemoveMsearchHandler(iId);
-    Stack::MulticastListenerRelease(Subnet());
+    Stack::MulticastListenerRelease(iInterface);
 }
 
 TIpAddress DviDeviceUpnp::MulticastListener::Interface() const

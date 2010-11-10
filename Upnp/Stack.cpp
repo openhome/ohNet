@@ -60,6 +60,9 @@ Stack::~Stack()
 {
     ASSERT(gStackInitCount == 1);
     gStackInitCount = 0;
+    iLock.Wait();
+    ASSERT(iMulticastListeners.size() == 0);
+    iLock.Signal();
     iTimerManager.Stop();
     delete iCpStack;
     delete iDvStack;
