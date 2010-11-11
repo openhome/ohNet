@@ -4,8 +4,8 @@
  * Proxy for upnp.org:ContentDirectory:3
  */
 
-var ServiceContentDirectory = function(aId){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aId + "/ContentDirectory/control";
+var ServiceContentDirectory = function(aUdn){	
+	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/upnp.org-ContentDirectory-3/control";
 	this.iDomain = "upnp.org";
 	if (this.iDomain == "upnp.org") {
 		this.iDomain = "schemas.upnp.org";
@@ -13,6 +13,9 @@ var ServiceContentDirectory = function(aId){
 	this.iDomain = this.iDomain.replace(/\./,"-");
 	this.iType = "ContentDirectory";
 	this.iVersion = "3";
+	this.iServiceName = "upnp.org-ContentDirectory-3";
+	this.iSubscriptionId = "";
+	this.iUdn = aUdn;
 	
 	this.iVariables = {};
 			this.iVariables["SearchCapabilities"] = new ServiceVariable("SearchCapabilities");
@@ -52,12 +55,193 @@ ServiceContentDirectory.kTransferStatusError = "ERROR";
 ServiceContentDirectory.kTransferStatusInProgress = "IN_PROGRESS";
 ServiceContentDirectory.kTransferStatusStopped = "STOPPED";
 
+ServiceContentDirectory.prototype.SearchCapabilities_Changed = function (aStateChangedFunction) {
+    this.Variables().SearchCapabilities.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.SortCapabilities_Changed = function (aStateChangedFunction) {
+    this.Variables().SortCapabilities.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.SortExtensionCapabilities_Changed = function (aStateChangedFunction) {
+    this.Variables().SortExtensionCapabilities.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.SystemUpdateID_Changed = function (aStateChangedFunction) {
+    this.Variables().SystemUpdateID.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.ContainerUpdateIDs_Changed = function (aStateChangedFunction) {
+    this.Variables().ContainerUpdateIDs.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.ServiceResetToken_Changed = function (aStateChangedFunction) {
+    this.Variables().ServiceResetToken.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.LastChange_Changed = function (aStateChangedFunction) {
+    this.Variables().LastChange.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.TransferIDs_Changed = function (aStateChangedFunction) {
+    this.Variables().TransferIDs.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.FeatureList_Changed = function (aStateChangedFunction) {
+    this.Variables().FeatureList.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.ObjectID_Changed = function (aStateChangedFunction) {
+    this.Variables().ObjectID.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.Result_Changed = function (aStateChangedFunction) {
+    this.Variables().Result.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.SearchCriteria_Changed = function (aStateChangedFunction) {
+    this.Variables().SearchCriteria.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.BrowseFlag_Changed = function (aStateChangedFunction) {
+    this.Variables().BrowseFlag.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.Filter_Changed = function (aStateChangedFunction) {
+    this.Variables().Filter.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.SortCriteria_Changed = function (aStateChangedFunction) {
+    this.Variables().SortCriteria.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.Index_Changed = function (aStateChangedFunction) {
+    this.Variables().Index.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.Count_Changed = function (aStateChangedFunction) {
+    this.Variables().Count.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.UpdateID_Changed = function (aStateChangedFunction) {
+    this.Variables().UpdateID.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.TransferID_Changed = function (aStateChangedFunction) {
+    this.Variables().TransferID.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.TransferStatus_Changed = function (aStateChangedFunction) {
+    this.Variables().TransferStatus.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.TransferLength_Changed = function (aStateChangedFunction) {
+    this.Variables().TransferLength.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.TransferTotal_Changed = function (aStateChangedFunction) {
+    this.Variables().TransferTotal.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.TagValueList_Changed = function (aStateChangedFunction) {
+    this.Variables().TagValueList.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.URI_Changed = function (aStateChangedFunction) {
+    this.Variables().URI.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.CDSView_Changed = function (aStateChangedFunction) {
+    this.Variables().CDSView.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.QueryRequest_Changed = function (aStateChangedFunction) {
+    this.Variables().QueryRequest.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.QueryResult_Changed = function (aStateChangedFunction) {
+    this.Variables().QueryResult.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceContentDirectory.prototype.FFQCapabilities_Changed = function (aStateChangedFunction) {
+    this.Variables().FFQCapabilities.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+
 ServiceContentDirectory.prototype.ServiceName = function(){
-	return this.iType;
+	return this.iServiceName;
 }
 
 ServiceContentDirectory.prototype.Variables = function(){
 	return this.iVariables;
+}
+
+ServiceContentDirectory.prototype.SubscriptionId = function () {
+    return this.iSubscriptionId;
+}
+
+ServiceContentDirectory.prototype.SetSubscriptionId = function (value) {
+    this.iSubscriptionId = value;
+}
+
+ServiceContentDirectory.prototype.Udn = function () {
+    return this.iUdn;
 }
 
 ServiceContentDirectory.prototype.VariableNames = function(){
@@ -70,11 +254,19 @@ ServiceContentDirectory.prototype.VariableNames = function(){
 	return result;
 }
 
+ServiceContentDirectory.prototype.Subscribe = function () {
+    SubscriptionManager.AddService(this);
+}
+
+ServiceContentDirectory.prototype.Unsubscribe = function () {
+    SubscriptionManager.RemoveService(this.SubscriptionId());
+}
+
 
 ServiceContentDirectory.prototype.GetSearchCapabilities = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("GetSearchCapabilities", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["SearchCaps"] = request.ReadStringParameter(result["SearchCaps"]);	
+		result["SearchCaps"] = SoapRequest.ReadStringParameter(result["SearchCaps"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -83,12 +275,12 @@ ServiceContentDirectory.prototype.GetSearchCapabilities = function(aSuccessFunct
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceContentDirectory.prototype.GetSortCapabilities = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("GetSortCapabilities", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["SortCaps"] = request.ReadStringParameter(result["SortCaps"]);	
+		result["SortCaps"] = SoapRequest.ReadStringParameter(result["SortCaps"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -97,12 +289,12 @@ ServiceContentDirectory.prototype.GetSortCapabilities = function(aSuccessFunctio
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceContentDirectory.prototype.GetSortExtensionCapabilities = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("GetSortExtensionCapabilities", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["SortExtensionCaps"] = request.ReadStringParameter(result["SortExtensionCaps"]);	
+		result["SortExtensionCaps"] = SoapRequest.ReadStringParameter(result["SortExtensionCaps"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -111,12 +303,12 @@ ServiceContentDirectory.prototype.GetSortExtensionCapabilities = function(aSucce
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceContentDirectory.prototype.GetFeatureList = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("GetFeatureList", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["FeatureList"] = request.ReadStringParameter(result["FeatureList"]);	
+		result["FeatureList"] = SoapRequest.ReadStringParameter(result["FeatureList"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -125,12 +317,12 @@ ServiceContentDirectory.prototype.GetFeatureList = function(aSuccessFunction, aE
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceContentDirectory.prototype.GetSystemUpdateID = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("GetSystemUpdateID", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["Id"] = request.ReadIntParameter(result["Id"]);	
+		result["Id"] = SoapRequest.ReadIntParameter(result["Id"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -139,12 +331,12 @@ ServiceContentDirectory.prototype.GetSystemUpdateID = function(aSuccessFunction,
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceContentDirectory.prototype.GetServiceResetToken = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("GetServiceResetToken", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["ResetToken"] = request.ReadStringParameter(result["ResetToken"]);	
+		result["ResetToken"] = SoapRequest.ReadStringParameter(result["ResetToken"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -153,7 +345,7 @@ ServiceContentDirectory.prototype.GetServiceResetToken = function(aSuccessFuncti
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceContentDirectory.prototype.Browse = function(ObjectID, BrowseFlag, Filter, StartingIndex, RequestedCount, SortCriteria, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("Browse", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -164,10 +356,10 @@ ServiceContentDirectory.prototype.Browse = function(ObjectID, BrowseFlag, Filter
     request.WriteIntParameter("RequestedCount", RequestedCount);
     request.WriteStringParameter("SortCriteria", SortCriteria);
     request.Send(function(result){
-		result["Result"] = request.ReadStringParameter(result["Result"]);	
-		result["NumberReturned"] = request.ReadIntParameter(result["NumberReturned"]);	
-		result["TotalMatches"] = request.ReadIntParameter(result["TotalMatches"]);	
-		result["UpdateID"] = request.ReadIntParameter(result["UpdateID"]);	
+		result["Result"] = SoapRequest.ReadStringParameter(result["Result"]);	
+		result["NumberReturned"] = SoapRequest.ReadIntParameter(result["NumberReturned"]);	
+		result["TotalMatches"] = SoapRequest.ReadIntParameter(result["TotalMatches"]);	
+		result["UpdateID"] = SoapRequest.ReadIntParameter(result["UpdateID"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -176,7 +368,7 @@ ServiceContentDirectory.prototype.Browse = function(ObjectID, BrowseFlag, Filter
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceContentDirectory.prototype.Search = function(ContainerID, SearchCriteria, Filter, StartingIndex, RequestedCount, SortCriteria, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("Search", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -187,10 +379,10 @@ ServiceContentDirectory.prototype.Search = function(ContainerID, SearchCriteria,
     request.WriteIntParameter("RequestedCount", RequestedCount);
     request.WriteStringParameter("SortCriteria", SortCriteria);
     request.Send(function(result){
-		result["Result"] = request.ReadStringParameter(result["Result"]);	
-		result["NumberReturned"] = request.ReadIntParameter(result["NumberReturned"]);	
-		result["TotalMatches"] = request.ReadIntParameter(result["TotalMatches"]);	
-		result["UpdateID"] = request.ReadIntParameter(result["UpdateID"]);	
+		result["Result"] = SoapRequest.ReadStringParameter(result["Result"]);	
+		result["NumberReturned"] = SoapRequest.ReadIntParameter(result["NumberReturned"]);	
+		result["TotalMatches"] = SoapRequest.ReadIntParameter(result["TotalMatches"]);	
+		result["UpdateID"] = SoapRequest.ReadIntParameter(result["UpdateID"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -199,15 +391,15 @@ ServiceContentDirectory.prototype.Search = function(ContainerID, SearchCriteria,
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceContentDirectory.prototype.CreateObject = function(ContainerID, Elements, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("CreateObject", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.WriteStringParameter("ContainerID", ContainerID);
     request.WriteStringParameter("Elements", Elements);
     request.Send(function(result){
-		result["ObjectID"] = request.ReadStringParameter(result["ObjectID"]);	
-		result["Result"] = request.ReadStringParameter(result["Result"]);	
+		result["ObjectID"] = SoapRequest.ReadStringParameter(result["ObjectID"]);	
+		result["Result"] = SoapRequest.ReadStringParameter(result["Result"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -216,7 +408,7 @@ ServiceContentDirectory.prototype.CreateObject = function(ContainerID, Elements,
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceContentDirectory.prototype.DestroyObject = function(ObjectID, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("DestroyObject", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -230,7 +422,7 @@ ServiceContentDirectory.prototype.DestroyObject = function(ObjectID, aSuccessFun
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceContentDirectory.prototype.UpdateObject = function(ObjectID, CurrentTagValue, NewTagValue, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("UpdateObject", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -246,14 +438,14 @@ ServiceContentDirectory.prototype.UpdateObject = function(ObjectID, CurrentTagVa
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceContentDirectory.prototype.MoveObject = function(ObjectID, NewParentID, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("MoveObject", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.WriteStringParameter("ObjectID", ObjectID);
     request.WriteStringParameter("NewParentID", NewParentID);
     request.Send(function(result){
-		result["NewObjectID"] = request.ReadStringParameter(result["NewObjectID"]);	
+		result["NewObjectID"] = SoapRequest.ReadStringParameter(result["NewObjectID"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -262,14 +454,14 @@ ServiceContentDirectory.prototype.MoveObject = function(ObjectID, NewParentID, a
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceContentDirectory.prototype.ImportResource = function(SourceURI, DestinationURI, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("ImportResource", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.WriteStringParameter("SourceURI", SourceURI);
     request.WriteStringParameter("DestinationURI", DestinationURI);
     request.Send(function(result){
-		result["TransferID"] = request.ReadIntParameter(result["TransferID"]);	
+		result["TransferID"] = SoapRequest.ReadIntParameter(result["TransferID"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -278,14 +470,14 @@ ServiceContentDirectory.prototype.ImportResource = function(SourceURI, Destinati
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceContentDirectory.prototype.ExportResource = function(SourceURI, DestinationURI, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("ExportResource", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.WriteStringParameter("SourceURI", SourceURI);
     request.WriteStringParameter("DestinationURI", DestinationURI);
     request.Send(function(result){
-		result["TransferID"] = request.ReadIntParameter(result["TransferID"]);	
+		result["TransferID"] = SoapRequest.ReadIntParameter(result["TransferID"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -294,7 +486,7 @@ ServiceContentDirectory.prototype.ExportResource = function(SourceURI, Destinati
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceContentDirectory.prototype.DeleteResource = function(ResourceURI, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("DeleteResource", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -308,7 +500,7 @@ ServiceContentDirectory.prototype.DeleteResource = function(ResourceURI, aSucces
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceContentDirectory.prototype.StopTransferResource = function(TransferID, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("StopTransferResource", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -322,15 +514,15 @@ ServiceContentDirectory.prototype.StopTransferResource = function(TransferID, aS
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceContentDirectory.prototype.GetTransferProgress = function(TransferID, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("GetTransferProgress", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.WriteIntParameter("TransferID", TransferID);
     request.Send(function(result){
-		result["TransferStatus"] = request.ReadStringParameter(result["TransferStatus"]);	
-		result["TransferLength"] = request.ReadStringParameter(result["TransferLength"]);	
-		result["TransferTotal"] = request.ReadStringParameter(result["TransferTotal"]);	
+		result["TransferStatus"] = SoapRequest.ReadStringParameter(result["TransferStatus"]);	
+		result["TransferLength"] = SoapRequest.ReadStringParameter(result["TransferLength"]);	
+		result["TransferTotal"] = SoapRequest.ReadStringParameter(result["TransferTotal"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -339,14 +531,14 @@ ServiceContentDirectory.prototype.GetTransferProgress = function(TransferID, aSu
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceContentDirectory.prototype.CreateReference = function(ContainerID, ObjectID, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("CreateReference", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.WriteStringParameter("ContainerID", ContainerID);
     request.WriteStringParameter("ObjectID", ObjectID);
     request.Send(function(result){
-		result["NewID"] = request.ReadStringParameter(result["NewID"]);	
+		result["NewID"] = SoapRequest.ReadStringParameter(result["NewID"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -355,7 +547,7 @@ ServiceContentDirectory.prototype.CreateReference = function(ContainerID, Object
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceContentDirectory.prototype.FreeFormQuery = function(ContainerID, CDSView, QueryRequest, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("FreeFormQuery", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -363,8 +555,8 @@ ServiceContentDirectory.prototype.FreeFormQuery = function(ContainerID, CDSView,
     request.WriteIntParameter("CDSView", CDSView);
     request.WriteStringParameter("QueryRequest", QueryRequest);
     request.Send(function(result){
-		result["QueryResult"] = request.ReadStringParameter(result["QueryResult"]);	
-		result["UpdateID"] = request.ReadIntParameter(result["UpdateID"]);	
+		result["QueryResult"] = SoapRequest.ReadStringParameter(result["QueryResult"]);	
+		result["UpdateID"] = SoapRequest.ReadIntParameter(result["UpdateID"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -373,12 +565,12 @@ ServiceContentDirectory.prototype.FreeFormQuery = function(ContainerID, CDSView,
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceContentDirectory.prototype.GetFreeFormQueryCapabilities = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("GetFreeFormQueryCapabilities", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["FFQCapabilities"] = request.ReadStringParameter(result["FFQCapabilities"]);	
+		result["FFQCapabilities"] = SoapRequest.ReadStringParameter(result["FFQCapabilities"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -387,6 +579,6 @@ ServiceContentDirectory.prototype.GetFreeFormQueryCapabilities = function(aSucce
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 

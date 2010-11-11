@@ -4,8 +4,8 @@
  * Proxy for zapp.org:TestLights:1
  */
 
-var ServiceTestLights = function(aId){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aId + "/TestLights/control";
+var ServiceTestLights = function(aUdn){	
+	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/zapp.org-TestLights-1/control";
 	this.iDomain = "zapp.org";
 	if (this.iDomain == "upnp.org") {
 		this.iDomain = "schemas.upnp.org";
@@ -13,6 +13,9 @@ var ServiceTestLights = function(aId){
 	this.iDomain = this.iDomain.replace(/\./,"-");
 	this.iType = "TestLights";
 	this.iVersion = "1";
+	this.iServiceName = "zapp.org-TestLights-1";
+	this.iSubscriptionId = "";
+	this.iUdn = aUdn;
 	
 	this.iVariables = {};
 			this.iVariables["A_ARG_GetCount_Count"] = new ServiceVariable("A_ARG_GetCount_Count");
@@ -32,12 +35,109 @@ var ServiceTestLights = function(aId){
 }
 
 
+ServiceTestLights.prototype.A_ARG_GetCount_Count_Changed = function (aStateChangedFunction) {
+    this.Variables().A_ARG_GetCount_Count.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestLights.prototype.A_ARG_Index_Changed = function (aStateChangedFunction) {
+    this.Variables().A_ARG_Index.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestLights.prototype.A_ARG_GetRoom_RoomName_Changed = function (aStateChangedFunction) {
+    this.Variables().A_ARG_GetRoom_RoomName.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceTestLights.prototype.A_ARG_GetName_FriendlyName_Changed = function (aStateChangedFunction) {
+    this.Variables().A_ARG_GetName_FriendlyName.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceTestLights.prototype.A_ARG_GetPosition_X_Changed = function (aStateChangedFunction) {
+    this.Variables().A_ARG_GetPosition_X.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestLights.prototype.A_ARG_GetPosition_Y_Changed = function (aStateChangedFunction) {
+    this.Variables().A_ARG_GetPosition_Y.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestLights.prototype.A_ARG_GetPosition_Z_Changed = function (aStateChangedFunction) {
+    this.Variables().A_ARG_GetPosition_Z.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestLights.prototype.A_ARG_SetColor_Color_Changed = function (aStateChangedFunction) {
+    this.Variables().A_ARG_SetColor_Color.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestLights.prototype.A_ARG_GetColor_Color_Changed = function (aStateChangedFunction) {
+    this.Variables().A_ARG_GetColor_Color.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestLights.prototype.A_ARG_GetColorComponents_Color_Changed = function (aStateChangedFunction) {
+    this.Variables().A_ARG_GetColorComponents_Color.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestLights.prototype.A_ARG_GetColorComponents_Brightness_Changed = function (aStateChangedFunction) {
+    this.Variables().A_ARG_GetColorComponents_Brightness.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestLights.prototype.A_ARG_GetColorComponents_Red_Changed = function (aStateChangedFunction) {
+    this.Variables().A_ARG_GetColorComponents_Red.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestLights.prototype.A_ARG_GetColorComponents_Green_Changed = function (aStateChangedFunction) {
+    this.Variables().A_ARG_GetColorComponents_Green.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestLights.prototype.A_ARG_GetColorComponents_Blue_Changed = function (aStateChangedFunction) {
+    this.Variables().A_ARG_GetColorComponents_Blue.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+
 ServiceTestLights.prototype.ServiceName = function(){
-	return this.iType;
+	return this.iServiceName;
 }
 
 ServiceTestLights.prototype.Variables = function(){
 	return this.iVariables;
+}
+
+ServiceTestLights.prototype.SubscriptionId = function () {
+    return this.iSubscriptionId;
+}
+
+ServiceTestLights.prototype.SetSubscriptionId = function (value) {
+    this.iSubscriptionId = value;
+}
+
+ServiceTestLights.prototype.Udn = function () {
+    return this.iUdn;
 }
 
 ServiceTestLights.prototype.VariableNames = function(){
@@ -50,11 +150,19 @@ ServiceTestLights.prototype.VariableNames = function(){
 	return result;
 }
 
+ServiceTestLights.prototype.Subscribe = function () {
+    SubscriptionManager.AddService(this);
+}
+
+ServiceTestLights.prototype.Unsubscribe = function () {
+    SubscriptionManager.RemoveService(this.SubscriptionId());
+}
+
 
 ServiceTestLights.prototype.GetCount = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("GetCount", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["Count"] = request.ReadIntParameter(result["Count"]);	
+		result["Count"] = SoapRequest.ReadIntParameter(result["Count"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -63,13 +171,13 @@ ServiceTestLights.prototype.GetCount = function(aSuccessFunction, aErrorFunction
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceTestLights.prototype.GetRoom = function(Index, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("GetRoom", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.WriteIntParameter("Index", Index);
     request.Send(function(result){
-		result["RoomName"] = request.ReadStringParameter(result["RoomName"]);	
+		result["RoomName"] = SoapRequest.ReadStringParameter(result["RoomName"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -78,13 +186,13 @@ ServiceTestLights.prototype.GetRoom = function(Index, aSuccessFunction, aErrorFu
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceTestLights.prototype.GetName = function(Index, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("GetName", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.WriteIntParameter("Index", Index);
     request.Send(function(result){
-		result["FriendlyName"] = request.ReadStringParameter(result["FriendlyName"]);	
+		result["FriendlyName"] = SoapRequest.ReadStringParameter(result["FriendlyName"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -93,15 +201,15 @@ ServiceTestLights.prototype.GetName = function(Index, aSuccessFunction, aErrorFu
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceTestLights.prototype.GetPosition = function(Index, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("GetPosition", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.WriteIntParameter("Index", Index);
     request.Send(function(result){
-		result["X"] = request.ReadIntParameter(result["X"]);	
-		result["Y"] = request.ReadIntParameter(result["Y"]);	
-		result["Z"] = request.ReadIntParameter(result["Z"]);	
+		result["X"] = SoapRequest.ReadIntParameter(result["X"]);	
+		result["Y"] = SoapRequest.ReadIntParameter(result["Y"]);	
+		result["Z"] = SoapRequest.ReadIntParameter(result["Z"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -110,7 +218,7 @@ ServiceTestLights.prototype.GetPosition = function(Index, aSuccessFunction, aErr
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceTestLights.prototype.SetColor = function(Index, Color, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetColor", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -125,13 +233,13 @@ ServiceTestLights.prototype.SetColor = function(Index, Color, aSuccessFunction, 
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceTestLights.prototype.GetColor = function(Index, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("GetColor", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.WriteIntParameter("Index", Index);
     request.Send(function(result){
-		result["Color"] = request.ReadIntParameter(result["Color"]);	
+		result["Color"] = SoapRequest.ReadIntParameter(result["Color"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -140,16 +248,16 @@ ServiceTestLights.prototype.GetColor = function(Index, aSuccessFunction, aErrorF
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceTestLights.prototype.GetColorComponents = function(Color, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("GetColorComponents", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.WriteIntParameter("Color", Color);
     request.Send(function(result){
-		result["Brightness"] = request.ReadIntParameter(result["Brightness"]);	
-		result["Red"] = request.ReadIntParameter(result["Red"]);	
-		result["Green"] = request.ReadIntParameter(result["Green"]);	
-		result["Blue"] = request.ReadIntParameter(result["Blue"]);	
+		result["Brightness"] = SoapRequest.ReadIntParameter(result["Brightness"]);	
+		result["Red"] = SoapRequest.ReadIntParameter(result["Red"]);	
+		result["Green"] = SoapRequest.ReadIntParameter(result["Green"]);	
+		result["Blue"] = SoapRequest.ReadIntParameter(result["Blue"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -158,6 +266,6 @@ ServiceTestLights.prototype.GetColorComponents = function(Color, aSuccessFunctio
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 

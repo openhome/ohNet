@@ -1,18 +1,4 @@
-﻿var subManager;
-
-$(document).ready(function () {
-    SubscriptionManager.EnableDebugging(false);
-    SubscriptionManager.Start();
-});
-
-$(window).unload(function () {
-    // subManager.UnsubscribeAll();
-    SubscriptionManager.Stop();
-    // Close SOcket
-});
-
-
-var SubscriptionManager = (function () {
+﻿var SubscriptionManager = (function () {
 
     // Private Variables
     var iRenewalPollingInterval = 0;
@@ -20,7 +6,6 @@ var SubscriptionManager = (function () {
     var iPort = 0;
     var started = false;
     var socket = null;
-    var onReady = null;
     var DEBUG = false;
     var DEBUGPOLL = false;
 
@@ -261,6 +246,11 @@ var SubscriptionManager = (function () {
                 if (x) {
                     log("VAR : timeout : " + x[0].textContent);
                     log("CALL : SetSubscriptionTimeout");
+
+                    if (iServices[subId].aSubscribeSuccessFunction) {
+                        iServices[subId].aSubscribeSuccessFunction();
+                        iServices[subId].aSubscribeSuccessFunction = null;
+                    }
                     SetSubscriptionTimeout(subId, x[0].textContent);
                 }
             }
@@ -307,7 +297,7 @@ var SubscriptionManager = (function () {
 
     function onSocketClose() {
         log("*** onSocketClose ***");
-       
+
         log("VAR : iServices :" + iServices);
         log("");
     }
@@ -321,7 +311,7 @@ var SubscriptionManager = (function () {
 
     function onSocketOpen(event) {
         log("*** onSocketOpen ***");
-        onReady();
+
         log("");
     }
 
@@ -341,7 +331,7 @@ var SubscriptionManager = (function () {
             log("Debugging Enabled");
         },
 
-        Start: function (aDefaultSubscriptionTimeoutSeconds) {
+        Start: function (aSuccessFunction, aDefaultSubscriptionTimeoutSeconds) {
             log("*** Start ***");
             log("VAR : aDefaultSubscriptionTimeoutSeconds :" + aDefaultSubscriptionTimeoutSeconds);
             kDefaultSubscriptionTimeoutSeconds = aDefaultSubscriptionTimeoutSeconds ? aDefaultSubscriptionTimeoutSeconds : SubscriptionManager.kDefaultSubscriptionTimeoutSeconds;
@@ -356,7 +346,7 @@ var SubscriptionManager = (function () {
                 socket.onmessage = onSocketMessage;
                 socket.onerror = onSocketError;
                 socket.onclose = onSocketClose;
-                socket.onopen = onSocketOpen;
+                socket.onopen = aSuccessFunction;
             }
             else {
                 log("CON : Web Socket Unsupport");
@@ -383,7 +373,7 @@ var SubscriptionManager = (function () {
             log("");
         },
 
-        AddService: function (aService) {
+        AddService: function (aService, aSuccessFunction) {
             log("*** AddService ***");
             if (started) {
                 log("CON : Subscription Manager running");
@@ -391,7 +381,9 @@ var SubscriptionManager = (function () {
                 aService.SetSubscriptionId(UId);
                 log("VAR :  aService.SubscriptionId():" + aService.SubscriptionId());
                 iServices[aService.SubscriptionId()] = aService;
-
+                if (aSuccessFunction) {
+                    iServices[aService.SubscriptionId()].aSubscribeSuccessFunction = aSuccessFunction;
+                }
                 log("CALL : SubscribeMessage");
                 socket.send(SubscribeMessage(aService, SubscriptionManager.kDefaultSubscriptionTimeoutSeconds));
             }
@@ -411,6 +403,7 @@ var SubscriptionManager = (function () {
                 socket.send(UnsubscribeMessage(aSubscriptionId));
                 log("DEL : " + aSubscriptionId);
                 delete iServices[aSubscriptionId];
+              
                 log("CALC : iServices[aSubscriptionId]:" + iServices[aSubscriptionId]);
             }
             else {
@@ -419,18 +412,12 @@ var SubscriptionManager = (function () {
             log("");
         },
 
-
         Port: function () {
             log("*** Port ***");
             log("RET : iPort" + iPort);
             log("");
             return iPort;
-        },
-
-        Ready: function (aReadyFunction) {
-            onReady = aReadyFunction;
         }
-
 
     };
 })();
@@ -563,20 +550,20 @@ SoapRequest.prototype.getElementsByTagNameNS = function (tagName, ns, scope) {
     return elementListForReturn;
 }
 
-SoapRequest.prototype.ReadIntParameter = function (aValue) {
+SoapRequest.ReadIntParameter = function (aValue) {
     return aValue * 1;
 }
 
-SoapRequest.prototype.ReadBoolParameter = function (aValue) {
+SoapRequest.ReadBoolParameter = function (aValue) {
     return (aValue == "1" || aValue == "true" || aValue == "yes") ? true : false;
 }
 
-SoapRequest.prototype.ReadStringParameter = function (aValue) {
+SoapRequest.ReadStringParameter = function (aValue) {
     return aValue;
 }
 
-SoapRequest.prototype.ReadBinaryParameter = function (aValue) {
-    return aValue;
+SoapRequest.ReadBinaryParameter = function (aValue) {
+    return atob(aValue);
 }
 
 SoapRequest.prototype.WriteIntParameter = function (aTagName, aValue) {
@@ -592,7 +579,7 @@ SoapRequest.prototype.WriteStringParameter = function (aTagName, aValue) {
 }
 
 SoapRequest.prototype.WriteBinaryParameter = function (aTagName, aValue) {
-    this.WriteParameter(aTagName, (aValue ? aValue : ""));
+    this.WriteParameter(aTagName, (aValue ? btoa(aValue) : ""));
 }
 
 SoapRequest.prototype.WriteParameter = function (aTagName, aValue) {
@@ -640,7 +627,7 @@ SoapRequest.prototype.Send = function (onSuccess, onError) {
 		                nodeValue += childNodes[j].nodeValue;
 		            }
 		            result[outParameters[i].nodeName.replace(/.*:/, "")] = (nodeValue != "" ? nodeValue : null);
-		        }
+		         }
 		        onSuccess(result);
 		    }
 		},
@@ -649,3 +636,15 @@ SoapRequest.prototype.Send = function (onSuccess, onError) {
 		}
 	);
 }
+
+
+$(document).ready(function () {
+   // SubscriptionManager.EnableDebugging(false);
+   // SubscriptionManager.Start();
+});
+
+$(window).unload(function () {
+    // subManager.UnsubscribeAll();
+    SubscriptionManager.Stop();
+    // Close SOcket
+});

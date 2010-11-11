@@ -85,8 +85,8 @@
  * Proxy for <#=domain#>:<#=type#>:<#=version#>
  */
 
-var Service<#=type#> = function(aId){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aId + "/<#=type#>/control";
+var Service<#=type#> = function(aUdn){	
+	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/<#=domain#>-<#=type#>-<#=version#>/control";
 	this.iDomain = "<#=domain#>";
 	if (this.iDomain == "upnp.org") {
 		this.iDomain = "schemas.upnp.org";
@@ -94,6 +94,9 @@ var Service<#=type#> = function(aId){
 	this.iDomain = this.iDomain.replace(/\./,"-");
 	this.iType = "<#=type#>";
 	this.iVersion = "<#=version.ToString()#>";
+	this.iServiceName = "<#=domain#>-<#=type#>-<#=version#>";
+	this.iSubscriptionId = "";
+	this.iUdn = aUdn;
 	
 	this.iVariables = {};
 	<#  foreach (Variable s in u.variables) #>
@@ -110,12 +113,34 @@ Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
 <#      } #>
 <#  } #>
 
+<#  foreach (Variable s in u.variables) #>
+<#  { #>
+Service<#=type#>.prototype.<#=s.prettyname#>_Changed = function (aStateChangedFunction) {
+    this.Variables().<#=s.prettyname#>.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.Read<#=svtype[s.type]#>Parameter(state)); 
+	});
+}
+<#  } #>
+
 Service<#=type#>.prototype.ServiceName = function(){
-	return this.iType;
+	return this.iServiceName;
 }
 
 Service<#=type#>.prototype.Variables = function(){
 	return this.iVariables;
+}
+
+Service<#=type#>.prototype.SubscriptionId = function () {
+    return this.iSubscriptionId;
+}
+
+Service<#=type#>.prototype.SetSubscriptionId = function (value) {
+    this.iSubscriptionId = value;
+}
+
+Service<#=type#>.prototype.Udn = function () {
+    return this.iUdn;
 }
 
 Service<#=type#>.prototype.VariableNames = function(){
@@ -126,6 +151,14 @@ Service<#=type#>.prototype.VariableNames = function(){
 		}
 	}
 	return result;
+}
+
+Service<#=type#>.prototype.Subscribe = function () {
+    SubscriptionManager.AddService(this);
+}
+
+Service<#=type#>.prototype.Unsubscribe = function () {
+    SubscriptionManager.RemoveService(this.SubscriptionId());
 }
 
 <#  foreach (Method a in u.methods) #>
@@ -140,7 +173,7 @@ Service<#=type#>.prototype.<#=a.name#> = function(<#=ArgString(a)#>){
     request.Send(function(result){
 <#          foreach (Argument o in a.outargs) #>
 <#          { #>
-		result["<#=o.name#>"] = request.Read<#=svtype[o.variable.type]#>Parameter(result["<#=o.name#>"]);	
+		result["<#=o.name#>"] = SoapRequest.Read<#=svtype[o.variable.type]#>Parameter(result["<#=o.name#>"]);	
 <#          } #>	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -149,7 +182,7 @@ Service<#=type#>.prototype.<#=a.name#> = function(<#=ArgString(a)#>){
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 <#  } #>
 
 

@@ -4,8 +4,8 @@
  * Proxy for linn.co.uk:Ui:2
  */
 
-var ServiceUi = function(aId){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aId + "/Ui/control";
+var ServiceUi = function(aUdn){	
+	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/linn.co.uk-Ui-2/control";
 	this.iDomain = "linn.co.uk";
 	if (this.iDomain == "upnp.org") {
 		this.iDomain = "schemas.upnp.org";
@@ -13,6 +13,9 @@ var ServiceUi = function(aId){
 	this.iDomain = this.iDomain.replace(/\./,"-");
 	this.iType = "Ui";
 	this.iVersion = "2";
+	this.iServiceName = "linn.co.uk-Ui-2";
+	this.iSubscriptionId = "";
+	this.iUdn = aUdn;
 	
 	this.iVariables = {};
 			this.iVariables["TestPattern"] = new ServiceVariable("TestPattern");
@@ -40,12 +43,109 @@ ServiceUi.kInfraredTerminalCommandsAll = "All";
 ServiceUi.kInfraredTerminalCommandsCd = "Cd";
 ServiceUi.kInfraredTerminalCommandsDvd = "Dvd";
 
+ServiceUi.prototype.TestPattern_Changed = function (aStateChangedFunction) {
+    this.Variables().TestPattern.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceUi.prototype.TestModeEnabled_Changed = function (aStateChangedFunction) {
+    this.Variables().TestModeEnabled.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+	});
+}
+ServiceUi.prototype.LightLevel_Changed = function (aStateChangedFunction) {
+    this.Variables().LightLevel.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceUi.prototype.DisplayBrightness_Changed = function (aStateChangedFunction) {
+    this.Variables().DisplayBrightness.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceUi.prototype.DisplayBrightnessAuto_Changed = function (aStateChangedFunction) {
+    this.Variables().DisplayBrightnessAuto.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+	});
+}
+ServiceUi.prototype.InfraredCommands_Changed = function (aStateChangedFunction) {
+    this.Variables().InfraredCommands.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceUi.prototype.InfraredTerminalCommands_Changed = function (aStateChangedFunction) {
+    this.Variables().InfraredTerminalCommands.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceUi.prototype.DisplayUpsideDown_Changed = function (aStateChangedFunction) {
+    this.Variables().DisplayUpsideDown.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+	});
+}
+ServiceUi.prototype.DisplayScrollText_Changed = function (aStateChangedFunction) {
+    this.Variables().DisplayScrollText.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+	});
+}
+ServiceUi.prototype.DisplaySleep_Changed = function (aStateChangedFunction) {
+    this.Variables().DisplaySleep.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+	});
+}
+ServiceUi.prototype.DisplayLedOff_Changed = function (aStateChangedFunction) {
+    this.Variables().DisplayLedOff.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+	});
+}
+ServiceUi.prototype.TerminalInputCode_Changed = function (aStateChangedFunction) {
+    this.Variables().TerminalInputCode.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceUi.prototype.TerminalInputName_Changed = function (aStateChangedFunction) {
+    this.Variables().TerminalInputName.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceUi.prototype.DisplayPixels_Changed = function (aStateChangedFunction) {
+    this.Variables().DisplayPixels.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadBinaryParameter(state)); 
+	});
+}
+
 ServiceUi.prototype.ServiceName = function(){
-	return this.iType;
+	return this.iServiceName;
 }
 
 ServiceUi.prototype.Variables = function(){
 	return this.iVariables;
+}
+
+ServiceUi.prototype.SubscriptionId = function () {
+    return this.iSubscriptionId;
+}
+
+ServiceUi.prototype.SetSubscriptionId = function (value) {
+    this.iSubscriptionId = value;
+}
+
+ServiceUi.prototype.Udn = function () {
+    return this.iUdn;
 }
 
 ServiceUi.prototype.VariableNames = function(){
@@ -56,6 +156,14 @@ ServiceUi.prototype.VariableNames = function(){
 		}
 	}
 	return result;
+}
+
+ServiceUi.prototype.Subscribe = function () {
+    SubscriptionManager.AddService(this);
+}
+
+ServiceUi.prototype.Unsubscribe = function () {
+    SubscriptionManager.RemoveService(this.SubscriptionId());
 }
 
 
@@ -71,7 +179,7 @@ ServiceUi.prototype.DisplayTestPattern = function(aTestPattern, aSuccessFunction
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.DisplayFill = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("DisplayFill", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -84,7 +192,7 @@ ServiceUi.prototype.DisplayFill = function(aSuccessFunction, aErrorFunction){
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.DisplayClear = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("DisplayClear", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -97,7 +205,7 @@ ServiceUi.prototype.DisplayClear = function(aSuccessFunction, aErrorFunction){
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.SetTestModeEnabled = function(aEnabled, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetTestModeEnabled", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -111,7 +219,7 @@ ServiceUi.prototype.SetTestModeEnabled = function(aEnabled, aSuccessFunction, aE
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.SimulateInfraredInput = function(aCode, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SimulateInfraredInput", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -125,7 +233,7 @@ ServiceUi.prototype.SimulateInfraredInput = function(aCode, aSuccessFunction, aE
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.SimulateButtonInput = function(aCode, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SimulateButtonInput", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -139,7 +247,7 @@ ServiceUi.prototype.SimulateButtonInput = function(aCode, aSuccessFunction, aErr
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.SimulateLightSensor = function(aLightLevel, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SimulateLightSensor", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -153,12 +261,12 @@ ServiceUi.prototype.SimulateLightSensor = function(aLightLevel, aSuccessFunction
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.GetLightSensorData = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("GetLightSensorData", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aLightLevel"] = request.ReadIntParameter(result["aLightLevel"]);	
+		result["aLightLevel"] = SoapRequest.ReadIntParameter(result["aLightLevel"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -167,7 +275,7 @@ ServiceUi.prototype.GetLightSensorData = function(aSuccessFunction, aErrorFuncti
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.SetDisplayBrightness = function(aBrightness, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetDisplayBrightness", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -181,7 +289,7 @@ ServiceUi.prototype.SetDisplayBrightness = function(aBrightness, aSuccessFunctio
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.SetDisplayBrightnessAuto = function(aBrightnessAuto, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetDisplayBrightnessAuto", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -195,7 +303,7 @@ ServiceUi.prototype.SetDisplayBrightnessAuto = function(aBrightnessAuto, aSucces
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.SetInfraredCommands = function(aCommands, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetInfraredCommands", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -209,12 +317,12 @@ ServiceUi.prototype.SetInfraredCommands = function(aCommands, aSuccessFunction, 
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.InfraredCommands = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("InfraredCommands", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aCommands"] = request.ReadStringParameter(result["aCommands"]);	
+		result["aCommands"] = SoapRequest.ReadStringParameter(result["aCommands"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -223,7 +331,7 @@ ServiceUi.prototype.InfraredCommands = function(aSuccessFunction, aErrorFunction
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.SetInfraredTerminalCommands = function(aCommands, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetInfraredTerminalCommands", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -237,12 +345,12 @@ ServiceUi.prototype.SetInfraredTerminalCommands = function(aCommands, aSuccessFu
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.InfraredTerminalCommands = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("InfraredTerminalCommands", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aCommands"] = request.ReadStringParameter(result["aCommands"]);	
+		result["aCommands"] = SoapRequest.ReadStringParameter(result["aCommands"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -251,12 +359,12 @@ ServiceUi.prototype.InfraredTerminalCommands = function(aSuccessFunction, aError
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.DisplayBrightness = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("DisplayBrightness", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aBrightness"] = request.ReadIntParameter(result["aBrightness"]);	
+		result["aBrightness"] = SoapRequest.ReadIntParameter(result["aBrightness"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -265,12 +373,12 @@ ServiceUi.prototype.DisplayBrightness = function(aSuccessFunction, aErrorFunctio
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.DisplayBrightnessAuto = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("DisplayBrightnessAuto", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aBrightnessAuto"] = request.ReadBoolParameter(result["aBrightnessAuto"]);	
+		result["aBrightnessAuto"] = SoapRequest.ReadBoolParameter(result["aBrightnessAuto"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -279,12 +387,12 @@ ServiceUi.prototype.DisplayBrightnessAuto = function(aSuccessFunction, aErrorFun
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.DisplayUpsideDown = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("DisplayUpsideDown", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aUpsideDown"] = request.ReadBoolParameter(result["aUpsideDown"]);	
+		result["aUpsideDown"] = SoapRequest.ReadBoolParameter(result["aUpsideDown"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -293,7 +401,7 @@ ServiceUi.prototype.DisplayUpsideDown = function(aSuccessFunction, aErrorFunctio
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.SetDisplayUpsideDown = function(aUpsideDown, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetDisplayUpsideDown", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -307,7 +415,7 @@ ServiceUi.prototype.SetDisplayUpsideDown = function(aUpsideDown, aSuccessFunctio
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.SetDisplayScrollText = function(aDisplayScrollText, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetDisplayScrollText", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -321,12 +429,12 @@ ServiceUi.prototype.SetDisplayScrollText = function(aDisplayScrollText, aSuccess
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.DisplayScrollText = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("DisplayScrollText", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aDisplayScrollTextEnabled"] = request.ReadBoolParameter(result["aDisplayScrollTextEnabled"]);	
+		result["aDisplayScrollTextEnabled"] = SoapRequest.ReadBoolParameter(result["aDisplayScrollTextEnabled"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -335,7 +443,7 @@ ServiceUi.prototype.DisplayScrollText = function(aSuccessFunction, aErrorFunctio
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.SetDisplaySleep = function(aEnabled, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetDisplaySleep", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -349,12 +457,12 @@ ServiceUi.prototype.SetDisplaySleep = function(aEnabled, aSuccessFunction, aErro
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.DisplaySleep = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("DisplaySleep", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aEnabled"] = request.ReadBoolParameter(result["aEnabled"]);	
+		result["aEnabled"] = SoapRequest.ReadBoolParameter(result["aEnabled"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -363,7 +471,7 @@ ServiceUi.prototype.DisplaySleep = function(aSuccessFunction, aErrorFunction){
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.SetDisplayLedOff = function(aOff, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetDisplayLedOff", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -377,12 +485,12 @@ ServiceUi.prototype.SetDisplayLedOff = function(aOff, aSuccessFunction, aErrorFu
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceUi.prototype.DisplayLedOff = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("DisplayLedOff", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aOff"] = request.ReadBoolParameter(result["aOff"]);	
+		result["aOff"] = SoapRequest.ReadBoolParameter(result["aOff"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -391,6 +499,6 @@ ServiceUi.prototype.DisplayLedOff = function(aSuccessFunction, aErrorFunction){
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 

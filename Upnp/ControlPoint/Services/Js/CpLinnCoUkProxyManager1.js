@@ -4,8 +4,8 @@
  * Proxy for linn.co.uk:ProxyManager:1
  */
 
-var ServiceProxyManager = function(aId){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aId + "/ProxyManager/control";
+var ServiceProxyManager = function(aUdn){	
+	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/linn.co.uk-ProxyManager-1/control";
 	this.iDomain = "linn.co.uk";
 	if (this.iDomain == "upnp.org") {
 		this.iDomain = "schemas.upnp.org";
@@ -13,6 +13,9 @@ var ServiceProxyManager = function(aId){
 	this.iDomain = this.iDomain.replace(/\./,"-");
 	this.iType = "ProxyManager";
 	this.iVersion = "1";
+	this.iServiceName = "linn.co.uk-ProxyManager-1";
+	this.iSubscriptionId = "";
+	this.iUdn = aUdn;
 	
 	this.iVariables = {};
 			this.iVariables["KontrolProductConnected"] = new ServiceVariable("KontrolProductConnected");
@@ -44,12 +47,61 @@ ServiceProxyManager.kDiscPlayerConnectedUnidiskSc = "Unidisk SC";
 ServiceProxyManager.kDiscPlayerConnectedClassikMovie = "Classik Movie";
 ServiceProxyManager.kDiscPlayerConnectedClassikMusic = "Classik Music";
 
+ServiceProxyManager.prototype.KontrolProductConnected_Changed = function (aStateChangedFunction) {
+    this.Variables().KontrolProductConnected.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceProxyManager.prototype.KontrolProductComPort_Changed = function (aStateChangedFunction) {
+    this.Variables().KontrolProductComPort.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceProxyManager.prototype.DiscPlayerConnected_Changed = function (aStateChangedFunction) {
+    this.Variables().DiscPlayerConnected.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceProxyManager.prototype.DiscPlayerComPort_Changed = function (aStateChangedFunction) {
+    this.Variables().DiscPlayerComPort.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceProxyManager.prototype.Bool_Changed = function (aStateChangedFunction) {
+    this.Variables().Bool.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+	});
+}
+ServiceProxyManager.prototype.ComPort_Changed = function (aStateChangedFunction) {
+    this.Variables().ComPort.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+
 ServiceProxyManager.prototype.ServiceName = function(){
-	return this.iType;
+	return this.iServiceName;
 }
 
 ServiceProxyManager.prototype.Variables = function(){
 	return this.iVariables;
+}
+
+ServiceProxyManager.prototype.SubscriptionId = function () {
+    return this.iSubscriptionId;
+}
+
+ServiceProxyManager.prototype.SetSubscriptionId = function (value) {
+    this.iSubscriptionId = value;
+}
+
+ServiceProxyManager.prototype.Udn = function () {
+    return this.iUdn;
 }
 
 ServiceProxyManager.prototype.VariableNames = function(){
@@ -62,11 +114,19 @@ ServiceProxyManager.prototype.VariableNames = function(){
 	return result;
 }
 
+ServiceProxyManager.prototype.Subscribe = function () {
+    SubscriptionManager.AddService(this);
+}
+
+ServiceProxyManager.prototype.Unsubscribe = function () {
+    SubscriptionManager.RemoveService(this.SubscriptionId());
+}
+
 
 ServiceProxyManager.prototype.KontrolProductConnected = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("KontrolProductConnected", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aConnected"] = request.ReadStringParameter(result["aConnected"]);	
+		result["aConnected"] = SoapRequest.ReadStringParameter(result["aConnected"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -75,7 +135,7 @@ ServiceProxyManager.prototype.KontrolProductConnected = function(aSuccessFunctio
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProxyManager.prototype.SetKontrolProductConnected = function(aConnected, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetKontrolProductConnected", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -89,12 +149,12 @@ ServiceProxyManager.prototype.SetKontrolProductConnected = function(aConnected, 
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProxyManager.prototype.KontrolProductComPort = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("KontrolProductComPort", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aPort"] = request.ReadIntParameter(result["aPort"]);	
+		result["aPort"] = SoapRequest.ReadIntParameter(result["aPort"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -103,7 +163,7 @@ ServiceProxyManager.prototype.KontrolProductComPort = function(aSuccessFunction,
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProxyManager.prototype.SetKontrolProductComPort = function(aConnected, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetKontrolProductComPort", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -117,12 +177,12 @@ ServiceProxyManager.prototype.SetKontrolProductComPort = function(aConnected, aS
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProxyManager.prototype.DiscPlayerConnected = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("DiscPlayerConnected", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aConnected"] = request.ReadStringParameter(result["aConnected"]);	
+		result["aConnected"] = SoapRequest.ReadStringParameter(result["aConnected"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -131,7 +191,7 @@ ServiceProxyManager.prototype.DiscPlayerConnected = function(aSuccessFunction, a
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProxyManager.prototype.SetDiscPlayerConnected = function(aConnected, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetDiscPlayerConnected", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -145,12 +205,12 @@ ServiceProxyManager.prototype.SetDiscPlayerConnected = function(aConnected, aSuc
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProxyManager.prototype.DiscPlayerComPort = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("DiscPlayerComPort", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aPort"] = request.ReadIntParameter(result["aPort"]);	
+		result["aPort"] = SoapRequest.ReadIntParameter(result["aPort"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -159,7 +219,7 @@ ServiceProxyManager.prototype.DiscPlayerComPort = function(aSuccessFunction, aEr
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProxyManager.prototype.SetDiscPlayerComPort = function(aConnected, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetDiscPlayerComPort", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -173,12 +233,12 @@ ServiceProxyManager.prototype.SetDiscPlayerComPort = function(aConnected, aSucce
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProxyManager.prototype.TestKontrolProductConnection = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("TestKontrolProductConnection", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aResult"] = request.ReadBoolParameter(result["aResult"]);	
+		result["aResult"] = SoapRequest.ReadBoolParameter(result["aResult"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -187,12 +247,12 @@ ServiceProxyManager.prototype.TestKontrolProductConnection = function(aSuccessFu
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProxyManager.prototype.TestDiscPlayerConnection = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("TestDiscPlayerConnection", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aResult"] = request.ReadBoolParameter(result["aResult"]);	
+		result["aResult"] = SoapRequest.ReadBoolParameter(result["aResult"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -201,6 +261,6 @@ ServiceProxyManager.prototype.TestDiscPlayerConnection = function(aSuccessFuncti
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 

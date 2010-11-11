@@ -4,8 +4,8 @@
  * Proxy for linn.co.uk:Volkano:1
  */
 
-var ServiceVolkano = function(aId){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aId + "/Volkano/control";
+var ServiceVolkano = function(aUdn){	
+	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/linn.co.uk-Volkano-1/control";
 	this.iDomain = "linn.co.uk";
 	if (this.iDomain == "upnp.org") {
 		this.iDomain = "schemas.upnp.org";
@@ -13,6 +13,9 @@ var ServiceVolkano = function(aId){
 	this.iDomain = this.iDomain.replace(/\./,"-");
 	this.iType = "Volkano";
 	this.iVersion = "1";
+	this.iServiceName = "linn.co.uk-Volkano-1";
+	this.iSubscriptionId = "";
+	this.iUdn = aUdn;
 	
 	this.iVariables = {};
 			this.iVariables["BootMode"] = new ServiceVariable("BootMode");
@@ -27,12 +30,49 @@ ServiceVolkano.kBootModeRam = "Ram";
 ServiceVolkano.kRebootModeMain = "Main";
 ServiceVolkano.kRebootModeFallback = "Fallback";
 
+ServiceVolkano.prototype.BootMode_Changed = function (aStateChangedFunction) {
+    this.Variables().BootMode.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceVolkano.prototype.RebootMode_Changed = function (aStateChangedFunction) {
+    this.Variables().RebootMode.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceVolkano.prototype.String_Changed = function (aStateChangedFunction) {
+    this.Variables().String.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceVolkano.prototype.TUint_Changed = function (aStateChangedFunction) {
+    this.Variables().TUint.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+
 ServiceVolkano.prototype.ServiceName = function(){
-	return this.iType;
+	return this.iServiceName;
 }
 
 ServiceVolkano.prototype.Variables = function(){
 	return this.iVariables;
+}
+
+ServiceVolkano.prototype.SubscriptionId = function () {
+    return this.iSubscriptionId;
+}
+
+ServiceVolkano.prototype.SetSubscriptionId = function (value) {
+    this.iSubscriptionId = value;
+}
+
+ServiceVolkano.prototype.Udn = function () {
+    return this.iUdn;
 }
 
 ServiceVolkano.prototype.VariableNames = function(){
@@ -43,6 +83,14 @@ ServiceVolkano.prototype.VariableNames = function(){
 		}
 	}
 	return result;
+}
+
+ServiceVolkano.prototype.Subscribe = function () {
+    SubscriptionManager.AddService(this);
+}
+
+ServiceVolkano.prototype.Unsubscribe = function () {
+    SubscriptionManager.RemoveService(this.SubscriptionId());
 }
 
 
@@ -57,12 +105,12 @@ ServiceVolkano.prototype.Reboot = function(aSuccessFunction, aErrorFunction){
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceVolkano.prototype.BootMode = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("BootMode", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aMode"] = request.ReadStringParameter(result["aMode"]);	
+		result["aMode"] = SoapRequest.ReadStringParameter(result["aMode"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -71,7 +119,7 @@ ServiceVolkano.prototype.BootMode = function(aSuccessFunction, aErrorFunction){
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceVolkano.prototype.SetBootMode = function(aMode, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetBootMode", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -85,12 +133,12 @@ ServiceVolkano.prototype.SetBootMode = function(aMode, aSuccessFunction, aErrorF
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceVolkano.prototype.BspType = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("BspType", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aBspType"] = request.ReadStringParameter(result["aBspType"]);	
+		result["aBspType"] = SoapRequest.ReadStringParameter(result["aBspType"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -99,12 +147,12 @@ ServiceVolkano.prototype.BspType = function(aSuccessFunction, aErrorFunction){
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceVolkano.prototype.UglyName = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("UglyName", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aUglyName"] = request.ReadStringParameter(result["aUglyName"]);	
+		result["aUglyName"] = SoapRequest.ReadStringParameter(result["aUglyName"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -113,12 +161,12 @@ ServiceVolkano.prototype.UglyName = function(aSuccessFunction, aErrorFunction){
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceVolkano.prototype.MacAddress = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("MacAddress", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aMacAddress"] = request.ReadStringParameter(result["aMacAddress"]);	
+		result["aMacAddress"] = SoapRequest.ReadStringParameter(result["aMacAddress"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -127,12 +175,12 @@ ServiceVolkano.prototype.MacAddress = function(aSuccessFunction, aErrorFunction)
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceVolkano.prototype.ProductId = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("ProductId", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aProductNumber"] = request.ReadStringParameter(result["aProductNumber"]);	
+		result["aProductNumber"] = SoapRequest.ReadStringParameter(result["aProductNumber"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -141,13 +189,13 @@ ServiceVolkano.prototype.ProductId = function(aSuccessFunction, aErrorFunction){
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceVolkano.prototype.BoardId = function(aIndex, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("BoardId", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.WriteIntParameter("aIndex", aIndex);
     request.Send(function(result){
-		result["aBoardNumber"] = request.ReadStringParameter(result["aBoardNumber"]);	
+		result["aBoardNumber"] = SoapRequest.ReadStringParameter(result["aBoardNumber"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -156,13 +204,13 @@ ServiceVolkano.prototype.BoardId = function(aIndex, aSuccessFunction, aErrorFunc
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceVolkano.prototype.BoardType = function(aIndex, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("BoardType", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.WriteIntParameter("aIndex", aIndex);
     request.Send(function(result){
-		result["aBoardNumber"] = request.ReadStringParameter(result["aBoardNumber"]);	
+		result["aBoardNumber"] = SoapRequest.ReadStringParameter(result["aBoardNumber"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -171,12 +219,12 @@ ServiceVolkano.prototype.BoardType = function(aIndex, aSuccessFunction, aErrorFu
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceVolkano.prototype.MaxBoards = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("MaxBoards", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aMaxBoards"] = request.ReadIntParameter(result["aMaxBoards"]);	
+		result["aMaxBoards"] = SoapRequest.ReadIntParameter(result["aMaxBoards"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -185,12 +233,12 @@ ServiceVolkano.prototype.MaxBoards = function(aSuccessFunction, aErrorFunction){
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceVolkano.prototype.SoftwareVersion = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SoftwareVersion", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aSoftwareVersion"] = request.ReadStringParameter(result["aSoftwareVersion"]);	
+		result["aSoftwareVersion"] = SoapRequest.ReadStringParameter(result["aSoftwareVersion"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -199,6 +247,6 @@ ServiceVolkano.prototype.SoftwareVersion = function(aSuccessFunction, aErrorFunc
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 

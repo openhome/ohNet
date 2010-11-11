@@ -4,8 +4,8 @@
  * Proxy for linn.co.uk:Diagnostics:1
  */
 
-var ServiceDiagnostics = function(aId){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aId + "/Diagnostics/control";
+var ServiceDiagnostics = function(aUdn){	
+	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/linn.co.uk-Diagnostics-1/control";
 	this.iDomain = "linn.co.uk";
 	if (this.iDomain == "upnp.org") {
 		this.iDomain = "schemas.upnp.org";
@@ -13,6 +13,9 @@ var ServiceDiagnostics = function(aId){
 	this.iDomain = this.iDomain.replace(/\./,"-");
 	this.iType = "Diagnostics";
 	this.iVersion = "1";
+	this.iServiceName = "linn.co.uk-Diagnostics-1";
+	this.iSubscriptionId = "";
+	this.iUdn = aUdn;
 	
 	this.iVariables = {};
 			this.iVariables["aStateVariable"] = new ServiceVariable("aStateVariable");
@@ -23,12 +26,55 @@ var ServiceDiagnostics = function(aId){
 }
 
 
+ServiceDiagnostics.prototype.aStateVariable_Changed = function (aStateChangedFunction) {
+    this.Variables().aStateVariable.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceDiagnostics.prototype.Data_Changed = function (aStateChangedFunction) {
+    this.Variables().Data.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadBinaryParameter(state)); 
+	});
+}
+ServiceDiagnostics.prototype.String_Changed = function (aStateChangedFunction) {
+    this.Variables().String.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceDiagnostics.prototype.Bool_Changed = function (aStateChangedFunction) {
+    this.Variables().Bool.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+	});
+}
+ServiceDiagnostics.prototype.TUint_Changed = function (aStateChangedFunction) {
+    this.Variables().TUint.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+
 ServiceDiagnostics.prototype.ServiceName = function(){
-	return this.iType;
+	return this.iServiceName;
 }
 
 ServiceDiagnostics.prototype.Variables = function(){
 	return this.iVariables;
+}
+
+ServiceDiagnostics.prototype.SubscriptionId = function () {
+    return this.iSubscriptionId;
+}
+
+ServiceDiagnostics.prototype.SetSubscriptionId = function (value) {
+    this.iSubscriptionId = value;
+}
+
+ServiceDiagnostics.prototype.Udn = function () {
+    return this.iUdn;
 }
 
 ServiceDiagnostics.prototype.VariableNames = function(){
@@ -41,12 +87,20 @@ ServiceDiagnostics.prototype.VariableNames = function(){
 	return result;
 }
 
+ServiceDiagnostics.prototype.Subscribe = function () {
+    SubscriptionManager.AddService(this);
+}
+
+ServiceDiagnostics.prototype.Unsubscribe = function () {
+    SubscriptionManager.RemoveService(this.SubscriptionId());
+}
+
 
 ServiceDiagnostics.prototype.Echo = function(aIn, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("Echo", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.WriteStringParameter("aIn", aIn);
     request.Send(function(result){
-		result["aOut"] = request.ReadStringParameter(result["aOut"]);	
+		result["aOut"] = SoapRequest.ReadStringParameter(result["aOut"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -55,12 +109,12 @@ ServiceDiagnostics.prototype.Echo = function(aIn, aSuccessFunction, aErrorFuncti
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceDiagnostics.prototype.ElfFile = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("ElfFile", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aElfFile"] = request.ReadStringParameter(result["aElfFile"]);	
+		result["aElfFile"] = SoapRequest.ReadStringParameter(result["aElfFile"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -69,12 +123,12 @@ ServiceDiagnostics.prototype.ElfFile = function(aSuccessFunction, aErrorFunction
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceDiagnostics.prototype.ElfFingerprint = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("ElfFingerprint", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aElfFileFingerprint"] = request.ReadStringParameter(result["aElfFileFingerprint"]);	
+		result["aElfFileFingerprint"] = SoapRequest.ReadStringParameter(result["aElfFileFingerprint"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -83,12 +137,12 @@ ServiceDiagnostics.prototype.ElfFingerprint = function(aSuccessFunction, aErrorF
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceDiagnostics.prototype.CrashDataStatus = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("CrashDataStatus", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aCrashDataStatus"] = request.ReadStringParameter(result["aCrashDataStatus"]);	
+		result["aCrashDataStatus"] = SoapRequest.ReadStringParameter(result["aCrashDataStatus"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -97,12 +151,12 @@ ServiceDiagnostics.prototype.CrashDataStatus = function(aSuccessFunction, aError
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceDiagnostics.prototype.CrashDataFetch = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("CrashDataFetch", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aCrashData"] = request.ReadBinaryParameter(result["aCrashData"]);	
+		result["aCrashData"] = SoapRequest.ReadBinaryParameter(result["aCrashData"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -111,7 +165,7 @@ ServiceDiagnostics.prototype.CrashDataFetch = function(aSuccessFunction, aErrorF
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceDiagnostics.prototype.CrashDataClear = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("CrashDataClear", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -124,12 +178,12 @@ ServiceDiagnostics.prototype.CrashDataClear = function(aSuccessFunction, aErrorF
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceDiagnostics.prototype.SysLog = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SysLog", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aSysLog"] = request.ReadBinaryParameter(result["aSysLog"]);	
+		result["aSysLog"] = SoapRequest.ReadBinaryParameter(result["aSysLog"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -138,13 +192,13 @@ ServiceDiagnostics.prototype.SysLog = function(aSuccessFunction, aErrorFunction)
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceDiagnostics.prototype.Diagnostic = function(aDiagnosticType, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("Diagnostic", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.WriteStringParameter("aDiagnosticType", aDiagnosticType);
     request.Send(function(result){
-		result["aDiagnosticInfo"] = request.ReadStringParameter(result["aDiagnosticInfo"]);	
+		result["aDiagnosticInfo"] = SoapRequest.ReadStringParameter(result["aDiagnosticInfo"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -153,12 +207,12 @@ ServiceDiagnostics.prototype.Diagnostic = function(aDiagnosticType, aSuccessFunc
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceDiagnostics.prototype.StateVariable = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("StateVariable", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aStateVariable"] = request.ReadIntParameter(result["aStateVariable"]);	
+		result["aStateVariable"] = SoapRequest.ReadIntParameter(result["aStateVariable"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -167,7 +221,7 @@ ServiceDiagnostics.prototype.StateVariable = function(aSuccessFunction, aErrorFu
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceDiagnostics.prototype.SetStateVariable = function(aStateVariable, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetStateVariable", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -181,12 +235,12 @@ ServiceDiagnostics.prototype.SetStateVariable = function(aStateVariable, aSucces
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceDiagnostics.prototype.StateVariablePeriod = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("StateVariablePeriod", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aPeriod"] = request.ReadIntParameter(result["aPeriod"]);	
+		result["aPeriod"] = SoapRequest.ReadIntParameter(result["aPeriod"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -195,7 +249,7 @@ ServiceDiagnostics.prototype.StateVariablePeriod = function(aSuccessFunction, aE
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceDiagnostics.prototype.SetStateVariablePeriod = function(aPeriod, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetStateVariablePeriod", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -209,7 +263,7 @@ ServiceDiagnostics.prototype.SetStateVariablePeriod = function(aPeriod, aSuccess
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceDiagnostics.prototype.Reboot = function(aDelay, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("Reboot", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -223,6 +277,6 @@ ServiceDiagnostics.prototype.Reboot = function(aDelay, aSuccessFunction, aErrorF
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 

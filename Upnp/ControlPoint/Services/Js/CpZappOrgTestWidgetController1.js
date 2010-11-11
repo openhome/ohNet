@@ -4,8 +4,8 @@
  * Proxy for zapp.org:TestWidgetController:1
  */
 
-var ServiceTestWidgetController = function(aId){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aId + "/TestWidgetController/control";
+var ServiceTestWidgetController = function(aUdn){	
+	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/zapp.org-TestWidgetController-1/control";
 	this.iDomain = "zapp.org";
 	if (this.iDomain == "upnp.org") {
 		this.iDomain = "schemas.upnp.org";
@@ -13,6 +13,9 @@ var ServiceTestWidgetController = function(aId){
 	this.iDomain = this.iDomain.replace(/\./,"-");
 	this.iType = "TestWidgetController";
 	this.iVersion = "1";
+	this.iServiceName = "zapp.org-TestWidgetController-1";
+	this.iSubscriptionId = "";
+	this.iUdn = aUdn;
 	
 	this.iVariables = {};
 			this.iVariables["RegisterValue"] = new ServiceVariable("RegisterValue");
@@ -21,12 +24,43 @@ var ServiceTestWidgetController = function(aId){
 }
 
 
+ServiceTestWidgetController.prototype.RegisterValue_Changed = function (aStateChangedFunction) {
+    this.Variables().RegisterValue.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestWidgetController.prototype.RegisterIndex_Changed = function (aStateChangedFunction) {
+    this.Variables().RegisterIndex.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestWidgetController.prototype.UDN_Changed = function (aStateChangedFunction) {
+    this.Variables().UDN.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+
 ServiceTestWidgetController.prototype.ServiceName = function(){
-	return this.iType;
+	return this.iServiceName;
 }
 
 ServiceTestWidgetController.prototype.Variables = function(){
 	return this.iVariables;
+}
+
+ServiceTestWidgetController.prototype.SubscriptionId = function () {
+    return this.iSubscriptionId;
+}
+
+ServiceTestWidgetController.prototype.SetSubscriptionId = function (value) {
+    this.iSubscriptionId = value;
+}
+
+ServiceTestWidgetController.prototype.Udn = function () {
+    return this.iUdn;
 }
 
 ServiceTestWidgetController.prototype.VariableNames = function(){
@@ -37,6 +71,14 @@ ServiceTestWidgetController.prototype.VariableNames = function(){
 		}
 	}
 	return result;
+}
+
+ServiceTestWidgetController.prototype.Subscribe = function () {
+    SubscriptionManager.AddService(this);
+}
+
+ServiceTestWidgetController.prototype.Unsubscribe = function () {
+    SubscriptionManager.RemoveService(this.SubscriptionId());
 }
 
 
@@ -52,7 +94,7 @@ ServiceTestWidgetController.prototype.CreateWidget = function(WidgetUdn, aSucces
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceTestWidgetController.prototype.RemoveWidget = function(WidgetUdn, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("RemoveWidget", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -66,7 +108,7 @@ ServiceTestWidgetController.prototype.RemoveWidget = function(WidgetUdn, aSucces
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceTestWidgetController.prototype.SetWidgetRegister = function(WidgetUdn, RegisterIndex, RegisterValue, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetWidgetRegister", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -82,6 +124,6 @@ ServiceTestWidgetController.prototype.SetWidgetRegister = function(WidgetUdn, Re
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 

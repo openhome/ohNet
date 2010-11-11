@@ -4,8 +4,8 @@
  * Proxy for linn.co.uk:Configuration:1
  */
 
-var ServiceConfiguration = function(aId){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aId + "/Configuration/control";
+var ServiceConfiguration = function(aUdn){	
+	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/linn.co.uk-Configuration-1/control";
 	this.iDomain = "linn.co.uk";
 	if (this.iDomain == "upnp.org") {
 		this.iDomain = "schemas.upnp.org";
@@ -13,6 +13,9 @@ var ServiceConfiguration = function(aId){
 	this.iDomain = this.iDomain.replace(/\./,"-");
 	this.iType = "Configuration";
 	this.iVersion = "1";
+	this.iServiceName = "linn.co.uk-Configuration-1";
+	this.iSubscriptionId = "";
+	this.iUdn = aUdn;
 	
 	this.iVariables = {};
 			this.iVariables["ConfigurationXml"] = new ServiceVariable("ConfigurationXml");
@@ -23,12 +26,55 @@ var ServiceConfiguration = function(aId){
 }
 
 
+ServiceConfiguration.prototype.ConfigurationXml_Changed = function (aStateChangedFunction) {
+    this.Variables().ConfigurationXml.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceConfiguration.prototype.ParameterXml_Changed = function (aStateChangedFunction) {
+    this.Variables().ParameterXml.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceConfiguration.prototype.Target_Changed = function (aStateChangedFunction) {
+    this.Variables().Target.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceConfiguration.prototype.Name_Changed = function (aStateChangedFunction) {
+    this.Variables().Name.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceConfiguration.prototype.Value_Changed = function (aStateChangedFunction) {
+    this.Variables().Value.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+
 ServiceConfiguration.prototype.ServiceName = function(){
-	return this.iType;
+	return this.iServiceName;
 }
 
 ServiceConfiguration.prototype.Variables = function(){
 	return this.iVariables;
+}
+
+ServiceConfiguration.prototype.SubscriptionId = function () {
+    return this.iSubscriptionId;
+}
+
+ServiceConfiguration.prototype.SetSubscriptionId = function (value) {
+    this.iSubscriptionId = value;
+}
+
+ServiceConfiguration.prototype.Udn = function () {
+    return this.iUdn;
 }
 
 ServiceConfiguration.prototype.VariableNames = function(){
@@ -41,11 +87,19 @@ ServiceConfiguration.prototype.VariableNames = function(){
 	return result;
 }
 
+ServiceConfiguration.prototype.Subscribe = function () {
+    SubscriptionManager.AddService(this);
+}
+
+ServiceConfiguration.prototype.Unsubscribe = function () {
+    SubscriptionManager.RemoveService(this.SubscriptionId());
+}
+
 
 ServiceConfiguration.prototype.ConfigurationXml = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("ConfigurationXml", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aConfigurationXml"] = request.ReadStringParameter(result["aConfigurationXml"]);	
+		result["aConfigurationXml"] = SoapRequest.ReadStringParameter(result["aConfigurationXml"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -54,12 +108,12 @@ ServiceConfiguration.prototype.ConfigurationXml = function(aSuccessFunction, aEr
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceConfiguration.prototype.ParameterXml = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("ParameterXml", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aParameterXml"] = request.ReadStringParameter(result["aParameterXml"]);	
+		result["aParameterXml"] = SoapRequest.ReadStringParameter(result["aParameterXml"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -68,7 +122,7 @@ ServiceConfiguration.prototype.ParameterXml = function(aSuccessFunction, aErrorF
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceConfiguration.prototype.SetParameter = function(aTarget, aName, aValue, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetParameter", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -84,6 +138,6 @@ ServiceConfiguration.prototype.SetParameter = function(aTarget, aName, aValue, a
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 

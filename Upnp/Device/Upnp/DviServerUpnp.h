@@ -143,6 +143,7 @@ private:
     TBool iResponseStarted;
     TBool iResponseEnded;
     Brn iSoapRequest;
+	TBool iResourceWriterHeadersOnly;
     Semaphore iShutdownSem;
 };
 

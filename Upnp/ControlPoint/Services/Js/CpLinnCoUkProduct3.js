@@ -4,8 +4,8 @@
  * Proxy for linn.co.uk:Product:3
  */
 
-var ServiceProduct = function(aId){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aId + "/Product/control";
+var ServiceProduct = function(aUdn){	
+	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/linn.co.uk-Product-3/control";
 	this.iDomain = "linn.co.uk";
 	if (this.iDomain == "upnp.org") {
 		this.iDomain = "schemas.upnp.org";
@@ -13,6 +13,9 @@ var ServiceProduct = function(aId){
 	this.iDomain = this.iDomain.replace(/\./,"-");
 	this.iType = "Product";
 	this.iVersion = "3";
+	this.iServiceName = "linn.co.uk-Product-3";
+	this.iSubscriptionId = "";
+	this.iUdn = aUdn;
 	
 	this.iVariables = {};
 			this.iVariables["ProductType"] = new ServiceVariable("ProductType");
@@ -34,12 +37,121 @@ var ServiceProduct = function(aId){
 }
 
 
+ServiceProduct.prototype.ProductType_Changed = function (aStateChangedFunction) {
+    this.Variables().ProductType.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceProduct.prototype.ProductModel_Changed = function (aStateChangedFunction) {
+    this.Variables().ProductModel.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceProduct.prototype.ProductName_Changed = function (aStateChangedFunction) {
+    this.Variables().ProductName.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceProduct.prototype.ProductRoom_Changed = function (aStateChangedFunction) {
+    this.Variables().ProductRoom.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceProduct.prototype.ProductStandby_Changed = function (aStateChangedFunction) {
+    this.Variables().ProductStandby.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+	});
+}
+ServiceProduct.prototype.ProductSourceIndex_Changed = function (aStateChangedFunction) {
+    this.Variables().ProductSourceIndex.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceProduct.prototype.ProductSourceCount_Changed = function (aStateChangedFunction) {
+    this.Variables().ProductSourceCount.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceProduct.prototype.ProductSourceXml_Changed = function (aStateChangedFunction) {
+    this.Variables().ProductSourceXml.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceProduct.prototype.StartupSourceIndex_Changed = function (aStateChangedFunction) {
+    this.Variables().StartupSourceIndex.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceProduct.prototype.StartupSourceEnabled_Changed = function (aStateChangedFunction) {
+    this.Variables().StartupSourceEnabled.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+	});
+}
+ServiceProduct.prototype.ProductSourceType_Changed = function (aStateChangedFunction) {
+    this.Variables().ProductSourceType.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceProduct.prototype.ProductSourceName_Changed = function (aStateChangedFunction) {
+    this.Variables().ProductSourceName.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceProduct.prototype.ProductSourceVisible_Changed = function (aStateChangedFunction) {
+    this.Variables().ProductSourceVisible.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+	});
+}
+ServiceProduct.prototype.ProductAnySourceName_Changed = function (aStateChangedFunction) {
+    this.Variables().ProductAnySourceName.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceProduct.prototype.ProductAnySourceVisible_Changed = function (aStateChangedFunction) {
+    this.Variables().ProductAnySourceVisible.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceProduct.prototype.ProductAnySourceType_Changed = function (aStateChangedFunction) {
+    this.Variables().ProductAnySourceType.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+
 ServiceProduct.prototype.ServiceName = function(){
-	return this.iType;
+	return this.iServiceName;
 }
 
 ServiceProduct.prototype.Variables = function(){
 	return this.iVariables;
+}
+
+ServiceProduct.prototype.SubscriptionId = function () {
+    return this.iSubscriptionId;
+}
+
+ServiceProduct.prototype.SetSubscriptionId = function (value) {
+    this.iSubscriptionId = value;
+}
+
+ServiceProduct.prototype.Udn = function () {
+    return this.iUdn;
 }
 
 ServiceProduct.prototype.VariableNames = function(){
@@ -52,11 +164,19 @@ ServiceProduct.prototype.VariableNames = function(){
 	return result;
 }
 
+ServiceProduct.prototype.Subscribe = function () {
+    SubscriptionManager.AddService(this);
+}
+
+ServiceProduct.prototype.Unsubscribe = function () {
+    SubscriptionManager.RemoveService(this.SubscriptionId());
+}
+
 
 ServiceProduct.prototype.Type = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("Type", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aType"] = request.ReadStringParameter(result["aType"]);	
+		result["aType"] = SoapRequest.ReadStringParameter(result["aType"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -65,12 +185,12 @@ ServiceProduct.prototype.Type = function(aSuccessFunction, aErrorFunction){
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.Model = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("Model", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aModel"] = request.ReadStringParameter(result["aModel"]);	
+		result["aModel"] = SoapRequest.ReadStringParameter(result["aModel"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -79,12 +199,12 @@ ServiceProduct.prototype.Model = function(aSuccessFunction, aErrorFunction){
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.Name = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("Name", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aName"] = request.ReadStringParameter(result["aName"]);	
+		result["aName"] = SoapRequest.ReadStringParameter(result["aName"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -93,7 +213,7 @@ ServiceProduct.prototype.Name = function(aSuccessFunction, aErrorFunction){
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.SetName = function(aName, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetName", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -107,12 +227,12 @@ ServiceProduct.prototype.SetName = function(aName, aSuccessFunction, aErrorFunct
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.Room = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("Room", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aRoom"] = request.ReadStringParameter(result["aRoom"]);	
+		result["aRoom"] = SoapRequest.ReadStringParameter(result["aRoom"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -121,7 +241,7 @@ ServiceProduct.prototype.Room = function(aSuccessFunction, aErrorFunction){
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.SetRoom = function(aRoom, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetRoom", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -135,12 +255,12 @@ ServiceProduct.prototype.SetRoom = function(aRoom, aSuccessFunction, aErrorFunct
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.Standby = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("Standby", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aStandby"] = request.ReadBoolParameter(result["aStandby"]);	
+		result["aStandby"] = SoapRequest.ReadBoolParameter(result["aStandby"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -149,7 +269,7 @@ ServiceProduct.prototype.Standby = function(aSuccessFunction, aErrorFunction){
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.SetStandby = function(aStandby, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetStandby", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -163,12 +283,12 @@ ServiceProduct.prototype.SetStandby = function(aStandby, aSuccessFunction, aErro
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.SourceCount = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SourceCount", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aSourceCount"] = request.ReadIntParameter(result["aSourceCount"]);	
+		result["aSourceCount"] = SoapRequest.ReadIntParameter(result["aSourceCount"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -177,12 +297,12 @@ ServiceProduct.prototype.SourceCount = function(aSuccessFunction, aErrorFunction
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.SourceXml = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SourceXml", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aSourceXml"] = request.ReadStringParameter(result["aSourceXml"]);	
+		result["aSourceXml"] = SoapRequest.ReadStringParameter(result["aSourceXml"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -191,12 +311,12 @@ ServiceProduct.prototype.SourceXml = function(aSuccessFunction, aErrorFunction){
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.SourceIndex = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SourceIndex", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aSourceIndex"] = request.ReadIntParameter(result["aSourceIndex"]);	
+		result["aSourceIndex"] = SoapRequest.ReadIntParameter(result["aSourceIndex"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -205,7 +325,7 @@ ServiceProduct.prototype.SourceIndex = function(aSuccessFunction, aErrorFunction
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.SetSourceIndex = function(aSourceIndex, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetSourceIndex", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -219,7 +339,7 @@ ServiceProduct.prototype.SetSourceIndex = function(aSourceIndex, aSuccessFunctio
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.SetSourceIndexByName = function(aSourceName, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetSourceIndexByName", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -233,7 +353,7 @@ ServiceProduct.prototype.SetSourceIndexByName = function(aSourceName, aSuccessFu
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.SetStartupSourceIndexByName = function(aSourceName, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetStartupSourceIndexByName", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -247,12 +367,12 @@ ServiceProduct.prototype.SetStartupSourceIndexByName = function(aSourceName, aSu
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.StartupSourceIndex = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("StartupSourceIndex", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aSourceIndex"] = request.ReadIntParameter(result["aSourceIndex"]);	
+		result["aSourceIndex"] = SoapRequest.ReadIntParameter(result["aSourceIndex"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -261,7 +381,7 @@ ServiceProduct.prototype.StartupSourceIndex = function(aSuccessFunction, aErrorF
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.SetStartupSourceIndex = function(aSourceIndex, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetStartupSourceIndex", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -275,12 +395,12 @@ ServiceProduct.prototype.SetStartupSourceIndex = function(aSourceIndex, aSuccess
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.StartupSourceEnabled = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("StartupSourceEnabled", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aStartupSourceEnabled"] = request.ReadBoolParameter(result["aStartupSourceEnabled"]);	
+		result["aStartupSourceEnabled"] = SoapRequest.ReadBoolParameter(result["aStartupSourceEnabled"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -289,7 +409,7 @@ ServiceProduct.prototype.StartupSourceEnabled = function(aSuccessFunction, aErro
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.SetStartupSourceEnabled = function(aStartupSourceEnabled, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetStartupSourceEnabled", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -303,13 +423,13 @@ ServiceProduct.prototype.SetStartupSourceEnabled = function(aStartupSourceEnable
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.SourceSystemName = function(aSourceIndex, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SourceSystemName", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.WriteIntParameter("aSourceIndex", aSourceIndex);
     request.Send(function(result){
-		result["aSourceName"] = request.ReadStringParameter(result["aSourceName"]);	
+		result["aSourceName"] = SoapRequest.ReadStringParameter(result["aSourceName"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -318,13 +438,13 @@ ServiceProduct.prototype.SourceSystemName = function(aSourceIndex, aSuccessFunct
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.SourceName = function(aSourceIndex, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SourceName", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.WriteIntParameter("aSourceIndex", aSourceIndex);
     request.Send(function(result){
-		result["aSourceName"] = request.ReadStringParameter(result["aSourceName"]);	
+		result["aSourceName"] = SoapRequest.ReadStringParameter(result["aSourceName"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -333,7 +453,7 @@ ServiceProduct.prototype.SourceName = function(aSourceIndex, aSuccessFunction, a
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.SetSourceName = function(aSourceIndex, aSourceName, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetSourceName", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -348,13 +468,13 @@ ServiceProduct.prototype.SetSourceName = function(aSourceIndex, aSourceName, aSu
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.SourceType = function(aSourceIndex, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SourceType", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.WriteIntParameter("aSourceIndex", aSourceIndex);
     request.Send(function(result){
-		result["aSourceType"] = request.ReadStringParameter(result["aSourceType"]);	
+		result["aSourceType"] = SoapRequest.ReadStringParameter(result["aSourceType"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -363,13 +483,13 @@ ServiceProduct.prototype.SourceType = function(aSourceIndex, aSuccessFunction, a
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.SourceVisible = function(aSourceIndex, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SourceVisible", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.WriteIntParameter("aSourceIndex", aSourceIndex);
     request.Send(function(result){
-		result["aSourceVisible"] = request.ReadBoolParameter(result["aSourceVisible"]);	
+		result["aSourceVisible"] = SoapRequest.ReadBoolParameter(result["aSourceVisible"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -378,7 +498,7 @@ ServiceProduct.prototype.SourceVisible = function(aSourceIndex, aSuccessFunction
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceProduct.prototype.SetSourceVisible = function(aSourceIndex, aSourceVisible, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetSourceVisible", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -393,6 +513,6 @@ ServiceProduct.prototype.SetSourceVisible = function(aSourceIndex, aSourceVisibl
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 

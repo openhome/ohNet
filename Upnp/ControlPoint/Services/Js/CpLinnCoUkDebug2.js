@@ -4,8 +4,8 @@
  * Proxy for linn.co.uk:Debug:2
  */
 
-var ServiceDebug = function(aId){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aId + "/Debug/control";
+var ServiceDebug = function(aUdn){	
+	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/linn.co.uk-Debug-2/control";
 	this.iDomain = "linn.co.uk";
 	if (this.iDomain == "upnp.org") {
 		this.iDomain = "schemas.upnp.org";
@@ -13,6 +13,9 @@ var ServiceDebug = function(aId){
 	this.iDomain = this.iDomain.replace(/\./,"-");
 	this.iType = "Debug";
 	this.iVersion = "2";
+	this.iServiceName = "linn.co.uk-Debug-2";
+	this.iSubscriptionId = "";
+	this.iUdn = aUdn;
 	
 	this.iVariables = {};
 			this.iVariables["TUint"] = new ServiceVariable("TUint");
@@ -21,12 +24,43 @@ var ServiceDebug = function(aId){
 }
 
 
+ServiceDebug.prototype.TUint_Changed = function (aStateChangedFunction) {
+    this.Variables().TUint.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceDebug.prototype.Address_Changed = function (aStateChangedFunction) {
+    this.Variables().Address.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceDebug.prototype.Data_Changed = function (aStateChangedFunction) {
+    this.Variables().Data.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadBinaryParameter(state)); 
+	});
+}
+
 ServiceDebug.prototype.ServiceName = function(){
-	return this.iType;
+	return this.iServiceName;
 }
 
 ServiceDebug.prototype.Variables = function(){
 	return this.iVariables;
+}
+
+ServiceDebug.prototype.SubscriptionId = function () {
+    return this.iSubscriptionId;
+}
+
+ServiceDebug.prototype.SetSubscriptionId = function (value) {
+    this.iSubscriptionId = value;
+}
+
+ServiceDebug.prototype.Udn = function () {
+    return this.iUdn;
 }
 
 ServiceDebug.prototype.VariableNames = function(){
@@ -37,6 +71,14 @@ ServiceDebug.prototype.VariableNames = function(){
 		}
 	}
 	return result;
+}
+
+ServiceDebug.prototype.Subscribe = function () {
+    SubscriptionManager.AddService(this);
+}
+
+ServiceDebug.prototype.Unsubscribe = function () {
+    SubscriptionManager.RemoveService(this.SubscriptionId());
 }
 
 
@@ -52,12 +94,12 @@ ServiceDebug.prototype.SetDebugLevel = function(aDebugLevel, aSuccessFunction, a
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceDebug.prototype.DebugLevel = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("DebugLevel", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aDebugLevel"] = request.ReadIntParameter(result["aDebugLevel"]);	
+		result["aDebugLevel"] = SoapRequest.ReadIntParameter(result["aDebugLevel"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -66,7 +108,7 @@ ServiceDebug.prototype.DebugLevel = function(aSuccessFunction, aErrorFunction){
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceDebug.prototype.MemWrite = function(aMemAddress, aMemData, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("MemWrite", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -81,6 +123,6 @@ ServiceDebug.prototype.MemWrite = function(aMemAddress, aMemData, aSuccessFuncti
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 

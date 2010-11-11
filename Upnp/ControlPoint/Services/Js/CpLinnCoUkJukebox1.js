@@ -4,8 +4,8 @@
  * Proxy for linn.co.uk:Jukebox:1
  */
 
-var ServiceJukebox = function(aId){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aId + "/Jukebox/control";
+var ServiceJukebox = function(aUdn){	
+	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/linn.co.uk-Jukebox-1/control";
 	this.iDomain = "linn.co.uk";
 	if (this.iDomain == "upnp.org") {
 		this.iDomain = "schemas.upnp.org";
@@ -13,6 +13,9 @@ var ServiceJukebox = function(aId){
 	this.iDomain = this.iDomain.replace(/\./,"-");
 	this.iType = "Jukebox";
 	this.iVersion = "1";
+	this.iServiceName = "linn.co.uk-Jukebox-1";
+	this.iSubscriptionId = "";
+	this.iUdn = aUdn;
 	
 	this.iVariables = {};
 			this.iVariables["MetaData"] = new ServiceVariable("MetaData");
@@ -22,12 +25,49 @@ var ServiceJukebox = function(aId){
 }
 
 
+ServiceJukebox.prototype.MetaData_Changed = function (aStateChangedFunction) {
+    this.Variables().MetaData.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceJukebox.prototype.CurrentPreset_Changed = function (aStateChangedFunction) {
+    this.Variables().CurrentPreset.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceJukebox.prototype.PresetPrefix_Changed = function (aStateChangedFunction) {
+    this.Variables().PresetPrefix.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceJukebox.prototype.AlbumArtFileName_Changed = function (aStateChangedFunction) {
+    this.Variables().AlbumArtFileName.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+
 ServiceJukebox.prototype.ServiceName = function(){
-	return this.iType;
+	return this.iServiceName;
 }
 
 ServiceJukebox.prototype.Variables = function(){
 	return this.iVariables;
+}
+
+ServiceJukebox.prototype.SubscriptionId = function () {
+    return this.iSubscriptionId;
+}
+
+ServiceJukebox.prototype.SetSubscriptionId = function (value) {
+    this.iSubscriptionId = value;
+}
+
+ServiceJukebox.prototype.Udn = function () {
+    return this.iUdn;
 }
 
 ServiceJukebox.prototype.VariableNames = function(){
@@ -38,6 +78,14 @@ ServiceJukebox.prototype.VariableNames = function(){
 		}
 	}
 	return result;
+}
+
+ServiceJukebox.prototype.Subscribe = function () {
+    SubscriptionManager.AddService(this);
+}
+
+ServiceJukebox.prototype.Unsubscribe = function () {
+    SubscriptionManager.RemoveService(this.SubscriptionId());
 }
 
 
@@ -53,12 +101,12 @@ ServiceJukebox.prototype.SetPresetPrefix = function(aUri, aSuccessFunction, aErr
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceJukebox.prototype.PresetPrefix = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("PresetPrefix", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aUri"] = request.ReadStringParameter(result["aUri"]);	
+		result["aUri"] = SoapRequest.ReadStringParameter(result["aUri"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -67,7 +115,7 @@ ServiceJukebox.prototype.PresetPrefix = function(aSuccessFunction, aErrorFunctio
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceJukebox.prototype.SetAlbumArtFileName = function(aName, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetAlbumArtFileName", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -81,12 +129,12 @@ ServiceJukebox.prototype.SetAlbumArtFileName = function(aName, aSuccessFunction,
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceJukebox.prototype.AlbumArtFileName = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("AlbumArtFileName", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aName"] = request.ReadStringParameter(result["aName"]);	
+		result["aName"] = SoapRequest.ReadStringParameter(result["aName"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -95,7 +143,7 @@ ServiceJukebox.prototype.AlbumArtFileName = function(aSuccessFunction, aErrorFun
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceJukebox.prototype.SetCurrentPreset = function(aPreset, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("SetCurrentPreset", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -109,12 +157,12 @@ ServiceJukebox.prototype.SetCurrentPreset = function(aPreset, aSuccessFunction, 
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceJukebox.prototype.CurrentPreset = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("CurrentPreset", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aPreset"] = request.ReadIntParameter(result["aPreset"]);	
+		result["aPreset"] = SoapRequest.ReadIntParameter(result["aPreset"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -123,13 +171,13 @@ ServiceJukebox.prototype.CurrentPreset = function(aSuccessFunction, aErrorFuncti
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceJukebox.prototype.PresetMetaData = function(aPreset, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("PresetMetaData", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.WriteIntParameter("aPreset", aPreset);
     request.Send(function(result){
-		result["aMetaData"] = request.ReadStringParameter(result["aMetaData"]);	
+		result["aMetaData"] = SoapRequest.ReadStringParameter(result["aMetaData"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -138,12 +186,12 @@ ServiceJukebox.prototype.PresetMetaData = function(aPreset, aSuccessFunction, aE
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceJukebox.prototype.LoadManifest = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("LoadManifest", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["aTotalPresets"] = request.ReadIntParameter(result["aTotalPresets"]);	
+		result["aTotalPresets"] = SoapRequest.ReadIntParameter(result["aTotalPresets"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -152,6 +200,6 @@ ServiceJukebox.prototype.LoadManifest = function(aSuccessFunction, aErrorFunctio
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 

@@ -4,8 +4,8 @@
  * Proxy for upnp.org:ConnectionManager:1
  */
 
-var ServiceConnectionManager = function(aId){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aId + "/ConnectionManager/control";
+var ServiceConnectionManager = function(aUdn){	
+	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/upnp.org-ConnectionManager-1/control";
 	this.iDomain = "upnp.org";
 	if (this.iDomain == "upnp.org") {
 		this.iDomain = "schemas.upnp.org";
@@ -13,6 +13,9 @@ var ServiceConnectionManager = function(aId){
 	this.iDomain = this.iDomain.replace(/\./,"-");
 	this.iType = "ConnectionManager";
 	this.iVersion = "1";
+	this.iServiceName = "upnp.org-ConnectionManager-1";
+	this.iSubscriptionId = "";
+	this.iUdn = aUdn;
 	
 	this.iVariables = {};
 			this.iVariables["SourceProtocolInfo"] = new ServiceVariable("SourceProtocolInfo");
@@ -35,12 +38,85 @@ ServiceConnectionManager.kConnectionStatusUnknown = "Unknown";
 ServiceConnectionManager.kDirectionInput = "Input";
 ServiceConnectionManager.kDirectionOutput = "Output";
 
+ServiceConnectionManager.prototype.SourceProtocolInfo_Changed = function (aStateChangedFunction) {
+    this.Variables().SourceProtocolInfo.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceConnectionManager.prototype.SinkProtocolInfo_Changed = function (aStateChangedFunction) {
+    this.Variables().SinkProtocolInfo.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceConnectionManager.prototype.CurrentConnectionIDs_Changed = function (aStateChangedFunction) {
+    this.Variables().CurrentConnectionIDs.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceConnectionManager.prototype.ConnectionStatus_Changed = function (aStateChangedFunction) {
+    this.Variables().ConnectionStatus.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceConnectionManager.prototype.ConnectionManager_Changed = function (aStateChangedFunction) {
+    this.Variables().ConnectionManager.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceConnectionManager.prototype.Direction_Changed = function (aStateChangedFunction) {
+    this.Variables().Direction.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceConnectionManager.prototype.ProtocolInfo_Changed = function (aStateChangedFunction) {
+    this.Variables().ProtocolInfo.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+	});
+}
+ServiceConnectionManager.prototype.ConnectionID_Changed = function (aStateChangedFunction) {
+    this.Variables().ConnectionID.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceConnectionManager.prototype.AVTransportID_Changed = function (aStateChangedFunction) {
+    this.Variables().AVTransportID.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceConnectionManager.prototype.RcsID_Changed = function (aStateChangedFunction) {
+    this.Variables().RcsID.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+
 ServiceConnectionManager.prototype.ServiceName = function(){
-	return this.iType;
+	return this.iServiceName;
 }
 
 ServiceConnectionManager.prototype.Variables = function(){
 	return this.iVariables;
+}
+
+ServiceConnectionManager.prototype.SubscriptionId = function () {
+    return this.iSubscriptionId;
+}
+
+ServiceConnectionManager.prototype.SetSubscriptionId = function (value) {
+    this.iSubscriptionId = value;
+}
+
+ServiceConnectionManager.prototype.Udn = function () {
+    return this.iUdn;
 }
 
 ServiceConnectionManager.prototype.VariableNames = function(){
@@ -53,12 +129,20 @@ ServiceConnectionManager.prototype.VariableNames = function(){
 	return result;
 }
 
+ServiceConnectionManager.prototype.Subscribe = function () {
+    SubscriptionManager.AddService(this);
+}
+
+ServiceConnectionManager.prototype.Unsubscribe = function () {
+    SubscriptionManager.RemoveService(this.SubscriptionId());
+}
+
 
 ServiceConnectionManager.prototype.GetProtocolInfo = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("GetProtocolInfo", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["Source"] = request.ReadStringParameter(result["Source"]);	
-		result["Sink"] = request.ReadStringParameter(result["Sink"]);	
+		result["Source"] = SoapRequest.ReadStringParameter(result["Source"]);	
+		result["Sink"] = SoapRequest.ReadStringParameter(result["Sink"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -67,7 +151,7 @@ ServiceConnectionManager.prototype.GetProtocolInfo = function(aSuccessFunction, 
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceConnectionManager.prototype.PrepareForConnection = function(RemoteProtocolInfo, PeerConnectionManager, PeerConnectionID, Direction, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("PrepareForConnection", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -76,9 +160,9 @@ ServiceConnectionManager.prototype.PrepareForConnection = function(RemoteProtoco
     request.WriteIntParameter("PeerConnectionID", PeerConnectionID);
     request.WriteStringParameter("Direction", Direction);
     request.Send(function(result){
-		result["ConnectionID"] = request.ReadIntParameter(result["ConnectionID"]);	
-		result["AVTransportID"] = request.ReadIntParameter(result["AVTransportID"]);	
-		result["RcsID"] = request.ReadIntParameter(result["RcsID"]);	
+		result["ConnectionID"] = SoapRequest.ReadIntParameter(result["ConnectionID"]);	
+		result["AVTransportID"] = SoapRequest.ReadIntParameter(result["AVTransportID"]);	
+		result["RcsID"] = SoapRequest.ReadIntParameter(result["RcsID"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -87,7 +171,7 @@ ServiceConnectionManager.prototype.PrepareForConnection = function(RemoteProtoco
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceConnectionManager.prototype.ConnectionComplete = function(ConnectionID, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("ConnectionComplete", this.iUrl, this.iDomain, this.iType, this.iVersion);		
@@ -101,12 +185,12 @@ ServiceConnectionManager.prototype.ConnectionComplete = function(ConnectionID, a
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceConnectionManager.prototype.GetCurrentConnectionIDs = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("GetCurrentConnectionIDs", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["ConnectionIDs"] = request.ReadStringParameter(result["ConnectionIDs"]);	
+		result["ConnectionIDs"] = SoapRequest.ReadStringParameter(result["ConnectionIDs"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -115,19 +199,19 @@ ServiceConnectionManager.prototype.GetCurrentConnectionIDs = function(aSuccessFu
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceConnectionManager.prototype.GetCurrentConnectionInfo = function(ConnectionID, aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("GetCurrentConnectionInfo", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.WriteIntParameter("ConnectionID", ConnectionID);
     request.Send(function(result){
-		result["RcsID"] = request.ReadIntParameter(result["RcsID"]);	
-		result["AVTransportID"] = request.ReadIntParameter(result["AVTransportID"]);	
-		result["ProtocolInfo"] = request.ReadStringParameter(result["ProtocolInfo"]);	
-		result["PeerConnectionManager"] = request.ReadStringParameter(result["PeerConnectionManager"]);	
-		result["PeerConnectionID"] = request.ReadIntParameter(result["PeerConnectionID"]);	
-		result["Direction"] = request.ReadStringParameter(result["Direction"]);	
-		result["Status"] = request.ReadStringParameter(result["Status"]);	
+		result["RcsID"] = SoapRequest.ReadIntParameter(result["RcsID"]);	
+		result["AVTransportID"] = SoapRequest.ReadIntParameter(result["AVTransportID"]);	
+		result["ProtocolInfo"] = SoapRequest.ReadStringParameter(result["ProtocolInfo"]);	
+		result["PeerConnectionManager"] = SoapRequest.ReadStringParameter(result["PeerConnectionManager"]);	
+		result["PeerConnectionID"] = SoapRequest.ReadIntParameter(result["PeerConnectionID"]);	
+		result["Direction"] = SoapRequest.ReadStringParameter(result["Direction"]);	
+		result["Status"] = SoapRequest.ReadStringParameter(result["Status"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -136,6 +220,6 @@ ServiceConnectionManager.prototype.GetCurrentConnectionInfo = function(Connectio
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 

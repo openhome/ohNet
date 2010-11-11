@@ -4,8 +4,8 @@
  * Proxy for zapp.org:TestWidget:1
  */
 
-var ServiceTestWidget = function(aId){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aId + "/TestWidget/control";
+var ServiceTestWidget = function(aUdn){	
+	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/zapp.org-TestWidget-1/control";
 	this.iDomain = "zapp.org";
 	if (this.iDomain == "upnp.org") {
 		this.iDomain = "schemas.upnp.org";
@@ -13,6 +13,9 @@ var ServiceTestWidget = function(aId){
 	this.iDomain = this.iDomain.replace(/\./,"-");
 	this.iType = "TestWidget";
 	this.iVersion = "1";
+	this.iServiceName = "zapp.org-TestWidget-1";
+	this.iSubscriptionId = "";
+	this.iUdn = aUdn;
 	
 	this.iVariables = {};
 			this.iVariables["RegisterValue"] = new ServiceVariable("RegisterValue");
@@ -28,12 +31,85 @@ var ServiceTestWidget = function(aId){
 }
 
 
+ServiceTestWidget.prototype.RegisterValue_Changed = function (aStateChangedFunction) {
+    this.Variables().RegisterValue.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestWidget.prototype.RegisterIndex_Changed = function (aStateChangedFunction) {
+    this.Variables().RegisterIndex.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestWidget.prototype.ReadWriteRegister0_Changed = function (aStateChangedFunction) {
+    this.Variables().ReadWriteRegister0.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestWidget.prototype.ReadWriteRegister1_Changed = function (aStateChangedFunction) {
+    this.Variables().ReadWriteRegister1.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestWidget.prototype.ReadWriteRegister2_Changed = function (aStateChangedFunction) {
+    this.Variables().ReadWriteRegister2.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestWidget.prototype.ReadWriteRegister3_Changed = function (aStateChangedFunction) {
+    this.Variables().ReadWriteRegister3.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestWidget.prototype.ReadOnlyRegister4_Changed = function (aStateChangedFunction) {
+    this.Variables().ReadOnlyRegister4.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestWidget.prototype.ReadOnlyRegister5_Changed = function (aStateChangedFunction) {
+    this.Variables().ReadOnlyRegister5.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestWidget.prototype.ReadOnlyRegister6_Changed = function (aStateChangedFunction) {
+    this.Variables().ReadOnlyRegister6.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+ServiceTestWidget.prototype.ReadOnlyRegister7_Changed = function (aStateChangedFunction) {
+    this.Variables().ReadOnlyRegister7.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+	});
+}
+
 ServiceTestWidget.prototype.ServiceName = function(){
-	return this.iType;
+	return this.iServiceName;
 }
 
 ServiceTestWidget.prototype.Variables = function(){
 	return this.iVariables;
+}
+
+ServiceTestWidget.prototype.SubscriptionId = function () {
+    return this.iSubscriptionId;
+}
+
+ServiceTestWidget.prototype.SetSubscriptionId = function (value) {
+    this.iSubscriptionId = value;
+}
+
+ServiceTestWidget.prototype.Udn = function () {
+    return this.iUdn;
 }
 
 ServiceTestWidget.prototype.VariableNames = function(){
@@ -44,6 +120,14 @@ ServiceTestWidget.prototype.VariableNames = function(){
 		}
 	}
 	return result;
+}
+
+ServiceTestWidget.prototype.Subscribe = function () {
+    SubscriptionManager.AddService(this);
+}
+
+ServiceTestWidget.prototype.Unsubscribe = function () {
+    SubscriptionManager.RemoveService(this.SubscriptionId());
 }
 
 
@@ -60,6 +144,6 @@ ServiceTestWidget.prototype.SetReadWriteRegister = function(RegisterIndex, Regis
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 

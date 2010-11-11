@@ -4,8 +4,8 @@
  * Proxy for upnp.org:SwitchPower:1
  */
 
-var ServiceSwitchPower = function(aId){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aId + "/SwitchPower/control";
+var ServiceSwitchPower = function(aUdn){	
+	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/upnp.org-SwitchPower-1/control";
 	this.iDomain = "upnp.org";
 	if (this.iDomain == "upnp.org") {
 		this.iDomain = "schemas.upnp.org";
@@ -13,6 +13,9 @@ var ServiceSwitchPower = function(aId){
 	this.iDomain = this.iDomain.replace(/\./,"-");
 	this.iType = "SwitchPower";
 	this.iVersion = "1";
+	this.iServiceName = "upnp.org-SwitchPower-1";
+	this.iSubscriptionId = "";
+	this.iUdn = aUdn;
 	
 	this.iVariables = {};
 			this.iVariables["Target"] = new ServiceVariable("Target");
@@ -20,12 +23,37 @@ var ServiceSwitchPower = function(aId){
 }
 
 
+ServiceSwitchPower.prototype.Target_Changed = function (aStateChangedFunction) {
+    this.Variables().Target.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+	});
+}
+ServiceSwitchPower.prototype.Status_Changed = function (aStateChangedFunction) {
+    this.Variables().Status.AddListener(function (state) 
+	{ 
+		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+	});
+}
+
 ServiceSwitchPower.prototype.ServiceName = function(){
-	return this.iType;
+	return this.iServiceName;
 }
 
 ServiceSwitchPower.prototype.Variables = function(){
 	return this.iVariables;
+}
+
+ServiceSwitchPower.prototype.SubscriptionId = function () {
+    return this.iSubscriptionId;
+}
+
+ServiceSwitchPower.prototype.SetSubscriptionId = function (value) {
+    this.iSubscriptionId = value;
+}
+
+ServiceSwitchPower.prototype.Udn = function () {
+    return this.iUdn;
 }
 
 ServiceSwitchPower.prototype.VariableNames = function(){
@@ -36,6 +64,14 @@ ServiceSwitchPower.prototype.VariableNames = function(){
 		}
 	}
 	return result;
+}
+
+ServiceSwitchPower.prototype.Subscribe = function () {
+    SubscriptionManager.AddService(this);
+}
+
+ServiceSwitchPower.prototype.Unsubscribe = function () {
+    SubscriptionManager.RemoveService(this.SubscriptionId());
 }
 
 
@@ -51,12 +87,12 @@ ServiceSwitchPower.prototype.SetTarget = function(newTargetValue, aSuccessFuncti
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceSwitchPower.prototype.GetTarget = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("GetTarget", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["RetTargetValue"] = request.ReadBoolParameter(result["RetTargetValue"]);	
+		result["RetTargetValue"] = SoapRequest.ReadBoolParameter(result["RetTargetValue"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -65,12 +101,12 @@ ServiceSwitchPower.prototype.GetTarget = function(aSuccessFunction, aErrorFuncti
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 ServiceSwitchPower.prototype.GetStatus = function(aSuccessFunction, aErrorFunction){	
 	var request = new SoapRequest("GetStatus", this.iUrl, this.iDomain, this.iType, this.iVersion);		
     request.Send(function(result){
-		result["ResultStatus"] = request.ReadBoolParameter(result["ResultStatus"]);	
+		result["ResultStatus"] = SoapRequest.ReadBoolParameter(result["ResultStatus"]);	
 	
 		if (aSuccessFunction){
 			aSuccessFunction(result);
@@ -79,6 +115,6 @@ ServiceSwitchPower.prototype.GetStatus = function(aSuccessFunction, aErrorFuncti
 		if (aErrorFunction) {aErrorFunction(message, transport);}
 	});
 }
-    
+
 
 
