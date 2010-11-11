@@ -94,6 +94,7 @@ private:
         SsdpListenerMulticast* iListener;
         TInt iId;
         TIpAddress iSubnet;
+        TIpAddress iInterface;
         Bwh iUriBase;
         TUint iServerPort;
         Brh iDeviceXml;
