@@ -60,6 +60,7 @@ Stack::~Stack()
 {
     ASSERT(gStackInitCount == 1);
     gStackInitCount = 0;
+    ASSERT(iMulticastListeners.size()==0);
     iTimerManager.Stop();
     delete iCpStack;
     delete iDvStack;
