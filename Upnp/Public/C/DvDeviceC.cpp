@@ -74,7 +74,7 @@ DvDeviceC DvDeviceCreate(const char* aUdn, ZappCallbackResourceManager aResource
 
 void DvDeviceDestroy(DvDeviceC aDevice)
 {
-	delete DviDeviceC::DeviceFromHandle(aDevice);
+	delete (DviDeviceC*)aDevice;
 }
 
 const char* DvDeviceUdn(DvDeviceC aDevice)

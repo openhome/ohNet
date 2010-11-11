@@ -72,6 +72,8 @@ void OsDestroy()
         WSACloseEvent(gInterfaceChangeObserver->iEvent);
         WSACloseEvent(gInterfaceChangeObserver->iShutdownEvent);
         (void)closesocket(gInterfaceChangeObserver->iSocket);
+        free(gInterfaceChangeObserver);
+        gInterfaceChangeObserver = NULL;
     }
     (void)WSACleanup();
     OsMutexDestroy(gMutex);

@@ -221,18 +221,15 @@ public:
     void Added(CpDeviceCpp& aDevice);
     void Removed(CpDeviceCpp& aDevice);
 private:
-    void SingleChanged();
     void UpdatesComplete();
 private:
     Mutex iLock;
     std::vector<CpDeviceCpp*> iList;
-    Semaphore iSingleChanged;
     Semaphore iUpdatesComplete;
 };
 
 CpDevices::CpDevices()
     : iLock("DLMX")
-    , iSingleChanged("DSB1", 0)
     , iUpdatesComplete("DSB2", 0)
 {
 }
@@ -314,15 +311,6 @@ void CpDevices::TestSubscriptions()
     proxy->Subscribe();
     iUpdatesComplete.Wait(); // wait for initial event
 
-    // set callbacks for individual property changes now to avoid all being run by initial event
-    functor = MakeFunctor(*this, &CpDevices::SingleChanged);
-    proxy->SetPropertyVarUintChanged(functor);
-    proxy->SetPropertyVarIntChanged(functor);
-    proxy->SetPropertyVarBoolChanged(functor);
-    proxy->SetPropertyVarStrChanged(functor);
-    proxy->SetPropertyVarBinChanged(functor);
-
-
     /* For each property,
          call the setter action it
          wait on a property being updated
@@ -332,7 +320,7 @@ void CpDevices::TestSubscriptions()
 
     Print("    Uint...\n");
     proxy->SyncSetUint(1);
-    iSingleChanged.Wait();
+    iUpdatesComplete.Wait();
     TUint propUint;
     proxy->PropertyVarUint(propUint);
     ASSERT(propUint == 1);
@@ -342,7 +330,7 @@ void CpDevices::TestSubscriptions()
 
     Print("    Int...\n");
     proxy->SyncSetInt(-99);
-    iSingleChanged.Wait();
+    iUpdatesComplete.Wait();
     TInt propInt;
     proxy->PropertyVarInt(propInt);
     ASSERT(propInt == -99);
@@ -352,7 +340,7 @@ void CpDevices::TestSubscriptions()
 
     Print("    Bool...\n");
     proxy->SyncSetBool(true);
-    iSingleChanged.Wait();
+    iUpdatesComplete.Wait();
     TBool propBool;
     proxy->PropertyVarBool(propBool);
     ASSERT(propBool);
@@ -363,7 +351,7 @@ void CpDevices::TestSubscriptions()
     Print("    String...\n");
     std::string str("<&'tag\">");
     proxy->SyncSetString(str);
-    iSingleChanged.Wait();
+    iUpdatesComplete.Wait();
     std::string propStr;
     proxy->PropertyVarStr(propStr);
     ASSERT(propStr == str);
@@ -381,7 +369,7 @@ void CpDevices::TestSubscriptions()
     }
     std::string bufBin(&bin[0], 256);
     proxy->SyncSetBinary(bufBin);
-    iSingleChanged.Wait();
+    iUpdatesComplete.Wait();
     std::string propBin;
     proxy->PropertyVarBin(propBin);
     ASSERT(propBin == bufBin);
@@ -393,7 +381,6 @@ void CpDevices::TestSubscriptions()
     ASSERT(propBin == valBin);
 
     Print("    Multiple...\n");
-    (void)iUpdatesComplete.Clear();
     proxy->SyncSetMultiple(15, 658, false);
     iUpdatesComplete.Wait();
     proxy->PropertyVarUint(propUint);
@@ -426,15 +413,8 @@ void CpDevices::Removed(CpDeviceCpp& /*aDevice*/)
 {
 }
 
-void CpDevices::SingleChanged()
-{
-    //Log::Print("SingleChanged\n");
-    iSingleChanged.Signal();
-}
-
 void CpDevices::UpdatesComplete()
 {
-    //Log::Print("UpdatesComplete\n");
     iUpdatesComplete.Signal();
 }
 
