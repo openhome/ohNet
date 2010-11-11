@@ -191,7 +191,7 @@ else:
 
 def ArmTests(module, arch, nightly):
 
-        host = "10.2.11.212"
+        host = "10.2.9.84"
         username = "hudson-zapp"
 
         if module == "upnp" and arch == "arm":
