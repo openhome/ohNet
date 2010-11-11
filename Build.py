@@ -179,8 +179,9 @@ def ParseDir():
 
 
 valgrind_run = Environment['valgrind_run']
+valgrind_nightly = Environment['nightly_run']
 
-if valgrind_run != "0":
+if valgrind_run != "0" and valgrind_nightly = "1":
         ParseDir()
 else:
 	os.mkdir(vgpath)
