@@ -198,7 +198,7 @@ def ArmTests(module, arch, nightly):
 
                 import paramiko
 
-                rsyncCmd = "rsync -avz --exclude='*.o' --exclude='*.a' --exclude='*.dll' --exclude='Include' Upnp/Build "+host+":~/ && rsync -avz Upnp/AllTests.py "+host+":~/"
+                rsyncCmd = "rsync -avz --exclude='*.o' --exclude='*.a' --exclude='Include' Upnp/Build "+host+":~/ && rsync -avz Upnp/AllTests.py "+host+":~/"
                 ret = subprocess.call(rsyncCmd, shell=True)
                 if ret != 0:
                           sys.exit(ret)
