@@ -35,6 +35,8 @@ def runTests():
         print '\nTest: ' + test.name
         cmdLine = test.args
         cmdLine.insert(0, test.Path())
+        if (not test.native and os.name != 'nt'):
+            cmdLine.insert(0, 'mono')
         ret = subprocess.call(cmdLine)
         if ret != 0:
             print '\nTest ' + test.name + ' failed, aborting'
