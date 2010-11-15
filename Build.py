@@ -189,16 +189,16 @@ else:
 	dummy.writelines('<?xml version="1.0" encoding="UTF-8"?><testsuite errors="0" failures="0" name="no-valgrind" tests="0"><testcase classname="no-valgrind" name="valgrind-off" time="0"></testcase></testsuite>')
 	dummy.close()
 
-def ArmTests(module, arch):
+def ArmTests(module, arch, nightly):
 
-        host = "10.2.11.212"
+        host = "10.2.9.84"
         username = "hudson-zapp"
 
         if module == "upnp" and arch == "arm":
 
                 import paramiko
 
-                rsyncCmd = "rsync -avz --exclude='*.o' --exclude='*.a' --exclude='*.so' --exclude='*.dll' --exclude='Include' Upnp/Build "+host+":~/ && rsync -avz Upnp/AllTests.py "+host+":~/"
+                rsyncCmd = "rsync -avz --exclude='*.o' --exclude='*.a' --exclude='Include' Upnp/Build "+host+":~/ && rsync -avz Upnp/AllTests.py "+host+":~/"
                 ret = subprocess.call(rsyncCmd, shell=True)
                 if ret != 0:
                           sys.exit(ret)
@@ -208,8 +208,13 @@ def ArmTests(module, arch):
 
                 ssh.connect(host, username=username, look_for_keys='True')
 
-                stdin, stdout, stderr = ssh.exec_command("python AllTests.py -f -t")
+		if nightly == "1":
 
+                	stdin, stdout, stderr = ssh.exec_command("python AllTests.py -f -t")
+
+		else:
+			stdin, stdout, stderr = ssh.exec_command("python AllTests.py -t")
+			
                 def get_thread(pipe):
                                 for line in pipe.readlines():
                                         print line
@@ -234,4 +239,4 @@ def ArmTests(module, arch):
                 ssh.close()
 
 
-ArmTests(Module['module'],Environment['arch'])
+ArmTests(Module['module'],Environment['arch'],Environment['nightly_run'])
