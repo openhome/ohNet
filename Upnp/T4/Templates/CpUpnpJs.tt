@@ -12,22 +12,17 @@
 <#@ import namespace="Linn.Xml.UpnpServiceXml" #>
 
 <#
+/**
+* T4 Template to generate service proxies
+* @module Zapp
+* @title CpUpnpJs
+*/
 
-// RELEASE
- 
+// Initialise parameters
 	string xmlArg = TemplateArgument("xml");
 	string domainArg = TemplateArgument("domain");
 	string typeArg = TemplateArgument("type");
 	string versionArg = TemplateArgument("version");
-	
-
-// DEBUG
-/*	string xmlArg = @"C:\Temp\AVTransport1.xml";
-	string domainArg = "domainChris";
-	string typeArg = "typeChris";
-	string versionArg = "1"; */
-	
-	
 	
 	string xml = xmlArg;
 	string domain = domainArg;
@@ -48,7 +43,6 @@
         throw (new ArgumentException("Service Type not specified"));
     }
     
-	
     uint version;
     
 	if (String.IsNullOrEmpty(versionArg))
@@ -82,26 +76,30 @@
 
 #>
 /**
- * Proxy for <#=domain#>:<#=type#>:<#=version#>
- */
+* Service Proxy for <#=domain#>:<#=type#>:<#=version#>
+* @module Zapp
+* @title <#=type#>
+*/
 
-var Service<#=type#> = function(aUdn){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/<#=domain#>-<#=type#>-<#=version#>/control";
-	this.iDomain = "<#=domain#>";
-	if (this.iDomain == "upnp.org") {
-		this.iDomain = "schemas.upnp.org";
+var Service<#=type#> = function(udn){	
+
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/<#=domain#>-<#=type#>-<#=version#>/control";  // upnp control url
+	this.domain = "<#=domain#>";
+	if (this.domain == "upnp.org") {
+		this.domain = "schemas.upnp.org";
     }
-	this.iDomain = this.iDomain.replace(/\./,"-");
-	this.iType = "<#=type#>";
-	this.iVersion = "<#=version.ToString()#>";
-	this.iServiceName = "<#=domain#>-<#=type#>-<#=version#>";
-	this.iSubscriptionId = "";
-	this.iUdn = aUdn;
+	this.domain = this.domain.replace(/\./,"-");
+	this.type = "<#=type#>";
+	this.version = "<#=version.ToString()#>";
+	this.serviceName = "<#=domain#>-<#=type#>-<#=version#>";
+	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+	this.udn = udn;   // device name
 	
-	this.iVariables = {};
-	<#  foreach (Variable s in u.variables) #>
+	// Collection of service properties
+	this.serviceProperties = {};
+<#  foreach (Variable s in u.variables) #>
 <#  { #>
-		this.iVariables["<#=s.prettyname#>"] = new ServiceVariable("<#=s.prettyname#>");
+	this.serviceProperties["<#=s.prettyname#>"] = new Zapp.ServiceProperty("<#=s.prettyname#>");
 <#  } #>
 }
 
@@ -113,73 +111,73 @@ Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
 <#      } #>
 <#  } #>
 
+
+/**
+* Subscribes the service to the subscription manager to listen for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+Service<#=type#>.prototype.subscribe = function (serviceAddedFunction) {
+    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+}
+
+
+/**
+* Unsubscribes the service from the subscription manager to stop listening for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+Service<#=type#>.prototype.unsubscribe = function () {
+    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+}
+
+
 <#  foreach (Variable s in u.variables) #>
 <#  { #>
-Service<#=type#>.prototype.<#=s.prettyname#>_Changed = function (aStateChangedFunction) {
-    this.Variables().<#=s.prettyname#>.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "<#=s.prettyname#>" property change events
+* @method <#=s.prettyname#>_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+Service<#=type#>.prototype.<#=s.prettyname#>_Changed = function (stateChangedFunction) {
+    this.serviceProperties.<#=s.prettyname#>.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.Read<#=svtype[s.type]#>Parameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.read<#=svtype[s.type]#>Parameter(state)); 
 	});
 }
 <#  } #>
 
-Service<#=type#>.prototype.ServiceName = function(){
-	return this.iServiceName;
-}
-
-Service<#=type#>.prototype.Variables = function(){
-	return this.iVariables;
-}
-
-Service<#=type#>.prototype.SubscriptionId = function () {
-    return this.iSubscriptionId;
-}
-
-Service<#=type#>.prototype.SetSubscriptionId = function (value) {
-    this.iSubscriptionId = value;
-}
-
-Service<#=type#>.prototype.Udn = function () {
-    return this.iUdn;
-}
-
-Service<#=type#>.prototype.VariableNames = function(){
-	var result = [];
-	for (var variable in this.iVariables){
-		if (this.iVariables.hasOwnProperty(variable)){
-			result[result.length] = variable;
-		}
-	}
-	return result;
-}
-
-Service<#=type#>.prototype.Subscribe = function () {
-    SubscriptionManager.AddService(this);
-}
-
-Service<#=type#>.prototype.Unsubscribe = function () {
-    SubscriptionManager.RemoveService(this.SubscriptionId());
-}
-
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-Service<#=type#>.prototype.<#=a.name#> = function(<#=ArgString(a)#>){	
-	var request = new SoapRequest("<#=a.name#>", this.iUrl, this.iDomain, this.iType, this.iVersion);		
+/**
+* A service action to <#=a.name#>
+* @method <#=a.name#>
 <#      foreach (Argument i in a.inargs) #>
 <#      { #>
-    request.Write<#=svtype[i.variable.type]#>Parameter("<#=i.name#>", <#=i.name#>);
+* @param {<#=comtype[i.variable.type]#>} <#=i.name#> An action parameter
 <#      } #>
-    request.Send(function(result){
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+Service<#=type#>.prototype.<#=a.name#> = function(<#=ArgString(a)#>){	
+	var request = new Zapp.SoapRequest("<#=a.name#>", this.url, this.domain, this.type, this.version);		
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+    request.write<#=svtype[i.variable.type]#>Parameter("<#=i.name#>", <#=i.name#>);
+<#      } #>
+    request.send(function(result){
 <#          foreach (Argument o in a.outargs) #>
 <#          { #>
-		result["<#=o.name#>"] = SoapRequest.Read<#=svtype[o.variable.type]#>Parameter(result["<#=o.name#>"]);	
+		result["<#=o.name#>"] = Zapp.SoapRequest.read<#=svtype[o.variable.type]#>Parameter(result["<#=o.name#>"]);	
 <#          } #>	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
@@ -190,6 +188,8 @@ Service<#=type#>.prototype.<#=a.name#> = function(<#=ArgString(a)#>){
 
 Dictionary<string,string> argtype = new Dictionary<string,string>();
 Dictionary<string,string> svtype = new Dictionary<string,string>();
+Dictionary<string,string> comtype = new Dictionary<string,string>();
+
 
 void Initialise()
 {    
@@ -214,7 +214,19 @@ void Initialise()
     svtype.Add("i4", "Int");
     svtype.Add("bin.base64", "Binary");
     svtype.Add("uri", "String");
+	
+	comtype.Add("string", "String");
+	comtype.Add("ui1", "Int");
+    comtype.Add("ui2", "Int");
+    comtype.Add("ui4", "Int");
+    comtype.Add("boolean", "Boolean");
+    comtype.Add("i1", "Int");
+    comtype.Add("i2", "Int");
+    comtype.Add("i4", "Int");
+    comtype.Add("bin.base64", "String");
+    comtype.Add("uri", "String");
 }
+
 
 string FormatValue(string aValue)
 {
@@ -328,7 +340,7 @@ string ArgString(Method a)
         result += ", ";
     }
     
-    result += "aSuccessFunction, aErrorFunction";
+    result += "successFunction, errorFunction";
     
     return(result);
 }

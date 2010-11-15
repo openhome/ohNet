@@ -1,141 +1,184 @@
  
 
 /**
- * Proxy for linn.co.uk:Configuration:1
- */
+* Service Proxy for linn.co.uk:Configuration:1
+* @module Zapp
+* @title Configuration
+*/
 
-var ServiceConfiguration = function(aUdn){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/linn.co.uk-Configuration-1/control";
-	this.iDomain = "linn.co.uk";
-	if (this.iDomain == "upnp.org") {
-		this.iDomain = "schemas.upnp.org";
+var ServiceConfiguration = function(udn){	
+
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Configuration-1/control";  // upnp control url
+	this.domain = "linn.co.uk";
+	if (this.domain == "upnp.org") {
+		this.domain = "schemas.upnp.org";
     }
-	this.iDomain = this.iDomain.replace(/\./,"-");
-	this.iType = "Configuration";
-	this.iVersion = "1";
-	this.iServiceName = "linn.co.uk-Configuration-1";
-	this.iSubscriptionId = "";
-	this.iUdn = aUdn;
+	this.domain = this.domain.replace(/\./,"-");
+	this.type = "Configuration";
+	this.version = "1";
+	this.serviceName = "linn.co.uk-Configuration-1";
+	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+	this.udn = udn;   // device name
 	
-	this.iVariables = {};
-			this.iVariables["ConfigurationXml"] = new ServiceVariable("ConfigurationXml");
-		this.iVariables["ParameterXml"] = new ServiceVariable("ParameterXml");
-		this.iVariables["Target"] = new ServiceVariable("Target");
-		this.iVariables["Name"] = new ServiceVariable("Name");
-		this.iVariables["Value"] = new ServiceVariable("Value");
+	// Collection of service properties
+	this.serviceProperties = {};
+	this.serviceProperties["ConfigurationXml"] = new Zapp.ServiceProperty("ConfigurationXml");
+	this.serviceProperties["ParameterXml"] = new Zapp.ServiceProperty("ParameterXml");
+	this.serviceProperties["Target"] = new Zapp.ServiceProperty("Target");
+	this.serviceProperties["Name"] = new Zapp.ServiceProperty("Name");
+	this.serviceProperties["Value"] = new Zapp.ServiceProperty("Value");
 }
 
 
-ServiceConfiguration.prototype.ConfigurationXml_Changed = function (aStateChangedFunction) {
-    this.Variables().ConfigurationXml.AddListener(function (state) 
+
+/**
+* Subscribes the service to the subscription manager to listen for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceConfiguration.prototype.subscribe = function (serviceAddedFunction) {
+    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+}
+
+
+/**
+* Unsubscribes the service from the subscription manager to stop listening for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceConfiguration.prototype.unsubscribe = function () {
+    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+}
+
+
+
+
+/**
+* Adds a listener to handle "ConfigurationXml" property change events
+* @method ConfigurationXml_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceConfiguration.prototype.ConfigurationXml_Changed = function (stateChangedFunction) {
+    this.serviceProperties.ConfigurationXml.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-ServiceConfiguration.prototype.ParameterXml_Changed = function (aStateChangedFunction) {
-    this.Variables().ParameterXml.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "ParameterXml" property change events
+* @method ParameterXml_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceConfiguration.prototype.ParameterXml_Changed = function (stateChangedFunction) {
+    this.serviceProperties.ParameterXml.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
-	});
-}
-ServiceConfiguration.prototype.Target_Changed = function (aStateChangedFunction) {
-    this.Variables().Target.AddListener(function (state) 
-	{ 
-		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
-	});
-}
-ServiceConfiguration.prototype.Name_Changed = function (aStateChangedFunction) {
-    this.Variables().Name.AddListener(function (state) 
-	{ 
-		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
-	});
-}
-ServiceConfiguration.prototype.Value_Changed = function (aStateChangedFunction) {
-    this.Variables().Value.AddListener(function (state) 
-	{ 
-		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
 
-ServiceConfiguration.prototype.ServiceName = function(){
-	return this.iServiceName;
-}
 
-ServiceConfiguration.prototype.Variables = function(){
-	return this.iVariables;
-}
-
-ServiceConfiguration.prototype.SubscriptionId = function () {
-    return this.iSubscriptionId;
-}
-
-ServiceConfiguration.prototype.SetSubscriptionId = function (value) {
-    this.iSubscriptionId = value;
-}
-
-ServiceConfiguration.prototype.Udn = function () {
-    return this.iUdn;
-}
-
-ServiceConfiguration.prototype.VariableNames = function(){
-	var result = [];
-	for (var variable in this.iVariables){
-		if (this.iVariables.hasOwnProperty(variable)){
-			result[result.length] = variable;
-		}
-	}
-	return result;
-}
-
-ServiceConfiguration.prototype.Subscribe = function () {
-    SubscriptionManager.AddService(this);
-}
-
-ServiceConfiguration.prototype.Unsubscribe = function () {
-    SubscriptionManager.RemoveService(this.SubscriptionId());
+/**
+* Adds a listener to handle "Target" property change events
+* @method Target_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceConfiguration.prototype.Target_Changed = function (stateChangedFunction) {
+    this.serviceProperties.Target.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+	});
 }
 
 
-ServiceConfiguration.prototype.ConfigurationXml = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("ConfigurationXml", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aConfigurationXml"] = SoapRequest.ReadStringParameter(result["aConfigurationXml"]);	
+/**
+* Adds a listener to handle "Name" property change events
+* @method Name_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceConfiguration.prototype.Name_Changed = function (stateChangedFunction) {
+    this.serviceProperties.Name.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+	});
+}
+
+
+/**
+* Adds a listener to handle "Value" property change events
+* @method Value_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceConfiguration.prototype.Value_Changed = function (stateChangedFunction) {
+    this.serviceProperties.Value.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
+	});
+}
+
+
+/**
+* A service action to ConfigurationXml
+* @method ConfigurationXml
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceConfiguration.prototype.ConfigurationXml = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("ConfigurationXml", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aConfigurationXml"] = Zapp.SoapRequest.readStringParameter(result["aConfigurationXml"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
-	});
-}
-
-
-ServiceConfiguration.prototype.ParameterXml = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("ParameterXml", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aParameterXml"] = SoapRequest.ReadStringParameter(result["aParameterXml"]);	
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
-	});
-}
-
-
-ServiceConfiguration.prototype.SetParameter = function(aTarget, aName, aValue, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetParameter", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteStringParameter("aTarget", aTarget);
-    request.WriteStringParameter("aName", aName);
-    request.WriteStringParameter("aValue", aValue);
-    request.Send(function(result){
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to ParameterXml
+* @method ParameterXml
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceConfiguration.prototype.ParameterXml = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("ParameterXml", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aParameterXml"] = Zapp.SoapRequest.readStringParameter(result["aParameterXml"]);	
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to SetParameter
+* @method SetParameter
+* @param {String} aTarget An action parameter
+* @param {String} aName An action parameter
+* @param {String} aValue An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceConfiguration.prototype.SetParameter = function(aTarget, aName, aValue, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetParameter", this.url, this.domain, this.type, this.version);		
+    request.writeStringParameter("aTarget", aTarget);
+    request.writeStringParameter("aName", aName);
+    request.writeStringParameter("aValue", aValue);
+    request.send(function(result){
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 

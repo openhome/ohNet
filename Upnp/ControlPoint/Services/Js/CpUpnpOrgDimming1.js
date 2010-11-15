@@ -1,431 +1,628 @@
  
 
 /**
- * Proxy for upnp.org:Dimming:1
- */
+* Service Proxy for upnp.org:Dimming:1
+* @module Zapp
+* @title Dimming
+*/
 
-var ServiceDimming = function(aUdn){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/upnp.org-Dimming-1/control";
-	this.iDomain = "upnp.org";
-	if (this.iDomain == "upnp.org") {
-		this.iDomain = "schemas.upnp.org";
+var ServiceDimming = function(udn){	
+
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/upnp.org-Dimming-1/control";  // upnp control url
+	this.domain = "upnp.org";
+	if (this.domain == "upnp.org") {
+		this.domain = "schemas.upnp.org";
     }
-	this.iDomain = this.iDomain.replace(/\./,"-");
-	this.iType = "Dimming";
-	this.iVersion = "1";
-	this.iServiceName = "upnp.org-Dimming-1";
-	this.iSubscriptionId = "";
-	this.iUdn = aUdn;
+	this.domain = this.domain.replace(/\./,"-");
+	this.type = "Dimming";
+	this.version = "1";
+	this.serviceName = "upnp.org-Dimming-1";
+	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+	this.udn = udn;   // device name
 	
-	this.iVariables = {};
-			this.iVariables["LoadLevelTarget"] = new ServiceVariable("LoadLevelTarget");
-		this.iVariables["LoadLevelStatus"] = new ServiceVariable("LoadLevelStatus");
-		this.iVariables["MinLevel"] = new ServiceVariable("MinLevel");
-		this.iVariables["OnEffectLevel"] = new ServiceVariable("OnEffectLevel");
-		this.iVariables["OnEffect"] = new ServiceVariable("OnEffect");
-		this.iVariables["ValidOutputValues"] = new ServiceVariable("ValidOutputValues");
-		this.iVariables["StepDelta"] = new ServiceVariable("StepDelta");
-		this.iVariables["RampRate"] = new ServiceVariable("RampRate");
-		this.iVariables["RampTime"] = new ServiceVariable("RampTime");
-		this.iVariables["IsRamping"] = new ServiceVariable("IsRamping");
-		this.iVariables["RampPaused"] = new ServiceVariable("RampPaused");
+	// Collection of service properties
+	this.serviceProperties = {};
+	this.serviceProperties["LoadLevelTarget"] = new Zapp.ServiceProperty("LoadLevelTarget");
+	this.serviceProperties["LoadLevelStatus"] = new Zapp.ServiceProperty("LoadLevelStatus");
+	this.serviceProperties["MinLevel"] = new Zapp.ServiceProperty("MinLevel");
+	this.serviceProperties["OnEffectLevel"] = new Zapp.ServiceProperty("OnEffectLevel");
+	this.serviceProperties["OnEffect"] = new Zapp.ServiceProperty("OnEffect");
+	this.serviceProperties["ValidOutputValues"] = new Zapp.ServiceProperty("ValidOutputValues");
+	this.serviceProperties["StepDelta"] = new Zapp.ServiceProperty("StepDelta");
+	this.serviceProperties["RampRate"] = new Zapp.ServiceProperty("RampRate");
+	this.serviceProperties["RampTime"] = new Zapp.ServiceProperty("RampTime");
+	this.serviceProperties["IsRamping"] = new Zapp.ServiceProperty("IsRamping");
+	this.serviceProperties["RampPaused"] = new Zapp.ServiceProperty("RampPaused");
 }
 
 ServiceDimming.kOnEffectOnEffectLevel = "OnEffectLevel";
 ServiceDimming.kOnEffectLastSetting = "LastSetting";
 ServiceDimming.kOnEffectDefault = "Default";
 
-ServiceDimming.prototype.LoadLevelTarget_Changed = function (aStateChangedFunction) {
-    this.Variables().LoadLevelTarget.AddListener(function (state) 
+
+/**
+* Subscribes the service to the subscription manager to listen for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceDimming.prototype.subscribe = function (serviceAddedFunction) {
+    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+}
+
+
+/**
+* Unsubscribes the service from the subscription manager to stop listening for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceDimming.prototype.unsubscribe = function () {
+    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+}
+
+
+
+
+/**
+* Adds a listener to handle "LoadLevelTarget" property change events
+* @method LoadLevelTarget_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceDimming.prototype.LoadLevelTarget_Changed = function (stateChangedFunction) {
+    this.serviceProperties.LoadLevelTarget.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-ServiceDimming.prototype.LoadLevelStatus_Changed = function (aStateChangedFunction) {
-    this.Variables().LoadLevelStatus.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "LoadLevelStatus" property change events
+* @method LoadLevelStatus_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceDimming.prototype.LoadLevelStatus_Changed = function (stateChangedFunction) {
+    this.serviceProperties.LoadLevelStatus.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-ServiceDimming.prototype.MinLevel_Changed = function (aStateChangedFunction) {
-    this.Variables().MinLevel.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "MinLevel" property change events
+* @method MinLevel_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceDimming.prototype.MinLevel_Changed = function (stateChangedFunction) {
+    this.serviceProperties.MinLevel.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-ServiceDimming.prototype.OnEffectLevel_Changed = function (aStateChangedFunction) {
-    this.Variables().OnEffectLevel.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "OnEffectLevel" property change events
+* @method OnEffectLevel_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceDimming.prototype.OnEffectLevel_Changed = function (stateChangedFunction) {
+    this.serviceProperties.OnEffectLevel.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-ServiceDimming.prototype.OnEffect_Changed = function (aStateChangedFunction) {
-    this.Variables().OnEffect.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "OnEffect" property change events
+* @method OnEffect_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceDimming.prototype.OnEffect_Changed = function (stateChangedFunction) {
+    this.serviceProperties.OnEffect.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-ServiceDimming.prototype.ValidOutputValues_Changed = function (aStateChangedFunction) {
-    this.Variables().ValidOutputValues.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "ValidOutputValues" property change events
+* @method ValidOutputValues_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceDimming.prototype.ValidOutputValues_Changed = function (stateChangedFunction) {
+    this.serviceProperties.ValidOutputValues.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-ServiceDimming.prototype.StepDelta_Changed = function (aStateChangedFunction) {
-    this.Variables().StepDelta.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "StepDelta" property change events
+* @method StepDelta_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceDimming.prototype.StepDelta_Changed = function (stateChangedFunction) {
+    this.serviceProperties.StepDelta.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-ServiceDimming.prototype.RampRate_Changed = function (aStateChangedFunction) {
-    this.Variables().RampRate.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "RampRate" property change events
+* @method RampRate_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceDimming.prototype.RampRate_Changed = function (stateChangedFunction) {
+    this.serviceProperties.RampRate.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-ServiceDimming.prototype.RampTime_Changed = function (aStateChangedFunction) {
-    this.Variables().RampTime.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "RampTime" property change events
+* @method RampTime_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceDimming.prototype.RampTime_Changed = function (stateChangedFunction) {
+    this.serviceProperties.RampTime.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-ServiceDimming.prototype.IsRamping_Changed = function (aStateChangedFunction) {
-    this.Variables().IsRamping.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "IsRamping" property change events
+* @method IsRamping_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceDimming.prototype.IsRamping_Changed = function (stateChangedFunction) {
+    this.serviceProperties.IsRamping.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-ServiceDimming.prototype.RampPaused_Changed = function (aStateChangedFunction) {
-    this.Variables().RampPaused.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "RampPaused" property change events
+* @method RampPaused_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceDimming.prototype.RampPaused_Changed = function (stateChangedFunction) {
+    this.serviceProperties.RampPaused.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
-	});
-}
-
-ServiceDimming.prototype.ServiceName = function(){
-	return this.iServiceName;
-}
-
-ServiceDimming.prototype.Variables = function(){
-	return this.iVariables;
-}
-
-ServiceDimming.prototype.SubscriptionId = function () {
-    return this.iSubscriptionId;
-}
-
-ServiceDimming.prototype.SetSubscriptionId = function (value) {
-    this.iSubscriptionId = value;
-}
-
-ServiceDimming.prototype.Udn = function () {
-    return this.iUdn;
-}
-
-ServiceDimming.prototype.VariableNames = function(){
-	var result = [];
-	for (var variable in this.iVariables){
-		if (this.iVariables.hasOwnProperty(variable)){
-			result[result.length] = variable;
-		}
-	}
-	return result;
-}
-
-ServiceDimming.prototype.Subscribe = function () {
-    SubscriptionManager.AddService(this);
-}
-
-ServiceDimming.prototype.Unsubscribe = function () {
-    SubscriptionManager.RemoveService(this.SubscriptionId());
-}
-
-
-ServiceDimming.prototype.SetLoadLevelTarget = function(newLoadlevelTarget, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetLoadLevelTarget", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("newLoadlevelTarget", newLoadlevelTarget);
-    request.Send(function(result){
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
 
 
-ServiceDimming.prototype.GetLoadLevelTarget = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("GetLoadLevelTarget", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["GetLoadlevelTarget"] = SoapRequest.ReadIntParameter(result["GetLoadlevelTarget"]);	
+/**
+* A service action to SetLoadLevelTarget
+* @method SetLoadLevelTarget
+* @param {Int} newLoadlevelTarget An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDimming.prototype.SetLoadLevelTarget = function(newLoadlevelTarget, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetLoadLevelTarget", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("newLoadlevelTarget", newLoadlevelTarget);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDimming.prototype.GetLoadLevelStatus = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("GetLoadLevelStatus", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["retLoadlevelStatus"] = SoapRequest.ReadIntParameter(result["retLoadlevelStatus"]);	
+/**
+* A service action to GetLoadLevelTarget
+* @method GetLoadLevelTarget
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDimming.prototype.GetLoadLevelTarget = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("GetLoadLevelTarget", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["GetLoadlevelTarget"] = Zapp.SoapRequest.readIntParameter(result["GetLoadlevelTarget"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDimming.prototype.SetOnEffectLevel = function(newOnEffectLevel, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetOnEffectLevel", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("newOnEffectLevel", newOnEffectLevel);
-    request.Send(function(result){
+/**
+* A service action to GetLoadLevelStatus
+* @method GetLoadLevelStatus
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDimming.prototype.GetLoadLevelStatus = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("GetLoadLevelStatus", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["retLoadlevelStatus"] = Zapp.SoapRequest.readIntParameter(result["retLoadlevelStatus"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDimming.prototype.SetOnEffect = function(newOnEffect, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetOnEffect", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteStringParameter("newOnEffect", newOnEffect);
-    request.Send(function(result){
+/**
+* A service action to SetOnEffectLevel
+* @method SetOnEffectLevel
+* @param {Int} newOnEffectLevel An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDimming.prototype.SetOnEffectLevel = function(newOnEffectLevel, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetOnEffectLevel", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("newOnEffectLevel", newOnEffectLevel);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDimming.prototype.GetOnEffectParameters = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("GetOnEffectParameters", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["retOnEffect"] = SoapRequest.ReadStringParameter(result["retOnEffect"]);	
-		result["retOnEffectLevel"] = SoapRequest.ReadIntParameter(result["retOnEffectLevel"]);	
+/**
+* A service action to SetOnEffect
+* @method SetOnEffect
+* @param {String} newOnEffect An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDimming.prototype.SetOnEffect = function(newOnEffect, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetOnEffect", this.url, this.domain, this.type, this.version);		
+    request.writeStringParameter("newOnEffect", newOnEffect);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDimming.prototype.StepUp = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("StepUp", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
+/**
+* A service action to GetOnEffectParameters
+* @method GetOnEffectParameters
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDimming.prototype.GetOnEffectParameters = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("GetOnEffectParameters", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["retOnEffect"] = Zapp.SoapRequest.readStringParameter(result["retOnEffect"]);	
+		result["retOnEffectLevel"] = Zapp.SoapRequest.readIntParameter(result["retOnEffectLevel"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDimming.prototype.StepDown = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("StepDown", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
+/**
+* A service action to StepUp
+* @method StepUp
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDimming.prototype.StepUp = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("StepUp", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDimming.prototype.StartRampUp = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("StartRampUp", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
+/**
+* A service action to StepDown
+* @method StepDown
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDimming.prototype.StepDown = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("StepDown", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDimming.prototype.StartRampDown = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("StartRampDown", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
+/**
+* A service action to StartRampUp
+* @method StartRampUp
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDimming.prototype.StartRampUp = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("StartRampUp", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDimming.prototype.StopRamp = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("StopRamp", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
+/**
+* A service action to StartRampDown
+* @method StartRampDown
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDimming.prototype.StartRampDown = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("StartRampDown", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDimming.prototype.StartRampToLevel = function(newLoadLevelTarget, newRampTime, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("StartRampToLevel", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("newLoadLevelTarget", newLoadLevelTarget);
-    request.WriteIntParameter("newRampTime", newRampTime);
-    request.Send(function(result){
+/**
+* A service action to StopRamp
+* @method StopRamp
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDimming.prototype.StopRamp = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("StopRamp", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDimming.prototype.SetStepDelta = function(newStepDelta, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetStepDelta", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("newStepDelta", newStepDelta);
-    request.Send(function(result){
+/**
+* A service action to StartRampToLevel
+* @method StartRampToLevel
+* @param {Int} newLoadLevelTarget An action parameter
+* @param {Int} newRampTime An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDimming.prototype.StartRampToLevel = function(newLoadLevelTarget, newRampTime, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("StartRampToLevel", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("newLoadLevelTarget", newLoadLevelTarget);
+    request.writeIntParameter("newRampTime", newRampTime);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDimming.prototype.GetStepDelta = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("GetStepDelta", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["retStepDelta"] = SoapRequest.ReadIntParameter(result["retStepDelta"]);	
+/**
+* A service action to SetStepDelta
+* @method SetStepDelta
+* @param {Int} newStepDelta An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDimming.prototype.SetStepDelta = function(newStepDelta, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetStepDelta", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("newStepDelta", newStepDelta);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDimming.prototype.SetRampRate = function(newRampRate, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetRampRate", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("newRampRate", newRampRate);
-    request.Send(function(result){
+/**
+* A service action to GetStepDelta
+* @method GetStepDelta
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDimming.prototype.GetStepDelta = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("GetStepDelta", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["retStepDelta"] = Zapp.SoapRequest.readIntParameter(result["retStepDelta"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDimming.prototype.GetRampRate = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("GetRampRate", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["retRampRate"] = SoapRequest.ReadIntParameter(result["retRampRate"]);	
+/**
+* A service action to SetRampRate
+* @method SetRampRate
+* @param {Int} newRampRate An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDimming.prototype.SetRampRate = function(newRampRate, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetRampRate", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("newRampRate", newRampRate);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDimming.prototype.PauseRamp = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("PauseRamp", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
+/**
+* A service action to GetRampRate
+* @method GetRampRate
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDimming.prototype.GetRampRate = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("GetRampRate", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["retRampRate"] = Zapp.SoapRequest.readIntParameter(result["retRampRate"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDimming.prototype.ResumeRamp = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("ResumeRamp", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
+/**
+* A service action to PauseRamp
+* @method PauseRamp
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDimming.prototype.PauseRamp = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("PauseRamp", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDimming.prototype.GetIsRamping = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("GetIsRamping", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["retIsRamping"] = SoapRequest.ReadBoolParameter(result["retIsRamping"]);	
+/**
+* A service action to ResumeRamp
+* @method ResumeRamp
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDimming.prototype.ResumeRamp = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("ResumeRamp", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDimming.prototype.GetRampPaused = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("GetRampPaused", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["retRampPaused"] = SoapRequest.ReadBoolParameter(result["retRampPaused"]);	
+/**
+* A service action to GetIsRamping
+* @method GetIsRamping
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDimming.prototype.GetIsRamping = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("GetIsRamping", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["retIsRamping"] = Zapp.SoapRequest.readBoolParameter(result["retIsRamping"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDimming.prototype.GetRampTime = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("GetRampTime", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["retRampTime"] = SoapRequest.ReadIntParameter(result["retRampTime"]);	
+/**
+* A service action to GetRampPaused
+* @method GetRampPaused
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDimming.prototype.GetRampPaused = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("GetRampPaused", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["retRampPaused"] = Zapp.SoapRequest.readBoolParameter(result["retRampPaused"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to GetRampTime
+* @method GetRampTime
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDimming.prototype.GetRampTime = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("GetRampTime", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["retRampTime"] = Zapp.SoapRequest.readIntParameter(result["retRampTime"]);	
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 

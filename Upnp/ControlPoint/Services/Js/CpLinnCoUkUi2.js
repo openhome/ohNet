@@ -1,37 +1,41 @@
  
 
 /**
- * Proxy for linn.co.uk:Ui:2
- */
+* Service Proxy for linn.co.uk:Ui:2
+* @module Zapp
+* @title Ui
+*/
 
-var ServiceUi = function(aUdn){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/linn.co.uk-Ui-2/control";
-	this.iDomain = "linn.co.uk";
-	if (this.iDomain == "upnp.org") {
-		this.iDomain = "schemas.upnp.org";
+var ServiceUi = function(udn){	
+
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Ui-2/control";  // upnp control url
+	this.domain = "linn.co.uk";
+	if (this.domain == "upnp.org") {
+		this.domain = "schemas.upnp.org";
     }
-	this.iDomain = this.iDomain.replace(/\./,"-");
-	this.iType = "Ui";
-	this.iVersion = "2";
-	this.iServiceName = "linn.co.uk-Ui-2";
-	this.iSubscriptionId = "";
-	this.iUdn = aUdn;
+	this.domain = this.domain.replace(/\./,"-");
+	this.type = "Ui";
+	this.version = "2";
+	this.serviceName = "linn.co.uk-Ui-2";
+	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+	this.udn = udn;   // device name
 	
-	this.iVariables = {};
-			this.iVariables["TestPattern"] = new ServiceVariable("TestPattern");
-		this.iVariables["TestModeEnabled"] = new ServiceVariable("TestModeEnabled");
-		this.iVariables["LightLevel"] = new ServiceVariable("LightLevel");
-		this.iVariables["DisplayBrightness"] = new ServiceVariable("DisplayBrightness");
-		this.iVariables["DisplayBrightnessAuto"] = new ServiceVariable("DisplayBrightnessAuto");
-		this.iVariables["InfraredCommands"] = new ServiceVariable("InfraredCommands");
-		this.iVariables["InfraredTerminalCommands"] = new ServiceVariable("InfraredTerminalCommands");
-		this.iVariables["DisplayUpsideDown"] = new ServiceVariable("DisplayUpsideDown");
-		this.iVariables["DisplayScrollText"] = new ServiceVariable("DisplayScrollText");
-		this.iVariables["DisplaySleep"] = new ServiceVariable("DisplaySleep");
-		this.iVariables["DisplayLedOff"] = new ServiceVariable("DisplayLedOff");
-		this.iVariables["TerminalInputCode"] = new ServiceVariable("TerminalInputCode");
-		this.iVariables["TerminalInputName"] = new ServiceVariable("TerminalInputName");
-		this.iVariables["DisplayPixels"] = new ServiceVariable("DisplayPixels");
+	// Collection of service properties
+	this.serviceProperties = {};
+	this.serviceProperties["TestPattern"] = new Zapp.ServiceProperty("TestPattern");
+	this.serviceProperties["TestModeEnabled"] = new Zapp.ServiceProperty("TestModeEnabled");
+	this.serviceProperties["LightLevel"] = new Zapp.ServiceProperty("LightLevel");
+	this.serviceProperties["DisplayBrightness"] = new Zapp.ServiceProperty("DisplayBrightness");
+	this.serviceProperties["DisplayBrightnessAuto"] = new Zapp.ServiceProperty("DisplayBrightnessAuto");
+	this.serviceProperties["InfraredCommands"] = new Zapp.ServiceProperty("InfraredCommands");
+	this.serviceProperties["InfraredTerminalCommands"] = new Zapp.ServiceProperty("InfraredTerminalCommands");
+	this.serviceProperties["DisplayUpsideDown"] = new Zapp.ServiceProperty("DisplayUpsideDown");
+	this.serviceProperties["DisplayScrollText"] = new Zapp.ServiceProperty("DisplayScrollText");
+	this.serviceProperties["DisplaySleep"] = new Zapp.ServiceProperty("DisplaySleep");
+	this.serviceProperties["DisplayLedOff"] = new Zapp.ServiceProperty("DisplayLedOff");
+	this.serviceProperties["TerminalInputCode"] = new Zapp.ServiceProperty("TerminalInputCode");
+	this.serviceProperties["TerminalInputName"] = new Zapp.ServiceProperty("TerminalInputName");
+	this.serviceProperties["DisplayPixels"] = new Zapp.ServiceProperty("DisplayPixels");
 }
 
 ServiceUi.kInfraredCommandsNone = "None";
@@ -43,460 +47,698 @@ ServiceUi.kInfraredTerminalCommandsAll = "All";
 ServiceUi.kInfraredTerminalCommandsCd = "Cd";
 ServiceUi.kInfraredTerminalCommandsDvd = "Dvd";
 
-ServiceUi.prototype.TestPattern_Changed = function (aStateChangedFunction) {
-    this.Variables().TestPattern.AddListener(function (state) 
+
+/**
+* Subscribes the service to the subscription manager to listen for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceUi.prototype.subscribe = function (serviceAddedFunction) {
+    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+}
+
+
+/**
+* Unsubscribes the service from the subscription manager to stop listening for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceUi.prototype.unsubscribe = function () {
+    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+}
+
+
+
+
+/**
+* Adds a listener to handle "TestPattern" property change events
+* @method TestPattern_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceUi.prototype.TestPattern_Changed = function (stateChangedFunction) {
+    this.serviceProperties.TestPattern.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-ServiceUi.prototype.TestModeEnabled_Changed = function (aStateChangedFunction) {
-    this.Variables().TestModeEnabled.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "TestModeEnabled" property change events
+* @method TestModeEnabled_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceUi.prototype.TestModeEnabled_Changed = function (stateChangedFunction) {
+    this.serviceProperties.TestModeEnabled.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-ServiceUi.prototype.LightLevel_Changed = function (aStateChangedFunction) {
-    this.Variables().LightLevel.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "LightLevel" property change events
+* @method LightLevel_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceUi.prototype.LightLevel_Changed = function (stateChangedFunction) {
+    this.serviceProperties.LightLevel.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-ServiceUi.prototype.DisplayBrightness_Changed = function (aStateChangedFunction) {
-    this.Variables().DisplayBrightness.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "DisplayBrightness" property change events
+* @method DisplayBrightness_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceUi.prototype.DisplayBrightness_Changed = function (stateChangedFunction) {
+    this.serviceProperties.DisplayBrightness.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-ServiceUi.prototype.DisplayBrightnessAuto_Changed = function (aStateChangedFunction) {
-    this.Variables().DisplayBrightnessAuto.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "DisplayBrightnessAuto" property change events
+* @method DisplayBrightnessAuto_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceUi.prototype.DisplayBrightnessAuto_Changed = function (stateChangedFunction) {
+    this.serviceProperties.DisplayBrightnessAuto.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-ServiceUi.prototype.InfraredCommands_Changed = function (aStateChangedFunction) {
-    this.Variables().InfraredCommands.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "InfraredCommands" property change events
+* @method InfraredCommands_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceUi.prototype.InfraredCommands_Changed = function (stateChangedFunction) {
+    this.serviceProperties.InfraredCommands.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-ServiceUi.prototype.InfraredTerminalCommands_Changed = function (aStateChangedFunction) {
-    this.Variables().InfraredTerminalCommands.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "InfraredTerminalCommands" property change events
+* @method InfraredTerminalCommands_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceUi.prototype.InfraredTerminalCommands_Changed = function (stateChangedFunction) {
+    this.serviceProperties.InfraredTerminalCommands.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-ServiceUi.prototype.DisplayUpsideDown_Changed = function (aStateChangedFunction) {
-    this.Variables().DisplayUpsideDown.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "DisplayUpsideDown" property change events
+* @method DisplayUpsideDown_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceUi.prototype.DisplayUpsideDown_Changed = function (stateChangedFunction) {
+    this.serviceProperties.DisplayUpsideDown.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-ServiceUi.prototype.DisplayScrollText_Changed = function (aStateChangedFunction) {
-    this.Variables().DisplayScrollText.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "DisplayScrollText" property change events
+* @method DisplayScrollText_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceUi.prototype.DisplayScrollText_Changed = function (stateChangedFunction) {
+    this.serviceProperties.DisplayScrollText.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-ServiceUi.prototype.DisplaySleep_Changed = function (aStateChangedFunction) {
-    this.Variables().DisplaySleep.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "DisplaySleep" property change events
+* @method DisplaySleep_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceUi.prototype.DisplaySleep_Changed = function (stateChangedFunction) {
+    this.serviceProperties.DisplaySleep.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-ServiceUi.prototype.DisplayLedOff_Changed = function (aStateChangedFunction) {
-    this.Variables().DisplayLedOff.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "DisplayLedOff" property change events
+* @method DisplayLedOff_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceUi.prototype.DisplayLedOff_Changed = function (stateChangedFunction) {
+    this.serviceProperties.DisplayLedOff.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-ServiceUi.prototype.TerminalInputCode_Changed = function (aStateChangedFunction) {
-    this.Variables().TerminalInputCode.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "TerminalInputCode" property change events
+* @method TerminalInputCode_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceUi.prototype.TerminalInputCode_Changed = function (stateChangedFunction) {
+    this.serviceProperties.TerminalInputCode.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-ServiceUi.prototype.TerminalInputName_Changed = function (aStateChangedFunction) {
-    this.Variables().TerminalInputName.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "TerminalInputName" property change events
+* @method TerminalInputName_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceUi.prototype.TerminalInputName_Changed = function (stateChangedFunction) {
+    this.serviceProperties.TerminalInputName.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-ServiceUi.prototype.DisplayPixels_Changed = function (aStateChangedFunction) {
-    this.Variables().DisplayPixels.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "DisplayPixels" property change events
+* @method DisplayPixels_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceUi.prototype.DisplayPixels_Changed = function (stateChangedFunction) {
+    this.serviceProperties.DisplayPixels.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBinaryParameter(state)); 
-	});
-}
-
-ServiceUi.prototype.ServiceName = function(){
-	return this.iServiceName;
-}
-
-ServiceUi.prototype.Variables = function(){
-	return this.iVariables;
-}
-
-ServiceUi.prototype.SubscriptionId = function () {
-    return this.iSubscriptionId;
-}
-
-ServiceUi.prototype.SetSubscriptionId = function (value) {
-    this.iSubscriptionId = value;
-}
-
-ServiceUi.prototype.Udn = function () {
-    return this.iUdn;
-}
-
-ServiceUi.prototype.VariableNames = function(){
-	var result = [];
-	for (var variable in this.iVariables){
-		if (this.iVariables.hasOwnProperty(variable)){
-			result[result.length] = variable;
-		}
-	}
-	return result;
-}
-
-ServiceUi.prototype.Subscribe = function () {
-    SubscriptionManager.AddService(this);
-}
-
-ServiceUi.prototype.Unsubscribe = function () {
-    SubscriptionManager.RemoveService(this.SubscriptionId());
-}
-
-
-ServiceUi.prototype.DisplayTestPattern = function(aTestPattern, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("DisplayTestPattern", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("aTestPattern", aTestPattern);
-    request.Send(function(result){
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		stateChangedFunction(Zapp.SoapRequest.readBinaryParameter(state)); 
 	});
 }
 
 
-ServiceUi.prototype.DisplayFill = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("DisplayFill", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
+/**
+* A service action to DisplayTestPattern
+* @method DisplayTestPattern
+* @param {Int} aTestPattern An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.DisplayTestPattern = function(aTestPattern, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("DisplayTestPattern", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("aTestPattern", aTestPattern);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.DisplayClear = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("DisplayClear", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
+/**
+* A service action to DisplayFill
+* @method DisplayFill
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.DisplayFill = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("DisplayFill", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.SetTestModeEnabled = function(aEnabled, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetTestModeEnabled", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteBoolParameter("aEnabled", aEnabled);
-    request.Send(function(result){
+/**
+* A service action to DisplayClear
+* @method DisplayClear
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.DisplayClear = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("DisplayClear", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.SimulateInfraredInput = function(aCode, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SimulateInfraredInput", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("aCode", aCode);
-    request.Send(function(result){
+/**
+* A service action to SetTestModeEnabled
+* @method SetTestModeEnabled
+* @param {Boolean} aEnabled An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.SetTestModeEnabled = function(aEnabled, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetTestModeEnabled", this.url, this.domain, this.type, this.version);		
+    request.writeBoolParameter("aEnabled", aEnabled);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.SimulateButtonInput = function(aCode, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SimulateButtonInput", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("aCode", aCode);
-    request.Send(function(result){
+/**
+* A service action to SimulateInfraredInput
+* @method SimulateInfraredInput
+* @param {Int} aCode An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.SimulateInfraredInput = function(aCode, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SimulateInfraredInput", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("aCode", aCode);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.SimulateLightSensor = function(aLightLevel, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SimulateLightSensor", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("aLightLevel", aLightLevel);
-    request.Send(function(result){
+/**
+* A service action to SimulateButtonInput
+* @method SimulateButtonInput
+* @param {Int} aCode An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.SimulateButtonInput = function(aCode, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SimulateButtonInput", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("aCode", aCode);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.GetLightSensorData = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("GetLightSensorData", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aLightLevel"] = SoapRequest.ReadIntParameter(result["aLightLevel"]);	
+/**
+* A service action to SimulateLightSensor
+* @method SimulateLightSensor
+* @param {Int} aLightLevel An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.SimulateLightSensor = function(aLightLevel, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SimulateLightSensor", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("aLightLevel", aLightLevel);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.SetDisplayBrightness = function(aBrightness, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetDisplayBrightness", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("aBrightness", aBrightness);
-    request.Send(function(result){
+/**
+* A service action to GetLightSensorData
+* @method GetLightSensorData
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.GetLightSensorData = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("GetLightSensorData", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aLightLevel"] = Zapp.SoapRequest.readIntParameter(result["aLightLevel"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.SetDisplayBrightnessAuto = function(aBrightnessAuto, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetDisplayBrightnessAuto", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteBoolParameter("aBrightnessAuto", aBrightnessAuto);
-    request.Send(function(result){
+/**
+* A service action to SetDisplayBrightness
+* @method SetDisplayBrightness
+* @param {Int} aBrightness An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.SetDisplayBrightness = function(aBrightness, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetDisplayBrightness", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("aBrightness", aBrightness);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.SetInfraredCommands = function(aCommands, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetInfraredCommands", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteStringParameter("aCommands", aCommands);
-    request.Send(function(result){
+/**
+* A service action to SetDisplayBrightnessAuto
+* @method SetDisplayBrightnessAuto
+* @param {Boolean} aBrightnessAuto An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.SetDisplayBrightnessAuto = function(aBrightnessAuto, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetDisplayBrightnessAuto", this.url, this.domain, this.type, this.version);		
+    request.writeBoolParameter("aBrightnessAuto", aBrightnessAuto);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.InfraredCommands = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("InfraredCommands", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aCommands"] = SoapRequest.ReadStringParameter(result["aCommands"]);	
+/**
+* A service action to SetInfraredCommands
+* @method SetInfraredCommands
+* @param {String} aCommands An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.SetInfraredCommands = function(aCommands, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetInfraredCommands", this.url, this.domain, this.type, this.version);		
+    request.writeStringParameter("aCommands", aCommands);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.SetInfraredTerminalCommands = function(aCommands, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetInfraredTerminalCommands", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteStringParameter("aCommands", aCommands);
-    request.Send(function(result){
+/**
+* A service action to InfraredCommands
+* @method InfraredCommands
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.InfraredCommands = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("InfraredCommands", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aCommands"] = Zapp.SoapRequest.readStringParameter(result["aCommands"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.InfraredTerminalCommands = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("InfraredTerminalCommands", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aCommands"] = SoapRequest.ReadStringParameter(result["aCommands"]);	
+/**
+* A service action to SetInfraredTerminalCommands
+* @method SetInfraredTerminalCommands
+* @param {String} aCommands An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.SetInfraredTerminalCommands = function(aCommands, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetInfraredTerminalCommands", this.url, this.domain, this.type, this.version);		
+    request.writeStringParameter("aCommands", aCommands);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.DisplayBrightness = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("DisplayBrightness", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aBrightness"] = SoapRequest.ReadIntParameter(result["aBrightness"]);	
+/**
+* A service action to InfraredTerminalCommands
+* @method InfraredTerminalCommands
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.InfraredTerminalCommands = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("InfraredTerminalCommands", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aCommands"] = Zapp.SoapRequest.readStringParameter(result["aCommands"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.DisplayBrightnessAuto = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("DisplayBrightnessAuto", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aBrightnessAuto"] = SoapRequest.ReadBoolParameter(result["aBrightnessAuto"]);	
+/**
+* A service action to DisplayBrightness
+* @method DisplayBrightness
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.DisplayBrightness = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("DisplayBrightness", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aBrightness"] = Zapp.SoapRequest.readIntParameter(result["aBrightness"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.DisplayUpsideDown = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("DisplayUpsideDown", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aUpsideDown"] = SoapRequest.ReadBoolParameter(result["aUpsideDown"]);	
+/**
+* A service action to DisplayBrightnessAuto
+* @method DisplayBrightnessAuto
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.DisplayBrightnessAuto = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("DisplayBrightnessAuto", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aBrightnessAuto"] = Zapp.SoapRequest.readBoolParameter(result["aBrightnessAuto"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.SetDisplayUpsideDown = function(aUpsideDown, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetDisplayUpsideDown", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteBoolParameter("aUpsideDown", aUpsideDown);
-    request.Send(function(result){
+/**
+* A service action to DisplayUpsideDown
+* @method DisplayUpsideDown
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.DisplayUpsideDown = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("DisplayUpsideDown", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aUpsideDown"] = Zapp.SoapRequest.readBoolParameter(result["aUpsideDown"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.SetDisplayScrollText = function(aDisplayScrollText, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetDisplayScrollText", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteBoolParameter("aDisplayScrollText", aDisplayScrollText);
-    request.Send(function(result){
+/**
+* A service action to SetDisplayUpsideDown
+* @method SetDisplayUpsideDown
+* @param {Boolean} aUpsideDown An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.SetDisplayUpsideDown = function(aUpsideDown, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetDisplayUpsideDown", this.url, this.domain, this.type, this.version);		
+    request.writeBoolParameter("aUpsideDown", aUpsideDown);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.DisplayScrollText = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("DisplayScrollText", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aDisplayScrollTextEnabled"] = SoapRequest.ReadBoolParameter(result["aDisplayScrollTextEnabled"]);	
+/**
+* A service action to SetDisplayScrollText
+* @method SetDisplayScrollText
+* @param {Boolean} aDisplayScrollText An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.SetDisplayScrollText = function(aDisplayScrollText, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetDisplayScrollText", this.url, this.domain, this.type, this.version);		
+    request.writeBoolParameter("aDisplayScrollText", aDisplayScrollText);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.SetDisplaySleep = function(aEnabled, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetDisplaySleep", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteBoolParameter("aEnabled", aEnabled);
-    request.Send(function(result){
+/**
+* A service action to DisplayScrollText
+* @method DisplayScrollText
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.DisplayScrollText = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("DisplayScrollText", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aDisplayScrollTextEnabled"] = Zapp.SoapRequest.readBoolParameter(result["aDisplayScrollTextEnabled"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.DisplaySleep = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("DisplaySleep", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aEnabled"] = SoapRequest.ReadBoolParameter(result["aEnabled"]);	
+/**
+* A service action to SetDisplaySleep
+* @method SetDisplaySleep
+* @param {Boolean} aEnabled An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.SetDisplaySleep = function(aEnabled, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetDisplaySleep", this.url, this.domain, this.type, this.version);		
+    request.writeBoolParameter("aEnabled", aEnabled);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.SetDisplayLedOff = function(aOff, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetDisplayLedOff", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteBoolParameter("aOff", aOff);
-    request.Send(function(result){
+/**
+* A service action to DisplaySleep
+* @method DisplaySleep
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.DisplaySleep = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("DisplaySleep", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aEnabled"] = Zapp.SoapRequest.readBoolParameter(result["aEnabled"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceUi.prototype.DisplayLedOff = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("DisplayLedOff", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aOff"] = SoapRequest.ReadBoolParameter(result["aOff"]);	
+/**
+* A service action to SetDisplayLedOff
+* @method SetDisplayLedOff
+* @param {Boolean} aOff An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.SetDisplayLedOff = function(aOff, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetDisplayLedOff", this.url, this.domain, this.type, this.version);		
+    request.writeBoolParameter("aOff", aOff);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to DisplayLedOff
+* @method DisplayLedOff
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceUi.prototype.DisplayLedOff = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("DisplayLedOff", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aOff"] = Zapp.SoapRequest.readBoolParameter(result["aOff"]);	
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 

@@ -1,411 +1,618 @@
  
 
 /**
- * Proxy for zapp.org:TestBasic:1
- */
+* Service Proxy for zapp.org:TestBasic:1
+* @module Zapp
+* @title TestBasic
+*/
 
-var ServiceTestBasic = function(aUdn){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/zapp.org-TestBasic-1/control";
-	this.iDomain = "zapp.org";
-	if (this.iDomain == "upnp.org") {
-		this.iDomain = "schemas.upnp.org";
+var ServiceTestBasic = function(udn){	
+
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/zapp.org-TestBasic-1/control";  // upnp control url
+	this.domain = "zapp.org";
+	if (this.domain == "upnp.org") {
+		this.domain = "schemas.upnp.org";
     }
-	this.iDomain = this.iDomain.replace(/\./,"-");
-	this.iType = "TestBasic";
-	this.iVersion = "1";
-	this.iServiceName = "zapp.org-TestBasic-1";
-	this.iSubscriptionId = "";
-	this.iUdn = aUdn;
+	this.domain = this.domain.replace(/\./,"-");
+	this.type = "TestBasic";
+	this.version = "1";
+	this.serviceName = "zapp.org-TestBasic-1";
+	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+	this.udn = udn;   // device name
 	
-	this.iVariables = {};
-			this.iVariables["A_ARG_Increment_Value"] = new ServiceVariable("A_ARG_Increment_Value");
-		this.iVariables["A_ARG_Increment_Result"] = new ServiceVariable("A_ARG_Increment_Result");
-		this.iVariables["A_ARG_Decrement_Value"] = new ServiceVariable("A_ARG_Decrement_Value");
-		this.iVariables["A_ARG_Decrement_Result"] = new ServiceVariable("A_ARG_Decrement_Result");
-		this.iVariables["A_ARG_Toggle_Value"] = new ServiceVariable("A_ARG_Toggle_Value");
-		this.iVariables["A_ARG_Toggle_Result"] = new ServiceVariable("A_ARG_Toggle_Result");
-		this.iVariables["A_ARG_EchoString_Value"] = new ServiceVariable("A_ARG_EchoString_Value");
-		this.iVariables["A_ARG_EchoString_Result"] = new ServiceVariable("A_ARG_EchoString_Result");
-		this.iVariables["A_ARG_EchoBinary_Value"] = new ServiceVariable("A_ARG_EchoBinary_Value");
-		this.iVariables["A_ARG_EchoBinary_Result"] = new ServiceVariable("A_ARG_EchoBinary_Result");
-		this.iVariables["VarUint"] = new ServiceVariable("VarUint");
-		this.iVariables["VarInt"] = new ServiceVariable("VarInt");
-		this.iVariables["VarBool"] = new ServiceVariable("VarBool");
-		this.iVariables["VarStr"] = new ServiceVariable("VarStr");
-		this.iVariables["VarBin"] = new ServiceVariable("VarBin");
+	// Collection of service properties
+	this.serviceProperties = {};
+	this.serviceProperties["A_ARG_Increment_Value"] = new Zapp.ServiceProperty("A_ARG_Increment_Value");
+	this.serviceProperties["A_ARG_Increment_Result"] = new Zapp.ServiceProperty("A_ARG_Increment_Result");
+	this.serviceProperties["A_ARG_Decrement_Value"] = new Zapp.ServiceProperty("A_ARG_Decrement_Value");
+	this.serviceProperties["A_ARG_Decrement_Result"] = new Zapp.ServiceProperty("A_ARG_Decrement_Result");
+	this.serviceProperties["A_ARG_Toggle_Value"] = new Zapp.ServiceProperty("A_ARG_Toggle_Value");
+	this.serviceProperties["A_ARG_Toggle_Result"] = new Zapp.ServiceProperty("A_ARG_Toggle_Result");
+	this.serviceProperties["A_ARG_EchoString_Value"] = new Zapp.ServiceProperty("A_ARG_EchoString_Value");
+	this.serviceProperties["A_ARG_EchoString_Result"] = new Zapp.ServiceProperty("A_ARG_EchoString_Result");
+	this.serviceProperties["A_ARG_EchoBinary_Value"] = new Zapp.ServiceProperty("A_ARG_EchoBinary_Value");
+	this.serviceProperties["A_ARG_EchoBinary_Result"] = new Zapp.ServiceProperty("A_ARG_EchoBinary_Result");
+	this.serviceProperties["VarUint"] = new Zapp.ServiceProperty("VarUint");
+	this.serviceProperties["VarInt"] = new Zapp.ServiceProperty("VarInt");
+	this.serviceProperties["VarBool"] = new Zapp.ServiceProperty("VarBool");
+	this.serviceProperties["VarStr"] = new Zapp.ServiceProperty("VarStr");
+	this.serviceProperties["VarBin"] = new Zapp.ServiceProperty("VarBin");
 }
 
 
-ServiceTestBasic.prototype.A_ARG_Increment_Value_Changed = function (aStateChangedFunction) {
-    this.Variables().A_ARG_Increment_Value.AddListener(function (state) 
+
+/**
+* Subscribes the service to the subscription manager to listen for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceTestBasic.prototype.subscribe = function (serviceAddedFunction) {
+    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+}
+
+
+/**
+* Unsubscribes the service from the subscription manager to stop listening for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceTestBasic.prototype.unsubscribe = function () {
+    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+}
+
+
+
+
+/**
+* Adds a listener to handle "A_ARG_Increment_Value" property change events
+* @method A_ARG_Increment_Value_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestBasic.prototype.A_ARG_Increment_Value_Changed = function (stateChangedFunction) {
+    this.serviceProperties.A_ARG_Increment_Value.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-ServiceTestBasic.prototype.A_ARG_Increment_Result_Changed = function (aStateChangedFunction) {
-    this.Variables().A_ARG_Increment_Result.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "A_ARG_Increment_Result" property change events
+* @method A_ARG_Increment_Result_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestBasic.prototype.A_ARG_Increment_Result_Changed = function (stateChangedFunction) {
+    this.serviceProperties.A_ARG_Increment_Result.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-ServiceTestBasic.prototype.A_ARG_Decrement_Value_Changed = function (aStateChangedFunction) {
-    this.Variables().A_ARG_Decrement_Value.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "A_ARG_Decrement_Value" property change events
+* @method A_ARG_Decrement_Value_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestBasic.prototype.A_ARG_Decrement_Value_Changed = function (stateChangedFunction) {
+    this.serviceProperties.A_ARG_Decrement_Value.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-ServiceTestBasic.prototype.A_ARG_Decrement_Result_Changed = function (aStateChangedFunction) {
-    this.Variables().A_ARG_Decrement_Result.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "A_ARG_Decrement_Result" property change events
+* @method A_ARG_Decrement_Result_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestBasic.prototype.A_ARG_Decrement_Result_Changed = function (stateChangedFunction) {
+    this.serviceProperties.A_ARG_Decrement_Result.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-ServiceTestBasic.prototype.A_ARG_Toggle_Value_Changed = function (aStateChangedFunction) {
-    this.Variables().A_ARG_Toggle_Value.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "A_ARG_Toggle_Value" property change events
+* @method A_ARG_Toggle_Value_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestBasic.prototype.A_ARG_Toggle_Value_Changed = function (stateChangedFunction) {
+    this.serviceProperties.A_ARG_Toggle_Value.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-ServiceTestBasic.prototype.A_ARG_Toggle_Result_Changed = function (aStateChangedFunction) {
-    this.Variables().A_ARG_Toggle_Result.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "A_ARG_Toggle_Result" property change events
+* @method A_ARG_Toggle_Result_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestBasic.prototype.A_ARG_Toggle_Result_Changed = function (stateChangedFunction) {
+    this.serviceProperties.A_ARG_Toggle_Result.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-ServiceTestBasic.prototype.A_ARG_EchoString_Value_Changed = function (aStateChangedFunction) {
-    this.Variables().A_ARG_EchoString_Value.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "A_ARG_EchoString_Value" property change events
+* @method A_ARG_EchoString_Value_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestBasic.prototype.A_ARG_EchoString_Value_Changed = function (stateChangedFunction) {
+    this.serviceProperties.A_ARG_EchoString_Value.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-ServiceTestBasic.prototype.A_ARG_EchoString_Result_Changed = function (aStateChangedFunction) {
-    this.Variables().A_ARG_EchoString_Result.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "A_ARG_EchoString_Result" property change events
+* @method A_ARG_EchoString_Result_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestBasic.prototype.A_ARG_EchoString_Result_Changed = function (stateChangedFunction) {
+    this.serviceProperties.A_ARG_EchoString_Result.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-ServiceTestBasic.prototype.A_ARG_EchoBinary_Value_Changed = function (aStateChangedFunction) {
-    this.Variables().A_ARG_EchoBinary_Value.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "A_ARG_EchoBinary_Value" property change events
+* @method A_ARG_EchoBinary_Value_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestBasic.prototype.A_ARG_EchoBinary_Value_Changed = function (stateChangedFunction) {
+    this.serviceProperties.A_ARG_EchoBinary_Value.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBinaryParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readBinaryParameter(state)); 
 	});
 }
-ServiceTestBasic.prototype.A_ARG_EchoBinary_Result_Changed = function (aStateChangedFunction) {
-    this.Variables().A_ARG_EchoBinary_Result.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "A_ARG_EchoBinary_Result" property change events
+* @method A_ARG_EchoBinary_Result_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestBasic.prototype.A_ARG_EchoBinary_Result_Changed = function (stateChangedFunction) {
+    this.serviceProperties.A_ARG_EchoBinary_Result.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBinaryParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readBinaryParameter(state)); 
 	});
 }
-ServiceTestBasic.prototype.VarUint_Changed = function (aStateChangedFunction) {
-    this.Variables().VarUint.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "VarUint" property change events
+* @method VarUint_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestBasic.prototype.VarUint_Changed = function (stateChangedFunction) {
+    this.serviceProperties.VarUint.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-ServiceTestBasic.prototype.VarInt_Changed = function (aStateChangedFunction) {
-    this.Variables().VarInt.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "VarInt" property change events
+* @method VarInt_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestBasic.prototype.VarInt_Changed = function (stateChangedFunction) {
+    this.serviceProperties.VarInt.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-ServiceTestBasic.prototype.VarBool_Changed = function (aStateChangedFunction) {
-    this.Variables().VarBool.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "VarBool" property change events
+* @method VarBool_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestBasic.prototype.VarBool_Changed = function (stateChangedFunction) {
+    this.serviceProperties.VarBool.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-ServiceTestBasic.prototype.VarStr_Changed = function (aStateChangedFunction) {
-    this.Variables().VarStr.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "VarStr" property change events
+* @method VarStr_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestBasic.prototype.VarStr_Changed = function (stateChangedFunction) {
+    this.serviceProperties.VarStr.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-ServiceTestBasic.prototype.VarBin_Changed = function (aStateChangedFunction) {
-    this.Variables().VarBin.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "VarBin" property change events
+* @method VarBin_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestBasic.prototype.VarBin_Changed = function (stateChangedFunction) {
+    this.serviceProperties.VarBin.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBinaryParameter(state)); 
-	});
-}
-
-ServiceTestBasic.prototype.ServiceName = function(){
-	return this.iServiceName;
-}
-
-ServiceTestBasic.prototype.Variables = function(){
-	return this.iVariables;
-}
-
-ServiceTestBasic.prototype.SubscriptionId = function () {
-    return this.iSubscriptionId;
-}
-
-ServiceTestBasic.prototype.SetSubscriptionId = function (value) {
-    this.iSubscriptionId = value;
-}
-
-ServiceTestBasic.prototype.Udn = function () {
-    return this.iUdn;
-}
-
-ServiceTestBasic.prototype.VariableNames = function(){
-	var result = [];
-	for (var variable in this.iVariables){
-		if (this.iVariables.hasOwnProperty(variable)){
-			result[result.length] = variable;
-		}
-	}
-	return result;
-}
-
-ServiceTestBasic.prototype.Subscribe = function () {
-    SubscriptionManager.AddService(this);
-}
-
-ServiceTestBasic.prototype.Unsubscribe = function () {
-    SubscriptionManager.RemoveService(this.SubscriptionId());
-}
-
-
-ServiceTestBasic.prototype.Increment = function(Value, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("Increment", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("Value", Value);
-    request.Send(function(result){
-		result["Result"] = SoapRequest.ReadIntParameter(result["Result"]);	
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		stateChangedFunction(Zapp.SoapRequest.readBinaryParameter(state)); 
 	});
 }
 
 
-ServiceTestBasic.prototype.Decrement = function(Value, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("Decrement", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("Value", Value);
-    request.Send(function(result){
-		result["Result"] = SoapRequest.ReadIntParameter(result["Result"]);	
+/**
+* A service action to Increment
+* @method Increment
+* @param {Int} Value An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestBasic.prototype.Increment = function(Value, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Increment", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("Value", Value);
+    request.send(function(result){
+		result["Result"] = Zapp.SoapRequest.readIntParameter(result["Result"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceTestBasic.prototype.Toggle = function(Value, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("Toggle", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteBoolParameter("Value", Value);
-    request.Send(function(result){
-		result["Result"] = SoapRequest.ReadBoolParameter(result["Result"]);	
+/**
+* A service action to Decrement
+* @method Decrement
+* @param {Int} Value An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestBasic.prototype.Decrement = function(Value, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Decrement", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("Value", Value);
+    request.send(function(result){
+		result["Result"] = Zapp.SoapRequest.readIntParameter(result["Result"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceTestBasic.prototype.EchoString = function(Value, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("EchoString", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteStringParameter("Value", Value);
-    request.Send(function(result){
-		result["Result"] = SoapRequest.ReadStringParameter(result["Result"]);	
+/**
+* A service action to Toggle
+* @method Toggle
+* @param {Boolean} Value An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestBasic.prototype.Toggle = function(Value, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Toggle", this.url, this.domain, this.type, this.version);		
+    request.writeBoolParameter("Value", Value);
+    request.send(function(result){
+		result["Result"] = Zapp.SoapRequest.readBoolParameter(result["Result"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceTestBasic.prototype.EchoBinary = function(Value, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("EchoBinary", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteBinaryParameter("Value", Value);
-    request.Send(function(result){
-		result["Result"] = SoapRequest.ReadBinaryParameter(result["Result"]);	
+/**
+* A service action to EchoString
+* @method EchoString
+* @param {String} Value An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestBasic.prototype.EchoString = function(Value, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("EchoString", this.url, this.domain, this.type, this.version);		
+    request.writeStringParameter("Value", Value);
+    request.send(function(result){
+		result["Result"] = Zapp.SoapRequest.readStringParameter(result["Result"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceTestBasic.prototype.SetUint = function(ValueUint, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetUint", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("ValueUint", ValueUint);
-    request.Send(function(result){
+/**
+* A service action to EchoBinary
+* @method EchoBinary
+* @param {String} Value An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestBasic.prototype.EchoBinary = function(Value, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("EchoBinary", this.url, this.domain, this.type, this.version);		
+    request.writeBinaryParameter("Value", Value);
+    request.send(function(result){
+		result["Result"] = Zapp.SoapRequest.readBinaryParameter(result["Result"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceTestBasic.prototype.GetUint = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("GetUint", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["ValueUint"] = SoapRequest.ReadIntParameter(result["ValueUint"]);	
+/**
+* A service action to SetUint
+* @method SetUint
+* @param {Int} ValueUint An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestBasic.prototype.SetUint = function(ValueUint, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetUint", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("ValueUint", ValueUint);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceTestBasic.prototype.SetInt = function(ValueInt, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetInt", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("ValueInt", ValueInt);
-    request.Send(function(result){
+/**
+* A service action to GetUint
+* @method GetUint
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestBasic.prototype.GetUint = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("GetUint", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["ValueUint"] = Zapp.SoapRequest.readIntParameter(result["ValueUint"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceTestBasic.prototype.GetInt = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("GetInt", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["ValueInt"] = SoapRequest.ReadIntParameter(result["ValueInt"]);	
+/**
+* A service action to SetInt
+* @method SetInt
+* @param {Int} ValueInt An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestBasic.prototype.SetInt = function(ValueInt, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetInt", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("ValueInt", ValueInt);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceTestBasic.prototype.SetBool = function(ValueBool, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetBool", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteBoolParameter("ValueBool", ValueBool);
-    request.Send(function(result){
+/**
+* A service action to GetInt
+* @method GetInt
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestBasic.prototype.GetInt = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("GetInt", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["ValueInt"] = Zapp.SoapRequest.readIntParameter(result["ValueInt"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceTestBasic.prototype.GetBool = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("GetBool", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["ValueBool"] = SoapRequest.ReadBoolParameter(result["ValueBool"]);	
+/**
+* A service action to SetBool
+* @method SetBool
+* @param {Boolean} ValueBool An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestBasic.prototype.SetBool = function(ValueBool, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetBool", this.url, this.domain, this.type, this.version);		
+    request.writeBoolParameter("ValueBool", ValueBool);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceTestBasic.prototype.SetMultiple = function(ValueUint, ValueInt, ValueBool, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetMultiple", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("ValueUint", ValueUint);
-    request.WriteIntParameter("ValueInt", ValueInt);
-    request.WriteBoolParameter("ValueBool", ValueBool);
-    request.Send(function(result){
+/**
+* A service action to GetBool
+* @method GetBool
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestBasic.prototype.GetBool = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("GetBool", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["ValueBool"] = Zapp.SoapRequest.readBoolParameter(result["ValueBool"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceTestBasic.prototype.SetString = function(ValueStr, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetString", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteStringParameter("ValueStr", ValueStr);
-    request.Send(function(result){
+/**
+* A service action to SetMultiple
+* @method SetMultiple
+* @param {Int} ValueUint An action parameter
+* @param {Int} ValueInt An action parameter
+* @param {Boolean} ValueBool An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestBasic.prototype.SetMultiple = function(ValueUint, ValueInt, ValueBool, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetMultiple", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("ValueUint", ValueUint);
+    request.writeIntParameter("ValueInt", ValueInt);
+    request.writeBoolParameter("ValueBool", ValueBool);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceTestBasic.prototype.GetString = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("GetString", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["ValueStr"] = SoapRequest.ReadStringParameter(result["ValueStr"]);	
+/**
+* A service action to SetString
+* @method SetString
+* @param {String} ValueStr An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestBasic.prototype.SetString = function(ValueStr, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetString", this.url, this.domain, this.type, this.version);		
+    request.writeStringParameter("ValueStr", ValueStr);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceTestBasic.prototype.SetBinary = function(ValueBin, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetBinary", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteBinaryParameter("ValueBin", ValueBin);
-    request.Send(function(result){
+/**
+* A service action to GetString
+* @method GetString
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestBasic.prototype.GetString = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("GetString", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["ValueStr"] = Zapp.SoapRequest.readStringParameter(result["ValueStr"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceTestBasic.prototype.GetBinary = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("GetBinary", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["ValueBin"] = SoapRequest.ReadBinaryParameter(result["ValueBin"]);	
+/**
+* A service action to SetBinary
+* @method SetBinary
+* @param {String} ValueBin An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestBasic.prototype.SetBinary = function(ValueBin, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetBinary", this.url, this.domain, this.type, this.version);		
+    request.writeBinaryParameter("ValueBin", ValueBin);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceTestBasic.prototype.ToggleBool = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("ToggleBool", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
+/**
+* A service action to GetBinary
+* @method GetBinary
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestBasic.prototype.GetBinary = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("GetBinary", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["ValueBin"] = Zapp.SoapRequest.readBinaryParameter(result["ValueBin"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to ToggleBool
+* @method ToggleBool
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestBasic.prototype.ToggleBool = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("ToggleBool", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 

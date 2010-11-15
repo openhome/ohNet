@@ -1,99 +1,113 @@
  
 
 /**
- * Proxy for linn.co.uk:Time:1
- */
+* Service Proxy for linn.co.uk:Time:1
+* @module Zapp
+* @title Time
+*/
 
-var ServiceTime = function(aUdn){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/linn.co.uk-Time-1/control";
-	this.iDomain = "linn.co.uk";
-	if (this.iDomain == "upnp.org") {
-		this.iDomain = "schemas.upnp.org";
+var ServiceTime = function(udn){	
+
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Time-1/control";  // upnp control url
+	this.domain = "linn.co.uk";
+	if (this.domain == "upnp.org") {
+		this.domain = "schemas.upnp.org";
     }
-	this.iDomain = this.iDomain.replace(/\./,"-");
-	this.iType = "Time";
-	this.iVersion = "1";
-	this.iServiceName = "linn.co.uk-Time-1";
-	this.iSubscriptionId = "";
-	this.iUdn = aUdn;
+	this.domain = this.domain.replace(/\./,"-");
+	this.type = "Time";
+	this.version = "1";
+	this.serviceName = "linn.co.uk-Time-1";
+	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+	this.udn = udn;   // device name
 	
-	this.iVariables = {};
-			this.iVariables["TrackCount"] = new ServiceVariable("TrackCount");
-		this.iVariables["Duration"] = new ServiceVariable("Duration");
-		this.iVariables["Seconds"] = new ServiceVariable("Seconds");
+	// Collection of service properties
+	this.serviceProperties = {};
+	this.serviceProperties["TrackCount"] = new Zapp.ServiceProperty("TrackCount");
+	this.serviceProperties["Duration"] = new Zapp.ServiceProperty("Duration");
+	this.serviceProperties["Seconds"] = new Zapp.ServiceProperty("Seconds");
 }
 
 
-ServiceTime.prototype.TrackCount_Changed = function (aStateChangedFunction) {
-    this.Variables().TrackCount.AddListener(function (state) 
+
+/**
+* Subscribes the service to the subscription manager to listen for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceTime.prototype.subscribe = function (serviceAddedFunction) {
+    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+}
+
+
+/**
+* Unsubscribes the service from the subscription manager to stop listening for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceTime.prototype.unsubscribe = function () {
+    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+}
+
+
+
+
+/**
+* Adds a listener to handle "TrackCount" property change events
+* @method TrackCount_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTime.prototype.TrackCount_Changed = function (stateChangedFunction) {
+    this.serviceProperties.TrackCount.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-ServiceTime.prototype.Duration_Changed = function (aStateChangedFunction) {
-    this.Variables().Duration.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "Duration" property change events
+* @method Duration_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTime.prototype.Duration_Changed = function (stateChangedFunction) {
+    this.serviceProperties.Duration.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-ServiceTime.prototype.Seconds_Changed = function (aStateChangedFunction) {
-    this.Variables().Seconds.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "Seconds" property change events
+* @method Seconds_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTime.prototype.Seconds_Changed = function (stateChangedFunction) {
+    this.serviceProperties.Seconds.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
 
-ServiceTime.prototype.ServiceName = function(){
-	return this.iServiceName;
-}
 
-ServiceTime.prototype.Variables = function(){
-	return this.iVariables;
-}
-
-ServiceTime.prototype.SubscriptionId = function () {
-    return this.iSubscriptionId;
-}
-
-ServiceTime.prototype.SetSubscriptionId = function (value) {
-    this.iSubscriptionId = value;
-}
-
-ServiceTime.prototype.Udn = function () {
-    return this.iUdn;
-}
-
-ServiceTime.prototype.VariableNames = function(){
-	var result = [];
-	for (var variable in this.iVariables){
-		if (this.iVariables.hasOwnProperty(variable)){
-			result[result.length] = variable;
-		}
-	}
-	return result;
-}
-
-ServiceTime.prototype.Subscribe = function () {
-    SubscriptionManager.AddService(this);
-}
-
-ServiceTime.prototype.Unsubscribe = function () {
-    SubscriptionManager.RemoveService(this.SubscriptionId());
-}
-
-
-ServiceTime.prototype.Time = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("Time", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aTrackCount"] = SoapRequest.ReadIntParameter(result["aTrackCount"]);	
-		result["aDuration"] = SoapRequest.ReadIntParameter(result["aDuration"]);	
-		result["aSeconds"] = SoapRequest.ReadIntParameter(result["aSeconds"]);	
+/**
+* A service action to Time
+* @method Time
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTime.prototype.Time = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Time", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aTrackCount"] = Zapp.SoapRequest.readIntParameter(result["aTrackCount"]);	
+		result["aDuration"] = Zapp.SoapRequest.readIntParameter(result["aDuration"]);	
+		result["aSeconds"] = Zapp.SoapRequest.readIntParameter(result["aSeconds"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 

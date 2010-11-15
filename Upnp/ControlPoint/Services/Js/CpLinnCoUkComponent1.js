@@ -1,28 +1,32 @@
  
 
 /**
- * Proxy for linn.co.uk:Component:1
- */
+* Service Proxy for linn.co.uk:Component:1
+* @module Zapp
+* @title Component
+*/
 
-var ServiceComponent = function(aUdn){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/linn.co.uk-Component-1/control";
-	this.iDomain = "linn.co.uk";
-	if (this.iDomain == "upnp.org") {
-		this.iDomain = "schemas.upnp.org";
+var ServiceComponent = function(udn){	
+
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Component-1/control";  // upnp control url
+	this.domain = "linn.co.uk";
+	if (this.domain == "upnp.org") {
+		this.domain = "schemas.upnp.org";
     }
-	this.iDomain = this.iDomain.replace(/\./,"-");
-	this.iType = "Component";
-	this.iVersion = "1";
-	this.iServiceName = "linn.co.uk-Component-1";
-	this.iSubscriptionId = "";
-	this.iUdn = aUdn;
+	this.domain = this.domain.replace(/\./,"-");
+	this.type = "Component";
+	this.version = "1";
+	this.serviceName = "linn.co.uk-Component-1";
+	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+	this.udn = udn;   // device name
 	
-	this.iVariables = {};
-			this.iVariables["AmplifierEnabled"] = new ServiceVariable("AmplifierEnabled");
-		this.iVariables["AmplifierAttenuation"] = new ServiceVariable("AmplifierAttenuation");
-		this.iVariables["VolumeControlEnabled"] = new ServiceVariable("VolumeControlEnabled");
-		this.iVariables["DigitalAudioOutputRaw"] = new ServiceVariable("DigitalAudioOutputRaw");
-		this.iVariables["Bool"] = new ServiceVariable("Bool");
+	// Collection of service properties
+	this.serviceProperties = {};
+	this.serviceProperties["AmplifierEnabled"] = new Zapp.ServiceProperty("AmplifierEnabled");
+	this.serviceProperties["AmplifierAttenuation"] = new Zapp.ServiceProperty("AmplifierAttenuation");
+	this.serviceProperties["VolumeControlEnabled"] = new Zapp.ServiceProperty("VolumeControlEnabled");
+	this.serviceProperties["DigitalAudioOutputRaw"] = new Zapp.ServiceProperty("DigitalAudioOutputRaw");
+	this.serviceProperties["Bool"] = new Zapp.ServiceProperty("Bool");
 }
 
 ServiceComponent.kAmplifierAttenuation12Db = "-12dB";
@@ -30,225 +34,313 @@ ServiceComponent.kAmplifierAttenuation9Db = "-9dB";
 ServiceComponent.kAmplifierAttenuation6Db = "-6dB";
 ServiceComponent.kAmplifierAttenuation0Db = "0dB";
 
-ServiceComponent.prototype.AmplifierEnabled_Changed = function (aStateChangedFunction) {
-    this.Variables().AmplifierEnabled.AddListener(function (state) 
+
+/**
+* Subscribes the service to the subscription manager to listen for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceComponent.prototype.subscribe = function (serviceAddedFunction) {
+    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+}
+
+
+/**
+* Unsubscribes the service from the subscription manager to stop listening for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceComponent.prototype.unsubscribe = function () {
+    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+}
+
+
+
+
+/**
+* Adds a listener to handle "AmplifierEnabled" property change events
+* @method AmplifierEnabled_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceComponent.prototype.AmplifierEnabled_Changed = function (stateChangedFunction) {
+    this.serviceProperties.AmplifierEnabled.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-ServiceComponent.prototype.AmplifierAttenuation_Changed = function (aStateChangedFunction) {
-    this.Variables().AmplifierAttenuation.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "AmplifierAttenuation" property change events
+* @method AmplifierAttenuation_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceComponent.prototype.AmplifierAttenuation_Changed = function (stateChangedFunction) {
+    this.serviceProperties.AmplifierAttenuation.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-ServiceComponent.prototype.VolumeControlEnabled_Changed = function (aStateChangedFunction) {
-    this.Variables().VolumeControlEnabled.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "VolumeControlEnabled" property change events
+* @method VolumeControlEnabled_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceComponent.prototype.VolumeControlEnabled_Changed = function (stateChangedFunction) {
+    this.serviceProperties.VolumeControlEnabled.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-ServiceComponent.prototype.DigitalAudioOutputRaw_Changed = function (aStateChangedFunction) {
-    this.Variables().DigitalAudioOutputRaw.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "DigitalAudioOutputRaw" property change events
+* @method DigitalAudioOutputRaw_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceComponent.prototype.DigitalAudioOutputRaw_Changed = function (stateChangedFunction) {
+    this.serviceProperties.DigitalAudioOutputRaw.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-ServiceComponent.prototype.Bool_Changed = function (aStateChangedFunction) {
-    this.Variables().Bool.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "Bool" property change events
+* @method Bool_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceComponent.prototype.Bool_Changed = function (stateChangedFunction) {
+    this.serviceProperties.Bool.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
-	});
-}
-
-ServiceComponent.prototype.ServiceName = function(){
-	return this.iServiceName;
-}
-
-ServiceComponent.prototype.Variables = function(){
-	return this.iVariables;
-}
-
-ServiceComponent.prototype.SubscriptionId = function () {
-    return this.iSubscriptionId;
-}
-
-ServiceComponent.prototype.SetSubscriptionId = function (value) {
-    this.iSubscriptionId = value;
-}
-
-ServiceComponent.prototype.Udn = function () {
-    return this.iUdn;
-}
-
-ServiceComponent.prototype.VariableNames = function(){
-	var result = [];
-	for (var variable in this.iVariables){
-		if (this.iVariables.hasOwnProperty(variable)){
-			result[result.length] = variable;
-		}
-	}
-	return result;
-}
-
-ServiceComponent.prototype.Subscribe = function () {
-    SubscriptionManager.AddService(this);
-}
-
-ServiceComponent.prototype.Unsubscribe = function () {
-    SubscriptionManager.RemoveService(this.SubscriptionId());
-}
-
-
-ServiceComponent.prototype.AmplifierEnabled = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("AmplifierEnabled", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aEnabled"] = SoapRequest.ReadBoolParameter(result["aEnabled"]);	
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
 
 
-ServiceComponent.prototype.SetAmplifierEnabled = function(aEnabled, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetAmplifierEnabled", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteBoolParameter("aEnabled", aEnabled);
-    request.Send(function(result){
+/**
+* A service action to AmplifierEnabled
+* @method AmplifierEnabled
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceComponent.prototype.AmplifierEnabled = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("AmplifierEnabled", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aEnabled"] = Zapp.SoapRequest.readBoolParameter(result["aEnabled"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceComponent.prototype.AmplifierAttenuation = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("AmplifierAttenuation", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aAttenuation"] = SoapRequest.ReadStringParameter(result["aAttenuation"]);	
+/**
+* A service action to SetAmplifierEnabled
+* @method SetAmplifierEnabled
+* @param {Boolean} aEnabled An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceComponent.prototype.SetAmplifierEnabled = function(aEnabled, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetAmplifierEnabled", this.url, this.domain, this.type, this.version);		
+    request.writeBoolParameter("aEnabled", aEnabled);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceComponent.prototype.SetAmplifierAttenuation = function(aAttenuation, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetAmplifierAttenuation", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteStringParameter("aAttenuation", aAttenuation);
-    request.Send(function(result){
+/**
+* A service action to AmplifierAttenuation
+* @method AmplifierAttenuation
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceComponent.prototype.AmplifierAttenuation = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("AmplifierAttenuation", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aAttenuation"] = Zapp.SoapRequest.readStringParameter(result["aAttenuation"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceComponent.prototype.SetVolumeControlEnabled = function(aEnabled, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetVolumeControlEnabled", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteBoolParameter("aEnabled", aEnabled);
-    request.Send(function(result){
+/**
+* A service action to SetAmplifierAttenuation
+* @method SetAmplifierAttenuation
+* @param {String} aAttenuation An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceComponent.prototype.SetAmplifierAttenuation = function(aAttenuation, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetAmplifierAttenuation", this.url, this.domain, this.type, this.version);		
+    request.writeStringParameter("aAttenuation", aAttenuation);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceComponent.prototype.VolumeControlEnabled = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("VolumeControlEnabled", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aEnabled"] = SoapRequest.ReadBoolParameter(result["aEnabled"]);	
+/**
+* A service action to SetVolumeControlEnabled
+* @method SetVolumeControlEnabled
+* @param {Boolean} aEnabled An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceComponent.prototype.SetVolumeControlEnabled = function(aEnabled, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetVolumeControlEnabled", this.url, this.domain, this.type, this.version);		
+    request.writeBoolParameter("aEnabled", aEnabled);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceComponent.prototype.SetDigitalAudioOutputRaw = function(aRaw, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetDigitalAudioOutputRaw", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteBoolParameter("aRaw", aRaw);
-    request.Send(function(result){
+/**
+* A service action to VolumeControlEnabled
+* @method VolumeControlEnabled
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceComponent.prototype.VolumeControlEnabled = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("VolumeControlEnabled", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aEnabled"] = Zapp.SoapRequest.readBoolParameter(result["aEnabled"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceComponent.prototype.DigitalAudioOutputRaw = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("DigitalAudioOutputRaw", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aRaw"] = SoapRequest.ReadBoolParameter(result["aRaw"]);	
+/**
+* A service action to SetDigitalAudioOutputRaw
+* @method SetDigitalAudioOutputRaw
+* @param {Boolean} aRaw An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceComponent.prototype.SetDigitalAudioOutputRaw = function(aRaw, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetDigitalAudioOutputRaw", this.url, this.domain, this.type, this.version);		
+    request.writeBoolParameter("aRaw", aRaw);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceComponent.prototype.AmplifierOverTemperature = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("AmplifierOverTemperature", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aOverTemperature"] = SoapRequest.ReadBoolParameter(result["aOverTemperature"]);	
+/**
+* A service action to DigitalAudioOutputRaw
+* @method DigitalAudioOutputRaw
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceComponent.prototype.DigitalAudioOutputRaw = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("DigitalAudioOutputRaw", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aRaw"] = Zapp.SoapRequest.readBoolParameter(result["aRaw"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceComponent.prototype.EthernetLinkConnected = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("EthernetLinkConnected", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aLinkConnected"] = SoapRequest.ReadBoolParameter(result["aLinkConnected"]);	
+/**
+* A service action to AmplifierOverTemperature
+* @method AmplifierOverTemperature
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceComponent.prototype.AmplifierOverTemperature = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("AmplifierOverTemperature", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aOverTemperature"] = Zapp.SoapRequest.readBoolParameter(result["aOverTemperature"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceComponent.prototype.Locate = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("Locate", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
+/**
+* A service action to EthernetLinkConnected
+* @method EthernetLinkConnected
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceComponent.prototype.EthernetLinkConnected = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("EthernetLinkConnected", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aLinkConnected"] = Zapp.SoapRequest.readBoolParameter(result["aLinkConnected"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to Locate
+* @method Locate
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceComponent.prototype.Locate = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Locate", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 

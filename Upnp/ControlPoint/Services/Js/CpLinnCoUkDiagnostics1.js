@@ -1,280 +1,385 @@
  
 
 /**
- * Proxy for linn.co.uk:Diagnostics:1
- */
+* Service Proxy for linn.co.uk:Diagnostics:1
+* @module Zapp
+* @title Diagnostics
+*/
 
-var ServiceDiagnostics = function(aUdn){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/linn.co.uk-Diagnostics-1/control";
-	this.iDomain = "linn.co.uk";
-	if (this.iDomain == "upnp.org") {
-		this.iDomain = "schemas.upnp.org";
+var ServiceDiagnostics = function(udn){	
+
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Diagnostics-1/control";  // upnp control url
+	this.domain = "linn.co.uk";
+	if (this.domain == "upnp.org") {
+		this.domain = "schemas.upnp.org";
     }
-	this.iDomain = this.iDomain.replace(/\./,"-");
-	this.iType = "Diagnostics";
-	this.iVersion = "1";
-	this.iServiceName = "linn.co.uk-Diagnostics-1";
-	this.iSubscriptionId = "";
-	this.iUdn = aUdn;
+	this.domain = this.domain.replace(/\./,"-");
+	this.type = "Diagnostics";
+	this.version = "1";
+	this.serviceName = "linn.co.uk-Diagnostics-1";
+	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+	this.udn = udn;   // device name
 	
-	this.iVariables = {};
-			this.iVariables["aStateVariable"] = new ServiceVariable("aStateVariable");
-		this.iVariables["Data"] = new ServiceVariable("Data");
-		this.iVariables["String"] = new ServiceVariable("String");
-		this.iVariables["Bool"] = new ServiceVariable("Bool");
-		this.iVariables["TUint"] = new ServiceVariable("TUint");
+	// Collection of service properties
+	this.serviceProperties = {};
+	this.serviceProperties["aStateVariable"] = new Zapp.ServiceProperty("aStateVariable");
+	this.serviceProperties["Data"] = new Zapp.ServiceProperty("Data");
+	this.serviceProperties["String"] = new Zapp.ServiceProperty("String");
+	this.serviceProperties["Bool"] = new Zapp.ServiceProperty("Bool");
+	this.serviceProperties["TUint"] = new Zapp.ServiceProperty("TUint");
 }
 
 
-ServiceDiagnostics.prototype.aStateVariable_Changed = function (aStateChangedFunction) {
-    this.Variables().aStateVariable.AddListener(function (state) 
+
+/**
+* Subscribes the service to the subscription manager to listen for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceDiagnostics.prototype.subscribe = function (serviceAddedFunction) {
+    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+}
+
+
+/**
+* Unsubscribes the service from the subscription manager to stop listening for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceDiagnostics.prototype.unsubscribe = function () {
+    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+}
+
+
+
+
+/**
+* Adds a listener to handle "aStateVariable" property change events
+* @method aStateVariable_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceDiagnostics.prototype.aStateVariable_Changed = function (stateChangedFunction) {
+    this.serviceProperties.aStateVariable.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-ServiceDiagnostics.prototype.Data_Changed = function (aStateChangedFunction) {
-    this.Variables().Data.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "Data" property change events
+* @method Data_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceDiagnostics.prototype.Data_Changed = function (stateChangedFunction) {
+    this.serviceProperties.Data.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBinaryParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readBinaryParameter(state)); 
 	});
 }
-ServiceDiagnostics.prototype.String_Changed = function (aStateChangedFunction) {
-    this.Variables().String.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "String" property change events
+* @method String_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceDiagnostics.prototype.String_Changed = function (stateChangedFunction) {
+    this.serviceProperties.String.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-ServiceDiagnostics.prototype.Bool_Changed = function (aStateChangedFunction) {
-    this.Variables().Bool.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "Bool" property change events
+* @method Bool_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceDiagnostics.prototype.Bool_Changed = function (stateChangedFunction) {
+    this.serviceProperties.Bool.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-ServiceDiagnostics.prototype.TUint_Changed = function (aStateChangedFunction) {
-    this.Variables().TUint.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "TUint" property change events
+* @method TUint_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceDiagnostics.prototype.TUint_Changed = function (stateChangedFunction) {
+    this.serviceProperties.TUint.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
-	});
-}
-
-ServiceDiagnostics.prototype.ServiceName = function(){
-	return this.iServiceName;
-}
-
-ServiceDiagnostics.prototype.Variables = function(){
-	return this.iVariables;
-}
-
-ServiceDiagnostics.prototype.SubscriptionId = function () {
-    return this.iSubscriptionId;
-}
-
-ServiceDiagnostics.prototype.SetSubscriptionId = function (value) {
-    this.iSubscriptionId = value;
-}
-
-ServiceDiagnostics.prototype.Udn = function () {
-    return this.iUdn;
-}
-
-ServiceDiagnostics.prototype.VariableNames = function(){
-	var result = [];
-	for (var variable in this.iVariables){
-		if (this.iVariables.hasOwnProperty(variable)){
-			result[result.length] = variable;
-		}
-	}
-	return result;
-}
-
-ServiceDiagnostics.prototype.Subscribe = function () {
-    SubscriptionManager.AddService(this);
-}
-
-ServiceDiagnostics.prototype.Unsubscribe = function () {
-    SubscriptionManager.RemoveService(this.SubscriptionId());
-}
-
-
-ServiceDiagnostics.prototype.Echo = function(aIn, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("Echo", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteStringParameter("aIn", aIn);
-    request.Send(function(result){
-		result["aOut"] = SoapRequest.ReadStringParameter(result["aOut"]);	
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
 
 
-ServiceDiagnostics.prototype.ElfFile = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("ElfFile", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aElfFile"] = SoapRequest.ReadStringParameter(result["aElfFile"]);	
+/**
+* A service action to Echo
+* @method Echo
+* @param {String} aIn An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDiagnostics.prototype.Echo = function(aIn, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Echo", this.url, this.domain, this.type, this.version);		
+    request.writeStringParameter("aIn", aIn);
+    request.send(function(result){
+		result["aOut"] = Zapp.SoapRequest.readStringParameter(result["aOut"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDiagnostics.prototype.ElfFingerprint = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("ElfFingerprint", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aElfFileFingerprint"] = SoapRequest.ReadStringParameter(result["aElfFileFingerprint"]);	
+/**
+* A service action to ElfFile
+* @method ElfFile
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDiagnostics.prototype.ElfFile = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("ElfFile", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aElfFile"] = Zapp.SoapRequest.readStringParameter(result["aElfFile"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDiagnostics.prototype.CrashDataStatus = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("CrashDataStatus", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aCrashDataStatus"] = SoapRequest.ReadStringParameter(result["aCrashDataStatus"]);	
+/**
+* A service action to ElfFingerprint
+* @method ElfFingerprint
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDiagnostics.prototype.ElfFingerprint = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("ElfFingerprint", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aElfFileFingerprint"] = Zapp.SoapRequest.readStringParameter(result["aElfFileFingerprint"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDiagnostics.prototype.CrashDataFetch = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("CrashDataFetch", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aCrashData"] = SoapRequest.ReadBinaryParameter(result["aCrashData"]);	
+/**
+* A service action to CrashDataStatus
+* @method CrashDataStatus
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDiagnostics.prototype.CrashDataStatus = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("CrashDataStatus", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aCrashDataStatus"] = Zapp.SoapRequest.readStringParameter(result["aCrashDataStatus"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDiagnostics.prototype.CrashDataClear = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("CrashDataClear", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
+/**
+* A service action to CrashDataFetch
+* @method CrashDataFetch
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDiagnostics.prototype.CrashDataFetch = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("CrashDataFetch", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aCrashData"] = Zapp.SoapRequest.readBinaryParameter(result["aCrashData"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDiagnostics.prototype.SysLog = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SysLog", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aSysLog"] = SoapRequest.ReadBinaryParameter(result["aSysLog"]);	
+/**
+* A service action to CrashDataClear
+* @method CrashDataClear
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDiagnostics.prototype.CrashDataClear = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("CrashDataClear", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDiagnostics.prototype.Diagnostic = function(aDiagnosticType, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("Diagnostic", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteStringParameter("aDiagnosticType", aDiagnosticType);
-    request.Send(function(result){
-		result["aDiagnosticInfo"] = SoapRequest.ReadStringParameter(result["aDiagnosticInfo"]);	
+/**
+* A service action to SysLog
+* @method SysLog
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDiagnostics.prototype.SysLog = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SysLog", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aSysLog"] = Zapp.SoapRequest.readBinaryParameter(result["aSysLog"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDiagnostics.prototype.StateVariable = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("StateVariable", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aStateVariable"] = SoapRequest.ReadIntParameter(result["aStateVariable"]);	
+/**
+* A service action to Diagnostic
+* @method Diagnostic
+* @param {String} aDiagnosticType An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDiagnostics.prototype.Diagnostic = function(aDiagnosticType, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Diagnostic", this.url, this.domain, this.type, this.version);		
+    request.writeStringParameter("aDiagnosticType", aDiagnosticType);
+    request.send(function(result){
+		result["aDiagnosticInfo"] = Zapp.SoapRequest.readStringParameter(result["aDiagnosticInfo"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDiagnostics.prototype.SetStateVariable = function(aStateVariable, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetStateVariable", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("aStateVariable", aStateVariable);
-    request.Send(function(result){
+/**
+* A service action to StateVariable
+* @method StateVariable
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDiagnostics.prototype.StateVariable = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("StateVariable", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aStateVariable"] = Zapp.SoapRequest.readIntParameter(result["aStateVariable"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDiagnostics.prototype.StateVariablePeriod = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("StateVariablePeriod", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aPeriod"] = SoapRequest.ReadIntParameter(result["aPeriod"]);	
+/**
+* A service action to SetStateVariable
+* @method SetStateVariable
+* @param {Int} aStateVariable An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDiagnostics.prototype.SetStateVariable = function(aStateVariable, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetStateVariable", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("aStateVariable", aStateVariable);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDiagnostics.prototype.SetStateVariablePeriod = function(aPeriod, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetStateVariablePeriod", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("aPeriod", aPeriod);
-    request.Send(function(result){
+/**
+* A service action to StateVariablePeriod
+* @method StateVariablePeriod
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDiagnostics.prototype.StateVariablePeriod = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("StateVariablePeriod", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aPeriod"] = Zapp.SoapRequest.readIntParameter(result["aPeriod"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceDiagnostics.prototype.Reboot = function(aDelay, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("Reboot", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("aDelay", aDelay);
-    request.Send(function(result){
+/**
+* A service action to SetStateVariablePeriod
+* @method SetStateVariablePeriod
+* @param {Int} aPeriod An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDiagnostics.prototype.SetStateVariablePeriod = function(aPeriod, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetStateVariablePeriod", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("aPeriod", aPeriod);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to Reboot
+* @method Reboot
+* @param {Int} aDelay An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDiagnostics.prototype.Reboot = function(aDelay, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Reboot", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("aDelay", aDelay);
+    request.send(function(result){
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 

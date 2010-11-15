@@ -1,280 +1,393 @@
  
 
 /**
- * Proxy for linn.co.uk:Product:2
- */
+* Service Proxy for linn.co.uk:Product:2
+* @module Zapp
+* @title Product
+*/
 
-var ServiceProduct = function(aUdn){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/linn.co.uk-Product-2/control";
-	this.iDomain = "linn.co.uk";
-	if (this.iDomain == "upnp.org") {
-		this.iDomain = "schemas.upnp.org";
+var ServiceProduct = function(udn){	
+
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Product-2/control";  // upnp control url
+	this.domain = "linn.co.uk";
+	if (this.domain == "upnp.org") {
+		this.domain = "schemas.upnp.org";
     }
-	this.iDomain = this.iDomain.replace(/\./,"-");
-	this.iType = "Product";
-	this.iVersion = "2";
-	this.iServiceName = "linn.co.uk-Product-2";
-	this.iSubscriptionId = "";
-	this.iUdn = aUdn;
+	this.domain = this.domain.replace(/\./,"-");
+	this.type = "Product";
+	this.version = "2";
+	this.serviceName = "linn.co.uk-Product-2";
+	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+	this.udn = udn;   // device name
 	
-	this.iVariables = {};
-			this.iVariables["ProductType"] = new ServiceVariable("ProductType");
-		this.iVariables["ProductModel"] = new ServiceVariable("ProductModel");
-		this.iVariables["ProductName"] = new ServiceVariable("ProductName");
-		this.iVariables["ProductRoom"] = new ServiceVariable("ProductRoom");
-		this.iVariables["ProductStandby"] = new ServiceVariable("ProductStandby");
-		this.iVariables["ProductSourceIndex"] = new ServiceVariable("ProductSourceIndex");
-		this.iVariables["ProductSourceType"] = new ServiceVariable("ProductSourceType");
+	// Collection of service properties
+	this.serviceProperties = {};
+	this.serviceProperties["ProductType"] = new Zapp.ServiceProperty("ProductType");
+	this.serviceProperties["ProductModel"] = new Zapp.ServiceProperty("ProductModel");
+	this.serviceProperties["ProductName"] = new Zapp.ServiceProperty("ProductName");
+	this.serviceProperties["ProductRoom"] = new Zapp.ServiceProperty("ProductRoom");
+	this.serviceProperties["ProductStandby"] = new Zapp.ServiceProperty("ProductStandby");
+	this.serviceProperties["ProductSourceIndex"] = new Zapp.ServiceProperty("ProductSourceIndex");
+	this.serviceProperties["ProductSourceType"] = new Zapp.ServiceProperty("ProductSourceType");
 }
 
 
-ServiceProduct.prototype.ProductType_Changed = function (aStateChangedFunction) {
-    this.Variables().ProductType.AddListener(function (state) 
+
+/**
+* Subscribes the service to the subscription manager to listen for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceProduct.prototype.subscribe = function (serviceAddedFunction) {
+    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+}
+
+
+/**
+* Unsubscribes the service from the subscription manager to stop listening for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceProduct.prototype.unsubscribe = function () {
+    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+}
+
+
+
+
+/**
+* Adds a listener to handle "ProductType" property change events
+* @method ProductType_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceProduct.prototype.ProductType_Changed = function (stateChangedFunction) {
+    this.serviceProperties.ProductType.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-ServiceProduct.prototype.ProductModel_Changed = function (aStateChangedFunction) {
-    this.Variables().ProductModel.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "ProductModel" property change events
+* @method ProductModel_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceProduct.prototype.ProductModel_Changed = function (stateChangedFunction) {
+    this.serviceProperties.ProductModel.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-ServiceProduct.prototype.ProductName_Changed = function (aStateChangedFunction) {
-    this.Variables().ProductName.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "ProductName" property change events
+* @method ProductName_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceProduct.prototype.ProductName_Changed = function (stateChangedFunction) {
+    this.serviceProperties.ProductName.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-ServiceProduct.prototype.ProductRoom_Changed = function (aStateChangedFunction) {
-    this.Variables().ProductRoom.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "ProductRoom" property change events
+* @method ProductRoom_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceProduct.prototype.ProductRoom_Changed = function (stateChangedFunction) {
+    this.serviceProperties.ProductRoom.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-ServiceProduct.prototype.ProductStandby_Changed = function (aStateChangedFunction) {
-    this.Variables().ProductStandby.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "ProductStandby" property change events
+* @method ProductStandby_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceProduct.prototype.ProductStandby_Changed = function (stateChangedFunction) {
+    this.serviceProperties.ProductStandby.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-ServiceProduct.prototype.ProductSourceIndex_Changed = function (aStateChangedFunction) {
-    this.Variables().ProductSourceIndex.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "ProductSourceIndex" property change events
+* @method ProductSourceIndex_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceProduct.prototype.ProductSourceIndex_Changed = function (stateChangedFunction) {
+    this.serviceProperties.ProductSourceIndex.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadIntParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-ServiceProduct.prototype.ProductSourceType_Changed = function (aStateChangedFunction) {
-    this.Variables().ProductSourceType.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "ProductSourceType" property change events
+* @method ProductSourceType_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceProduct.prototype.ProductSourceType_Changed = function (stateChangedFunction) {
+    this.serviceProperties.ProductSourceType.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadStringParameter(state)); 
-	});
-}
-
-ServiceProduct.prototype.ServiceName = function(){
-	return this.iServiceName;
-}
-
-ServiceProduct.prototype.Variables = function(){
-	return this.iVariables;
-}
-
-ServiceProduct.prototype.SubscriptionId = function () {
-    return this.iSubscriptionId;
-}
-
-ServiceProduct.prototype.SetSubscriptionId = function (value) {
-    this.iSubscriptionId = value;
-}
-
-ServiceProduct.prototype.Udn = function () {
-    return this.iUdn;
-}
-
-ServiceProduct.prototype.VariableNames = function(){
-	var result = [];
-	for (var variable in this.iVariables){
-		if (this.iVariables.hasOwnProperty(variable)){
-			result[result.length] = variable;
-		}
-	}
-	return result;
-}
-
-ServiceProduct.prototype.Subscribe = function () {
-    SubscriptionManager.AddService(this);
-}
-
-ServiceProduct.prototype.Unsubscribe = function () {
-    SubscriptionManager.RemoveService(this.SubscriptionId());
-}
-
-
-ServiceProduct.prototype.Type = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("Type", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aType"] = SoapRequest.ReadStringParameter(result["aType"]);	
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
 
 
-ServiceProduct.prototype.Model = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("Model", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aModel"] = SoapRequest.ReadStringParameter(result["aModel"]);	
+/**
+* A service action to Type
+* @method Type
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceProduct.prototype.Type = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Type", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aType"] = Zapp.SoapRequest.readStringParameter(result["aType"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceProduct.prototype.Name = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("Name", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aName"] = SoapRequest.ReadStringParameter(result["aName"]);	
+/**
+* A service action to Model
+* @method Model
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceProduct.prototype.Model = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Model", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aModel"] = Zapp.SoapRequest.readStringParameter(result["aModel"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceProduct.prototype.SetName = function(aName, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetName", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteStringParameter("aName", aName);
-    request.Send(function(result){
+/**
+* A service action to Name
+* @method Name
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceProduct.prototype.Name = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Name", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aName"] = Zapp.SoapRequest.readStringParameter(result["aName"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceProduct.prototype.Room = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("Room", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aRoom"] = SoapRequest.ReadStringParameter(result["aRoom"]);	
+/**
+* A service action to SetName
+* @method SetName
+* @param {String} aName An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceProduct.prototype.SetName = function(aName, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetName", this.url, this.domain, this.type, this.version);		
+    request.writeStringParameter("aName", aName);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceProduct.prototype.SetRoom = function(aRoom, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetRoom", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteStringParameter("aRoom", aRoom);
-    request.Send(function(result){
+/**
+* A service action to Room
+* @method Room
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceProduct.prototype.Room = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Room", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aRoom"] = Zapp.SoapRequest.readStringParameter(result["aRoom"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceProduct.prototype.Standby = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("Standby", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aStandby"] = SoapRequest.ReadBoolParameter(result["aStandby"]);	
+/**
+* A service action to SetRoom
+* @method SetRoom
+* @param {String} aRoom An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceProduct.prototype.SetRoom = function(aRoom, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetRoom", this.url, this.domain, this.type, this.version);		
+    request.writeStringParameter("aRoom", aRoom);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceProduct.prototype.SetStandby = function(aStandby, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetStandby", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteBoolParameter("aStandby", aStandby);
-    request.Send(function(result){
+/**
+* A service action to Standby
+* @method Standby
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceProduct.prototype.Standby = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Standby", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aStandby"] = Zapp.SoapRequest.readBoolParameter(result["aStandby"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceProduct.prototype.SourceCount = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SourceCount", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aSourceCount"] = SoapRequest.ReadIntParameter(result["aSourceCount"]);	
+/**
+* A service action to SetStandby
+* @method SetStandby
+* @param {Boolean} aStandby An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceProduct.prototype.SetStandby = function(aStandby, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetStandby", this.url, this.domain, this.type, this.version);		
+    request.writeBoolParameter("aStandby", aStandby);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceProduct.prototype.SourceIndex = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SourceIndex", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aSourceIndex"] = SoapRequest.ReadIntParameter(result["aSourceIndex"]);	
+/**
+* A service action to SourceCount
+* @method SourceCount
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceProduct.prototype.SourceCount = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SourceCount", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aSourceCount"] = Zapp.SoapRequest.readIntParameter(result["aSourceCount"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceProduct.prototype.SetSourceIndex = function(aSourceIndex, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetSourceIndex", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("aSourceIndex", aSourceIndex);
-    request.Send(function(result){
+/**
+* A service action to SourceIndex
+* @method SourceIndex
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceProduct.prototype.SourceIndex = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SourceIndex", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aSourceIndex"] = Zapp.SoapRequest.readIntParameter(result["aSourceIndex"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceProduct.prototype.SourceType = function(aSourceIndex, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SourceType", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("aSourceIndex", aSourceIndex);
-    request.Send(function(result){
-		result["aSourceType"] = SoapRequest.ReadStringParameter(result["aSourceType"]);	
+/**
+* A service action to SetSourceIndex
+* @method SetSourceIndex
+* @param {Int} aSourceIndex An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceProduct.prototype.SetSourceIndex = function(aSourceIndex, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetSourceIndex", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("aSourceIndex", aSourceIndex);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to SourceType
+* @method SourceType
+* @param {Int} aSourceIndex An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceProduct.prototype.SourceType = function(aSourceIndex, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SourceType", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("aSourceIndex", aSourceIndex);
+    request.send(function(result){
+		result["aSourceType"] = Zapp.SoapRequest.readStringParameter(result["aSourceType"]);	
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 

@@ -1,118 +1,138 @@
  
 
 /**
- * Proxy for upnp.org:SwitchPower:1
- */
+* Service Proxy for upnp.org:SwitchPower:1
+* @module Zapp
+* @title SwitchPower
+*/
 
-var ServiceSwitchPower = function(aUdn){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aUdn + "/upnp.org-SwitchPower-1/control";
-	this.iDomain = "upnp.org";
-	if (this.iDomain == "upnp.org") {
-		this.iDomain = "schemas.upnp.org";
+var ServiceSwitchPower = function(udn){	
+
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/upnp.org-SwitchPower-1/control";  // upnp control url
+	this.domain = "upnp.org";
+	if (this.domain == "upnp.org") {
+		this.domain = "schemas.upnp.org";
     }
-	this.iDomain = this.iDomain.replace(/\./,"-");
-	this.iType = "SwitchPower";
-	this.iVersion = "1";
-	this.iServiceName = "upnp.org-SwitchPower-1";
-	this.iSubscriptionId = "";
-	this.iUdn = aUdn;
+	this.domain = this.domain.replace(/\./,"-");
+	this.type = "SwitchPower";
+	this.version = "1";
+	this.serviceName = "upnp.org-SwitchPower-1";
+	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+	this.udn = udn;   // device name
 	
-	this.iVariables = {};
-			this.iVariables["Target"] = new ServiceVariable("Target");
-		this.iVariables["Status"] = new ServiceVariable("Status");
+	// Collection of service properties
+	this.serviceProperties = {};
+	this.serviceProperties["Target"] = new Zapp.ServiceProperty("Target");
+	this.serviceProperties["Status"] = new Zapp.ServiceProperty("Status");
 }
 
 
-ServiceSwitchPower.prototype.Target_Changed = function (aStateChangedFunction) {
-    this.Variables().Target.AddListener(function (state) 
+
+/**
+* Subscribes the service to the subscription manager to listen for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceSwitchPower.prototype.subscribe = function (serviceAddedFunction) {
+    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+}
+
+
+/**
+* Unsubscribes the service from the subscription manager to stop listening for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceSwitchPower.prototype.unsubscribe = function () {
+    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+}
+
+
+
+
+/**
+* Adds a listener to handle "Target" property change events
+* @method Target_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceSwitchPower.prototype.Target_Changed = function (stateChangedFunction) {
+    this.serviceProperties.Target.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
+		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-ServiceSwitchPower.prototype.Status_Changed = function (aStateChangedFunction) {
-    this.Variables().Status.AddListener(function (state) 
+
+
+/**
+* Adds a listener to handle "Status" property change events
+* @method Status_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceSwitchPower.prototype.Status_Changed = function (stateChangedFunction) {
+    this.serviceProperties.Status.addListener(function (state) 
 	{ 
-		aStateChangedFunction(SoapRequest.ReadBoolParameter(state)); 
-	});
-}
-
-ServiceSwitchPower.prototype.ServiceName = function(){
-	return this.iServiceName;
-}
-
-ServiceSwitchPower.prototype.Variables = function(){
-	return this.iVariables;
-}
-
-ServiceSwitchPower.prototype.SubscriptionId = function () {
-    return this.iSubscriptionId;
-}
-
-ServiceSwitchPower.prototype.SetSubscriptionId = function (value) {
-    this.iSubscriptionId = value;
-}
-
-ServiceSwitchPower.prototype.Udn = function () {
-    return this.iUdn;
-}
-
-ServiceSwitchPower.prototype.VariableNames = function(){
-	var result = [];
-	for (var variable in this.iVariables){
-		if (this.iVariables.hasOwnProperty(variable)){
-			result[result.length] = variable;
-		}
-	}
-	return result;
-}
-
-ServiceSwitchPower.prototype.Subscribe = function () {
-    SubscriptionManager.AddService(this);
-}
-
-ServiceSwitchPower.prototype.Unsubscribe = function () {
-    SubscriptionManager.RemoveService(this.SubscriptionId());
-}
-
-
-ServiceSwitchPower.prototype.SetTarget = function(newTargetValue, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetTarget", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteBoolParameter("newTargetValue", newTargetValue);
-    request.Send(function(result){
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
 
 
-ServiceSwitchPower.prototype.GetTarget = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("GetTarget", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["RetTargetValue"] = SoapRequest.ReadBoolParameter(result["RetTargetValue"]);	
+/**
+* A service action to SetTarget
+* @method SetTarget
+* @param {Boolean} newTargetValue An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceSwitchPower.prototype.SetTarget = function(newTargetValue, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetTarget", this.url, this.domain, this.type, this.version);		
+    request.writeBoolParameter("newTargetValue", newTargetValue);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
 
-ServiceSwitchPower.prototype.GetStatus = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("GetStatus", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["ResultStatus"] = SoapRequest.ReadBoolParameter(result["ResultStatus"]);	
+/**
+* A service action to GetTarget
+* @method GetTarget
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceSwitchPower.prototype.GetTarget = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("GetTarget", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["RetTargetValue"] = Zapp.SoapRequest.readBoolParameter(result["RetTargetValue"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to GetStatus
+* @method GetStatus
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceSwitchPower.prototype.GetStatus = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("GetStatus", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["ResultStatus"] = Zapp.SoapRequest.readBoolParameter(result["ResultStatus"]);	
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
 
