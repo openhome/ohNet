@@ -39,6 +39,11 @@ int32_t OsCreate()
     WSADATA wsaData;
     WORD ver = (2<<8)|2; // WinSock v2.2.  Standard on XP and later
 
+    char* noErrDlgs = getenv("ZAPP_NO_ERROR_DIALOGS");
+    if (noErrDlgs != NULL && strcmp(noErrDlgs, "1") == 0) {
+        _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
+    }
+
     GetSystemTimeAsFileTime(&ft);
     gStartTime = ft.dwHighDateTime;
     gStartTime <<= 32;
