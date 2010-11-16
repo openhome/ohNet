@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -28,7 +28,7 @@ void DvProviderUpnpOrgSwitchPower1::EnableActionSetTarget()
 {
     Zapp::Action* action = new Zapp::Action("SetTarget");
     action->AddInputParameter(new ParameterBool("newTargetValue"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgSwitchPower1::DoSetTarget);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgSwitchPower1::DoSetTarget);
     iService->AddAction(action, functor);
 }
 
@@ -36,7 +36,7 @@ void DvProviderUpnpOrgSwitchPower1::EnableActionGetTarget()
 {
     Zapp::Action* action = new Zapp::Action("GetTarget");
     action->AddOutputParameter(new ParameterBool("RetTargetValue"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgSwitchPower1::DoGetTarget);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgSwitchPower1::DoGetTarget);
     iService->AddAction(action, functor);
 }
 
@@ -44,11 +44,11 @@ void DvProviderUpnpOrgSwitchPower1::EnableActionGetStatus()
 {
     Zapp::Action* action = new Zapp::Action("GetStatus");
     action->AddOutputParameter(new ParameterRelated("ResultStatus", *iPropertyStatus));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgSwitchPower1::DoGetStatus);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgSwitchPower1::DoGetStatus);
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgSwitchPower1::DoSetTarget(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgSwitchPower1::DoSetTarget(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TBool newTargetValue = aInvocation.InvocationReadBool("newTargetValue");
@@ -57,7 +57,7 @@ void DvProviderUpnpOrgSwitchPower1::DoSetTarget(IDvInvocation& aInvocation, TUin
     SetTarget(resp, aVersion, newTargetValue);
 }
 
-void DvProviderUpnpOrgSwitchPower1::DoGetTarget(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgSwitchPower1::DoGetTarget(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -66,7 +66,7 @@ void DvProviderUpnpOrgSwitchPower1::DoGetTarget(IDvInvocation& aInvocation, TUin
     GetTarget(resp, aVersion, respRetTargetValue);
 }
 
-void DvProviderUpnpOrgSwitchPower1::DoGetStatus(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgSwitchPower1::DoGetStatus(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

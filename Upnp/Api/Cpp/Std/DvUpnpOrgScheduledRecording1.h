@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -67,24 +67,24 @@ private:
     virtual void GetRecordTaskConflicts(uint32_t aVersion, const std::string& aRecordTaskID, std::string& aRecordTaskConflictIDList, uint32_t& aUpdateID);
 private:
     DvProviderUpnpOrgScheduledRecording1Cpp();
-    void DoGetSortCapabilities(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetPropertyList(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetAllowedValues(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetStateUpdateID(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoBrowseRecordSchedules(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoBrowseRecordTasks(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoCreateRecordSchedule(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDeleteRecordSchedule(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetRecordSchedule(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoEnableRecordSchedule(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDisableRecordSchedule(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDeleteRecordTask(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetRecordTask(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoEnableRecordTask(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDisableRecordTask(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoResetRecordTask(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetRecordScheduleConflicts(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetRecordTaskConflicts(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoGetSortCapabilities(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetPropertyList(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetAllowedValues(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetStateUpdateID(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoBrowseRecordSchedules(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoBrowseRecordTasks(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoCreateRecordSchedule(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDeleteRecordSchedule(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetRecordSchedule(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoEnableRecordSchedule(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDisableRecordSchedule(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDeleteRecordTask(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetRecordTask(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoEnableRecordTask(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDisableRecordTask(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoResetRecordTask(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetRecordScheduleConflicts(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetRecordTaskConflicts(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyString* iPropertyLastChange;
 };

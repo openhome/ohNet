@@ -309,16 +309,16 @@ CpProxyLinnCoUkComponent1Cpp::CpProxyLinnCoUkComponent1Cpp(CpDeviceCpp& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyLinnCoUkComponent1Cpp::AmplifierEnabledPropertyChanged);
     iAmplifierEnabled = new PropertyBool("AmplifierEnabled", functor);
-    iService->AddProperty(iAmplifierEnabled);
+    AddProperty(iAmplifierEnabled);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkComponent1Cpp::AmplifierAttenuationPropertyChanged);
     iAmplifierAttenuation = new PropertyString("AmplifierAttenuation", functor);
-    iService->AddProperty(iAmplifierAttenuation);
+    AddProperty(iAmplifierAttenuation);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkComponent1Cpp::VolumeControlEnabledPropertyChanged);
     iVolumeControlEnabled = new PropertyBool("VolumeControlEnabled", functor);
-    iService->AddProperty(iVolumeControlEnabled);
+    AddProperty(iVolumeControlEnabled);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkComponent1Cpp::DigitalAudioOutputRawPropertyChanged);
     iDigitalAudioOutputRaw = new PropertyBool("DigitalAudioOutputRaw", functor);
-    iService->AddProperty(iDigitalAudioOutputRaw);
+    AddProperty(iDigitalAudioOutputRaw);
 }
 
 CpProxyLinnCoUkComponent1Cpp::~CpProxyLinnCoUkComponent1Cpp()
@@ -350,7 +350,7 @@ void CpProxyLinnCoUkComponent1Cpp::BeginAmplifierEnabled(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionAmplifierEnabled->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkComponent1Cpp::EndAmplifierEnabled(IAsync& aAsync, bool& aaEnabled)
@@ -379,7 +379,7 @@ void CpProxyLinnCoUkComponent1Cpp::BeginSetAmplifierEnabled(bool aaEnabled, Func
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetAmplifierEnabled->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aaEnabled));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkComponent1Cpp::EndSetAmplifierEnabled(IAsync& aAsync)
@@ -406,7 +406,7 @@ void CpProxyLinnCoUkComponent1Cpp::BeginAmplifierAttenuation(FunctorAsync& aFunc
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionAmplifierAttenuation->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkComponent1Cpp::EndAmplifierAttenuation(IAsync& aAsync, std::string& aaAttenuation)
@@ -441,7 +441,7 @@ void CpProxyLinnCoUkComponent1Cpp::BeginSetAmplifierAttenuation(const std::strin
         Brn buf((const TByte*)aaAttenuation.c_str(), (TUint)aaAttenuation.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkComponent1Cpp::EndSetAmplifierAttenuation(IAsync& aAsync)
@@ -468,7 +468,7 @@ void CpProxyLinnCoUkComponent1Cpp::BeginSetVolumeControlEnabled(bool aaEnabled, 
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetVolumeControlEnabled->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aaEnabled));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkComponent1Cpp::EndSetVolumeControlEnabled(IAsync& aAsync)
@@ -495,7 +495,7 @@ void CpProxyLinnCoUkComponent1Cpp::BeginVolumeControlEnabled(FunctorAsync& aFunc
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionVolumeControlEnabled->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkComponent1Cpp::EndVolumeControlEnabled(IAsync& aAsync, bool& aaEnabled)
@@ -524,7 +524,7 @@ void CpProxyLinnCoUkComponent1Cpp::BeginSetDigitalAudioOutputRaw(bool aaRaw, Fun
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetDigitalAudioOutputRaw->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aaRaw));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkComponent1Cpp::EndSetDigitalAudioOutputRaw(IAsync& aAsync)
@@ -551,7 +551,7 @@ void CpProxyLinnCoUkComponent1Cpp::BeginDigitalAudioOutputRaw(FunctorAsync& aFun
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionDigitalAudioOutputRaw->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkComponent1Cpp::EndDigitalAudioOutputRaw(IAsync& aAsync, bool& aaRaw)
@@ -580,7 +580,7 @@ void CpProxyLinnCoUkComponent1Cpp::BeginAmplifierOverTemperature(FunctorAsync& a
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionAmplifierOverTemperature->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkComponent1Cpp::EndAmplifierOverTemperature(IAsync& aAsync, bool& aaOverTemperature)
@@ -609,7 +609,7 @@ void CpProxyLinnCoUkComponent1Cpp::BeginEthernetLinkConnected(FunctorAsync& aFun
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionEthernetLinkConnected->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkComponent1Cpp::EndEthernetLinkConnected(IAsync& aAsync, bool& aaLinkConnected)
@@ -635,7 +635,7 @@ void CpProxyLinnCoUkComponent1Cpp::SyncLocate()
 void CpProxyLinnCoUkComponent1Cpp::BeginLocate(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionLocate, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkComponent1Cpp::EndLocate(IAsync& aAsync)
@@ -679,27 +679,35 @@ void CpProxyLinnCoUkComponent1Cpp::SetPropertyDigitalAudioOutputRawChanged(Funct
 
 void CpProxyLinnCoUkComponent1Cpp::PropertyAmplifierEnabled(bool& aAmplifierEnabled) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aAmplifierEnabled = iAmplifierEnabled->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkComponent1Cpp::PropertyAmplifierAttenuation(std::string& aAmplifierAttenuation) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iAmplifierAttenuation->Value();
     aAmplifierAttenuation.assign((const char*)val.Ptr(), val.Bytes());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkComponent1Cpp::PropertyVolumeControlEnabled(bool& aVolumeControlEnabled) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVolumeControlEnabled = iVolumeControlEnabled->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkComponent1Cpp::PropertyDigitalAudioOutputRaw(bool& aDigitalAudioOutputRaw) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDigitalAudioOutputRaw = iDigitalAudioOutputRaw->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkComponent1Cpp::AmplifierEnabledPropertyChanged()

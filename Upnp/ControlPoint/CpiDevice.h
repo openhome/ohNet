@@ -14,6 +14,7 @@
 #include <Discovery.h>
 #include <Timer.h>
 #include <FunctorCpiDevice.h>
+#include <Service.h>
 
 #include <vector>
 #include <map>
@@ -24,10 +25,31 @@ namespace Zapp {
 class CpiDeviceList;
 class Invocation;
 class ServiceType;
-class Subscription;
+class CpiSubscription;
 class Property;
 class IPropertyProcessor;
 typedef std::map<Brn,Property*,BufferCmp> PropertyMap;
+
+class IInvocable
+{
+public:
+    virtual void InvokeAction(Invocation& aInvocation) = 0;
+};
+
+class ICpiProtocol : public IInvocable
+{
+public:
+    virtual TBool GetAttribute(const char* aKey, Brh& aValue) const = 0;
+    virtual TUint Subscribe(CpiSubscription& aSubscription, const Uri& aSubscriber) = 0;
+    virtual TUint Renew(CpiSubscription& aSubscription) = 0;
+    virtual void Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid) = 0;
+};
+
+class ICpiDeviceObserver
+{
+public:
+    virtual void Release() = 0;
+};
 
 /**
  * Protocol-independent device
@@ -35,9 +57,14 @@ typedef std::map<Brn,Property*,BufferCmp> PropertyMap;
  * Instance of this class are reference counted and are automatically deleted
  * when the reference count falls to zero
  */
-class CpiDevice
+class CpiDevice : public ICpiProtocol
 {
 public:
+    /**
+     * Sets the ref count to 1
+     */
+    CpiDevice(const Brx& aUdn, ICpiProtocol& aProtocol, ICpiDeviceObserver& aObserver, void* aOwnerData);
+    
     /**
      * Return the Unique Device Name
      * This is guaranteed to uniquely identify a single device
@@ -51,6 +78,7 @@ public:
     
     TBool operator==(const CpiDevice& aDevice) const;
     TBool operator!=(const CpiDevice& aDevice) const;
+    void* OwnerData();
 
     /**
      * Claim a reference to a device.
@@ -64,12 +92,11 @@ public:
      */
     void RemoveRef();
 
-    virtual TBool GetAttribute(const char* aKey, Brh& aValue) const = 0;
-    virtual void Invoke(Invocation& aInvocation) = 0;
-    virtual TUint Subscribe(Subscription& aSubscription, const Uri& aSubscriber) = 0;
-    virtual TUint Renew(Subscription& aSubscription) = 0;
-    virtual void Unsubscribe(Subscription& aSubscription, const Brx& aSid) = 0;
-    virtual void ProcessPropertyNotification(const Brx& aNotification, PropertyMap& aProperties) = 0;
+    virtual TBool GetAttribute(const char* aKey, Brh& aValue) const;
+    virtual void InvokeAction(Invocation& aInvocation);
+    virtual TUint Subscribe(CpiSubscription& aSubscription, const Uri& aSubscriber);
+    virtual TUint Renew(CpiSubscription& aSubscription);
+    virtual void Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid);
 
     /**
      * Mark a device as ready to use.
@@ -93,21 +120,18 @@ public:
      * Not intended for use outside this module
      */
     TBool HasExpired() const;
-protected:
-    /**
-     * Sets the ref count to 1
-     */
-    CpiDevice(const Brx& aUdn);
-    
+private:
     /**
      * Not intended for client use.  The call to RemoveRef() which reduces the
      * ref count to 0 will delete
      */
     virtual ~CpiDevice();
-protected:
+private:
     Brhz iUdn;
     Mutex iLock;
-private:
+    ICpiProtocol& iProtocol;
+    ICpiDeviceObserver& iObserver;
+    void* iOwnerData;
     TInt iRefCount;
     TBool iReady;
     TBool iExpired;

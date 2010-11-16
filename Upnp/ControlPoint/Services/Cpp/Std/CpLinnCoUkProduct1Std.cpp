@@ -119,10 +119,10 @@ CpProxyLinnCoUkProduct1Cpp::CpProxyLinnCoUkProduct1Cpp(CpDeviceCpp& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProduct1Cpp::RoomPropertyChanged);
     iRoom = new PropertyString("Room", functor);
-    iService->AddProperty(iRoom);
+    AddProperty(iRoom);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProduct1Cpp::StandbyPropertyChanged);
     iStandby = new PropertyBool("Standby", functor);
-    iService->AddProperty(iStandby);
+    AddProperty(iStandby);
 }
 
 CpProxyLinnCoUkProduct1Cpp::~CpProxyLinnCoUkProduct1Cpp()
@@ -147,7 +147,7 @@ void CpProxyLinnCoUkProduct1Cpp::BeginRoom(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionRoom->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct1Cpp::EndRoom(IAsync& aAsync, std::string& aaRoom)
@@ -182,7 +182,7 @@ void CpProxyLinnCoUkProduct1Cpp::BeginSetRoom(const std::string& aaRoom, Functor
         Brn buf((const TByte*)aaRoom.c_str(), (TUint)aaRoom.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct1Cpp::EndSetRoom(IAsync& aAsync)
@@ -209,7 +209,7 @@ void CpProxyLinnCoUkProduct1Cpp::BeginStandby(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionStandby->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct1Cpp::EndStandby(IAsync& aAsync, bool& aaStandby)
@@ -238,7 +238,7 @@ void CpProxyLinnCoUkProduct1Cpp::BeginSetStandby(bool aaStandby, FunctorAsync& a
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetStandby->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aaStandby));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct1Cpp::EndSetStandby(IAsync& aAsync)
@@ -268,15 +268,19 @@ void CpProxyLinnCoUkProduct1Cpp::SetPropertyStandbyChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkProduct1Cpp::PropertyRoom(std::string& aRoom) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iRoom->Value();
     aRoom.assign((const char*)val.Ptr(), val.Bytes());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProduct1Cpp::PropertyStandby(bool& aStandby) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aStandby = iStandby->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProduct1Cpp::RoomPropertyChanged()

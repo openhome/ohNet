@@ -111,7 +111,7 @@ void CpProxyLinnCoUkDebug2::BeginSetDebugLevel(TUint aaDebugLevel, FunctorAsync&
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetDebugLevel->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaDebugLevel));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDebug2::EndSetDebugLevel(IAsync& aAsync)
@@ -138,7 +138,7 @@ void CpProxyLinnCoUkDebug2::BeginDebugLevel(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionDebugLevel->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDebug2::EndDebugLevel(IAsync& aAsync, TUint& aaDebugLevel)
@@ -168,7 +168,7 @@ void CpProxyLinnCoUkDebug2::BeginMemWrite(TUint aaMemAddress, const Brx& aaMemDa
     const Action::VectorParameters& inParams = iActionMemWrite->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaMemAddress));
     invocation->AddInput(new ArgumentBinary(*inParams[inIndex++], aaMemData));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDebug2::EndMemWrite(IAsync& aAsync)

@@ -75,7 +75,7 @@ private:
     WriterHttpChunked* iWriterChunked;
 };
 
-class DviSessionUpnp : public SocketTcpSession, private IResourceWriter, private IDvInvocation, private IPropertyWriterFactory
+class DviSessionUpnp : public SocketTcpSession, private IResourceWriter, private IDviInvocation, private IPropertyWriterFactory
 {
 public:
     DviSessionUpnp(TIpAddress aInterface, TUint aPort);
@@ -94,28 +94,29 @@ private: // IResourceWriter
     void WriteResourceBegin(TUint aTotalBytes, const TChar* aMimeType);
     void WriteResource(const TByte* aData, TUint aBytes);
     void WriteResourceEnd();
-private: // IDvInvocation
-   void InvocationReadStart();
-   TBool InvocationReadBool(const TChar* aName);
-   void InvocationReadString(const TChar* aName, Brhz& aString);
-   TInt InvocationReadInt(const TChar* aName);
-   TUint InvocationReadUint(const TChar* aName);
-   void InvocationReadBinary(const TChar* aName, Brh& aData);
-   void InvocationReadEnd();
-   void InvocationReportError(TUint aCode, const Brx& aDescription);
-   void InvocationWriteStart();
-   void InvocationWriteBool(const TChar* aName, TBool aValue);
-   void InvocationWriteInt(const TChar* aName, TInt aValue);
-   void InvocationWriteUint(const TChar* aName, TUint aValue);
-   void InvocationWriteBinaryStart(const TChar* aName);
-   void InvocationWriteBinary(TByte aValue);
-   void InvocationWriteBinary(const Brx& aValue);
-   void InvocationWriteBinaryEnd(const TChar* aName);
-   void InvocationWriteStringStart(const TChar* aName);
-   void InvocationWriteString(TByte aValue);
-   void InvocationWriteString(const Brx& aValue);
-   void InvocationWriteStringEnd(const TChar* aName);
-   void InvocationWriteEnd();
+private: // IDviInvocation
+    void Invoke();
+    void InvocationReadStart();
+    TBool InvocationReadBool(const TChar* aName);
+    void InvocationReadString(const TChar* aName, Brhz& aString);
+    TInt InvocationReadInt(const TChar* aName);
+    TUint InvocationReadUint(const TChar* aName);
+    void InvocationReadBinary(const TChar* aName, Brh& aData);
+    void InvocationReadEnd();
+    void InvocationReportError(TUint aCode, const Brx& aDescription);
+    void InvocationWriteStart();
+    void InvocationWriteBool(const TChar* aName, TBool aValue);
+    void InvocationWriteInt(const TChar* aName, TInt aValue);
+    void InvocationWriteUint(const TChar* aName, TUint aValue);
+    void InvocationWriteBinaryStart(const TChar* aName);
+    void InvocationWriteBinary(TByte aValue);
+    void InvocationWriteBinary(const Brx& aValue);
+    void InvocationWriteBinaryEnd(const TChar* aName);
+    void InvocationWriteStringStart(const TChar* aName);
+    void InvocationWriteString(TByte aValue);
+    void InvocationWriteString(const Brx& aValue);
+    void InvocationWriteStringEnd(const TChar* aName);
+    void InvocationWriteEnd();
 private: // IPropertyWriterFactory
     IPropertyWriter* CreateWriter(const Endpoint& aSubscriber, const Brx& aSubscriberPath,
                                   const Brx& aSid, TUint aSequenceNumber);
@@ -143,6 +144,8 @@ private:
     TBool iResponseStarted;
     TBool iResponseEnded;
     Brn iSoapRequest;
+    DviService* iInvocationService;
+    Semaphore iInvocationSem;
 	TBool iResourceWriterHeadersOnly;
     Semaphore iShutdownSem;
 };

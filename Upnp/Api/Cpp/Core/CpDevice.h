@@ -21,8 +21,9 @@ public:
     DllExport void RemoveRef();
     DllExport TBool GetAttribute(const char* aKey, Brh& aValue) const;
     DllExport CpiDevice& Device();
-private:
+protected:
     ~CpDevice();
+private:
     CpDevice(const CpDevice&);
     void operator=(const CpDevice&);
 private:

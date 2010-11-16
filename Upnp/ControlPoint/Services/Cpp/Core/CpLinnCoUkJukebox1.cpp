@@ -220,13 +220,13 @@ CpProxyLinnCoUkJukebox1::CpProxyLinnCoUkJukebox1(CpDevice& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyLinnCoUkJukebox1::CurrentPresetPropertyChanged);
     iCurrentPreset = new PropertyUint("CurrentPreset", functor);
-    iService->AddProperty(iCurrentPreset);
+    AddProperty(iCurrentPreset);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkJukebox1::PresetPrefixPropertyChanged);
     iPresetPrefix = new PropertyString("PresetPrefix", functor);
-    iService->AddProperty(iPresetPrefix);
+    AddProperty(iPresetPrefix);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkJukebox1::AlbumArtFileNamePropertyChanged);
     iAlbumArtFileName = new PropertyString("AlbumArtFileName", functor);
-    iService->AddProperty(iAlbumArtFileName);
+    AddProperty(iAlbumArtFileName);
 }
 
 CpProxyLinnCoUkJukebox1::~CpProxyLinnCoUkJukebox1()
@@ -255,7 +255,7 @@ void CpProxyLinnCoUkJukebox1::BeginSetPresetPrefix(const Brx& aaUri, FunctorAsyn
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetPresetPrefix->InputParameters();
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aaUri));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkJukebox1::EndSetPresetPrefix(IAsync& aAsync)
@@ -282,7 +282,7 @@ void CpProxyLinnCoUkJukebox1::BeginPresetPrefix(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionPresetPrefix->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkJukebox1::EndPresetPrefix(IAsync& aAsync, Brh& aaUri)
@@ -311,7 +311,7 @@ void CpProxyLinnCoUkJukebox1::BeginSetAlbumArtFileName(const Brx& aaName, Functo
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetAlbumArtFileName->InputParameters();
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aaName));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkJukebox1::EndSetAlbumArtFileName(IAsync& aAsync)
@@ -338,7 +338,7 @@ void CpProxyLinnCoUkJukebox1::BeginAlbumArtFileName(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionAlbumArtFileName->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkJukebox1::EndAlbumArtFileName(IAsync& aAsync, Brh& aaName)
@@ -367,7 +367,7 @@ void CpProxyLinnCoUkJukebox1::BeginSetCurrentPreset(TUint aaPreset, FunctorAsync
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetCurrentPreset->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaPreset));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkJukebox1::EndSetCurrentPreset(IAsync& aAsync)
@@ -394,7 +394,7 @@ void CpProxyLinnCoUkJukebox1::BeginCurrentPreset(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionCurrentPreset->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkJukebox1::EndCurrentPreset(IAsync& aAsync, TUint& aaPreset)
@@ -426,7 +426,7 @@ void CpProxyLinnCoUkJukebox1::BeginPresetMetaData(TUint aaPreset, FunctorAsync& 
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionPresetMetaData->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkJukebox1::EndPresetMetaData(IAsync& aAsync, Brh& aaMetaData)
@@ -455,7 +455,7 @@ void CpProxyLinnCoUkJukebox1::BeginLoadManifest(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionLoadManifest->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkJukebox1::EndLoadManifest(IAsync& aAsync, TUint& aaTotalPresets)
@@ -494,20 +494,26 @@ void CpProxyLinnCoUkJukebox1::SetPropertyAlbumArtFileNameChanged(Functor& aFunct
 
 void CpProxyLinnCoUkJukebox1::PropertyCurrentPreset(TUint& aCurrentPreset) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aCurrentPreset = iCurrentPreset->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkJukebox1::PropertyPresetPrefix(Brhz& aPresetPrefix) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aPresetPrefix.Set(iPresetPrefix->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkJukebox1::PropertyAlbumArtFileName(Brhz& aAlbumArtFileName) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aAlbumArtFileName.Set(iAlbumArtFileName->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkJukebox1::CurrentPresetPropertyChanged()

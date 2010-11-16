@@ -8,6 +8,7 @@
 
 namespace Zapp {
 
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -32,8 +33,8 @@ private:
     virtual void SetLevel(IInvocationResponse& aResponse, TUint aVersion, TUint aLevel);
 private:
     DvProviderZappOrgTestDimmableLight1();
-    void DoGetLevel(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetLevel(IDvInvocation& aInvocation, TUint aVersion);
+    void DoGetLevel(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetLevel(IDviInvocation& aInvocation, TUint aVersion);
 private:
     PropertyUint* iPropertyA_ARG_Level;
 };

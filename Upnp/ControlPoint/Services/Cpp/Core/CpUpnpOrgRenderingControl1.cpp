@@ -1026,7 +1026,7 @@ CpProxyUpnpOrgRenderingControl1::CpProxyUpnpOrgRenderingControl1(CpDevice& aDevi
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgRenderingControl1::LastChangePropertyChanged);
     iLastChange = new PropertyString("LastChange", functor);
-    iService->AddProperty(iLastChange);
+    AddProperty(iLastChange);
 }
 
 CpProxyUpnpOrgRenderingControl1::~CpProxyUpnpOrgRenderingControl1()
@@ -1085,7 +1085,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginListPresets(TUint aInstanceID, Functo
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionListPresets->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndListPresets(IAsync& aAsync, Brh& aCurrentPresetNameList)
@@ -1115,7 +1115,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSelectPreset(TUint aInstanceID, const
     const Action::VectorParameters& inParams = iActionSelectPreset->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aPresetName));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSelectPreset(IAsync& aAsync)
@@ -1145,7 +1145,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetBrightness(TUint aInstanceID, Func
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetBrightness->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetBrightness(IAsync& aAsync, TUint& aCurrentBrightness)
@@ -1175,7 +1175,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetBrightness(TUint aInstanceID, TUin
     const Action::VectorParameters& inParams = iActionSetBrightness->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredBrightness));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetBrightness(IAsync& aAsync)
@@ -1205,7 +1205,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetContrast(TUint aInstanceID, Functo
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetContrast->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetContrast(IAsync& aAsync, TUint& aCurrentContrast)
@@ -1235,7 +1235,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetContrast(TUint aInstanceID, TUint 
     const Action::VectorParameters& inParams = iActionSetContrast->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredContrast));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetContrast(IAsync& aAsync)
@@ -1265,7 +1265,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetSharpness(TUint aInstanceID, Funct
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetSharpness->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetSharpness(IAsync& aAsync, TUint& aCurrentSharpness)
@@ -1295,7 +1295,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetSharpness(TUint aInstanceID, TUint
     const Action::VectorParameters& inParams = iActionSetSharpness->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredSharpness));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetSharpness(IAsync& aAsync)
@@ -1325,7 +1325,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetRedVideoGain(TUint aInstanceID, Fu
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetRedVideoGain->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetRedVideoGain(IAsync& aAsync, TUint& aCurrentRedVideoGain)
@@ -1355,7 +1355,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetRedVideoGain(TUint aInstanceID, TU
     const Action::VectorParameters& inParams = iActionSetRedVideoGain->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredRedVideoGain));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetRedVideoGain(IAsync& aAsync)
@@ -1385,7 +1385,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetGreenVideoGain(TUint aInstanceID, 
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetGreenVideoGain->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetGreenVideoGain(IAsync& aAsync, TUint& aCurrentGreenVideoGain)
@@ -1415,7 +1415,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetGreenVideoGain(TUint aInstanceID, 
     const Action::VectorParameters& inParams = iActionSetGreenVideoGain->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredGreenVideoGain));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetGreenVideoGain(IAsync& aAsync)
@@ -1445,7 +1445,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetBlueVideoGain(TUint aInstanceID, F
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetBlueVideoGain->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetBlueVideoGain(IAsync& aAsync, TUint& aCurrentBlueVideoGain)
@@ -1475,7 +1475,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetBlueVideoGain(TUint aInstanceID, T
     const Action::VectorParameters& inParams = iActionSetBlueVideoGain->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredBlueVideoGain));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetBlueVideoGain(IAsync& aAsync)
@@ -1505,7 +1505,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetRedVideoBlackLevel(TUint aInstance
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetRedVideoBlackLevel->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetRedVideoBlackLevel(IAsync& aAsync, TUint& aCurrentRedVideoBlackLevel)
@@ -1535,7 +1535,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetRedVideoBlackLevel(TUint aInstance
     const Action::VectorParameters& inParams = iActionSetRedVideoBlackLevel->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredRedVideoBlackLevel));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetRedVideoBlackLevel(IAsync& aAsync)
@@ -1565,7 +1565,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetGreenVideoBlackLevel(TUint aInstan
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetGreenVideoBlackLevel->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetGreenVideoBlackLevel(IAsync& aAsync, TUint& aCurrentGreenVideoBlackLevel)
@@ -1595,7 +1595,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetGreenVideoBlackLevel(TUint aInstan
     const Action::VectorParameters& inParams = iActionSetGreenVideoBlackLevel->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredGreenVideoBlackLevel));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetGreenVideoBlackLevel(IAsync& aAsync)
@@ -1625,7 +1625,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetBlueVideoBlackLevel(TUint aInstanc
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetBlueVideoBlackLevel->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetBlueVideoBlackLevel(IAsync& aAsync, TUint& aCurrentBlueVideoBlackLevel)
@@ -1655,7 +1655,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetBlueVideoBlackLevel(TUint aInstanc
     const Action::VectorParameters& inParams = iActionSetBlueVideoBlackLevel->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredBlueVideoBlackLevel));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetBlueVideoBlackLevel(IAsync& aAsync)
@@ -1685,7 +1685,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetColorTemperature(TUint aInstanceID
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetColorTemperature->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetColorTemperature(IAsync& aAsync, TUint& aCurrentColorTemperature)
@@ -1715,7 +1715,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetColorTemperature(TUint aInstanceID
     const Action::VectorParameters& inParams = iActionSetColorTemperature->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredColorTemperature));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetColorTemperature(IAsync& aAsync)
@@ -1745,7 +1745,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetHorizontalKeystone(TUint aInstance
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetHorizontalKeystone->OutputParameters();
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetHorizontalKeystone(IAsync& aAsync, TInt& aCurrentHorizontalKeystone)
@@ -1775,7 +1775,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetHorizontalKeystone(TUint aInstance
     const Action::VectorParameters& inParams = iActionSetHorizontalKeystone->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentInt(*inParams[inIndex++], aDesiredHorizontalKeystone));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetHorizontalKeystone(IAsync& aAsync)
@@ -1805,7 +1805,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetVerticalKeystone(TUint aInstanceID
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetVerticalKeystone->OutputParameters();
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetVerticalKeystone(IAsync& aAsync, TInt& aCurrentVerticalKeystone)
@@ -1835,7 +1835,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetVerticalKeystone(TUint aInstanceID
     const Action::VectorParameters& inParams = iActionSetVerticalKeystone->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentInt(*inParams[inIndex++], aDesiredVerticalKeystone));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetVerticalKeystone(IAsync& aAsync)
@@ -1866,7 +1866,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetMute(TUint aInstanceID, const Brx&
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetMute->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetMute(IAsync& aAsync, TBool& aCurrentMute)
@@ -1897,7 +1897,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetMute(TUint aInstanceID, const Brx&
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aChannel));
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aDesiredMute));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetMute(IAsync& aAsync)
@@ -1928,7 +1928,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetVolume(TUint aInstanceID, const Br
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetVolume->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetVolume(IAsync& aAsync, TUint& aCurrentVolume)
@@ -1959,7 +1959,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetVolume(TUint aInstanceID, const Br
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aChannel));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredVolume));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetVolume(IAsync& aAsync)
@@ -1990,7 +1990,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetVolumeDB(TUint aInstanceID, const 
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetVolumeDB->OutputParameters();
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetVolumeDB(IAsync& aAsync, TInt& aCurrentVolume)
@@ -2021,7 +2021,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetVolumeDB(TUint aInstanceID, const 
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aChannel));
     invocation->AddInput(new ArgumentInt(*inParams[inIndex++], aDesiredVolume));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetVolumeDB(IAsync& aAsync)
@@ -2053,7 +2053,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetVolumeDBRange(TUint aInstanceID, c
     const Action::VectorParameters& outParams = iActionGetVolumeDBRange->OutputParameters();
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetVolumeDBRange(IAsync& aAsync, TInt& aMinValue, TInt& aMaxValue)
@@ -2087,7 +2087,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetLoudness(TUint aInstanceID, const 
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetLoudness->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetLoudness(IAsync& aAsync, TBool& aCurrentLoudness)
@@ -2118,7 +2118,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetLoudness(TUint aInstanceID, const 
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aChannel));
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aDesiredLoudness));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetLoudness(IAsync& aAsync)
@@ -2141,8 +2141,10 @@ void CpProxyUpnpOrgRenderingControl1::SetPropertyLastChangeChanged(Functor& aFun
 
 void CpProxyUpnpOrgRenderingControl1::PropertyLastChange(Brhz& aLastChange) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aLastChange.Set(iLastChange->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyUpnpOrgRenderingControl1::LastChangePropertyChanged()

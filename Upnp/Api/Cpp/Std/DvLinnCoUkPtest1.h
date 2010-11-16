@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -35,9 +35,9 @@ private:
     virtual void LedsOff(uint32_t aVersion);
 private:
     DvProviderLinnCoUkPtest1Cpp();
-    void DoTestComPort(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoLedsOn(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoLedsOff(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoTestComPort(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoLedsOn(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoLedsOff(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
 };
 

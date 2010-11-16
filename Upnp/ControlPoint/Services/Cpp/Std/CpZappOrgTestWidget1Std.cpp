@@ -45,28 +45,28 @@ CpProxyZappOrgTestWidget1Cpp::CpProxyZappOrgTestWidget1Cpp(CpDeviceCpp& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyZappOrgTestWidget1Cpp::ReadWriteRegister0PropertyChanged);
     iReadWriteRegister0 = new PropertyUint("ReadWriteRegister0", functor);
-    iService->AddProperty(iReadWriteRegister0);
+    AddProperty(iReadWriteRegister0);
     functor = MakeFunctor(*this, &CpProxyZappOrgTestWidget1Cpp::ReadWriteRegister1PropertyChanged);
     iReadWriteRegister1 = new PropertyUint("ReadWriteRegister1", functor);
-    iService->AddProperty(iReadWriteRegister1);
+    AddProperty(iReadWriteRegister1);
     functor = MakeFunctor(*this, &CpProxyZappOrgTestWidget1Cpp::ReadWriteRegister2PropertyChanged);
     iReadWriteRegister2 = new PropertyUint("ReadWriteRegister2", functor);
-    iService->AddProperty(iReadWriteRegister2);
+    AddProperty(iReadWriteRegister2);
     functor = MakeFunctor(*this, &CpProxyZappOrgTestWidget1Cpp::ReadWriteRegister3PropertyChanged);
     iReadWriteRegister3 = new PropertyUint("ReadWriteRegister3", functor);
-    iService->AddProperty(iReadWriteRegister3);
+    AddProperty(iReadWriteRegister3);
     functor = MakeFunctor(*this, &CpProxyZappOrgTestWidget1Cpp::ReadOnlyRegister4PropertyChanged);
     iReadOnlyRegister4 = new PropertyUint("ReadOnlyRegister4", functor);
-    iService->AddProperty(iReadOnlyRegister4);
+    AddProperty(iReadOnlyRegister4);
     functor = MakeFunctor(*this, &CpProxyZappOrgTestWidget1Cpp::ReadOnlyRegister5PropertyChanged);
     iReadOnlyRegister5 = new PropertyUint("ReadOnlyRegister5", functor);
-    iService->AddProperty(iReadOnlyRegister5);
+    AddProperty(iReadOnlyRegister5);
     functor = MakeFunctor(*this, &CpProxyZappOrgTestWidget1Cpp::ReadOnlyRegister6PropertyChanged);
     iReadOnlyRegister6 = new PropertyUint("ReadOnlyRegister6", functor);
-    iService->AddProperty(iReadOnlyRegister6);
+    AddProperty(iReadOnlyRegister6);
     functor = MakeFunctor(*this, &CpProxyZappOrgTestWidget1Cpp::ReadOnlyRegister7PropertyChanged);
     iReadOnlyRegister7 = new PropertyUint("ReadOnlyRegister7", functor);
-    iService->AddProperty(iReadOnlyRegister7);
+    AddProperty(iReadOnlyRegister7);
 }
 
 CpProxyZappOrgTestWidget1Cpp::~CpProxyZappOrgTestWidget1Cpp()
@@ -89,7 +89,7 @@ void CpProxyZappOrgTestWidget1Cpp::BeginSetReadWriteRegister(uint32_t aRegisterI
     const Action::VectorParameters& inParams = iActionSetReadWriteRegister->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aRegisterIndex));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aRegisterValue));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestWidget1Cpp::EndSetReadWriteRegister(IAsync& aAsync)
@@ -161,50 +161,66 @@ void CpProxyZappOrgTestWidget1Cpp::SetPropertyReadOnlyRegister7Changed(Functor& 
 
 void CpProxyZappOrgTestWidget1Cpp::PropertyReadWriteRegister0(uint32_t& aReadWriteRegister0) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aReadWriteRegister0 = iReadWriteRegister0->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyZappOrgTestWidget1Cpp::PropertyReadWriteRegister1(uint32_t& aReadWriteRegister1) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aReadWriteRegister1 = iReadWriteRegister1->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyZappOrgTestWidget1Cpp::PropertyReadWriteRegister2(uint32_t& aReadWriteRegister2) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aReadWriteRegister2 = iReadWriteRegister2->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyZappOrgTestWidget1Cpp::PropertyReadWriteRegister3(uint32_t& aReadWriteRegister3) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aReadWriteRegister3 = iReadWriteRegister3->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyZappOrgTestWidget1Cpp::PropertyReadOnlyRegister4(uint32_t& aReadOnlyRegister4) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aReadOnlyRegister4 = iReadOnlyRegister4->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyZappOrgTestWidget1Cpp::PropertyReadOnlyRegister5(uint32_t& aReadOnlyRegister5) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aReadOnlyRegister5 = iReadOnlyRegister5->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyZappOrgTestWidget1Cpp::PropertyReadOnlyRegister6(uint32_t& aReadOnlyRegister6) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aReadOnlyRegister6 = iReadOnlyRegister6->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyZappOrgTestWidget1Cpp::PropertyReadOnlyRegister7(uint32_t& aReadOnlyRegister7) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aReadOnlyRegister7 = iReadOnlyRegister7->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyZappOrgTestWidget1Cpp::ReadWriteRegister0PropertyChanged()

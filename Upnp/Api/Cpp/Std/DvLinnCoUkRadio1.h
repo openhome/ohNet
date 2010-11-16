@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -75,22 +75,22 @@ private:
     virtual void IdsMax(uint32_t aVersion, uint32_t& aaIdsMax);
 private:
     DvProviderLinnCoUkRadio1Cpp();
-    void DoPlay(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoPause(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoStop(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSeekSecondAbsolute(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSeekSecondRelative(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoChannel(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetChannel(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoProtocolInfo(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoTransportState(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoId(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetId(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoRead(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoReadList(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoIdArray(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoIdArrayChanged(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoIdsMax(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoPlay(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoPause(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoStop(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSeekSecondAbsolute(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSeekSecondRelative(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoChannel(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetChannel(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoProtocolInfo(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoTransportState(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoId(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetId(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoRead(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoReadList(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoIdArray(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoIdArrayChanged(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoIdsMax(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyString* iPropertyChannelUri;
     PropertyString* iPropertyChannelMetadata;

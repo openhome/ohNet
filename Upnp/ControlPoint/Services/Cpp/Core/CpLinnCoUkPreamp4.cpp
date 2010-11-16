@@ -360,22 +360,22 @@ CpProxyLinnCoUkPreamp4::CpProxyLinnCoUkPreamp4(CpDevice& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyLinnCoUkPreamp4::VolumePropertyChanged);
     iVolume = new PropertyUint("Volume", functor);
-    iService->AddProperty(iVolume);
+    AddProperty(iVolume);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkPreamp4::MutePropertyChanged);
     iMute = new PropertyBool("Mute", functor);
-    iService->AddProperty(iMute);
+    AddProperty(iMute);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkPreamp4::BalancePropertyChanged);
     iBalance = new PropertyInt("Balance", functor);
-    iService->AddProperty(iBalance);
+    AddProperty(iBalance);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkPreamp4::VolumeLimitPropertyChanged);
     iVolumeLimit = new PropertyUint("VolumeLimit", functor);
-    iService->AddProperty(iVolumeLimit);
+    AddProperty(iVolumeLimit);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkPreamp4::StartupVolumePropertyChanged);
     iStartupVolume = new PropertyUint("StartupVolume", functor);
-    iService->AddProperty(iStartupVolume);
+    AddProperty(iStartupVolume);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkPreamp4::StartupVolumeEnabledPropertyChanged);
     iStartupVolumeEnabled = new PropertyBool("StartupVolumeEnabled", functor);
-    iService->AddProperty(iStartupVolumeEnabled);
+    AddProperty(iStartupVolumeEnabled);
 }
 
 CpProxyLinnCoUkPreamp4::~CpProxyLinnCoUkPreamp4()
@@ -407,7 +407,7 @@ void CpProxyLinnCoUkPreamp4::SyncVolumeInc()
 void CpProxyLinnCoUkPreamp4::BeginVolumeInc(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionVolumeInc, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPreamp4::EndVolumeInc(IAsync& aAsync)
@@ -431,7 +431,7 @@ void CpProxyLinnCoUkPreamp4::SyncVolumeDec()
 void CpProxyLinnCoUkPreamp4::BeginVolumeDec(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionVolumeDec, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPreamp4::EndVolumeDec(IAsync& aAsync)
@@ -458,7 +458,7 @@ void CpProxyLinnCoUkPreamp4::BeginSetVolume(TUint aaVolume, FunctorAsync& aFunct
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetVolume->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaVolume));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPreamp4::EndSetVolume(IAsync& aAsync)
@@ -485,7 +485,7 @@ void CpProxyLinnCoUkPreamp4::BeginVolume(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionVolume->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPreamp4::EndVolume(IAsync& aAsync, TUint& aaVolume)
@@ -514,7 +514,7 @@ void CpProxyLinnCoUkPreamp4::BeginSetMute(TBool aaMute, FunctorAsync& aFunctor)
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetMute->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aaMute));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPreamp4::EndSetMute(IAsync& aAsync)
@@ -541,7 +541,7 @@ void CpProxyLinnCoUkPreamp4::BeginMute(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionMute->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPreamp4::EndMute(IAsync& aAsync, TBool& aaMute)
@@ -570,7 +570,7 @@ void CpProxyLinnCoUkPreamp4::BeginSetBalance(TInt aaBalance, FunctorAsync& aFunc
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetBalance->InputParameters();
     invocation->AddInput(new ArgumentInt(*inParams[inIndex++], aaBalance));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPreamp4::EndSetBalance(IAsync& aAsync)
@@ -597,7 +597,7 @@ void CpProxyLinnCoUkPreamp4::BeginBalance(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionBalance->OutputParameters();
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPreamp4::EndBalance(IAsync& aAsync, TInt& aaBalance)
@@ -626,7 +626,7 @@ void CpProxyLinnCoUkPreamp4::BeginSetVolumeLimit(TUint aaVolumeLimit, FunctorAsy
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetVolumeLimit->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaVolumeLimit));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPreamp4::EndSetVolumeLimit(IAsync& aAsync)
@@ -653,7 +653,7 @@ void CpProxyLinnCoUkPreamp4::BeginVolumeLimit(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionVolumeLimit->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPreamp4::EndVolumeLimit(IAsync& aAsync, TUint& aaVolumeLimit)
@@ -682,7 +682,7 @@ void CpProxyLinnCoUkPreamp4::BeginSetStartupVolume(TUint aaStartupVolume, Functo
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetStartupVolume->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaStartupVolume));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPreamp4::EndSetStartupVolume(IAsync& aAsync)
@@ -709,7 +709,7 @@ void CpProxyLinnCoUkPreamp4::BeginStartupVolume(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionStartupVolume->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPreamp4::EndStartupVolume(IAsync& aAsync, TUint& aaStartupVolume)
@@ -738,7 +738,7 @@ void CpProxyLinnCoUkPreamp4::BeginSetStartupVolumeEnabled(TBool aaStartupVolumeE
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetStartupVolumeEnabled->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aaStartupVolumeEnabled));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPreamp4::EndSetStartupVolumeEnabled(IAsync& aAsync)
@@ -765,7 +765,7 @@ void CpProxyLinnCoUkPreamp4::BeginStartupVolumeEnabled(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionStartupVolumeEnabled->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPreamp4::EndStartupVolumeEnabled(IAsync& aAsync, TBool& aaStartupVolumeEnabled)
@@ -825,38 +825,50 @@ void CpProxyLinnCoUkPreamp4::SetPropertyStartupVolumeEnabledChanged(Functor& aFu
 
 void CpProxyLinnCoUkPreamp4::PropertyVolume(TUint& aVolume) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVolume = iVolume->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkPreamp4::PropertyMute(TBool& aMute) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aMute = iMute->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkPreamp4::PropertyBalance(TInt& aBalance) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aBalance = iBalance->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkPreamp4::PropertyVolumeLimit(TUint& aVolumeLimit) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVolumeLimit = iVolumeLimit->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkPreamp4::PropertyStartupVolume(TUint& aStartupVolume) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aStartupVolume = iStartupVolume->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkPreamp4::PropertyStartupVolumeEnabled(TBool& aStartupVolumeEnabled) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aStartupVolumeEnabled = iStartupVolumeEnabled->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkPreamp4::VolumePropertyChanged()

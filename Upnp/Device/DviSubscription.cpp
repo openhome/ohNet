@@ -103,6 +103,9 @@ void DviSubscription::WriteChanges()
 			if (seq != iPropertySequenceNumbers[i]) {
 				if (first) {
 					writer = iWriterFactory.CreateWriter(iSubscriber, iSubscriberPath, iSid, iSequenceNumber);
+                    if (writer == NULL) {
+                        THROW(WriterError);
+                    }
 					if (iSequenceNumber == UINT32_MAX) {
 						iSequenceNumber = 1;
 					}

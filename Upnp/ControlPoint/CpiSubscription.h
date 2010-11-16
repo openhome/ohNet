@@ -16,7 +16,7 @@
 
 namespace Zapp {
 
-class CpiDevice;
+class IEventProcessor;
 
 /**
  * Owns a subscription (request for notification of changes in state variables)
@@ -26,8 +26,10 @@ class CpiDevice;
  * Unsubscribe().  The class will then effectively delete itself when it releases
  * its operation reference after completing the unsubscription.
  */
-class Subscription
+class CpiSubscription
 {
+public:
+    static const TUint kDefaultDurationSecs = 30 * 60; // 30 minutes
 public:
     /**
      * Return the unique subscription identifier
@@ -64,13 +66,6 @@ public:
     TBool UpdateSequenceNumber(TUint aSequenceNumber);
 
     /**
-     * Passes a notification of update(s) in properties to the (protocol-dependent)
-     * device.  Calls the updatesComplete callback after the device has processed
-     * the full notification.
-     */
-    void ProcessNotification(const Brx& aNotification);
-    
-    /**
      * Inform the subscription of an error in processing an update.
      * Occurence of any error risks one or more properties having the wrong value.
      * This would take an unbounded time to correct itself if ignored so this function
@@ -100,6 +95,8 @@ public:
 
     const Zapp::ServiceType& ServiceType() const;
 
+    IEventProcessor& EventProcessor();
+
     /**
      * Used by Subscriber threads to process a subscribe/renew/unsubscribe operation
      * Intended for internal use only
@@ -120,8 +117,8 @@ private:
      * in a Subscriber thread)
      * Clients are not notified about any failure of the subscription
      */
-    Subscription(CpiDevice& aDevice, const Zapp::ServiceType& aServiceType, PropertyMap& aProperties, Functor& aUpdatesComplete);
-    ~Subscription();
+    CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const Zapp::ServiceType& aServiceType);
+    ~CpiSubscription();
     /**
      * Schedule a (subscribe, renew or unsubscribe operation) which will be processed
      * later in a Subscriber thread.  Claims a reference to the subscription, ensuring
@@ -135,9 +132,8 @@ private:
 private:
     Mutex iLock;
     CpiDevice& iDevice;
+    IEventProcessor& iEventProcessor;
     Zapp::ServiceType iServiceType;
-    PropertyMap& iProperties;
-    Functor& iUpdatesComplete;
     Brh iSid;
     Timer* iTimer;
     TUint iNextSequenceNumber;
@@ -146,7 +142,7 @@ private:
     TBool iStopUpdates;
     IInterruptHandler* iInterruptHandler;
 
-    friend class SubscriptionManager;
+    friend class CpiSubscriptionManager;
 };
 
 /**
@@ -162,29 +158,29 @@ class Subscriber : public Thread
 public:
     Subscriber(const TChar* aName, Fifo<Subscriber*>& aFree);
     ~Subscriber();
-    void Subscribe(Subscription* aSubscription);
+    void Subscribe(CpiSubscription* aSubscription);
 private:
     void Error(const TChar* aErr);
     void Run();
 private:
     Fifo<Subscriber*>& iFree;
-    Subscription* iSubscription;
+    CpiSubscription* iSubscription;
 };
 
 /**
  * Singleton which manages the pools of Subscriber and active Subscription instances
  */
-class SubscriptionManager : public Thread
+class CpiSubscriptionManager : public Thread
 {
 public:
-    SubscriptionManager();
+    CpiSubscriptionManager();
     /**
      * Destructor.  Blocks until all subscriptions have been deleted.
      */
-    ~SubscriptionManager();
-    static Subscription* NewSubscription(CpiDevice& aDevice, const ServiceType& aServiceType, PropertyMap& aProperties, Functor& aUpdatesComplete);
-    static void NotifyAddPending(Subscription& aSubscription);
-    static void NotifyAddAborted(Subscription& aSubscription);
+    ~CpiSubscriptionManager();
+    static CpiSubscription* NewSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const Zapp::ServiceType& aServiceType);
+    static void NotifyAddPending(CpiSubscription& aSubscription);
+    static void NotifyAddAborted(CpiSubscription& aSubscription);
     
     /**
      * The UPnP specification contains a race condition where it is possible to
@@ -201,7 +197,7 @@ public:
      * should be tried again before treating the notification as an error.
      */
     static void WaitForPendingAdds();
-    static void Add(Subscription& aSubscription);
+    static void Add(CpiSubscription& aSubscription);
 
     /**
      * Returns the subscription with unique id aSid, or NULL if the subscription
@@ -210,30 +206,30 @@ public:
      *
      * See also WaitForPendingAdds()
      */
-    static Zapp::Subscription* FindSubscription(const Brx& aSid);
-    static void Remove(Zapp::Subscription& aSubscription);
-    static void Schedule(Zapp::Subscription& aSubscription);
+    static CpiSubscription* FindSubscription(const Brx& aSid);
+    static void Remove(CpiSubscription& aSubscription);
+    static void Schedule(CpiSubscription& aSubscription);
     static EventServerUpnp* EventServer();
 private:
-    static SubscriptionManager* Self();
-    void RemovePendingAdd(Subscription& aSubscription);
+    static CpiSubscriptionManager* Self();
+    void RemovePendingAdd(CpiSubscription& aSubscription);
     void CurrentNetworkInterfaceChanged();
     void SubnetChanged();
     void HandleInterfaceChange(TBool aNewSubnet);
     void Run();
 private:
     Mutex iLock;
-    std::list<Zapp::Subscription*> iList;
+    std::list<CpiSubscription*> iList;
     Fifo<Subscriber*> iFree;
     Subscriber** iSubscribers;
-    typedef std::map<Brn,Subscription*,BufferCmp> Map;
+    typedef std::map<Brn,CpiSubscription*,BufferCmp> Map;
     Map iMap;
     TBool iActive;
     Semaphore iWaiter;
     TUint iWaiters;
     Semaphore iShutdownSem;
     EventServerUpnp* iEventServer;
-    typedef std::vector<Zapp::Subscription*> VectorSubscriptions;
+    typedef std::vector<CpiSubscription*> VectorSubscriptions;
     VectorSubscriptions iPendingSubscriptions;
     TUint iInterfaceListListenerId;
     TUint iSubnetListenerId;

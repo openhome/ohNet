@@ -14,7 +14,7 @@ CpiStack::CpiStack()
     Stack::SetCpiStack(this);
     iInvocationManager = new Zapp::InvocationManager;
     iXmlFetchManager = new Zapp::XmlFetchManager;
-    iSubscriptionManager = new Zapp::SubscriptionManager;
+    iSubscriptionManager = new CpiSubscriptionManager;
 }
 
 CpiStack::~CpiStack()
@@ -36,7 +36,7 @@ Zapp::XmlFetchManager& CpiStack::XmlFetchManager()
     return *(self->iXmlFetchManager);
 }
 
-Zapp::SubscriptionManager& CpiStack::SubscriptionManager()
+CpiSubscriptionManager& CpiStack::SubscriptionManager()
 {
     CpiStack* self = CpiStack::Self();
     return *(self->iSubscriptionManager);

@@ -8,6 +8,7 @@
 
 namespace Zapp {
 
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -32,9 +33,9 @@ private:
     virtual void MemWrite(IInvocationResponse& aResponse, TUint aVersion, TUint aaMemAddress, const Brx& aaMemData);
 private:
     DvProviderLinnCoUkDebug2();
-    void DoSetDebugLevel(IDvInvocation& aInvocation, TUint aVersion);
-    void DoDebugLevel(IDvInvocation& aInvocation, TUint aVersion);
-    void DoMemWrite(IDvInvocation& aInvocation, TUint aVersion);
+    void DoSetDebugLevel(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDebugLevel(IDviInvocation& aInvocation, TUint aVersion);
+    void DoMemWrite(IDviInvocation& aInvocation, TUint aVersion);
 private:
 };
 

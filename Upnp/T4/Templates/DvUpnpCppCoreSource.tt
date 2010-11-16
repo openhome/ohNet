@@ -45,7 +45,7 @@
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 <#  foreach (Variable s in u.evented) #>
@@ -146,14 +146,14 @@ void <#=className#>::EnableAction<#=a.name#>()
 <#              } #>
 <#          } #>
 <#      } #>
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &<#=className#>::Do<#=a.name#>);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &<#=className#>::Do<#=a.name#>);
     iService->AddAction(action, functor);
 }
 <#  } #>
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-void <#=className#>::Do<#=a.name#>(IDvInvocation& aInvocation, TUint aVersion)
+void <#=className#>::Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
 <#      foreach (Argument i in a.inargs) #>

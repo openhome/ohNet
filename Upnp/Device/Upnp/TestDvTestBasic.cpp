@@ -305,6 +305,7 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
         return;
     }
 
+    aInitParams->SetDvNumWebSocketThreads(5);
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartDv();
 

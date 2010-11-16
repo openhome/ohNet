@@ -95,7 +95,7 @@ CpProxyUpnpOrgSwitchPower1Cpp::CpProxyUpnpOrgSwitchPower1Cpp(CpDeviceCpp& aDevic
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgSwitchPower1Cpp::StatusPropertyChanged);
     iStatus = new PropertyBool("Status", functor);
-    iService->AddProperty(iStatus);
+    AddProperty(iStatus);
 }
 
 CpProxyUpnpOrgSwitchPower1Cpp::~CpProxyUpnpOrgSwitchPower1Cpp()
@@ -119,7 +119,7 @@ void CpProxyUpnpOrgSwitchPower1Cpp::BeginSetTarget(bool anewTargetValue, Functor
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetTarget->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], anewTargetValue));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgSwitchPower1Cpp::EndSetTarget(IAsync& aAsync)
@@ -146,7 +146,7 @@ void CpProxyUpnpOrgSwitchPower1Cpp::BeginGetTarget(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetTarget->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgSwitchPower1Cpp::EndGetTarget(IAsync& aAsync, bool& aRetTargetValue)
@@ -175,7 +175,7 @@ void CpProxyUpnpOrgSwitchPower1Cpp::BeginGetStatus(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetStatus->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgSwitchPower1Cpp::EndGetStatus(IAsync& aAsync, bool& aResultStatus)
@@ -200,8 +200,10 @@ void CpProxyUpnpOrgSwitchPower1Cpp::SetPropertyStatusChanged(Functor& aFunctor)
 
 void CpProxyUpnpOrgSwitchPower1Cpp::PropertyStatus(bool& aStatus) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aStatus = iStatus->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyUpnpOrgSwitchPower1Cpp::StatusPropertyChanged()

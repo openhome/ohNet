@@ -8,6 +8,7 @@
 
 namespace Zapp {
 
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -72,27 +73,27 @@ private:
     virtual void SetStateVariables(IInvocationResponse& aResponse, TUint aVersion, TUint aInstanceID, const Brx& aAVTransportUDN, const Brx& aServiceType, const Brx& aServiceId, const Brx& aStateVariableValuePairs, IInvocationResponseString& aStateVariableList);
 private:
     DvProviderUpnpOrgAVTransport2();
-    void DoSetAVTransportURI(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetNextAVTransportURI(IDvInvocation& aInvocation, TUint aVersion);
-    void DoGetMediaInfo(IDvInvocation& aInvocation, TUint aVersion);
-    void DoGetMediaInfo_Ext(IDvInvocation& aInvocation, TUint aVersion);
-    void DoGetTransportInfo(IDvInvocation& aInvocation, TUint aVersion);
-    void DoGetPositionInfo(IDvInvocation& aInvocation, TUint aVersion);
-    void DoGetDeviceCapabilities(IDvInvocation& aInvocation, TUint aVersion);
-    void DoGetTransportSettings(IDvInvocation& aInvocation, TUint aVersion);
-    void DoStop(IDvInvocation& aInvocation, TUint aVersion);
-    void DoPlay(IDvInvocation& aInvocation, TUint aVersion);
-    void DoPause(IDvInvocation& aInvocation, TUint aVersion);
-    void DoRecord(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSeek(IDvInvocation& aInvocation, TUint aVersion);
-    void DoNext(IDvInvocation& aInvocation, TUint aVersion);
-    void DoPrevious(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetPlayMode(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetRecordQualityMode(IDvInvocation& aInvocation, TUint aVersion);
-    void DoGetCurrentTransportActions(IDvInvocation& aInvocation, TUint aVersion);
-    void DoGetDRMState(IDvInvocation& aInvocation, TUint aVersion);
-    void DoGetStateVariables(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetStateVariables(IDvInvocation& aInvocation, TUint aVersion);
+    void DoSetAVTransportURI(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetNextAVTransportURI(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetMediaInfo(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetMediaInfo_Ext(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetTransportInfo(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetPositionInfo(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetDeviceCapabilities(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetTransportSettings(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStop(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPlay(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPause(IDviInvocation& aInvocation, TUint aVersion);
+    void DoRecord(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSeek(IDviInvocation& aInvocation, TUint aVersion);
+    void DoNext(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPrevious(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetPlayMode(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetRecordQualityMode(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetCurrentTransportActions(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetDRMState(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetStateVariables(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetStateVariables(IDviInvocation& aInvocation, TUint aVersion);
 private:
     PropertyString* iPropertyLastChange;
     PropertyString* iPropertyDRMState;

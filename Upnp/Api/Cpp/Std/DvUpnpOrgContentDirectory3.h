@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -77,26 +77,26 @@ private:
     virtual void GetFreeFormQueryCapabilities(uint32_t aVersion, std::string& aFFQCapabilities);
 private:
     DvProviderUpnpOrgContentDirectory3Cpp();
-    void DoGetSearchCapabilities(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetSortCapabilities(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetSortExtensionCapabilities(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetFeatureList(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetSystemUpdateID(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetServiceResetToken(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoBrowse(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSearch(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoCreateObject(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDestroyObject(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoUpdateObject(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoMoveObject(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoImportResource(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoExportResource(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDeleteResource(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoStopTransferResource(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetTransferProgress(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoCreateReference(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoFreeFormQuery(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetFreeFormQueryCapabilities(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoGetSearchCapabilities(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetSortCapabilities(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetSortExtensionCapabilities(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetFeatureList(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetSystemUpdateID(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetServiceResetToken(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoBrowse(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSearch(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoCreateObject(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDestroyObject(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoUpdateObject(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoMoveObject(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoImportResource(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoExportResource(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDeleteResource(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoStopTransferResource(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetTransferProgress(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoCreateReference(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoFreeFormQuery(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetFreeFormQueryCapabilities(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyUint* iPropertySystemUpdateID;
     PropertyString* iPropertyContainerUpdateIDs;

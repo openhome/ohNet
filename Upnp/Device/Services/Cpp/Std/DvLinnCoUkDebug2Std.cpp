@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -16,7 +16,7 @@ void DvProviderLinnCoUkDebug2Cpp::EnableActionSetDebugLevel()
 {
     Zapp::Action* action = new Zapp::Action("SetDebugLevel");
     action->AddInputParameter(new ParameterUint("aDebugLevel"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDebug2Cpp::DoSetDebugLevel);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDebug2Cpp::DoSetDebugLevel);
     iService->AddAction(action, functor);
 }
 
@@ -24,7 +24,7 @@ void DvProviderLinnCoUkDebug2Cpp::EnableActionDebugLevel()
 {
     Zapp::Action* action = new Zapp::Action("DebugLevel");
     action->AddOutputParameter(new ParameterUint("aDebugLevel"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDebug2Cpp::DoDebugLevel);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDebug2Cpp::DoDebugLevel);
     iService->AddAction(action, functor);
 }
 
@@ -33,11 +33,11 @@ void DvProviderLinnCoUkDebug2Cpp::EnableActionMemWrite()
     Zapp::Action* action = new Zapp::Action("MemWrite");
     action->AddInputParameter(new ParameterUint("aMemAddress"));
     action->AddInputParameter(new ParameterBinary("aMemData"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDebug2Cpp::DoMemWrite);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDebug2Cpp::DoMemWrite);
     iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkDebug2Cpp::DoSetDebugLevel(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDebug2Cpp::DoSetDebugLevel(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aDebugLevel = aInvocation.InvocationReadUint("aDebugLevel");
@@ -47,7 +47,7 @@ void DvProviderLinnCoUkDebug2Cpp::DoSetDebugLevel(IDvInvocation& aInvocation, TU
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkDebug2Cpp::DoDebugLevel(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDebug2Cpp::DoDebugLevel(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -59,7 +59,7 @@ void DvProviderLinnCoUkDebug2Cpp::DoDebugLevel(IDvInvocation& aInvocation, TUint
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkDebug2Cpp::DoMemWrite(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDebug2Cpp::DoMemWrite(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aMemAddress = aInvocation.InvocationReadUint("aMemAddress");

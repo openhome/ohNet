@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -43,13 +43,13 @@ private:
     virtual void GetColorComponents(uint32_t aVersion, uint32_t aColor, uint32_t& aBrightness, uint32_t& aRed, uint32_t& aGreen, uint32_t& aBlue);
 private:
     DvProviderZappOrgTestLights1Cpp();
-    void DoGetCount(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetRoom(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetName(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetPosition(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetColor(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetColor(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetColorComponents(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoGetCount(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetRoom(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetName(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetPosition(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetColor(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetColor(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetColorComponents(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
 };
 

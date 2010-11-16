@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -17,25 +17,25 @@ void DvProviderLinnCoUkPtest1Cpp::EnableActionTestComPort()
     Zapp::Action* action = new Zapp::Action("TestComPort");
     action->AddInputParameter(new ParameterUint("aPort"));
     action->AddOutputParameter(new ParameterBool("aResult"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkPtest1Cpp::DoTestComPort);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPtest1Cpp::DoTestComPort);
     iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkPtest1Cpp::EnableActionLedsOn()
 {
     Zapp::Action* action = new Zapp::Action("LedsOn");
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkPtest1Cpp::DoLedsOn);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPtest1Cpp::DoLedsOn);
     iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkPtest1Cpp::EnableActionLedsOff()
 {
     Zapp::Action* action = new Zapp::Action("LedsOff");
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkPtest1Cpp::DoLedsOff);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPtest1Cpp::DoLedsOff);
     iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkPtest1Cpp::DoTestComPort(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPtest1Cpp::DoTestComPort(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aPort = aInvocation.InvocationReadUint("aPort");
@@ -48,7 +48,7 @@ void DvProviderLinnCoUkPtest1Cpp::DoTestComPort(IDvInvocation& aInvocation, TUin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkPtest1Cpp::DoLedsOn(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPtest1Cpp::DoLedsOn(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -57,7 +57,7 @@ void DvProviderLinnCoUkPtest1Cpp::DoLedsOn(IDvInvocation& aInvocation, TUint aVe
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkPtest1Cpp::DoLedsOff(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPtest1Cpp::DoLedsOff(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

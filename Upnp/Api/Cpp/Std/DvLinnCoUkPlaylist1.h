@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -61,18 +61,18 @@ private:
     virtual void IdArrayChanged(uint32_t aVersion, uint32_t aaIdArrayToken, bool& aaIdArrayChanged);
 private:
     DvProviderLinnCoUkPlaylist1Cpp();
-    void DoRead(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoReadList(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoInsert(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDelete(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDeleteAll(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetRepeat(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoRepeat(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetShuffle(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoShuffle(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoTracksMax(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoIdArray(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoIdArrayChanged(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoRead(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoReadList(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoInsert(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDelete(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDeleteAll(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetRepeat(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoRepeat(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetShuffle(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoShuffle(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoTracksMax(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoIdArray(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoIdArrayChanged(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyBinary* iPropertyIdArray;
     PropertyBool* iPropertyRepeat;
