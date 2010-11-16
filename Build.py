@@ -91,7 +91,8 @@ def Build(tool, cmd, args):
         print buildCmd
         ret = subprocess.call(buildCmd, shell=True)
         if ret != 0:
-                        sys.exit(ret)
+                print ret        
+		sys.exit(10)
 
 
 Build(Environment['tool'],Module['cmd'],Arguments['args'])
@@ -201,7 +202,8 @@ def ArmTests(module, arch, nightly):
                 rsyncCmd = "rsync -avz --exclude='*.o' --exclude='*.a' --exclude='Include' Upnp/Build "+host+":~/ && rsync -avz Upnp/AllTests.py "+host+":~/"
                 ret = subprocess.call(rsyncCmd, shell=True)
                 if ret != 0:
-                          sys.exit(ret)
+			  print ret
+                          sys.exit(10)
 
                 ssh = paramiko.SSHClient()
                 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -234,7 +236,8 @@ def ArmTests(module, arch, nightly):
                 if exit_status != 0:
                         print "FAILED: non-zero exit status on sheeva node"
                         ssh.close()
-                        sys.exit(-1)
+                        print exit_status
+			sys.exit(10)
 
                 ssh.close()
 
