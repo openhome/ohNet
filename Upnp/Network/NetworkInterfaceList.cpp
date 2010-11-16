@@ -10,7 +10,7 @@ using namespace Zapp;
 NetworkInterfaceList::NetworkInterfaceList(TIpAddress aDefaultSubnet)
     : iListLock("MNIL")
     , iListenerLock("MNIO")
-    , iNextListenerId(0)
+    , iNextListenerId(1)
 {
     iDefaultSubnet = aDefaultSubnet;
     iNetworkInterfaces = Os::NetworkListInterfaces(Stack::InitParams().UseLoopbackNetworkInterface());

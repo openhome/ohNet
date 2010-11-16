@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -44,7 +44,7 @@ void DvProviderLinnCoUkConfiguration1Cpp::EnableActionConfigurationXml()
 {
     Zapp::Action* action = new Zapp::Action("ConfigurationXml");
     action->AddOutputParameter(new ParameterRelated("aConfigurationXml", *iPropertyConfigurationXml));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkConfiguration1Cpp::DoConfigurationXml);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkConfiguration1Cpp::DoConfigurationXml);
     iService->AddAction(action, functor);
 }
 
@@ -52,7 +52,7 @@ void DvProviderLinnCoUkConfiguration1Cpp::EnableActionParameterXml()
 {
     Zapp::Action* action = new Zapp::Action("ParameterXml");
     action->AddOutputParameter(new ParameterRelated("aParameterXml", *iPropertyParameterXml));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkConfiguration1Cpp::DoParameterXml);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkConfiguration1Cpp::DoParameterXml);
     iService->AddAction(action, functor);
 }
 
@@ -62,11 +62,11 @@ void DvProviderLinnCoUkConfiguration1Cpp::EnableActionSetParameter()
     action->AddInputParameter(new ParameterString("aTarget"));
     action->AddInputParameter(new ParameterString("aName"));
     action->AddInputParameter(new ParameterString("aValue"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkConfiguration1Cpp::DoSetParameter);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkConfiguration1Cpp::DoSetParameter);
     iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkConfiguration1Cpp::DoConfigurationXml(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkConfiguration1Cpp::DoConfigurationXml(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -80,7 +80,7 @@ void DvProviderLinnCoUkConfiguration1Cpp::DoConfigurationXml(IDvInvocation& aInv
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkConfiguration1Cpp::DoParameterXml(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkConfiguration1Cpp::DoParameterXml(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -94,7 +94,7 @@ void DvProviderLinnCoUkConfiguration1Cpp::DoParameterXml(IDvInvocation& aInvocat
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkConfiguration1Cpp::DoSetParameter(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkConfiguration1Cpp::DoSetParameter(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_aTarget;

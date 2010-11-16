@@ -250,6 +250,7 @@ void PropertyWriterUpnp::PropertyWriteEnd()
 DviSessionUpnp::DviSessionUpnp(TIpAddress aInterface, TUint aPort)
     : iInterface(aInterface)
     , iPort(aPort)
+    , iInvocationSem("DSUI", 0)
     , iShutdownSem("DSUS", 1)
 {
     iReadBuffer = new Srs<kMaxRequestBytes>(*this);
@@ -292,6 +293,8 @@ void DviSessionUpnp::Run()
     iErrorStatus = &HttpStatus::kOk;
     iReaderRequest->Flush();
     iWriterChunked->SetChunked(false);
+    iInvocationService = NULL;
+    (void)iInvocationSem.Clear();
 	iResourceWriterHeadersOnly = false;
     // check headers
     try {
@@ -398,27 +401,17 @@ void DviSessionUpnp::Post()
     iSoapRequest.Set(iReadBuffer->Read(iHeaderContentLength.ContentLength()));
 
     DviDevice* device;
-    DviService* service;
-    ParseRequestUri(DviDeviceUpnp::kControlUrlTail, &device, &service);
-    if (device == NULL || service == NULL) {
+    ParseRequestUri(DviDeviceUpnp::kControlUrlTail, &device, &iInvocationService);
+    if (device != NULL && iInvocationService != NULL) {
+        DviInvocationManager::Queue(this);
+        iInvocationSem.Wait();
+    }
+    else {
         try {
             const HttpStatus* err = &HttpStatus::kNotFound;
             InvocationReportError(err->Code(), err->Reason());
         }
         catch (InvocationError&) {}
-    }
-    TBool completed = false;
-    try {
-        if (service != NULL) {
-            service->Invoke(*this, iHeaderSoapAction.Version(), iHeaderSoapAction.Action());
-            completed = true;
-        }
-    }
-    catch (InvocationError&) {}
-    if (completed) {
-        LOG(KDvInvocation, "Completed action: ");
-        LOG(KDvInvocation, iHeaderSoapAction.Action());
-        LOG(KDvInvocation, "\n");
     }
 }
 
@@ -653,6 +646,14 @@ void DviSessionUpnp::WriteResourceEnd()
     iWriterBuffer->WriteFlush();
 }
 
+void DviSessionUpnp::Invoke()
+{
+    try {
+        iInvocationService->Invoke(*this, iHeaderSoapAction.Version(), iHeaderSoapAction.Action());
+    }
+    catch (InvocationError&) {}
+}
+
 void DviSessionUpnp::InvocationReadStart()
 {
     try {
@@ -790,6 +791,7 @@ void DviSessionUpnp::InvocationReportError(TUint aCode, const Brx& aDescription)
     iWriterBuffer->WriteFlush();
     iResponseEnded = true;
 
+    iInvocationSem.Signal();
     THROW(InvocationError);
 }
 
@@ -916,6 +918,11 @@ void DviSessionUpnp::InvocationWriteEnd()
     iWriterBuffer->Write(iHeaderSoapAction.Action());
     iWriterBuffer->Write(Brn("Response></s:Body></s:Envelope>"));
     iWriterBuffer->WriteFlush();
+
+    LOG(KDvInvocation, "Completed action: ");
+    LOG(KDvInvocation, iHeaderSoapAction.Action());
+    LOG(KDvInvocation, "\n");
+    iInvocationSem.Signal();
 }
 
 IPropertyWriter* DviSessionUpnp::CreateWriter(const Endpoint& aSubscriber, const Brx& aSubscriberPath,

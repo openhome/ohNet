@@ -50,13 +50,13 @@ CpProxyLinnCoUkTime1::CpProxyLinnCoUkTime1(CpDevice& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyLinnCoUkTime1::TrackCountPropertyChanged);
     iTrackCount = new PropertyUint("TrackCount", functor);
-    iService->AddProperty(iTrackCount);
+    AddProperty(iTrackCount);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkTime1::DurationPropertyChanged);
     iDuration = new PropertyUint("Duration", functor);
-    iService->AddProperty(iDuration);
+    AddProperty(iDuration);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkTime1::SecondsPropertyChanged);
     iSeconds = new PropertyUint("Seconds", functor);
-    iService->AddProperty(iSeconds);
+    AddProperty(iSeconds);
 }
 
 CpProxyLinnCoUkTime1::~CpProxyLinnCoUkTime1()
@@ -80,7 +80,7 @@ void CpProxyLinnCoUkTime1::BeginTime(FunctorAsync& aFunctor)
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkTime1::EndTime(IAsync& aAsync, TUint& aaTrackCount, TUint& aaDuration, TUint& aaSeconds)
@@ -121,20 +121,26 @@ void CpProxyLinnCoUkTime1::SetPropertySecondsChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkTime1::PropertyTrackCount(TUint& aTrackCount) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTrackCount = iTrackCount->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkTime1::PropertyDuration(TUint& aDuration) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDuration = iDuration->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkTime1::PropertySeconds(TUint& aSeconds) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSeconds = iSeconds->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkTime1::TrackCountPropertyChanged()

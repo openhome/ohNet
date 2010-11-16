@@ -351,7 +351,7 @@ CpProxyLinnCoUkDiagnostics1Cpp::CpProxyLinnCoUkDiagnostics1Cpp(CpDeviceCpp& aDev
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyLinnCoUkDiagnostics1Cpp::aStateVariablePropertyChanged);
     iaStateVariable = new PropertyUint("aStateVariable", functor);
-    iService->AddProperty(iaStateVariable);
+    AddProperty(iaStateVariable);
 }
 
 CpProxyLinnCoUkDiagnostics1Cpp::~CpProxyLinnCoUkDiagnostics1Cpp()
@@ -391,7 +391,7 @@ void CpProxyLinnCoUkDiagnostics1Cpp::BeginEcho(const std::string& aaIn, FunctorA
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionEcho->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDiagnostics1Cpp::EndEcho(IAsync& aAsync, std::string& aaOut)
@@ -423,7 +423,7 @@ void CpProxyLinnCoUkDiagnostics1Cpp::BeginElfFile(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionElfFile->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDiagnostics1Cpp::EndElfFile(IAsync& aAsync, std::string& aaElfFile)
@@ -455,7 +455,7 @@ void CpProxyLinnCoUkDiagnostics1Cpp::BeginElfFingerprint(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionElfFingerprint->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDiagnostics1Cpp::EndElfFingerprint(IAsync& aAsync, std::string& aaElfFileFingerprint)
@@ -487,7 +487,7 @@ void CpProxyLinnCoUkDiagnostics1Cpp::BeginCrashDataStatus(FunctorAsync& aFunctor
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionCrashDataStatus->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDiagnostics1Cpp::EndCrashDataStatus(IAsync& aAsync, std::string& aaCrashDataStatus)
@@ -519,7 +519,7 @@ void CpProxyLinnCoUkDiagnostics1Cpp::BeginCrashDataFetch(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionCrashDataFetch->OutputParameters();
     invocation->AddOutput(new ArgumentBinary(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDiagnostics1Cpp::EndCrashDataFetch(IAsync& aAsync, std::string& aaCrashData)
@@ -548,7 +548,7 @@ void CpProxyLinnCoUkDiagnostics1Cpp::SyncCrashDataClear()
 void CpProxyLinnCoUkDiagnostics1Cpp::BeginCrashDataClear(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionCrashDataClear, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDiagnostics1Cpp::EndCrashDataClear(IAsync& aAsync)
@@ -575,7 +575,7 @@ void CpProxyLinnCoUkDiagnostics1Cpp::BeginSysLog(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionSysLog->OutputParameters();
     invocation->AddOutput(new ArgumentBinary(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDiagnostics1Cpp::EndSysLog(IAsync& aAsync, std::string& aaSysLog)
@@ -613,7 +613,7 @@ void CpProxyLinnCoUkDiagnostics1Cpp::BeginDiagnostic(const std::string& aaDiagno
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionDiagnostic->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDiagnostics1Cpp::EndDiagnostic(IAsync& aAsync, std::string& aaDiagnosticInfo)
@@ -645,7 +645,7 @@ void CpProxyLinnCoUkDiagnostics1Cpp::BeginStateVariable(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionStateVariable->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDiagnostics1Cpp::EndStateVariable(IAsync& aAsync, uint32_t& aaStateVariable)
@@ -674,7 +674,7 @@ void CpProxyLinnCoUkDiagnostics1Cpp::BeginSetStateVariable(uint32_t aaStateVaria
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetStateVariable->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaStateVariable));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDiagnostics1Cpp::EndSetStateVariable(IAsync& aAsync)
@@ -701,7 +701,7 @@ void CpProxyLinnCoUkDiagnostics1Cpp::BeginStateVariablePeriod(FunctorAsync& aFun
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionStateVariablePeriod->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDiagnostics1Cpp::EndStateVariablePeriod(IAsync& aAsync, uint32_t& aaPeriod)
@@ -730,7 +730,7 @@ void CpProxyLinnCoUkDiagnostics1Cpp::BeginSetStateVariablePeriod(uint32_t aaPeri
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetStateVariablePeriod->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaPeriod));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDiagnostics1Cpp::EndSetStateVariablePeriod(IAsync& aAsync)
@@ -757,7 +757,7 @@ void CpProxyLinnCoUkDiagnostics1Cpp::BeginReboot(uint32_t aaDelay, FunctorAsync&
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionReboot->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaDelay));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDiagnostics1Cpp::EndReboot(IAsync& aAsync)
@@ -780,8 +780,10 @@ void CpProxyLinnCoUkDiagnostics1Cpp::SetPropertyaStateVariableChanged(Functor& a
 
 void CpProxyLinnCoUkDiagnostics1Cpp::PropertyaStateVariable(uint32_t& aaStateVariable) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aaStateVariable = iaStateVariable->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkDiagnostics1Cpp::aStateVariablePropertyChanged()

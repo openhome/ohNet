@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -61,18 +61,18 @@ private:
     virtual void SourceType(uint32_t aVersion, uint32_t aaSourceIndex, std::string& aaSourceType);
 private:
     DvProviderLinnCoUkProduct2Cpp();
-    void DoType(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoModel(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoName(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetName(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoRoom(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetRoom(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoStandby(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetStandby(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSourceCount(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSourceIndex(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetSourceIndex(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSourceType(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoType(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoModel(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoName(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetName(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoRoom(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetRoom(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoStandby(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetStandby(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSourceCount(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSourceIndex(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetSourceIndex(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSourceType(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyString* iPropertyProductName;
     PropertyString* iPropertyProductRoom;

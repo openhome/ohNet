@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -16,7 +16,7 @@ void DvProviderZappOrgTestWidgetController1Cpp::EnableActionCreateWidget()
 {
     Zapp::Action* action = new Zapp::Action("CreateWidget");
     action->AddInputParameter(new ParameterString("WidgetUdn"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestWidgetController1Cpp::DoCreateWidget);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestWidgetController1Cpp::DoCreateWidget);
     iService->AddAction(action, functor);
 }
 
@@ -24,7 +24,7 @@ void DvProviderZappOrgTestWidgetController1Cpp::EnableActionRemoveWidget()
 {
     Zapp::Action* action = new Zapp::Action("RemoveWidget");
     action->AddInputParameter(new ParameterString("WidgetUdn"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestWidgetController1Cpp::DoRemoveWidget);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestWidgetController1Cpp::DoRemoveWidget);
     iService->AddAction(action, functor);
 }
 
@@ -34,11 +34,11 @@ void DvProviderZappOrgTestWidgetController1Cpp::EnableActionSetWidgetRegister()
     action->AddInputParameter(new ParameterString("WidgetUdn"));
     action->AddInputParameter(new ParameterUint("RegisterIndex"));
     action->AddInputParameter(new ParameterUint("RegisterValue"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestWidgetController1Cpp::DoSetWidgetRegister);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestWidgetController1Cpp::DoSetWidgetRegister);
     iService->AddAction(action, functor);
 }
 
-void DvProviderZappOrgTestWidgetController1Cpp::DoCreateWidget(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestWidgetController1Cpp::DoCreateWidget(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_WidgetUdn;
@@ -50,7 +50,7 @@ void DvProviderZappOrgTestWidgetController1Cpp::DoCreateWidget(IDvInvocation& aI
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderZappOrgTestWidgetController1Cpp::DoRemoveWidget(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestWidgetController1Cpp::DoRemoveWidget(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_WidgetUdn;
@@ -62,7 +62,7 @@ void DvProviderZappOrgTestWidgetController1Cpp::DoRemoveWidget(IDvInvocation& aI
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderZappOrgTestWidgetController1Cpp::DoSetWidgetRegister(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestWidgetController1Cpp::DoSetWidgetRegister(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_WidgetUdn;

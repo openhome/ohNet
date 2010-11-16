@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -51,14 +51,14 @@ private:
     virtual void LoadManifest(uint32_t aVersion, uint32_t& aaTotalPresets);
 private:
     DvProviderLinnCoUkJukebox1Cpp();
-    void DoSetPresetPrefix(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoPresetPrefix(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetAlbumArtFileName(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoAlbumArtFileName(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetCurrentPreset(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoCurrentPreset(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoPresetMetaData(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoLoadManifest(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoSetPresetPrefix(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoPresetPrefix(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetAlbumArtFileName(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoAlbumArtFileName(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetCurrentPreset(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoCurrentPreset(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoPresetMetaData(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoLoadManifest(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyUint* iPropertyCurrentPreset;
     PropertyString* iPropertyPresetPrefix;

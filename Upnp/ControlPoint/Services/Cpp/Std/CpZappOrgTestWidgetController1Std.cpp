@@ -117,7 +117,7 @@ void CpProxyZappOrgTestWidgetController1Cpp::BeginCreateWidget(const std::string
         Brn buf((const TByte*)aWidgetUdn.c_str(), (TUint)aWidgetUdn.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestWidgetController1Cpp::EndCreateWidget(IAsync& aAsync)
@@ -147,7 +147,7 @@ void CpProxyZappOrgTestWidgetController1Cpp::BeginRemoveWidget(const std::string
         Brn buf((const TByte*)aWidgetUdn.c_str(), (TUint)aWidgetUdn.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestWidgetController1Cpp::EndRemoveWidget(IAsync& aAsync)
@@ -179,7 +179,7 @@ void CpProxyZappOrgTestWidgetController1Cpp::BeginSetWidgetRegister(const std::s
     }
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aRegisterIndex));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aRegisterValue));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestWidgetController1Cpp::EndSetWidgetRegister(IAsync& aAsync)

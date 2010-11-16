@@ -92,7 +92,7 @@ CpProxyUpnpOrgSwitchPower1::CpProxyUpnpOrgSwitchPower1(CpDevice& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgSwitchPower1::StatusPropertyChanged);
     iStatus = new PropertyBool("Status", functor);
-    iService->AddProperty(iStatus);
+    AddProperty(iStatus);
 }
 
 CpProxyUpnpOrgSwitchPower1::~CpProxyUpnpOrgSwitchPower1()
@@ -116,7 +116,7 @@ void CpProxyUpnpOrgSwitchPower1::BeginSetTarget(TBool anewTargetValue, FunctorAs
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetTarget->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], anewTargetValue));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgSwitchPower1::EndSetTarget(IAsync& aAsync)
@@ -143,7 +143,7 @@ void CpProxyUpnpOrgSwitchPower1::BeginGetTarget(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetTarget->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgSwitchPower1::EndGetTarget(IAsync& aAsync, TBool& aRetTargetValue)
@@ -172,7 +172,7 @@ void CpProxyUpnpOrgSwitchPower1::BeginGetStatus(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetStatus->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgSwitchPower1::EndGetStatus(IAsync& aAsync, TBool& aResultStatus)
@@ -197,8 +197,10 @@ void CpProxyUpnpOrgSwitchPower1::SetPropertyStatusChanged(Functor& aFunctor)
 
 void CpProxyUpnpOrgSwitchPower1::PropertyStatus(TBool& aStatus) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aStatus = iStatus->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyUpnpOrgSwitchPower1::StatusPropertyChanged()

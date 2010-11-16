@@ -35,6 +35,7 @@ TUint DviServer::Port(TIpAddress aInterface)
 
 DviServer::DviServer()
     : iLock("DSUM")
+    , iSubnetChangeListenerId(NetworkInterfaceList::kListenerIdNull)
 {
 }
 

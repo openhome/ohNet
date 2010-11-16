@@ -749,10 +749,10 @@ CpProxyUpnpOrgAVTransport2Cpp::CpProxyUpnpOrgAVTransport2Cpp(CpDeviceCpp& aDevic
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgAVTransport2Cpp::LastChangePropertyChanged);
     iLastChange = new PropertyString("LastChange", functor);
-    iService->AddProperty(iLastChange);
+    AddProperty(iLastChange);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgAVTransport2Cpp::DRMStatePropertyChanged);
     iDRMState = new PropertyString("DRMState", functor);
-    iService->AddProperty(iDRMState);
+    AddProperty(iDRMState);
 }
 
 CpProxyUpnpOrgAVTransport2Cpp::~CpProxyUpnpOrgAVTransport2Cpp()
@@ -802,7 +802,7 @@ void CpProxyUpnpOrgAVTransport2Cpp::BeginSetAVTransportURI(uint32_t aInstanceID,
         Brn buf((const TByte*)aCurrentURIMetaData.c_str(), (TUint)aCurrentURIMetaData.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::EndSetAVTransportURI(IAsync& aAsync)
@@ -837,7 +837,7 @@ void CpProxyUpnpOrgAVTransport2Cpp::BeginSetNextAVTransportURI(uint32_t aInstanc
         Brn buf((const TByte*)aNextURIMetaData.c_str(), (TUint)aNextURIMetaData.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::EndSetNextAVTransportURI(IAsync& aAsync)
@@ -875,7 +875,7 @@ void CpProxyUpnpOrgAVTransport2Cpp::BeginGetMediaInfo(uint32_t aInstanceID, Func
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::EndGetMediaInfo(IAsync& aAsync, uint32_t& aNrTracks, std::string& aMediaDuration, std::string& aCurrentURI, std::string& aCurrentURIMetaData, std::string& aNextURI, std::string& aNextURIMetaData, std::string& aPlayMedium, std::string& aRecordMedium, std::string& aWriteStatus)
@@ -948,7 +948,7 @@ void CpProxyUpnpOrgAVTransport2Cpp::BeginGetMediaInfo_Ext(uint32_t aInstanceID, 
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::EndGetMediaInfo_Ext(IAsync& aAsync, std::string& aCurrentType, uint32_t& aNrTracks, std::string& aMediaDuration, std::string& aCurrentURI, std::string& aCurrentURIMetaData, std::string& aNextURI, std::string& aNextURIMetaData, std::string& aPlayMedium, std::string& aRecordMedium, std::string& aWriteStatus)
@@ -1018,7 +1018,7 @@ void CpProxyUpnpOrgAVTransport2Cpp::BeginGetTransportInfo(uint32_t aInstanceID, 
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::EndGetTransportInfo(IAsync& aAsync, std::string& aCurrentTransportState, std::string& aCurrentTransportStatus, std::string& aCurrentSpeed)
@@ -1068,7 +1068,7 @@ void CpProxyUpnpOrgAVTransport2Cpp::BeginGetPositionInfo(uint32_t aInstanceID, F
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::EndGetPositionInfo(IAsync& aAsync, uint32_t& aTrack, std::string& aTrackDuration, std::string& aTrackMetaData, std::string& aTrackURI, std::string& aRelTime, std::string& aAbsTime, int32_t& aRelCount, int32_t& aAbsCount)
@@ -1124,7 +1124,7 @@ void CpProxyUpnpOrgAVTransport2Cpp::BeginGetDeviceCapabilities(uint32_t aInstanc
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::EndGetDeviceCapabilities(IAsync& aAsync, std::string& aPlayMedia, std::string& aRecMedia, std::string& aRecQualityModes)
@@ -1168,7 +1168,7 @@ void CpProxyUpnpOrgAVTransport2Cpp::BeginGetTransportSettings(uint32_t aInstance
     const Action::VectorParameters& outParams = iActionGetTransportSettings->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::EndGetTransportSettings(IAsync& aAsync, std::string& aPlayMode, std::string& aRecQualityMode)
@@ -1204,7 +1204,7 @@ void CpProxyUpnpOrgAVTransport2Cpp::BeginStop(uint32_t aInstanceID, FunctorAsync
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionStop->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::EndStop(IAsync& aAsync)
@@ -1235,7 +1235,7 @@ void CpProxyUpnpOrgAVTransport2Cpp::BeginPlay(uint32_t aInstanceID, const std::s
         Brn buf((const TByte*)aSpeed.c_str(), (TUint)aSpeed.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::EndPlay(IAsync& aAsync)
@@ -1262,7 +1262,7 @@ void CpProxyUpnpOrgAVTransport2Cpp::BeginPause(uint32_t aInstanceID, FunctorAsyn
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionPause->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::EndPause(IAsync& aAsync)
@@ -1289,7 +1289,7 @@ void CpProxyUpnpOrgAVTransport2Cpp::BeginRecord(uint32_t aInstanceID, FunctorAsy
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionRecord->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::EndRecord(IAsync& aAsync)
@@ -1324,7 +1324,7 @@ void CpProxyUpnpOrgAVTransport2Cpp::BeginSeek(uint32_t aInstanceID, const std::s
         Brn buf((const TByte*)aTarget.c_str(), (TUint)aTarget.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::EndSeek(IAsync& aAsync)
@@ -1351,7 +1351,7 @@ void CpProxyUpnpOrgAVTransport2Cpp::BeginNext(uint32_t aInstanceID, FunctorAsync
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionNext->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::EndNext(IAsync& aAsync)
@@ -1378,7 +1378,7 @@ void CpProxyUpnpOrgAVTransport2Cpp::BeginPrevious(uint32_t aInstanceID, FunctorA
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionPrevious->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::EndPrevious(IAsync& aAsync)
@@ -1409,7 +1409,7 @@ void CpProxyUpnpOrgAVTransport2Cpp::BeginSetPlayMode(uint32_t aInstanceID, const
         Brn buf((const TByte*)aNewPlayMode.c_str(), (TUint)aNewPlayMode.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::EndSetPlayMode(IAsync& aAsync)
@@ -1440,7 +1440,7 @@ void CpProxyUpnpOrgAVTransport2Cpp::BeginSetRecordQualityMode(uint32_t aInstance
         Brn buf((const TByte*)aNewRecordQualityMode.c_str(), (TUint)aNewRecordQualityMode.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::EndSetRecordQualityMode(IAsync& aAsync)
@@ -1470,7 +1470,7 @@ void CpProxyUpnpOrgAVTransport2Cpp::BeginGetCurrentTransportActions(uint32_t aIn
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetCurrentTransportActions->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::EndGetCurrentTransportActions(IAsync& aAsync, std::string& aActions)
@@ -1505,7 +1505,7 @@ void CpProxyUpnpOrgAVTransport2Cpp::BeginGetDRMState(uint32_t aInstanceID, Funct
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetDRMState->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::EndGetDRMState(IAsync& aAsync, std::string& aCurrentDRMState)
@@ -1544,7 +1544,7 @@ void CpProxyUpnpOrgAVTransport2Cpp::BeginGetStateVariables(uint32_t aInstanceID,
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetStateVariables->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::EndGetStateVariables(IAsync& aAsync, std::string& aStateVariableValuePairs)
@@ -1595,7 +1595,7 @@ void CpProxyUpnpOrgAVTransport2Cpp::BeginSetStateVariables(uint32_t aInstanceID,
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionSetStateVariables->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::EndSetStateVariables(IAsync& aAsync, std::string& aStateVariableList)
@@ -1630,16 +1630,20 @@ void CpProxyUpnpOrgAVTransport2Cpp::SetPropertyDRMStateChanged(Functor& aFunctor
 
 void CpProxyUpnpOrgAVTransport2Cpp::PropertyLastChange(std::string& aLastChange) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iLastChange->Value();
     aLastChange.assign((const char*)val.Ptr(), val.Bytes());
+    iPropertyLock->Signal();
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::PropertyDRMState(std::string& aDRMState) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iDRMState->Value();
     aDRMState.assign((const char*)val.Ptr(), val.Bytes());
+    iPropertyLock->Signal();
 }
 
 void CpProxyUpnpOrgAVTransport2Cpp::LastChangePropertyChanged()

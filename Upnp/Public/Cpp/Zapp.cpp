@@ -200,7 +200,7 @@ void InitialisationParams::SetDvNumPublisherThreads(uint32_t aNumThreads)
 
 void InitialisationParams::SetDvNumWebSocketThreads(uint32_t aNumThreads)
 {
-    ASSERT(aNumThreads > 0 && aNumThreads < 100);
+    ASSERT(aNumThreads >= 0 && aNumThreads < 100);
     iDvNumWebSocketThreads = aNumThreads;
 }
 
@@ -324,7 +324,7 @@ InitialisationParams::InitialisationParams()
     , iUseLoopbackNetworkInterface(false)
 	, iDvMaxUpdateTimeSecs(1800)
 	, iDvNumPublisherThreads(4)
-    , iDvNumWebSocketThreads(5)
+    , iDvNumWebSocketThreads(0)
 {
     iDefaultLogger = new DefaultLogger;
     FunctorMsg functor = MakeFunctorMsg(*iDefaultLogger, &Zapp::DefaultLogger::Log);

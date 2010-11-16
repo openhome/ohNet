@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -59,7 +59,7 @@ void DvProviderUpnpOrgConnectionManager2Cpp::EnableActionGetProtocolInfo()
     Zapp::Action* action = new Zapp::Action("GetProtocolInfo");
     action->AddOutputParameter(new ParameterRelated("Source", *iPropertySourceProtocolInfo));
     action->AddOutputParameter(new ParameterRelated("Sink", *iPropertySinkProtocolInfo));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgConnectionManager2Cpp::DoGetProtocolInfo);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgConnectionManager2Cpp::DoGetProtocolInfo);
     iService->AddAction(action, functor);
 }
 
@@ -80,7 +80,7 @@ void DvProviderUpnpOrgConnectionManager2Cpp::EnableActionPrepareForConnection()
     action->AddOutputParameter(new ParameterInt("ConnectionID"));
     action->AddOutputParameter(new ParameterInt("AVTransportID"));
     action->AddOutputParameter(new ParameterInt("RcsID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgConnectionManager2Cpp::DoPrepareForConnection);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgConnectionManager2Cpp::DoPrepareForConnection);
     iService->AddAction(action, functor);
 }
 
@@ -88,7 +88,7 @@ void DvProviderUpnpOrgConnectionManager2Cpp::EnableActionConnectionComplete()
 {
     Zapp::Action* action = new Zapp::Action("ConnectionComplete");
     action->AddInputParameter(new ParameterInt("ConnectionID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgConnectionManager2Cpp::DoConnectionComplete);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgConnectionManager2Cpp::DoConnectionComplete);
     iService->AddAction(action, functor);
 }
 
@@ -96,7 +96,7 @@ void DvProviderUpnpOrgConnectionManager2Cpp::EnableActionGetCurrentConnectionIDs
 {
     Zapp::Action* action = new Zapp::Action("GetCurrentConnectionIDs");
     action->AddOutputParameter(new ParameterRelated("ConnectionIDs", *iPropertyCurrentConnectionIDs));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgConnectionManager2Cpp::DoGetCurrentConnectionIDs);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgConnectionManager2Cpp::DoGetCurrentConnectionIDs);
     iService->AddAction(action, functor);
 }
 
@@ -126,11 +126,11 @@ void DvProviderUpnpOrgConnectionManager2Cpp::EnableActionGetCurrentConnectionInf
     allowedValues[index++] = (TChar*)"Unknown";
     action->AddOutputParameter(new ParameterString("Status", allowedValues, 5));
     delete[] allowedValues;
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgConnectionManager2Cpp::DoGetCurrentConnectionInfo);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgConnectionManager2Cpp::DoGetCurrentConnectionInfo);
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgConnectionManager2Cpp::DoGetProtocolInfo(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgConnectionManager2Cpp::DoGetProtocolInfo(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -149,7 +149,7 @@ void DvProviderUpnpOrgConnectionManager2Cpp::DoGetProtocolInfo(IDvInvocation& aI
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgConnectionManager2Cpp::DoPrepareForConnection(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgConnectionManager2Cpp::DoPrepareForConnection(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_RemoteProtocolInfo;
@@ -177,7 +177,7 @@ void DvProviderUpnpOrgConnectionManager2Cpp::DoPrepareForConnection(IDvInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgConnectionManager2Cpp::DoConnectionComplete(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgConnectionManager2Cpp::DoConnectionComplete(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     int32_t ConnectionID = aInvocation.InvocationReadInt("ConnectionID");
@@ -187,7 +187,7 @@ void DvProviderUpnpOrgConnectionManager2Cpp::DoConnectionComplete(IDvInvocation&
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgConnectionManager2Cpp::DoGetCurrentConnectionIDs(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgConnectionManager2Cpp::DoGetCurrentConnectionIDs(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -201,7 +201,7 @@ void DvProviderUpnpOrgConnectionManager2Cpp::DoGetCurrentConnectionIDs(IDvInvoca
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgConnectionManager2Cpp::DoGetCurrentConnectionInfo(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgConnectionManager2Cpp::DoGetCurrentConnectionInfo(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     int32_t ConnectionID = aInvocation.InvocationReadInt("ConnectionID");

@@ -8,6 +8,7 @@
 
 namespace Zapp {
 
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -96,30 +97,30 @@ private:
     virtual void DisplayLedOff(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaOff);
 private:
     DvProviderLinnCoUkUi2();
-    void DoDisplayTestPattern(IDvInvocation& aInvocation, TUint aVersion);
-    void DoDisplayFill(IDvInvocation& aInvocation, TUint aVersion);
-    void DoDisplayClear(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetTestModeEnabled(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSimulateInfraredInput(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSimulateButtonInput(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSimulateLightSensor(IDvInvocation& aInvocation, TUint aVersion);
-    void DoGetLightSensorData(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetDisplayBrightness(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetDisplayBrightnessAuto(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetInfraredCommands(IDvInvocation& aInvocation, TUint aVersion);
-    void DoInfraredCommands(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetInfraredTerminalCommands(IDvInvocation& aInvocation, TUint aVersion);
-    void DoInfraredTerminalCommands(IDvInvocation& aInvocation, TUint aVersion);
-    void DoDisplayBrightness(IDvInvocation& aInvocation, TUint aVersion);
-    void DoDisplayBrightnessAuto(IDvInvocation& aInvocation, TUint aVersion);
-    void DoDisplayUpsideDown(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetDisplayUpsideDown(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetDisplayScrollText(IDvInvocation& aInvocation, TUint aVersion);
-    void DoDisplayScrollText(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetDisplaySleep(IDvInvocation& aInvocation, TUint aVersion);
-    void DoDisplaySleep(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetDisplayLedOff(IDvInvocation& aInvocation, TUint aVersion);
-    void DoDisplayLedOff(IDvInvocation& aInvocation, TUint aVersion);
+    void DoDisplayTestPattern(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDisplayFill(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDisplayClear(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetTestModeEnabled(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSimulateInfraredInput(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSimulateButtonInput(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSimulateLightSensor(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetLightSensorData(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetDisplayBrightness(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetDisplayBrightnessAuto(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetInfraredCommands(IDviInvocation& aInvocation, TUint aVersion);
+    void DoInfraredCommands(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetInfraredTerminalCommands(IDviInvocation& aInvocation, TUint aVersion);
+    void DoInfraredTerminalCommands(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDisplayBrightness(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDisplayBrightnessAuto(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDisplayUpsideDown(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetDisplayUpsideDown(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetDisplayScrollText(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDisplayScrollText(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetDisplaySleep(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDisplaySleep(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetDisplayLedOff(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDisplayLedOff(IDviInvocation& aInvocation, TUint aVersion);
 private:
     PropertyUint* iPropertyDisplayBrightness;
     PropertyBool* iPropertyDisplayBrightnessAuto;

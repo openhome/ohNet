@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -73,23 +73,23 @@ private:
     virtual void ToggleBool(uint32_t aVersion);
 private:
     DvProviderZappOrgTestBasic1Cpp();
-    void DoIncrement(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDecrement(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoToggle(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoEchoString(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoEchoBinary(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetUint(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetUint(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetInt(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetInt(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetBool(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetBool(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetMultiple(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetString(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetString(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetBinary(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetBinary(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoToggleBool(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoIncrement(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDecrement(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoToggle(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoEchoString(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoEchoBinary(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetUint(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetUint(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetInt(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetInt(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetBool(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetBool(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetMultiple(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetString(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetString(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetBinary(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetBinary(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoToggleBool(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyUint* iPropertyVarUint;
     PropertyInt* iPropertyVarInt;

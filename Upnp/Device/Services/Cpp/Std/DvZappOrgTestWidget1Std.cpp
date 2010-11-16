@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -113,11 +113,11 @@ void DvProviderZappOrgTestWidget1Cpp::EnableActionSetReadWriteRegister()
     Zapp::Action* action = new Zapp::Action("SetReadWriteRegister");
     action->AddInputParameter(new ParameterUint("RegisterIndex"));
     action->AddInputParameter(new ParameterUint("RegisterValue"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestWidget1Cpp::DoSetReadWriteRegister);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestWidget1Cpp::DoSetReadWriteRegister);
     iService->AddAction(action, functor);
 }
 
-void DvProviderZappOrgTestWidget1Cpp::DoSetReadWriteRegister(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestWidget1Cpp::DoSetReadWriteRegister(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t RegisterIndex = aInvocation.InvocationReadUint("RegisterIndex");

@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -92,7 +92,7 @@ void DvProviderLinnCoUkProxyManager1::EnableActionKontrolProductConnected()
 {
     Zapp::Action* action = new Zapp::Action("KontrolProductConnected");
     action->AddOutputParameter(new ParameterRelated("aConnected", *iPropertyKontrolProductConnected));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProxyManager1::DoKontrolProductConnected);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProxyManager1::DoKontrolProductConnected);
     iService->AddAction(action, functor);
 }
 
@@ -100,7 +100,7 @@ void DvProviderLinnCoUkProxyManager1::EnableActionSetKontrolProductConnected()
 {
     Zapp::Action* action = new Zapp::Action("SetKontrolProductConnected");
     action->AddInputParameter(new ParameterRelated("aConnected", *iPropertyKontrolProductConnected));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProxyManager1::DoSetKontrolProductConnected);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProxyManager1::DoSetKontrolProductConnected);
     iService->AddAction(action, functor);
 }
 
@@ -108,7 +108,7 @@ void DvProviderLinnCoUkProxyManager1::EnableActionKontrolProductComPort()
 {
     Zapp::Action* action = new Zapp::Action("KontrolProductComPort");
     action->AddOutputParameter(new ParameterRelated("aPort", *iPropertyKontrolProductComPort));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProxyManager1::DoKontrolProductComPort);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProxyManager1::DoKontrolProductComPort);
     iService->AddAction(action, functor);
 }
 
@@ -116,7 +116,7 @@ void DvProviderLinnCoUkProxyManager1::EnableActionSetKontrolProductComPort()
 {
     Zapp::Action* action = new Zapp::Action("SetKontrolProductComPort");
     action->AddInputParameter(new ParameterRelated("aConnected", *iPropertyKontrolProductComPort));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProxyManager1::DoSetKontrolProductComPort);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProxyManager1::DoSetKontrolProductComPort);
     iService->AddAction(action, functor);
 }
 
@@ -124,7 +124,7 @@ void DvProviderLinnCoUkProxyManager1::EnableActionDiscPlayerConnected()
 {
     Zapp::Action* action = new Zapp::Action("DiscPlayerConnected");
     action->AddOutputParameter(new ParameterRelated("aConnected", *iPropertyDiscPlayerConnected));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProxyManager1::DoDiscPlayerConnected);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProxyManager1::DoDiscPlayerConnected);
     iService->AddAction(action, functor);
 }
 
@@ -132,7 +132,7 @@ void DvProviderLinnCoUkProxyManager1::EnableActionSetDiscPlayerConnected()
 {
     Zapp::Action* action = new Zapp::Action("SetDiscPlayerConnected");
     action->AddInputParameter(new ParameterRelated("aConnected", *iPropertyDiscPlayerConnected));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProxyManager1::DoSetDiscPlayerConnected);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProxyManager1::DoSetDiscPlayerConnected);
     iService->AddAction(action, functor);
 }
 
@@ -140,7 +140,7 @@ void DvProviderLinnCoUkProxyManager1::EnableActionDiscPlayerComPort()
 {
     Zapp::Action* action = new Zapp::Action("DiscPlayerComPort");
     action->AddOutputParameter(new ParameterRelated("aPort", *iPropertyDiscPlayerComPort));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProxyManager1::DoDiscPlayerComPort);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProxyManager1::DoDiscPlayerComPort);
     iService->AddAction(action, functor);
 }
 
@@ -148,7 +148,7 @@ void DvProviderLinnCoUkProxyManager1::EnableActionSetDiscPlayerComPort()
 {
     Zapp::Action* action = new Zapp::Action("SetDiscPlayerComPort");
     action->AddInputParameter(new ParameterRelated("aConnected", *iPropertyDiscPlayerComPort));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProxyManager1::DoSetDiscPlayerComPort);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProxyManager1::DoSetDiscPlayerComPort);
     iService->AddAction(action, functor);
 }
 
@@ -156,7 +156,7 @@ void DvProviderLinnCoUkProxyManager1::EnableActionTestKontrolProductConnection()
 {
     Zapp::Action* action = new Zapp::Action("TestKontrolProductConnection");
     action->AddOutputParameter(new ParameterBool("aResult"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProxyManager1::DoTestKontrolProductConnection);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProxyManager1::DoTestKontrolProductConnection);
     iService->AddAction(action, functor);
 }
 
@@ -164,11 +164,11 @@ void DvProviderLinnCoUkProxyManager1::EnableActionTestDiscPlayerConnection()
 {
     Zapp::Action* action = new Zapp::Action("TestDiscPlayerConnection");
     action->AddOutputParameter(new ParameterBool("aResult"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProxyManager1::DoTestDiscPlayerConnection);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProxyManager1::DoTestDiscPlayerConnection);
     iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkProxyManager1::DoKontrolProductConnected(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProxyManager1::DoKontrolProductConnected(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -177,7 +177,7 @@ void DvProviderLinnCoUkProxyManager1::DoKontrolProductConnected(IDvInvocation& a
     KontrolProductConnected(resp, aVersion, respaConnected);
 }
 
-void DvProviderLinnCoUkProxyManager1::DoSetKontrolProductConnected(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProxyManager1::DoSetKontrolProductConnected(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz aConnected;
@@ -187,7 +187,7 @@ void DvProviderLinnCoUkProxyManager1::DoSetKontrolProductConnected(IDvInvocation
     SetKontrolProductConnected(resp, aVersion, aConnected);
 }
 
-void DvProviderLinnCoUkProxyManager1::DoKontrolProductComPort(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProxyManager1::DoKontrolProductComPort(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -196,7 +196,7 @@ void DvProviderLinnCoUkProxyManager1::DoKontrolProductComPort(IDvInvocation& aIn
     KontrolProductComPort(resp, aVersion, respaPort);
 }
 
-void DvProviderLinnCoUkProxyManager1::DoSetKontrolProductComPort(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProxyManager1::DoSetKontrolProductComPort(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aConnected = aInvocation.InvocationReadUint("aConnected");
@@ -205,7 +205,7 @@ void DvProviderLinnCoUkProxyManager1::DoSetKontrolProductComPort(IDvInvocation& 
     SetKontrolProductComPort(resp, aVersion, aConnected);
 }
 
-void DvProviderLinnCoUkProxyManager1::DoDiscPlayerConnected(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProxyManager1::DoDiscPlayerConnected(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -214,7 +214,7 @@ void DvProviderLinnCoUkProxyManager1::DoDiscPlayerConnected(IDvInvocation& aInvo
     DiscPlayerConnected(resp, aVersion, respaConnected);
 }
 
-void DvProviderLinnCoUkProxyManager1::DoSetDiscPlayerConnected(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProxyManager1::DoSetDiscPlayerConnected(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz aConnected;
@@ -224,7 +224,7 @@ void DvProviderLinnCoUkProxyManager1::DoSetDiscPlayerConnected(IDvInvocation& aI
     SetDiscPlayerConnected(resp, aVersion, aConnected);
 }
 
-void DvProviderLinnCoUkProxyManager1::DoDiscPlayerComPort(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProxyManager1::DoDiscPlayerComPort(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -233,7 +233,7 @@ void DvProviderLinnCoUkProxyManager1::DoDiscPlayerComPort(IDvInvocation& aInvoca
     DiscPlayerComPort(resp, aVersion, respaPort);
 }
 
-void DvProviderLinnCoUkProxyManager1::DoSetDiscPlayerComPort(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProxyManager1::DoSetDiscPlayerComPort(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aConnected = aInvocation.InvocationReadUint("aConnected");
@@ -242,7 +242,7 @@ void DvProviderLinnCoUkProxyManager1::DoSetDiscPlayerComPort(IDvInvocation& aInv
     SetDiscPlayerComPort(resp, aVersion, aConnected);
 }
 
-void DvProviderLinnCoUkProxyManager1::DoTestKontrolProductConnection(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProxyManager1::DoTestKontrolProductConnection(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -251,7 +251,7 @@ void DvProviderLinnCoUkProxyManager1::DoTestKontrolProductConnection(IDvInvocati
     TestKontrolProductConnection(resp, aVersion, respaResult);
 }
 
-void DvProviderLinnCoUkProxyManager1::DoTestDiscPlayerConnection(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProxyManager1::DoTestDiscPlayerConnection(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

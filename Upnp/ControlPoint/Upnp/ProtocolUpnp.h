@@ -16,7 +16,7 @@
 
 namespace Zapp {
 
-class Subscription;
+class CpiSubscription;
 
 class InvocationUpnp : private IInterruptHandler
 {
@@ -67,12 +67,11 @@ private:
 class EventUpnp : private IInterruptHandler, private INonCopyable
 {
 public:
-    EventUpnp(Subscription& aSubscription);
+    EventUpnp(CpiSubscription& aSubscription);
     ~EventUpnp();
     void Subscribe(const Uri& aPublisher, const Uri& aSubscriber, TUint& aDurationSecs);
     void RenewSubscription(const Uri& aPublisher, TUint& aDurationSecs);
     void Unsubscribe(const Uri& aPublisher, const Brx& aSid);
-    static void ProcessNotification(const Brx& aNotification, PropertyMap& aProperties);
 private:
     void Interrupt();
 private:
@@ -84,7 +83,7 @@ private:
     static void WriteHeaderSid(WriterHttpRequest& aWriterRequest, const Brx& aSid);
     static void WriteHeaderTimeout(WriterHttpRequest& aWriterRequest, TUint aSeconds);
 private:
-    Subscription& iSubscription;
+    CpiSubscription& iSubscription;
     SocketTcpClient iSocket;
 };
 

@@ -51,6 +51,7 @@
 
 namespace Zapp {
 
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -84,7 +85,7 @@ private:
     <#=className#>();
 <#  foreach (Method a in u.methods) #>
 <#  { #>
-    void Do<#=a.name#>(IDvInvocation& aInvocation, TUint aVersion);
+    void Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion);
 <#  } #>
 private:
 <#  foreach (Variable s in u.evented) #>

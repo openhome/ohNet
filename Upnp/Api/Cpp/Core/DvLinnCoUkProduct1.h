@@ -8,6 +8,7 @@
 
 namespace Zapp {
 
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -38,10 +39,10 @@ private:
     virtual void SetStandby(IInvocationResponse& aResponse, TUint aVersion, TBool aaStandby);
 private:
     DvProviderLinnCoUkProduct1();
-    void DoRoom(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetRoom(IDvInvocation& aInvocation, TUint aVersion);
-    void DoStandby(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetStandby(IDvInvocation& aInvocation, TUint aVersion);
+    void DoRoom(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetRoom(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStandby(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetStandby(IDviInvocation& aInvocation, TUint aVersion);
 private:
     PropertyString* iPropertyRoom;
     PropertyBool* iPropertyStandby;

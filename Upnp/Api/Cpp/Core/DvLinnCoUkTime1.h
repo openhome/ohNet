@@ -8,6 +8,7 @@
 
 namespace Zapp {
 
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -34,7 +35,7 @@ private:
     virtual void Time(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaTrackCount, IInvocationResponseUint& aaDuration, IInvocationResponseUint& aaSeconds);
 private:
     DvProviderLinnCoUkTime1();
-    void DoTime(IDvInvocation& aInvocation, TUint aVersion);
+    void DoTime(IDviInvocation& aInvocation, TUint aVersion);
 private:
     PropertyUint* iPropertyTrackCount;
     PropertyUint* iPropertyDuration;

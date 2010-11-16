@@ -27,9 +27,9 @@
 namespace Zapp {
 
 class Invocation;
-class Subscription;
-class Property;
-typedef std::map<Brn,Property*,BufferCmp> PropertyMap;
+class CpiSubscription;
+class IInvocable;
+class IEventProcessor;
 
 /**
  * Service.  Specific to a single device.
@@ -48,24 +48,6 @@ public:
      * Any pending invocations are likely to complete with errors.
      */
     DllExport ~CpiService();
-
-    /**
-     * Add a property (aka state variable) to the service
-     * Passes ownership of aProperty
-     * Properties should ideally be added on construction of a Service.  Properties
-     * which are added after a call to Subscribe() will not be updated until an
-     * unsubscribe followed by re-subscribe.
-     */
-    DllExport void AddProperty(Property* aProperty);
-
-    /**
-     * Set a callback which will run at the end of processing a single notification
-     * i.e. after processing 1..n updates
-     * This may be useful for clients who'll act on updates to a group of related properties
-     * Should be set on construction of a service.  A Functor set after a call to Subscribe()
-     * will not be called until an unsubscribe followed by re-subscribe.
-     */
-    void SetPropertyChanged(Functor& aFunctor);
     
     // !!!! Refresh (refresh iSubscription)
 
@@ -89,11 +71,11 @@ public:
      * [see AddProperty()]
      * Note that subscription is asynchronous.  There is no formal notification that
      * it has completed but clients can infer this by setting a callback using
-     * SetPropertyChanged().  The next callback after a call to Subscribe() implies
-     * that a subscription has completed
+     * CpProxy::SetPropertyChanged().  The next callback after a call to Subscribe()
+     * implies that a subscription has completed
      * It is safe to delete a Service while a subscription is in progress.
      */
-    void Subscribe();
+    void Subscribe(IEventProcessor& aEventProcessor);
 
     /**
      * Unsubscribe to updates on properties for this Service
@@ -124,9 +106,7 @@ private:
     TUint iPendingInvocations;
     Semaphore iShutdownSignal;
     TBool iInterrupt;
-    Subscription* iSubscription;
-    PropertyMap iProperties;
-    Functor iPropertyChanged;
+    CpiSubscription* iSubscription;
 };
 
 /**
@@ -249,7 +229,7 @@ private:
 
 /**
  * Callback used to interrupt an active operation
- * Devices should implement this interface.
+ * CpDevices should implement this interface.
  */
 class IInterruptHandler
 {
@@ -264,8 +244,8 @@ public:
 /**
  * Used to invoke an Action with particular Arguments on a Service
  *
- * Clients must not create new Invocation instances or delete instances returned by
- * Service::GetInvocation() or passed to their invocation completed callback.
+ * Control point side clients must not create new Invocation instances or delete instances
+ * returned by Service::GetInvocation() or passed to their invocation completed callback.
  *
  * Normal use will be
  * - create (possibly allocating) any data required in the callback
@@ -278,7 +258,7 @@ public:
  * - create one Argument-derived class for each OutputParameter on the action
  *      these arguments should not have their values set (i.e. use the c'tor taking one param)
  * - call AddOutput() for each of these arguments
- * - call Invoke()
+ * - call IInvocable::QueueInvocation()
  * ....
  * - The invocation completed callback will run.  Invocation::Error() will be
  *      true if the invocation failed.  If no error occurred, each member of
@@ -287,13 +267,6 @@ public:
 class DllExportClass Invocation : public Async
 {
 public:
-    /**
-     * Invoke an action after setting all relevant in/out arguments etc
-     *
-     * The Completed() callback is guaranteed to be called.
-     */
-    DllExport void Invoke();
-
     /**
      * Intended for internal use only
      */
@@ -373,6 +346,9 @@ public:
      * This is assumed to be of interest to the device and the Completed() callback
      */
     DllExport VectorArguments& OutputArguments();
+
+    void SetInvoker(IInvocable& aInvocable);
+    IInvocable& Invoker();
 private:
     Invocation(Fifo<Zapp::Invocation*>& aFree);
     Invocation& operator=(const Invocation& aInvocation);
@@ -393,6 +369,7 @@ private:
     VectorArguments iInput;
     VectorArguments iOutput;
     IInterruptHandler* iInterruptHandler;
+    IInvocable* iInvoker;
 private:
     friend class InvocationManager;
 };
@@ -442,7 +419,6 @@ private:
     void Run();
 private:
     Mutex iLock;
-    Mutex iOutputLock;
     Fifo<Zapp::Invocation*> iFreeInvocations;
     Fifo<Zapp::Invocation*> iWaitingInvocations;
     Fifo<Invoker*> iFreeInvokers;

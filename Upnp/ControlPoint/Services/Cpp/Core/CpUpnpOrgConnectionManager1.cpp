@@ -210,13 +210,13 @@ CpProxyUpnpOrgConnectionManager1::CpProxyUpnpOrgConnectionManager1(CpDevice& aDe
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgConnectionManager1::SourceProtocolInfoPropertyChanged);
     iSourceProtocolInfo = new PropertyString("SourceProtocolInfo", functor);
-    iService->AddProperty(iSourceProtocolInfo);
+    AddProperty(iSourceProtocolInfo);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgConnectionManager1::SinkProtocolInfoPropertyChanged);
     iSinkProtocolInfo = new PropertyString("SinkProtocolInfo", functor);
-    iService->AddProperty(iSinkProtocolInfo);
+    AddProperty(iSinkProtocolInfo);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgConnectionManager1::CurrentConnectionIDsPropertyChanged);
     iCurrentConnectionIDs = new PropertyString("CurrentConnectionIDs", functor);
-    iService->AddProperty(iCurrentConnectionIDs);
+    AddProperty(iCurrentConnectionIDs);
 }
 
 CpProxyUpnpOrgConnectionManager1::~CpProxyUpnpOrgConnectionManager1()
@@ -243,7 +243,7 @@ void CpProxyUpnpOrgConnectionManager1::BeginGetProtocolInfo(FunctorAsync& aFunct
     const Action::VectorParameters& outParams = iActionGetProtocolInfo->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgConnectionManager1::EndGetProtocolInfo(IAsync& aAsync, Brh& aSource, Brh& aSink)
@@ -281,7 +281,7 @@ void CpProxyUpnpOrgConnectionManager1::BeginPrepareForConnection(const Brx& aRem
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgConnectionManager1::EndPrepareForConnection(IAsync& aAsync, TInt& aConnectionID, TInt& aAVTransportID, TInt& aRcsID)
@@ -312,7 +312,7 @@ void CpProxyUpnpOrgConnectionManager1::BeginConnectionComplete(TInt aConnectionI
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionConnectionComplete->InputParameters();
     invocation->AddInput(new ArgumentInt(*inParams[inIndex++], aConnectionID));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgConnectionManager1::EndConnectionComplete(IAsync& aAsync)
@@ -339,7 +339,7 @@ void CpProxyUpnpOrgConnectionManager1::BeginGetCurrentConnectionIDs(FunctorAsync
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetCurrentConnectionIDs->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgConnectionManager1::EndGetCurrentConnectionIDs(IAsync& aAsync, Brh& aConnectionIDs)
@@ -377,7 +377,7 @@ void CpProxyUpnpOrgConnectionManager1::BeginGetCurrentConnectionInfo(TInt aConne
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgConnectionManager1::EndGetCurrentConnectionInfo(IAsync& aAsync, TInt& aRcsID, TInt& aAVTransportID, Brh& aProtocolInfo, Brh& aPeerConnectionManager, TInt& aPeerConnectionID, Brh& aDirection, Brh& aStatus)
@@ -422,20 +422,26 @@ void CpProxyUpnpOrgConnectionManager1::SetPropertyCurrentConnectionIDsChanged(Fu
 
 void CpProxyUpnpOrgConnectionManager1::PropertySourceProtocolInfo(Brhz& aSourceProtocolInfo) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSourceProtocolInfo.Set(iSourceProtocolInfo->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyUpnpOrgConnectionManager1::PropertySinkProtocolInfo(Brhz& aSinkProtocolInfo) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSinkProtocolInfo.Set(iSinkProtocolInfo->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyUpnpOrgConnectionManager1::PropertyCurrentConnectionIDs(Brhz& aCurrentConnectionIDs) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aCurrentConnectionIDs.Set(iCurrentConnectionIDs->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyUpnpOrgConnectionManager1::SourceProtocolInfoPropertyChanged()

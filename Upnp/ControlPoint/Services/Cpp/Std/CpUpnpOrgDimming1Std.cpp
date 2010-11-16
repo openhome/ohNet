@@ -545,19 +545,19 @@ CpProxyUpnpOrgDimming1Cpp::CpProxyUpnpOrgDimming1Cpp(CpDeviceCpp& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgDimming1Cpp::LoadLevelStatusPropertyChanged);
     iLoadLevelStatus = new PropertyUint("LoadLevelStatus", functor);
-    iService->AddProperty(iLoadLevelStatus);
+    AddProperty(iLoadLevelStatus);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgDimming1Cpp::StepDeltaPropertyChanged);
     iStepDelta = new PropertyUint("StepDelta", functor);
-    iService->AddProperty(iStepDelta);
+    AddProperty(iStepDelta);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgDimming1Cpp::RampRatePropertyChanged);
     iRampRate = new PropertyUint("RampRate", functor);
-    iService->AddProperty(iRampRate);
+    AddProperty(iRampRate);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgDimming1Cpp::IsRampingPropertyChanged);
     iIsRamping = new PropertyBool("IsRamping", functor);
-    iService->AddProperty(iIsRamping);
+    AddProperty(iIsRamping);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgDimming1Cpp::RampPausedPropertyChanged);
     iRampPaused = new PropertyBool("RampPaused", functor);
-    iService->AddProperty(iRampPaused);
+    AddProperty(iRampPaused);
 }
 
 CpProxyUpnpOrgDimming1Cpp::~CpProxyUpnpOrgDimming1Cpp()
@@ -599,7 +599,7 @@ void CpProxyUpnpOrgDimming1Cpp::BeginSetLoadLevelTarget(uint32_t anewLoadlevelTa
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetLoadLevelTarget->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], anewLoadlevelTarget));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::EndSetLoadLevelTarget(IAsync& aAsync)
@@ -626,7 +626,7 @@ void CpProxyUpnpOrgDimming1Cpp::BeginGetLoadLevelTarget(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetLoadLevelTarget->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::EndGetLoadLevelTarget(IAsync& aAsync, uint32_t& aGetLoadlevelTarget)
@@ -655,7 +655,7 @@ void CpProxyUpnpOrgDimming1Cpp::BeginGetLoadLevelStatus(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetLoadLevelStatus->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::EndGetLoadLevelStatus(IAsync& aAsync, uint32_t& aretLoadlevelStatus)
@@ -684,7 +684,7 @@ void CpProxyUpnpOrgDimming1Cpp::BeginSetOnEffectLevel(uint32_t anewOnEffectLevel
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetOnEffectLevel->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], anewOnEffectLevel));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::EndSetOnEffectLevel(IAsync& aAsync)
@@ -714,7 +714,7 @@ void CpProxyUpnpOrgDimming1Cpp::BeginSetOnEffect(const std::string& anewOnEffect
         Brn buf((const TByte*)anewOnEffect.c_str(), (TUint)anewOnEffect.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::EndSetOnEffect(IAsync& aAsync)
@@ -742,7 +742,7 @@ void CpProxyUpnpOrgDimming1Cpp::BeginGetOnEffectParameters(FunctorAsync& aFuncto
     const Action::VectorParameters& outParams = iActionGetOnEffectParameters->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::EndGetOnEffectParameters(IAsync& aAsync, std::string& aretOnEffect, uint32_t& aretOnEffectLevel)
@@ -772,7 +772,7 @@ void CpProxyUpnpOrgDimming1Cpp::SyncStepUp()
 void CpProxyUpnpOrgDimming1Cpp::BeginStepUp(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionStepUp, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::EndStepUp(IAsync& aAsync)
@@ -796,7 +796,7 @@ void CpProxyUpnpOrgDimming1Cpp::SyncStepDown()
 void CpProxyUpnpOrgDimming1Cpp::BeginStepDown(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionStepDown, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::EndStepDown(IAsync& aAsync)
@@ -820,7 +820,7 @@ void CpProxyUpnpOrgDimming1Cpp::SyncStartRampUp()
 void CpProxyUpnpOrgDimming1Cpp::BeginStartRampUp(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionStartRampUp, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::EndStartRampUp(IAsync& aAsync)
@@ -844,7 +844,7 @@ void CpProxyUpnpOrgDimming1Cpp::SyncStartRampDown()
 void CpProxyUpnpOrgDimming1Cpp::BeginStartRampDown(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionStartRampDown, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::EndStartRampDown(IAsync& aAsync)
@@ -868,7 +868,7 @@ void CpProxyUpnpOrgDimming1Cpp::SyncStopRamp()
 void CpProxyUpnpOrgDimming1Cpp::BeginStopRamp(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionStopRamp, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::EndStopRamp(IAsync& aAsync)
@@ -896,7 +896,7 @@ void CpProxyUpnpOrgDimming1Cpp::BeginStartRampToLevel(uint32_t anewLoadLevelTarg
     const Action::VectorParameters& inParams = iActionStartRampToLevel->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], anewLoadLevelTarget));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], anewRampTime));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::EndStartRampToLevel(IAsync& aAsync)
@@ -923,7 +923,7 @@ void CpProxyUpnpOrgDimming1Cpp::BeginSetStepDelta(uint32_t anewStepDelta, Functo
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetStepDelta->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], anewStepDelta));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::EndSetStepDelta(IAsync& aAsync)
@@ -950,7 +950,7 @@ void CpProxyUpnpOrgDimming1Cpp::BeginGetStepDelta(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetStepDelta->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::EndGetStepDelta(IAsync& aAsync, uint32_t& aretStepDelta)
@@ -979,7 +979,7 @@ void CpProxyUpnpOrgDimming1Cpp::BeginSetRampRate(uint32_t anewRampRate, FunctorA
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetRampRate->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], anewRampRate));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::EndSetRampRate(IAsync& aAsync)
@@ -1006,7 +1006,7 @@ void CpProxyUpnpOrgDimming1Cpp::BeginGetRampRate(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetRampRate->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::EndGetRampRate(IAsync& aAsync, uint32_t& aretRampRate)
@@ -1032,7 +1032,7 @@ void CpProxyUpnpOrgDimming1Cpp::SyncPauseRamp()
 void CpProxyUpnpOrgDimming1Cpp::BeginPauseRamp(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionPauseRamp, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::EndPauseRamp(IAsync& aAsync)
@@ -1056,7 +1056,7 @@ void CpProxyUpnpOrgDimming1Cpp::SyncResumeRamp()
 void CpProxyUpnpOrgDimming1Cpp::BeginResumeRamp(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionResumeRamp, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::EndResumeRamp(IAsync& aAsync)
@@ -1083,7 +1083,7 @@ void CpProxyUpnpOrgDimming1Cpp::BeginGetIsRamping(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetIsRamping->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::EndGetIsRamping(IAsync& aAsync, bool& aretIsRamping)
@@ -1112,7 +1112,7 @@ void CpProxyUpnpOrgDimming1Cpp::BeginGetRampPaused(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetRampPaused->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::EndGetRampPaused(IAsync& aAsync, bool& aretRampPaused)
@@ -1141,7 +1141,7 @@ void CpProxyUpnpOrgDimming1Cpp::BeginGetRampTime(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetRampTime->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgDimming1Cpp::EndGetRampTime(IAsync& aAsync, uint32_t& aretRampTime)
@@ -1194,32 +1194,42 @@ void CpProxyUpnpOrgDimming1Cpp::SetPropertyRampPausedChanged(Functor& aFunctor)
 
 void CpProxyUpnpOrgDimming1Cpp::PropertyLoadLevelStatus(uint32_t& aLoadLevelStatus) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aLoadLevelStatus = iLoadLevelStatus->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyUpnpOrgDimming1Cpp::PropertyStepDelta(uint32_t& aStepDelta) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aStepDelta = iStepDelta->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyUpnpOrgDimming1Cpp::PropertyRampRate(uint32_t& aRampRate) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aRampRate = iRampRate->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyUpnpOrgDimming1Cpp::PropertyIsRamping(bool& aIsRamping) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aIsRamping = iIsRamping->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyUpnpOrgDimming1Cpp::PropertyRampPaused(bool& aRampPaused) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aRampPaused = iRampPaused->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyUpnpOrgDimming1Cpp::LoadLevelStatusPropertyChanged()

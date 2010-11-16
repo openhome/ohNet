@@ -322,16 +322,16 @@ CpProxyLinnCoUkProxyManager1::CpProxyLinnCoUkProxyManager1(CpDevice& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProxyManager1::KontrolProductConnectedPropertyChanged);
     iKontrolProductConnected = new PropertyString("KontrolProductConnected", functor);
-    iService->AddProperty(iKontrolProductConnected);
+    AddProperty(iKontrolProductConnected);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProxyManager1::KontrolProductComPortPropertyChanged);
     iKontrolProductComPort = new PropertyUint("KontrolProductComPort", functor);
-    iService->AddProperty(iKontrolProductComPort);
+    AddProperty(iKontrolProductComPort);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProxyManager1::DiscPlayerConnectedPropertyChanged);
     iDiscPlayerConnected = new PropertyString("DiscPlayerConnected", functor);
-    iService->AddProperty(iDiscPlayerConnected);
+    AddProperty(iDiscPlayerConnected);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProxyManager1::DiscPlayerComPortPropertyChanged);
     iDiscPlayerComPort = new PropertyUint("DiscPlayerComPort", functor);
-    iService->AddProperty(iDiscPlayerComPort);
+    AddProperty(iDiscPlayerComPort);
 }
 
 CpProxyLinnCoUkProxyManager1::~CpProxyLinnCoUkProxyManager1()
@@ -362,7 +362,7 @@ void CpProxyLinnCoUkProxyManager1::BeginKontrolProductConnected(FunctorAsync& aF
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionKontrolProductConnected->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProxyManager1::EndKontrolProductConnected(IAsync& aAsync, Brh& aaConnected)
@@ -391,7 +391,7 @@ void CpProxyLinnCoUkProxyManager1::BeginSetKontrolProductConnected(const Brx& aa
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetKontrolProductConnected->InputParameters();
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aaConnected));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProxyManager1::EndSetKontrolProductConnected(IAsync& aAsync)
@@ -418,7 +418,7 @@ void CpProxyLinnCoUkProxyManager1::BeginKontrolProductComPort(FunctorAsync& aFun
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionKontrolProductComPort->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProxyManager1::EndKontrolProductComPort(IAsync& aAsync, TUint& aaPort)
@@ -447,7 +447,7 @@ void CpProxyLinnCoUkProxyManager1::BeginSetKontrolProductComPort(TUint aaConnect
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetKontrolProductComPort->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaConnected));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProxyManager1::EndSetKontrolProductComPort(IAsync& aAsync)
@@ -474,7 +474,7 @@ void CpProxyLinnCoUkProxyManager1::BeginDiscPlayerConnected(FunctorAsync& aFunct
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionDiscPlayerConnected->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProxyManager1::EndDiscPlayerConnected(IAsync& aAsync, Brh& aaConnected)
@@ -503,7 +503,7 @@ void CpProxyLinnCoUkProxyManager1::BeginSetDiscPlayerConnected(const Brx& aaConn
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetDiscPlayerConnected->InputParameters();
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aaConnected));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProxyManager1::EndSetDiscPlayerConnected(IAsync& aAsync)
@@ -530,7 +530,7 @@ void CpProxyLinnCoUkProxyManager1::BeginDiscPlayerComPort(FunctorAsync& aFunctor
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionDiscPlayerComPort->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProxyManager1::EndDiscPlayerComPort(IAsync& aAsync, TUint& aaPort)
@@ -559,7 +559,7 @@ void CpProxyLinnCoUkProxyManager1::BeginSetDiscPlayerComPort(TUint aaConnected, 
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetDiscPlayerComPort->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaConnected));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProxyManager1::EndSetDiscPlayerComPort(IAsync& aAsync)
@@ -586,7 +586,7 @@ void CpProxyLinnCoUkProxyManager1::BeginTestKontrolProductConnection(FunctorAsyn
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionTestKontrolProductConnection->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProxyManager1::EndTestKontrolProductConnection(IAsync& aAsync, TBool& aaResult)
@@ -615,7 +615,7 @@ void CpProxyLinnCoUkProxyManager1::BeginTestDiscPlayerConnection(FunctorAsync& a
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionTestDiscPlayerConnection->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProxyManager1::EndTestDiscPlayerConnection(IAsync& aAsync, TBool& aaResult)
@@ -661,26 +661,34 @@ void CpProxyLinnCoUkProxyManager1::SetPropertyDiscPlayerComPortChanged(Functor& 
 
 void CpProxyLinnCoUkProxyManager1::PropertyKontrolProductConnected(Brhz& aKontrolProductConnected) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aKontrolProductConnected.Set(iKontrolProductConnected->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProxyManager1::PropertyKontrolProductComPort(TUint& aKontrolProductComPort) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aKontrolProductComPort = iKontrolProductComPort->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProxyManager1::PropertyDiscPlayerConnected(Brhz& aDiscPlayerConnected) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDiscPlayerConnected.Set(iDiscPlayerConnected->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProxyManager1::PropertyDiscPlayerComPort(TUint& aDiscPlayerComPort) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDiscPlayerComPort = iDiscPlayerComPort->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProxyManager1::KontrolProductConnectedPropertyChanged()

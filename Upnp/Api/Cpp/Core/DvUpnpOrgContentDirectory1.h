@@ -8,6 +8,7 @@
 
 namespace Zapp {
 
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -60,20 +61,20 @@ private:
     virtual void CreateReference(IInvocationResponse& aResponse, TUint aVersion, const Brx& aContainerID, const Brx& aObjectID, IInvocationResponseString& aNewID);
 private:
     DvProviderUpnpOrgContentDirectory1();
-    void DoGetSearchCapabilities(IDvInvocation& aInvocation, TUint aVersion);
-    void DoGetSortCapabilities(IDvInvocation& aInvocation, TUint aVersion);
-    void DoGetSystemUpdateID(IDvInvocation& aInvocation, TUint aVersion);
-    void DoBrowse(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSearch(IDvInvocation& aInvocation, TUint aVersion);
-    void DoCreateObject(IDvInvocation& aInvocation, TUint aVersion);
-    void DoDestroyObject(IDvInvocation& aInvocation, TUint aVersion);
-    void DoUpdateObject(IDvInvocation& aInvocation, TUint aVersion);
-    void DoImportResource(IDvInvocation& aInvocation, TUint aVersion);
-    void DoExportResource(IDvInvocation& aInvocation, TUint aVersion);
-    void DoStopTransferResource(IDvInvocation& aInvocation, TUint aVersion);
-    void DoGetTransferProgress(IDvInvocation& aInvocation, TUint aVersion);
-    void DoDeleteResource(IDvInvocation& aInvocation, TUint aVersion);
-    void DoCreateReference(IDvInvocation& aInvocation, TUint aVersion);
+    void DoGetSearchCapabilities(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetSortCapabilities(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetSystemUpdateID(IDviInvocation& aInvocation, TUint aVersion);
+    void DoBrowse(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSearch(IDviInvocation& aInvocation, TUint aVersion);
+    void DoCreateObject(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDestroyObject(IDviInvocation& aInvocation, TUint aVersion);
+    void DoUpdateObject(IDviInvocation& aInvocation, TUint aVersion);
+    void DoImportResource(IDviInvocation& aInvocation, TUint aVersion);
+    void DoExportResource(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStopTransferResource(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetTransferProgress(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDeleteResource(IDviInvocation& aInvocation, TUint aVersion);
+    void DoCreateReference(IDviInvocation& aInvocation, TUint aVersion);
 private:
     PropertyString* iPropertyTransferIDs;
     PropertyUint* iPropertySystemUpdateID;

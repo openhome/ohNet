@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -103,30 +103,30 @@ private:
     virtual void SetSourceVisible(uint32_t aVersion, uint32_t aaSourceIndex, bool aaSourceVisible);
 private:
     DvProviderLinnCoUkProduct3Cpp();
-    void DoType(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoModel(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoName(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetName(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoRoom(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetRoom(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoStandby(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetStandby(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSourceCount(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSourceXml(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSourceIndex(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetSourceIndex(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetSourceIndexByName(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetStartupSourceIndexByName(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoStartupSourceIndex(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetStartupSourceIndex(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoStartupSourceEnabled(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetStartupSourceEnabled(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSourceSystemName(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSourceName(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetSourceName(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSourceType(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSourceVisible(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetSourceVisible(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoType(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoModel(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoName(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetName(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoRoom(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetRoom(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoStandby(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetStandby(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSourceCount(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSourceXml(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSourceIndex(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetSourceIndex(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetSourceIndexByName(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetStartupSourceIndexByName(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoStartupSourceIndex(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetStartupSourceIndex(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoStartupSourceEnabled(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetStartupSourceEnabled(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSourceSystemName(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSourceName(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetSourceName(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSourceType(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSourceVisible(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetSourceVisible(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyString* iPropertyProductType;
     PropertyString* iPropertyProductModel;

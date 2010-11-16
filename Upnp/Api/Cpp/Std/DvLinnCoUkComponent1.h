@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -59,17 +59,17 @@ private:
     virtual void Locate(uint32_t aVersion);
 private:
     DvProviderLinnCoUkComponent1Cpp();
-    void DoAmplifierEnabled(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetAmplifierEnabled(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoAmplifierAttenuation(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetAmplifierAttenuation(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetVolumeControlEnabled(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoVolumeControlEnabled(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetDigitalAudioOutputRaw(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDigitalAudioOutputRaw(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoAmplifierOverTemperature(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoEthernetLinkConnected(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoLocate(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoAmplifierEnabled(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetAmplifierEnabled(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoAmplifierAttenuation(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetAmplifierAttenuation(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetVolumeControlEnabled(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoVolumeControlEnabled(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetDigitalAudioOutputRaw(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDigitalAudioOutputRaw(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoAmplifierOverTemperature(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoEthernetLinkConnected(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoLocate(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyBool* iPropertyAmplifierEnabled;
     PropertyString* iPropertyAmplifierAttenuation;

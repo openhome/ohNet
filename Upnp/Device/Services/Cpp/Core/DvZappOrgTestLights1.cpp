@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -16,7 +16,7 @@ void DvProviderZappOrgTestLights1::EnableActionGetCount()
 {
     Zapp::Action* action = new Zapp::Action("GetCount");
     action->AddOutputParameter(new ParameterUint("Count"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestLights1::DoGetCount);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestLights1::DoGetCount);
     iService->AddAction(action, functor);
 }
 
@@ -25,7 +25,7 @@ void DvProviderZappOrgTestLights1::EnableActionGetRoom()
     Zapp::Action* action = new Zapp::Action("GetRoom");
     action->AddInputParameter(new ParameterUint("Index"));
     action->AddOutputParameter(new ParameterString("RoomName"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestLights1::DoGetRoom);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestLights1::DoGetRoom);
     iService->AddAction(action, functor);
 }
 
@@ -34,7 +34,7 @@ void DvProviderZappOrgTestLights1::EnableActionGetName()
     Zapp::Action* action = new Zapp::Action("GetName");
     action->AddInputParameter(new ParameterUint("Index"));
     action->AddOutputParameter(new ParameterString("FriendlyName"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestLights1::DoGetName);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestLights1::DoGetName);
     iService->AddAction(action, functor);
 }
 
@@ -45,7 +45,7 @@ void DvProviderZappOrgTestLights1::EnableActionGetPosition()
     action->AddOutputParameter(new ParameterUint("X"));
     action->AddOutputParameter(new ParameterUint("Y"));
     action->AddOutputParameter(new ParameterUint("Z"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestLights1::DoGetPosition);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestLights1::DoGetPosition);
     iService->AddAction(action, functor);
 }
 
@@ -54,7 +54,7 @@ void DvProviderZappOrgTestLights1::EnableActionSetColor()
     Zapp::Action* action = new Zapp::Action("SetColor");
     action->AddInputParameter(new ParameterUint("Index"));
     action->AddInputParameter(new ParameterUint("Color"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestLights1::DoSetColor);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestLights1::DoSetColor);
     iService->AddAction(action, functor);
 }
 
@@ -63,7 +63,7 @@ void DvProviderZappOrgTestLights1::EnableActionGetColor()
     Zapp::Action* action = new Zapp::Action("GetColor");
     action->AddInputParameter(new ParameterUint("Index"));
     action->AddOutputParameter(new ParameterUint("Color"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestLights1::DoGetColor);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestLights1::DoGetColor);
     iService->AddAction(action, functor);
 }
 
@@ -75,11 +75,11 @@ void DvProviderZappOrgTestLights1::EnableActionGetColorComponents()
     action->AddOutputParameter(new ParameterUint("Red"));
     action->AddOutputParameter(new ParameterUint("Green"));
     action->AddOutputParameter(new ParameterUint("Blue"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderZappOrgTestLights1::DoGetColorComponents);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestLights1::DoGetColorComponents);
     iService->AddAction(action, functor);
 }
 
-void DvProviderZappOrgTestLights1::DoGetCount(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestLights1::DoGetCount(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -88,7 +88,7 @@ void DvProviderZappOrgTestLights1::DoGetCount(IDvInvocation& aInvocation, TUint 
     GetCount(resp, aVersion, respCount);
 }
 
-void DvProviderZappOrgTestLights1::DoGetRoom(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestLights1::DoGetRoom(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint Index = aInvocation.InvocationReadUint("Index");
@@ -98,7 +98,7 @@ void DvProviderZappOrgTestLights1::DoGetRoom(IDvInvocation& aInvocation, TUint a
     GetRoom(resp, aVersion, Index, respRoomName);
 }
 
-void DvProviderZappOrgTestLights1::DoGetName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestLights1::DoGetName(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint Index = aInvocation.InvocationReadUint("Index");
@@ -108,7 +108,7 @@ void DvProviderZappOrgTestLights1::DoGetName(IDvInvocation& aInvocation, TUint a
     GetName(resp, aVersion, Index, respFriendlyName);
 }
 
-void DvProviderZappOrgTestLights1::DoGetPosition(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestLights1::DoGetPosition(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint Index = aInvocation.InvocationReadUint("Index");
@@ -120,7 +120,7 @@ void DvProviderZappOrgTestLights1::DoGetPosition(IDvInvocation& aInvocation, TUi
     GetPosition(resp, aVersion, Index, respX, respY, respZ);
 }
 
-void DvProviderZappOrgTestLights1::DoSetColor(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestLights1::DoSetColor(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint Index = aInvocation.InvocationReadUint("Index");
@@ -130,7 +130,7 @@ void DvProviderZappOrgTestLights1::DoSetColor(IDvInvocation& aInvocation, TUint 
     SetColor(resp, aVersion, Index, Color);
 }
 
-void DvProviderZappOrgTestLights1::DoGetColor(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestLights1::DoGetColor(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint Index = aInvocation.InvocationReadUint("Index");
@@ -140,7 +140,7 @@ void DvProviderZappOrgTestLights1::DoGetColor(IDvInvocation& aInvocation, TUint 
     GetColor(resp, aVersion, Index, respColor);
 }
 
-void DvProviderZappOrgTestLights1::DoGetColorComponents(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestLights1::DoGetColorComponents(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint Color = aInvocation.InvocationReadUint("Color");

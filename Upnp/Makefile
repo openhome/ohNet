@@ -75,6 +75,7 @@ copy_build_includes:
 	cp -u Arch/*.h $(inc_build)
 	cp -u Arch/I386/ArchSpecific.h $(inc_build)
 	cp -u ControlPoint/*.h $(inc_build)
+	cp -u ControlPoint/Dv/*.h $(inc_build)
 	cp -u ControlPoint/Upnp/*.h $(inc_build)
 	cp -u Device/*.h $(inc_build)
 	cp -u Device/Upnp/*.h $(inc_build)

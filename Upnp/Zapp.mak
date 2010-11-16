@@ -89,6 +89,7 @@ copy_build_includes:
 	copy Arch\*.h $(inc_build) > nul
 	copy Arch\I386\ArchSpecific.h $(inc_build) > nul
 	copy ControlPoint\*.h $(inc_build) > nul
+	copy ControlPoint\Dv\*.h $(inc_build) > nul
 	copy ControlPoint\Upnp\*.h $(inc_build) > nul
 	copy Device\*.h $(inc_build) > nul
 	copy Device\Upnp\*.h $(inc_build) > nul

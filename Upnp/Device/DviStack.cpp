@@ -19,6 +19,7 @@ DviStack::DviStack()
     iDviDeviceMap = new DviDeviceMap;
     iSubscriptionManager = new DviSubscriptionManager;
     iDviServerWebSocket = new DviServerWebSocket;
+    iInvocationManager = new DviInvocationManager;
 }
 
 DviStack::~DviStack()
@@ -27,6 +28,7 @@ DviStack::~DviStack()
     delete iDviServerUpnp;
     delete iDviDeviceMap;
     delete iSubscriptionManager;
+    delete iInvocationManager;
 }
 
 TUint DviStack::BootId()
@@ -75,6 +77,12 @@ DviSubscriptionManager& DviStack::SubscriptionManager()
 {
     DviStack* self = DviStack::Self();
     return *(self->iSubscriptionManager);
+}
+
+DviInvocationManager& DviStack::InvocationManager()
+{
+    DviStack* self = DviStack::Self();
+    return *(self->iInvocationManager);
 }
 
 DviStack* DviStack::Self()

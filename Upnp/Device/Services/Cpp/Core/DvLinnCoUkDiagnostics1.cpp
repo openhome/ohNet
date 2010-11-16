@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -29,7 +29,7 @@ void DvProviderLinnCoUkDiagnostics1::EnableActionEcho()
     Zapp::Action* action = new Zapp::Action("Echo");
     action->AddInputParameter(new ParameterString("aIn"));
     action->AddOutputParameter(new ParameterString("aOut"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoEcho);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoEcho);
     iService->AddAction(action, functor);
 }
 
@@ -37,7 +37,7 @@ void DvProviderLinnCoUkDiagnostics1::EnableActionElfFile()
 {
     Zapp::Action* action = new Zapp::Action("ElfFile");
     action->AddOutputParameter(new ParameterString("aElfFile"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoElfFile);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoElfFile);
     iService->AddAction(action, functor);
 }
 
@@ -45,7 +45,7 @@ void DvProviderLinnCoUkDiagnostics1::EnableActionElfFingerprint()
 {
     Zapp::Action* action = new Zapp::Action("ElfFingerprint");
     action->AddOutputParameter(new ParameterString("aElfFileFingerprint"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoElfFingerprint);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoElfFingerprint);
     iService->AddAction(action, functor);
 }
 
@@ -53,7 +53,7 @@ void DvProviderLinnCoUkDiagnostics1::EnableActionCrashDataStatus()
 {
     Zapp::Action* action = new Zapp::Action("CrashDataStatus");
     action->AddOutputParameter(new ParameterString("aCrashDataStatus"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoCrashDataStatus);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoCrashDataStatus);
     iService->AddAction(action, functor);
 }
 
@@ -61,14 +61,14 @@ void DvProviderLinnCoUkDiagnostics1::EnableActionCrashDataFetch()
 {
     Zapp::Action* action = new Zapp::Action("CrashDataFetch");
     action->AddOutputParameter(new ParameterBinary("aCrashData"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoCrashDataFetch);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoCrashDataFetch);
     iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkDiagnostics1::EnableActionCrashDataClear()
 {
     Zapp::Action* action = new Zapp::Action("CrashDataClear");
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoCrashDataClear);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoCrashDataClear);
     iService->AddAction(action, functor);
 }
 
@@ -76,7 +76,7 @@ void DvProviderLinnCoUkDiagnostics1::EnableActionSysLog()
 {
     Zapp::Action* action = new Zapp::Action("SysLog");
     action->AddOutputParameter(new ParameterBinary("aSysLog"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoSysLog);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoSysLog);
     iService->AddAction(action, functor);
 }
 
@@ -85,7 +85,7 @@ void DvProviderLinnCoUkDiagnostics1::EnableActionDiagnostic()
     Zapp::Action* action = new Zapp::Action("Diagnostic");
     action->AddInputParameter(new ParameterString("aDiagnosticType"));
     action->AddOutputParameter(new ParameterString("aDiagnosticInfo"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoDiagnostic);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoDiagnostic);
     iService->AddAction(action, functor);
 }
 
@@ -93,7 +93,7 @@ void DvProviderLinnCoUkDiagnostics1::EnableActionStateVariable()
 {
     Zapp::Action* action = new Zapp::Action("StateVariable");
     action->AddOutputParameter(new ParameterRelated("aStateVariable", *iPropertyaStateVariable));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoStateVariable);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoStateVariable);
     iService->AddAction(action, functor);
 }
 
@@ -101,7 +101,7 @@ void DvProviderLinnCoUkDiagnostics1::EnableActionSetStateVariable()
 {
     Zapp::Action* action = new Zapp::Action("SetStateVariable");
     action->AddInputParameter(new ParameterRelated("aStateVariable", *iPropertyaStateVariable));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoSetStateVariable);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoSetStateVariable);
     iService->AddAction(action, functor);
 }
 
@@ -109,7 +109,7 @@ void DvProviderLinnCoUkDiagnostics1::EnableActionStateVariablePeriod()
 {
     Zapp::Action* action = new Zapp::Action("StateVariablePeriod");
     action->AddOutputParameter(new ParameterUint("aPeriod"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoStateVariablePeriod);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoStateVariablePeriod);
     iService->AddAction(action, functor);
 }
 
@@ -117,7 +117,7 @@ void DvProviderLinnCoUkDiagnostics1::EnableActionSetStateVariablePeriod()
 {
     Zapp::Action* action = new Zapp::Action("SetStateVariablePeriod");
     action->AddInputParameter(new ParameterUint("aPeriod"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoSetStateVariablePeriod);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoSetStateVariablePeriod);
     iService->AddAction(action, functor);
 }
 
@@ -125,11 +125,11 @@ void DvProviderLinnCoUkDiagnostics1::EnableActionReboot()
 {
     Zapp::Action* action = new Zapp::Action("Reboot");
     action->AddInputParameter(new ParameterUint("aDelay"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoReboot);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDiagnostics1::DoReboot);
     iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkDiagnostics1::DoEcho(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1::DoEcho(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz aIn;
@@ -140,7 +140,7 @@ void DvProviderLinnCoUkDiagnostics1::DoEcho(IDvInvocation& aInvocation, TUint aV
     Echo(resp, aVersion, aIn, respaOut);
 }
 
-void DvProviderLinnCoUkDiagnostics1::DoElfFile(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1::DoElfFile(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -149,7 +149,7 @@ void DvProviderLinnCoUkDiagnostics1::DoElfFile(IDvInvocation& aInvocation, TUint
     ElfFile(resp, aVersion, respaElfFile);
 }
 
-void DvProviderLinnCoUkDiagnostics1::DoElfFingerprint(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1::DoElfFingerprint(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -158,7 +158,7 @@ void DvProviderLinnCoUkDiagnostics1::DoElfFingerprint(IDvInvocation& aInvocation
     ElfFingerprint(resp, aVersion, respaElfFileFingerprint);
 }
 
-void DvProviderLinnCoUkDiagnostics1::DoCrashDataStatus(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1::DoCrashDataStatus(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -167,7 +167,7 @@ void DvProviderLinnCoUkDiagnostics1::DoCrashDataStatus(IDvInvocation& aInvocatio
     CrashDataStatus(resp, aVersion, respaCrashDataStatus);
 }
 
-void DvProviderLinnCoUkDiagnostics1::DoCrashDataFetch(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1::DoCrashDataFetch(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -176,7 +176,7 @@ void DvProviderLinnCoUkDiagnostics1::DoCrashDataFetch(IDvInvocation& aInvocation
     CrashDataFetch(resp, aVersion, respaCrashData);
 }
 
-void DvProviderLinnCoUkDiagnostics1::DoCrashDataClear(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1::DoCrashDataClear(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -184,7 +184,7 @@ void DvProviderLinnCoUkDiagnostics1::DoCrashDataClear(IDvInvocation& aInvocation
     CrashDataClear(resp, aVersion);
 }
 
-void DvProviderLinnCoUkDiagnostics1::DoSysLog(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1::DoSysLog(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -193,7 +193,7 @@ void DvProviderLinnCoUkDiagnostics1::DoSysLog(IDvInvocation& aInvocation, TUint 
     SysLog(resp, aVersion, respaSysLog);
 }
 
-void DvProviderLinnCoUkDiagnostics1::DoDiagnostic(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1::DoDiagnostic(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz aDiagnosticType;
@@ -204,7 +204,7 @@ void DvProviderLinnCoUkDiagnostics1::DoDiagnostic(IDvInvocation& aInvocation, TU
     Diagnostic(resp, aVersion, aDiagnosticType, respaDiagnosticInfo);
 }
 
-void DvProviderLinnCoUkDiagnostics1::DoStateVariable(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1::DoStateVariable(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -213,7 +213,7 @@ void DvProviderLinnCoUkDiagnostics1::DoStateVariable(IDvInvocation& aInvocation,
     StateVariable(resp, aVersion, respaStateVariable);
 }
 
-void DvProviderLinnCoUkDiagnostics1::DoSetStateVariable(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1::DoSetStateVariable(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aStateVariable = aInvocation.InvocationReadUint("aStateVariable");
@@ -222,7 +222,7 @@ void DvProviderLinnCoUkDiagnostics1::DoSetStateVariable(IDvInvocation& aInvocati
     SetStateVariable(resp, aVersion, aStateVariable);
 }
 
-void DvProviderLinnCoUkDiagnostics1::DoStateVariablePeriod(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1::DoStateVariablePeriod(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -231,7 +231,7 @@ void DvProviderLinnCoUkDiagnostics1::DoStateVariablePeriod(IDvInvocation& aInvoc
     StateVariablePeriod(resp, aVersion, respaPeriod);
 }
 
-void DvProviderLinnCoUkDiagnostics1::DoSetStateVariablePeriod(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1::DoSetStateVariablePeriod(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aPeriod = aInvocation.InvocationReadUint("aPeriod");
@@ -240,7 +240,7 @@ void DvProviderLinnCoUkDiagnostics1::DoSetStateVariablePeriod(IDvInvocation& aIn
     SetStateVariablePeriod(resp, aVersion, aPeriod);
 }
 
-void DvProviderLinnCoUkDiagnostics1::DoReboot(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDiagnostics1::DoReboot(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aDelay = aInvocation.InvocationReadUint("aDelay");

@@ -760,7 +760,9 @@ DviSessionWebSocket::SubscriptionWrapper::~SubscriptionWrapper()
 
 DviServerWebSocket::DviServerWebSocket()
 {
-    Initialise();
+    if (Stack::InitParams().DvNumWebSocketThreads() > 0) {
+        Initialise();
+    }    
 }
 
 SocketTcpServer* DviServerWebSocket::CreateServer(const NetworkInterface& aNif)

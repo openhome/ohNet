@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -56,7 +56,7 @@ void DvProviderLinnCoUkJukebox1Cpp::EnableActionSetPresetPrefix()
 {
     Zapp::Action* action = new Zapp::Action("SetPresetPrefix");
     action->AddInputParameter(new ParameterRelated("aUri", *iPropertyPresetPrefix));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkJukebox1Cpp::DoSetPresetPrefix);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkJukebox1Cpp::DoSetPresetPrefix);
     iService->AddAction(action, functor);
 }
 
@@ -64,7 +64,7 @@ void DvProviderLinnCoUkJukebox1Cpp::EnableActionPresetPrefix()
 {
     Zapp::Action* action = new Zapp::Action("PresetPrefix");
     action->AddOutputParameter(new ParameterRelated("aUri", *iPropertyPresetPrefix));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkJukebox1Cpp::DoPresetPrefix);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkJukebox1Cpp::DoPresetPrefix);
     iService->AddAction(action, functor);
 }
 
@@ -72,7 +72,7 @@ void DvProviderLinnCoUkJukebox1Cpp::EnableActionSetAlbumArtFileName()
 {
     Zapp::Action* action = new Zapp::Action("SetAlbumArtFileName");
     action->AddInputParameter(new ParameterRelated("aName", *iPropertyAlbumArtFileName));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkJukebox1Cpp::DoSetAlbumArtFileName);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkJukebox1Cpp::DoSetAlbumArtFileName);
     iService->AddAction(action, functor);
 }
 
@@ -80,7 +80,7 @@ void DvProviderLinnCoUkJukebox1Cpp::EnableActionAlbumArtFileName()
 {
     Zapp::Action* action = new Zapp::Action("AlbumArtFileName");
     action->AddOutputParameter(new ParameterRelated("aName", *iPropertyAlbumArtFileName));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkJukebox1Cpp::DoAlbumArtFileName);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkJukebox1Cpp::DoAlbumArtFileName);
     iService->AddAction(action, functor);
 }
 
@@ -88,7 +88,7 @@ void DvProviderLinnCoUkJukebox1Cpp::EnableActionSetCurrentPreset()
 {
     Zapp::Action* action = new Zapp::Action("SetCurrentPreset");
     action->AddInputParameter(new ParameterRelated("aPreset", *iPropertyCurrentPreset));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkJukebox1Cpp::DoSetCurrentPreset);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkJukebox1Cpp::DoSetCurrentPreset);
     iService->AddAction(action, functor);
 }
 
@@ -96,7 +96,7 @@ void DvProviderLinnCoUkJukebox1Cpp::EnableActionCurrentPreset()
 {
     Zapp::Action* action = new Zapp::Action("CurrentPreset");
     action->AddOutputParameter(new ParameterRelated("aPreset", *iPropertyCurrentPreset));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkJukebox1Cpp::DoCurrentPreset);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkJukebox1Cpp::DoCurrentPreset);
     iService->AddAction(action, functor);
 }
 
@@ -105,7 +105,7 @@ void DvProviderLinnCoUkJukebox1Cpp::EnableActionPresetMetaData()
     Zapp::Action* action = new Zapp::Action("PresetMetaData");
     action->AddInputParameter(new ParameterRelated("aPreset", *iPropertyCurrentPreset));
     action->AddOutputParameter(new ParameterString("aMetaData"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkJukebox1Cpp::DoPresetMetaData);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkJukebox1Cpp::DoPresetMetaData);
     iService->AddAction(action, functor);
 }
 
@@ -113,11 +113,11 @@ void DvProviderLinnCoUkJukebox1Cpp::EnableActionLoadManifest()
 {
     Zapp::Action* action = new Zapp::Action("LoadManifest");
     action->AddOutputParameter(new ParameterRelated("aTotalPresets", *iPropertyCurrentPreset));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkJukebox1Cpp::DoLoadManifest);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkJukebox1Cpp::DoLoadManifest);
     iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkJukebox1Cpp::DoSetPresetPrefix(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkJukebox1Cpp::DoSetPresetPrefix(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_aUri;
@@ -129,7 +129,7 @@ void DvProviderLinnCoUkJukebox1Cpp::DoSetPresetPrefix(IDvInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkJukebox1Cpp::DoPresetPrefix(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkJukebox1Cpp::DoPresetPrefix(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -143,7 +143,7 @@ void DvProviderLinnCoUkJukebox1Cpp::DoPresetPrefix(IDvInvocation& aInvocation, T
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkJukebox1Cpp::DoSetAlbumArtFileName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkJukebox1Cpp::DoSetAlbumArtFileName(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_aName;
@@ -155,7 +155,7 @@ void DvProviderLinnCoUkJukebox1Cpp::DoSetAlbumArtFileName(IDvInvocation& aInvoca
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkJukebox1Cpp::DoAlbumArtFileName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkJukebox1Cpp::DoAlbumArtFileName(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -169,7 +169,7 @@ void DvProviderLinnCoUkJukebox1Cpp::DoAlbumArtFileName(IDvInvocation& aInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkJukebox1Cpp::DoSetCurrentPreset(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkJukebox1Cpp::DoSetCurrentPreset(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aPreset = aInvocation.InvocationReadUint("aPreset");
@@ -179,7 +179,7 @@ void DvProviderLinnCoUkJukebox1Cpp::DoSetCurrentPreset(IDvInvocation& aInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkJukebox1Cpp::DoCurrentPreset(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkJukebox1Cpp::DoCurrentPreset(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -191,7 +191,7 @@ void DvProviderLinnCoUkJukebox1Cpp::DoCurrentPreset(IDvInvocation& aInvocation, 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkJukebox1Cpp::DoPresetMetaData(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkJukebox1Cpp::DoPresetMetaData(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aPreset = aInvocation.InvocationReadUint("aPreset");
@@ -206,7 +206,7 @@ void DvProviderLinnCoUkJukebox1Cpp::DoPresetMetaData(IDvInvocation& aInvocation,
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkJukebox1Cpp::DoLoadManifest(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkJukebox1Cpp::DoLoadManifest(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
