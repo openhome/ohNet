@@ -337,7 +337,7 @@ void CpProxyLinnCoUkVolkano1::SyncReboot()
 void CpProxyLinnCoUkVolkano1::BeginReboot(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionReboot, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkVolkano1::EndReboot(IAsync& aAsync)
@@ -364,7 +364,7 @@ void CpProxyLinnCoUkVolkano1::BeginBootMode(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionBootMode->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkVolkano1::EndBootMode(IAsync& aAsync, Brh& aaMode)
@@ -393,7 +393,7 @@ void CpProxyLinnCoUkVolkano1::BeginSetBootMode(const Brx& aaMode, FunctorAsync& 
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetBootMode->InputParameters();
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aaMode));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkVolkano1::EndSetBootMode(IAsync& aAsync)
@@ -420,7 +420,7 @@ void CpProxyLinnCoUkVolkano1::BeginBspType(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionBspType->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkVolkano1::EndBspType(IAsync& aAsync, Brh& aaBspType)
@@ -449,7 +449,7 @@ void CpProxyLinnCoUkVolkano1::BeginUglyName(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionUglyName->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkVolkano1::EndUglyName(IAsync& aAsync, Brh& aaUglyName)
@@ -478,7 +478,7 @@ void CpProxyLinnCoUkVolkano1::BeginMacAddress(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionMacAddress->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkVolkano1::EndMacAddress(IAsync& aAsync, Brh& aaMacAddress)
@@ -507,7 +507,7 @@ void CpProxyLinnCoUkVolkano1::BeginProductId(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionProductId->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkVolkano1::EndProductId(IAsync& aAsync, Brh& aaProductNumber)
@@ -539,7 +539,7 @@ void CpProxyLinnCoUkVolkano1::BeginBoardId(TUint aaIndex, FunctorAsync& aFunctor
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionBoardId->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkVolkano1::EndBoardId(IAsync& aAsync, Brh& aaBoardNumber)
@@ -571,7 +571,7 @@ void CpProxyLinnCoUkVolkano1::BeginBoardType(TUint aaIndex, FunctorAsync& aFunct
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionBoardType->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkVolkano1::EndBoardType(IAsync& aAsync, Brh& aaBoardNumber)
@@ -600,7 +600,7 @@ void CpProxyLinnCoUkVolkano1::BeginMaxBoards(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionMaxBoards->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkVolkano1::EndMaxBoards(IAsync& aAsync, TUint& aaMaxBoards)
@@ -629,7 +629,7 @@ void CpProxyLinnCoUkVolkano1::BeginSoftwareVersion(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionSoftwareVersion->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkVolkano1::EndSoftwareVersion(IAsync& aAsync, Brh& aaSoftwareVersion)

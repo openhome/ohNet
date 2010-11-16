@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -172,21 +172,21 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionDisplayTestPattern()
 {
     Zapp::Action* action = new Zapp::Action("DisplayTestPattern");
     action->AddInputParameter(new ParameterInt("aTestPattern", 0, 6));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoDisplayTestPattern);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoDisplayTestPattern);
     iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2Cpp::EnableActionDisplayFill()
 {
     Zapp::Action* action = new Zapp::Action("DisplayFill");
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoDisplayFill);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoDisplayFill);
     iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkUi2Cpp::EnableActionDisplayClear()
 {
     Zapp::Action* action = new Zapp::Action("DisplayClear");
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoDisplayClear);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoDisplayClear);
     iService->AddAction(action, functor);
 }
 
@@ -194,7 +194,7 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionSetTestModeEnabled()
 {
     Zapp::Action* action = new Zapp::Action("SetTestModeEnabled");
     action->AddInputParameter(new ParameterBool("aEnabled"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSetTestModeEnabled);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSetTestModeEnabled);
     iService->AddAction(action, functor);
 }
 
@@ -202,7 +202,7 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionSimulateInfraredInput()
 {
     Zapp::Action* action = new Zapp::Action("SimulateInfraredInput");
     action->AddInputParameter(new ParameterRelated("aCode", *iPropertyTerminalInputCode));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSimulateInfraredInput);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSimulateInfraredInput);
     iService->AddAction(action, functor);
 }
 
@@ -210,7 +210,7 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionSimulateButtonInput()
 {
     Zapp::Action* action = new Zapp::Action("SimulateButtonInput");
     action->AddInputParameter(new ParameterRelated("aCode", *iPropertyTerminalInputCode));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSimulateButtonInput);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSimulateButtonInput);
     iService->AddAction(action, functor);
 }
 
@@ -218,7 +218,7 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionSimulateLightSensor()
 {
     Zapp::Action* action = new Zapp::Action("SimulateLightSensor");
     action->AddInputParameter(new ParameterUint("aLightLevel"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSimulateLightSensor);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSimulateLightSensor);
     iService->AddAction(action, functor);
 }
 
@@ -226,7 +226,7 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionGetLightSensorData()
 {
     Zapp::Action* action = new Zapp::Action("GetLightSensorData");
     action->AddOutputParameter(new ParameterUint("aLightLevel"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoGetLightSensorData);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoGetLightSensorData);
     iService->AddAction(action, functor);
 }
 
@@ -234,7 +234,7 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionSetDisplayBrightness()
 {
     Zapp::Action* action = new Zapp::Action("SetDisplayBrightness");
     action->AddInputParameter(new ParameterRelated("aBrightness", *iPropertyDisplayBrightness));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSetDisplayBrightness);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSetDisplayBrightness);
     iService->AddAction(action, functor);
 }
 
@@ -242,7 +242,7 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionSetDisplayBrightnessAuto()
 {
     Zapp::Action* action = new Zapp::Action("SetDisplayBrightnessAuto");
     action->AddInputParameter(new ParameterRelated("aBrightnessAuto", *iPropertyDisplayBrightnessAuto));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSetDisplayBrightnessAuto);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSetDisplayBrightnessAuto);
     iService->AddAction(action, functor);
 }
 
@@ -250,7 +250,7 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionSetInfraredCommands()
 {
     Zapp::Action* action = new Zapp::Action("SetInfraredCommands");
     action->AddInputParameter(new ParameterRelated("aCommands", *iPropertyInfraredCommands));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSetInfraredCommands);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSetInfraredCommands);
     iService->AddAction(action, functor);
 }
 
@@ -258,7 +258,7 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionInfraredCommands()
 {
     Zapp::Action* action = new Zapp::Action("InfraredCommands");
     action->AddOutputParameter(new ParameterRelated("aCommands", *iPropertyInfraredCommands));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoInfraredCommands);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoInfraredCommands);
     iService->AddAction(action, functor);
 }
 
@@ -266,7 +266,7 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionSetInfraredTerminalCommands()
 {
     Zapp::Action* action = new Zapp::Action("SetInfraredTerminalCommands");
     action->AddInputParameter(new ParameterRelated("aCommands", *iPropertyInfraredTerminalCommands));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSetInfraredTerminalCommands);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSetInfraredTerminalCommands);
     iService->AddAction(action, functor);
 }
 
@@ -274,7 +274,7 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionInfraredTerminalCommands()
 {
     Zapp::Action* action = new Zapp::Action("InfraredTerminalCommands");
     action->AddOutputParameter(new ParameterRelated("aCommands", *iPropertyInfraredTerminalCommands));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoInfraredTerminalCommands);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoInfraredTerminalCommands);
     iService->AddAction(action, functor);
 }
 
@@ -282,7 +282,7 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionDisplayBrightness()
 {
     Zapp::Action* action = new Zapp::Action("DisplayBrightness");
     action->AddOutputParameter(new ParameterRelated("aBrightness", *iPropertyDisplayBrightness));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoDisplayBrightness);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoDisplayBrightness);
     iService->AddAction(action, functor);
 }
 
@@ -290,7 +290,7 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionDisplayBrightnessAuto()
 {
     Zapp::Action* action = new Zapp::Action("DisplayBrightnessAuto");
     action->AddOutputParameter(new ParameterRelated("aBrightnessAuto", *iPropertyDisplayBrightnessAuto));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoDisplayBrightnessAuto);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoDisplayBrightnessAuto);
     iService->AddAction(action, functor);
 }
 
@@ -298,7 +298,7 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionDisplayUpsideDown()
 {
     Zapp::Action* action = new Zapp::Action("DisplayUpsideDown");
     action->AddOutputParameter(new ParameterRelated("aUpsideDown", *iPropertyDisplayUpsideDown));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoDisplayUpsideDown);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoDisplayUpsideDown);
     iService->AddAction(action, functor);
 }
 
@@ -306,7 +306,7 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionSetDisplayUpsideDown()
 {
     Zapp::Action* action = new Zapp::Action("SetDisplayUpsideDown");
     action->AddInputParameter(new ParameterRelated("aUpsideDown", *iPropertyDisplayUpsideDown));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSetDisplayUpsideDown);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSetDisplayUpsideDown);
     iService->AddAction(action, functor);
 }
 
@@ -314,7 +314,7 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionSetDisplayScrollText()
 {
     Zapp::Action* action = new Zapp::Action("SetDisplayScrollText");
     action->AddInputParameter(new ParameterRelated("aDisplayScrollText", *iPropertyDisplayScrollText));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSetDisplayScrollText);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSetDisplayScrollText);
     iService->AddAction(action, functor);
 }
 
@@ -322,7 +322,7 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionDisplayScrollText()
 {
     Zapp::Action* action = new Zapp::Action("DisplayScrollText");
     action->AddOutputParameter(new ParameterRelated("aDisplayScrollTextEnabled", *iPropertyDisplayScrollText));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoDisplayScrollText);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoDisplayScrollText);
     iService->AddAction(action, functor);
 }
 
@@ -330,7 +330,7 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionSetDisplaySleep()
 {
     Zapp::Action* action = new Zapp::Action("SetDisplaySleep");
     action->AddInputParameter(new ParameterRelated("aEnabled", *iPropertyDisplaySleep));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSetDisplaySleep);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSetDisplaySleep);
     iService->AddAction(action, functor);
 }
 
@@ -338,7 +338,7 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionDisplaySleep()
 {
     Zapp::Action* action = new Zapp::Action("DisplaySleep");
     action->AddOutputParameter(new ParameterRelated("aEnabled", *iPropertyDisplaySleep));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoDisplaySleep);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoDisplaySleep);
     iService->AddAction(action, functor);
 }
 
@@ -346,7 +346,7 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionSetDisplayLedOff()
 {
     Zapp::Action* action = new Zapp::Action("SetDisplayLedOff");
     action->AddInputParameter(new ParameterRelated("aOff", *iPropertyDisplayLedOff));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSetDisplayLedOff);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoSetDisplayLedOff);
     iService->AddAction(action, functor);
 }
 
@@ -354,11 +354,11 @@ void DvProviderLinnCoUkUi2Cpp::EnableActionDisplayLedOff()
 {
     Zapp::Action* action = new Zapp::Action("DisplayLedOff");
     action->AddOutputParameter(new ParameterRelated("aOff", *iPropertyDisplayLedOff));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoDisplayLedOff);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkUi2Cpp::DoDisplayLedOff);
     iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoDisplayTestPattern(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoDisplayTestPattern(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     int32_t aTestPattern = aInvocation.InvocationReadInt("aTestPattern");
@@ -368,7 +368,7 @@ void DvProviderLinnCoUkUi2Cpp::DoDisplayTestPattern(IDvInvocation& aInvocation, 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoDisplayFill(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoDisplayFill(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -377,7 +377,7 @@ void DvProviderLinnCoUkUi2Cpp::DoDisplayFill(IDvInvocation& aInvocation, TUint a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoDisplayClear(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoDisplayClear(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -386,7 +386,7 @@ void DvProviderLinnCoUkUi2Cpp::DoDisplayClear(IDvInvocation& aInvocation, TUint 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoSetTestModeEnabled(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoSetTestModeEnabled(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     bool aEnabled = aInvocation.InvocationReadBool("aEnabled");
@@ -396,7 +396,7 @@ void DvProviderLinnCoUkUi2Cpp::DoSetTestModeEnabled(IDvInvocation& aInvocation, 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoSimulateInfraredInput(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoSimulateInfraredInput(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aCode = aInvocation.InvocationReadUint("aCode");
@@ -406,7 +406,7 @@ void DvProviderLinnCoUkUi2Cpp::DoSimulateInfraredInput(IDvInvocation& aInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoSimulateButtonInput(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoSimulateButtonInput(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aCode = aInvocation.InvocationReadUint("aCode");
@@ -416,7 +416,7 @@ void DvProviderLinnCoUkUi2Cpp::DoSimulateButtonInput(IDvInvocation& aInvocation,
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoSimulateLightSensor(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoSimulateLightSensor(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aLightLevel = aInvocation.InvocationReadUint("aLightLevel");
@@ -426,7 +426,7 @@ void DvProviderLinnCoUkUi2Cpp::DoSimulateLightSensor(IDvInvocation& aInvocation,
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoGetLightSensorData(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoGetLightSensorData(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -438,7 +438,7 @@ void DvProviderLinnCoUkUi2Cpp::DoGetLightSensorData(IDvInvocation& aInvocation, 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoSetDisplayBrightness(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoSetDisplayBrightness(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aBrightness = aInvocation.InvocationReadUint("aBrightness");
@@ -448,7 +448,7 @@ void DvProviderLinnCoUkUi2Cpp::DoSetDisplayBrightness(IDvInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoSetDisplayBrightnessAuto(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoSetDisplayBrightnessAuto(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     bool aBrightnessAuto = aInvocation.InvocationReadBool("aBrightnessAuto");
@@ -458,7 +458,7 @@ void DvProviderLinnCoUkUi2Cpp::DoSetDisplayBrightnessAuto(IDvInvocation& aInvoca
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoSetInfraredCommands(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoSetInfraredCommands(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_aCommands;
@@ -470,7 +470,7 @@ void DvProviderLinnCoUkUi2Cpp::DoSetInfraredCommands(IDvInvocation& aInvocation,
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoInfraredCommands(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoInfraredCommands(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -484,7 +484,7 @@ void DvProviderLinnCoUkUi2Cpp::DoInfraredCommands(IDvInvocation& aInvocation, TU
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoSetInfraredTerminalCommands(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoSetInfraredTerminalCommands(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_aCommands;
@@ -496,7 +496,7 @@ void DvProviderLinnCoUkUi2Cpp::DoSetInfraredTerminalCommands(IDvInvocation& aInv
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoInfraredTerminalCommands(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoInfraredTerminalCommands(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -510,7 +510,7 @@ void DvProviderLinnCoUkUi2Cpp::DoInfraredTerminalCommands(IDvInvocation& aInvoca
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoDisplayBrightness(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoDisplayBrightness(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -522,7 +522,7 @@ void DvProviderLinnCoUkUi2Cpp::DoDisplayBrightness(IDvInvocation& aInvocation, T
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoDisplayBrightnessAuto(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoDisplayBrightnessAuto(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -534,7 +534,7 @@ void DvProviderLinnCoUkUi2Cpp::DoDisplayBrightnessAuto(IDvInvocation& aInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoDisplayUpsideDown(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoDisplayUpsideDown(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -546,7 +546,7 @@ void DvProviderLinnCoUkUi2Cpp::DoDisplayUpsideDown(IDvInvocation& aInvocation, T
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoSetDisplayUpsideDown(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoSetDisplayUpsideDown(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     bool aUpsideDown = aInvocation.InvocationReadBool("aUpsideDown");
@@ -556,7 +556,7 @@ void DvProviderLinnCoUkUi2Cpp::DoSetDisplayUpsideDown(IDvInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoSetDisplayScrollText(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoSetDisplayScrollText(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     bool aDisplayScrollText = aInvocation.InvocationReadBool("aDisplayScrollText");
@@ -566,7 +566,7 @@ void DvProviderLinnCoUkUi2Cpp::DoSetDisplayScrollText(IDvInvocation& aInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoDisplayScrollText(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoDisplayScrollText(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -578,7 +578,7 @@ void DvProviderLinnCoUkUi2Cpp::DoDisplayScrollText(IDvInvocation& aInvocation, T
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoSetDisplaySleep(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoSetDisplaySleep(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     bool aEnabled = aInvocation.InvocationReadBool("aEnabled");
@@ -588,7 +588,7 @@ void DvProviderLinnCoUkUi2Cpp::DoSetDisplaySleep(IDvInvocation& aInvocation, TUi
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoDisplaySleep(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoDisplaySleep(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -600,7 +600,7 @@ void DvProviderLinnCoUkUi2Cpp::DoDisplaySleep(IDvInvocation& aInvocation, TUint 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoSetDisplayLedOff(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoSetDisplayLedOff(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     bool aOff = aInvocation.InvocationReadBool("aOff");
@@ -610,7 +610,7 @@ void DvProviderLinnCoUkUi2Cpp::DoSetDisplayLedOff(IDvInvocation& aInvocation, TU
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkUi2Cpp::DoDisplayLedOff(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkUi2Cpp::DoDisplayLedOff(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

@@ -23,8 +23,6 @@ CpiDeviceDv::CpiDeviceDv(DviDevice& aDevice)
     iDeviceCp->SetReady();
 }
 
-// !!!! dtor that unsubscribes ?
-
 CpiDevice& CpiDeviceDv::Device()
 {
     return *iDeviceCp;

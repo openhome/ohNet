@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -61,10 +61,10 @@ private:
     virtual void Metatext(uint32_t aVersion, std::string& aaMetatext);
 private:
     DvProviderLinnCoUkInfo1Cpp();
-    void DoCounters(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoTrack(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDetails(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoMetatext(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoCounters(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoTrack(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDetails(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoMetatext(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyUint* iPropertyTrackCount;
     PropertyUint* iPropertyDetailsCount;

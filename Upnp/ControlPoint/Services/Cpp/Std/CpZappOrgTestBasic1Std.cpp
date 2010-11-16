@@ -459,19 +459,19 @@ CpProxyZappOrgTestBasic1Cpp::CpProxyZappOrgTestBasic1Cpp(CpDeviceCpp& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyZappOrgTestBasic1Cpp::VarUintPropertyChanged);
     iVarUint = new PropertyUint("VarUint", functor);
-    iService->AddProperty(iVarUint);
+    AddProperty(iVarUint);
     functor = MakeFunctor(*this, &CpProxyZappOrgTestBasic1Cpp::VarIntPropertyChanged);
     iVarInt = new PropertyInt("VarInt", functor);
-    iService->AddProperty(iVarInt);
+    AddProperty(iVarInt);
     functor = MakeFunctor(*this, &CpProxyZappOrgTestBasic1Cpp::VarBoolPropertyChanged);
     iVarBool = new PropertyBool("VarBool", functor);
-    iService->AddProperty(iVarBool);
+    AddProperty(iVarBool);
     functor = MakeFunctor(*this, &CpProxyZappOrgTestBasic1Cpp::VarStrPropertyChanged);
     iVarStr = new PropertyString("VarStr", functor);
-    iService->AddProperty(iVarStr);
+    AddProperty(iVarStr);
     functor = MakeFunctor(*this, &CpProxyZappOrgTestBasic1Cpp::VarBinPropertyChanged);
     iVarBin = new PropertyBinary("VarBin", functor);
-    iService->AddProperty(iVarBin);
+    AddProperty(iVarBin);
 }
 
 CpProxyZappOrgTestBasic1Cpp::~CpProxyZappOrgTestBasic1Cpp()
@@ -512,7 +512,7 @@ void CpProxyZappOrgTestBasic1Cpp::BeginIncrement(uint32_t aValue, FunctorAsync& 
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionIncrement->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestBasic1Cpp::EndIncrement(IAsync& aAsync, uint32_t& aResult)
@@ -544,7 +544,7 @@ void CpProxyZappOrgTestBasic1Cpp::BeginDecrement(int32_t aValue, FunctorAsync& a
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionDecrement->OutputParameters();
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestBasic1Cpp::EndDecrement(IAsync& aAsync, int32_t& aResult)
@@ -576,7 +576,7 @@ void CpProxyZappOrgTestBasic1Cpp::BeginToggle(bool aValue, FunctorAsync& aFuncto
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionToggle->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestBasic1Cpp::EndToggle(IAsync& aAsync, bool& aResult)
@@ -611,7 +611,7 @@ void CpProxyZappOrgTestBasic1Cpp::BeginEchoString(const std::string& aValue, Fun
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionEchoString->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestBasic1Cpp::EndEchoString(IAsync& aAsync, std::string& aResult)
@@ -649,7 +649,7 @@ void CpProxyZappOrgTestBasic1Cpp::BeginEchoBinary(const std::string& aValue, Fun
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionEchoBinary->OutputParameters();
     invocation->AddOutput(new ArgumentBinary(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestBasic1Cpp::EndEchoBinary(IAsync& aAsync, std::string& aResult)
@@ -681,7 +681,7 @@ void CpProxyZappOrgTestBasic1Cpp::BeginSetUint(uint32_t aValueUint, FunctorAsync
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetUint->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aValueUint));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestBasic1Cpp::EndSetUint(IAsync& aAsync)
@@ -708,7 +708,7 @@ void CpProxyZappOrgTestBasic1Cpp::BeginGetUint(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetUint->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestBasic1Cpp::EndGetUint(IAsync& aAsync, uint32_t& aValueUint)
@@ -737,7 +737,7 @@ void CpProxyZappOrgTestBasic1Cpp::BeginSetInt(int32_t aValueInt, FunctorAsync& a
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetInt->InputParameters();
     invocation->AddInput(new ArgumentInt(*inParams[inIndex++], aValueInt));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestBasic1Cpp::EndSetInt(IAsync& aAsync)
@@ -764,7 +764,7 @@ void CpProxyZappOrgTestBasic1Cpp::BeginGetInt(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetInt->OutputParameters();
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestBasic1Cpp::EndGetInt(IAsync& aAsync, int32_t& aValueInt)
@@ -793,7 +793,7 @@ void CpProxyZappOrgTestBasic1Cpp::BeginSetBool(bool aValueBool, FunctorAsync& aF
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetBool->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aValueBool));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestBasic1Cpp::EndSetBool(IAsync& aAsync)
@@ -820,7 +820,7 @@ void CpProxyZappOrgTestBasic1Cpp::BeginGetBool(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetBool->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestBasic1Cpp::EndGetBool(IAsync& aAsync, bool& aValueBool)
@@ -851,7 +851,7 @@ void CpProxyZappOrgTestBasic1Cpp::BeginSetMultiple(uint32_t aValueUint, int32_t 
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aValueUint));
     invocation->AddInput(new ArgumentInt(*inParams[inIndex++], aValueInt));
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aValueBool));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestBasic1Cpp::EndSetMultiple(IAsync& aAsync)
@@ -881,7 +881,7 @@ void CpProxyZappOrgTestBasic1Cpp::BeginSetString(const std::string& aValueStr, F
         Brn buf((const TByte*)aValueStr.c_str(), (TUint)aValueStr.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestBasic1Cpp::EndSetString(IAsync& aAsync)
@@ -908,7 +908,7 @@ void CpProxyZappOrgTestBasic1Cpp::BeginGetString(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetString->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestBasic1Cpp::EndGetString(IAsync& aAsync, std::string& aValueStr)
@@ -943,7 +943,7 @@ void CpProxyZappOrgTestBasic1Cpp::BeginSetBinary(const std::string& aValueBin, F
         Brn buf((const TByte*)aValueBin.c_str(), (TUint)aValueBin.length());
         invocation->AddInput(new ArgumentBinary(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestBasic1Cpp::EndSetBinary(IAsync& aAsync)
@@ -970,7 +970,7 @@ void CpProxyZappOrgTestBasic1Cpp::BeginGetBinary(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetBinary->OutputParameters();
     invocation->AddOutput(new ArgumentBinary(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestBasic1Cpp::EndGetBinary(IAsync& aAsync, std::string& aValueBin)
@@ -999,7 +999,7 @@ void CpProxyZappOrgTestBasic1Cpp::SyncToggleBool()
 void CpProxyZappOrgTestBasic1Cpp::BeginToggleBool(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionToggleBool, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestBasic1Cpp::EndToggleBool(IAsync& aAsync)
@@ -1050,34 +1050,44 @@ void CpProxyZappOrgTestBasic1Cpp::SetPropertyVarBinChanged(Functor& aFunctor)
 
 void CpProxyZappOrgTestBasic1Cpp::PropertyVarUint(uint32_t& aVarUint) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVarUint = iVarUint->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyZappOrgTestBasic1Cpp::PropertyVarInt(int32_t& aVarInt) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVarInt = iVarInt->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyZappOrgTestBasic1Cpp::PropertyVarBool(bool& aVarBool) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aVarBool = iVarBool->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyZappOrgTestBasic1Cpp::PropertyVarStr(std::string& aVarStr) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iVarStr->Value();
     aVarStr.assign((const char*)val.Ptr(), val.Bytes());
+    iPropertyLock->Signal();
 }
 
 void CpProxyZappOrgTestBasic1Cpp::PropertyVarBin(std::string& aVarBin) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iVarBin->Value();
     aVarBin.assign((const char*)val.Ptr(), val.Bytes());
+    iPropertyLock->Signal();
 }
 
 void CpProxyZappOrgTestBasic1Cpp::VarUintPropertyChanged()

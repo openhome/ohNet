@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -45,11 +45,11 @@ private:
     virtual void GetCurrentConnectionInfo(uint32_t aVersion, int32_t aConnectionID, int32_t& aRcsID, int32_t& aAVTransportID, std::string& aProtocolInfo, std::string& aPeerConnectionManager, int32_t& aPeerConnectionID, std::string& aDirection, std::string& aStatus);
 private:
     DvProviderUpnpOrgConnectionManager2Cpp();
-    void DoGetProtocolInfo(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoPrepareForConnection(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoConnectionComplete(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetCurrentConnectionIDs(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetCurrentConnectionInfo(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoGetProtocolInfo(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoPrepareForConnection(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoConnectionComplete(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetCurrentConnectionIDs(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetCurrentConnectionInfo(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyString* iPropertySourceProtocolInfo;
     PropertyString* iPropertySinkProtocolInfo;

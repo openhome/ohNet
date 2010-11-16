@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -170,7 +170,7 @@ void DvProviderLinnCoUkInfo1Cpp::EnableActionCounters()
     action->AddOutputParameter(new ParameterRelated("aTrackCount", *iPropertyTrackCount));
     action->AddOutputParameter(new ParameterRelated("aDetailsCount", *iPropertyDetailsCount));
     action->AddOutputParameter(new ParameterRelated("aMetatextCount", *iPropertyMetatextCount));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkInfo1Cpp::DoCounters);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkInfo1Cpp::DoCounters);
     iService->AddAction(action, functor);
 }
 
@@ -179,7 +179,7 @@ void DvProviderLinnCoUkInfo1Cpp::EnableActionTrack()
     Zapp::Action* action = new Zapp::Action("Track");
     action->AddOutputParameter(new ParameterRelated("aUri", *iPropertyUri));
     action->AddOutputParameter(new ParameterRelated("aMetadata", *iPropertyMetadata));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkInfo1Cpp::DoTrack);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkInfo1Cpp::DoTrack);
     iService->AddAction(action, functor);
 }
 
@@ -192,7 +192,7 @@ void DvProviderLinnCoUkInfo1Cpp::EnableActionDetails()
     action->AddOutputParameter(new ParameterRelated("aSampleRate", *iPropertySampleRate));
     action->AddOutputParameter(new ParameterRelated("aLossless", *iPropertyLossless));
     action->AddOutputParameter(new ParameterRelated("aCodecName", *iPropertyCodecName));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkInfo1Cpp::DoDetails);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkInfo1Cpp::DoDetails);
     iService->AddAction(action, functor);
 }
 
@@ -200,11 +200,11 @@ void DvProviderLinnCoUkInfo1Cpp::EnableActionMetatext()
 {
     Zapp::Action* action = new Zapp::Action("Metatext");
     action->AddOutputParameter(new ParameterRelated("aMetatext", *iPropertyMetatext));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkInfo1Cpp::DoMetatext);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkInfo1Cpp::DoMetatext);
     iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkInfo1Cpp::DoCounters(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkInfo1Cpp::DoCounters(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -222,7 +222,7 @@ void DvProviderLinnCoUkInfo1Cpp::DoCounters(IDvInvocation& aInvocation, TUint aV
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkInfo1Cpp::DoTrack(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkInfo1Cpp::DoTrack(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -241,7 +241,7 @@ void DvProviderLinnCoUkInfo1Cpp::DoTrack(IDvInvocation& aInvocation, TUint aVers
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkInfo1Cpp::DoDetails(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkInfo1Cpp::DoDetails(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -270,7 +270,7 @@ void DvProviderLinnCoUkInfo1Cpp::DoDetails(IDvInvocation& aInvocation, TUint aVe
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkInfo1Cpp::DoMetatext(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkInfo1Cpp::DoMetatext(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

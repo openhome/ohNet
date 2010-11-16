@@ -1,38 +1,38 @@
-#ifndef HEADER_IFACE_DVINVOCATION
-#define HEADER_IFACE_DVINVOCATION
+#ifndef HEADER_IFACE_DVIINVOCATION
+#define HEADER_IFACE_DVIINVOCATION
 
 #include <ZappTypes.h>
 
 namespace Zapp {
 
-typedef void (*ZappFunctorDvInvocation)(void* aPtr, void* aInvocation, TUint aVersion);
-class IDvInvocation;
+typedef void (*ZappFunctorDviInvocation)(void* aPtr, void* aInvocation, TUint aVersion);
+class IDviInvocation;
 
-class FunctorDvInvocation
+class FunctorDviInvocation
 {
 public:
-    void operator()(IDvInvocation& aInvocation, TUint aVersion) const { iThunk(*this, aInvocation, aVersion); }
+    void operator()(IDviInvocation& aInvocation, TUint aVersion) const { iThunk(*this, aInvocation, aVersion); }
     operator TBool() const { return (iObject!=NULL || iCallback!=NULL); }
-    typedef TAny (FunctorDvInvocation::*MemberFunction)();
+    typedef TAny (FunctorDviInvocation::*MemberFunction)();
     typedef TAny (*Callback)();
-    FunctorDvInvocation() : iCallback(NULL), iObject(NULL) {}
+    FunctorDviInvocation() : iCallback(NULL), iObject(NULL) {}
     static const TUint kFudgeFactor = 2;
 
     union {
-        ZappFunctorDvInvocation iCallback;
+        ZappFunctorDviInvocation iCallback;
         TByte iCallbackMember[kFudgeFactor * sizeof(MemberFunction)];
     };
     TAny* iObject;
 
 protected:
-    typedef void (*Thunk)(const FunctorDvInvocation&, IDvInvocation&, TUint);
-    FunctorDvInvocation(Thunk aT, const TAny* aObject, const TAny* aCallback, TUint aBytes)
+    typedef void (*Thunk)(const FunctorDviInvocation&, IDviInvocation&, TUint);
+    FunctorDviInvocation(Thunk aT, const TAny* aObject, const TAny* aCallback, TUint aBytes)
         : iThunk(aT)
     {
         iObject = (TAny*)aObject;
         memcpy(iCallbackMember, aCallback, aBytes);
     }
-    FunctorDvInvocation(Thunk aT, const TAny* aObject, ZappFunctorDvInvocation aCallback)
+    FunctorDviInvocation(Thunk aT, const TAny* aObject, ZappFunctorDviInvocation aCallback)
         : iThunk(aT)
     {
         iObject = (TAny*)aObject;
@@ -44,12 +44,12 @@ private:
 };
 
 template<class Object, class MemFunc>
-class MemberTranslatorDvInvocation : public FunctorDvInvocation
+class MemberTranslatorDviInvocation : public FunctorDviInvocation
 {
 public:
-    MemberTranslatorDvInvocation(Object& aC, const MemFunc& aM) :
-        FunctorDvInvocation(Thunk,&aC,&aM,sizeof(MemFunc)) {}
-    static void Thunk(const FunctorDvInvocation& aFb, IDvInvocation& aInvocation, TUint aVersion)
+    MemberTranslatorDviInvocation(Object& aC, const MemFunc& aM) :
+        FunctorDviInvocation(Thunk,&aC,&aM,sizeof(MemFunc)) {}
+    static void Thunk(const FunctorDviInvocation& aFb, IDviInvocation& aInvocation, TUint aVersion)
     {
         Object* object = (Object*)aFb.iObject;
         MemFunc& memFunc(*(MemFunc*)(TAny*)(aFb.iCallbackMember));
@@ -58,13 +58,13 @@ public:
 };
 
 template<class Object, class CallType>
-inline MemberTranslatorDvInvocation<Object,void (CallType::*)(IDvInvocation&, TUint)>
-MakeFunctorDvInvocation(Object& aC, void(CallType::* const &aF)(IDvInvocation&, TUint))
+inline MemberTranslatorDviInvocation<Object,void (CallType::*)(IDviInvocation&, TUint)>
+MakeFunctorDviInvocation(Object& aC, void(CallType::* const &aF)(IDviInvocation&, TUint))
     {
-    typedef void(CallType::*MemFunc)(IDvInvocation&, TUint);
-    return MemberTranslatorDvInvocation<Object,MemFunc>(aC,aF);
+    typedef void(CallType::*MemFunc)(IDviInvocation&, TUint);
+    return MemberTranslatorDviInvocation<Object,MemFunc>(aC,aF);
     }
 
 } // namespace Zapp
 
-#endif // HEADER_IFACE_DVINVOCATION
+#endif // HEADER_IFACE_DVIINVOCATION

@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -57,19 +57,19 @@ private:
     virtual void Reboot(uint32_t aVersion, uint32_t aaDelay);
 private:
     DvProviderLinnCoUkDiagnostics1Cpp();
-    void DoEcho(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoElfFile(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoElfFingerprint(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoCrashDataStatus(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoCrashDataFetch(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoCrashDataClear(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSysLog(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDiagnostic(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoStateVariable(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetStateVariable(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoStateVariablePeriod(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetStateVariablePeriod(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoReboot(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoEcho(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoElfFile(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoElfFingerprint(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoCrashDataStatus(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoCrashDataFetch(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoCrashDataClear(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSysLog(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDiagnostic(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoStateVariable(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetStateVariable(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoStateVariablePeriod(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetStateVariablePeriod(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoReboot(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyUint* iPropertyaStateVariable;
 };

@@ -198,7 +198,7 @@ public:
     virtual ~Property();
     const Zapp::Parameter& Parameter() const;
     TUint SequenceNumber() const;
-    void ReportChanged();
+    TBool ReportChanged();
     virtual void Process(IOutputProcessor& aProcessor, const Brx& aBuffer) = 0;
     virtual void Write(IPropertyWriter& aWriter) = 0;
 protected:

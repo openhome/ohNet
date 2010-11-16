@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -51,15 +51,15 @@ private:
     virtual void PresetCount(uint32_t aVersion, uint32_t& aaCount);
 private:
     DvProviderLinnCoUkDelay1Cpp();
-    void DoPresetXml(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoPresetIndex(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetPresetIndex(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetPresetDelay(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetPresetVisible(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetPresetName(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDelayMinimum(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDelayMaximum(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoPresetCount(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoPresetXml(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoPresetIndex(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetPresetIndex(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetPresetDelay(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetPresetVisible(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetPresetName(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDelayMinimum(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDelayMaximum(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoPresetCount(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyString* iPropertyPresetXml;
     PropertyUint* iPropertyPresetIndex;

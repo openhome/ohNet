@@ -8,6 +8,7 @@
 
 namespace Zapp {
 
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -64,16 +65,16 @@ private:
     virtual void ProtocolInfo(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaSupportedProtocols);
 private:
     DvProviderLinnCoUkDs1();
-    void DoPlay(IDvInvocation& aInvocation, TUint aVersion);
-    void DoPause(IDvInvocation& aInvocation, TUint aVersion);
-    void DoStop(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSeekSecondAbsolute(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSeekSecondRelative(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSeekTrackId(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSeekTrackAbsolute(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSeekTrackRelative(IDvInvocation& aInvocation, TUint aVersion);
-    void DoState(IDvInvocation& aInvocation, TUint aVersion);
-    void DoProtocolInfo(IDvInvocation& aInvocation, TUint aVersion);
+    void DoPlay(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPause(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStop(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSeekSecondAbsolute(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSeekSecondRelative(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSeekTrackId(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSeekTrackAbsolute(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSeekTrackRelative(IDviInvocation& aInvocation, TUint aVersion);
+    void DoState(IDviInvocation& aInvocation, TUint aVersion);
+    void DoProtocolInfo(IDviInvocation& aInvocation, TUint aVersion);
 private:
     PropertyString* iPropertySupportedProtocols;
     PropertyUint* iPropertyTrackDuration;

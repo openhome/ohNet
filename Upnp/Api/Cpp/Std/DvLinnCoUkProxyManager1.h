@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -57,16 +57,16 @@ private:
     virtual void TestDiscPlayerConnection(uint32_t aVersion, bool& aaResult);
 private:
     DvProviderLinnCoUkProxyManager1Cpp();
-    void DoKontrolProductConnected(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetKontrolProductConnected(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoKontrolProductComPort(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetKontrolProductComPort(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDiscPlayerConnected(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetDiscPlayerConnected(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDiscPlayerComPort(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetDiscPlayerComPort(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoTestKontrolProductConnection(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoTestDiscPlayerConnection(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoKontrolProductConnected(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetKontrolProductConnected(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoKontrolProductComPort(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetKontrolProductComPort(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDiscPlayerConnected(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetDiscPlayerConnected(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDiscPlayerComPort(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetDiscPlayerComPort(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoTestKontrolProductConnection(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoTestDiscPlayerConnection(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyString* iPropertyKontrolProductConnected;
     PropertyUint* iPropertyKontrolProductComPort;

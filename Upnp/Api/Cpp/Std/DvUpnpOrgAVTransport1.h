@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -65,23 +65,23 @@ private:
     virtual void GetCurrentTransportActions(uint32_t aVersion, uint32_t aInstanceID, std::string& aActions);
 private:
     DvProviderUpnpOrgAVTransport1Cpp();
-    void DoSetAVTransportURI(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetNextAVTransportURI(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetMediaInfo(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetTransportInfo(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetPositionInfo(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetDeviceCapabilities(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetTransportSettings(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoStop(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoPlay(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoPause(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoRecord(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSeek(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoNext(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoPrevious(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetPlayMode(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetRecordQualityMode(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetCurrentTransportActions(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoSetAVTransportURI(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetNextAVTransportURI(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetMediaInfo(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetTransportInfo(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetPositionInfo(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetDeviceCapabilities(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetTransportSettings(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoStop(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoPlay(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoPause(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoRecord(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSeek(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoNext(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoPrevious(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetPlayMode(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetRecordQualityMode(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetCurrentTransportActions(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyString* iPropertyLastChange;
 };

@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -99,30 +99,30 @@ private:
     virtual void DisplayLedOff(uint32_t aVersion, bool& aaOff);
 private:
     DvProviderLinnCoUkUi2Cpp();
-    void DoDisplayTestPattern(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDisplayFill(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDisplayClear(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetTestModeEnabled(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSimulateInfraredInput(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSimulateButtonInput(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSimulateLightSensor(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetLightSensorData(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetDisplayBrightness(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetDisplayBrightnessAuto(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetInfraredCommands(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoInfraredCommands(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetInfraredTerminalCommands(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoInfraredTerminalCommands(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDisplayBrightness(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDisplayBrightnessAuto(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDisplayUpsideDown(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetDisplayUpsideDown(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetDisplayScrollText(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDisplayScrollText(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetDisplaySleep(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDisplaySleep(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetDisplayLedOff(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoDisplayLedOff(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoDisplayTestPattern(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDisplayFill(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDisplayClear(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetTestModeEnabled(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSimulateInfraredInput(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSimulateButtonInput(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSimulateLightSensor(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetLightSensorData(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetDisplayBrightness(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetDisplayBrightnessAuto(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetInfraredCommands(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoInfraredCommands(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetInfraredTerminalCommands(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoInfraredTerminalCommands(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDisplayBrightness(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDisplayBrightnessAuto(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDisplayUpsideDown(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetDisplayUpsideDown(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetDisplayScrollText(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDisplayScrollText(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetDisplaySleep(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDisplaySleep(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetDisplayLedOff(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoDisplayLedOff(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyUint* iPropertyDisplayBrightness;
     PropertyBool* iPropertyDisplayBrightnessAuto;

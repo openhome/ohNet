@@ -23,14 +23,14 @@ public:
     CpiStack();
     static Zapp::InvocationManager& InvocationManager();
     static Zapp::XmlFetchManager& XmlFetchManager();
-    static Zapp::SubscriptionManager& SubscriptionManager();
+    static CpiSubscriptionManager& SubscriptionManager();
 private:
     ~CpiStack();
     static CpiStack* Self();
 private:
     Zapp::InvocationManager* iInvocationManager;
     Zapp::XmlFetchManager* iXmlFetchManager;
-    Zapp::SubscriptionManager* iSubscriptionManager;
+    CpiSubscriptionManager* iSubscriptionManager;
 };
 
 } // namespace Zapp

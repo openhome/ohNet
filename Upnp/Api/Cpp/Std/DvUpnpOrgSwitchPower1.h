@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -37,9 +37,9 @@ private:
     virtual void GetStatus(uint32_t aVersion, bool& aResultStatus);
 private:
     DvProviderUpnpOrgSwitchPower1Cpp();
-    void DoSetTarget(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetTarget(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetStatus(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoSetTarget(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetTarget(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetStatus(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyBool* iPropertyStatus;
 };

@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -108,21 +108,21 @@ DvProviderLinnCoUkRadio1::DvProviderLinnCoUkRadio1(DvDevice& aDevice)
 void DvProviderLinnCoUkRadio1::EnableActionPlay()
 {
     Zapp::Action* action = new Zapp::Action("Play");
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkRadio1::DoPlay);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkRadio1::DoPlay);
     iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkRadio1::EnableActionPause()
 {
     Zapp::Action* action = new Zapp::Action("Pause");
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkRadio1::DoPause);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkRadio1::DoPause);
     iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkRadio1::EnableActionStop()
 {
     Zapp::Action* action = new Zapp::Action("Stop");
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkRadio1::DoStop);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkRadio1::DoStop);
     iService->AddAction(action, functor);
 }
 
@@ -130,7 +130,7 @@ void DvProviderLinnCoUkRadio1::EnableActionSeekSecondAbsolute()
 {
     Zapp::Action* action = new Zapp::Action("SeekSecondAbsolute");
     action->AddInputParameter(new ParameterUint("aSecond"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkRadio1::DoSeekSecondAbsolute);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkRadio1::DoSeekSecondAbsolute);
     iService->AddAction(action, functor);
 }
 
@@ -138,7 +138,7 @@ void DvProviderLinnCoUkRadio1::EnableActionSeekSecondRelative()
 {
     Zapp::Action* action = new Zapp::Action("SeekSecondRelative");
     action->AddInputParameter(new ParameterInt("aSecond"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkRadio1::DoSeekSecondRelative);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkRadio1::DoSeekSecondRelative);
     iService->AddAction(action, functor);
 }
 
@@ -147,7 +147,7 @@ void DvProviderLinnCoUkRadio1::EnableActionChannel()
     Zapp::Action* action = new Zapp::Action("Channel");
     action->AddOutputParameter(new ParameterRelated("aUri", *iPropertyChannelUri));
     action->AddOutputParameter(new ParameterRelated("aMetadata", *iPropertyChannelMetadata));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkRadio1::DoChannel);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkRadio1::DoChannel);
     iService->AddAction(action, functor);
 }
 
@@ -156,7 +156,7 @@ void DvProviderLinnCoUkRadio1::EnableActionSetChannel()
     Zapp::Action* action = new Zapp::Action("SetChannel");
     action->AddInputParameter(new ParameterRelated("aUri", *iPropertyChannelUri));
     action->AddInputParameter(new ParameterRelated("aMetadata", *iPropertyChannelMetadata));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkRadio1::DoSetChannel);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkRadio1::DoSetChannel);
     iService->AddAction(action, functor);
 }
 
@@ -164,7 +164,7 @@ void DvProviderLinnCoUkRadio1::EnableActionProtocolInfo()
 {
     Zapp::Action* action = new Zapp::Action("ProtocolInfo");
     action->AddOutputParameter(new ParameterRelated("aInfo", *iPropertyProtocolInfo));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkRadio1::DoProtocolInfo);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkRadio1::DoProtocolInfo);
     iService->AddAction(action, functor);
 }
 
@@ -172,7 +172,7 @@ void DvProviderLinnCoUkRadio1::EnableActionTransportState()
 {
     Zapp::Action* action = new Zapp::Action("TransportState");
     action->AddOutputParameter(new ParameterRelated("aState", *iPropertyTransportState));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkRadio1::DoTransportState);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkRadio1::DoTransportState);
     iService->AddAction(action, functor);
 }
 
@@ -180,7 +180,7 @@ void DvProviderLinnCoUkRadio1::EnableActionId()
 {
     Zapp::Action* action = new Zapp::Action("Id");
     action->AddOutputParameter(new ParameterRelated("aId", *iPropertyId));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkRadio1::DoId);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkRadio1::DoId);
     iService->AddAction(action, functor);
 }
 
@@ -189,7 +189,7 @@ void DvProviderLinnCoUkRadio1::EnableActionSetId()
     Zapp::Action* action = new Zapp::Action("SetId");
     action->AddInputParameter(new ParameterRelated("aId", *iPropertyId));
     action->AddInputParameter(new ParameterRelated("aUri", *iPropertyChannelUri));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkRadio1::DoSetId);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkRadio1::DoSetId);
     iService->AddAction(action, functor);
 }
 
@@ -198,7 +198,7 @@ void DvProviderLinnCoUkRadio1::EnableActionRead()
     Zapp::Action* action = new Zapp::Action("Read");
     action->AddInputParameter(new ParameterRelated("aId", *iPropertyId));
     action->AddOutputParameter(new ParameterRelated("aMetadata", *iPropertyChannelMetadata));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkRadio1::DoRead);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkRadio1::DoRead);
     iService->AddAction(action, functor);
 }
 
@@ -207,7 +207,7 @@ void DvProviderLinnCoUkRadio1::EnableActionReadList()
     Zapp::Action* action = new Zapp::Action("ReadList");
     action->AddInputParameter(new ParameterString("aIdList"));
     action->AddOutputParameter(new ParameterString("aMetadataList"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkRadio1::DoReadList);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkRadio1::DoReadList);
     iService->AddAction(action, functor);
 }
 
@@ -216,7 +216,7 @@ void DvProviderLinnCoUkRadio1::EnableActionIdArray()
     Zapp::Action* action = new Zapp::Action("IdArray");
     action->AddOutputParameter(new ParameterUint("aIdArrayToken"));
     action->AddOutputParameter(new ParameterRelated("aIdArray", *iPropertyIdArray));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkRadio1::DoIdArray);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkRadio1::DoIdArray);
     iService->AddAction(action, functor);
 }
 
@@ -225,7 +225,7 @@ void DvProviderLinnCoUkRadio1::EnableActionIdArrayChanged()
     Zapp::Action* action = new Zapp::Action("IdArrayChanged");
     action->AddInputParameter(new ParameterUint("aIdArrayToken"));
     action->AddOutputParameter(new ParameterBool("aIdArrayChanged"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkRadio1::DoIdArrayChanged);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkRadio1::DoIdArrayChanged);
     iService->AddAction(action, functor);
 }
 
@@ -233,11 +233,11 @@ void DvProviderLinnCoUkRadio1::EnableActionIdsMax()
 {
     Zapp::Action* action = new Zapp::Action("IdsMax");
     action->AddOutputParameter(new ParameterRelated("aIdsMax", *iPropertyIdsMax));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkRadio1::DoIdsMax);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkRadio1::DoIdsMax);
     iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkRadio1::DoPlay(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkRadio1::DoPlay(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -245,7 +245,7 @@ void DvProviderLinnCoUkRadio1::DoPlay(IDvInvocation& aInvocation, TUint aVersion
     Play(resp, aVersion);
 }
 
-void DvProviderLinnCoUkRadio1::DoPause(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkRadio1::DoPause(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -253,7 +253,7 @@ void DvProviderLinnCoUkRadio1::DoPause(IDvInvocation& aInvocation, TUint aVersio
     Pause(resp, aVersion);
 }
 
-void DvProviderLinnCoUkRadio1::DoStop(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkRadio1::DoStop(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -261,7 +261,7 @@ void DvProviderLinnCoUkRadio1::DoStop(IDvInvocation& aInvocation, TUint aVersion
     Stop(resp, aVersion);
 }
 
-void DvProviderLinnCoUkRadio1::DoSeekSecondAbsolute(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkRadio1::DoSeekSecondAbsolute(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aSecond = aInvocation.InvocationReadUint("aSecond");
@@ -270,7 +270,7 @@ void DvProviderLinnCoUkRadio1::DoSeekSecondAbsolute(IDvInvocation& aInvocation, 
     SeekSecondAbsolute(resp, aVersion, aSecond);
 }
 
-void DvProviderLinnCoUkRadio1::DoSeekSecondRelative(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkRadio1::DoSeekSecondRelative(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TInt aSecond = aInvocation.InvocationReadInt("aSecond");
@@ -279,7 +279,7 @@ void DvProviderLinnCoUkRadio1::DoSeekSecondRelative(IDvInvocation& aInvocation, 
     SeekSecondRelative(resp, aVersion, aSecond);
 }
 
-void DvProviderLinnCoUkRadio1::DoChannel(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkRadio1::DoChannel(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -289,7 +289,7 @@ void DvProviderLinnCoUkRadio1::DoChannel(IDvInvocation& aInvocation, TUint aVers
     Channel(resp, aVersion, respaUri, respaMetadata);
 }
 
-void DvProviderLinnCoUkRadio1::DoSetChannel(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkRadio1::DoSetChannel(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz aUri;
@@ -301,7 +301,7 @@ void DvProviderLinnCoUkRadio1::DoSetChannel(IDvInvocation& aInvocation, TUint aV
     SetChannel(resp, aVersion, aUri, aMetadata);
 }
 
-void DvProviderLinnCoUkRadio1::DoProtocolInfo(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkRadio1::DoProtocolInfo(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -310,7 +310,7 @@ void DvProviderLinnCoUkRadio1::DoProtocolInfo(IDvInvocation& aInvocation, TUint 
     ProtocolInfo(resp, aVersion, respaInfo);
 }
 
-void DvProviderLinnCoUkRadio1::DoTransportState(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkRadio1::DoTransportState(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -319,7 +319,7 @@ void DvProviderLinnCoUkRadio1::DoTransportState(IDvInvocation& aInvocation, TUin
     TransportState(resp, aVersion, respaState);
 }
 
-void DvProviderLinnCoUkRadio1::DoId(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkRadio1::DoId(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -328,7 +328,7 @@ void DvProviderLinnCoUkRadio1::DoId(IDvInvocation& aInvocation, TUint aVersion)
     Id(resp, aVersion, respaId);
 }
 
-void DvProviderLinnCoUkRadio1::DoSetId(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkRadio1::DoSetId(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aId = aInvocation.InvocationReadUint("aId");
@@ -339,7 +339,7 @@ void DvProviderLinnCoUkRadio1::DoSetId(IDvInvocation& aInvocation, TUint aVersio
     SetId(resp, aVersion, aId, aUri);
 }
 
-void DvProviderLinnCoUkRadio1::DoRead(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkRadio1::DoRead(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aId = aInvocation.InvocationReadUint("aId");
@@ -349,7 +349,7 @@ void DvProviderLinnCoUkRadio1::DoRead(IDvInvocation& aInvocation, TUint aVersion
     Read(resp, aVersion, aId, respaMetadata);
 }
 
-void DvProviderLinnCoUkRadio1::DoReadList(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkRadio1::DoReadList(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz aIdList;
@@ -360,7 +360,7 @@ void DvProviderLinnCoUkRadio1::DoReadList(IDvInvocation& aInvocation, TUint aVer
     ReadList(resp, aVersion, aIdList, respaMetadataList);
 }
 
-void DvProviderLinnCoUkRadio1::DoIdArray(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkRadio1::DoIdArray(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -370,7 +370,7 @@ void DvProviderLinnCoUkRadio1::DoIdArray(IDvInvocation& aInvocation, TUint aVers
     IdArray(resp, aVersion, respaIdArrayToken, respaIdArray);
 }
 
-void DvProviderLinnCoUkRadio1::DoIdArrayChanged(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkRadio1::DoIdArrayChanged(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aIdArrayToken = aInvocation.InvocationReadUint("aIdArrayToken");
@@ -380,7 +380,7 @@ void DvProviderLinnCoUkRadio1::DoIdArrayChanged(IDvInvocation& aInvocation, TUin
     IdArrayChanged(resp, aVersion, aIdArrayToken, respaIdArrayChanged);
 }
 
-void DvProviderLinnCoUkRadio1::DoIdsMax(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkRadio1::DoIdsMax(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

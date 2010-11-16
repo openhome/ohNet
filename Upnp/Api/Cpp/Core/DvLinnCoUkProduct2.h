@@ -8,6 +8,7 @@
 
 namespace Zapp {
 
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -58,18 +59,18 @@ private:
     virtual void SourceType(IInvocationResponse& aResponse, TUint aVersion, TUint aaSourceIndex, IInvocationResponseString& aaSourceType);
 private:
     DvProviderLinnCoUkProduct2();
-    void DoType(IDvInvocation& aInvocation, TUint aVersion);
-    void DoModel(IDvInvocation& aInvocation, TUint aVersion);
-    void DoName(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetName(IDvInvocation& aInvocation, TUint aVersion);
-    void DoRoom(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetRoom(IDvInvocation& aInvocation, TUint aVersion);
-    void DoStandby(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetStandby(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSourceCount(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSourceIndex(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetSourceIndex(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSourceType(IDvInvocation& aInvocation, TUint aVersion);
+    void DoType(IDviInvocation& aInvocation, TUint aVersion);
+    void DoModel(IDviInvocation& aInvocation, TUint aVersion);
+    void DoName(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetName(IDviInvocation& aInvocation, TUint aVersion);
+    void DoRoom(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetRoom(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStandby(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetStandby(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSourceCount(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSourceIndex(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetSourceIndex(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSourceType(IDviInvocation& aInvocation, TUint aVersion);
 private:
     PropertyString* iPropertyProductName;
     PropertyString* iPropertyProductRoom;

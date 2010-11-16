@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -69,20 +69,20 @@ private:
     virtual void StartupVolumeEnabled(uint32_t aVersion, bool& aaStartupVolumeEnabled);
 private:
     DvProviderLinnCoUkPreamp4Cpp();
-    void DoVolumeInc(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoVolumeDec(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetVolume(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoVolume(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetMute(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoMute(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetBalance(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoBalance(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetVolumeLimit(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoVolumeLimit(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetStartupVolume(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoStartupVolume(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetStartupVolumeEnabled(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoStartupVolumeEnabled(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoVolumeInc(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoVolumeDec(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetVolume(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoVolume(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetMute(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoMute(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetBalance(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoBalance(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetVolumeLimit(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoVolumeLimit(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetStartupVolume(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoStartupVolume(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetStartupVolumeEnabled(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoStartupVolumeEnabled(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyUint* iPropertyVolume;
     PropertyBool* iPropertyMute;

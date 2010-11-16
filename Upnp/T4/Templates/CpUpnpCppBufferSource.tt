@@ -144,7 +144,7 @@ void Sync<#=a.name#><#=syncClassSuffix#>::CompleteRequest(IAsync& aAsync)
 <#  { #>
     functor = MakeFunctor(*this, &<#=className#>::<#=s.name#>PropertyChanged);
     i<#=s.name#> = new <#=proptype[s.type]#>("<#=s.name#>", functor);
-    iService->AddProperty(i<#=s.name#>);
+    AddProperty(i<#=s.name#>);
 <#  } #>
 }
 
@@ -187,7 +187,7 @@ void <#=className#>::Begin<#=a.name#>(<#=InTypesAndNamesTrailingComma(a)#>Functo
     invocation->AddOutput(new <#=argclass[o.variable.type]#>(*outParams[outIndex++]));
 <#          } #>
 <#      } #>
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void <#=className#>::End<#=a.name#>(<#=PrefixedOutArgTypesAndNames("IAsync& aAsync", a)#>)
@@ -231,6 +231,7 @@ void <#=className#>::SetProperty<#=s.name#>Changed(Functor& aFunctor)
 
 void <#=className#>::Property<#=s.name#>(<#=propargtype[s.type]#> a<#=s.name#>) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
 <#      if (s.type=="string" || s.type=="bin.base64" || s.type=="uri") #>
 <#      { #>
@@ -240,6 +241,7 @@ void <#=className#>::Property<#=s.name#>(<#=propargtype[s.type]#> a<#=s.name#>) 
 <#      { #>
     a<#=s.name#> = i<#=s.name#>->Value();
 <#      } #>
+    iPropertyLock->Signal();
 }
 <#  } #>
 <#  foreach (Variable s in u.evented) #>

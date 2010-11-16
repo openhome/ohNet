@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -172,7 +172,7 @@ void DvProviderLinnCoUkProduct3::EnableActionType()
 {
     Zapp::Action* action = new Zapp::Action("Type");
     action->AddOutputParameter(new ParameterRelated("aType", *iPropertyProductType));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoType);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoType);
     iService->AddAction(action, functor);
 }
 
@@ -180,7 +180,7 @@ void DvProviderLinnCoUkProduct3::EnableActionModel()
 {
     Zapp::Action* action = new Zapp::Action("Model");
     action->AddOutputParameter(new ParameterRelated("aModel", *iPropertyProductModel));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoModel);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoModel);
     iService->AddAction(action, functor);
 }
 
@@ -188,7 +188,7 @@ void DvProviderLinnCoUkProduct3::EnableActionName()
 {
     Zapp::Action* action = new Zapp::Action("Name");
     action->AddOutputParameter(new ParameterRelated("aName", *iPropertyProductName));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoName);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoName);
     iService->AddAction(action, functor);
 }
 
@@ -196,7 +196,7 @@ void DvProviderLinnCoUkProduct3::EnableActionSetName()
 {
     Zapp::Action* action = new Zapp::Action("SetName");
     action->AddInputParameter(new ParameterRelated("aName", *iPropertyProductName));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetName);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetName);
     iService->AddAction(action, functor);
 }
 
@@ -204,7 +204,7 @@ void DvProviderLinnCoUkProduct3::EnableActionRoom()
 {
     Zapp::Action* action = new Zapp::Action("Room");
     action->AddOutputParameter(new ParameterRelated("aRoom", *iPropertyProductRoom));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoRoom);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoRoom);
     iService->AddAction(action, functor);
 }
 
@@ -212,7 +212,7 @@ void DvProviderLinnCoUkProduct3::EnableActionSetRoom()
 {
     Zapp::Action* action = new Zapp::Action("SetRoom");
     action->AddInputParameter(new ParameterRelated("aRoom", *iPropertyProductRoom));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetRoom);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetRoom);
     iService->AddAction(action, functor);
 }
 
@@ -220,7 +220,7 @@ void DvProviderLinnCoUkProduct3::EnableActionStandby()
 {
     Zapp::Action* action = new Zapp::Action("Standby");
     action->AddOutputParameter(new ParameterRelated("aStandby", *iPropertyProductStandby));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoStandby);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoStandby);
     iService->AddAction(action, functor);
 }
 
@@ -228,7 +228,7 @@ void DvProviderLinnCoUkProduct3::EnableActionSetStandby()
 {
     Zapp::Action* action = new Zapp::Action("SetStandby");
     action->AddInputParameter(new ParameterRelated("aStandby", *iPropertyProductStandby));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetStandby);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetStandby);
     iService->AddAction(action, functor);
 }
 
@@ -236,7 +236,7 @@ void DvProviderLinnCoUkProduct3::EnableActionSourceCount()
 {
     Zapp::Action* action = new Zapp::Action("SourceCount");
     action->AddOutputParameter(new ParameterRelated("aSourceCount", *iPropertyProductSourceCount));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSourceCount);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoSourceCount);
     iService->AddAction(action, functor);
 }
 
@@ -244,7 +244,7 @@ void DvProviderLinnCoUkProduct3::EnableActionSourceXml()
 {
     Zapp::Action* action = new Zapp::Action("SourceXml");
     action->AddOutputParameter(new ParameterRelated("aSourceXml", *iPropertyProductSourceXml));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSourceXml);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoSourceXml);
     iService->AddAction(action, functor);
 }
 
@@ -252,7 +252,7 @@ void DvProviderLinnCoUkProduct3::EnableActionSourceIndex()
 {
     Zapp::Action* action = new Zapp::Action("SourceIndex");
     action->AddOutputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSourceIndex);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoSourceIndex);
     iService->AddAction(action, functor);
 }
 
@@ -260,7 +260,7 @@ void DvProviderLinnCoUkProduct3::EnableActionSetSourceIndex()
 {
     Zapp::Action* action = new Zapp::Action("SetSourceIndex");
     action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetSourceIndex);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetSourceIndex);
     iService->AddAction(action, functor);
 }
 
@@ -268,7 +268,7 @@ void DvProviderLinnCoUkProduct3::EnableActionSetSourceIndexByName()
 {
     Zapp::Action* action = new Zapp::Action("SetSourceIndexByName");
     action->AddInputParameter(new ParameterString("aSourceName"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetSourceIndexByName);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetSourceIndexByName);
     iService->AddAction(action, functor);
 }
 
@@ -276,7 +276,7 @@ void DvProviderLinnCoUkProduct3::EnableActionSetStartupSourceIndexByName()
 {
     Zapp::Action* action = new Zapp::Action("SetStartupSourceIndexByName");
     action->AddInputParameter(new ParameterString("aSourceName"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetStartupSourceIndexByName);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetStartupSourceIndexByName);
     iService->AddAction(action, functor);
 }
 
@@ -284,7 +284,7 @@ void DvProviderLinnCoUkProduct3::EnableActionStartupSourceIndex()
 {
     Zapp::Action* action = new Zapp::Action("StartupSourceIndex");
     action->AddOutputParameter(new ParameterRelated("aSourceIndex", *iPropertyStartupSourceIndex));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoStartupSourceIndex);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoStartupSourceIndex);
     iService->AddAction(action, functor);
 }
 
@@ -292,7 +292,7 @@ void DvProviderLinnCoUkProduct3::EnableActionSetStartupSourceIndex()
 {
     Zapp::Action* action = new Zapp::Action("SetStartupSourceIndex");
     action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyStartupSourceIndex));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetStartupSourceIndex);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetStartupSourceIndex);
     iService->AddAction(action, functor);
 }
 
@@ -300,7 +300,7 @@ void DvProviderLinnCoUkProduct3::EnableActionStartupSourceEnabled()
 {
     Zapp::Action* action = new Zapp::Action("StartupSourceEnabled");
     action->AddOutputParameter(new ParameterRelated("aStartupSourceEnabled", *iPropertyStartupSourceEnabled));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoStartupSourceEnabled);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoStartupSourceEnabled);
     iService->AddAction(action, functor);
 }
 
@@ -308,7 +308,7 @@ void DvProviderLinnCoUkProduct3::EnableActionSetStartupSourceEnabled()
 {
     Zapp::Action* action = new Zapp::Action("SetStartupSourceEnabled");
     action->AddInputParameter(new ParameterRelated("aStartupSourceEnabled", *iPropertyStartupSourceEnabled));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetStartupSourceEnabled);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetStartupSourceEnabled);
     iService->AddAction(action, functor);
 }
 
@@ -317,7 +317,7 @@ void DvProviderLinnCoUkProduct3::EnableActionSourceSystemName()
     Zapp::Action* action = new Zapp::Action("SourceSystemName");
     action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
     action->AddOutputParameter(new ParameterString("aSourceName"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSourceSystemName);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoSourceSystemName);
     iService->AddAction(action, functor);
 }
 
@@ -326,7 +326,7 @@ void DvProviderLinnCoUkProduct3::EnableActionSourceName()
     Zapp::Action* action = new Zapp::Action("SourceName");
     action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
     action->AddOutputParameter(new ParameterString("aSourceName"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSourceName);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoSourceName);
     iService->AddAction(action, functor);
 }
 
@@ -335,7 +335,7 @@ void DvProviderLinnCoUkProduct3::EnableActionSetSourceName()
     Zapp::Action* action = new Zapp::Action("SetSourceName");
     action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
     action->AddInputParameter(new ParameterString("aSourceName"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetSourceName);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetSourceName);
     iService->AddAction(action, functor);
 }
 
@@ -344,7 +344,7 @@ void DvProviderLinnCoUkProduct3::EnableActionSourceType()
     Zapp::Action* action = new Zapp::Action("SourceType");
     action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
     action->AddOutputParameter(new ParameterString("aSourceType"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSourceType);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoSourceType);
     iService->AddAction(action, functor);
 }
 
@@ -353,7 +353,7 @@ void DvProviderLinnCoUkProduct3::EnableActionSourceVisible()
     Zapp::Action* action = new Zapp::Action("SourceVisible");
     action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
     action->AddOutputParameter(new ParameterBool("aSourceVisible"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSourceVisible);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoSourceVisible);
     iService->AddAction(action, functor);
 }
 
@@ -362,11 +362,11 @@ void DvProviderLinnCoUkProduct3::EnableActionSetSourceVisible()
     Zapp::Action* action = new Zapp::Action("SetSourceVisible");
     action->AddInputParameter(new ParameterRelated("aSourceIndex", *iPropertyProductSourceIndex));
     action->AddInputParameter(new ParameterBool("aSourceVisible"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetSourceVisible);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct3::DoSetSourceVisible);
     iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkProduct3::DoType(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoType(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -375,7 +375,7 @@ void DvProviderLinnCoUkProduct3::DoType(IDvInvocation& aInvocation, TUint aVersi
     Type(resp, aVersion, respaType);
 }
 
-void DvProviderLinnCoUkProduct3::DoModel(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoModel(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -384,7 +384,7 @@ void DvProviderLinnCoUkProduct3::DoModel(IDvInvocation& aInvocation, TUint aVers
     Model(resp, aVersion, respaModel);
 }
 
-void DvProviderLinnCoUkProduct3::DoName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoName(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -393,7 +393,7 @@ void DvProviderLinnCoUkProduct3::DoName(IDvInvocation& aInvocation, TUint aVersi
     Name(resp, aVersion, respaName);
 }
 
-void DvProviderLinnCoUkProduct3::DoSetName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSetName(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz aName;
@@ -403,7 +403,7 @@ void DvProviderLinnCoUkProduct3::DoSetName(IDvInvocation& aInvocation, TUint aVe
     SetName(resp, aVersion, aName);
 }
 
-void DvProviderLinnCoUkProduct3::DoRoom(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoRoom(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -412,7 +412,7 @@ void DvProviderLinnCoUkProduct3::DoRoom(IDvInvocation& aInvocation, TUint aVersi
     Room(resp, aVersion, respaRoom);
 }
 
-void DvProviderLinnCoUkProduct3::DoSetRoom(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSetRoom(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz aRoom;
@@ -422,7 +422,7 @@ void DvProviderLinnCoUkProduct3::DoSetRoom(IDvInvocation& aInvocation, TUint aVe
     SetRoom(resp, aVersion, aRoom);
 }
 
-void DvProviderLinnCoUkProduct3::DoStandby(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoStandby(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -431,7 +431,7 @@ void DvProviderLinnCoUkProduct3::DoStandby(IDvInvocation& aInvocation, TUint aVe
     Standby(resp, aVersion, respaStandby);
 }
 
-void DvProviderLinnCoUkProduct3::DoSetStandby(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSetStandby(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TBool aStandby = aInvocation.InvocationReadBool("aStandby");
@@ -440,7 +440,7 @@ void DvProviderLinnCoUkProduct3::DoSetStandby(IDvInvocation& aInvocation, TUint 
     SetStandby(resp, aVersion, aStandby);
 }
 
-void DvProviderLinnCoUkProduct3::DoSourceCount(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSourceCount(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -449,7 +449,7 @@ void DvProviderLinnCoUkProduct3::DoSourceCount(IDvInvocation& aInvocation, TUint
     SourceCount(resp, aVersion, respaSourceCount);
 }
 
-void DvProviderLinnCoUkProduct3::DoSourceXml(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSourceXml(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -458,7 +458,7 @@ void DvProviderLinnCoUkProduct3::DoSourceXml(IDvInvocation& aInvocation, TUint a
     SourceXml(resp, aVersion, respaSourceXml);
 }
 
-void DvProviderLinnCoUkProduct3::DoSourceIndex(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSourceIndex(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -467,7 +467,7 @@ void DvProviderLinnCoUkProduct3::DoSourceIndex(IDvInvocation& aInvocation, TUint
     SourceIndex(resp, aVersion, respaSourceIndex);
 }
 
-void DvProviderLinnCoUkProduct3::DoSetSourceIndex(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSetSourceIndex(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
@@ -476,7 +476,7 @@ void DvProviderLinnCoUkProduct3::DoSetSourceIndex(IDvInvocation& aInvocation, TU
     SetSourceIndex(resp, aVersion, aSourceIndex);
 }
 
-void DvProviderLinnCoUkProduct3::DoSetSourceIndexByName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSetSourceIndexByName(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz aSourceName;
@@ -486,7 +486,7 @@ void DvProviderLinnCoUkProduct3::DoSetSourceIndexByName(IDvInvocation& aInvocati
     SetSourceIndexByName(resp, aVersion, aSourceName);
 }
 
-void DvProviderLinnCoUkProduct3::DoSetStartupSourceIndexByName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSetStartupSourceIndexByName(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz aSourceName;
@@ -496,7 +496,7 @@ void DvProviderLinnCoUkProduct3::DoSetStartupSourceIndexByName(IDvInvocation& aI
     SetStartupSourceIndexByName(resp, aVersion, aSourceName);
 }
 
-void DvProviderLinnCoUkProduct3::DoStartupSourceIndex(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoStartupSourceIndex(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -505,7 +505,7 @@ void DvProviderLinnCoUkProduct3::DoStartupSourceIndex(IDvInvocation& aInvocation
     StartupSourceIndex(resp, aVersion, respaSourceIndex);
 }
 
-void DvProviderLinnCoUkProduct3::DoSetStartupSourceIndex(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSetStartupSourceIndex(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
@@ -514,7 +514,7 @@ void DvProviderLinnCoUkProduct3::DoSetStartupSourceIndex(IDvInvocation& aInvocat
     SetStartupSourceIndex(resp, aVersion, aSourceIndex);
 }
 
-void DvProviderLinnCoUkProduct3::DoStartupSourceEnabled(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoStartupSourceEnabled(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -523,7 +523,7 @@ void DvProviderLinnCoUkProduct3::DoStartupSourceEnabled(IDvInvocation& aInvocati
     StartupSourceEnabled(resp, aVersion, respaStartupSourceEnabled);
 }
 
-void DvProviderLinnCoUkProduct3::DoSetStartupSourceEnabled(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSetStartupSourceEnabled(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TBool aStartupSourceEnabled = aInvocation.InvocationReadBool("aStartupSourceEnabled");
@@ -532,7 +532,7 @@ void DvProviderLinnCoUkProduct3::DoSetStartupSourceEnabled(IDvInvocation& aInvoc
     SetStartupSourceEnabled(resp, aVersion, aStartupSourceEnabled);
 }
 
-void DvProviderLinnCoUkProduct3::DoSourceSystemName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSourceSystemName(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
@@ -542,7 +542,7 @@ void DvProviderLinnCoUkProduct3::DoSourceSystemName(IDvInvocation& aInvocation, 
     SourceSystemName(resp, aVersion, aSourceIndex, respaSourceName);
 }
 
-void DvProviderLinnCoUkProduct3::DoSourceName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSourceName(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
@@ -552,7 +552,7 @@ void DvProviderLinnCoUkProduct3::DoSourceName(IDvInvocation& aInvocation, TUint 
     SourceName(resp, aVersion, aSourceIndex, respaSourceName);
 }
 
-void DvProviderLinnCoUkProduct3::DoSetSourceName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSetSourceName(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
@@ -563,7 +563,7 @@ void DvProviderLinnCoUkProduct3::DoSetSourceName(IDvInvocation& aInvocation, TUi
     SetSourceName(resp, aVersion, aSourceIndex, aSourceName);
 }
 
-void DvProviderLinnCoUkProduct3::DoSourceType(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSourceType(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
@@ -573,7 +573,7 @@ void DvProviderLinnCoUkProduct3::DoSourceType(IDvInvocation& aInvocation, TUint 
     SourceType(resp, aVersion, aSourceIndex, respaSourceType);
 }
 
-void DvProviderLinnCoUkProduct3::DoSourceVisible(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSourceVisible(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");
@@ -583,7 +583,7 @@ void DvProviderLinnCoUkProduct3::DoSourceVisible(IDvInvocation& aInvocation, TUi
     SourceVisible(resp, aVersion, aSourceIndex, respaSourceVisible);
 }
 
-void DvProviderLinnCoUkProduct3::DoSetSourceVisible(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct3::DoSetSourceVisible(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aSourceIndex = aInvocation.InvocationReadUint("aSourceIndex");

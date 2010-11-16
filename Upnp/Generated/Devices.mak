@@ -124,7 +124,7 @@ headers_device = $(inc_build)/Cpp/ZappTypes.h \
                 $(inc_build)/DviService.h \
                 $(inc_build)/Cpp/Functor.h \
                 $(inc_build)/Service.h \
-                $(inc_build)/FunctorDvInvocation.h
+                $(inc_build)/FunctorDviInvocation.h
 
 device_dotnet_assemblies = \
 		DvUpnpOrgAVTransport1.net.dll \

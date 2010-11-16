@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -40,7 +40,7 @@ void DvProviderLinnCoUkProduct1::EnableActionRoom()
 {
     Zapp::Action* action = new Zapp::Action("Room");
     action->AddOutputParameter(new ParameterRelated("aRoom", *iPropertyRoom));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct1::DoRoom);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct1::DoRoom);
     iService->AddAction(action, functor);
 }
 
@@ -48,7 +48,7 @@ void DvProviderLinnCoUkProduct1::EnableActionSetRoom()
 {
     Zapp::Action* action = new Zapp::Action("SetRoom");
     action->AddInputParameter(new ParameterRelated("aRoom", *iPropertyRoom));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct1::DoSetRoom);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct1::DoSetRoom);
     iService->AddAction(action, functor);
 }
 
@@ -56,7 +56,7 @@ void DvProviderLinnCoUkProduct1::EnableActionStandby()
 {
     Zapp::Action* action = new Zapp::Action("Standby");
     action->AddOutputParameter(new ParameterRelated("aStandby", *iPropertyStandby));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct1::DoStandby);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct1::DoStandby);
     iService->AddAction(action, functor);
 }
 
@@ -64,11 +64,11 @@ void DvProviderLinnCoUkProduct1::EnableActionSetStandby()
 {
     Zapp::Action* action = new Zapp::Action("SetStandby");
     action->AddInputParameter(new ParameterRelated("aStandby", *iPropertyStandby));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkProduct1::DoSetStandby);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct1::DoSetStandby);
     iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkProduct1::DoRoom(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct1::DoRoom(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -77,7 +77,7 @@ void DvProviderLinnCoUkProduct1::DoRoom(IDvInvocation& aInvocation, TUint aVersi
     Room(resp, aVersion, respaRoom);
 }
 
-void DvProviderLinnCoUkProduct1::DoSetRoom(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct1::DoSetRoom(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz aRoom;
@@ -87,7 +87,7 @@ void DvProviderLinnCoUkProduct1::DoSetRoom(IDvInvocation& aInvocation, TUint aVe
     SetRoom(resp, aVersion, aRoom);
 }
 
-void DvProviderLinnCoUkProduct1::DoStandby(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct1::DoStandby(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -96,7 +96,7 @@ void DvProviderLinnCoUkProduct1::DoStandby(IDvInvocation& aInvocation, TUint aVe
     Standby(resp, aVersion, respaStandby);
 }
 
-void DvProviderLinnCoUkProduct1::DoSetStandby(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct1::DoSetStandby(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TBool aStandby = aInvocation.InvocationReadBool("aStandby");

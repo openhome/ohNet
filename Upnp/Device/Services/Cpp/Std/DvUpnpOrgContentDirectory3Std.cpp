@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -70,7 +70,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::EnableActionGetSearchCapabilities()
 {
     Zapp::Action* action = new Zapp::Action("GetSearchCapabilities");
     action->AddOutputParameter(new ParameterString("SearchCaps"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoGetSearchCapabilities);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoGetSearchCapabilities);
     iService->AddAction(action, functor);
 }
 
@@ -78,7 +78,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::EnableActionGetSortCapabilities()
 {
     Zapp::Action* action = new Zapp::Action("GetSortCapabilities");
     action->AddOutputParameter(new ParameterString("SortCaps"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoGetSortCapabilities);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoGetSortCapabilities);
     iService->AddAction(action, functor);
 }
 
@@ -86,7 +86,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::EnableActionGetSortExtensionCapabili
 {
     Zapp::Action* action = new Zapp::Action("GetSortExtensionCapabilities");
     action->AddOutputParameter(new ParameterString("SortExtensionCaps"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoGetSortExtensionCapabilities);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoGetSortExtensionCapabilities);
     iService->AddAction(action, functor);
 }
 
@@ -94,7 +94,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::EnableActionGetFeatureList()
 {
     Zapp::Action* action = new Zapp::Action("GetFeatureList");
     action->AddOutputParameter(new ParameterString("FeatureList"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoGetFeatureList);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoGetFeatureList);
     iService->AddAction(action, functor);
 }
 
@@ -102,7 +102,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::EnableActionGetSystemUpdateID()
 {
     Zapp::Action* action = new Zapp::Action("GetSystemUpdateID");
     action->AddOutputParameter(new ParameterRelated("Id", *iPropertySystemUpdateID));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoGetSystemUpdateID);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoGetSystemUpdateID);
     iService->AddAction(action, functor);
 }
 
@@ -110,7 +110,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::EnableActionGetServiceResetToken()
 {
     Zapp::Action* action = new Zapp::Action("GetServiceResetToken");
     action->AddOutputParameter(new ParameterString("ResetToken"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoGetServiceResetToken);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoGetServiceResetToken);
     iService->AddAction(action, functor);
 }
 
@@ -134,7 +134,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::EnableActionBrowse()
     action->AddOutputParameter(new ParameterUint("NumberReturned"));
     action->AddOutputParameter(new ParameterUint("TotalMatches"));
     action->AddOutputParameter(new ParameterUint("UpdateID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoBrowse);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoBrowse);
     iService->AddAction(action, functor);
 }
 
@@ -151,7 +151,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::EnableActionSearch()
     action->AddOutputParameter(new ParameterUint("NumberReturned"));
     action->AddOutputParameter(new ParameterUint("TotalMatches"));
     action->AddOutputParameter(new ParameterUint("UpdateID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoSearch);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoSearch);
     iService->AddAction(action, functor);
 }
 
@@ -162,7 +162,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::EnableActionCreateObject()
     action->AddInputParameter(new ParameterString("Elements"));
     action->AddOutputParameter(new ParameterString("ObjectID"));
     action->AddOutputParameter(new ParameterString("Result"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoCreateObject);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoCreateObject);
     iService->AddAction(action, functor);
 }
 
@@ -170,7 +170,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::EnableActionDestroyObject()
 {
     Zapp::Action* action = new Zapp::Action("DestroyObject");
     action->AddInputParameter(new ParameterString("ObjectID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoDestroyObject);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoDestroyObject);
     iService->AddAction(action, functor);
 }
 
@@ -180,7 +180,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::EnableActionUpdateObject()
     action->AddInputParameter(new ParameterString("ObjectID"));
     action->AddInputParameter(new ParameterString("CurrentTagValue"));
     action->AddInputParameter(new ParameterString("NewTagValue"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoUpdateObject);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoUpdateObject);
     iService->AddAction(action, functor);
 }
 
@@ -190,7 +190,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::EnableActionMoveObject()
     action->AddInputParameter(new ParameterString("ObjectID"));
     action->AddInputParameter(new ParameterString("NewParentID"));
     action->AddOutputParameter(new ParameterString("NewObjectID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoMoveObject);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoMoveObject);
     iService->AddAction(action, functor);
 }
 
@@ -200,7 +200,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::EnableActionImportResource()
     action->AddInputParameter(new ParameterString("SourceURI"));
     action->AddInputParameter(new ParameterString("DestinationURI"));
     action->AddOutputParameter(new ParameterUint("TransferID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoImportResource);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoImportResource);
     iService->AddAction(action, functor);
 }
 
@@ -210,7 +210,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::EnableActionExportResource()
     action->AddInputParameter(new ParameterString("SourceURI"));
     action->AddInputParameter(new ParameterString("DestinationURI"));
     action->AddOutputParameter(new ParameterUint("TransferID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoExportResource);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoExportResource);
     iService->AddAction(action, functor);
 }
 
@@ -218,7 +218,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::EnableActionDeleteResource()
 {
     Zapp::Action* action = new Zapp::Action("DeleteResource");
     action->AddInputParameter(new ParameterString("ResourceURI"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoDeleteResource);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoDeleteResource);
     iService->AddAction(action, functor);
 }
 
@@ -226,7 +226,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::EnableActionStopTransferResource()
 {
     Zapp::Action* action = new Zapp::Action("StopTransferResource");
     action->AddInputParameter(new ParameterUint("TransferID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoStopTransferResource);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoStopTransferResource);
     iService->AddAction(action, functor);
 }
 
@@ -246,7 +246,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::EnableActionGetTransferProgress()
     delete[] allowedValues;
     action->AddOutputParameter(new ParameterString("TransferLength"));
     action->AddOutputParameter(new ParameterString("TransferTotal"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoGetTransferProgress);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoGetTransferProgress);
     iService->AddAction(action, functor);
 }
 
@@ -256,7 +256,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::EnableActionCreateReference()
     action->AddInputParameter(new ParameterString("ContainerID"));
     action->AddInputParameter(new ParameterString("ObjectID"));
     action->AddOutputParameter(new ParameterString("NewID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoCreateReference);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoCreateReference);
     iService->AddAction(action, functor);
 }
 
@@ -268,7 +268,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::EnableActionFreeFormQuery()
     action->AddInputParameter(new ParameterString("QueryRequest"));
     action->AddOutputParameter(new ParameterString("QueryResult"));
     action->AddOutputParameter(new ParameterUint("UpdateID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoFreeFormQuery);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoFreeFormQuery);
     iService->AddAction(action, functor);
 }
 
@@ -276,11 +276,11 @@ void DvProviderUpnpOrgContentDirectory3Cpp::EnableActionGetFreeFormQueryCapabili
 {
     Zapp::Action* action = new Zapp::Action("GetFreeFormQueryCapabilities");
     action->AddOutputParameter(new ParameterString("FFQCapabilities"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoGetFreeFormQueryCapabilities);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgContentDirectory3Cpp::DoGetFreeFormQueryCapabilities);
     iService->AddAction(action, functor);
 }
 
-void DvProviderUpnpOrgContentDirectory3Cpp::DoGetSearchCapabilities(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3Cpp::DoGetSearchCapabilities(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -294,7 +294,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::DoGetSearchCapabilities(IDvInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory3Cpp::DoGetSortCapabilities(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3Cpp::DoGetSortCapabilities(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -308,7 +308,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::DoGetSortCapabilities(IDvInvocation&
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory3Cpp::DoGetSortExtensionCapabilities(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3Cpp::DoGetSortExtensionCapabilities(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -322,7 +322,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::DoGetSortExtensionCapabilities(IDvIn
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory3Cpp::DoGetFeatureList(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3Cpp::DoGetFeatureList(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -336,7 +336,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::DoGetFeatureList(IDvInvocation& aInv
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory3Cpp::DoGetSystemUpdateID(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3Cpp::DoGetSystemUpdateID(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -348,7 +348,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::DoGetSystemUpdateID(IDvInvocation& a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory3Cpp::DoGetServiceResetToken(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3Cpp::DoGetServiceResetToken(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -362,7 +362,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::DoGetServiceResetToken(IDvInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory3Cpp::DoBrowse(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3Cpp::DoBrowse(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ObjectID;
@@ -399,7 +399,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::DoBrowse(IDvInvocation& aInvocation,
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory3Cpp::DoSearch(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3Cpp::DoSearch(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ContainerID;
@@ -436,7 +436,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::DoSearch(IDvInvocation& aInvocation,
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory3Cpp::DoCreateObject(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3Cpp::DoCreateObject(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ContainerID;
@@ -461,7 +461,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::DoCreateObject(IDvInvocation& aInvoc
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory3Cpp::DoDestroyObject(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3Cpp::DoDestroyObject(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ObjectID;
@@ -473,7 +473,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::DoDestroyObject(IDvInvocation& aInvo
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory3Cpp::DoUpdateObject(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3Cpp::DoUpdateObject(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ObjectID;
@@ -491,7 +491,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::DoUpdateObject(IDvInvocation& aInvoc
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory3Cpp::DoMoveObject(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3Cpp::DoMoveObject(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ObjectID;
@@ -511,7 +511,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::DoMoveObject(IDvInvocation& aInvocat
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory3Cpp::DoImportResource(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3Cpp::DoImportResource(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_SourceURI;
@@ -529,7 +529,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::DoImportResource(IDvInvocation& aInv
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory3Cpp::DoExportResource(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3Cpp::DoExportResource(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_SourceURI;
@@ -547,7 +547,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::DoExportResource(IDvInvocation& aInv
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory3Cpp::DoDeleteResource(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3Cpp::DoDeleteResource(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ResourceURI;
@@ -559,7 +559,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::DoDeleteResource(IDvInvocation& aInv
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory3Cpp::DoStopTransferResource(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3Cpp::DoStopTransferResource(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t TransferID = aInvocation.InvocationReadUint("TransferID");
@@ -569,7 +569,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::DoStopTransferResource(IDvInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory3Cpp::DoGetTransferProgress(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3Cpp::DoGetTransferProgress(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t TransferID = aInvocation.InvocationReadUint("TransferID");
@@ -594,7 +594,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::DoGetTransferProgress(IDvInvocation&
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory3Cpp::DoCreateReference(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3Cpp::DoCreateReference(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ContainerID;
@@ -614,7 +614,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::DoCreateReference(IDvInvocation& aIn
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory3Cpp::DoFreeFormQuery(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3Cpp::DoFreeFormQuery(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_ContainerID;
@@ -638,7 +638,7 @@ void DvProviderUpnpOrgContentDirectory3Cpp::DoFreeFormQuery(IDvInvocation& aInvo
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderUpnpOrgContentDirectory3Cpp::DoGetFreeFormQueryCapabilities(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgContentDirectory3Cpp::DoGetFreeFormQueryCapabilities(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

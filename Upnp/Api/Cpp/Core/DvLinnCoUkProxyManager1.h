@@ -8,6 +8,7 @@
 
 namespace Zapp {
 
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -54,16 +55,16 @@ private:
     virtual void TestDiscPlayerConnection(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aaResult);
 private:
     DvProviderLinnCoUkProxyManager1();
-    void DoKontrolProductConnected(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetKontrolProductConnected(IDvInvocation& aInvocation, TUint aVersion);
-    void DoKontrolProductComPort(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetKontrolProductComPort(IDvInvocation& aInvocation, TUint aVersion);
-    void DoDiscPlayerConnected(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetDiscPlayerConnected(IDvInvocation& aInvocation, TUint aVersion);
-    void DoDiscPlayerComPort(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetDiscPlayerComPort(IDvInvocation& aInvocation, TUint aVersion);
-    void DoTestKontrolProductConnection(IDvInvocation& aInvocation, TUint aVersion);
-    void DoTestDiscPlayerConnection(IDvInvocation& aInvocation, TUint aVersion);
+    void DoKontrolProductConnected(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetKontrolProductConnected(IDviInvocation& aInvocation, TUint aVersion);
+    void DoKontrolProductComPort(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetKontrolProductComPort(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDiscPlayerConnected(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetDiscPlayerConnected(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDiscPlayerComPort(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetDiscPlayerComPort(IDviInvocation& aInvocation, TUint aVersion);
+    void DoTestKontrolProductConnection(IDviInvocation& aInvocation, TUint aVersion);
+    void DoTestDiscPlayerConnection(IDviInvocation& aInvocation, TUint aVersion);
 private:
     PropertyString* iPropertyKontrolProductConnected;
     PropertyUint* iPropertyKontrolProductComPort;

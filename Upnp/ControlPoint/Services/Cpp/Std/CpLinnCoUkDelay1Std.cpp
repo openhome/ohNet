@@ -251,10 +251,10 @@ CpProxyLinnCoUkDelay1Cpp::CpProxyLinnCoUkDelay1Cpp(CpDeviceCpp& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyLinnCoUkDelay1Cpp::PresetXmlPropertyChanged);
     iPresetXml = new PropertyString("PresetXml", functor);
-    iService->AddProperty(iPresetXml);
+    AddProperty(iPresetXml);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkDelay1Cpp::PresetIndexPropertyChanged);
     iPresetIndex = new PropertyUint("PresetIndex", functor);
-    iService->AddProperty(iPresetIndex);
+    AddProperty(iPresetIndex);
 }
 
 CpProxyLinnCoUkDelay1Cpp::~CpProxyLinnCoUkDelay1Cpp()
@@ -284,7 +284,7 @@ void CpProxyLinnCoUkDelay1Cpp::BeginPresetXml(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionPresetXml->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDelay1Cpp::EndPresetXml(IAsync& aAsync, std::string& aaPresetXml)
@@ -316,7 +316,7 @@ void CpProxyLinnCoUkDelay1Cpp::BeginPresetIndex(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionPresetIndex->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDelay1Cpp::EndPresetIndex(IAsync& aAsync, uint32_t& aaIndex)
@@ -345,7 +345,7 @@ void CpProxyLinnCoUkDelay1Cpp::BeginSetPresetIndex(uint32_t aaIndex, FunctorAsyn
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetPresetIndex->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaIndex));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDelay1Cpp::EndSetPresetIndex(IAsync& aAsync)
@@ -373,7 +373,7 @@ void CpProxyLinnCoUkDelay1Cpp::BeginSetPresetDelay(uint32_t aaIndex, uint32_t aa
     const Action::VectorParameters& inParams = iActionSetPresetDelay->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaIndex));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaDelay));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDelay1Cpp::EndSetPresetDelay(IAsync& aAsync)
@@ -401,7 +401,7 @@ void CpProxyLinnCoUkDelay1Cpp::BeginSetPresetVisible(uint32_t aaIndex, bool aaVi
     const Action::VectorParameters& inParams = iActionSetPresetVisible->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaIndex));
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aaVisible));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDelay1Cpp::EndSetPresetVisible(IAsync& aAsync)
@@ -432,7 +432,7 @@ void CpProxyLinnCoUkDelay1Cpp::BeginSetPresetName(uint32_t aaIndex, const std::s
         Brn buf((const TByte*)aaName.c_str(), (TUint)aaName.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDelay1Cpp::EndSetPresetName(IAsync& aAsync)
@@ -459,7 +459,7 @@ void CpProxyLinnCoUkDelay1Cpp::BeginDelayMinimum(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionDelayMinimum->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDelay1Cpp::EndDelayMinimum(IAsync& aAsync, uint32_t& aaDelay)
@@ -488,7 +488,7 @@ void CpProxyLinnCoUkDelay1Cpp::BeginDelayMaximum(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionDelayMaximum->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDelay1Cpp::EndDelayMaximum(IAsync& aAsync, uint32_t& aaDelay)
@@ -517,7 +517,7 @@ void CpProxyLinnCoUkDelay1Cpp::BeginPresetCount(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionPresetCount->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDelay1Cpp::EndPresetCount(IAsync& aAsync, uint32_t& aaCount)
@@ -549,15 +549,19 @@ void CpProxyLinnCoUkDelay1Cpp::SetPropertyPresetIndexChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkDelay1Cpp::PropertyPresetXml(std::string& aPresetXml) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iPresetXml->Value();
     aPresetXml.assign((const char*)val.Ptr(), val.Bytes());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkDelay1Cpp::PropertyPresetIndex(uint32_t& aPresetIndex) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aPresetIndex = iPresetIndex->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkDelay1Cpp::PresetXmlPropertyChanged()

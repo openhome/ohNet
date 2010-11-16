@@ -111,7 +111,7 @@ void CpProxyZappOrgTestWidgetController1::BeginCreateWidget(const Brx& aWidgetUd
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionCreateWidget->InputParameters();
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aWidgetUdn));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestWidgetController1::EndCreateWidget(IAsync& aAsync)
@@ -138,7 +138,7 @@ void CpProxyZappOrgTestWidgetController1::BeginRemoveWidget(const Brx& aWidgetUd
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionRemoveWidget->InputParameters();
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aWidgetUdn));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestWidgetController1::EndRemoveWidget(IAsync& aAsync)
@@ -167,7 +167,7 @@ void CpProxyZappOrgTestWidgetController1::BeginSetWidgetRegister(const Brx& aWid
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aWidgetUdn));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aRegisterIndex));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aRegisterValue));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestWidgetController1::EndSetWidgetRegister(IAsync& aAsync)

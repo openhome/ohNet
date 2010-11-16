@@ -574,7 +574,7 @@ CpProxyUpnpOrgScheduledRecording1::CpProxyUpnpOrgScheduledRecording1(CpDevice& a
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgScheduledRecording1::LastChangePropertyChanged);
     iLastChange = new PropertyString("LastChange", functor);
-    iService->AddProperty(iLastChange);
+    AddProperty(iLastChange);
 }
 
 CpProxyUpnpOrgScheduledRecording1::~CpProxyUpnpOrgScheduledRecording1()
@@ -614,7 +614,7 @@ void CpProxyUpnpOrgScheduledRecording1::BeginGetSortCapabilities(FunctorAsync& a
     const Action::VectorParameters& outParams = iActionGetSortCapabilities->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgScheduledRecording1::EndGetSortCapabilities(IAsync& aAsync, Brh& aSortCaps, TUint& aSortLevelCap)
@@ -647,7 +647,7 @@ void CpProxyUpnpOrgScheduledRecording1::BeginGetPropertyList(const Brx& aDataTyp
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetPropertyList->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgScheduledRecording1::EndGetPropertyList(IAsync& aAsync, Brh& aPropertyList)
@@ -680,7 +680,7 @@ void CpProxyUpnpOrgScheduledRecording1::BeginGetAllowedValues(const Brx& aDataTy
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetAllowedValues->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgScheduledRecording1::EndGetAllowedValues(IAsync& aAsync, Brh& aPropertyInfo)
@@ -709,7 +709,7 @@ void CpProxyUpnpOrgScheduledRecording1::BeginGetStateUpdateID(FunctorAsync& aFun
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetStateUpdateID->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgScheduledRecording1::EndGetStateUpdateID(IAsync& aAsync, TUint& aId)
@@ -747,7 +747,7 @@ void CpProxyUpnpOrgScheduledRecording1::BeginBrowseRecordSchedules(const Brx& aF
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgScheduledRecording1::EndBrowseRecordSchedules(IAsync& aAsync, Brh& aResult, TUint& aNumberReturned, TUint& aTotalMatches, TUint& aUpdateID)
@@ -789,7 +789,7 @@ void CpProxyUpnpOrgScheduledRecording1::BeginBrowseRecordTasks(const Brx& aRecor
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgScheduledRecording1::EndBrowseRecordTasks(IAsync& aAsync, Brh& aResult, TUint& aNumberReturned, TUint& aTotalMatches, TUint& aUpdateID)
@@ -826,7 +826,7 @@ void CpProxyUpnpOrgScheduledRecording1::BeginCreateRecordSchedule(const Brx& aEl
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgScheduledRecording1::EndCreateRecordSchedule(IAsync& aAsync, Brh& aRecordScheduleID, Brh& aResult, TUint& aUpdateID)
@@ -857,7 +857,7 @@ void CpProxyUpnpOrgScheduledRecording1::BeginDeleteRecordSchedule(const Brx& aRe
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionDeleteRecordSchedule->InputParameters();
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aRecordScheduleID));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgScheduledRecording1::EndDeleteRecordSchedule(IAsync& aAsync)
@@ -889,7 +889,7 @@ void CpProxyUpnpOrgScheduledRecording1::BeginGetRecordSchedule(const Brx& aRecor
     const Action::VectorParameters& outParams = iActionGetRecordSchedule->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgScheduledRecording1::EndGetRecordSchedule(IAsync& aAsync, Brh& aResult, TUint& aUpdateID)
@@ -919,7 +919,7 @@ void CpProxyUpnpOrgScheduledRecording1::BeginEnableRecordSchedule(const Brx& aRe
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionEnableRecordSchedule->InputParameters();
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aRecordScheduleID));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgScheduledRecording1::EndEnableRecordSchedule(IAsync& aAsync)
@@ -946,7 +946,7 @@ void CpProxyUpnpOrgScheduledRecording1::BeginDisableRecordSchedule(const Brx& aR
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionDisableRecordSchedule->InputParameters();
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aRecordScheduleID));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgScheduledRecording1::EndDisableRecordSchedule(IAsync& aAsync)
@@ -973,7 +973,7 @@ void CpProxyUpnpOrgScheduledRecording1::BeginDeleteRecordTask(const Brx& aRecord
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionDeleteRecordTask->InputParameters();
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aRecordTaskID));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgScheduledRecording1::EndDeleteRecordTask(IAsync& aAsync)
@@ -1005,7 +1005,7 @@ void CpProxyUpnpOrgScheduledRecording1::BeginGetRecordTask(const Brx& aRecordTas
     const Action::VectorParameters& outParams = iActionGetRecordTask->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgScheduledRecording1::EndGetRecordTask(IAsync& aAsync, Brh& aResult, TUint& aUpdateID)
@@ -1035,7 +1035,7 @@ void CpProxyUpnpOrgScheduledRecording1::BeginEnableRecordTask(const Brx& aRecord
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionEnableRecordTask->InputParameters();
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aRecordTaskID));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgScheduledRecording1::EndEnableRecordTask(IAsync& aAsync)
@@ -1062,7 +1062,7 @@ void CpProxyUpnpOrgScheduledRecording1::BeginDisableRecordTask(const Brx& aRecor
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionDisableRecordTask->InputParameters();
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aRecordTaskID));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgScheduledRecording1::EndDisableRecordTask(IAsync& aAsync)
@@ -1089,7 +1089,7 @@ void CpProxyUpnpOrgScheduledRecording1::BeginResetRecordTask(const Brx& aRecordT
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionResetRecordTask->InputParameters();
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aRecordTaskID));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgScheduledRecording1::EndResetRecordTask(IAsync& aAsync)
@@ -1120,7 +1120,7 @@ void CpProxyUpnpOrgScheduledRecording1::BeginGetRecordScheduleConflicts(const Br
     const Action::VectorParameters& outParams = iActionGetRecordScheduleConflicts->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgScheduledRecording1::EndGetRecordScheduleConflicts(IAsync& aAsync, Brh& aRecordScheduleConflictIDList, TUint& aUpdateID)
@@ -1154,7 +1154,7 @@ void CpProxyUpnpOrgScheduledRecording1::BeginGetRecordTaskConflicts(const Brx& a
     const Action::VectorParameters& outParams = iActionGetRecordTaskConflicts->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgScheduledRecording1::EndGetRecordTaskConflicts(IAsync& aAsync, Brh& aRecordTaskConflictIDList, TUint& aUpdateID)
@@ -1180,8 +1180,10 @@ void CpProxyUpnpOrgScheduledRecording1::SetPropertyLastChangeChanged(Functor& aF
 
 void CpProxyUpnpOrgScheduledRecording1::PropertyLastChange(Brhz& aLastChange) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aLastChange.Set(iLastChange->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyUpnpOrgScheduledRecording1::LastChangePropertyChanged()

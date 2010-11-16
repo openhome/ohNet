@@ -341,16 +341,16 @@ CpProxyLinnCoUkPlaylist1Cpp::CpProxyLinnCoUkPlaylist1Cpp(CpDeviceCpp& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyLinnCoUkPlaylist1Cpp::IdArrayPropertyChanged);
     iIdArray = new PropertyBinary("IdArray", functor);
-    iService->AddProperty(iIdArray);
+    AddProperty(iIdArray);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkPlaylist1Cpp::RepeatPropertyChanged);
     iRepeat = new PropertyBool("Repeat", functor);
-    iService->AddProperty(iRepeat);
+    AddProperty(iRepeat);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkPlaylist1Cpp::ShufflePropertyChanged);
     iShuffle = new PropertyBool("Shuffle", functor);
-    iService->AddProperty(iShuffle);
+    AddProperty(iShuffle);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkPlaylist1Cpp::TracksMaxPropertyChanged);
     iTracksMax = new PropertyUint("TracksMax", functor);
-    iService->AddProperty(iTracksMax);
+    AddProperty(iTracksMax);
 }
 
 CpProxyLinnCoUkPlaylist1Cpp::~CpProxyLinnCoUkPlaylist1Cpp()
@@ -387,7 +387,7 @@ void CpProxyLinnCoUkPlaylist1Cpp::BeginRead(uint32_t aaId, FunctorAsync& aFuncto
     const Action::VectorParameters& outParams = iActionRead->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPlaylist1Cpp::EndRead(IAsync& aAsync, std::string& aaUri, std::string& aaMetaData)
@@ -429,7 +429,7 @@ void CpProxyLinnCoUkPlaylist1Cpp::BeginReadList(const std::string& aaIdList, Fun
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionReadList->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPlaylist1Cpp::EndReadList(IAsync& aAsync, std::string& aaMetaDataList)
@@ -472,7 +472,7 @@ void CpProxyLinnCoUkPlaylist1Cpp::BeginInsert(uint32_t aaAfterId, const std::str
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionInsert->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPlaylist1Cpp::EndInsert(IAsync& aAsync, uint32_t& aaNewId)
@@ -501,7 +501,7 @@ void CpProxyLinnCoUkPlaylist1Cpp::BeginDelete(uint32_t aaId, FunctorAsync& aFunc
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionDelete->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaId));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPlaylist1Cpp::EndDelete(IAsync& aAsync)
@@ -525,7 +525,7 @@ void CpProxyLinnCoUkPlaylist1Cpp::SyncDeleteAll()
 void CpProxyLinnCoUkPlaylist1Cpp::BeginDeleteAll(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionDeleteAll, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPlaylist1Cpp::EndDeleteAll(IAsync& aAsync)
@@ -552,7 +552,7 @@ void CpProxyLinnCoUkPlaylist1Cpp::BeginSetRepeat(bool aaRepeat, FunctorAsync& aF
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetRepeat->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aaRepeat));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPlaylist1Cpp::EndSetRepeat(IAsync& aAsync)
@@ -579,7 +579,7 @@ void CpProxyLinnCoUkPlaylist1Cpp::BeginRepeat(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionRepeat->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPlaylist1Cpp::EndRepeat(IAsync& aAsync, bool& aaRepeat)
@@ -608,7 +608,7 @@ void CpProxyLinnCoUkPlaylist1Cpp::BeginSetShuffle(bool aaShuffle, FunctorAsync& 
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetShuffle->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aaShuffle));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPlaylist1Cpp::EndSetShuffle(IAsync& aAsync)
@@ -635,7 +635,7 @@ void CpProxyLinnCoUkPlaylist1Cpp::BeginShuffle(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionShuffle->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPlaylist1Cpp::EndShuffle(IAsync& aAsync, bool& aaShuffle)
@@ -664,7 +664,7 @@ void CpProxyLinnCoUkPlaylist1Cpp::BeginTracksMax(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionTracksMax->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPlaylist1Cpp::EndTracksMax(IAsync& aAsync, uint32_t& aaTracksMax)
@@ -694,7 +694,7 @@ void CpProxyLinnCoUkPlaylist1Cpp::BeginIdArray(FunctorAsync& aFunctor)
     const Action::VectorParameters& outParams = iActionIdArray->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentBinary(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPlaylist1Cpp::EndIdArray(IAsync& aAsync, uint32_t& aaIdArrayToken, std::string& aaIdArray)
@@ -730,7 +730,7 @@ void CpProxyLinnCoUkPlaylist1Cpp::BeginIdArrayChanged(uint32_t aaIdArrayToken, F
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionIdArrayChanged->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPlaylist1Cpp::EndIdArrayChanged(IAsync& aAsync, bool& aaIdArrayChanged)
@@ -776,27 +776,35 @@ void CpProxyLinnCoUkPlaylist1Cpp::SetPropertyTracksMaxChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkPlaylist1Cpp::PropertyIdArray(std::string& aIdArray) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iIdArray->Value();
     aIdArray.assign((const char*)val.Ptr(), val.Bytes());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkPlaylist1Cpp::PropertyRepeat(bool& aRepeat) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aRepeat = iRepeat->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkPlaylist1Cpp::PropertyShuffle(bool& aShuffle) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aShuffle = iShuffle->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkPlaylist1Cpp::PropertyTracksMax(uint32_t& aTracksMax) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTracksMax = iTracksMax->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkPlaylist1Cpp::IdArrayPropertyChanged()

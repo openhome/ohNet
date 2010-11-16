@@ -45,24 +45,6 @@ CpiService::~CpiService()
         iShutdownSignal.Wait();
     }
 	iDevice.RemoveRef();
-	PropertyMap::iterator it = iProperties.begin();
-    while (it != iProperties.end()) {
-        delete it->second;
-        it->second = NULL;
-        it++;
-    }
-}
-
-void CpiService::AddProperty(Property* aProperty)
-{
-    ASSERT(aProperty != NULL);
-    Brn name(aProperty->Parameter().Name());
-    iProperties.insert(std::pair<Brn,Property*>(name, aProperty));
-}
-
-void CpiService::SetPropertyChanged(Functor& aFunctor)
-{
-    iPropertyChanged = aFunctor;
 }
 
 Invocation* CpiService::Invocation(const Action& aAction, FunctorAsync& aFunctor)
@@ -75,10 +57,10 @@ Invocation* CpiService::Invocation(const Action& aAction, FunctorAsync& aFunctor
     return invocation;
 }
 
-void CpiService::Subscribe()
+void CpiService::Subscribe(IEventProcessor& aEventProcessor)
 {
     ASSERT(iSubscription == NULL);
-    iSubscription = SubscriptionManager::NewSubscription(iDevice, iServiceType, iProperties, iPropertyChanged);
+    iSubscription = CpiSubscriptionManager::NewSubscription(iDevice, aEventProcessor, iServiceType);
 }
 
 void CpiService::Unsubscribe()
@@ -348,15 +330,6 @@ void ArgumentBinary::ProcessOutput(IOutputProcessor& aProcessor, const Brx& aBuf
 
 // Zapp::Invocation
 
-void Zapp::Invocation::Invoke()
-{
-    FunctorAsync& asyncBeginHandler = Stack::InitParams().AsyncBeginHandler();
-    if (asyncBeginHandler) {
-        asyncBeginHandler(*this);
-    }
-    InvocationManager::Invoke(this);
-}
-
 void Zapp::Invocation::SignalCompleted()
 {
     iCompleted = !Error();
@@ -543,6 +516,17 @@ Zapp::Invocation::VectorArguments& Zapp::Invocation::OutputArguments()
     return iOutput;
 }
 
+void Zapp::Invocation::SetInvoker(IInvocable& aInvocable)
+{
+    iInvoker = &aInvocable;
+}
+
+IInvocable& Zapp::Invocation::Invoker()
+{
+    ASSERT(iInvoker != NULL);
+    return *iInvoker;
+}
+
 TUint Zapp::Invocation::Type() const
 {
     return eInvocation;
@@ -639,7 +623,7 @@ void Invoker::Run()
                           (const TChar*)Name().Ptr(), iInvocation);
             LOG(kService, iInvocation->Action().Name());
             LOG(kService, "\n");
-            iInvocation->Device().Invoke(*iInvocation);
+            iInvocation->Invoker().InvokeAction(*iInvocation);
         }
         catch (HttpError&) {
             iInvocation->SetError(Error::eHttp, Error::kCodeUnknown,
@@ -685,7 +669,6 @@ void Invoker::Run()
 InvocationManager::InvocationManager()
     : Thread("INVM")
     , iLock("INVM")
-    , iOutputLock("OUTM")
     , iFreeInvocations(Stack::InitParams().NumInvocations())
     , iWaitingInvocations(Stack::InitParams().NumInvocations())
     , iFreeInvokers(Stack::InitParams().NumActionInvokerThreads())
@@ -745,6 +728,10 @@ Zapp::Invocation* InvocationManager::Invocation()
 
 void InvocationManager::Invoke(Zapp::Invocation* aInvocation)
 {
+    FunctorAsync& asyncBeginHandler = Stack::InitParams().AsyncBeginHandler();
+    if (asyncBeginHandler) {
+        asyncBeginHandler(*aInvocation);
+    }
     InvocationManager& self = Self();
     self.iWaitingInvocations.Write(aInvocation);
     self.Signal();

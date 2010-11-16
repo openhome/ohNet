@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -33,7 +33,7 @@ private:
     virtual void Seconds(uint32_t aVersion, uint32_t& aaSeconds);
 private:
     DvProviderLinnCoUkMediaTime1Cpp();
-    void DoSeconds(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoSeconds(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyUint* iPropertySeconds;
 };
