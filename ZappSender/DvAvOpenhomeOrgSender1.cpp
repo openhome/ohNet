@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -86,7 +86,7 @@ void DvProviderAvOpenhomeOrgSender1::EnableActionPresentationUrl()
 {
     Zapp::Action* action = new Zapp::Action("PresentationUrl");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyPresentationUrl));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderAvOpenhomeOrgSender1::DoPresentationUrl);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgSender1::DoPresentationUrl);
     iService->AddAction(action, functor);
 }
 
@@ -94,7 +94,7 @@ void DvProviderAvOpenhomeOrgSender1::EnableActionMetadata()
 {
     Zapp::Action* action = new Zapp::Action("Metadata");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyMetadata));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderAvOpenhomeOrgSender1::DoMetadata);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgSender1::DoMetadata);
     iService->AddAction(action, functor);
 }
 
@@ -102,7 +102,7 @@ void DvProviderAvOpenhomeOrgSender1::EnableActionAudio()
 {
     Zapp::Action* action = new Zapp::Action("Audio");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyAudio));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderAvOpenhomeOrgSender1::DoAudio);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgSender1::DoAudio);
     iService->AddAction(action, functor);
 }
 
@@ -110,7 +110,7 @@ void DvProviderAvOpenhomeOrgSender1::EnableActionStatus()
 {
     Zapp::Action* action = new Zapp::Action("Status");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyStatus));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderAvOpenhomeOrgSender1::DoStatus);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgSender1::DoStatus);
     iService->AddAction(action, functor);
 }
 
@@ -118,11 +118,11 @@ void DvProviderAvOpenhomeOrgSender1::EnableActionAttributes()
 {
     Zapp::Action* action = new Zapp::Action("Attributes");
     action->AddOutputParameter(new ParameterRelated("Value", *iPropertyAttributes));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderAvOpenhomeOrgSender1::DoAttributes);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderAvOpenhomeOrgSender1::DoAttributes);
     iService->AddAction(action, functor);
 }
 
-void DvProviderAvOpenhomeOrgSender1::DoPresentationUrl(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgSender1::DoPresentationUrl(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -131,7 +131,7 @@ void DvProviderAvOpenhomeOrgSender1::DoPresentationUrl(IDvInvocation& aInvocatio
     PresentationUrl(resp, aVersion, respValue);
 }
 
-void DvProviderAvOpenhomeOrgSender1::DoMetadata(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgSender1::DoMetadata(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -140,7 +140,7 @@ void DvProviderAvOpenhomeOrgSender1::DoMetadata(IDvInvocation& aInvocation, TUin
     Metadata(resp, aVersion, respValue);
 }
 
-void DvProviderAvOpenhomeOrgSender1::DoAudio(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgSender1::DoAudio(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -149,7 +149,7 @@ void DvProviderAvOpenhomeOrgSender1::DoAudio(IDvInvocation& aInvocation, TUint a
     Audio(resp, aVersion, respValue);
 }
 
-void DvProviderAvOpenhomeOrgSender1::DoStatus(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgSender1::DoStatus(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -158,7 +158,7 @@ void DvProviderAvOpenhomeOrgSender1::DoStatus(IDvInvocation& aInvocation, TUint 
     Status(resp, aVersion, respValue);
 }
 
-void DvProviderAvOpenhomeOrgSender1::DoAttributes(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderAvOpenhomeOrgSender1::DoAttributes(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

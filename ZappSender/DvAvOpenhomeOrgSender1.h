@@ -8,6 +8,7 @@
 
 namespace Zapp {
 
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -46,11 +47,11 @@ private:
     virtual void Attributes(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
 private:
     DvProviderAvOpenhomeOrgSender1();
-    void DoPresentationUrl(IDvInvocation& aInvocation, TUint aVersion);
-    void DoMetadata(IDvInvocation& aInvocation, TUint aVersion);
-    void DoAudio(IDvInvocation& aInvocation, TUint aVersion);
-    void DoStatus(IDvInvocation& aInvocation, TUint aVersion);
-    void DoAttributes(IDvInvocation& aInvocation, TUint aVersion);
+    void DoPresentationUrl(IDviInvocation& aInvocation, TUint aVersion);
+    void DoMetadata(IDviInvocation& aInvocation, TUint aVersion);
+    void DoAudio(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStatus(IDviInvocation& aInvocation, TUint aVersion);
+    void DoAttributes(IDviInvocation& aInvocation, TUint aVersion);
 private:
     PropertyString* iPropertyPresentationUrl;
     PropertyString* iPropertyMetadata;
