@@ -200,7 +200,7 @@ void InitialisationParams::SetDvNumPublisherThreads(uint32_t aNumThreads)
 
 void InitialisationParams::SetDvNumWebSocketThreads(uint32_t aNumThreads)
 {
-    ASSERT(aNumThreads > 0 && aNumThreads < 100);
+    ASSERT(aNumThreads >= 0 && aNumThreads < 100);
     iDvNumWebSocketThreads = aNumThreads;
 }
 
