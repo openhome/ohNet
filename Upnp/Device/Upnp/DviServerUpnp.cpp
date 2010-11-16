@@ -261,7 +261,7 @@ DviSessionUpnp::DviSessionUpnp(TIpAddress aInterface, TUint aPort)
 
     iReaderRequest->AddMethod(Http::kMethodGet);
     iReaderRequest->AddMethod(Http::kMethodPost);
-//    iReaderRequest->AddMethod(HttpMethod::kHead);
+    iReaderRequest->AddMethod(Http::kMethodHead);
     iReaderRequest->AddMethod(kUpnpMethodSubscribe);
     iReaderRequest->AddMethod(kUpnpMethodUnsubscribe);
 
@@ -295,6 +295,7 @@ void DviSessionUpnp::Run()
     iWriterChunked->SetChunked(false);
     iInvocationService = NULL;
     (void)iInvocationSem.Clear();
+	iResourceWriterHeadersOnly = false;
     // check headers
     try {
         try {
@@ -312,6 +313,10 @@ void DviSessionUpnp::Run()
         if (method == Http::kMethodGet) {
             Get();
         }
+		else if (method == Http::kMethodHead) {
+			iResourceWriterHeadersOnly = true;
+			Get();
+		}
         else if (method == Http::kMethodPost) {
             Post();
         }
@@ -623,6 +628,9 @@ void DviSessionUpnp::WriteResourceBegin(TUint aTotalBytes, const TChar* aMimeTyp
 
 void DviSessionUpnp::WriteResource(const TByte* aData, TUint aBytes)
 {
+	if (iResourceWriterHeadersOnly) {
+		return;
+	}
     Brn buf(aData, aBytes);
 #if 0
     Log::Print("Writing resource...\n");

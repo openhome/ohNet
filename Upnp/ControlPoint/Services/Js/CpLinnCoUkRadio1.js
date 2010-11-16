@@ -1,32 +1,39 @@
  
 
 /**
- * Proxy for linn.co.uk:Radio:1
- */
+* Service Proxy for linn.co.uk:Radio:1
+* @module Zapp
+* @title Radio
+*/
 
-var ServiceRadio = function(aId){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aId + "/Radio/control";
-	this.iDomain = "linn.co.uk";
-	if (this.iDomain == "upnp.org") {
-		this.iDomain = "schemas.upnp.org";
+var ServiceRadio = function(udn){	
+
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Radio-1/control";  // upnp control url
+	this.domain = "linn.co.uk";
+	if (this.domain == "upnp.org") {
+		this.domain = "schemas.upnp.org";
     }
-	this.iDomain = this.iDomain.replace(/\./,"-");
-	this.iType = "Radio";
-	this.iVersion = "1";
+	this.domain = this.domain.replace(/\./,"-");
+	this.type = "Radio";
+	this.version = "1";
+	this.serviceName = "linn.co.uk-Radio-1";
+	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+	this.udn = udn;   // device name
 	
-	this.iVariables = {};
-			this.iVariables["Offset"] = new ServiceVariable("Offset");
-		this.iVariables["Pos"] = new ServiceVariable("Pos");
-		this.iVariables["ChannelUri"] = new ServiceVariable("ChannelUri");
-		this.iVariables["ChannelMetadata"] = new ServiceVariable("ChannelMetadata");
-		this.iVariables["TransportState"] = new ServiceVariable("TransportState");
-		this.iVariables["ProtocolInfo"] = new ServiceVariable("ProtocolInfo");
-		this.iVariables["Id"] = new ServiceVariable("Id");
-		this.iVariables["IdArray"] = new ServiceVariable("IdArray");
-		this.iVariables["IdsMax"] = new ServiceVariable("IdsMax");
-		this.iVariables["IdArrayToken"] = new ServiceVariable("IdArrayToken");
-		this.iVariables["IdArrayChanged"] = new ServiceVariable("IdArrayChanged");
-		this.iVariables["Data"] = new ServiceVariable("Data");
+	// Collection of service properties
+	this.serviceProperties = {};
+	this.serviceProperties["Offset"] = new Zapp.ServiceProperty("Offset");
+	this.serviceProperties["Pos"] = new Zapp.ServiceProperty("Pos");
+	this.serviceProperties["ChannelUri"] = new Zapp.ServiceProperty("ChannelUri");
+	this.serviceProperties["ChannelMetadata"] = new Zapp.ServiceProperty("ChannelMetadata");
+	this.serviceProperties["TransportState"] = new Zapp.ServiceProperty("TransportState");
+	this.serviceProperties["ProtocolInfo"] = new Zapp.ServiceProperty("ProtocolInfo");
+	this.serviceProperties["Id"] = new Zapp.ServiceProperty("Id");
+	this.serviceProperties["IdArray"] = new Zapp.ServiceProperty("IdArray");
+	this.serviceProperties["IdsMax"] = new Zapp.ServiceProperty("IdsMax");
+	this.serviceProperties["IdArrayToken"] = new Zapp.ServiceProperty("IdArrayToken");
+	this.serviceProperties["IdArrayChanged"] = new Zapp.ServiceProperty("IdArrayChanged");
+	this.serviceProperties["Data"] = new Zapp.ServiceProperty("Data");
 }
 
 ServiceRadio.kTransportStateStopped = "Stopped";
@@ -34,251 +41,516 @@ ServiceRadio.kTransportStatePlaying = "Playing";
 ServiceRadio.kTransportStatePaused = "Paused";
 ServiceRadio.kTransportStateBuffering = "Buffering";
 
-ServiceRadio.prototype.ServiceName = function(){
-	return this.iType;
-}
 
-ServiceRadio.prototype.Variables = function(){
-	return this.iVariables;
-}
-
-ServiceRadio.prototype.VariableNames = function(){
-	var result = [];
-	for (var variable in this.iVariables){
-		if (this.iVariables.hasOwnProperty(variable)){
-			result[result.length] = variable;
-		}
-	}
-	return result;
+/**
+* Subscribes the service to the subscription manager to listen for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceRadio.prototype.subscribe = function (serviceAddedFunction) {
+    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
 
-ServiceRadio.prototype.Play = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("Play", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+/**
+* Unsubscribes the service from the subscription manager to stop listening for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceRadio.prototype.unsubscribe = function () {
+    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+}
+
+
+
+
+/**
+* Adds a listener to handle "Offset" property change events
+* @method Offset_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceRadio.prototype.Offset_Changed = function (stateChangedFunction) {
+    this.serviceProperties.Offset.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-    
 
-ServiceRadio.prototype.Pause = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("Pause", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+
+/**
+* Adds a listener to handle "Pos" property change events
+* @method Pos_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceRadio.prototype.Pos_Changed = function (stateChangedFunction) {
+    this.serviceProperties.Pos.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-    
 
-ServiceRadio.prototype.Stop = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("Stop", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+
+/**
+* Adds a listener to handle "ChannelUri" property change events
+* @method ChannelUri_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceRadio.prototype.ChannelUri_Changed = function (stateChangedFunction) {
+    this.serviceProperties.ChannelUri.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-    
 
-ServiceRadio.prototype.SeekSecondAbsolute = function(aSecond, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SeekSecondAbsolute", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("aSecond", aSecond);
-    request.Send(function(result){
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+
+/**
+* Adds a listener to handle "ChannelMetadata" property change events
+* @method ChannelMetadata_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceRadio.prototype.ChannelMetadata_Changed = function (stateChangedFunction) {
+    this.serviceProperties.ChannelMetadata.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-    
 
-ServiceRadio.prototype.SeekSecondRelative = function(aSecond, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SeekSecondRelative", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("aSecond", aSecond);
-    request.Send(function(result){
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+
+/**
+* Adds a listener to handle "TransportState" property change events
+* @method TransportState_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceRadio.prototype.TransportState_Changed = function (stateChangedFunction) {
+    this.serviceProperties.TransportState.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-    
 
-ServiceRadio.prototype.Channel = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("Channel", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aUri"] = request.ReadStringParameter(result["aUri"]);	
-		result["aMetadata"] = request.ReadStringParameter(result["aMetadata"]);	
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+
+/**
+* Adds a listener to handle "ProtocolInfo" property change events
+* @method ProtocolInfo_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceRadio.prototype.ProtocolInfo_Changed = function (stateChangedFunction) {
+    this.serviceProperties.ProtocolInfo.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-    
 
-ServiceRadio.prototype.SetChannel = function(aUri, aMetadata, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetChannel", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteStringParameter("aUri", aUri);
-    request.WriteStringParameter("aMetadata", aMetadata);
-    request.Send(function(result){
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+
+/**
+* Adds a listener to handle "Id" property change events
+* @method Id_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceRadio.prototype.Id_Changed = function (stateChangedFunction) {
+    this.serviceProperties.Id.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-    
 
-ServiceRadio.prototype.ProtocolInfo = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("ProtocolInfo", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aInfo"] = request.ReadStringParameter(result["aInfo"]);	
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+
+/**
+* Adds a listener to handle "IdArray" property change events
+* @method IdArray_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceRadio.prototype.IdArray_Changed = function (stateChangedFunction) {
+    this.serviceProperties.IdArray.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readBinaryParameter(state)); 
 	});
 }
-    
 
-ServiceRadio.prototype.TransportState = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("TransportState", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aState"] = request.ReadStringParameter(result["aState"]);	
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+
+/**
+* Adds a listener to handle "IdsMax" property change events
+* @method IdsMax_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceRadio.prototype.IdsMax_Changed = function (stateChangedFunction) {
+    this.serviceProperties.IdsMax.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-    
 
-ServiceRadio.prototype.Id = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("Id", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aId"] = request.ReadIntParameter(result["aId"]);	
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+
+/**
+* Adds a listener to handle "IdArrayToken" property change events
+* @method IdArrayToken_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceRadio.prototype.IdArrayToken_Changed = function (stateChangedFunction) {
+    this.serviceProperties.IdArrayToken.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-    
 
-ServiceRadio.prototype.SetId = function(aId, aUri, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetId", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("aId", aId);
-    request.WriteStringParameter("aUri", aUri);
-    request.Send(function(result){
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+
+/**
+* Adds a listener to handle "IdArrayChanged" property change events
+* @method IdArrayChanged_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceRadio.prototype.IdArrayChanged_Changed = function (stateChangedFunction) {
+    this.serviceProperties.IdArrayChanged.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-    
 
-ServiceRadio.prototype.Read = function(aId, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("Read", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("aId", aId);
-    request.Send(function(result){
-		result["aMetadata"] = request.ReadStringParameter(result["aMetadata"]);	
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+
+/**
+* Adds a listener to handle "Data" property change events
+* @method Data_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceRadio.prototype.Data_Changed = function (stateChangedFunction) {
+    this.serviceProperties.Data.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-    
 
-ServiceRadio.prototype.ReadList = function(aIdList, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("ReadList", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteStringParameter("aIdList", aIdList);
-    request.Send(function(result){
-		result["aMetadataList"] = request.ReadStringParameter(result["aMetadataList"]);	
+
+/**
+* A service action to Play
+* @method Play
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceRadio.prototype.Play = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Play", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
-    
 
-ServiceRadio.prototype.IdArray = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("IdArray", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aIdArrayToken"] = request.ReadIntParameter(result["aIdArrayToken"]);	
-		result["aIdArray"] = request.ReadBinaryParameter(result["aIdArray"]);	
+
+/**
+* A service action to Pause
+* @method Pause
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceRadio.prototype.Pause = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Pause", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
-    
 
-ServiceRadio.prototype.IdArrayChanged = function(aIdArrayToken, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("IdArrayChanged", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("aIdArrayToken", aIdArrayToken);
-    request.Send(function(result){
-		result["aIdArrayChanged"] = request.ReadBoolParameter(result["aIdArrayChanged"]);	
+
+/**
+* A service action to Stop
+* @method Stop
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceRadio.prototype.Stop = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Stop", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
-    
 
-ServiceRadio.prototype.IdsMax = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("IdsMax", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aIdsMax"] = request.ReadIntParameter(result["aIdsMax"]);	
+
+/**
+* A service action to SeekSecondAbsolute
+* @method SeekSecondAbsolute
+* @param {Int} aSecond An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceRadio.prototype.SeekSecondAbsolute = function(aSecond, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SeekSecondAbsolute", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("aSecond", aSecond);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
-    
+
+
+/**
+* A service action to SeekSecondRelative
+* @method SeekSecondRelative
+* @param {Int} aSecond An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceRadio.prototype.SeekSecondRelative = function(aSecond, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SeekSecondRelative", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("aSecond", aSecond);
+    request.send(function(result){
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to Channel
+* @method Channel
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceRadio.prototype.Channel = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Channel", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aUri"] = Zapp.SoapRequest.readStringParameter(result["aUri"]);	
+		result["aMetadata"] = Zapp.SoapRequest.readStringParameter(result["aMetadata"]);	
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to SetChannel
+* @method SetChannel
+* @param {String} aUri An action parameter
+* @param {String} aMetadata An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceRadio.prototype.SetChannel = function(aUri, aMetadata, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetChannel", this.url, this.domain, this.type, this.version);		
+    request.writeStringParameter("aUri", aUri);
+    request.writeStringParameter("aMetadata", aMetadata);
+    request.send(function(result){
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to ProtocolInfo
+* @method ProtocolInfo
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceRadio.prototype.ProtocolInfo = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("ProtocolInfo", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aInfo"] = Zapp.SoapRequest.readStringParameter(result["aInfo"]);	
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to TransportState
+* @method TransportState
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceRadio.prototype.TransportState = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("TransportState", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aState"] = Zapp.SoapRequest.readStringParameter(result["aState"]);	
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to Id
+* @method Id
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceRadio.prototype.Id = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Id", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aId"] = Zapp.SoapRequest.readIntParameter(result["aId"]);	
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to SetId
+* @method SetId
+* @param {Int} aId An action parameter
+* @param {String} aUri An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceRadio.prototype.SetId = function(aId, aUri, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetId", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("aId", aId);
+    request.writeStringParameter("aUri", aUri);
+    request.send(function(result){
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to Read
+* @method Read
+* @param {Int} aId An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceRadio.prototype.Read = function(aId, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Read", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("aId", aId);
+    request.send(function(result){
+		result["aMetadata"] = Zapp.SoapRequest.readStringParameter(result["aMetadata"]);	
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to ReadList
+* @method ReadList
+* @param {String} aIdList An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceRadio.prototype.ReadList = function(aIdList, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("ReadList", this.url, this.domain, this.type, this.version);		
+    request.writeStringParameter("aIdList", aIdList);
+    request.send(function(result){
+		result["aMetadataList"] = Zapp.SoapRequest.readStringParameter(result["aMetadataList"]);	
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to IdArray
+* @method IdArray
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceRadio.prototype.IdArray = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("IdArray", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aIdArrayToken"] = Zapp.SoapRequest.readIntParameter(result["aIdArrayToken"]);	
+		result["aIdArray"] = Zapp.SoapRequest.readBinaryParameter(result["aIdArray"]);	
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to IdArrayChanged
+* @method IdArrayChanged
+* @param {Int} aIdArrayToken An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceRadio.prototype.IdArrayChanged = function(aIdArrayToken, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("IdArrayChanged", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("aIdArrayToken", aIdArrayToken);
+    request.send(function(result){
+		result["aIdArrayChanged"] = Zapp.SoapRequest.readBoolParameter(result["aIdArrayChanged"]);	
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to IdsMax
+* @method IdsMax
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceRadio.prototype.IdsMax = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("IdsMax", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aIdsMax"] = Zapp.SoapRequest.readIntParameter(result["aIdsMax"]);	
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
 
 

@@ -146,6 +146,7 @@ private:
     Brn iSoapRequest;
     DviService* iInvocationService;
     Semaphore iInvocationSem;
+	TBool iResourceWriterHeadersOnly;
     Semaphore iShutdownSem;
 };
 

@@ -1,87 +1,160 @@
  
 
 /**
- * Proxy for zapp.org:TestWidgetController:1
- */
+* Service Proxy for zapp.org:TestWidgetController:1
+* @module Zapp
+* @title TestWidgetController
+*/
 
-var ServiceTestWidgetController = function(aId){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aId + "/TestWidgetController/control";
-	this.iDomain = "zapp.org";
-	if (this.iDomain == "upnp.org") {
-		this.iDomain = "schemas.upnp.org";
+var ServiceTestWidgetController = function(udn){	
+
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/zapp.org-TestWidgetController-1/control";  // upnp control url
+	this.domain = "zapp.org";
+	if (this.domain == "upnp.org") {
+		this.domain = "schemas.upnp.org";
     }
-	this.iDomain = this.iDomain.replace(/\./,"-");
-	this.iType = "TestWidgetController";
-	this.iVersion = "1";
+	this.domain = this.domain.replace(/\./,"-");
+	this.type = "TestWidgetController";
+	this.version = "1";
+	this.serviceName = "zapp.org-TestWidgetController-1";
+	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+	this.udn = udn;   // device name
 	
-	this.iVariables = {};
-			this.iVariables["RegisterValue"] = new ServiceVariable("RegisterValue");
-		this.iVariables["RegisterIndex"] = new ServiceVariable("RegisterIndex");
-		this.iVariables["UDN"] = new ServiceVariable("UDN");
+	// Collection of service properties
+	this.serviceProperties = {};
+	this.serviceProperties["RegisterValue"] = new Zapp.ServiceProperty("RegisterValue");
+	this.serviceProperties["RegisterIndex"] = new Zapp.ServiceProperty("RegisterIndex");
+	this.serviceProperties["UDN"] = new Zapp.ServiceProperty("UDN");
 }
 
 
-ServiceTestWidgetController.prototype.ServiceName = function(){
-	return this.iType;
-}
 
-ServiceTestWidgetController.prototype.Variables = function(){
-	return this.iVariables;
-}
-
-ServiceTestWidgetController.prototype.VariableNames = function(){
-	var result = [];
-	for (var variable in this.iVariables){
-		if (this.iVariables.hasOwnProperty(variable)){
-			result[result.length] = variable;
-		}
-	}
-	return result;
+/**
+* Subscribes the service to the subscription manager to listen for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceTestWidgetController.prototype.subscribe = function (serviceAddedFunction) {
+    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
 
-ServiceTestWidgetController.prototype.CreateWidget = function(WidgetUdn, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("CreateWidget", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteStringParameter("WidgetUdn", WidgetUdn);
-    request.Send(function(result){
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+/**
+* Unsubscribes the service from the subscription manager to stop listening for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceTestWidgetController.prototype.unsubscribe = function () {
+    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+}
+
+
+
+
+/**
+* Adds a listener to handle "RegisterValue" property change events
+* @method RegisterValue_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestWidgetController.prototype.RegisterValue_Changed = function (stateChangedFunction) {
+    this.serviceProperties.RegisterValue.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-    
 
-ServiceTestWidgetController.prototype.RemoveWidget = function(WidgetUdn, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("RemoveWidget", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteStringParameter("WidgetUdn", WidgetUdn);
-    request.Send(function(result){
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+
+/**
+* Adds a listener to handle "RegisterIndex" property change events
+* @method RegisterIndex_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestWidgetController.prototype.RegisterIndex_Changed = function (stateChangedFunction) {
+    this.serviceProperties.RegisterIndex.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-    
 
-ServiceTestWidgetController.prototype.SetWidgetRegister = function(WidgetUdn, RegisterIndex, RegisterValue, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetWidgetRegister", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteStringParameter("WidgetUdn", WidgetUdn);
-    request.WriteIntParameter("RegisterIndex", RegisterIndex);
-    request.WriteIntParameter("RegisterValue", RegisterValue);
-    request.Send(function(result){
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+
+/**
+* Adds a listener to handle "UDN" property change events
+* @method UDN_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestWidgetController.prototype.UDN_Changed = function (stateChangedFunction) {
+    this.serviceProperties.UDN.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-    
+
+
+/**
+* A service action to CreateWidget
+* @method CreateWidget
+* @param {String} WidgetUdn An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestWidgetController.prototype.CreateWidget = function(WidgetUdn, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("CreateWidget", this.url, this.domain, this.type, this.version);		
+    request.writeStringParameter("WidgetUdn", WidgetUdn);
+    request.send(function(result){
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to RemoveWidget
+* @method RemoveWidget
+* @param {String} WidgetUdn An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestWidgetController.prototype.RemoveWidget = function(WidgetUdn, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("RemoveWidget", this.url, this.domain, this.type, this.version);		
+    request.writeStringParameter("WidgetUdn", WidgetUdn);
+    request.send(function(result){
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to SetWidgetRegister
+* @method SetWidgetRegister
+* @param {String} WidgetUdn An action parameter
+* @param {Int} RegisterIndex An action parameter
+* @param {Int} RegisterValue An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestWidgetController.prototype.SetWidgetRegister = function(WidgetUdn, RegisterIndex, RegisterValue, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetWidgetRegister", this.url, this.domain, this.type, this.version);		
+    request.writeStringParameter("WidgetUdn", WidgetUdn);
+    request.writeIntParameter("RegisterIndex", RegisterIndex);
+    request.writeIntParameter("RegisterValue", RegisterValue);
+    request.send(function(result){
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
 
 

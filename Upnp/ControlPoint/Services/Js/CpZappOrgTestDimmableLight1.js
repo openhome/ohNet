@@ -1,69 +1,106 @@
  
 
 /**
- * Proxy for zapp.org:TestDimmableLight:1
- */
+* Service Proxy for zapp.org:TestDimmableLight:1
+* @module Zapp
+* @title TestDimmableLight
+*/
 
-var ServiceTestDimmableLight = function(aId){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aId + "/TestDimmableLight/control";
-	this.iDomain = "zapp.org";
-	if (this.iDomain == "upnp.org") {
-		this.iDomain = "schemas.upnp.org";
+var ServiceTestDimmableLight = function(udn){	
+
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/zapp.org-TestDimmableLight-1/control";  // upnp control url
+	this.domain = "zapp.org";
+	if (this.domain == "upnp.org") {
+		this.domain = "schemas.upnp.org";
     }
-	this.iDomain = this.iDomain.replace(/\./,"-");
-	this.iType = "TestDimmableLight";
-	this.iVersion = "1";
+	this.domain = this.domain.replace(/\./,"-");
+	this.type = "TestDimmableLight";
+	this.version = "1";
+	this.serviceName = "zapp.org-TestDimmableLight-1";
+	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+	this.udn = udn;   // device name
 	
-	this.iVariables = {};
-			this.iVariables["A_ARG_Level"] = new ServiceVariable("A_ARG_Level");
+	// Collection of service properties
+	this.serviceProperties = {};
+	this.serviceProperties["A_ARG_Level"] = new Zapp.ServiceProperty("A_ARG_Level");
 }
 
 
-ServiceTestDimmableLight.prototype.ServiceName = function(){
-	return this.iType;
-}
 
-ServiceTestDimmableLight.prototype.Variables = function(){
-	return this.iVariables;
-}
-
-ServiceTestDimmableLight.prototype.VariableNames = function(){
-	var result = [];
-	for (var variable in this.iVariables){
-		if (this.iVariables.hasOwnProperty(variable)){
-			result[result.length] = variable;
-		}
-	}
-	return result;
+/**
+* Subscribes the service to the subscription manager to listen for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceTestDimmableLight.prototype.subscribe = function (serviceAddedFunction) {
+    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
 
-ServiceTestDimmableLight.prototype.GetLevel = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("GetLevel", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["Level"] = request.ReadIntParameter(result["Level"]);	
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+/**
+* Unsubscribes the service from the subscription manager to stop listening for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceTestDimmableLight.prototype.unsubscribe = function () {
+    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+}
+
+
+
+
+/**
+* Adds a listener to handle "A_ARG_Level" property change events
+* @method A_ARG_Level_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestDimmableLight.prototype.A_ARG_Level_Changed = function (stateChangedFunction) {
+    this.serviceProperties.A_ARG_Level.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-    
 
-ServiceTestDimmableLight.prototype.SetLevel = function(Level, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetLevel", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("Level", Level);
-    request.Send(function(result){
+
+/**
+* A service action to GetLevel
+* @method GetLevel
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestDimmableLight.prototype.GetLevel = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("GetLevel", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["Level"] = Zapp.SoapRequest.readIntParameter(result["Level"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
-    
+
+
+/**
+* A service action to SetLevel
+* @method SetLevel
+* @param {Int} Level An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestDimmableLight.prototype.SetLevel = function(Level, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetLevel", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("Level", Level);
+    request.send(function(result){
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
 
 

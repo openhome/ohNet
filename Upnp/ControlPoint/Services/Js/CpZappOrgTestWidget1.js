@@ -1,65 +1,214 @@
  
 
 /**
- * Proxy for zapp.org:TestWidget:1
- */
+* Service Proxy for zapp.org:TestWidget:1
+* @module Zapp
+* @title TestWidget
+*/
 
-var ServiceTestWidget = function(aId){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aId + "/TestWidget/control";
-	this.iDomain = "zapp.org";
-	if (this.iDomain == "upnp.org") {
-		this.iDomain = "schemas.upnp.org";
+var ServiceTestWidget = function(udn){	
+
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/zapp.org-TestWidget-1/control";  // upnp control url
+	this.domain = "zapp.org";
+	if (this.domain == "upnp.org") {
+		this.domain = "schemas.upnp.org";
     }
-	this.iDomain = this.iDomain.replace(/\./,"-");
-	this.iType = "TestWidget";
-	this.iVersion = "1";
+	this.domain = this.domain.replace(/\./,"-");
+	this.type = "TestWidget";
+	this.version = "1";
+	this.serviceName = "zapp.org-TestWidget-1";
+	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+	this.udn = udn;   // device name
 	
-	this.iVariables = {};
-			this.iVariables["RegisterValue"] = new ServiceVariable("RegisterValue");
-		this.iVariables["RegisterIndex"] = new ServiceVariable("RegisterIndex");
-		this.iVariables["ReadWriteRegister0"] = new ServiceVariable("ReadWriteRegister0");
-		this.iVariables["ReadWriteRegister1"] = new ServiceVariable("ReadWriteRegister1");
-		this.iVariables["ReadWriteRegister2"] = new ServiceVariable("ReadWriteRegister2");
-		this.iVariables["ReadWriteRegister3"] = new ServiceVariable("ReadWriteRegister3");
-		this.iVariables["ReadOnlyRegister4"] = new ServiceVariable("ReadOnlyRegister4");
-		this.iVariables["ReadOnlyRegister5"] = new ServiceVariable("ReadOnlyRegister5");
-		this.iVariables["ReadOnlyRegister6"] = new ServiceVariable("ReadOnlyRegister6");
-		this.iVariables["ReadOnlyRegister7"] = new ServiceVariable("ReadOnlyRegister7");
+	// Collection of service properties
+	this.serviceProperties = {};
+	this.serviceProperties["RegisterValue"] = new Zapp.ServiceProperty("RegisterValue");
+	this.serviceProperties["RegisterIndex"] = new Zapp.ServiceProperty("RegisterIndex");
+	this.serviceProperties["ReadWriteRegister0"] = new Zapp.ServiceProperty("ReadWriteRegister0");
+	this.serviceProperties["ReadWriteRegister1"] = new Zapp.ServiceProperty("ReadWriteRegister1");
+	this.serviceProperties["ReadWriteRegister2"] = new Zapp.ServiceProperty("ReadWriteRegister2");
+	this.serviceProperties["ReadWriteRegister3"] = new Zapp.ServiceProperty("ReadWriteRegister3");
+	this.serviceProperties["ReadOnlyRegister4"] = new Zapp.ServiceProperty("ReadOnlyRegister4");
+	this.serviceProperties["ReadOnlyRegister5"] = new Zapp.ServiceProperty("ReadOnlyRegister5");
+	this.serviceProperties["ReadOnlyRegister6"] = new Zapp.ServiceProperty("ReadOnlyRegister6");
+	this.serviceProperties["ReadOnlyRegister7"] = new Zapp.ServiceProperty("ReadOnlyRegister7");
 }
 
 
-ServiceTestWidget.prototype.ServiceName = function(){
-	return this.iType;
-}
 
-ServiceTestWidget.prototype.Variables = function(){
-	return this.iVariables;
-}
-
-ServiceTestWidget.prototype.VariableNames = function(){
-	var result = [];
-	for (var variable in this.iVariables){
-		if (this.iVariables.hasOwnProperty(variable)){
-			result[result.length] = variable;
-		}
-	}
-	return result;
+/**
+* Subscribes the service to the subscription manager to listen for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceTestWidget.prototype.subscribe = function (serviceAddedFunction) {
+    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
 
-ServiceTestWidget.prototype.SetReadWriteRegister = function(RegisterIndex, RegisterValue, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetReadWriteRegister", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("RegisterIndex", RegisterIndex);
-    request.WriteIntParameter("RegisterValue", RegisterValue);
-    request.Send(function(result){
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+/**
+* Unsubscribes the service from the subscription manager to stop listening for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceTestWidget.prototype.unsubscribe = function () {
+    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+}
+
+
+
+
+/**
+* Adds a listener to handle "RegisterValue" property change events
+* @method RegisterValue_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestWidget.prototype.RegisterValue_Changed = function (stateChangedFunction) {
+    this.serviceProperties.RegisterValue.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-    
+
+
+/**
+* Adds a listener to handle "RegisterIndex" property change events
+* @method RegisterIndex_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestWidget.prototype.RegisterIndex_Changed = function (stateChangedFunction) {
+    this.serviceProperties.RegisterIndex.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+	});
+}
+
+
+/**
+* Adds a listener to handle "ReadWriteRegister0" property change events
+* @method ReadWriteRegister0_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestWidget.prototype.ReadWriteRegister0_Changed = function (stateChangedFunction) {
+    this.serviceProperties.ReadWriteRegister0.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+	});
+}
+
+
+/**
+* Adds a listener to handle "ReadWriteRegister1" property change events
+* @method ReadWriteRegister1_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestWidget.prototype.ReadWriteRegister1_Changed = function (stateChangedFunction) {
+    this.serviceProperties.ReadWriteRegister1.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+	});
+}
+
+
+/**
+* Adds a listener to handle "ReadWriteRegister2" property change events
+* @method ReadWriteRegister2_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestWidget.prototype.ReadWriteRegister2_Changed = function (stateChangedFunction) {
+    this.serviceProperties.ReadWriteRegister2.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+	});
+}
+
+
+/**
+* Adds a listener to handle "ReadWriteRegister3" property change events
+* @method ReadWriteRegister3_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestWidget.prototype.ReadWriteRegister3_Changed = function (stateChangedFunction) {
+    this.serviceProperties.ReadWriteRegister3.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+	});
+}
+
+
+/**
+* Adds a listener to handle "ReadOnlyRegister4" property change events
+* @method ReadOnlyRegister4_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestWidget.prototype.ReadOnlyRegister4_Changed = function (stateChangedFunction) {
+    this.serviceProperties.ReadOnlyRegister4.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+	});
+}
+
+
+/**
+* Adds a listener to handle "ReadOnlyRegister5" property change events
+* @method ReadOnlyRegister5_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestWidget.prototype.ReadOnlyRegister5_Changed = function (stateChangedFunction) {
+    this.serviceProperties.ReadOnlyRegister5.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+	});
+}
+
+
+/**
+* Adds a listener to handle "ReadOnlyRegister6" property change events
+* @method ReadOnlyRegister6_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestWidget.prototype.ReadOnlyRegister6_Changed = function (stateChangedFunction) {
+    this.serviceProperties.ReadOnlyRegister6.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+	});
+}
+
+
+/**
+* Adds a listener to handle "ReadOnlyRegister7" property change events
+* @method ReadOnlyRegister7_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestWidget.prototype.ReadOnlyRegister7_Changed = function (stateChangedFunction) {
+    this.serviceProperties.ReadOnlyRegister7.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+	});
+}
+
+
+/**
+* A service action to SetReadWriteRegister
+* @method SetReadWriteRegister
+* @param {Int} RegisterIndex An action parameter
+* @param {Int} RegisterValue An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestWidget.prototype.SetReadWriteRegister = function(RegisterIndex, RegisterValue, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetReadWriteRegister", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("RegisterIndex", RegisterIndex);
+    request.writeIntParameter("RegisterValue", RegisterValue);
+    request.send(function(result){
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
 
 

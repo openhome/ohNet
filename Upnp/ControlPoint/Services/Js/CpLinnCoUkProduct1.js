@@ -1,98 +1,161 @@
  
 
 /**
- * Proxy for linn.co.uk:Product:1
- */
+* Service Proxy for linn.co.uk:Product:1
+* @module Zapp
+* @title Product
+*/
 
-var ServiceProduct = function(aId){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aId + "/Product/control";
-	this.iDomain = "linn.co.uk";
-	if (this.iDomain == "upnp.org") {
-		this.iDomain = "schemas.upnp.org";
+var ServiceProduct = function(udn){	
+
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Product-1/control";  // upnp control url
+	this.domain = "linn.co.uk";
+	if (this.domain == "upnp.org") {
+		this.domain = "schemas.upnp.org";
     }
-	this.iDomain = this.iDomain.replace(/\./,"-");
-	this.iType = "Product";
-	this.iVersion = "1";
+	this.domain = this.domain.replace(/\./,"-");
+	this.type = "Product";
+	this.version = "1";
+	this.serviceName = "linn.co.uk-Product-1";
+	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+	this.udn = udn;   // device name
 	
-	this.iVariables = {};
-			this.iVariables["Room"] = new ServiceVariable("Room");
-		this.iVariables["Standby"] = new ServiceVariable("Standby");
+	// Collection of service properties
+	this.serviceProperties = {};
+	this.serviceProperties["Room"] = new Zapp.ServiceProperty("Room");
+	this.serviceProperties["Standby"] = new Zapp.ServiceProperty("Standby");
 }
 
 
-ServiceProduct.prototype.ServiceName = function(){
-	return this.iType;
-}
 
-ServiceProduct.prototype.Variables = function(){
-	return this.iVariables;
-}
-
-ServiceProduct.prototype.VariableNames = function(){
-	var result = [];
-	for (var variable in this.iVariables){
-		if (this.iVariables.hasOwnProperty(variable)){
-			result[result.length] = variable;
-		}
-	}
-	return result;
+/**
+* Subscribes the service to the subscription manager to listen for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceProduct.prototype.subscribe = function (serviceAddedFunction) {
+    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
 
-ServiceProduct.prototype.Room = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("Room", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aRoom"] = request.ReadStringParameter(result["aRoom"]);	
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+/**
+* Unsubscribes the service from the subscription manager to stop listening for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceProduct.prototype.unsubscribe = function () {
+    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+}
+
+
+
+
+/**
+* Adds a listener to handle "Room" property change events
+* @method Room_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceProduct.prototype.Room_Changed = function (stateChangedFunction) {
+    this.serviceProperties.Room.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
-    
 
-ServiceProduct.prototype.SetRoom = function(aRoom, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetRoom", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteStringParameter("aRoom", aRoom);
-    request.Send(function(result){
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+
+/**
+* Adds a listener to handle "Standby" property change events
+* @method Standby_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceProduct.prototype.Standby_Changed = function (stateChangedFunction) {
+    this.serviceProperties.Standby.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readBoolParameter(state)); 
 	});
 }
-    
 
-ServiceProduct.prototype.Standby = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("Standby", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aStandby"] = request.ReadBoolParameter(result["aStandby"]);	
+
+/**
+* A service action to Room
+* @method Room
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceProduct.prototype.Room = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Room", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aRoom"] = Zapp.SoapRequest.readStringParameter(result["aRoom"]);	
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
-    
 
-ServiceProduct.prototype.SetStandby = function(aStandby, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetStandby", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteBoolParameter("aStandby", aStandby);
-    request.Send(function(result){
+
+/**
+* A service action to SetRoom
+* @method SetRoom
+* @param {String} aRoom An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceProduct.prototype.SetRoom = function(aRoom, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetRoom", this.url, this.domain, this.type, this.version);		
+    request.writeStringParameter("aRoom", aRoom);
+    request.send(function(result){
 	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
+		if (successFunction){
+			successFunction(result);
 		}
 	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+		if (errorFunction) {errorFunction(message, transport);}
 	});
 }
-    
+
+
+/**
+* A service action to Standby
+* @method Standby
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceProduct.prototype.Standby = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Standby", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aStandby"] = Zapp.SoapRequest.readBoolParameter(result["aStandby"]);	
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to SetStandby
+* @method SetStandby
+* @param {Boolean} aStandby An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceProduct.prototype.SetStandby = function(aStandby, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetStandby", this.url, this.domain, this.type, this.version);		
+    request.writeBoolParameter("aStandby", aStandby);
+    request.send(function(result){
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
 
 

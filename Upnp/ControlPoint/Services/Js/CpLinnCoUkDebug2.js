@@ -1,86 +1,157 @@
  
 
 /**
- * Proxy for linn.co.uk:Debug:2
- */
+* Service Proxy for linn.co.uk:Debug:2
+* @module Zapp
+* @title Debug
+*/
 
-var ServiceDebug = function(aId){	
-	this.iUrl = window.location.protocol + "//" + window.location.host + "/" + aId + "/Debug/control";
-	this.iDomain = "linn.co.uk";
-	if (this.iDomain == "upnp.org") {
-		this.iDomain = "schemas.upnp.org";
+var ServiceDebug = function(udn){	
+
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/linn.co.uk-Debug-2/control";  // upnp control url
+	this.domain = "linn.co.uk";
+	if (this.domain == "upnp.org") {
+		this.domain = "schemas.upnp.org";
     }
-	this.iDomain = this.iDomain.replace(/\./,"-");
-	this.iType = "Debug";
-	this.iVersion = "2";
+	this.domain = this.domain.replace(/\./,"-");
+	this.type = "Debug";
+	this.version = "2";
+	this.serviceName = "linn.co.uk-Debug-2";
+	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+	this.udn = udn;   // device name
 	
-	this.iVariables = {};
-			this.iVariables["TUint"] = new ServiceVariable("TUint");
-		this.iVariables["Address"] = new ServiceVariable("Address");
-		this.iVariables["Data"] = new ServiceVariable("Data");
+	// Collection of service properties
+	this.serviceProperties = {};
+	this.serviceProperties["TUint"] = new Zapp.ServiceProperty("TUint");
+	this.serviceProperties["Address"] = new Zapp.ServiceProperty("Address");
+	this.serviceProperties["Data"] = new Zapp.ServiceProperty("Data");
 }
 
 
-ServiceDebug.prototype.ServiceName = function(){
-	return this.iType;
-}
 
-ServiceDebug.prototype.Variables = function(){
-	return this.iVariables;
-}
-
-ServiceDebug.prototype.VariableNames = function(){
-	var result = [];
-	for (var variable in this.iVariables){
-		if (this.iVariables.hasOwnProperty(variable)){
-			result[result.length] = variable;
-		}
-	}
-	return result;
+/**
+* Subscribes the service to the subscription manager to listen for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceDebug.prototype.subscribe = function (serviceAddedFunction) {
+    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
 }
 
 
-ServiceDebug.prototype.SetDebugLevel = function(aDebugLevel, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("SetDebugLevel", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("aDebugLevel", aDebugLevel);
-    request.Send(function(result){
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+/**
+* Unsubscribes the service from the subscription manager to stop listening for property change events
+* @method Subscribed
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+ServiceDebug.prototype.unsubscribe = function () {
+    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+}
+
+
+
+
+/**
+* Adds a listener to handle "TUint" property change events
+* @method TUint_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceDebug.prototype.TUint_Changed = function (stateChangedFunction) {
+    this.serviceProperties.TUint.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-    
 
-ServiceDebug.prototype.DebugLevel = function(aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("DebugLevel", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.Send(function(result){
-		result["aDebugLevel"] = request.ReadIntParameter(result["aDebugLevel"]);	
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+
+/**
+* Adds a listener to handle "Address" property change events
+* @method Address_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceDebug.prototype.Address_Changed = function (stateChangedFunction) {
+    this.serviceProperties.Address.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
 }
-    
 
-ServiceDebug.prototype.MemWrite = function(aMemAddress, aMemData, aSuccessFunction, aErrorFunction){	
-	var request = new SoapRequest("MemWrite", this.iUrl, this.iDomain, this.iType, this.iVersion);		
-    request.WriteIntParameter("aMemAddress", aMemAddress);
-    request.WriteBinaryParameter("aMemData", aMemData);
-    request.Send(function(result){
-	
-		if (aSuccessFunction){
-			aSuccessFunction(result);
-		}
-	}, function(message, transport) {
-		if (aErrorFunction) {aErrorFunction(message, transport);}
+
+/**
+* Adds a listener to handle "Data" property change events
+* @method Data_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceDebug.prototype.Data_Changed = function (stateChangedFunction) {
+    this.serviceProperties.Data.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readBinaryParameter(state)); 
 	});
 }
-    
+
+
+/**
+* A service action to SetDebugLevel
+* @method SetDebugLevel
+* @param {Int} aDebugLevel An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDebug.prototype.SetDebugLevel = function(aDebugLevel, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("SetDebugLevel", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("aDebugLevel", aDebugLevel);
+    request.send(function(result){
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to DebugLevel
+* @method DebugLevel
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDebug.prototype.DebugLevel = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("DebugLevel", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["aDebugLevel"] = Zapp.SoapRequest.readIntParameter(result["aDebugLevel"]);	
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to MemWrite
+* @method MemWrite
+* @param {Int} aMemAddress An action parameter
+* @param {String} aMemData An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceDebug.prototype.MemWrite = function(aMemAddress, aMemData, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("MemWrite", this.url, this.domain, this.type, this.version);		
+    request.writeIntParameter("aMemAddress", aMemAddress);
+    request.writeBinaryParameter("aMemData", aMemData);
+    request.send(function(result){
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
 
 
