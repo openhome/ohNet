@@ -7,6 +7,16 @@
 
     <actionList>
         <action>
+            <name>PresentationUrl</name>
+            <argumentList>
+                <argument>
+                    <name>Value</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>PresentationUrl</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
             <name>Metadata</name>
             <argumentList>
                 <argument>
@@ -50,6 +60,10 @@
     
     <serviceStateTable>
         <stateVariable sendEvents="yes">
+            <name>PresentationUrl</name>
+            <dataType>string</dataType>
+        </stateVariable>
+        <stateVariable sendEvents="yes">
             <name>Metadata</name>
             <dataType>string</dataType>
         </stateVariable>
@@ -65,6 +79,7 @@
                 <allowedValue>Ready</allowedValue>
                 <allowedValue>Blocked</allowedValue>
                 <allowedValue>Inactive</allowedValue>
+                <allowedValue>Disabled</allowedValue>
             </allowedValueList>
         </stateVariable>
         <stateVariable sendEvents="yes">
