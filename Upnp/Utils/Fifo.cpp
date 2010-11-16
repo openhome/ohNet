@@ -27,10 +27,12 @@ TUint FifoBase::SlotsUsed() const
     return iSlotsUsed;
 }
 
-void FifoBase::ReadInterrupt()
+void FifoBase::ReadInterrupt(TBool aInterrupt)
 {
-    iInterrupted = true;
-    iSemaRead.Signal();
+    iInterrupted = aInterrupt;
+    if (aInterrupt) {
+        iSemaRead.Signal();
+    }
 }
 
 TUint FifoBase::WriteOpen(TUint aTimeoutMs)

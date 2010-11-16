@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -81,27 +81,27 @@ private:
     virtual void GetRampTime(uint32_t aVersion, uint32_t& aretRampTime);
 private:
     DvProviderUpnpOrgDimming1Cpp();
-    void DoSetLoadLevelTarget(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetLoadLevelTarget(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetLoadLevelStatus(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetOnEffectLevel(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetOnEffect(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetOnEffectParameters(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoStepUp(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoStepDown(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoStartRampUp(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoStartRampDown(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoStopRamp(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoStartRampToLevel(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetStepDelta(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetStepDelta(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetRampRate(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetRampRate(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoPauseRamp(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoResumeRamp(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetIsRamping(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetRampPaused(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoGetRampTime(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoSetLoadLevelTarget(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetLoadLevelTarget(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetLoadLevelStatus(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetOnEffectLevel(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetOnEffect(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetOnEffectParameters(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoStepUp(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoStepDown(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoStartRampUp(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoStartRampDown(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoStopRamp(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoStartRampToLevel(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetStepDelta(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetStepDelta(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetRampRate(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetRampRate(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoPauseRamp(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoResumeRamp(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetIsRamping(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetRampPaused(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetRampTime(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyUint* iPropertyLoadLevelStatus;
     PropertyUint* iPropertyStepDelta;

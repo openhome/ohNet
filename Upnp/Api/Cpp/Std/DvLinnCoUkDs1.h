@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -67,16 +67,16 @@ private:
     virtual void ProtocolInfo(uint32_t aVersion, std::string& aaSupportedProtocols);
 private:
     DvProviderLinnCoUkDs1Cpp();
-    void DoPlay(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoPause(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoStop(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSeekSecondAbsolute(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSeekSecondRelative(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSeekTrackId(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSeekTrackAbsolute(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSeekTrackRelative(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoState(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoProtocolInfo(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoPlay(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoPause(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoStop(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSeekSecondAbsolute(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSeekSecondRelative(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSeekTrackId(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSeekTrackAbsolute(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSeekTrackRelative(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoState(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoProtocolInfo(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyString* iPropertySupportedProtocols;
     PropertyUint* iPropertyTrackDuration;

@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -138,21 +138,21 @@ DvProviderLinnCoUkDs1Cpp::DvProviderLinnCoUkDs1Cpp(DvDeviceStd& aDevice)
 void DvProviderLinnCoUkDs1Cpp::EnableActionPlay()
 {
     Zapp::Action* action = new Zapp::Action("Play");
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDs1Cpp::DoPlay);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDs1Cpp::DoPlay);
     iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkDs1Cpp::EnableActionPause()
 {
     Zapp::Action* action = new Zapp::Action("Pause");
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDs1Cpp::DoPause);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDs1Cpp::DoPause);
     iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkDs1Cpp::EnableActionStop()
 {
     Zapp::Action* action = new Zapp::Action("Stop");
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDs1Cpp::DoStop);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDs1Cpp::DoStop);
     iService->AddAction(action, functor);
 }
 
@@ -160,7 +160,7 @@ void DvProviderLinnCoUkDs1Cpp::EnableActionSeekSecondAbsolute()
 {
     Zapp::Action* action = new Zapp::Action("SeekSecondAbsolute");
     action->AddInputParameter(new ParameterUint("aSecond"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDs1Cpp::DoSeekSecondAbsolute);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDs1Cpp::DoSeekSecondAbsolute);
     iService->AddAction(action, functor);
 }
 
@@ -168,7 +168,7 @@ void DvProviderLinnCoUkDs1Cpp::EnableActionSeekSecondRelative()
 {
     Zapp::Action* action = new Zapp::Action("SeekSecondRelative");
     action->AddInputParameter(new ParameterInt("aSecond"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDs1Cpp::DoSeekSecondRelative);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDs1Cpp::DoSeekSecondRelative);
     iService->AddAction(action, functor);
 }
 
@@ -176,7 +176,7 @@ void DvProviderLinnCoUkDs1Cpp::EnableActionSeekTrackId()
 {
     Zapp::Action* action = new Zapp::Action("SeekTrackId");
     action->AddInputParameter(new ParameterRelated("aTrackId", *iPropertyTrackId));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDs1Cpp::DoSeekTrackId);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDs1Cpp::DoSeekTrackId);
     iService->AddAction(action, functor);
 }
 
@@ -184,7 +184,7 @@ void DvProviderLinnCoUkDs1Cpp::EnableActionSeekTrackAbsolute()
 {
     Zapp::Action* action = new Zapp::Action("SeekTrackAbsolute");
     action->AddInputParameter(new ParameterUint("aTrack"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDs1Cpp::DoSeekTrackAbsolute);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDs1Cpp::DoSeekTrackAbsolute);
     iService->AddAction(action, functor);
 }
 
@@ -192,7 +192,7 @@ void DvProviderLinnCoUkDs1Cpp::EnableActionSeekTrackRelative()
 {
     Zapp::Action* action = new Zapp::Action("SeekTrackRelative");
     action->AddInputParameter(new ParameterInt("aTrack"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDs1Cpp::DoSeekTrackRelative);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDs1Cpp::DoSeekTrackRelative);
     iService->AddAction(action, functor);
 }
 
@@ -207,7 +207,7 @@ void DvProviderLinnCoUkDs1Cpp::EnableActionState()
     action->AddOutputParameter(new ParameterRelated("aTrackSampleRate", *iPropertyTrackSampleRate));
     action->AddOutputParameter(new ParameterRelated("aTrackCodecName", *iPropertyTrackCodecName));
     action->AddOutputParameter(new ParameterRelated("aTrackId", *iPropertyTrackId));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDs1Cpp::DoState);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDs1Cpp::DoState);
     iService->AddAction(action, functor);
 }
 
@@ -215,11 +215,11 @@ void DvProviderLinnCoUkDs1Cpp::EnableActionProtocolInfo()
 {
     Zapp::Action* action = new Zapp::Action("ProtocolInfo");
     action->AddOutputParameter(new ParameterRelated("aSupportedProtocols", *iPropertySupportedProtocols));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDs1Cpp::DoProtocolInfo);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDs1Cpp::DoProtocolInfo);
     iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkDs1Cpp::DoPlay(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDs1Cpp::DoPlay(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -228,7 +228,7 @@ void DvProviderLinnCoUkDs1Cpp::DoPlay(IDvInvocation& aInvocation, TUint aVersion
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkDs1Cpp::DoPause(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDs1Cpp::DoPause(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -237,7 +237,7 @@ void DvProviderLinnCoUkDs1Cpp::DoPause(IDvInvocation& aInvocation, TUint aVersio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkDs1Cpp::DoStop(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDs1Cpp::DoStop(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -246,7 +246,7 @@ void DvProviderLinnCoUkDs1Cpp::DoStop(IDvInvocation& aInvocation, TUint aVersion
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkDs1Cpp::DoSeekSecondAbsolute(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDs1Cpp::DoSeekSecondAbsolute(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aSecond = aInvocation.InvocationReadUint("aSecond");
@@ -256,7 +256,7 @@ void DvProviderLinnCoUkDs1Cpp::DoSeekSecondAbsolute(IDvInvocation& aInvocation, 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkDs1Cpp::DoSeekSecondRelative(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDs1Cpp::DoSeekSecondRelative(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     int32_t aSecond = aInvocation.InvocationReadInt("aSecond");
@@ -266,7 +266,7 @@ void DvProviderLinnCoUkDs1Cpp::DoSeekSecondRelative(IDvInvocation& aInvocation, 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkDs1Cpp::DoSeekTrackId(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDs1Cpp::DoSeekTrackId(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aTrackId = aInvocation.InvocationReadUint("aTrackId");
@@ -276,7 +276,7 @@ void DvProviderLinnCoUkDs1Cpp::DoSeekTrackId(IDvInvocation& aInvocation, TUint a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkDs1Cpp::DoSeekTrackAbsolute(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDs1Cpp::DoSeekTrackAbsolute(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aTrack = aInvocation.InvocationReadUint("aTrack");
@@ -286,7 +286,7 @@ void DvProviderLinnCoUkDs1Cpp::DoSeekTrackAbsolute(IDvInvocation& aInvocation, T
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkDs1Cpp::DoSeekTrackRelative(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDs1Cpp::DoSeekTrackRelative(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     int32_t aTrack = aInvocation.InvocationReadInt("aTrack");
@@ -296,7 +296,7 @@ void DvProviderLinnCoUkDs1Cpp::DoSeekTrackRelative(IDvInvocation& aInvocation, T
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkDs1Cpp::DoState(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDs1Cpp::DoState(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -333,7 +333,7 @@ void DvProviderLinnCoUkDs1Cpp::DoState(IDvInvocation& aInvocation, TUint aVersio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkDs1Cpp::DoProtocolInfo(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDs1Cpp::DoProtocolInfo(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

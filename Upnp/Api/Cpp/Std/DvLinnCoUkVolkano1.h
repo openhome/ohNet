@@ -10,7 +10,7 @@
 
 namespace Zapp {
 
-class IDvInvocation;
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -51,17 +51,17 @@ private:
     virtual void SoftwareVersion(uint32_t aVersion, std::string& aaSoftwareVersion);
 private:
     DvProviderLinnCoUkVolkano1Cpp();
-    void DoReboot(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoBootMode(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSetBootMode(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoBspType(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoUglyName(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoMacAddress(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoProductId(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoBoardId(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoBoardType(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoMaxBoards(IDvInvocation& aInvocation, uint32_t aVersion);
-    void DoSoftwareVersion(IDvInvocation& aInvocation, uint32_t aVersion);
+    void DoReboot(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoBootMode(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSetBootMode(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoBspType(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoUglyName(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoMacAddress(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoProductId(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoBoardId(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoBoardType(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoMaxBoards(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoSoftwareVersion(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
 };
 

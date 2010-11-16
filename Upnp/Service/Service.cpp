@@ -241,12 +241,14 @@ TUint Property::SequenceNumber() const
     return iSequenceNumber;
 }
 
-void Property::ReportChanged()
+TBool Property::ReportChanged()
 {
     if (iChanged) {
         iFunctor();
 		iChanged = false;
+        return true;
 	}
+    return false;
 }
 
 Property::Property(Zapp::Parameter* aParameter, Functor& aFunctor)

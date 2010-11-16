@@ -5,12 +5,14 @@
 #include <Http.h>
 #include <Printer.h>
 #include <DviSubscription.h>
+#include <Error.h>
+#include <DviStack.h>
 
 using namespace Zapp;
 
 // DvAction
 
-DvAction::DvAction(Zapp::Action* aAction, FunctorDvInvocation aFunctor)
+DvAction::DvAction(Zapp::Action* aAction, FunctorDviInvocation aFunctor)
     : iAction(aAction)
     , iFunctor(aFunctor)
 {
@@ -26,7 +28,7 @@ const Zapp::Action* DvAction::Action() const
     return iAction;
 }
 
-FunctorDvInvocation DvAction::Functor() const
+FunctorDviInvocation DvAction::Functor() const
 {
     return iFunctor;
 }
@@ -78,7 +80,7 @@ void DviService::RemoveRef()
     }
 }
 
-void DviService::AddAction(Action* aAction, FunctorDvInvocation aFunctor)
+void DviService::AddAction(Action* aAction, FunctorDviInvocation aFunctor)
 {
     DvAction action(aAction, aFunctor);
     iDvActions.push_back(action);
@@ -89,7 +91,7 @@ const DviService::VectorActions& DviService::DvActions() const
     return iDvActions;
 }
 
-void DviService::Invoke(IDvInvocation& aInvocation, TUint aVersion, const Brx& aActionName)
+void DviService::Invoke(IDviInvocation& aInvocation, TUint aVersion, const Brx& aActionName)
 {
     for (TUint i=0; i<iDvActions.size(); i++) {
         if (iDvActions[i].Action()->Name() == aActionName) {
@@ -158,7 +160,7 @@ void DviService::RemoveSubscription(const Brx& aSid)
 
 // InvocationResponse
 
-InvocationResponse::InvocationResponse(IDvInvocation& aInvocation)
+InvocationResponse::InvocationResponse(IDviInvocation& aInvocation)
     : iInvocation(aInvocation)
 {
 }
@@ -181,7 +183,7 @@ void InvocationResponse::End()
 
 // InvocationResponseBool
 
-InvocationResponseBool::InvocationResponseBool(IDvInvocation& aInvocation, const TChar* aName)
+InvocationResponseBool::InvocationResponseBool(IDviInvocation& aInvocation, const TChar* aName)
     : iInvocation(aInvocation)
     , iName(aName)
 {
@@ -195,7 +197,7 @@ void InvocationResponseBool::Write(TBool aValue)
 
 // InvocationResponseUint
 
-InvocationResponseUint::InvocationResponseUint(IDvInvocation& aInvocation, const TChar* aName)
+InvocationResponseUint::InvocationResponseUint(IDviInvocation& aInvocation, const TChar* aName)
     : iInvocation(aInvocation)
     , iName(aName)
 {
@@ -209,7 +211,7 @@ void InvocationResponseUint::Write(TUint aValue)
 
 // InvocationResponseInt
 
-InvocationResponseInt::InvocationResponseInt(IDvInvocation& aInvocation, const TChar* aName)
+InvocationResponseInt::InvocationResponseInt(IDviInvocation& aInvocation, const TChar* aName)
     : iInvocation(aInvocation)
     , iName(aName)
 {
@@ -223,7 +225,7 @@ void InvocationResponseInt::Write(TInt aValue)
 
 // InvocationResponseBinary
 
-InvocationResponseBinary::InvocationResponseBinary(IDvInvocation& aInvocation, const TChar* aName)
+InvocationResponseBinary::InvocationResponseBinary(IDviInvocation& aInvocation, const TChar* aName)
     : iInvocation(aInvocation)
     , iName(aName)
     , iFirst(true)
@@ -260,7 +262,7 @@ void InvocationResponseBinary::WriteFlush()
 
 // InvocationResponseString
 
-InvocationResponseString::InvocationResponseString(IDvInvocation& aInvocation, const TChar* aName)
+InvocationResponseString::InvocationResponseString(IDviInvocation& aInvocation, const TChar* aName)
     : iInvocation(aInvocation)
     , iName(aName)
     , iFirst(true)
@@ -292,4 +294,127 @@ void InvocationResponseString::WriteFlush()
 {
 	CheckFirst();
 	iInvocation.InvocationWriteStringEnd(iName);
+}
+
+
+// DviInvoker
+
+DviInvoker::DviInvoker(const TChar* aName, Fifo<DviInvoker*>& aFree)
+    : Thread(aName)
+    , iFree(aFree)
+    , iInvocation(NULL)
+    , iLock("MDVK")
+{
+}
+
+DviInvoker::~DviInvoker()
+{
+    Kill();
+    Join();
+}
+
+void DviInvoker::Invoke(IDviInvocation* aInvocation)
+{
+    iLock.Wait();
+    iInvocation = aInvocation;
+    iLock.Signal();
+    Signal();
+}
+
+void DviInvoker::Run()
+{
+    for (;;) {
+        Wait();
+        try {
+            iInvocation->Invoke();
+        }
+        catch (InvocationError&) {
+            iInvocation->InvocationReportError(Error::kCodeUnknown, Error::kDescriptionUnknown);
+        }
+        catch (ParameterValidationError&) {
+            iInvocation->InvocationReportError(Error::eCodeParameterInvalid, Error::kDescriptionParameterInvalid);
+        }
+        iLock.Wait();
+        iInvocation = NULL;
+        iLock.Signal();
+        iFree.Write(this);
+    }
+}
+
+
+// DviInvocationManager
+
+DviInvocationManager::DviInvocationManager()
+    : Thread("DNVM")
+    , iLock("DNVM")
+    , iWaitingInvocations(kNumInvocations)
+    , iFreeInvokers(kNumInvokerThreads)
+{
+    TUint i;
+    const TUint numInvokerThreads = kNumInvokerThreads;
+#ifndef _WIN32
+    ASSERT(numInvokerThreads <= 99);
+#endif
+    iInvokers = (DviInvoker**)malloc(sizeof(*iInvokers) * numInvokerThreads);
+    TChar thName[5];
+    for (i=0; i<numInvokerThreads; i++) {
+        (void)sprintf(&thName[0], "DN%2u", i);
+        iInvokers[i] = new DviInvoker(&thName[0], iFreeInvokers);
+        iFreeInvokers.Write(iInvokers[i]);
+        iInvokers[i]->Start();
+    }
+
+    iActive = true;
+    Start();
+}
+
+DviInvocationManager::~DviInvocationManager()
+{
+    iLock.Wait();
+    iActive = false;
+    iLock.Signal();
+
+    iFreeInvokers.ReadInterrupt(true);
+    Kill();
+    Join();
+
+    TUint i;
+    for (i=0; i<kNumInvokerThreads; i++) {
+        delete iInvokers[i];
+    }
+    free(iInvokers);
+
+    iWaitingInvocations.ReadInterrupt(false);
+    TUint waiting = iWaitingInvocations.SlotsUsed();
+    for (i=0; i<waiting; i++) {
+        IDviInvocation* invocation = iWaitingInvocations.Read();
+        invocation->InvocationReportError(Error::eCodeShutdown, Error::kDescriptionAsyncShutdown);
+    }
+}
+
+void DviInvocationManager::Queue(IDviInvocation* aInvocation)
+{
+    DviInvocationManager& self = DviStack::InvocationManager();
+    self.iWaitingInvocations.Write(aInvocation);
+    self.Signal();
+}
+
+void DviInvocationManager::Run()
+{
+    for (;;) {
+        Wait();
+        IDviInvocation* invocation = NULL;
+        try {
+            invocation = iWaitingInvocations.Read();
+            // !!!! do we want to allow invocations to be interrupted? (see CpiInvocationManager)
+            DviInvoker* invoker = iFreeInvokers.Read();
+            invoker->Invoke(invocation);
+        }
+        catch (FifoReadError&) {
+            if (invocation != NULL) {
+                invocation->InvocationReportError(Error::eCodeShutdown, Error::kDescriptionAsyncShutdown);
+            }
+            break;
+        }
+    }
 }

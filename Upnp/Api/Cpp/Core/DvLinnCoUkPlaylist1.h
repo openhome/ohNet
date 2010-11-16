@@ -8,6 +8,7 @@
 
 namespace Zapp {
 
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -58,18 +59,18 @@ private:
     virtual void IdArrayChanged(IInvocationResponse& aResponse, TUint aVersion, TUint aaIdArrayToken, IInvocationResponseBool& aaIdArrayChanged);
 private:
     DvProviderLinnCoUkPlaylist1();
-    void DoRead(IDvInvocation& aInvocation, TUint aVersion);
-    void DoReadList(IDvInvocation& aInvocation, TUint aVersion);
-    void DoInsert(IDvInvocation& aInvocation, TUint aVersion);
-    void DoDelete(IDvInvocation& aInvocation, TUint aVersion);
-    void DoDeleteAll(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetRepeat(IDvInvocation& aInvocation, TUint aVersion);
-    void DoRepeat(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetShuffle(IDvInvocation& aInvocation, TUint aVersion);
-    void DoShuffle(IDvInvocation& aInvocation, TUint aVersion);
-    void DoTracksMax(IDvInvocation& aInvocation, TUint aVersion);
-    void DoIdArray(IDvInvocation& aInvocation, TUint aVersion);
-    void DoIdArrayChanged(IDvInvocation& aInvocation, TUint aVersion);
+    void DoRead(IDviInvocation& aInvocation, TUint aVersion);
+    void DoReadList(IDviInvocation& aInvocation, TUint aVersion);
+    void DoInsert(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDelete(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDeleteAll(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetRepeat(IDviInvocation& aInvocation, TUint aVersion);
+    void DoRepeat(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetShuffle(IDviInvocation& aInvocation, TUint aVersion);
+    void DoShuffle(IDviInvocation& aInvocation, TUint aVersion);
+    void DoTracksMax(IDviInvocation& aInvocation, TUint aVersion);
+    void DoIdArray(IDviInvocation& aInvocation, TUint aVersion);
+    void DoIdArrayChanged(IDviInvocation& aInvocation, TUint aVersion);
 private:
     PropertyBinary* iPropertyIdArray;
     PropertyBool* iPropertyRepeat;

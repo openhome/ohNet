@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -54,11 +54,11 @@ void DvProviderLinnCoUkTime1Cpp::EnableActionTime()
     action->AddOutputParameter(new ParameterRelated("aTrackCount", *iPropertyTrackCount));
     action->AddOutputParameter(new ParameterRelated("aDuration", *iPropertyDuration));
     action->AddOutputParameter(new ParameterRelated("aSeconds", *iPropertySeconds));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkTime1Cpp::DoTime);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkTime1Cpp::DoTime);
     iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkTime1Cpp::DoTime(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkTime1Cpp::DoTime(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

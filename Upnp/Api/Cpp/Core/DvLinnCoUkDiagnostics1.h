@@ -8,6 +8,7 @@
 
 namespace Zapp {
 
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -54,19 +55,19 @@ private:
     virtual void Reboot(IInvocationResponse& aResponse, TUint aVersion, TUint aaDelay);
 private:
     DvProviderLinnCoUkDiagnostics1();
-    void DoEcho(IDvInvocation& aInvocation, TUint aVersion);
-    void DoElfFile(IDvInvocation& aInvocation, TUint aVersion);
-    void DoElfFingerprint(IDvInvocation& aInvocation, TUint aVersion);
-    void DoCrashDataStatus(IDvInvocation& aInvocation, TUint aVersion);
-    void DoCrashDataFetch(IDvInvocation& aInvocation, TUint aVersion);
-    void DoCrashDataClear(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSysLog(IDvInvocation& aInvocation, TUint aVersion);
-    void DoDiagnostic(IDvInvocation& aInvocation, TUint aVersion);
-    void DoStateVariable(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetStateVariable(IDvInvocation& aInvocation, TUint aVersion);
-    void DoStateVariablePeriod(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetStateVariablePeriod(IDvInvocation& aInvocation, TUint aVersion);
-    void DoReboot(IDvInvocation& aInvocation, TUint aVersion);
+    void DoEcho(IDviInvocation& aInvocation, TUint aVersion);
+    void DoElfFile(IDviInvocation& aInvocation, TUint aVersion);
+    void DoElfFingerprint(IDviInvocation& aInvocation, TUint aVersion);
+    void DoCrashDataStatus(IDviInvocation& aInvocation, TUint aVersion);
+    void DoCrashDataFetch(IDviInvocation& aInvocation, TUint aVersion);
+    void DoCrashDataClear(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSysLog(IDviInvocation& aInvocation, TUint aVersion);
+    void DoDiagnostic(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStateVariable(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetStateVariable(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStateVariablePeriod(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetStateVariablePeriod(IDviInvocation& aInvocation, TUint aVersion);
+    void DoReboot(IDviInvocation& aInvocation, TUint aVersion);
 private:
     PropertyUint* iPropertyaStateVariable;
 };

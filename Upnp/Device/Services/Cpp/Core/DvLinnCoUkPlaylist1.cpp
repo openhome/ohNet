@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -66,7 +66,7 @@ void DvProviderLinnCoUkPlaylist1::EnableActionRead()
     action->AddInputParameter(new ParameterUint("aId"));
     action->AddOutputParameter(new ParameterString("aUri"));
     action->AddOutputParameter(new ParameterString("aMetaData"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoRead);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoRead);
     iService->AddAction(action, functor);
 }
 
@@ -75,7 +75,7 @@ void DvProviderLinnCoUkPlaylist1::EnableActionReadList()
     Zapp::Action* action = new Zapp::Action("ReadList");
     action->AddInputParameter(new ParameterString("aIdList"));
     action->AddOutputParameter(new ParameterString("aMetaDataList"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoReadList);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoReadList);
     iService->AddAction(action, functor);
 }
 
@@ -86,7 +86,7 @@ void DvProviderLinnCoUkPlaylist1::EnableActionInsert()
     action->AddInputParameter(new ParameterString("aUri"));
     action->AddInputParameter(new ParameterString("aMetaData"));
     action->AddOutputParameter(new ParameterUint("aNewId"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoInsert);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoInsert);
     iService->AddAction(action, functor);
 }
 
@@ -94,14 +94,14 @@ void DvProviderLinnCoUkPlaylist1::EnableActionDelete()
 {
     Zapp::Action* action = new Zapp::Action("Delete");
     action->AddInputParameter(new ParameterUint("aId"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoDelete);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoDelete);
     iService->AddAction(action, functor);
 }
 
 void DvProviderLinnCoUkPlaylist1::EnableActionDeleteAll()
 {
     Zapp::Action* action = new Zapp::Action("DeleteAll");
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoDeleteAll);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoDeleteAll);
     iService->AddAction(action, functor);
 }
 
@@ -109,7 +109,7 @@ void DvProviderLinnCoUkPlaylist1::EnableActionSetRepeat()
 {
     Zapp::Action* action = new Zapp::Action("SetRepeat");
     action->AddInputParameter(new ParameterRelated("aRepeat", *iPropertyRepeat));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoSetRepeat);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoSetRepeat);
     iService->AddAction(action, functor);
 }
 
@@ -117,7 +117,7 @@ void DvProviderLinnCoUkPlaylist1::EnableActionRepeat()
 {
     Zapp::Action* action = new Zapp::Action("Repeat");
     action->AddOutputParameter(new ParameterRelated("aRepeat", *iPropertyRepeat));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoRepeat);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoRepeat);
     iService->AddAction(action, functor);
 }
 
@@ -125,7 +125,7 @@ void DvProviderLinnCoUkPlaylist1::EnableActionSetShuffle()
 {
     Zapp::Action* action = new Zapp::Action("SetShuffle");
     action->AddInputParameter(new ParameterRelated("aShuffle", *iPropertyShuffle));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoSetShuffle);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoSetShuffle);
     iService->AddAction(action, functor);
 }
 
@@ -133,7 +133,7 @@ void DvProviderLinnCoUkPlaylist1::EnableActionShuffle()
 {
     Zapp::Action* action = new Zapp::Action("Shuffle");
     action->AddOutputParameter(new ParameterRelated("aShuffle", *iPropertyShuffle));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoShuffle);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoShuffle);
     iService->AddAction(action, functor);
 }
 
@@ -141,7 +141,7 @@ void DvProviderLinnCoUkPlaylist1::EnableActionTracksMax()
 {
     Zapp::Action* action = new Zapp::Action("TracksMax");
     action->AddOutputParameter(new ParameterRelated("aTracksMax", *iPropertyTracksMax));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoTracksMax);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoTracksMax);
     iService->AddAction(action, functor);
 }
 
@@ -150,7 +150,7 @@ void DvProviderLinnCoUkPlaylist1::EnableActionIdArray()
     Zapp::Action* action = new Zapp::Action("IdArray");
     action->AddOutputParameter(new ParameterUint("aIdArrayToken"));
     action->AddOutputParameter(new ParameterRelated("aIdArray", *iPropertyIdArray));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoIdArray);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoIdArray);
     iService->AddAction(action, functor);
 }
 
@@ -159,11 +159,11 @@ void DvProviderLinnCoUkPlaylist1::EnableActionIdArrayChanged()
     Zapp::Action* action = new Zapp::Action("IdArrayChanged");
     action->AddInputParameter(new ParameterUint("aIdArrayToken"));
     action->AddOutputParameter(new ParameterBool("aIdArrayChanged"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoIdArrayChanged);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1::DoIdArrayChanged);
     iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkPlaylist1::DoRead(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1::DoRead(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aId = aInvocation.InvocationReadUint("aId");
@@ -174,7 +174,7 @@ void DvProviderLinnCoUkPlaylist1::DoRead(IDvInvocation& aInvocation, TUint aVers
     Read(resp, aVersion, aId, respaUri, respaMetaData);
 }
 
-void DvProviderLinnCoUkPlaylist1::DoReadList(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1::DoReadList(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz aIdList;
@@ -185,7 +185,7 @@ void DvProviderLinnCoUkPlaylist1::DoReadList(IDvInvocation& aInvocation, TUint a
     ReadList(resp, aVersion, aIdList, respaMetaDataList);
 }
 
-void DvProviderLinnCoUkPlaylist1::DoInsert(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1::DoInsert(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aAfterId = aInvocation.InvocationReadUint("aAfterId");
@@ -199,7 +199,7 @@ void DvProviderLinnCoUkPlaylist1::DoInsert(IDvInvocation& aInvocation, TUint aVe
     Insert(resp, aVersion, aAfterId, aUri, aMetaData, respaNewId);
 }
 
-void DvProviderLinnCoUkPlaylist1::DoDelete(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1::DoDelete(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aId = aInvocation.InvocationReadUint("aId");
@@ -208,7 +208,7 @@ void DvProviderLinnCoUkPlaylist1::DoDelete(IDvInvocation& aInvocation, TUint aVe
     Delete(resp, aVersion, aId);
 }
 
-void DvProviderLinnCoUkPlaylist1::DoDeleteAll(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1::DoDeleteAll(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -216,7 +216,7 @@ void DvProviderLinnCoUkPlaylist1::DoDeleteAll(IDvInvocation& aInvocation, TUint 
     DeleteAll(resp, aVersion);
 }
 
-void DvProviderLinnCoUkPlaylist1::DoSetRepeat(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1::DoSetRepeat(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TBool aRepeat = aInvocation.InvocationReadBool("aRepeat");
@@ -225,7 +225,7 @@ void DvProviderLinnCoUkPlaylist1::DoSetRepeat(IDvInvocation& aInvocation, TUint 
     SetRepeat(resp, aVersion, aRepeat);
 }
 
-void DvProviderLinnCoUkPlaylist1::DoRepeat(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1::DoRepeat(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -234,7 +234,7 @@ void DvProviderLinnCoUkPlaylist1::DoRepeat(IDvInvocation& aInvocation, TUint aVe
     Repeat(resp, aVersion, respaRepeat);
 }
 
-void DvProviderLinnCoUkPlaylist1::DoSetShuffle(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1::DoSetShuffle(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TBool aShuffle = aInvocation.InvocationReadBool("aShuffle");
@@ -243,7 +243,7 @@ void DvProviderLinnCoUkPlaylist1::DoSetShuffle(IDvInvocation& aInvocation, TUint
     SetShuffle(resp, aVersion, aShuffle);
 }
 
-void DvProviderLinnCoUkPlaylist1::DoShuffle(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1::DoShuffle(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -252,7 +252,7 @@ void DvProviderLinnCoUkPlaylist1::DoShuffle(IDvInvocation& aInvocation, TUint aV
     Shuffle(resp, aVersion, respaShuffle);
 }
 
-void DvProviderLinnCoUkPlaylist1::DoTracksMax(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1::DoTracksMax(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -261,7 +261,7 @@ void DvProviderLinnCoUkPlaylist1::DoTracksMax(IDvInvocation& aInvocation, TUint 
     TracksMax(resp, aVersion, respaTracksMax);
 }
 
-void DvProviderLinnCoUkPlaylist1::DoIdArray(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1::DoIdArray(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -271,7 +271,7 @@ void DvProviderLinnCoUkPlaylist1::DoIdArray(IDvInvocation& aInvocation, TUint aV
     IdArray(resp, aVersion, respaIdArrayToken, respaIdArray);
 }
 
-void DvProviderLinnCoUkPlaylist1::DoIdArrayChanged(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1::DoIdArrayChanged(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aIdArrayToken = aInvocation.InvocationReadUint("aIdArrayToken");

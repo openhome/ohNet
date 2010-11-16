@@ -8,6 +8,7 @@
 
 namespace Zapp {
 
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -44,7 +45,7 @@ private:
     virtual void SetReadWriteRegister(IInvocationResponse& aResponse, TUint aVersion, TUint aRegisterIndex, TUint aRegisterValue);
 private:
     DvProviderZappOrgTestWidget1();
-    void DoSetReadWriteRegister(IDvInvocation& aInvocation, TUint aVersion);
+    void DoSetReadWriteRegister(IDviInvocation& aInvocation, TUint aVersion);
 private:
     PropertyUint* iPropertyReadWriteRegister0;
     PropertyUint* iPropertyReadWriteRegister1;

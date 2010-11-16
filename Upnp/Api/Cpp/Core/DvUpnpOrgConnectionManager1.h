@@ -8,6 +8,7 @@
 
 namespace Zapp {
 
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -42,11 +43,11 @@ private:
     virtual void GetCurrentConnectionInfo(IInvocationResponse& aResponse, TUint aVersion, TInt aConnectionID, IInvocationResponseInt& aRcsID, IInvocationResponseInt& aAVTransportID, IInvocationResponseString& aProtocolInfo, IInvocationResponseString& aPeerConnectionManager, IInvocationResponseInt& aPeerConnectionID, IInvocationResponseString& aDirection, IInvocationResponseString& aStatus);
 private:
     DvProviderUpnpOrgConnectionManager1();
-    void DoGetProtocolInfo(IDvInvocation& aInvocation, TUint aVersion);
-    void DoPrepareForConnection(IDvInvocation& aInvocation, TUint aVersion);
-    void DoConnectionComplete(IDvInvocation& aInvocation, TUint aVersion);
-    void DoGetCurrentConnectionIDs(IDvInvocation& aInvocation, TUint aVersion);
-    void DoGetCurrentConnectionInfo(IDvInvocation& aInvocation, TUint aVersion);
+    void DoGetProtocolInfo(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPrepareForConnection(IDviInvocation& aInvocation, TUint aVersion);
+    void DoConnectionComplete(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetCurrentConnectionIDs(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetCurrentConnectionInfo(IDviInvocation& aInvocation, TUint aVersion);
 private:
     PropertyString* iPropertySourceProtocolInfo;
     PropertyString* iPropertySinkProtocolInfo;

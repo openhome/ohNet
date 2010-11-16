@@ -439,25 +439,25 @@ CpProxyLinnCoUkRadio1::CpProxyLinnCoUkRadio1(CpDevice& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyLinnCoUkRadio1::ChannelUriPropertyChanged);
     iChannelUri = new PropertyString("ChannelUri", functor);
-    iService->AddProperty(iChannelUri);
+    AddProperty(iChannelUri);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkRadio1::ChannelMetadataPropertyChanged);
     iChannelMetadata = new PropertyString("ChannelMetadata", functor);
-    iService->AddProperty(iChannelMetadata);
+    AddProperty(iChannelMetadata);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkRadio1::TransportStatePropertyChanged);
     iTransportState = new PropertyString("TransportState", functor);
-    iService->AddProperty(iTransportState);
+    AddProperty(iTransportState);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkRadio1::ProtocolInfoPropertyChanged);
     iProtocolInfo = new PropertyString("ProtocolInfo", functor);
-    iService->AddProperty(iProtocolInfo);
+    AddProperty(iProtocolInfo);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkRadio1::IdPropertyChanged);
     iId = new PropertyUint("Id", functor);
-    iService->AddProperty(iId);
+    AddProperty(iId);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkRadio1::IdArrayPropertyChanged);
     iIdArray = new PropertyBinary("IdArray", functor);
-    iService->AddProperty(iIdArray);
+    AddProperty(iIdArray);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkRadio1::IdsMaxPropertyChanged);
     iIdsMax = new PropertyUint("IdsMax", functor);
-    iService->AddProperty(iIdsMax);
+    AddProperty(iIdsMax);
 }
 
 CpProxyLinnCoUkRadio1::~CpProxyLinnCoUkRadio1()
@@ -491,7 +491,7 @@ void CpProxyLinnCoUkRadio1::SyncPlay()
 void CpProxyLinnCoUkRadio1::BeginPlay(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionPlay, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkRadio1::EndPlay(IAsync& aAsync)
@@ -515,7 +515,7 @@ void CpProxyLinnCoUkRadio1::SyncPause()
 void CpProxyLinnCoUkRadio1::BeginPause(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionPause, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkRadio1::EndPause(IAsync& aAsync)
@@ -539,7 +539,7 @@ void CpProxyLinnCoUkRadio1::SyncStop()
 void CpProxyLinnCoUkRadio1::BeginStop(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionStop, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkRadio1::EndStop(IAsync& aAsync)
@@ -566,7 +566,7 @@ void CpProxyLinnCoUkRadio1::BeginSeekSecondAbsolute(TUint aaSecond, FunctorAsync
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSeekSecondAbsolute->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaSecond));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkRadio1::EndSeekSecondAbsolute(IAsync& aAsync)
@@ -593,7 +593,7 @@ void CpProxyLinnCoUkRadio1::BeginSeekSecondRelative(TInt aaSecond, FunctorAsync&
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSeekSecondRelative->InputParameters();
     invocation->AddInput(new ArgumentInt(*inParams[inIndex++], aaSecond));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkRadio1::EndSeekSecondRelative(IAsync& aAsync)
@@ -621,7 +621,7 @@ void CpProxyLinnCoUkRadio1::BeginChannel(FunctorAsync& aFunctor)
     const Action::VectorParameters& outParams = iActionChannel->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkRadio1::EndChannel(IAsync& aAsync, Brh& aaUri, Brh& aaMetadata)
@@ -652,7 +652,7 @@ void CpProxyLinnCoUkRadio1::BeginSetChannel(const Brx& aaUri, const Brx& aaMetad
     const Action::VectorParameters& inParams = iActionSetChannel->InputParameters();
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aaUri));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aaMetadata));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkRadio1::EndSetChannel(IAsync& aAsync)
@@ -679,7 +679,7 @@ void CpProxyLinnCoUkRadio1::BeginProtocolInfo(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionProtocolInfo->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkRadio1::EndProtocolInfo(IAsync& aAsync, Brh& aaInfo)
@@ -708,7 +708,7 @@ void CpProxyLinnCoUkRadio1::BeginTransportState(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionTransportState->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkRadio1::EndTransportState(IAsync& aAsync, Brh& aaState)
@@ -737,7 +737,7 @@ void CpProxyLinnCoUkRadio1::BeginId(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionId->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkRadio1::EndId(IAsync& aAsync, TUint& aaId)
@@ -767,7 +767,7 @@ void CpProxyLinnCoUkRadio1::BeginSetId(TUint aaId, const Brx& aaUri, FunctorAsyn
     const Action::VectorParameters& inParams = iActionSetId->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaId));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aaUri));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkRadio1::EndSetId(IAsync& aAsync)
@@ -797,7 +797,7 @@ void CpProxyLinnCoUkRadio1::BeginRead(TUint aaId, FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionRead->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkRadio1::EndRead(IAsync& aAsync, Brh& aaMetadata)
@@ -829,7 +829,7 @@ void CpProxyLinnCoUkRadio1::BeginReadList(const Brx& aaIdList, FunctorAsync& aFu
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionReadList->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkRadio1::EndReadList(IAsync& aAsync, Brh& aaMetadataList)
@@ -859,7 +859,7 @@ void CpProxyLinnCoUkRadio1::BeginIdArray(FunctorAsync& aFunctor)
     const Action::VectorParameters& outParams = iActionIdArray->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentBinary(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkRadio1::EndIdArray(IAsync& aAsync, TUint& aaIdArrayToken, Brh& aaIdArray)
@@ -892,7 +892,7 @@ void CpProxyLinnCoUkRadio1::BeginIdArrayChanged(TUint aaIdArrayToken, FunctorAsy
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionIdArrayChanged->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkRadio1::EndIdArrayChanged(IAsync& aAsync, TBool& aaIdArrayChanged)
@@ -921,7 +921,7 @@ void CpProxyLinnCoUkRadio1::BeginIdsMax(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionIdsMax->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkRadio1::EndIdsMax(IAsync& aAsync, TUint& aaIdsMax)
@@ -988,44 +988,58 @@ void CpProxyLinnCoUkRadio1::SetPropertyIdsMaxChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkRadio1::PropertyChannelUri(Brhz& aChannelUri) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aChannelUri.Set(iChannelUri->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkRadio1::PropertyChannelMetadata(Brhz& aChannelMetadata) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aChannelMetadata.Set(iChannelMetadata->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkRadio1::PropertyTransportState(Brhz& aTransportState) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTransportState.Set(iTransportState->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkRadio1::PropertyProtocolInfo(Brhz& aProtocolInfo) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProtocolInfo.Set(iProtocolInfo->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkRadio1::PropertyId(TUint& aId) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aId = iId->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkRadio1::PropertyIdArray(Brh& aIdArray) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aIdArray.Set(iIdArray->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkRadio1::PropertyIdsMax(TUint& aIdsMax) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aIdsMax = iIdsMax->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkRadio1::ChannelUriPropertyChanged()

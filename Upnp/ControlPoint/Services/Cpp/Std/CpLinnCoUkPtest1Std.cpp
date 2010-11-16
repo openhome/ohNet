@@ -113,7 +113,7 @@ void CpProxyLinnCoUkPtest1Cpp::BeginTestComPort(uint32_t aaPort, FunctorAsync& a
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionTestComPort->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPtest1Cpp::EndTestComPort(IAsync& aAsync, bool& aaResult)
@@ -139,7 +139,7 @@ void CpProxyLinnCoUkPtest1Cpp::SyncLedsOn()
 void CpProxyLinnCoUkPtest1Cpp::BeginLedsOn(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionLedsOn, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPtest1Cpp::EndLedsOn(IAsync& aAsync)
@@ -163,7 +163,7 @@ void CpProxyLinnCoUkPtest1Cpp::SyncLedsOff()
 void CpProxyLinnCoUkPtest1Cpp::BeginLedsOff(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionLedsOff, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPtest1Cpp::EndLedsOff(IAsync& aAsync)

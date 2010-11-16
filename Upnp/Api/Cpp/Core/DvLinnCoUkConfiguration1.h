@@ -8,6 +8,7 @@
 
 namespace Zapp {
 
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -36,9 +37,9 @@ private:
     virtual void SetParameter(IInvocationResponse& aResponse, TUint aVersion, const Brx& aaTarget, const Brx& aaName, const Brx& aaValue);
 private:
     DvProviderLinnCoUkConfiguration1();
-    void DoConfigurationXml(IDvInvocation& aInvocation, TUint aVersion);
-    void DoParameterXml(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetParameter(IDvInvocation& aInvocation, TUint aVersion);
+    void DoConfigurationXml(IDviInvocation& aInvocation, TUint aVersion);
+    void DoParameterXml(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetParameter(IDviInvocation& aInvocation, TUint aVersion);
 private:
     PropertyString* iPropertyConfigurationXml;
     PropertyString* iPropertyParameterXml;

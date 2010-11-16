@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -28,11 +28,11 @@ void DvProviderLinnCoUkMediaTime1::EnableActionSeconds()
 {
     Zapp::Action* action = new Zapp::Action("Seconds");
     action->AddOutputParameter(new ParameterRelated("aSeconds", *iPropertySeconds));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkMediaTime1::DoSeconds);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkMediaTime1::DoSeconds);
     iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkMediaTime1::DoSeconds(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkMediaTime1::DoSeconds(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

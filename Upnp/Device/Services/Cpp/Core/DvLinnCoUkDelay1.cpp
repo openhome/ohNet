@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -40,7 +40,7 @@ void DvProviderLinnCoUkDelay1::EnableActionPresetXml()
 {
     Zapp::Action* action = new Zapp::Action("PresetXml");
     action->AddOutputParameter(new ParameterRelated("aPresetXml", *iPropertyPresetXml));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDelay1::DoPresetXml);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDelay1::DoPresetXml);
     iService->AddAction(action, functor);
 }
 
@@ -48,7 +48,7 @@ void DvProviderLinnCoUkDelay1::EnableActionPresetIndex()
 {
     Zapp::Action* action = new Zapp::Action("PresetIndex");
     action->AddOutputParameter(new ParameterRelated("aIndex", *iPropertyPresetIndex));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDelay1::DoPresetIndex);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDelay1::DoPresetIndex);
     iService->AddAction(action, functor);
 }
 
@@ -56,7 +56,7 @@ void DvProviderLinnCoUkDelay1::EnableActionSetPresetIndex()
 {
     Zapp::Action* action = new Zapp::Action("SetPresetIndex");
     action->AddInputParameter(new ParameterRelated("aIndex", *iPropertyPresetIndex));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDelay1::DoSetPresetIndex);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDelay1::DoSetPresetIndex);
     iService->AddAction(action, functor);
 }
 
@@ -65,7 +65,7 @@ void DvProviderLinnCoUkDelay1::EnableActionSetPresetDelay()
     Zapp::Action* action = new Zapp::Action("SetPresetDelay");
     action->AddInputParameter(new ParameterUint("aIndex"));
     action->AddInputParameter(new ParameterUint("aDelay"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDelay1::DoSetPresetDelay);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDelay1::DoSetPresetDelay);
     iService->AddAction(action, functor);
 }
 
@@ -74,7 +74,7 @@ void DvProviderLinnCoUkDelay1::EnableActionSetPresetVisible()
     Zapp::Action* action = new Zapp::Action("SetPresetVisible");
     action->AddInputParameter(new ParameterUint("aIndex"));
     action->AddInputParameter(new ParameterBool("aVisible"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDelay1::DoSetPresetVisible);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDelay1::DoSetPresetVisible);
     iService->AddAction(action, functor);
 }
 
@@ -83,7 +83,7 @@ void DvProviderLinnCoUkDelay1::EnableActionSetPresetName()
     Zapp::Action* action = new Zapp::Action("SetPresetName");
     action->AddInputParameter(new ParameterUint("aIndex"));
     action->AddInputParameter(new ParameterString("aName"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDelay1::DoSetPresetName);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDelay1::DoSetPresetName);
     iService->AddAction(action, functor);
 }
 
@@ -91,7 +91,7 @@ void DvProviderLinnCoUkDelay1::EnableActionDelayMinimum()
 {
     Zapp::Action* action = new Zapp::Action("DelayMinimum");
     action->AddOutputParameter(new ParameterUint("aDelay"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDelay1::DoDelayMinimum);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDelay1::DoDelayMinimum);
     iService->AddAction(action, functor);
 }
 
@@ -99,7 +99,7 @@ void DvProviderLinnCoUkDelay1::EnableActionDelayMaximum()
 {
     Zapp::Action* action = new Zapp::Action("DelayMaximum");
     action->AddOutputParameter(new ParameterUint("aDelay"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDelay1::DoDelayMaximum);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDelay1::DoDelayMaximum);
     iService->AddAction(action, functor);
 }
 
@@ -107,11 +107,11 @@ void DvProviderLinnCoUkDelay1::EnableActionPresetCount()
 {
     Zapp::Action* action = new Zapp::Action("PresetCount");
     action->AddOutputParameter(new ParameterUint("aCount"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkDelay1::DoPresetCount);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkDelay1::DoPresetCount);
     iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkDelay1::DoPresetXml(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDelay1::DoPresetXml(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -120,7 +120,7 @@ void DvProviderLinnCoUkDelay1::DoPresetXml(IDvInvocation& aInvocation, TUint aVe
     PresetXml(resp, aVersion, respaPresetXml);
 }
 
-void DvProviderLinnCoUkDelay1::DoPresetIndex(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDelay1::DoPresetIndex(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -129,7 +129,7 @@ void DvProviderLinnCoUkDelay1::DoPresetIndex(IDvInvocation& aInvocation, TUint a
     PresetIndex(resp, aVersion, respaIndex);
 }
 
-void DvProviderLinnCoUkDelay1::DoSetPresetIndex(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDelay1::DoSetPresetIndex(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aIndex = aInvocation.InvocationReadUint("aIndex");
@@ -138,7 +138,7 @@ void DvProviderLinnCoUkDelay1::DoSetPresetIndex(IDvInvocation& aInvocation, TUin
     SetPresetIndex(resp, aVersion, aIndex);
 }
 
-void DvProviderLinnCoUkDelay1::DoSetPresetDelay(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDelay1::DoSetPresetDelay(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aIndex = aInvocation.InvocationReadUint("aIndex");
@@ -148,7 +148,7 @@ void DvProviderLinnCoUkDelay1::DoSetPresetDelay(IDvInvocation& aInvocation, TUin
     SetPresetDelay(resp, aVersion, aIndex, aDelay);
 }
 
-void DvProviderLinnCoUkDelay1::DoSetPresetVisible(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDelay1::DoSetPresetVisible(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aIndex = aInvocation.InvocationReadUint("aIndex");
@@ -158,7 +158,7 @@ void DvProviderLinnCoUkDelay1::DoSetPresetVisible(IDvInvocation& aInvocation, TU
     SetPresetVisible(resp, aVersion, aIndex, aVisible);
 }
 
-void DvProviderLinnCoUkDelay1::DoSetPresetName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDelay1::DoSetPresetName(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aIndex = aInvocation.InvocationReadUint("aIndex");
@@ -169,7 +169,7 @@ void DvProviderLinnCoUkDelay1::DoSetPresetName(IDvInvocation& aInvocation, TUint
     SetPresetName(resp, aVersion, aIndex, aName);
 }
 
-void DvProviderLinnCoUkDelay1::DoDelayMinimum(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDelay1::DoDelayMinimum(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -178,7 +178,7 @@ void DvProviderLinnCoUkDelay1::DoDelayMinimum(IDvInvocation& aInvocation, TUint 
     DelayMinimum(resp, aVersion, respaDelay);
 }
 
-void DvProviderLinnCoUkDelay1::DoDelayMaximum(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDelay1::DoDelayMaximum(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -187,7 +187,7 @@ void DvProviderLinnCoUkDelay1::DoDelayMaximum(IDvInvocation& aInvocation, TUint 
     DelayMaximum(resp, aVersion, respaDelay);
 }
 
-void DvProviderLinnCoUkDelay1::DoPresetCount(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkDelay1::DoPresetCount(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

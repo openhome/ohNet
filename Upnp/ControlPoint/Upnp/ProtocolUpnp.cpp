@@ -267,7 +267,7 @@ void InvocationBodyWriter::ProcessBinary(const Brx& aVal)
 
 // EventUpnp
 
-EventUpnp::EventUpnp(Subscription& aSubscription)
+EventUpnp::EventUpnp(CpiSubscription& aSubscription)
     : iSubscription(aSubscription)
 {
 }
@@ -324,53 +324,6 @@ void EventUpnp::Interrupt()
     /* Assumes that interrupting the socket is always safe, regardless of whether we're
        using it or one of its stream/http wrappers */
     iSocket.Interrupt(true);
-}
-
-void EventUpnp::ProcessNotification(const Brx& aNotification, PropertyMap& aProperties)
-{
-    OutputProcessorUpnp outputProcessor;
-    Brn propertySet = XmlParserBasic::Find("propertyset", aNotification);
-    Brn property;
-    Brn remaining;
-    try {
-        for (;;) {
-            property.Set(XmlParserBasic::Find("property", propertySet, remaining));
-            property.Set(Ascii::Trim(property));
-            if (property.Bytes() < 8 || property[0] != '<') {
-                THROW(XmlError);
-            }
-            if (property[1] == '/') {
-                ASSERTS();
-            }
-            Parser parser(property);
-            (void)parser.Next('<');
-            Brn tagName = parser.Next('>');
-            Brn val = parser.Next('<');
-            Brn closingTag = parser.Next('/');
-            closingTag.Set(parser.Next('>'));
-            if (tagName != closingTag) {
-                THROW(XmlError);
-            }
-
-            PropertyMap::iterator it = aProperties.find(tagName);
-            if (it != aProperties.end()) {
-                try {
-                    it->second->Process(outputProcessor, val);
-                }
-                catch(AsciiError&) {
-                    THROW(XmlError);
-                }
-            }
-
-            propertySet.Set(remaining);
-        }
-    }
-    catch(XmlError&) {}
-    PropertyMap::iterator it = aProperties.begin();
-    while (it != aProperties.end()) {
-        it->second->ReportChanged();
-		it++;
-    }
 }
 
 void EventUpnp::SubscribeWriteRequest(const Uri& aPublisher, const Uri& aSubscriber, TUint aDurationSecs)

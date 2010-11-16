@@ -21,7 +21,7 @@ public:
     TUint Slots() const;
     TUint SlotsFree() const;
     TUint SlotsUsed() const;
-    void ReadInterrupt();
+    void ReadInterrupt(TBool aInterrupt=true);
 protected:
     FifoBase(TUint aSlots);
     TUint WriteOpen(TUint aTimeoutMs);// return index of entry to write

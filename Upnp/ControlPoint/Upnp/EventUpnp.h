@@ -19,7 +19,8 @@ public:
 private:
     void Error(const HttpStatus& aStatus);
     void LogError(const TChar* aErr);
-    void Run();
+    virtual void Run();
+    void ProcessNotification(IEventProcessor& aEventProcessor, const Brx& aEntity);
 private:
     static const TUint kMaxReadBytes = 1024;
     static const Brn kMethodNotify;

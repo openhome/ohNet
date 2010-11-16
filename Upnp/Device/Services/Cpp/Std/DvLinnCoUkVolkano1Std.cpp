@@ -2,7 +2,7 @@
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
@@ -15,7 +15,7 @@ DvProviderLinnCoUkVolkano1Cpp::DvProviderLinnCoUkVolkano1Cpp(DvDeviceStd& aDevic
 void DvProviderLinnCoUkVolkano1Cpp::EnableActionReboot()
 {
     Zapp::Action* action = new Zapp::Action("Reboot");
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoReboot);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoReboot);
     iService->AddAction(action, functor);
 }
 
@@ -31,7 +31,7 @@ void DvProviderLinnCoUkVolkano1Cpp::EnableActionBootMode()
     allowedValues[index++] = (TChar*)"Ram";
     action->AddOutputParameter(new ParameterString("aMode", allowedValues, 3));
     delete[] allowedValues;
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoBootMode);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoBootMode);
     iService->AddAction(action, functor);
 }
 
@@ -46,7 +46,7 @@ void DvProviderLinnCoUkVolkano1Cpp::EnableActionSetBootMode()
     allowedValues[index++] = (TChar*)"Fallback";
     action->AddInputParameter(new ParameterString("aMode", allowedValues, 2));
     delete[] allowedValues;
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoSetBootMode);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoSetBootMode);
     iService->AddAction(action, functor);
 }
 
@@ -54,7 +54,7 @@ void DvProviderLinnCoUkVolkano1Cpp::EnableActionBspType()
 {
     Zapp::Action* action = new Zapp::Action("BspType");
     action->AddOutputParameter(new ParameterString("aBspType"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoBspType);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoBspType);
     iService->AddAction(action, functor);
 }
 
@@ -62,7 +62,7 @@ void DvProviderLinnCoUkVolkano1Cpp::EnableActionUglyName()
 {
     Zapp::Action* action = new Zapp::Action("UglyName");
     action->AddOutputParameter(new ParameterString("aUglyName"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoUglyName);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoUglyName);
     iService->AddAction(action, functor);
 }
 
@@ -70,7 +70,7 @@ void DvProviderLinnCoUkVolkano1Cpp::EnableActionMacAddress()
 {
     Zapp::Action* action = new Zapp::Action("MacAddress");
     action->AddOutputParameter(new ParameterString("aMacAddress"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoMacAddress);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoMacAddress);
     iService->AddAction(action, functor);
 }
 
@@ -78,7 +78,7 @@ void DvProviderLinnCoUkVolkano1Cpp::EnableActionProductId()
 {
     Zapp::Action* action = new Zapp::Action("ProductId");
     action->AddOutputParameter(new ParameterString("aProductNumber"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoProductId);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoProductId);
     iService->AddAction(action, functor);
 }
 
@@ -87,7 +87,7 @@ void DvProviderLinnCoUkVolkano1Cpp::EnableActionBoardId()
     Zapp::Action* action = new Zapp::Action("BoardId");
     action->AddInputParameter(new ParameterUint("aIndex"));
     action->AddOutputParameter(new ParameterString("aBoardNumber"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoBoardId);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoBoardId);
     iService->AddAction(action, functor);
 }
 
@@ -96,7 +96,7 @@ void DvProviderLinnCoUkVolkano1Cpp::EnableActionBoardType()
     Zapp::Action* action = new Zapp::Action("BoardType");
     action->AddInputParameter(new ParameterUint("aIndex"));
     action->AddOutputParameter(new ParameterString("aBoardNumber"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoBoardType);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoBoardType);
     iService->AddAction(action, functor);
 }
 
@@ -104,7 +104,7 @@ void DvProviderLinnCoUkVolkano1Cpp::EnableActionMaxBoards()
 {
     Zapp::Action* action = new Zapp::Action("MaxBoards");
     action->AddOutputParameter(new ParameterUint("aMaxBoards"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoMaxBoards);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoMaxBoards);
     iService->AddAction(action, functor);
 }
 
@@ -112,11 +112,11 @@ void DvProviderLinnCoUkVolkano1Cpp::EnableActionSoftwareVersion()
 {
     Zapp::Action* action = new Zapp::Action("SoftwareVersion");
     action->AddOutputParameter(new ParameterString("aSoftwareVersion"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoSoftwareVersion);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkVolkano1Cpp::DoSoftwareVersion);
     iService->AddAction(action, functor);
 }
 
-void DvProviderLinnCoUkVolkano1Cpp::DoReboot(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1Cpp::DoReboot(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -125,7 +125,7 @@ void DvProviderLinnCoUkVolkano1Cpp::DoReboot(IDvInvocation& aInvocation, TUint a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkVolkano1Cpp::DoBootMode(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1Cpp::DoBootMode(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -139,7 +139,7 @@ void DvProviderLinnCoUkVolkano1Cpp::DoBootMode(IDvInvocation& aInvocation, TUint
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkVolkano1Cpp::DoSetBootMode(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1Cpp::DoSetBootMode(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_aMode;
@@ -151,7 +151,7 @@ void DvProviderLinnCoUkVolkano1Cpp::DoSetBootMode(IDvInvocation& aInvocation, TU
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkVolkano1Cpp::DoBspType(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1Cpp::DoBspType(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -165,7 +165,7 @@ void DvProviderLinnCoUkVolkano1Cpp::DoBspType(IDvInvocation& aInvocation, TUint 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkVolkano1Cpp::DoUglyName(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1Cpp::DoUglyName(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -179,7 +179,7 @@ void DvProviderLinnCoUkVolkano1Cpp::DoUglyName(IDvInvocation& aInvocation, TUint
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkVolkano1Cpp::DoMacAddress(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1Cpp::DoMacAddress(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -193,7 +193,7 @@ void DvProviderLinnCoUkVolkano1Cpp::DoMacAddress(IDvInvocation& aInvocation, TUi
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkVolkano1Cpp::DoProductId(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1Cpp::DoProductId(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -207,7 +207,7 @@ void DvProviderLinnCoUkVolkano1Cpp::DoProductId(IDvInvocation& aInvocation, TUin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkVolkano1Cpp::DoBoardId(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1Cpp::DoBoardId(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aIndex = aInvocation.InvocationReadUint("aIndex");
@@ -222,7 +222,7 @@ void DvProviderLinnCoUkVolkano1Cpp::DoBoardId(IDvInvocation& aInvocation, TUint 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkVolkano1Cpp::DoBoardType(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1Cpp::DoBoardType(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aIndex = aInvocation.InvocationReadUint("aIndex");
@@ -237,7 +237,7 @@ void DvProviderLinnCoUkVolkano1Cpp::DoBoardType(IDvInvocation& aInvocation, TUin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkVolkano1Cpp::DoMaxBoards(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1Cpp::DoMaxBoards(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -249,7 +249,7 @@ void DvProviderLinnCoUkVolkano1Cpp::DoMaxBoards(IDvInvocation& aInvocation, TUin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderLinnCoUkVolkano1Cpp::DoSoftwareVersion(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkVolkano1Cpp::DoSoftwareVersion(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();

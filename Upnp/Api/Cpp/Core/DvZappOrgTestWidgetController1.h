@@ -8,6 +8,7 @@
 
 namespace Zapp {
 
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -32,9 +33,9 @@ private:
     virtual void SetWidgetRegister(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn, TUint aRegisterIndex, TUint aRegisterValue);
 private:
     DvProviderZappOrgTestWidgetController1();
-    void DoCreateWidget(IDvInvocation& aInvocation, TUint aVersion);
-    void DoRemoveWidget(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetWidgetRegister(IDvInvocation& aInvocation, TUint aVersion);
+    void DoCreateWidget(IDviInvocation& aInvocation, TUint aVersion);
+    void DoRemoveWidget(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetWidgetRegister(IDviInvocation& aInvocation, TUint aVersion);
 private:
 };
 

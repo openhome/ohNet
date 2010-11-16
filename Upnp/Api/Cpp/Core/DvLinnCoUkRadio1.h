@@ -8,6 +8,7 @@
 
 namespace Zapp {
 
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -72,22 +73,22 @@ private:
     virtual void IdsMax(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaIdsMax);
 private:
     DvProviderLinnCoUkRadio1();
-    void DoPlay(IDvInvocation& aInvocation, TUint aVersion);
-    void DoPause(IDvInvocation& aInvocation, TUint aVersion);
-    void DoStop(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSeekSecondAbsolute(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSeekSecondRelative(IDvInvocation& aInvocation, TUint aVersion);
-    void DoChannel(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetChannel(IDvInvocation& aInvocation, TUint aVersion);
-    void DoProtocolInfo(IDvInvocation& aInvocation, TUint aVersion);
-    void DoTransportState(IDvInvocation& aInvocation, TUint aVersion);
-    void DoId(IDvInvocation& aInvocation, TUint aVersion);
-    void DoSetId(IDvInvocation& aInvocation, TUint aVersion);
-    void DoRead(IDvInvocation& aInvocation, TUint aVersion);
-    void DoReadList(IDvInvocation& aInvocation, TUint aVersion);
-    void DoIdArray(IDvInvocation& aInvocation, TUint aVersion);
-    void DoIdArrayChanged(IDvInvocation& aInvocation, TUint aVersion);
-    void DoIdsMax(IDvInvocation& aInvocation, TUint aVersion);
+    void DoPlay(IDviInvocation& aInvocation, TUint aVersion);
+    void DoPause(IDviInvocation& aInvocation, TUint aVersion);
+    void DoStop(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSeekSecondAbsolute(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSeekSecondRelative(IDviInvocation& aInvocation, TUint aVersion);
+    void DoChannel(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetChannel(IDviInvocation& aInvocation, TUint aVersion);
+    void DoProtocolInfo(IDviInvocation& aInvocation, TUint aVersion);
+    void DoTransportState(IDviInvocation& aInvocation, TUint aVersion);
+    void DoId(IDviInvocation& aInvocation, TUint aVersion);
+    void DoSetId(IDviInvocation& aInvocation, TUint aVersion);
+    void DoRead(IDviInvocation& aInvocation, TUint aVersion);
+    void DoReadList(IDviInvocation& aInvocation, TUint aVersion);
+    void DoIdArray(IDviInvocation& aInvocation, TUint aVersion);
+    void DoIdArrayChanged(IDviInvocation& aInvocation, TUint aVersion);
+    void DoIdsMax(IDviInvocation& aInvocation, TUint aVersion);
 private:
     PropertyString* iPropertyChannelUri;
     PropertyString* iPropertyChannelMetadata;
