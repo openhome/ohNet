@@ -324,7 +324,7 @@ InitialisationParams::InitialisationParams()
     , iUseLoopbackNetworkInterface(false)
 	, iDvMaxUpdateTimeSecs(1800)
 	, iDvNumPublisherThreads(4)
-    , iDvNumWebSocketThreads(5)
+    , iDvNumWebSocketThreads(0)
 {
     iDefaultLogger = new DefaultLogger;
     FunctorMsg functor = MakeFunctorMsg(*iDefaultLogger, &Zapp::DefaultLogger::Log);
