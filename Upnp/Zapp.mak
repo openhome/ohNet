@@ -99,6 +99,7 @@ copy_build_includes:
 	copy Os\*.h $(inc_build) > nul
 	copy Os\*.inl $(inc_build) > nul
 	copy Public\C\*.h $(inc_build)\C > nul
+	copy Public\Cpp\Std\*.h $(inc_build)\Cpp\Std > nul
 	copy Thread\Thread.h $(inc_build) > nul
 	copy Timer\Timer.h $(inc_build) > nul
 	copy Utils\*.h $(inc_build) > nul

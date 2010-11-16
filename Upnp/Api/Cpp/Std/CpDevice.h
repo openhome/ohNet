@@ -20,9 +20,10 @@ public:
     void RemoveRef();
     TBool GetAttribute(const char* aKey, std::string& aValue) const;
     CpiDevice& Device();
-private:
+protected:
     CpDeviceCpp(CpiDevice& aDevice);
     ~CpDeviceCpp();
+private:
     CpDeviceCpp(const CpDeviceCpp&);
     void operator=(const CpDeviceCpp&);
     friend class CpDeviceListCpp;

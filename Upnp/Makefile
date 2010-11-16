@@ -85,6 +85,7 @@ copy_build_includes:
 	cp -u Os/*.h $(inc_build)
 	cp -u Os/*.inl $(inc_build)
 	cp -u Public/C/*.h $(inc_build)/C
+	cp -u Public/Cpp/Std/*.h $(inc_build)/C
 	cp -u Thread/Thread.h $(inc_build)
 	cp -u Timer/Timer.h $(inc_build)
 	cp -u Utils/*.h $(inc_build)
