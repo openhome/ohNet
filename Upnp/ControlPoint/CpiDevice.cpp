@@ -8,11 +8,11 @@ using namespace Zapp;
 // CpiDevice
 
 CpiDevice::CpiDevice(const Brx& aUdn, ICpiProtocol& aProtocol, ICpiDeviceObserver& aObserver, void* aOwnerData)
-    : iProtocol(aProtocol)
+    : iUdn(aUdn)
+    , iLock("CDVM")
+    , iProtocol(aProtocol)
     , iObserver(aObserver)
     , iOwnerData(aOwnerData)
-    , iUdn(aUdn)
-    , iLock("CDVM")
     , iRefCount(1)
     , iReady(false)
     , iExpired(false)

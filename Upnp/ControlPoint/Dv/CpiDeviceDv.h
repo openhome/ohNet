@@ -76,9 +76,9 @@ private: // IDviInvocation
     void InvocationWriteStringEnd(const TChar* aName);
     void InvocationWriteEnd();
 private:
-    Argument* InputArgument(const TChar* aName);
-    Argument* OutputArgument(const TChar* aName);
-    Argument* Argument(const TChar* aName, const Invocation::VectorArguments& aVector, TUint& aIndex);
+    Zapp::Argument* InputArgument(const TChar* aName);
+    Zapp::Argument* OutputArgument(const TChar* aName);
+    Zapp::Argument* Argument(const TChar* aName, const Invocation::VectorArguments& aVector, TUint& aIndex);
     void GetNextIndex(TUint& aIndex, const Invocation::VectorArguments& aVector);
 private:
     Invocation& iInvocation;

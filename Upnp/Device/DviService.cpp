@@ -8,6 +8,8 @@
 #include <Error.h>
 #include <DviStack.h>
 
+#include <stdlib.h>
+
 using namespace Zapp;
 
 // DvAction

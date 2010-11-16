@@ -16,8 +16,8 @@ using namespace Zapp;
 CpiDeviceDv::CpiDeviceDv(DviDevice& aDevice)
     : iDeviceDv(aDevice)
     , iEventProcessor(NULL)
-    , iSubscriptionCp(NULL)
     , iSubscriptionDv(NULL)
+    , iSubscriptionCp(NULL)
 {
     iDeviceCp = new CpiDevice(iDeviceDv.Udn(), *this, *this, NULL);
     iDeviceCp->SetReady();
@@ -272,17 +272,17 @@ void InvocationDv::InvocationWriteEnd()
     iSem.Signal();
 }
 
-Argument* InvocationDv::InputArgument(const TChar* aName)
+Zapp::Argument* InvocationDv::InputArgument(const TChar* aName)
 {
     return Argument(aName, iInvocation.InputArguments(), iReadIndex);
 }
 
-Argument* InvocationDv::OutputArgument(const TChar* aName)
+Zapp::Argument* InvocationDv::OutputArgument(const TChar* aName)
 {
     return Argument(aName, iInvocation.OutputArguments(), iWriteIndex);
 }
 
-Argument* InvocationDv::Argument(const TChar* aName, const Invocation::VectorArguments& aVector, TUint& aIndex)
+Zapp::Argument* InvocationDv::Argument(const TChar* aName, const Invocation::VectorArguments& aVector, TUint& aIndex)
 {
     Zapp::Argument* ret = NULL;
     Brn name(aName);
