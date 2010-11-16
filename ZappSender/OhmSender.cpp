@@ -302,10 +302,12 @@ void OhmSender::SendAudio(const TByte* aData, TUint aBytes)
                                samples,
                                iFrame,
                                iTimestamp,
+                               0, // sync timestamp
                                iSampleStart,
                                iSamplesTotal,
                                iSampleRate,
                                iBitRate,
+                               0, // volume offset
                                iBitDepth,
                                iChannels,
                                iCodecName);
