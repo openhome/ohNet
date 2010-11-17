@@ -527,8 +527,8 @@ $(objdir)TestCpDeviceDvStd.$(objext) : Public/Cpp/Std/TestCpDeviceDvStd.cpp $(he
 	$(compiler)TestCpDeviceDvStd.$(objext) -c $(cflags) $(includes) Public/Cpp/Std/TestCpDeviceDvStd.cpp
 
 TestCpDeviceDvC: $(objdir)TestCpDeviceDvC.$(exeext) 
-$(objdir)TestCpDeviceDvC.$(exeext) :  upnp_core $(objdir)TestCpDeviceDvC.$(objext) $(objdir)TestBasicCpC.$(objext) $(objdir)TestBasicDvC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) TestFramework.$(libext)  $(objdir)MainC.$(objext)
-	$(link) $(linkoutput)$(objdir)TestCpDeviceDvC.$(exeext) $(objdir)TestCpDeviceDvC.$(objext) $(objdir)TestBasicCpC.$(objext) $(objdir)TestBasicDvC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)MainC.$(objext) $(objdir)$(libprefix)upnp_core.$(libext)
+$(objdir)TestCpDeviceDvC.$(exeext) :  upnp_core $(objdir)TestCpDeviceDvC.$(objext) $(objdir)TestBasicCpC.$(objext) $(objdir)TestBasicDvC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext)
+	$(link) $(linkoutput)$(objdir)TestCpDeviceDvC.$(exeext) $(objdir)TestCpDeviceDvC.$(objext) $(objdir)TestBasicCpC.$(objext) $(objdir)TestBasicDvC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestCpDeviceDvC.$(objext) : Public/C/TestCpDeviceDvC.cpp $(headers)
 	$(compiler)TestCpDeviceDvC.$(objext) -c $(cflags) $(includes) Public/C/TestCpDeviceDvC.cpp
 
