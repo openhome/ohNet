@@ -14,6 +14,7 @@ namespace Zapp
 	    TUint ReadUintLe(TUint aBytes);
 	    TUint64 ReadUint64Be(TUint aBytes);
 	    TUint64 ReadUint64Le(TUint aBytes);
+	    TInt ReadIntBe(TUint aBytes);
 	private:
 	    IReader& iReader;
 	};
@@ -28,6 +29,7 @@ namespace Zapp
 	    void WriteUint24Be(TUint32 aValue);
 	    void WriteUint32Be(TUint32 aValue);
 	    void WriteUint64Be(TUint64 aValue);
+		void WriteInt16Be(TInt16 aValue);
 	private:
 	    IWriter& iWriter;
 	};
@@ -48,6 +50,7 @@ const Brn ReaderBinary::Read(TUint aBytes)
 
 TUint ReaderBinary::ReadUintBe(TUint aBytes)
 {
+    ASSERT(aBytes > 0);
     ASSERT(aBytes <= sizeof(TUint));
     TUint val = 0;
     TUint count = 0;
@@ -59,8 +62,28 @@ TUint ReaderBinary::ReadUintBe(TUint aBytes)
     return val;
 }
 
+TInt ReaderBinary::ReadIntBe(TUint aBytes)
+{
+    ASSERT(aBytes > 0);
+    ASSERT(aBytes <= sizeof(TInt));
+    TInt val = 0;
+    TUint count = 0;
+
+    TInt sbyte = iReader.Read(1).At(0);
+    val += sbyte << ((aBytes - count - 1) * 8);
+    count++;
+
+    while(count < aBytes) {
+        TUint byte = iReader.Read(1).At(0);
+        val += byte << ((aBytes - count - 1) * 8);
+        count++;
+    }
+    return val;
+}
+
 TUint ReaderBinary::ReadUintLe(TUint aBytes)
 {
+    ASSERT(aBytes > 0);
     ASSERT(aBytes <= sizeof(TUint));
     TUint val = 0;
     TUint shift = 0;
@@ -74,6 +97,7 @@ TUint ReaderBinary::ReadUintLe(TUint aBytes)
 
 TUint64 ReaderBinary::ReadUint64Be(TUint aBytes)
 {
+    ASSERT(aBytes > 0);
     ASSERT(aBytes <= sizeof(TUint64));
     TUint64 val = 0;
     TUint count = 0;
@@ -87,6 +111,7 @@ TUint64 ReaderBinary::ReadUint64Be(TUint aBytes)
 
 TUint64 ReaderBinary::ReadUint64Le(TUint aBytes)
 {
+    ASSERT(aBytes > 0);
     ASSERT(aBytes <= sizeof(TUint64));
     TUint64 val = 0;
     TUint shift = 0;
@@ -116,6 +141,12 @@ void WriterBinary::WriteUint8(TUint8 aValue)
 }
 
 void WriterBinary::WriteUint16Be(TUint16 aValue)
+{
+    iWriter.Write(aValue >> 8);
+    iWriter.Write(aValue);
+}
+
+void WriterBinary::WriteInt16Be(TInt16 aValue)
 {
     iWriter.Write(aValue >> 8);
     iWriter.Write(aValue);
@@ -226,7 +257,7 @@ OhmSocket::~OhmSocket()
 
 // OhmHeader
 
-const Brn OhmHeader::kOhm("Mpus");
+const Brn OhmHeader::kOhm("Ohm ");
 
 OhmHeader::OhmHeader()
     : iMsgType(kMsgTypeJoin)
@@ -291,10 +322,12 @@ OhmHeaderAudio::OhmHeaderAudio(TBool aHalt,
                                TUint aSamples,
                                TUint aFrame,
                                TUint aTxTimestampPrev,
+                               TUint aSyncTimestamp,
                                TUint64 aSampleStart,
                                TUint64 aSamplesTotal,
                                TUint aSampleRate,
                                TUint aBitRate,
+                               TUint aVolumeOffset,
                                TUint aBitDepth,
                                TUint aChannels,
                                const Brx& aCodecName)
@@ -303,10 +336,12 @@ OhmHeaderAudio::OhmHeaderAudio(TBool aHalt,
     , iSamples(aSamples)
     , iFrame(aFrame)
     , iTxTimestampPrev(aTxTimestampPrev)
+    , iSyncTimestamp(aSyncTimestamp)
     , iSampleStart(aSampleStart)
     , iSamplesTotal(aSamplesTotal)
     , iSampleRate(aSampleRate)
     , iBitRate(aBitRate)
+    , iVolumeOffset(aVolumeOffset)
     , iBitDepth(aBitDepth)
     , iChannels(aChannels)
     , iCodecName(aCodecName)
@@ -343,10 +378,12 @@ void OhmHeaderAudio::Internalise(IReader& aReader, const OhmHeader& aHeader)
     iSamples = readerBinary.ReadUintBe(2);
     iFrame = readerBinary.ReadUintBe(4);
     iTxTimestampPrev = readerBinary.ReadUintBe(4);
+    iSyncTimestamp = readerBinary.ReadUintBe(4);
     iSampleStart = readerBinary.ReadUint64Be(8);
     iSamplesTotal = readerBinary.ReadUint64Be(8);
     iSampleRate = readerBinary.ReadUintBe(4);
     iBitRate = readerBinary.ReadUintBe(4);
+    iVolumeOffset = readerBinary.ReadIntBe(2);
     iBitDepth = readerBinary.ReadUintBe(1);
     iChannels = readerBinary.ReadUintBe(1);
     
@@ -387,10 +424,12 @@ void OhmHeaderAudio::Externalise(IWriter& aWriter) const
     writer.WriteUint16Be(iSamples);
     writer.WriteUint32Be(iFrame);
     writer.WriteUint32Be(iTxTimestampPrev);
+    writer.WriteUint32Be(iSyncTimestamp);
     writer.WriteUint64Be(iSampleStart);
     writer.WriteUint64Be(iSamplesTotal);
     writer.WriteUint32Be(iSampleRate);
     writer.WriteUint32Be(iBitRate);
+    writer.WriteInt16Be(iVolumeOffset);
     writer.WriteUint8(iBitDepth);
     writer.WriteUint8(iChannels);
     writer.WriteUint8(kReserved);
@@ -468,7 +507,7 @@ void OhmHeaderMetatext::Externalise(IWriter& aWriter) const
     
 // OhzHeader
 
-const Brn OhzHeader::kOhz("Zpus");
+const Brn OhzHeader::kOhz("Ohz ");
 
 OhzHeader::OhzHeader()
     : iMsgType(kMsgTypeQuery)
