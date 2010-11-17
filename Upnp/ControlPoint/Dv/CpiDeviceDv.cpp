@@ -127,6 +127,7 @@ InvocationDv::InvocationDv(Invocation& aInvocation, DviService& aService)
     : iInvocation(aInvocation)
     , iService(aService)
     , iSem("IDVS", 0)
+    , iWriteArg(NULL)
 {
 }
 
@@ -221,7 +222,7 @@ void InvocationDv::InvocationWriteUint(const TChar* aName, TUint aValue)
 
 void InvocationDv::InvocationWriteBinaryStart(const TChar* aName)
 {
-    ASSERT(iWriteArg != NULL);
+    ASSERT(iWriteArg == NULL);
     iWriteArg = OutputArgument(aName);
     ASSERT(static_cast<ArgumentBinary*>(iWriteArg)->Value().Bytes() == 0);
 }
@@ -244,7 +245,7 @@ void InvocationDv::InvocationWriteBinaryEnd(const TChar* aName)
 
 void InvocationDv::InvocationWriteStringStart(const TChar* aName)
 {
-    ASSERT(iWriteArg != NULL);
+    ASSERT(iWriteArg == NULL);
     iWriteArg = OutputArgument(aName);
     ASSERT(static_cast<ArgumentString*>(iWriteArg)->Value().Bytes() == 0);
 }
