@@ -150,6 +150,7 @@ gAllTests = [ TestCase('TestBuffer', [], True)
              ,TestCase('TestDvDeviceC', [], True)
              ,TestCase('TestCpDeviceDv', [], True)
              ,TestCase('TestCpDeviceDvStd', [], True)
+             ,TestCase('TestCpDeviceDvC', [], True)
              ,TestCase('TestProxyCs', [], False, False)
             ]
 

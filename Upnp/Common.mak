@@ -13,6 +13,7 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)CpDeviceStd.$(objext) \
     		   $(objdir)CpDeviceDvCore.$(objext) \
     		   $(objdir)CpDeviceDvStd.$(objext) \
+    		   $(objdir)CpDeviceDvC.$(objext) \
     		   $(objdir)CpDeviceUpnpCore.$(objext) \
     		   $(objdir)CpDeviceUpnpC.$(objext) \
     		   $(objdir)CpDeviceUpnpStd.$(objext) \
@@ -87,6 +88,7 @@ headers = $(inc_build)/Ascii.h \
           $(inc_build)/Cpp/Std/CpDevice.h \
           $(inc_build)/Cpp/Core/CpDeviceDv.h \
           $(inc_build)/Cpp/Std/CpDeviceDv.h \
+          $(inc_build)/C/CpDeviceDv.h \
           $(inc_build)/Cpp/Core/CpDeviceUpnp.h \
           $(inc_build)/C/CpDeviceUpnp.h \
           $(inc_build)/Cpp/Std/CpDeviceUpnp.h \
@@ -181,6 +183,8 @@ $(objdir)CpDeviceDvCore.$(objext) : Public/Cpp/Core/CpDeviceDvCore.cpp $(headers
 	$(compiler)CpDeviceDvCore.$(objext) -c $(cflags) $(includes) Public/Cpp/Core/CpDeviceDvCore.cpp
 $(objdir)CpDeviceDvStd.$(objext) : Public/Cpp/Std/CpDeviceDvStd.cpp $(headers)
 	$(compiler)CpDeviceDvStd.$(objext) -c $(cflags) $(includes) Public/Cpp/Std/CpDeviceDvStd.cpp
+$(objdir)CpDeviceDvC.$(objext) : Public/C/CpDeviceDvC.cpp $(headers)
+	$(compiler)CpDeviceDvC.$(objext) -c $(cflags) $(includes) Public/C/CpDeviceDvC.cpp
 $(objdir)CpDeviceUpnpCore.$(objext) : Public/Cpp/Core/CpDeviceUpnpCore.cpp $(headers)
 	$(compiler)CpDeviceUpnpCore.$(objext) -c $(cflags) $(includes) Public/Cpp/Core/CpDeviceUpnpCore.cpp
 $(objdir)CpDeviceUpnpC.$(objext) : Public/C/CpDeviceUpnpC.cpp $(headers)
@@ -501,10 +505,14 @@ $(objdir)TestBasicDvStd.$(objext) : Public/Cpp/Std/TestBasicDv.cpp $(headers)
 	$(compiler)TestBasicDvStd.$(objext) -c $(cflags) $(includes) Public/Cpp/Std/TestBasicDv.cpp
 
 TestDvDeviceC: $(objdir)TestDvDeviceC.$(exeext) 
-$(objdir)TestDvDeviceC.$(exeext) :  upnp_core $(objdir)TestDvDeviceC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext)
-	$(link) $(linkoutput)$(objdir)TestDvDeviceC.$(exeext) $(objdir)TestDvDeviceC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext) $(objdir)$(libprefix)upnp_core.$(libext)
+$(objdir)TestDvDeviceC.$(exeext) :  upnp_core $(objdir)TestDvDeviceC.$(objext) $(objdir)TestBasicCpC.$(objext) $(objdir)TestBasicDvC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext)
+	$(link) $(linkoutput)$(objdir)TestDvDeviceC.$(exeext) $(objdir)TestDvDeviceC.$(objext) $(objdir)TestBasicCpC.$(objext) $(objdir)TestBasicDvC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestDvDeviceC.$(objext) : Public/C/TestDvDeviceC.cpp $(headers)
 	$(compiler)TestDvDeviceC.$(objext) -c $(cflags) $(includes) Public/C/TestDvDeviceC.cpp
+$(objdir)TestBasicCpC.$(objext) : Public/C/TestBasicCpC.cpp $(headers)
+	$(compiler)TestBasicCpC.$(objext) -c $(cflags) $(includes) Public/C/TestBasicCpC.cpp
+$(objdir)TestBasicDvC.$(objext) : Public/C/TestBasicDvC.cpp $(headers)
+	$(compiler)TestBasicDvC.$(objext) -c $(cflags) $(includes) Public/C/TestBasicDvC.cpp
 
 TestCpDeviceDv: $(objdir)TestCpDeviceDv.$(exeext) 
 $(objdir)TestCpDeviceDv.$(exeext) :  upnp_core $(objdir)TestCpDeviceDv.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) TestFramework.$(libext)
@@ -518,7 +526,13 @@ $(objdir)TestCpDeviceDvStd.$(exeext) :  upnp_core $(objdir)TestCpDeviceDvStd.$(o
 $(objdir)TestCpDeviceDvStd.$(objext) : Public/Cpp/Std/TestCpDeviceDvStd.cpp $(headers)
 	$(compiler)TestCpDeviceDvStd.$(objext) -c $(cflags) $(includes) Public/Cpp/Std/TestCpDeviceDvStd.cpp
 
-Tests: TestBuffer TestThread TestFifo TestQueue TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestProxyCs
+TestCpDeviceDvC: $(objdir)TestCpDeviceDvC.$(exeext) 
+$(objdir)TestCpDeviceDvC.$(exeext) :  upnp_core $(objdir)TestCpDeviceDvC.$(objext) $(objdir)TestBasicCpC.$(objext) $(objdir)TestBasicDvC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) TestFramework.$(libext)  $(objdir)MainC.$(objext)
+	$(link) $(linkoutput)$(objdir)TestCpDeviceDvC.$(exeext) $(objdir)TestCpDeviceDvC.$(objext) $(objdir)TestBasicCpC.$(objext) $(objdir)TestBasicDvC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)MainC.$(objext) $(objdir)$(libprefix)upnp_core.$(libext)
+$(objdir)TestCpDeviceDvC.$(objext) : Public/C/TestCpDeviceDvC.cpp $(headers)
+	$(compiler)TestCpDeviceDvC.$(objext) -c $(cflags) $(includes) Public/C/TestCpDeviceDvC.cpp
+
+Tests: TestBuffer TestThread TestFifo TestQueue TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestProxyCs
 
 Zapp.net.dll : $(objdir)Zapp.net.dll
 

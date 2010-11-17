@@ -17,6 +17,8 @@
 #include <Maths.h>
 #include <Stack.h>
 #include <Debug.h>
+#include <C/TestBasicDv.h>
+#include <C/TestBasicCp.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -24,194 +26,8 @@
 using namespace Zapp;
 using namespace Zapp::TestFramework;
 
-static int32_t increment(void* /*aPtr*/, uint32_t /*aVersion*/, uint32_t aValue, uint32_t* aResult)
-{
-    *aResult = ++aValue;
-    return 0;
-}
-
-static int32_t decrement(void* /*aPtr*/, uint32_t /*aVersion*/, int32_t aValue, int32_t* aResult)
-{
-    *aResult = --aValue;
-    return 0;
-}
-
-static int32_t toggle(void* /*aPtr*/, uint32_t /*aVersion*/, uint32_t aValue, uint32_t* aResult)
-{
-    *aResult = (aValue==0? 1 : 0);
-    return 0;
-}
-
-static int32_t echoString(void* /*aPtr*/, uint32_t /*aVersion*/, const char* aValue, char** aResult)
-{
-    char* res = (char*)malloc(strlen(aValue)+1);
-    (void)strcpy(res, aValue);
-    *aResult = res;
-    return 0;
-}
-
-static int32_t echoBinary(void* /*aPtr*/, uint32_t /*aVersion*/, const char* aValue, uint32_t aValueLen, char** aResult, uint32_t* aResultLen)
-{
-    char* res = (char*)malloc(aValueLen);
-    (void)strncpy(res, aValue, aValueLen);
-    *aResult = res;
-    *aResultLen = aValueLen;
-    return 0;
-}
-
-static int32_t setUint(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueUint)
-{
-    uint32_t changed;
-    return DvProviderZappOrgTestBasic1SetPropertyVarUint((THandle)aPtr, aValueUint, &changed);
-}
-
-static int32_t getUint(void* aPtr, uint32_t /*aVersion*/, uint32_t* aValueUint)
-{
-    DvProviderZappOrgTestBasic1GetPropertyVarUint((THandle)aPtr, aValueUint);
-    return 0;
-}
-
-static int32_t setInt(void* aPtr, uint32_t /*aVersion*/, int32_t aValueInt)
-{
-    uint32_t changed;
-    return DvProviderZappOrgTestBasic1SetPropertyVarInt((THandle)aPtr, aValueInt, &changed);
-}
-
-static int32_t getInt(void* aPtr, uint32_t /*aVersion*/, int32_t* aValueInt)
-{
-    DvProviderZappOrgTestBasic1GetPropertyVarInt((THandle)aPtr, aValueInt);
-    return 0;
-}
-
-static int32_t setBool(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueBool)
-{
-    uint32_t changed;
-    return DvProviderZappOrgTestBasic1SetPropertyVarBool((THandle)aPtr, aValueBool, &changed);
-}
-
-static int32_t getBool(void* aPtr, uint32_t /*aVersion*/, uint32_t* aValueBool)
-{
-    DvProviderZappOrgTestBasic1GetPropertyVarBool((THandle)aPtr, aValueBool);
-    return 0;
-}
-
-static int32_t setMultiple(void* aPtr, uint32_t /*aVersion*/, uint32_t aValueUint, int32_t aValueInt, uint32_t aValueBool)
-{
-    uint32_t changed1;
-    uint32_t changed2;
-    uint32_t changed3;
-    DvProviderPropertiesLock((THandle)aPtr);
-    int32_t err = (0 == DvProviderZappOrgTestBasic1SetPropertyVarUint((THandle)aPtr, aValueUint, &changed1) &&
-                   0 == DvProviderZappOrgTestBasic1SetPropertyVarInt((THandle)aPtr, aValueInt, &changed2)   &&
-                   0 == DvProviderZappOrgTestBasic1SetPropertyVarBool((THandle)aPtr, aValueBool, &changed3)) ? 0 : -1;
-    DvProviderPropertiesUnlock((THandle)aPtr);
-    return err;
-}
-
-static int32_t setString(void* aPtr, uint32_t /*aVersion*/, const char* aValueStr)
-{
-    uint32_t changed;
-    return DvProviderZappOrgTestBasic1SetPropertyVarStr((THandle)aPtr, aValueStr, &changed);
-}
-
-static int32_t getString(void* aPtr, uint32_t /*aVersion*/, char** aValueStr)
-{
-    DvProviderZappOrgTestBasic1GetPropertyVarStr((THandle)aPtr, aValueStr);
-    return 0;
-}
-
-static int32_t setBinary(void* aPtr, uint32_t /*aVersion*/, const char* aValueBin, uint32_t aValueBinLen)
-{
-    uint32_t changed;
-    return DvProviderZappOrgTestBasic1SetPropertyVarBin((THandle)aPtr, aValueBin, aValueBinLen, &changed);
-}
-
-static int32_t getBinary(void* aPtr, uint32_t /*aVersion*/, char** aValueBin, uint32_t* aValueBinLen)
-{
-    DvProviderZappOrgTestBasic1GetPropertyVarBin((THandle)aPtr, aValueBin, aValueBinLen);
-    return 0;
-}
-
-
-class DeviceBasic
-{
-public:
-    DeviceBasic();
-    ~DeviceBasic();
-private:
-    DvDeviceC iDevice;
-    THandle iTestBasic;
-};
-
-static Bwh gDeviceName("device");
-
-static void RandomiseUdn(Bwh& aUdn)
-{
-    aUdn.Grow(aUdn.Bytes() + 1 + Ascii::kMaxUintStringBytes + 1);
-    aUdn.Append('-');
-    Bws<Ascii::kMaxUintStringBytes> buf;
-    NetworkInterface* nif = Stack::NetworkInterfaceList().CurrentInterface();
-    TUint max = nif->Address();
-    delete nif;
-    (void)Ascii::AppendDec(buf, Random(max));
-    aUdn.Append(buf);
-    aUdn.PtrZ();
-}
-
-DeviceBasic::DeviceBasic()
-{
-    RandomiseUdn(gDeviceName);
-    iDevice = DvDeviceCreate((const char*)gDeviceName.Ptr(), NULL, NULL);
-    DvDeviceSetAttribute(iDevice, "Upnp.Domain", "zapp.org");
-    DvDeviceSetAttribute(iDevice, "Upnp.Type", "Test");
-    DvDeviceSetAttribute(iDevice, "Upnp.Version", "1");
-    DvDeviceSetAttribute(iDevice, "Upnp.FriendlyName", "ZappTestDevice");
-    DvDeviceSetAttribute(iDevice, "Upnp.Manufacturer", "None");
-    DvDeviceSetAttribute(iDevice, "Upnp.ManufacturerUrl", "http://www.linn.co.uk");
-    DvDeviceSetAttribute(iDevice, "Upnp.ModelDescription", "Test service");
-    DvDeviceSetAttribute(iDevice, "Upnp.ModelName", "Zapp test device");
-    DvDeviceSetAttribute(iDevice, "Upnp.ModelNumber", "1");
-    DvDeviceSetAttribute(iDevice, "Upnp.ModelUrl", "http://www.linn.co.uk");
-    DvDeviceSetAttribute(iDevice, "Upnp.SerialNumber", "123456");
-    DvDeviceSetAttribute(iDevice, "Upnp.Upc", "123456654321");
-    iTestBasic = DvProviderZappOrgTestBasic1Create(iDevice);
-
-    uint32_t ignore;
-    (void)DvProviderZappOrgTestBasic1SetPropertyVarUint(iTestBasic, 0, &ignore);
-    (void)DvProviderZappOrgTestBasic1SetPropertyVarInt(iTestBasic, 0, &ignore);
-    (void)DvProviderZappOrgTestBasic1SetPropertyVarBool(iTestBasic, 0, &ignore);
-    (void)DvProviderZappOrgTestBasic1SetPropertyVarStr(iTestBasic, "", &ignore);
-    (void)DvProviderZappOrgTestBasic1SetPropertyVarBin(iTestBasic, "", 0, &ignore);
-    DvProviderZappOrgTestBasic1EnableActionIncrement(iTestBasic, increment, NULL);
-    DvProviderZappOrgTestBasic1EnableActionDecrement(iTestBasic, decrement, NULL);
-    DvProviderZappOrgTestBasic1EnableActionToggle(iTestBasic, toggle, NULL);
-    DvProviderZappOrgTestBasic1EnableActionEchoString(iTestBasic, echoString, NULL);
-    DvProviderZappOrgTestBasic1EnableActionEchoBinary(iTestBasic, echoBinary, NULL);
-    DvProviderZappOrgTestBasic1EnableActionSetUint(iTestBasic, setUint, (void*)iTestBasic);
-    DvProviderZappOrgTestBasic1EnableActionGetUint(iTestBasic, getUint, (void*)iTestBasic);
-    DvProviderZappOrgTestBasic1EnableActionSetInt(iTestBasic, setInt, (void*)iTestBasic);
-    DvProviderZappOrgTestBasic1EnableActionGetInt(iTestBasic, getInt, (void*)iTestBasic);
-    DvProviderZappOrgTestBasic1EnableActionSetBool(iTestBasic, setBool, (void*)iTestBasic);
-    DvProviderZappOrgTestBasic1EnableActionGetBool(iTestBasic, getBool, (void*)iTestBasic);
-    DvProviderZappOrgTestBasic1EnableActionSetMultiple(iTestBasic, setMultiple, (void*)iTestBasic);
-    DvProviderZappOrgTestBasic1EnableActionSetString(iTestBasic, setString, (void*)iTestBasic);
-    DvProviderZappOrgTestBasic1EnableActionGetString(iTestBasic, getString, (void*)iTestBasic);
-    DvProviderZappOrgTestBasic1EnableActionSetBinary(iTestBasic, setBinary, (void*)iTestBasic);
-    DvProviderZappOrgTestBasic1EnableActionGetBinary(iTestBasic, getBinary, (void*)iTestBasic);
-
-    DvDeviceSetEnabled(iDevice);
-}
-
-DeviceBasic::~DeviceBasic()
-{
-    DvProviderZappOrgTestBasic1Destroy(iTestBasic);
-    DvDeviceDestroy(iDevice);
-}
-
-
 class DeviceList
 {
-    static const TUint kTestIterations = 10;
 public:
     DeviceList();
     ~DeviceList();
@@ -220,11 +36,9 @@ public:
     void TestSubscriptions();
     void Added(CpDeviceC aDevice);
     void Removed(CpDeviceC aDevice);
-    void UpdatesComplete();
 private:
     Mutex iLock;
     std::vector<CpDeviceC> iList;
-    Semaphore iUpdatesComplete;
 };
 
 
@@ -238,15 +52,9 @@ static void removed(void* aPtr, CpDeviceC aDevice)
     reinterpret_cast<DeviceList*>(aPtr)->Removed(aDevice);
 }
 
-static void updatesComplete(void* aPtr)
-{
-    reinterpret_cast<DeviceList*>(aPtr)->UpdatesComplete();
-}
-
 
 DeviceList::DeviceList()
     : iLock("DLMX")
-    , iUpdatesComplete("DSB2", 0)
 {
 }
 
@@ -260,168 +68,14 @@ DeviceList::~DeviceList()
 
 void DeviceList::TestActions()
 {
-    Print("  Actions\n");
     ASSERT(iList.size() == 1);
-    THandle proxy = CpProxyZappOrgTestBasic1Create(iList[0]);
-    TUint i;
-
-    Print("    Unsigned integer arguments...\n");
-    uint32_t valUint = 15;
-    for (i=0; i<kTestIterations; i++) {
-        uint32_t result;
-        CpProxyZappOrgTestBasic1SyncIncrement(proxy, valUint, &result);
-        ASSERT(result == valUint+1);
-        valUint = result;
-    }
-
-    Print("    Integer arguments...\n");
-    int32_t valInt = 3;
-    for (i=0; i<kTestIterations; i++) {
-        int32_t result;
-        CpProxyZappOrgTestBasic1SyncDecrement(proxy, valInt, &result);
-        ASSERT(result == valInt-1);
-        valInt = result;
-    }
-
-    Print("    Boolean arguments...\n");
-    uint32_t valBool = 1;
-    for (i=0; i<kTestIterations; i++) {
-        uint32_t result;
-        CpProxyZappOrgTestBasic1SyncToggle(proxy, valBool, &result);
-        ASSERT((result==1 && valBool==0) || (result==0 && valBool==1));
-        valBool = result;
-    }
-
-    Print("    String arguments...\n");
-    const char* valStr = "<&'tag\">";
-    for (i=0; i<kTestIterations; i++) {
-        char* result;
-        CpProxyZappOrgTestBasic1SyncEchoString(proxy, valStr, &result);
-        ASSERT(strcmp(result, valStr) == 0);
-        free(result);
-    }
-
-    Print("    Binary arguments...\n");
-    char valBin[256];
-    for (i=0; i<256; i++) {
-        valBin[i] = (char)i;
-    }
-    for (i=0; i<kTestIterations; i++) {
-        char* result;
-        uint32_t resultLen;
-        CpProxyZappOrgTestBasic1SyncEchoBinary(proxy, valBin, 256, &result, &resultLen);
-        ASSERT(resultLen == 256);
-        ASSERT(strncmp(result, valBin, resultLen) == 0);
-    }
-
-    CpProxyZappOrgTestBasic1Destroy(proxy);
+    TestBasicCpC::TestActions(iList[0]);
 }
 
 void DeviceList::TestSubscriptions()
 {
-    Print("  Subscriptions\n");
     ASSERT(iList.size() == 1);
-    THandle proxy = CpProxyZappOrgTestBasic1Create(iList[0]);
-    CpProxyCSetPropertyChanged(proxy, updatesComplete, this);
-    CpProxyCSubscribe(proxy);
-    iUpdatesComplete.Wait(); // wait for initial event
-
-    /* For each property,
-         call the setter action it
-         wait on a property being updated
-         check that the property matches the value set
-         check that the getter action matches the property
-    */
-
-    Print("    Uint...\n");
-    CpProxyZappOrgTestBasic1SyncSetUint(proxy, 1);
-    iUpdatesComplete.Wait();
-    uint32_t propUint;
-    CpProxyZappOrgTestBasic1PropertyVarUint(proxy, &propUint);
-    ASSERT(propUint == 1);
-    uint32_t valUint;
-    CpProxyZappOrgTestBasic1SyncGetUint(proxy, &valUint);
-    ASSERT(propUint == valUint);
-
-    Print("    Int...\n");
-    CpProxyZappOrgTestBasic1SyncSetInt(proxy, -99);
-    iUpdatesComplete.Wait();
-    int32_t propInt;
-    CpProxyZappOrgTestBasic1PropertyVarInt(proxy, &propInt);
-    ASSERT(propInt == -99);
-    int32_t valInt;
-    CpProxyZappOrgTestBasic1SyncGetInt(proxy, &valInt);
-    ASSERT(propInt == valInt);
-
-    Print("    Bool...\n");
-    CpProxyZappOrgTestBasic1SyncSetBool(proxy, 1);
-    iUpdatesComplete.Wait();
-    uint32_t propBool;
-    CpProxyZappOrgTestBasic1PropertyVarBool(proxy, &propBool);
-    ASSERT(propBool == 1);
-    uint32_t valBool;
-    CpProxyZappOrgTestBasic1SyncGetBool(proxy, &valBool);
-    ASSERT(valBool == 1);
-
-    Print("    String...\n");
-    const char* str = "<&'tag\">";
-    CpProxyZappOrgTestBasic1SyncSetString(proxy, str);
-    iUpdatesComplete.Wait();
-    char* propStr;
-    CpProxyZappOrgTestBasic1PropertyVarStr(proxy, &propStr);
-    ASSERT(strcmp(propStr, str) == 0);
-    // test again to check that PropertyVarStr didn't TransferTo the property
-    free(propStr);
-    CpProxyZappOrgTestBasic1PropertyVarStr(proxy, &propStr);
-    ASSERT(strcmp(propStr, str) == 0);
-    char* valStr;
-    CpProxyZappOrgTestBasic1SyncGetString(proxy, &valStr);
-    ASSERT(strcmp(propStr, valStr) == 0);
-    free(propStr);
-    free(valStr);
-
-    Print("    Binary...\n");
-    char bufBin[256];
-    for (TUint i=0; i<256; i++) {
-        bufBin[i] = (char)i;
-    }
-    CpProxyZappOrgTestBasic1SyncSetBinary(proxy, &bufBin[0], 256);
-    iUpdatesComplete.Wait();
-    char* propBin;
-    uint32_t propBinLen;
-    CpProxyZappOrgTestBasic1PropertyVarBin(proxy, &propBin, &propBinLen);
-    ASSERT(propBinLen == 256);
-    ASSERT(strncmp(propBin, bufBin, propBinLen) == 0);
-    // test again to check that PropertyVarBin didn't TransferTo the property
-    free(propBin);
-    CpProxyZappOrgTestBasic1PropertyVarBin(proxy, &propBin, &propBinLen);
-    ASSERT(propBinLen == 256);
-    ASSERT(strncmp(propBin, bufBin, propBinLen) == 0);
-    char* valBin;
-    uint32_t valBinLen;
-    CpProxyZappOrgTestBasic1SyncGetBinary(proxy, &valBin, &valBinLen);
-    ASSERT(valBinLen == 256)
-    ASSERT(strncmp(propBin, valBin, valBinLen) ==0);
-    free(propBin);
-    free(valBin);
-
-    Print("    Multiple...\n");
-    CpProxyZappOrgTestBasic1SyncSetMultiple(proxy, 15, 658, 0);
-    iUpdatesComplete.Wait();
-    CpProxyZappOrgTestBasic1PropertyVarUint(proxy, &propUint);
-    ASSERT(propUint == 15);
-    CpProxyZappOrgTestBasic1SyncGetUint(proxy, &valUint);
-    ASSERT(propUint == valUint);
-    CpProxyZappOrgTestBasic1PropertyVarInt(proxy, &propInt);
-    ASSERT(propInt == 658);
-    CpProxyZappOrgTestBasic1SyncGetInt(proxy, &valInt);
-    ASSERT(propInt == valInt);
-    CpProxyZappOrgTestBasic1PropertyVarBool(proxy, &propBool);
-    ASSERT(propBool == 0);
-    CpProxyZappOrgTestBasic1SyncGetBool(proxy, &valBool);
-    ASSERT(valBool == 0);
-
-    CpProxyZappOrgTestBasic1Destroy(proxy); // automatically unsubscribes
+    TestBasicCpC::TestSubscriptions(iList[0]);
 }
 
 void DeviceList::Added(CpDeviceC aDevice)
@@ -446,11 +100,6 @@ void DeviceList::Removed(CpDeviceC aDevice)
     }
 }
 
-void DeviceList::UpdatesComplete()
-{
-    iUpdatesComplete.Signal();
-}
-
 
 extern "C" void ZappTestRunner(ZappHandleInitParams aInitParams)
 {
@@ -461,7 +110,7 @@ extern "C" void ZappTestRunner(ZappHandleInitParams aInitParams)
     ZappLibraryStartCombined();
 //    Debug::SetLevel(Debug::kService);
 
-    DeviceBasic* device = new DeviceBasic;
+    DeviceBasicC* device = new DeviceBasicC;
     DeviceList* deviceList = new DeviceList;
     HandleCpDeviceList dlh = CpDeviceListCreateUpnpServiceType("zapp.org", "TestBasic", 1,
                                                                added, deviceList, removed, deviceList);
