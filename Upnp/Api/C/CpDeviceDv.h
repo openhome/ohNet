@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-CpDeviceC CpDeviceDvCreate(DvDeviceC aDevice);
+DllExport CpDeviceC CpDeviceDvCreate(DvDeviceC aDevice);
 
 #ifdef __cplusplus
 } // extern "C"
