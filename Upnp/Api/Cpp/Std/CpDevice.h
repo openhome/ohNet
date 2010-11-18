@@ -22,7 +22,7 @@ public:
     CpiDevice& Device();
 protected:
     CpDeviceCpp(CpiDevice& aDevice);
-    ~CpDeviceCpp();
+    virtual ~CpDeviceCpp();
 private:
     CpDeviceCpp(const CpDeviceCpp&);
     void operator=(const CpDeviceCpp&);

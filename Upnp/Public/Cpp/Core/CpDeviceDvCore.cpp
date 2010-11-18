@@ -7,7 +7,9 @@ using namespace Zapp;
 CpDeviceDv* CpDeviceDv::New(DvDevice& aDevice)
 {
     CpiDeviceDv* device = new CpiDeviceDv(aDevice.Device());
-    return new CpDeviceDv(*device);
+    CpDeviceDv* self = new CpDeviceDv(*device);
+    self->Device().RemoveRef();
+    return self;
 }
 
 CpDeviceDv::~CpDeviceDv()
