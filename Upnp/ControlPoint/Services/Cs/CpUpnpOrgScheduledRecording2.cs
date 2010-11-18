@@ -844,17 +844,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
             lock (this)
             {
                 if (iHandle == 0)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyUpnpOrgScheduledRecording2Destroy(iHandle);
                 iHandle = 0;
             }
-            CpProxyUpnpOrgScheduledRecording2Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

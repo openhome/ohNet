@@ -705,17 +705,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
             lock (this)
             {
                 if (iHandle == 0)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyLinnCoUkPreamp4Destroy(iHandle);
                 iHandle = 0;
             }
-            CpProxyLinnCoUkPreamp4Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

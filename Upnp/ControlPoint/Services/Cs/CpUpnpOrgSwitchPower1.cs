@@ -178,17 +178,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
             lock (this)
             {
                 if (iHandle == 0)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyUpnpOrgSwitchPower1Destroy(iHandle);
                 iHandle = 0;
             }
-            CpProxyUpnpOrgSwitchPower1Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {
