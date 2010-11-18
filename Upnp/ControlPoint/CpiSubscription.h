@@ -9,14 +9,13 @@
 #include <Fifo.h>
 #include <EventUpnp.h>
 #include <Functor.h>
+#include <CpProxy.h> // for IEventProcessor
 
 #include <list>
 #include <map>
 #include <vector>
 
 namespace Zapp {
-
-class IEventProcessor;
 
 /**
  * Owns a subscription (request for notification of changes in state variables)
@@ -26,7 +25,7 @@ class IEventProcessor;
  * Unsubscribe().  The class will then effectively delete itself when it releases
  * its operation reference after completing the unsubscription.
  */
-class CpiSubscription
+class CpiSubscription : public IEventProcessor
 {
 public:
     static const TUint kDefaultDurationSecs = 30 * 60; // 30 minutes
@@ -50,15 +49,6 @@ public:
     void RemoveRef();
 
     /**
-     * Signal that ProcessNotification should not process the notification message
-     * or report any updates.
-     * Normally used during destruction of a Service (allowing the Subscription to
-     * outlast the Service, unsubscribing without delaying Service destruction which
-     * may well happen in a UI thread).
-     */
-    void StopUpdates();
-    
-    /**
      * Used by the comms thread which receives updates on the state of properties.
      * Assumes that updates are incrementally numbered and returns false if
      * aSequenceNumber suggests that previous updates may have been missed.
@@ -78,6 +68,7 @@ public:
     
     /**
      * Schedule an unsubscribe operation which will happen later in a Subscriber thread.
+	 * No property update events will be delivered once this returns.
      * Clients who call this should also release their reference.
      * Clients are not informed about any failure to unsubscribe.
      */
@@ -94,8 +85,6 @@ public:
     void SetSid(Brh& aSid);
 
     const Zapp::ServiceType& ServiceType() const;
-
-    IEventProcessor& EventProcessor();
 
     /**
      * Used by Subscriber threads to process a subscribe/renew/unsubscribe operation
@@ -129,17 +118,20 @@ private:
     void Renew();
     void DoRenew();
     void DoUnsubscribe();
+private: // IEventProcessor
+    void EventUpdateStart();
+    void EventUpdate(const Brx& aName, const Brx& aValue, IOutputProcessor& aProcessor);
+    void EventUpdateEnd();
 private:
     Mutex iLock;
     CpiDevice& iDevice;
-    IEventProcessor& iEventProcessor;
+    IEventProcessor* iEventProcessor;
     Zapp::ServiceType iServiceType;
     Brh iSid;
     Timer* iTimer;
     TUint iNextSequenceNumber;
     EOperation iPendingOperation;
     TUint iRefCount;
-    TBool iStopUpdates;
     IInterruptHandler* iInterruptHandler;
 
     friend class CpiSubscriptionManager;

@@ -67,7 +67,6 @@ void CpiService::Unsubscribe()
 {
     if (iSubscription != NULL) {
         iSubscription->Unsubscribe();
-        iSubscription->StopUpdates();
         iSubscription->RemoveRef();
         iSubscription = NULL;
     }

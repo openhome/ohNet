@@ -15,7 +15,6 @@ using namespace Zapp;
 
 CpiDeviceDv::CpiDeviceDv(DviDevice& aDevice)
     : iDeviceDv(aDevice)
-    , iEventProcessor(NULL)
     , iSubscriptionDv(NULL)
     , iSubscriptionCp(NULL)
 {
@@ -68,7 +67,6 @@ TBool CpiDeviceDv::GetAttribute(const char* aKey, Brh& aValue) const
 
 TUint CpiDeviceDv::Subscribe(CpiSubscription& aSubscription, const Uri& /*aSubscriber*/)
 {
-    iEventProcessor = &aSubscription.EventProcessor();
     iSubscriptionCp = &aSubscription;
     Brh sid;
     iDeviceDv.CreateSid(sid);
@@ -100,7 +98,6 @@ void CpiDeviceDv::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
     iSubscriptionDv->RemoveRef();
     iSubscriptionDv = NULL;
     iSubscriptionCp = NULL;
-    iEventProcessor = NULL;
 }
 
 void CpiDeviceDv::Release()
@@ -116,8 +113,8 @@ IPropertyWriter* CpiDeviceDv::CreateWriter(const Endpoint& /*aSubscriber*/, cons
         iSubscriptionCp->SetNotificationError();
         return NULL;
     }
-    ASSERT(iEventProcessor != NULL);
-    return new PropertyWriterDv(*iEventProcessor);
+    ASSERT(iSubscriptionCp != NULL);
+    return new PropertyWriterDv(*iSubscriptionCp);
 }
 
 

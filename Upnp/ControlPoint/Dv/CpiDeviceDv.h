@@ -37,7 +37,6 @@ private: // IPropertyWriterFactory
 private:
     CpiDevice* iDeviceCp;
     DviDevice& iDeviceDv;
-    IEventProcessor* iEventProcessor;
     DviSubscription* iSubscriptionDv;
     CpiSubscription* iSubscriptionCp;
 };
