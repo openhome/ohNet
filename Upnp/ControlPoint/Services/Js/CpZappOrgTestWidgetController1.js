@@ -157,4 +157,28 @@ ServiceTestWidgetController.prototype.SetWidgetRegister = function(WidgetUdn, Re
 }
 
 
+/**
+* A service action to GetWidgetRegister
+* @method GetWidgetRegister
+* @param {String} WidgetUdn An action parameter
+* @param {Int} RegisterIndex An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestWidgetController.prototype.GetWidgetRegister = function(WidgetUdn, RegisterIndex, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("GetWidgetRegister", this.url, this.domain, this.type, this.version);		
+    request.writeStringParameter("WidgetUdn", WidgetUdn);
+    request.writeIntParameter("RegisterIndex", RegisterIndex);
+    request.send(function(result){
+		result["RegisterValue"] = Zapp.SoapRequest.readIntParameter(result["RegisterValue"]);	
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
 

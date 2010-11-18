@@ -124,12 +124,43 @@ public:
      */
     void EndSetWidgetRegister(IAsync& aAsync);
 
+    /**
+     * Invoke the action synchronously.  Blocks until the action has been processed
+     * on the device and sets any output arguments.
+     *
+     * @param[in]  aWidgetUdn
+     * @param[in]  aRegisterIndex
+     * @param[out] aRegisterValue
+     */
+    void SyncGetWidgetRegister(const Brx& aWidgetUdn, TUint aRegisterIndex, TUint& aRegisterValue);
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the action
+     * later completes.  Any output arguments can then be retrieved by calling
+     * EndGetWidgetRegister().
+     *
+     * @param[in] aWidgetUdn
+     * @param[in] aRegisterIndex
+     * @param[in] aFunctor   Callback to run when the action completes.
+     *                       This is guaranteed to be run but may indicate an error
+     */
+    void BeginGetWidgetRegister(const Brx& aWidgetUdn, TUint aRegisterIndex, FunctorAsync& aFunctor);
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
+     * This may only be called from the callback set in the above Begin function.
+     *
+     * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
+     * @param[out] aRegisterValue
+     */
+    void EndGetWidgetRegister(IAsync& aAsync, TUint& aRegisterValue);
+
 
 private:
 private:
     Action* iActionCreateWidget;
     Action* iActionRemoveWidget;
     Action* iActionSetWidgetRegister;
+    Action* iActionGetWidgetRegister;
 };
 
 } // namespace Zapp

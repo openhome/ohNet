@@ -38,6 +38,16 @@ void DvProviderZappOrgTestWidgetController1Cpp::EnableActionSetWidgetRegister()
     iService->AddAction(action, functor);
 }
 
+void DvProviderZappOrgTestWidgetController1Cpp::EnableActionGetWidgetRegister()
+{
+    Zapp::Action* action = new Zapp::Action("GetWidgetRegister");
+    action->AddInputParameter(new ParameterString("WidgetUdn"));
+    action->AddInputParameter(new ParameterUint("RegisterIndex"));
+    action->AddOutputParameter(new ParameterUint("RegisterValue"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestWidgetController1Cpp::DoGetWidgetRegister);
+    iService->AddAction(action, functor);
+}
+
 void DvProviderZappOrgTestWidgetController1Cpp::DoCreateWidget(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
@@ -76,6 +86,22 @@ void DvProviderZappOrgTestWidgetController1Cpp::DoSetWidgetRegister(IDviInvocati
 	aInvocation.InvocationWriteEnd();
 }
 
+void DvProviderZappOrgTestWidgetController1Cpp::DoGetWidgetRegister(IDviInvocation& aInvocation, TUint aVersion)
+{
+    aInvocation.InvocationReadStart();
+    Brhz buf_WidgetUdn;
+    aInvocation.InvocationReadString("WidgetUdn", buf_WidgetUdn);
+    std::string WidgetUdn((const char*)buf_WidgetUdn.Ptr(), buf_WidgetUdn.Bytes());
+    uint32_t RegisterIndex = aInvocation.InvocationReadUint("RegisterIndex");
+    aInvocation.InvocationReadEnd();
+    uint32_t respRegisterValue;
+    GetWidgetRegister(aVersion, WidgetUdn, RegisterIndex, respRegisterValue);
+	aInvocation.InvocationWriteStart();
+    InvocationResponseUint respWriterRegisterValue(aInvocation, "RegisterValue");
+    respWriterRegisterValue.Write(respRegisterValue);
+	aInvocation.InvocationWriteEnd();
+}
+
 void DvProviderZappOrgTestWidgetController1Cpp::CreateWidget(uint32_t /*aVersion*/, const std::string& /*aWidgetUdn*/)
 {
     ASSERTS();
@@ -87,6 +113,11 @@ void DvProviderZappOrgTestWidgetController1Cpp::RemoveWidget(uint32_t /*aVersion
 }
 
 void DvProviderZappOrgTestWidgetController1Cpp::SetWidgetRegister(uint32_t /*aVersion*/, const std::string& /*aWidgetUdn*/, uint32_t /*aRegisterIndex*/, uint32_t /*aRegisterValue*/)
+{
+    ASSERTS();
+}
+
+void DvProviderZappOrgTestWidgetController1Cpp::GetWidgetRegister(uint32_t /*aVersion*/, const std::string& /*aWidgetUdn*/, uint32_t /*aRegisterIndex*/, uint32_t& /*aRegisterValue*/)
 {
     ASSERTS();
 }

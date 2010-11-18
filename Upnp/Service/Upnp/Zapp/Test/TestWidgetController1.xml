@@ -57,5 +57,25 @@
                 </argument>
             </argumentList>
         </action>
+        <action>
+            <name>GetWidgetRegister</name>
+            <argumentList>
+                <argument>
+                    <name>WidgetUdn</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_UDN</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>RegisterIndex</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_RegisterIndex</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>RegisterValue</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_RegisterValue</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
     </actionList>
 </scpd>

@@ -27,15 +27,18 @@ protected:
     void EnableActionCreateWidget();
     void EnableActionRemoveWidget();
     void EnableActionSetWidgetRegister();
+    void EnableActionGetWidgetRegister();
 private:
     virtual void CreateWidget(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn);
     virtual void RemoveWidget(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn);
     virtual void SetWidgetRegister(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn, TUint aRegisterIndex, TUint aRegisterValue);
+    virtual void GetWidgetRegister(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn, TUint aRegisterIndex, IInvocationResponseUint& aRegisterValue);
 private:
     DvProviderZappOrgTestWidgetController1();
     void DoCreateWidget(IDviInvocation& aInvocation, TUint aVersion);
     void DoRemoveWidget(IDviInvocation& aInvocation, TUint aVersion);
     void DoSetWidgetRegister(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetWidgetRegister(IDviInvocation& aInvocation, TUint aVersion);
 private:
 };
 

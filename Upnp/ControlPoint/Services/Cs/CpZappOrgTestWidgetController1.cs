@@ -29,6 +29,12 @@ namespace Zapp
         static extern unsafe void CpProxyZappOrgTestWidgetController1BeginSetWidgetRegister(uint aHandle, char* aWidgetUdn, uint aRegisterIndex, uint aRegisterValue, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestWidgetController1")]
         static extern unsafe int CpProxyZappOrgTestWidgetController1EndSetWidgetRegister(uint aHandle, uint aAsync);
+        [DllImport("CpZappOrgTestWidgetController1")]
+        static extern unsafe void CpProxyZappOrgTestWidgetController1SyncGetWidgetRegister(uint aHandle, char* aWidgetUdn, uint aRegisterIndex, uint* aRegisterValue);
+        [DllImport("CpZappOrgTestWidgetController1")]
+        static extern unsafe void CpProxyZappOrgTestWidgetController1BeginGetWidgetRegister(uint aHandle, char* aWidgetUdn, uint aRegisterIndex, CallbackActionComplete aCallback, IntPtr aPtr);
+        [DllImport("CpZappOrgTestWidgetController1")]
+        static extern unsafe int CpProxyZappOrgTestWidgetController1EndGetWidgetRegister(uint aHandle, uint aAsync, uint* aRegisterValue);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -118,6 +124,36 @@ namespace Zapp
         {
 			{
 				if (0 != CpProxyZappOrgTestWidgetController1EndSetWidgetRegister(iHandle, aAsyncHandle))
+				{
+					throw(new ProxyError());
+				}
+			}
+        }
+
+        public unsafe void SyncGetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, out uint aRegisterValue)
+        {
+			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
+			fixed (uint* registerValue = &aRegisterValue)
+			{
+				CpProxyZappOrgTestWidgetController1SyncGetWidgetRegister(iHandle, widgetUdn, aRegisterIndex, registerValue);
+			}
+			Marshal.FreeHGlobal((IntPtr)widgetUdn);
+        }
+
+        public unsafe void BeginGetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, CallbackAsyncComplete aCallback)
+        {
+			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
+            GCHandle gch = GCHandle.Alloc(aCallback);
+            IntPtr ptr = GCHandle.ToIntPtr(gch);
+            CpProxyZappOrgTestWidgetController1BeginGetWidgetRegister(iHandle, widgetUdn, aRegisterIndex, iActionComplete, ptr);
+			Marshal.FreeHGlobal((IntPtr)widgetUdn);
+        }
+
+        public unsafe void EndGetWidgetRegister(uint aAsyncHandle, out uint aRegisterValue)
+        {
+			fixed (uint* registerValue = &aRegisterValue)
+			{
+				if (0 != CpProxyZappOrgTestWidgetController1EndGetWidgetRegister(iHandle, aAsyncHandle, registerValue))
 				{
 					throw(new ProxyError());
 				}

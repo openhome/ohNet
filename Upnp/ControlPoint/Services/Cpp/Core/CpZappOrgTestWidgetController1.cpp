@@ -68,6 +68,28 @@ void SyncSetWidgetRegisterZappOrgTestWidgetController1::CompleteRequest(IAsync& 
 }
 
 
+class SyncGetWidgetRegisterZappOrgTestWidgetController1 : public SyncProxyAction
+{
+public:
+    SyncGetWidgetRegisterZappOrgTestWidgetController1(CpProxyZappOrgTestWidgetController1& aProxy, TUint& aRegisterValue);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyZappOrgTestWidgetController1& iService;
+    TUint& iRegisterValue;
+};
+
+SyncGetWidgetRegisterZappOrgTestWidgetController1::SyncGetWidgetRegisterZappOrgTestWidgetController1(CpProxyZappOrgTestWidgetController1& aProxy, TUint& aRegisterValue)
+    : iService(aProxy)
+    , iRegisterValue(aRegisterValue)
+{
+}
+
+void SyncGetWidgetRegisterZappOrgTestWidgetController1::CompleteRequest(IAsync& aAsync)
+{
+    iService.EndGetWidgetRegister(aAsync, iRegisterValue);
+}
+
+
 CpProxyZappOrgTestWidgetController1::CpProxyZappOrgTestWidgetController1(CpDevice& aDevice)
     : CpProxy("zapp-org", "TestWidgetController", 1, aDevice.Device())
 {
@@ -88,6 +110,14 @@ CpProxyZappOrgTestWidgetController1::CpProxyZappOrgTestWidgetController1(CpDevic
     iActionSetWidgetRegister->AddInputParameter(param);
     param = new Zapp::ParameterUint("RegisterValue");
     iActionSetWidgetRegister->AddInputParameter(param);
+
+    iActionGetWidgetRegister = new Action("GetWidgetRegister");
+    param = new Zapp::ParameterString("WidgetUdn");
+    iActionGetWidgetRegister->AddInputParameter(param);
+    param = new Zapp::ParameterUint("RegisterIndex");
+    iActionGetWidgetRegister->AddInputParameter(param);
+    param = new Zapp::ParameterUint("RegisterValue");
+    iActionGetWidgetRegister->AddOutputParameter(param);
 }
 
 CpProxyZappOrgTestWidgetController1::~CpProxyZappOrgTestWidgetController1()
@@ -96,6 +126,7 @@ CpProxyZappOrgTestWidgetController1::~CpProxyZappOrgTestWidgetController1()
     delete iActionCreateWidget;
     delete iActionRemoveWidget;
     delete iActionSetWidgetRegister;
+    delete iActionGetWidgetRegister;
 }
 
 void CpProxyZappOrgTestWidgetController1::SyncCreateWidget(const Brx& aWidgetUdn)
@@ -179,5 +210,38 @@ void CpProxyZappOrgTestWidgetController1::EndSetWidgetRegister(IAsync& aAsync)
     if (invocation.Error()) {
         THROW(ProxyError);
     }
+}
+
+void CpProxyZappOrgTestWidgetController1::SyncGetWidgetRegister(const Brx& aWidgetUdn, TUint aRegisterIndex, TUint& aRegisterValue)
+{
+    SyncGetWidgetRegisterZappOrgTestWidgetController1 sync(*this, aRegisterValue);
+    BeginGetWidgetRegister(aWidgetUdn, aRegisterIndex, sync.Functor());
+    sync.Wait();
+}
+
+void CpProxyZappOrgTestWidgetController1::BeginGetWidgetRegister(const Brx& aWidgetUdn, TUint aRegisterIndex, FunctorAsync& aFunctor)
+{
+    Invocation* invocation = iService->Invocation(*iActionGetWidgetRegister, aFunctor);
+    TUint inIndex = 0;
+    const Action::VectorParameters& inParams = iActionGetWidgetRegister->InputParameters();
+    invocation->AddInput(new ArgumentString(*inParams[inIndex++], aWidgetUdn));
+    invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aRegisterIndex));
+    TUint outIndex = 0;
+    const Action::VectorParameters& outParams = iActionGetWidgetRegister->OutputParameters();
+    invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
+    iInvocable.InvokeAction(*invocation);
+}
+
+void CpProxyZappOrgTestWidgetController1::EndGetWidgetRegister(IAsync& aAsync, TUint& aRegisterValue)
+{
+    ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
+    Invocation& invocation = (Invocation&)aAsync;
+    ASSERT(invocation.Action().Name() == Brn("GetWidgetRegister"));
+
+    if (invocation.Error()) {
+        THROW(ProxyError);
+    }
+    TUint index = 0;
+    aRegisterValue = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
 }
 
