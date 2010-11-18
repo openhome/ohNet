@@ -5,7 +5,65 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyUpnpOrgAVTransport1 : CpProxy, IDisposable
+    public interface ICpProxyUpnpOrgAVTransport1
+    {
+        void SyncSetAVTransportURI(uint aInstanceID, string aCurrentURI, string aCurrentURIMetaData);
+        void BeginSetAVTransportURI(uint aInstanceID, string aCurrentURI, string aCurrentURIMetaData, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetAVTransportURI(uint aAsyncHandle);
+        void SyncSetNextAVTransportURI(uint aInstanceID, string aNextURI, string aNextURIMetaData);
+        void BeginSetNextAVTransportURI(uint aInstanceID, string aNextURI, string aNextURIMetaData, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetNextAVTransportURI(uint aAsyncHandle);
+        void SyncGetMediaInfo(uint aInstanceID, out uint aNrTracks, out string aMediaDuration, out string aCurrentURI, out string aCurrentURIMetaData, out string aNextURI, out string aNextURIMetaData, out string aPlayMedium, out string aRecordMedium, out string aWriteStatus);
+        void BeginGetMediaInfo(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetMediaInfo(uint aAsyncHandle, out uint aNrTracks, out string aMediaDuration, out string aCurrentURI, out string aCurrentURIMetaData, out string aNextURI, out string aNextURIMetaData, out string aPlayMedium, out string aRecordMedium, out string aWriteStatus);
+        void SyncGetTransportInfo(uint aInstanceID, out string aCurrentTransportState, out string aCurrentTransportStatus, out string aCurrentSpeed);
+        void BeginGetTransportInfo(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetTransportInfo(uint aAsyncHandle, out string aCurrentTransportState, out string aCurrentTransportStatus, out string aCurrentSpeed);
+        void SyncGetPositionInfo(uint aInstanceID, out uint aTrack, out string aTrackDuration, out string aTrackMetaData, out string aTrackURI, out string aRelTime, out string aAbsTime, out int aRelCount, out int aAbsCount);
+        void BeginGetPositionInfo(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetPositionInfo(uint aAsyncHandle, out uint aTrack, out string aTrackDuration, out string aTrackMetaData, out string aTrackURI, out string aRelTime, out string aAbsTime, out int aRelCount, out int aAbsCount);
+        void SyncGetDeviceCapabilities(uint aInstanceID, out string aPlayMedia, out string aRecMedia, out string aRecQualityModes);
+        void BeginGetDeviceCapabilities(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetDeviceCapabilities(uint aAsyncHandle, out string aPlayMedia, out string aRecMedia, out string aRecQualityModes);
+        void SyncGetTransportSettings(uint aInstanceID, out string aPlayMode, out string aRecQualityMode);
+        void BeginGetTransportSettings(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetTransportSettings(uint aAsyncHandle, out string aPlayMode, out string aRecQualityMode);
+        void SyncStop(uint aInstanceID);
+        void BeginStop(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndStop(uint aAsyncHandle);
+        void SyncPlay(uint aInstanceID, string aSpeed);
+        void BeginPlay(uint aInstanceID, string aSpeed, CpProxy.CallbackAsyncComplete aCallback);
+        void EndPlay(uint aAsyncHandle);
+        void SyncPause(uint aInstanceID);
+        void BeginPause(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndPause(uint aAsyncHandle);
+        void SyncRecord(uint aInstanceID);
+        void BeginRecord(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndRecord(uint aAsyncHandle);
+        void SyncSeek(uint aInstanceID, string aUnit, string aTarget);
+        void BeginSeek(uint aInstanceID, string aUnit, string aTarget, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSeek(uint aAsyncHandle);
+        void SyncNext(uint aInstanceID);
+        void BeginNext(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndNext(uint aAsyncHandle);
+        void SyncPrevious(uint aInstanceID);
+        void BeginPrevious(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndPrevious(uint aAsyncHandle);
+        void SyncSetPlayMode(uint aInstanceID, string aNewPlayMode);
+        void BeginSetPlayMode(uint aInstanceID, string aNewPlayMode, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetPlayMode(uint aAsyncHandle);
+        void SyncSetRecordQualityMode(uint aInstanceID, string aNewRecordQualityMode);
+        void BeginSetRecordQualityMode(uint aInstanceID, string aNewRecordQualityMode, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetRecordQualityMode(uint aAsyncHandle);
+        void SyncGetCurrentTransportActions(uint aInstanceID, out string aActions);
+        void BeginGetCurrentTransportActions(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetCurrentTransportActions(uint aAsyncHandle, out string aActions);
+
+        void SetPropertyLastChangeChanged(CpProxy.CallbackPropertyChanged aLastChangeChanged);
+        void PropertyLastChange(out string aLastChange);
+    }
+
+    public class CpProxyUpnpOrgAVTransport1 : CpProxy, IDisposable, ICpProxyUpnpOrgAVTransport1
     {
         [DllImport("CpUpnpOrgAVTransport1")]
         static extern uint CpProxyUpnpOrgAVTransport1Create(uint aDeviceHandle);

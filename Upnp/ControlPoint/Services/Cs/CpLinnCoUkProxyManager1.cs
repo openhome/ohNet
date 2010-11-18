@@ -5,7 +5,50 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyLinnCoUkProxyManager1 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkProxyManager1
+    {
+        void SyncKontrolProductConnected(out string aaConnected);
+        void BeginKontrolProductConnected(CpProxy.CallbackAsyncComplete aCallback);
+        void EndKontrolProductConnected(uint aAsyncHandle, out string aaConnected);
+        void SyncSetKontrolProductConnected(string aaConnected);
+        void BeginSetKontrolProductConnected(string aaConnected, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetKontrolProductConnected(uint aAsyncHandle);
+        void SyncKontrolProductComPort(out uint aaPort);
+        void BeginKontrolProductComPort(CpProxy.CallbackAsyncComplete aCallback);
+        void EndKontrolProductComPort(uint aAsyncHandle, out uint aaPort);
+        void SyncSetKontrolProductComPort(uint aaConnected);
+        void BeginSetKontrolProductComPort(uint aaConnected, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetKontrolProductComPort(uint aAsyncHandle);
+        void SyncDiscPlayerConnected(out string aaConnected);
+        void BeginDiscPlayerConnected(CpProxy.CallbackAsyncComplete aCallback);
+        void EndDiscPlayerConnected(uint aAsyncHandle, out string aaConnected);
+        void SyncSetDiscPlayerConnected(string aaConnected);
+        void BeginSetDiscPlayerConnected(string aaConnected, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetDiscPlayerConnected(uint aAsyncHandle);
+        void SyncDiscPlayerComPort(out uint aaPort);
+        void BeginDiscPlayerComPort(CpProxy.CallbackAsyncComplete aCallback);
+        void EndDiscPlayerComPort(uint aAsyncHandle, out uint aaPort);
+        void SyncSetDiscPlayerComPort(uint aaConnected);
+        void BeginSetDiscPlayerComPort(uint aaConnected, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetDiscPlayerComPort(uint aAsyncHandle);
+        void SyncTestKontrolProductConnection(out bool aaResult);
+        void BeginTestKontrolProductConnection(CpProxy.CallbackAsyncComplete aCallback);
+        void EndTestKontrolProductConnection(uint aAsyncHandle, out bool aaResult);
+        void SyncTestDiscPlayerConnection(out bool aaResult);
+        void BeginTestDiscPlayerConnection(CpProxy.CallbackAsyncComplete aCallback);
+        void EndTestDiscPlayerConnection(uint aAsyncHandle, out bool aaResult);
+
+        void SetPropertyKontrolProductConnectedChanged(CpProxy.CallbackPropertyChanged aKontrolProductConnectedChanged);
+        void PropertyKontrolProductConnected(out string aKontrolProductConnected);
+        void SetPropertyKontrolProductComPortChanged(CpProxy.CallbackPropertyChanged aKontrolProductComPortChanged);
+        void PropertyKontrolProductComPort(out uint aKontrolProductComPort);
+        void SetPropertyDiscPlayerConnectedChanged(CpProxy.CallbackPropertyChanged aDiscPlayerConnectedChanged);
+        void PropertyDiscPlayerConnected(out string aDiscPlayerConnected);
+        void SetPropertyDiscPlayerComPortChanged(CpProxy.CallbackPropertyChanged aDiscPlayerComPortChanged);
+        void PropertyDiscPlayerComPort(out uint aDiscPlayerComPort);
+    }
+
+    public class CpProxyLinnCoUkProxyManager1 : CpProxy, IDisposable, ICpProxyLinnCoUkProxyManager1
     {
         [DllImport("CpLinnCoUkProxyManager1")]
         static extern uint CpProxyLinnCoUkProxyManager1Create(uint aDeviceHandle);

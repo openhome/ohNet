@@ -5,7 +5,53 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyLinnCoUkDiagnostics1 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkDiagnostics1
+    {
+        void SyncEcho(string aaIn, out string aaOut);
+        void BeginEcho(string aaIn, CpProxy.CallbackAsyncComplete aCallback);
+        void EndEcho(uint aAsyncHandle, out string aaOut);
+        void SyncElfFile(out string aaElfFile);
+        void BeginElfFile(CpProxy.CallbackAsyncComplete aCallback);
+        void EndElfFile(uint aAsyncHandle, out string aaElfFile);
+        void SyncElfFingerprint(out string aaElfFileFingerprint);
+        void BeginElfFingerprint(CpProxy.CallbackAsyncComplete aCallback);
+        void EndElfFingerprint(uint aAsyncHandle, out string aaElfFileFingerprint);
+        void SyncCrashDataStatus(out string aaCrashDataStatus);
+        void BeginCrashDataStatus(CpProxy.CallbackAsyncComplete aCallback);
+        void EndCrashDataStatus(uint aAsyncHandle, out string aaCrashDataStatus);
+        void SyncCrashDataFetch(out string aaCrashData);
+        void BeginCrashDataFetch(CpProxy.CallbackAsyncComplete aCallback);
+        void EndCrashDataFetch(uint aAsyncHandle, out string aaCrashData);
+        void SyncCrashDataClear();
+        void BeginCrashDataClear(CpProxy.CallbackAsyncComplete aCallback);
+        void EndCrashDataClear(uint aAsyncHandle);
+        void SyncSysLog(out string aaSysLog);
+        void BeginSysLog(CpProxy.CallbackAsyncComplete aCallback);
+        void EndSysLog(uint aAsyncHandle, out string aaSysLog);
+        void SyncDiagnostic(string aaDiagnosticType, out string aaDiagnosticInfo);
+        void BeginDiagnostic(string aaDiagnosticType, CpProxy.CallbackAsyncComplete aCallback);
+        void EndDiagnostic(uint aAsyncHandle, out string aaDiagnosticInfo);
+        void SyncStateVariable(out uint aaStateVariable);
+        void BeginStateVariable(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStateVariable(uint aAsyncHandle, out uint aaStateVariable);
+        void SyncSetStateVariable(uint aaStateVariable);
+        void BeginSetStateVariable(uint aaStateVariable, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetStateVariable(uint aAsyncHandle);
+        void SyncStateVariablePeriod(out uint aaPeriod);
+        void BeginStateVariablePeriod(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStateVariablePeriod(uint aAsyncHandle, out uint aaPeriod);
+        void SyncSetStateVariablePeriod(uint aaPeriod);
+        void BeginSetStateVariablePeriod(uint aaPeriod, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetStateVariablePeriod(uint aAsyncHandle);
+        void SyncReboot(uint aaDelay);
+        void BeginReboot(uint aaDelay, CpProxy.CallbackAsyncComplete aCallback);
+        void EndReboot(uint aAsyncHandle);
+
+        void SetPropertyaStateVariableChanged(CpProxy.CallbackPropertyChanged aaStateVariableChanged);
+        void PropertyaStateVariable(out uint aaStateVariable);
+    }
+
+    public class CpProxyLinnCoUkDiagnostics1 : CpProxy, IDisposable, ICpProxyLinnCoUkDiagnostics1
     {
         [DllImport("CpLinnCoUkDiagnostics1")]
         static extern uint CpProxyLinnCoUkDiagnostics1Create(uint aDeviceHandle);

@@ -5,7 +5,21 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyLinnCoUkDebug2 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkDebug2
+    {
+        void SyncSetDebugLevel(uint aaDebugLevel);
+        void BeginSetDebugLevel(uint aaDebugLevel, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetDebugLevel(uint aAsyncHandle);
+        void SyncDebugLevel(out uint aaDebugLevel);
+        void BeginDebugLevel(CpProxy.CallbackAsyncComplete aCallback);
+        void EndDebugLevel(uint aAsyncHandle, out uint aaDebugLevel);
+        void SyncMemWrite(uint aaMemAddress, string aaMemData);
+        void BeginMemWrite(uint aaMemAddress, string aaMemData, CpProxy.CallbackAsyncComplete aCallback);
+        void EndMemWrite(uint aAsyncHandle);
+
+    }
+
+    public class CpProxyLinnCoUkDebug2 : CpProxy, IDisposable, ICpProxyLinnCoUkDebug2
     {
         [DllImport("CpLinnCoUkDebug2")]
         static extern uint CpProxyLinnCoUkDebug2Create(uint aDeviceHandle);

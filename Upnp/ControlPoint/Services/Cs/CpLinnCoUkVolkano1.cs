@@ -5,7 +5,45 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyLinnCoUkVolkano1 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkVolkano1
+    {
+        void SyncReboot();
+        void BeginReboot(CpProxy.CallbackAsyncComplete aCallback);
+        void EndReboot(uint aAsyncHandle);
+        void SyncBootMode(out string aaMode);
+        void BeginBootMode(CpProxy.CallbackAsyncComplete aCallback);
+        void EndBootMode(uint aAsyncHandle, out string aaMode);
+        void SyncSetBootMode(string aaMode);
+        void BeginSetBootMode(string aaMode, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetBootMode(uint aAsyncHandle);
+        void SyncBspType(out string aaBspType);
+        void BeginBspType(CpProxy.CallbackAsyncComplete aCallback);
+        void EndBspType(uint aAsyncHandle, out string aaBspType);
+        void SyncUglyName(out string aaUglyName);
+        void BeginUglyName(CpProxy.CallbackAsyncComplete aCallback);
+        void EndUglyName(uint aAsyncHandle, out string aaUglyName);
+        void SyncMacAddress(out string aaMacAddress);
+        void BeginMacAddress(CpProxy.CallbackAsyncComplete aCallback);
+        void EndMacAddress(uint aAsyncHandle, out string aaMacAddress);
+        void SyncProductId(out string aaProductNumber);
+        void BeginProductId(CpProxy.CallbackAsyncComplete aCallback);
+        void EndProductId(uint aAsyncHandle, out string aaProductNumber);
+        void SyncBoardId(uint aaIndex, out string aaBoardNumber);
+        void BeginBoardId(uint aaIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndBoardId(uint aAsyncHandle, out string aaBoardNumber);
+        void SyncBoardType(uint aaIndex, out string aaBoardNumber);
+        void BeginBoardType(uint aaIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndBoardType(uint aAsyncHandle, out string aaBoardNumber);
+        void SyncMaxBoards(out uint aaMaxBoards);
+        void BeginMaxBoards(CpProxy.CallbackAsyncComplete aCallback);
+        void EndMaxBoards(uint aAsyncHandle, out uint aaMaxBoards);
+        void SyncSoftwareVersion(out string aaSoftwareVersion);
+        void BeginSoftwareVersion(CpProxy.CallbackAsyncComplete aCallback);
+        void EndSoftwareVersion(uint aAsyncHandle, out string aaSoftwareVersion);
+
+    }
+
+    public class CpProxyLinnCoUkVolkano1 : CpProxy, IDisposable, ICpProxyLinnCoUkVolkano1
     {
         [DllImport("CpLinnCoUkVolkano1")]
         static extern uint CpProxyLinnCoUkVolkano1Create(uint aDeviceHandle);

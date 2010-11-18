@@ -5,7 +5,20 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyZappOrgTestDimmableLight1 : CpProxy, IDisposable
+    public interface ICpProxyZappOrgTestDimmableLight1
+    {
+        void SyncGetLevel(out uint aLevel);
+        void BeginGetLevel(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetLevel(uint aAsyncHandle, out uint aLevel);
+        void SyncSetLevel(uint aLevel);
+        void BeginSetLevel(uint aLevel, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetLevel(uint aAsyncHandle);
+
+        void SetPropertyA_ARG_LevelChanged(CpProxy.CallbackPropertyChanged aA_ARG_LevelChanged);
+        void PropertyA_ARG_Level(out uint aA_ARG_Level);
+    }
+
+    public class CpProxyZappOrgTestDimmableLight1 : CpProxy, IDisposable, ICpProxyZappOrgTestDimmableLight1
     {
         [DllImport("CpZappOrgTestDimmableLight1")]
         static extern uint CpProxyZappOrgTestDimmableLight1Create(uint aDeviceHandle);

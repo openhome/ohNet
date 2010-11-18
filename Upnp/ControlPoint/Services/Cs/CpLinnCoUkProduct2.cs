@@ -5,7 +5,56 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyLinnCoUkProduct2 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkProduct2
+    {
+        void SyncType(out string aaType);
+        void BeginType(CpProxy.CallbackAsyncComplete aCallback);
+        void EndType(uint aAsyncHandle, out string aaType);
+        void SyncModel(out string aaModel);
+        void BeginModel(CpProxy.CallbackAsyncComplete aCallback);
+        void EndModel(uint aAsyncHandle, out string aaModel);
+        void SyncName(out string aaName);
+        void BeginName(CpProxy.CallbackAsyncComplete aCallback);
+        void EndName(uint aAsyncHandle, out string aaName);
+        void SyncSetName(string aaName);
+        void BeginSetName(string aaName, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetName(uint aAsyncHandle);
+        void SyncRoom(out string aaRoom);
+        void BeginRoom(CpProxy.CallbackAsyncComplete aCallback);
+        void EndRoom(uint aAsyncHandle, out string aaRoom);
+        void SyncSetRoom(string aaRoom);
+        void BeginSetRoom(string aaRoom, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetRoom(uint aAsyncHandle);
+        void SyncStandby(out bool aaStandby);
+        void BeginStandby(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStandby(uint aAsyncHandle, out bool aaStandby);
+        void SyncSetStandby(bool aaStandby);
+        void BeginSetStandby(bool aaStandby, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetStandby(uint aAsyncHandle);
+        void SyncSourceCount(out uint aaSourceCount);
+        void BeginSourceCount(CpProxy.CallbackAsyncComplete aCallback);
+        void EndSourceCount(uint aAsyncHandle, out uint aaSourceCount);
+        void SyncSourceIndex(out uint aaSourceIndex);
+        void BeginSourceIndex(CpProxy.CallbackAsyncComplete aCallback);
+        void EndSourceIndex(uint aAsyncHandle, out uint aaSourceIndex);
+        void SyncSetSourceIndex(uint aaSourceIndex);
+        void BeginSetSourceIndex(uint aaSourceIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetSourceIndex(uint aAsyncHandle);
+        void SyncSourceType(uint aaSourceIndex, out string aaSourceType);
+        void BeginSourceType(uint aaSourceIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSourceType(uint aAsyncHandle, out string aaSourceType);
+
+        void SetPropertyProductNameChanged(CpProxy.CallbackPropertyChanged aProductNameChanged);
+        void PropertyProductName(out string aProductName);
+        void SetPropertyProductRoomChanged(CpProxy.CallbackPropertyChanged aProductRoomChanged);
+        void PropertyProductRoom(out string aProductRoom);
+        void SetPropertyProductStandbyChanged(CpProxy.CallbackPropertyChanged aProductStandbyChanged);
+        void PropertyProductStandby(out bool aProductStandby);
+        void SetPropertyProductSourceIndexChanged(CpProxy.CallbackPropertyChanged aProductSourceIndexChanged);
+        void PropertyProductSourceIndex(out uint aProductSourceIndex);
+    }
+
+    public class CpProxyLinnCoUkProduct2 : CpProxy, IDisposable, ICpProxyLinnCoUkProduct2
     {
         [DllImport("CpLinnCoUkProduct2")]
         static extern uint CpProxyLinnCoUkProduct2Create(uint aDeviceHandle);

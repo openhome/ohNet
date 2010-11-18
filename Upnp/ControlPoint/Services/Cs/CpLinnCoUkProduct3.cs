@@ -5,7 +5,110 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyLinnCoUkProduct3 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkProduct3
+    {
+        void SyncType(out string aaType);
+        void BeginType(CpProxy.CallbackAsyncComplete aCallback);
+        void EndType(uint aAsyncHandle, out string aaType);
+        void SyncModel(out string aaModel);
+        void BeginModel(CpProxy.CallbackAsyncComplete aCallback);
+        void EndModel(uint aAsyncHandle, out string aaModel);
+        void SyncName(out string aaName);
+        void BeginName(CpProxy.CallbackAsyncComplete aCallback);
+        void EndName(uint aAsyncHandle, out string aaName);
+        void SyncSetName(string aaName);
+        void BeginSetName(string aaName, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetName(uint aAsyncHandle);
+        void SyncRoom(out string aaRoom);
+        void BeginRoom(CpProxy.CallbackAsyncComplete aCallback);
+        void EndRoom(uint aAsyncHandle, out string aaRoom);
+        void SyncSetRoom(string aaRoom);
+        void BeginSetRoom(string aaRoom, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetRoom(uint aAsyncHandle);
+        void SyncStandby(out bool aaStandby);
+        void BeginStandby(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStandby(uint aAsyncHandle, out bool aaStandby);
+        void SyncSetStandby(bool aaStandby);
+        void BeginSetStandby(bool aaStandby, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetStandby(uint aAsyncHandle);
+        void SyncSourceCount(out uint aaSourceCount);
+        void BeginSourceCount(CpProxy.CallbackAsyncComplete aCallback);
+        void EndSourceCount(uint aAsyncHandle, out uint aaSourceCount);
+        void SyncSourceXml(out string aaSourceXml);
+        void BeginSourceXml(CpProxy.CallbackAsyncComplete aCallback);
+        void EndSourceXml(uint aAsyncHandle, out string aaSourceXml);
+        void SyncSourceIndex(out uint aaSourceIndex);
+        void BeginSourceIndex(CpProxy.CallbackAsyncComplete aCallback);
+        void EndSourceIndex(uint aAsyncHandle, out uint aaSourceIndex);
+        void SyncSetSourceIndex(uint aaSourceIndex);
+        void BeginSetSourceIndex(uint aaSourceIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetSourceIndex(uint aAsyncHandle);
+        void SyncSetSourceIndexByName(string aaSourceName);
+        void BeginSetSourceIndexByName(string aaSourceName, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetSourceIndexByName(uint aAsyncHandle);
+        void SyncSetStartupSourceIndexByName(string aaSourceName);
+        void BeginSetStartupSourceIndexByName(string aaSourceName, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetStartupSourceIndexByName(uint aAsyncHandle);
+        void SyncStartupSourceIndex(out uint aaSourceIndex);
+        void BeginStartupSourceIndex(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStartupSourceIndex(uint aAsyncHandle, out uint aaSourceIndex);
+        void SyncSetStartupSourceIndex(uint aaSourceIndex);
+        void BeginSetStartupSourceIndex(uint aaSourceIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetStartupSourceIndex(uint aAsyncHandle);
+        void SyncStartupSourceEnabled(out bool aaStartupSourceEnabled);
+        void BeginStartupSourceEnabled(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStartupSourceEnabled(uint aAsyncHandle, out bool aaStartupSourceEnabled);
+        void SyncSetStartupSourceEnabled(bool aaStartupSourceEnabled);
+        void BeginSetStartupSourceEnabled(bool aaStartupSourceEnabled, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetStartupSourceEnabled(uint aAsyncHandle);
+        void SyncSourceSystemName(uint aaSourceIndex, out string aaSourceName);
+        void BeginSourceSystemName(uint aaSourceIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSourceSystemName(uint aAsyncHandle, out string aaSourceName);
+        void SyncSourceName(uint aaSourceIndex, out string aaSourceName);
+        void BeginSourceName(uint aaSourceIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSourceName(uint aAsyncHandle, out string aaSourceName);
+        void SyncSetSourceName(uint aaSourceIndex, string aaSourceName);
+        void BeginSetSourceName(uint aaSourceIndex, string aaSourceName, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetSourceName(uint aAsyncHandle);
+        void SyncSourceType(uint aaSourceIndex, out string aaSourceType);
+        void BeginSourceType(uint aaSourceIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSourceType(uint aAsyncHandle, out string aaSourceType);
+        void SyncSourceVisible(uint aaSourceIndex, out bool aaSourceVisible);
+        void BeginSourceVisible(uint aaSourceIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSourceVisible(uint aAsyncHandle, out bool aaSourceVisible);
+        void SyncSetSourceVisible(uint aaSourceIndex, bool aaSourceVisible);
+        void BeginSetSourceVisible(uint aaSourceIndex, bool aaSourceVisible, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetSourceVisible(uint aAsyncHandle);
+
+        void SetPropertyProductTypeChanged(CpProxy.CallbackPropertyChanged aProductTypeChanged);
+        void PropertyProductType(out string aProductType);
+        void SetPropertyProductModelChanged(CpProxy.CallbackPropertyChanged aProductModelChanged);
+        void PropertyProductModel(out string aProductModel);
+        void SetPropertyProductNameChanged(CpProxy.CallbackPropertyChanged aProductNameChanged);
+        void PropertyProductName(out string aProductName);
+        void SetPropertyProductRoomChanged(CpProxy.CallbackPropertyChanged aProductRoomChanged);
+        void PropertyProductRoom(out string aProductRoom);
+        void SetPropertyProductStandbyChanged(CpProxy.CallbackPropertyChanged aProductStandbyChanged);
+        void PropertyProductStandby(out bool aProductStandby);
+        void SetPropertyProductSourceIndexChanged(CpProxy.CallbackPropertyChanged aProductSourceIndexChanged);
+        void PropertyProductSourceIndex(out uint aProductSourceIndex);
+        void SetPropertyProductSourceCountChanged(CpProxy.CallbackPropertyChanged aProductSourceCountChanged);
+        void PropertyProductSourceCount(out uint aProductSourceCount);
+        void SetPropertyProductSourceXmlChanged(CpProxy.CallbackPropertyChanged aProductSourceXmlChanged);
+        void PropertyProductSourceXml(out string aProductSourceXml);
+        void SetPropertyStartupSourceIndexChanged(CpProxy.CallbackPropertyChanged aStartupSourceIndexChanged);
+        void PropertyStartupSourceIndex(out uint aStartupSourceIndex);
+        void SetPropertyStartupSourceEnabledChanged(CpProxy.CallbackPropertyChanged aStartupSourceEnabledChanged);
+        void PropertyStartupSourceEnabled(out bool aStartupSourceEnabled);
+        void SetPropertyProductAnySourceNameChanged(CpProxy.CallbackPropertyChanged aProductAnySourceNameChanged);
+        void PropertyProductAnySourceName(out uint aProductAnySourceName);
+        void SetPropertyProductAnySourceVisibleChanged(CpProxy.CallbackPropertyChanged aProductAnySourceVisibleChanged);
+        void PropertyProductAnySourceVisible(out uint aProductAnySourceVisible);
+        void SetPropertyProductAnySourceTypeChanged(CpProxy.CallbackPropertyChanged aProductAnySourceTypeChanged);
+        void PropertyProductAnySourceType(out uint aProductAnySourceType);
+    }
+
+    public class CpProxyLinnCoUkProduct3 : CpProxy, IDisposable, ICpProxyLinnCoUkProduct3
     {
         [DllImport("CpLinnCoUkProduct3")]
         static extern uint CpProxyLinnCoUkProduct3Create(uint aDeviceHandle);

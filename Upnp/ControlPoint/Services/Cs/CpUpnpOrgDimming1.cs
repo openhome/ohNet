@@ -5,7 +5,85 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyUpnpOrgDimming1 : CpProxy, IDisposable
+    public interface ICpProxyUpnpOrgDimming1
+    {
+        void SyncSetLoadLevelTarget(uint anewLoadlevelTarget);
+        void BeginSetLoadLevelTarget(uint anewLoadlevelTarget, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetLoadLevelTarget(uint aAsyncHandle);
+        void SyncGetLoadLevelTarget(out uint aGetLoadlevelTarget);
+        void BeginGetLoadLevelTarget(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetLoadLevelTarget(uint aAsyncHandle, out uint aGetLoadlevelTarget);
+        void SyncGetLoadLevelStatus(out uint aretLoadlevelStatus);
+        void BeginGetLoadLevelStatus(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetLoadLevelStatus(uint aAsyncHandle, out uint aretLoadlevelStatus);
+        void SyncSetOnEffectLevel(uint anewOnEffectLevel);
+        void BeginSetOnEffectLevel(uint anewOnEffectLevel, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetOnEffectLevel(uint aAsyncHandle);
+        void SyncSetOnEffect(string anewOnEffect);
+        void BeginSetOnEffect(string anewOnEffect, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetOnEffect(uint aAsyncHandle);
+        void SyncGetOnEffectParameters(out string aretOnEffect, out uint aretOnEffectLevel);
+        void BeginGetOnEffectParameters(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetOnEffectParameters(uint aAsyncHandle, out string aretOnEffect, out uint aretOnEffectLevel);
+        void SyncStepUp();
+        void BeginStepUp(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStepUp(uint aAsyncHandle);
+        void SyncStepDown();
+        void BeginStepDown(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStepDown(uint aAsyncHandle);
+        void SyncStartRampUp();
+        void BeginStartRampUp(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStartRampUp(uint aAsyncHandle);
+        void SyncStartRampDown();
+        void BeginStartRampDown(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStartRampDown(uint aAsyncHandle);
+        void SyncStopRamp();
+        void BeginStopRamp(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStopRamp(uint aAsyncHandle);
+        void SyncStartRampToLevel(uint anewLoadLevelTarget, uint anewRampTime);
+        void BeginStartRampToLevel(uint anewLoadLevelTarget, uint anewRampTime, CpProxy.CallbackAsyncComplete aCallback);
+        void EndStartRampToLevel(uint aAsyncHandle);
+        void SyncSetStepDelta(uint anewStepDelta);
+        void BeginSetStepDelta(uint anewStepDelta, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetStepDelta(uint aAsyncHandle);
+        void SyncGetStepDelta(out uint aretStepDelta);
+        void BeginGetStepDelta(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetStepDelta(uint aAsyncHandle, out uint aretStepDelta);
+        void SyncSetRampRate(uint anewRampRate);
+        void BeginSetRampRate(uint anewRampRate, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetRampRate(uint aAsyncHandle);
+        void SyncGetRampRate(out uint aretRampRate);
+        void BeginGetRampRate(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetRampRate(uint aAsyncHandle, out uint aretRampRate);
+        void SyncPauseRamp();
+        void BeginPauseRamp(CpProxy.CallbackAsyncComplete aCallback);
+        void EndPauseRamp(uint aAsyncHandle);
+        void SyncResumeRamp();
+        void BeginResumeRamp(CpProxy.CallbackAsyncComplete aCallback);
+        void EndResumeRamp(uint aAsyncHandle);
+        void SyncGetIsRamping(out bool aretIsRamping);
+        void BeginGetIsRamping(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetIsRamping(uint aAsyncHandle, out bool aretIsRamping);
+        void SyncGetRampPaused(out bool aretRampPaused);
+        void BeginGetRampPaused(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetRampPaused(uint aAsyncHandle, out bool aretRampPaused);
+        void SyncGetRampTime(out uint aretRampTime);
+        void BeginGetRampTime(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetRampTime(uint aAsyncHandle, out uint aretRampTime);
+
+        void SetPropertyLoadLevelStatusChanged(CpProxy.CallbackPropertyChanged aLoadLevelStatusChanged);
+        void PropertyLoadLevelStatus(out uint aLoadLevelStatus);
+        void SetPropertyStepDeltaChanged(CpProxy.CallbackPropertyChanged aStepDeltaChanged);
+        void PropertyStepDelta(out uint aStepDelta);
+        void SetPropertyRampRateChanged(CpProxy.CallbackPropertyChanged aRampRateChanged);
+        void PropertyRampRate(out uint aRampRate);
+        void SetPropertyIsRampingChanged(CpProxy.CallbackPropertyChanged aIsRampingChanged);
+        void PropertyIsRamping(out bool aIsRamping);
+        void SetPropertyRampPausedChanged(CpProxy.CallbackPropertyChanged aRampPausedChanged);
+        void PropertyRampPaused(out bool aRampPaused);
+    }
+
+    public class CpProxyUpnpOrgDimming1 : CpProxy, IDisposable, ICpProxyUpnpOrgDimming1
     {
         [DllImport("CpUpnpOrgDimming1")]
         static extern uint CpProxyUpnpOrgDimming1Create(uint aDeviceHandle);

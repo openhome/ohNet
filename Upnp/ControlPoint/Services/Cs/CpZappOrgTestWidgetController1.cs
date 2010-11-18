@@ -5,7 +5,24 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyZappOrgTestWidgetController1 : CpProxy, IDisposable
+    public interface ICpProxyZappOrgTestWidgetController1
+    {
+        void SyncCreateWidget(string aWidgetUdn);
+        void BeginCreateWidget(string aWidgetUdn, CpProxy.CallbackAsyncComplete aCallback);
+        void EndCreateWidget(uint aAsyncHandle);
+        void SyncRemoveWidget(string aWidgetUdn);
+        void BeginRemoveWidget(string aWidgetUdn, CpProxy.CallbackAsyncComplete aCallback);
+        void EndRemoveWidget(uint aAsyncHandle);
+        void SyncSetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, uint aRegisterValue);
+        void BeginSetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, uint aRegisterValue, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetWidgetRegister(uint aAsyncHandle);
+        void SyncGetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, out uint aRegisterValue);
+        void BeginGetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetWidgetRegister(uint aAsyncHandle, out uint aRegisterValue);
+
+    }
+
+    public class CpProxyZappOrgTestWidgetController1 : CpProxy, IDisposable, ICpProxyZappOrgTestWidgetController1
     {
         [DllImport("CpZappOrgTestWidgetController1")]
         static extern uint CpProxyZappOrgTestWidgetController1Create(uint aDeviceHandle);

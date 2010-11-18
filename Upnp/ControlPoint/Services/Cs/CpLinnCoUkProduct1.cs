@@ -5,7 +5,28 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyLinnCoUkProduct1 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkProduct1
+    {
+        void SyncRoom(out string aaRoom);
+        void BeginRoom(CpProxy.CallbackAsyncComplete aCallback);
+        void EndRoom(uint aAsyncHandle, out string aaRoom);
+        void SyncSetRoom(string aaRoom);
+        void BeginSetRoom(string aaRoom, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetRoom(uint aAsyncHandle);
+        void SyncStandby(out bool aaStandby);
+        void BeginStandby(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStandby(uint aAsyncHandle, out bool aaStandby);
+        void SyncSetStandby(bool aaStandby);
+        void BeginSetStandby(bool aaStandby, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetStandby(uint aAsyncHandle);
+
+        void SetPropertyRoomChanged(CpProxy.CallbackPropertyChanged aRoomChanged);
+        void PropertyRoom(out string aRoom);
+        void SetPropertyStandbyChanged(CpProxy.CallbackPropertyChanged aStandbyChanged);
+        void PropertyStandby(out bool aStandby);
+    }
+
+    public class CpProxyLinnCoUkProduct1 : CpProxy, IDisposable, ICpProxyLinnCoUkProduct1
     {
         [DllImport("CpLinnCoUkProduct1")]
         static extern uint CpProxyLinnCoUkProduct1Create(uint aDeviceHandle);

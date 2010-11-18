@@ -5,7 +5,23 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyUpnpOrgSwitchPower1 : CpProxy, IDisposable
+    public interface ICpProxyUpnpOrgSwitchPower1
+    {
+        void SyncSetTarget(bool anewTargetValue);
+        void BeginSetTarget(bool anewTargetValue, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetTarget(uint aAsyncHandle);
+        void SyncGetTarget(out bool aRetTargetValue);
+        void BeginGetTarget(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetTarget(uint aAsyncHandle, out bool aRetTargetValue);
+        void SyncGetStatus(out bool aResultStatus);
+        void BeginGetStatus(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetStatus(uint aAsyncHandle, out bool aResultStatus);
+
+        void SetPropertyStatusChanged(CpProxy.CallbackPropertyChanged aStatusChanged);
+        void PropertyStatus(out bool aStatus);
+    }
+
+    public class CpProxyUpnpOrgSwitchPower1 : CpProxy, IDisposable, ICpProxyUpnpOrgSwitchPower1
     {
         [DllImport("CpUpnpOrgSwitchPower1")]
         static extern uint CpProxyUpnpOrgSwitchPower1Create(uint aDeviceHandle);

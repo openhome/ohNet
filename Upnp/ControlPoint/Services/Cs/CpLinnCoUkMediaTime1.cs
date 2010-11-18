@@ -5,7 +5,17 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyLinnCoUkMediaTime1 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkMediaTime1
+    {
+        void SyncSeconds(out uint aaSeconds);
+        void BeginSeconds(CpProxy.CallbackAsyncComplete aCallback);
+        void EndSeconds(uint aAsyncHandle, out uint aaSeconds);
+
+        void SetPropertySecondsChanged(CpProxy.CallbackPropertyChanged aSecondsChanged);
+        void PropertySeconds(out uint aSeconds);
+    }
+
+    public class CpProxyLinnCoUkMediaTime1 : CpProxy, IDisposable, ICpProxyLinnCoUkMediaTime1
     {
         [DllImport("CpLinnCoUkMediaTime1")]
         static extern uint CpProxyLinnCoUkMediaTime1Create(uint aDeviceHandle);

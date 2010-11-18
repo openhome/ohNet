@@ -5,7 +5,60 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyUpnpOrgContentDirectory1 : CpProxy, IDisposable
+    public interface ICpProxyUpnpOrgContentDirectory1
+    {
+        void SyncGetSearchCapabilities(out string aSearchCaps);
+        void BeginGetSearchCapabilities(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetSearchCapabilities(uint aAsyncHandle, out string aSearchCaps);
+        void SyncGetSortCapabilities(out string aSortCaps);
+        void BeginGetSortCapabilities(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetSortCapabilities(uint aAsyncHandle, out string aSortCaps);
+        void SyncGetSystemUpdateID(out uint aId);
+        void BeginGetSystemUpdateID(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetSystemUpdateID(uint aAsyncHandle, out uint aId);
+        void SyncBrowse(string aObjectID, string aBrowseFlag, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
+        void BeginBrowse(string aObjectID, string aBrowseFlag, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, CpProxy.CallbackAsyncComplete aCallback);
+        void EndBrowse(uint aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
+        void SyncSearch(string aContainerID, string aSearchCriteria, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
+        void BeginSearch(string aContainerID, string aSearchCriteria, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSearch(uint aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
+        void SyncCreateObject(string aContainerID, string aElements, out string aObjectID, out string aResult);
+        void BeginCreateObject(string aContainerID, string aElements, CpProxy.CallbackAsyncComplete aCallback);
+        void EndCreateObject(uint aAsyncHandle, out string aObjectID, out string aResult);
+        void SyncDestroyObject(string aObjectID);
+        void BeginDestroyObject(string aObjectID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndDestroyObject(uint aAsyncHandle);
+        void SyncUpdateObject(string aObjectID, string aCurrentTagValue, string aNewTagValue);
+        void BeginUpdateObject(string aObjectID, string aCurrentTagValue, string aNewTagValue, CpProxy.CallbackAsyncComplete aCallback);
+        void EndUpdateObject(uint aAsyncHandle);
+        void SyncImportResource(string aSourceURI, string aDestinationURI, out uint aTransferID);
+        void BeginImportResource(string aSourceURI, string aDestinationURI, CpProxy.CallbackAsyncComplete aCallback);
+        void EndImportResource(uint aAsyncHandle, out uint aTransferID);
+        void SyncExportResource(string aSourceURI, string aDestinationURI, out uint aTransferID);
+        void BeginExportResource(string aSourceURI, string aDestinationURI, CpProxy.CallbackAsyncComplete aCallback);
+        void EndExportResource(uint aAsyncHandle, out uint aTransferID);
+        void SyncStopTransferResource(uint aTransferID);
+        void BeginStopTransferResource(uint aTransferID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndStopTransferResource(uint aAsyncHandle);
+        void SyncGetTransferProgress(uint aTransferID, out string aTransferStatus, out string aTransferLength, out string aTransferTotal);
+        void BeginGetTransferProgress(uint aTransferID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetTransferProgress(uint aAsyncHandle, out string aTransferStatus, out string aTransferLength, out string aTransferTotal);
+        void SyncDeleteResource(string aResourceURI);
+        void BeginDeleteResource(string aResourceURI, CpProxy.CallbackAsyncComplete aCallback);
+        void EndDeleteResource(uint aAsyncHandle);
+        void SyncCreateReference(string aContainerID, string aObjectID, out string aNewID);
+        void BeginCreateReference(string aContainerID, string aObjectID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndCreateReference(uint aAsyncHandle, out string aNewID);
+
+        void SetPropertyTransferIDsChanged(CpProxy.CallbackPropertyChanged aTransferIDsChanged);
+        void PropertyTransferIDs(out string aTransferIDs);
+        void SetPropertySystemUpdateIDChanged(CpProxy.CallbackPropertyChanged aSystemUpdateIDChanged);
+        void PropertySystemUpdateID(out uint aSystemUpdateID);
+        void SetPropertyContainerUpdateIDsChanged(CpProxy.CallbackPropertyChanged aContainerUpdateIDsChanged);
+        void PropertyContainerUpdateIDs(out string aContainerUpdateIDs);
+    }
+
+    public class CpProxyUpnpOrgContentDirectory1 : CpProxy, IDisposable, ICpProxyUpnpOrgContentDirectory1
     {
         [DllImport("CpUpnpOrgContentDirectory1")]
         static extern uint CpProxyUpnpOrgContentDirectory1Create(uint aDeviceHandle);

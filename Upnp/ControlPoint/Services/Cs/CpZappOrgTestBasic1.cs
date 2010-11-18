@@ -5,7 +5,73 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyZappOrgTestBasic1 : CpProxy, IDisposable
+    public interface ICpProxyZappOrgTestBasic1
+    {
+        void SyncIncrement(uint aValue, out uint aResult);
+        void BeginIncrement(uint aValue, CpProxy.CallbackAsyncComplete aCallback);
+        void EndIncrement(uint aAsyncHandle, out uint aResult);
+        void SyncDecrement(int aValue, out int aResult);
+        void BeginDecrement(int aValue, CpProxy.CallbackAsyncComplete aCallback);
+        void EndDecrement(uint aAsyncHandle, out int aResult);
+        void SyncToggle(bool aValue, out bool aResult);
+        void BeginToggle(bool aValue, CpProxy.CallbackAsyncComplete aCallback);
+        void EndToggle(uint aAsyncHandle, out bool aResult);
+        void SyncEchoString(string aValue, out string aResult);
+        void BeginEchoString(string aValue, CpProxy.CallbackAsyncComplete aCallback);
+        void EndEchoString(uint aAsyncHandle, out string aResult);
+        void SyncEchoBinary(string aValue, out string aResult);
+        void BeginEchoBinary(string aValue, CpProxy.CallbackAsyncComplete aCallback);
+        void EndEchoBinary(uint aAsyncHandle, out string aResult);
+        void SyncSetUint(uint aValueUint);
+        void BeginSetUint(uint aValueUint, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetUint(uint aAsyncHandle);
+        void SyncGetUint(out uint aValueUint);
+        void BeginGetUint(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetUint(uint aAsyncHandle, out uint aValueUint);
+        void SyncSetInt(int aValueInt);
+        void BeginSetInt(int aValueInt, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetInt(uint aAsyncHandle);
+        void SyncGetInt(out int aValueInt);
+        void BeginGetInt(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetInt(uint aAsyncHandle, out int aValueInt);
+        void SyncSetBool(bool aValueBool);
+        void BeginSetBool(bool aValueBool, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetBool(uint aAsyncHandle);
+        void SyncGetBool(out bool aValueBool);
+        void BeginGetBool(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetBool(uint aAsyncHandle, out bool aValueBool);
+        void SyncSetMultiple(uint aValueUint, int aValueInt, bool aValueBool);
+        void BeginSetMultiple(uint aValueUint, int aValueInt, bool aValueBool, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetMultiple(uint aAsyncHandle);
+        void SyncSetString(string aValueStr);
+        void BeginSetString(string aValueStr, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetString(uint aAsyncHandle);
+        void SyncGetString(out string aValueStr);
+        void BeginGetString(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetString(uint aAsyncHandle, out string aValueStr);
+        void SyncSetBinary(string aValueBin);
+        void BeginSetBinary(string aValueBin, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetBinary(uint aAsyncHandle);
+        void SyncGetBinary(out string aValueBin);
+        void BeginGetBinary(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetBinary(uint aAsyncHandle, out string aValueBin);
+        void SyncToggleBool();
+        void BeginToggleBool(CpProxy.CallbackAsyncComplete aCallback);
+        void EndToggleBool(uint aAsyncHandle);
+
+        void SetPropertyVarUintChanged(CpProxy.CallbackPropertyChanged aVarUintChanged);
+        void PropertyVarUint(out uint aVarUint);
+        void SetPropertyVarIntChanged(CpProxy.CallbackPropertyChanged aVarIntChanged);
+        void PropertyVarInt(out int aVarInt);
+        void SetPropertyVarBoolChanged(CpProxy.CallbackPropertyChanged aVarBoolChanged);
+        void PropertyVarBool(out bool aVarBool);
+        void SetPropertyVarStrChanged(CpProxy.CallbackPropertyChanged aVarStrChanged);
+        void PropertyVarStr(out string aVarStr);
+        void SetPropertyVarBinChanged(CpProxy.CallbackPropertyChanged aVarBinChanged);
+        void PropertyVarBin(out string aVarBin);
+    }
+
+    public class CpProxyZappOrgTestBasic1 : CpProxy, IDisposable, ICpProxyZappOrgTestBasic1
     {
         [DllImport("CpZappOrgTestBasic1")]
         static extern uint CpProxyZappOrgTestBasic1Create(uint aDeviceHandle);

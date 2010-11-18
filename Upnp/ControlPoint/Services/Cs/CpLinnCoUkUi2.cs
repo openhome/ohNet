@@ -5,7 +5,106 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyLinnCoUkUi2 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkUi2
+    {
+        void SyncDisplayTestPattern(int aaTestPattern);
+        void BeginDisplayTestPattern(int aaTestPattern, CpProxy.CallbackAsyncComplete aCallback);
+        void EndDisplayTestPattern(uint aAsyncHandle);
+        void SyncDisplayFill();
+        void BeginDisplayFill(CpProxy.CallbackAsyncComplete aCallback);
+        void EndDisplayFill(uint aAsyncHandle);
+        void SyncDisplayClear();
+        void BeginDisplayClear(CpProxy.CallbackAsyncComplete aCallback);
+        void EndDisplayClear(uint aAsyncHandle);
+        void SyncSetTestModeEnabled(bool aaEnabled);
+        void BeginSetTestModeEnabled(bool aaEnabled, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetTestModeEnabled(uint aAsyncHandle);
+        void SyncSimulateInfraredInput(uint aaCode);
+        void BeginSimulateInfraredInput(uint aaCode, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSimulateInfraredInput(uint aAsyncHandle);
+        void SyncSimulateButtonInput(uint aaCode);
+        void BeginSimulateButtonInput(uint aaCode, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSimulateButtonInput(uint aAsyncHandle);
+        void SyncSimulateLightSensor(uint aaLightLevel);
+        void BeginSimulateLightSensor(uint aaLightLevel, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSimulateLightSensor(uint aAsyncHandle);
+        void SyncGetLightSensorData(out uint aaLightLevel);
+        void BeginGetLightSensorData(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetLightSensorData(uint aAsyncHandle, out uint aaLightLevel);
+        void SyncSetDisplayBrightness(uint aaBrightness);
+        void BeginSetDisplayBrightness(uint aaBrightness, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetDisplayBrightness(uint aAsyncHandle);
+        void SyncSetDisplayBrightnessAuto(bool aaBrightnessAuto);
+        void BeginSetDisplayBrightnessAuto(bool aaBrightnessAuto, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetDisplayBrightnessAuto(uint aAsyncHandle);
+        void SyncSetInfraredCommands(string aaCommands);
+        void BeginSetInfraredCommands(string aaCommands, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetInfraredCommands(uint aAsyncHandle);
+        void SyncInfraredCommands(out string aaCommands);
+        void BeginInfraredCommands(CpProxy.CallbackAsyncComplete aCallback);
+        void EndInfraredCommands(uint aAsyncHandle, out string aaCommands);
+        void SyncSetInfraredTerminalCommands(string aaCommands);
+        void BeginSetInfraredTerminalCommands(string aaCommands, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetInfraredTerminalCommands(uint aAsyncHandle);
+        void SyncInfraredTerminalCommands(out string aaCommands);
+        void BeginInfraredTerminalCommands(CpProxy.CallbackAsyncComplete aCallback);
+        void EndInfraredTerminalCommands(uint aAsyncHandle, out string aaCommands);
+        void SyncDisplayBrightness(out uint aaBrightness);
+        void BeginDisplayBrightness(CpProxy.CallbackAsyncComplete aCallback);
+        void EndDisplayBrightness(uint aAsyncHandle, out uint aaBrightness);
+        void SyncDisplayBrightnessAuto(out bool aaBrightnessAuto);
+        void BeginDisplayBrightnessAuto(CpProxy.CallbackAsyncComplete aCallback);
+        void EndDisplayBrightnessAuto(uint aAsyncHandle, out bool aaBrightnessAuto);
+        void SyncDisplayUpsideDown(out bool aaUpsideDown);
+        void BeginDisplayUpsideDown(CpProxy.CallbackAsyncComplete aCallback);
+        void EndDisplayUpsideDown(uint aAsyncHandle, out bool aaUpsideDown);
+        void SyncSetDisplayUpsideDown(bool aaUpsideDown);
+        void BeginSetDisplayUpsideDown(bool aaUpsideDown, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetDisplayUpsideDown(uint aAsyncHandle);
+        void SyncSetDisplayScrollText(bool aaDisplayScrollText);
+        void BeginSetDisplayScrollText(bool aaDisplayScrollText, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetDisplayScrollText(uint aAsyncHandle);
+        void SyncDisplayScrollText(out bool aaDisplayScrollTextEnabled);
+        void BeginDisplayScrollText(CpProxy.CallbackAsyncComplete aCallback);
+        void EndDisplayScrollText(uint aAsyncHandle, out bool aaDisplayScrollTextEnabled);
+        void SyncSetDisplaySleep(bool aaEnabled);
+        void BeginSetDisplaySleep(bool aaEnabled, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetDisplaySleep(uint aAsyncHandle);
+        void SyncDisplaySleep(out bool aaEnabled);
+        void BeginDisplaySleep(CpProxy.CallbackAsyncComplete aCallback);
+        void EndDisplaySleep(uint aAsyncHandle, out bool aaEnabled);
+        void SyncSetDisplayLedOff(bool aaOff);
+        void BeginSetDisplayLedOff(bool aaOff, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetDisplayLedOff(uint aAsyncHandle);
+        void SyncDisplayLedOff(out bool aaOff);
+        void BeginDisplayLedOff(CpProxy.CallbackAsyncComplete aCallback);
+        void EndDisplayLedOff(uint aAsyncHandle, out bool aaOff);
+
+        void SetPropertyDisplayBrightnessChanged(CpProxy.CallbackPropertyChanged aDisplayBrightnessChanged);
+        void PropertyDisplayBrightness(out uint aDisplayBrightness);
+        void SetPropertyDisplayBrightnessAutoChanged(CpProxy.CallbackPropertyChanged aDisplayBrightnessAutoChanged);
+        void PropertyDisplayBrightnessAuto(out bool aDisplayBrightnessAuto);
+        void SetPropertyInfraredCommandsChanged(CpProxy.CallbackPropertyChanged aInfraredCommandsChanged);
+        void PropertyInfraredCommands(out string aInfraredCommands);
+        void SetPropertyInfraredTerminalCommandsChanged(CpProxy.CallbackPropertyChanged aInfraredTerminalCommandsChanged);
+        void PropertyInfraredTerminalCommands(out string aInfraredTerminalCommands);
+        void SetPropertyDisplayUpsideDownChanged(CpProxy.CallbackPropertyChanged aDisplayUpsideDownChanged);
+        void PropertyDisplayUpsideDown(out bool aDisplayUpsideDown);
+        void SetPropertyDisplayScrollTextChanged(CpProxy.CallbackPropertyChanged aDisplayScrollTextChanged);
+        void PropertyDisplayScrollText(out bool aDisplayScrollText);
+        void SetPropertyDisplaySleepChanged(CpProxy.CallbackPropertyChanged aDisplaySleepChanged);
+        void PropertyDisplaySleep(out bool aDisplaySleep);
+        void SetPropertyDisplayLedOffChanged(CpProxy.CallbackPropertyChanged aDisplayLedOffChanged);
+        void PropertyDisplayLedOff(out bool aDisplayLedOff);
+        void SetPropertyTerminalInputCodeChanged(CpProxy.CallbackPropertyChanged aTerminalInputCodeChanged);
+        void PropertyTerminalInputCode(out uint aTerminalInputCode);
+        void SetPropertyTerminalInputNameChanged(CpProxy.CallbackPropertyChanged aTerminalInputNameChanged);
+        void PropertyTerminalInputName(out string aTerminalInputName);
+        void SetPropertyDisplayPixelsChanged(CpProxy.CallbackPropertyChanged aDisplayPixelsChanged);
+        void PropertyDisplayPixels(out string aDisplayPixels);
+    }
+
+    public class CpProxyLinnCoUkUi2 : CpProxy, IDisposable, ICpProxyLinnCoUkUi2
     {
         [DllImport("CpLinnCoUkUi2")]
         static extern uint CpProxyLinnCoUkUi2Create(uint aDeviceHandle);

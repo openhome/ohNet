@@ -5,7 +5,21 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyLinnCoUkTime1 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkTime1
+    {
+        void SyncTime(out uint aaTrackCount, out uint aaDuration, out uint aaSeconds);
+        void BeginTime(CpProxy.CallbackAsyncComplete aCallback);
+        void EndTime(uint aAsyncHandle, out uint aaTrackCount, out uint aaDuration, out uint aaSeconds);
+
+        void SetPropertyTrackCountChanged(CpProxy.CallbackPropertyChanged aTrackCountChanged);
+        void PropertyTrackCount(out uint aTrackCount);
+        void SetPropertyDurationChanged(CpProxy.CallbackPropertyChanged aDurationChanged);
+        void PropertyDuration(out uint aDuration);
+        void SetPropertySecondsChanged(CpProxy.CallbackPropertyChanged aSecondsChanged);
+        void PropertySeconds(out uint aSeconds);
+    }
+
+    public class CpProxyLinnCoUkTime1 : CpProxy, IDisposable, ICpProxyLinnCoUkTime1
     {
         [DllImport("CpLinnCoUkTime1")]
         static extern uint CpProxyLinnCoUkTime1Create(uint aDeviceHandle);

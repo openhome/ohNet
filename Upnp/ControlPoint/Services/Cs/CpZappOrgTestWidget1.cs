@@ -5,7 +5,31 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyZappOrgTestWidget1 : CpProxy, IDisposable
+    public interface ICpProxyZappOrgTestWidget1
+    {
+        void SyncSetReadWriteRegister(uint aRegisterIndex, uint aRegisterValue);
+        void BeginSetReadWriteRegister(uint aRegisterIndex, uint aRegisterValue, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetReadWriteRegister(uint aAsyncHandle);
+
+        void SetPropertyReadWriteRegister0Changed(CpProxy.CallbackPropertyChanged aReadWriteRegister0Changed);
+        void PropertyReadWriteRegister0(out uint aReadWriteRegister0);
+        void SetPropertyReadWriteRegister1Changed(CpProxy.CallbackPropertyChanged aReadWriteRegister1Changed);
+        void PropertyReadWriteRegister1(out uint aReadWriteRegister1);
+        void SetPropertyReadWriteRegister2Changed(CpProxy.CallbackPropertyChanged aReadWriteRegister2Changed);
+        void PropertyReadWriteRegister2(out uint aReadWriteRegister2);
+        void SetPropertyReadWriteRegister3Changed(CpProxy.CallbackPropertyChanged aReadWriteRegister3Changed);
+        void PropertyReadWriteRegister3(out uint aReadWriteRegister3);
+        void SetPropertyReadOnlyRegister4Changed(CpProxy.CallbackPropertyChanged aReadOnlyRegister4Changed);
+        void PropertyReadOnlyRegister4(out uint aReadOnlyRegister4);
+        void SetPropertyReadOnlyRegister5Changed(CpProxy.CallbackPropertyChanged aReadOnlyRegister5Changed);
+        void PropertyReadOnlyRegister5(out uint aReadOnlyRegister5);
+        void SetPropertyReadOnlyRegister6Changed(CpProxy.CallbackPropertyChanged aReadOnlyRegister6Changed);
+        void PropertyReadOnlyRegister6(out uint aReadOnlyRegister6);
+        void SetPropertyReadOnlyRegister7Changed(CpProxy.CallbackPropertyChanged aReadOnlyRegister7Changed);
+        void PropertyReadOnlyRegister7(out uint aReadOnlyRegister7);
+    }
+
+    public class CpProxyZappOrgTestWidget1 : CpProxy, IDisposable, ICpProxyZappOrgTestWidget1
     {
         [DllImport("CpZappOrgTestWidget1")]
         static extern uint CpProxyZappOrgTestWidget1Create(uint aDeviceHandle);
