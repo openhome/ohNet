@@ -66,6 +66,7 @@ void TestBasicCpC::TestActions(CpDeviceC aDevice)
         CpProxyZappOrgTestBasic1SyncEchoBinary(proxy, valBin, 256, &result, &resultLen);
         ASSERT(resultLen == 256);
         ASSERT(strncmp(result, valBin, resultLen) == 0);
+        free(result);
     }
 
     CpProxyZappOrgTestBasic1Destroy(proxy);
