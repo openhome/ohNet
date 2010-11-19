@@ -177,6 +177,29 @@ void WsHeaderOrigin::Process(const Brx& aValue)
 }
 
 
+// SubscriptionDataWs
+
+SubscriptionDataWs::SubscriptionDataWs(const Brx& aSubscriberSid)
+    : iSubscriberSid(aSubscriberSid)
+{
+}
+
+const Brx& SubscriptionDataWs::SubscriberSid() const
+{
+    return iSubscriberSid;
+}
+
+const void* SubscriptionDataWs::Data() const
+{
+    return this;
+}
+
+void SubscriptionDataWs::Release()
+{
+    delete this;
+}
+
+
 // PropertyWriterWs
 
 PropertyWriterWs::PropertyWriterWs(DviSessionWebSocket& aSession, const Brx& aSid, TUint aSequenceNumber)
@@ -643,9 +666,8 @@ void DviSessionWebSocket::Subscribe(const Brx& aRequest)
     }
     Brh sid2;
     device->CreateSid(sid2);
-    /* cheat slightly by passing the subscriber's sid as aSubscriberPath
-       we get away with this as DviSubscription dowsn't use it internally and merely passes it back to CreateWriter */
-    DviSubscription* subscription = new DviSubscription(*device, *this, Endpoint(), sid, sid2, timeout);
+    SubscriptionDataWs* data = new SubscriptionDataWs(sid);
+    DviSubscription* subscription = new DviSubscription(*device, *this, data, sid2, timeout);
 
     try {
         WriteSubscriptionTimeout(sid, timeout);
@@ -730,10 +752,10 @@ void DviSessionWebSocket::WritePropertyUpdates()
     }
 }
 
-IPropertyWriter* DviSessionWebSocket::CreateWriter(const Endpoint& /*aSubscriber*/, const Brx& aSubscriberPath,
-                                                   const Brx& /*aSid*/, TUint aSequenceNumber)
+IPropertyWriter* DviSessionWebSocket::CreateWriter(const IDviSubscriptionUserData* aUserData, const Brx& /*aSid*/, TUint aSequenceNumber)
 {
-    return new PropertyWriterWs(*this, aSubscriberPath, aSequenceNumber);
+    const SubscriptionDataWs* data = reinterpret_cast<const SubscriptionDataWs*>(aUserData->Data());
+    return new PropertyWriterWs(*this, data->SubscriberSid(), aSequenceNumber);
 }
 
     

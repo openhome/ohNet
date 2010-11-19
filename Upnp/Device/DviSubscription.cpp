@@ -17,14 +17,12 @@ using namespace Zapp;
 // DviSubscription
 
 DviSubscription::DviSubscription(DviDevice& aDevice, IPropertyWriterFactory& aWriterFactory,
-                                 const Endpoint& aSubscriber, const Brx& aSubscriberPath,
-                                 Brh& aSid, TUint& aDurationSecs)
+                                 IDviSubscriptionUserData* aUserData, Brh& aSid, TUint& aDurationSecs)
     : iLock("MDSB")
     , iRefCount(1)
     , iDevice(aDevice)
     , iWriterFactory(aWriterFactory)
-    , iSubscriber(aSubscriber)
-    , iSubscriberPath(aSubscriberPath)
+    , iUserData(aUserData)
     , iService(NULL)
     , iSequenceNumber(0)
     , iExpired(false)
@@ -102,7 +100,7 @@ void DviSubscription::WriteChanges()
 			ASSERT(seq != 0); // => implementor hasn't initialised the property
 			if (seq != iPropertySequenceNumbers[i]) {
 				if (first) {
-					writer = iWriterFactory.CreateWriter(iSubscriber, iSubscriberPath, iSid, iSequenceNumber);
+					writer = iWriterFactory.CreateWriter(iUserData, iSid, iSequenceNumber);
                     if (writer == NULL) {
                         THROW(WriterError);
                     }
@@ -134,11 +132,6 @@ void DviSubscription::WriteChanges()
     iService->PropertiesUnlock();
 }
 
-const Endpoint& DviSubscription::Subscriber() const
-{
-    return iSubscriber;
-}
-
 const Brx& DviSubscription::Sid() const
 {
     return iSid;
@@ -167,6 +160,7 @@ TBool DviSubscription::HasExpired() const
 DviSubscription::~DviSubscription()
 {
     delete iTimer;
+    iUserData->Release();
 }
 
 void DviSubscription::Expired()

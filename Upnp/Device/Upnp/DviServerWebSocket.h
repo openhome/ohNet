@@ -104,6 +104,19 @@ private:
     Brh iOrigin;
 };
 
+class SubscriptionDataWs : public IDviSubscriptionUserData
+{
+public:
+    SubscriptionDataWs(const Brx& aSubscriberSid);
+    const Brx& SubscriberSid() const;
+    virtual const void* Data() const;
+    virtual void Release();
+private:
+    ~SubscriptionDataWs() {}
+private:
+    Brh iSubscriberSid;
+};
+
 class DviSessionWebSocket;
 
 class PropertyWriterWs : public PropertyWriter
@@ -150,7 +163,7 @@ private:
     void WriteSubscriptionTimeout(const Brx& aSid, TUint aSeconds);
     void WritePropertyUpdates();
 private: // IPropertyWriterFactory
-    IPropertyWriter* CreateWriter(const Endpoint& aSubscriber, const Brx& aSubscriberPath,
+    IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData,
                                   const Brx& aSid, TUint aSequenceNumber);
 private:
     class SubscriptionWrapper

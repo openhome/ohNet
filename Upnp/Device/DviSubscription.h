@@ -15,20 +15,32 @@
 
 namespace Zapp {
 
+class IDviSubscriptionUserData
+{
+public:
+    virtual const void* Data() const = 0;
+    virtual void Release() = 0;
+};
+    
+class IPropertyWriterFactory
+{
+public:
+    virtual IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData, 
+                                          const Brx& aSid, TUint aSequenceNumber) = 0;
+};
+
 class DviDevice;
 class DviService;
 class DviSubscription
 {
 public:
     DviSubscription(DviDevice& aDevice, IPropertyWriterFactory& aWriterFactory,
-                    const Endpoint& aSubscriber, const Brx& aSubscriberPath,
-                    Brh& aSid, TUint& aDurationSecs);
+                    IDviSubscriptionUserData* aUserData, Brh& aSid, TUint& aDurationSecs);
     void Start(DviService& aService);
     void AddRef();
     void RemoveRef();
     void Renew(TUint& aSeconds);
     void WriteChanges();
-    const Endpoint& Subscriber() const;
     const Brx& Sid() const;
     TBool PropertiesInitialised() const;
     TBool HasExpired() const;
@@ -40,8 +52,7 @@ private:
     TUint iRefCount;
     DviDevice& iDevice;
     IPropertyWriterFactory& iWriterFactory;
-    Endpoint iSubscriber;
-    Brh iSubscriberPath;
+    IDviSubscriptionUserData* iUserData;
     Brh iSid;
     DviService* iService;
     std::vector<TUint> iPropertySequenceNumbers;

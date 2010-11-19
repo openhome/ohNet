@@ -74,7 +74,7 @@ TUint CpiDeviceDv::Subscribe(CpiSubscription& aSubscription, const Uri& /*aSubsc
     Brh transfer(tmp);
     aSubscription.SetSid(transfer);
     TUint durationSecs = CpiSubscription::kDefaultDurationSecs;
-    iSubscriptionDv = new DviSubscription(iDeviceDv, *this, Endpoint(), Brn(""), sid, durationSecs); // !!!! refactor DviSubscription to replace aSubscriber +  aSubscriberPath with caller defined data
+    iSubscriptionDv = new DviSubscription(iDeviceDv, *this, NULL, sid, durationSecs);
     iSubscriptionDv->AddRef(); // guard against subscription expiring before client tries to renew or unsubscribe
     DviSubscriptionManager::AddSubscription(*iSubscriptionDv);
     DviService* service = Service(aSubscription.ServiceType());
@@ -106,7 +106,7 @@ void CpiDeviceDv::Release()
     delete this;
 }
 
-IPropertyWriter* CpiDeviceDv::CreateWriter(const Endpoint& /*aSubscriber*/, const Brx& /*aSubscriberPath*/,
+IPropertyWriter* CpiDeviceDv::CreateWriter(const IDviSubscriptionUserData* /*aUserData*/,
                                            const Brx& /*aSid*/, TUint aSequenceNumber)
 {
     if (!iSubscriptionCp->UpdateSequenceNumber(aSequenceNumber)) {

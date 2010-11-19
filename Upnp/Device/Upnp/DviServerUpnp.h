@@ -59,6 +59,21 @@ private:
     Bwh iUri;
 };
 
+class SubscriptionDataUpnp : public IDviSubscriptionUserData
+{
+public:
+    SubscriptionDataUpnp(const Endpoint& aSubscriber, const Brx& aSubscriberPath);
+    const Endpoint& Subscriber() const;
+    const Brx& SubscriberPath() const;
+    virtual const void* Data() const;
+    virtual void Release();
+private:
+    ~SubscriptionDataUpnp() {}
+private:
+    Endpoint iSubscriber;
+    Brh iSubscriberPath;
+};
+
 class PropertyWriterUpnp : public PropertyWriter
 {
 public:
@@ -118,8 +133,7 @@ private: // IDviInvocation
     void InvocationWriteStringEnd(const TChar* aName);
     void InvocationWriteEnd();
 private: // IPropertyWriterFactory
-    IPropertyWriter* CreateWriter(const Endpoint& aSubscriber, const Brx& aSubscriberPath,
-                                  const Brx& aSid, TUint aSequenceNumber);
+    IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData, const Brx& aSid, TUint aSequenceNumber);
 private:
     static const TUint kMaxRequestBytes = 4*1024;
     static const TUint kMaxResponseBytes = 4*1024;

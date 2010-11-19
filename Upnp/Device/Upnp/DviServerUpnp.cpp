@@ -177,6 +177,35 @@ void HeaderCallback::Process(const Brx& aValue)
 }
 
 
+// SubscriptionDataUpnp
+
+SubscriptionDataUpnp::SubscriptionDataUpnp(const Endpoint& aSubscriber, const Brx& aSubscriberPath)
+    : iSubscriber(aSubscriber)
+    , iSubscriberPath(aSubscriberPath)
+{
+}
+
+const Endpoint& SubscriptionDataUpnp::Subscriber() const
+{
+    return iSubscriber;
+}
+
+const Brx& SubscriptionDataUpnp::SubscriberPath() const
+{
+    return iSubscriberPath;
+}
+
+const void* SubscriptionDataUpnp::Data() const
+{
+    return this;
+}
+
+void SubscriptionDataUpnp::Release()
+{
+    delete this;
+}
+
+
 // PropertyWriterUpnp
 
 PropertyWriterUpnp::PropertyWriterUpnp(const Endpoint& aPublisher, const Endpoint& aSubscriber, const Brx& aSubscriberPath,
@@ -437,7 +466,8 @@ void DviSessionUpnp::Subscribe()
     TUint duration = iHeaderTimeout.Timeout();
     Brh sid;
     device->CreateSid(sid);
-    DviSubscription* subscription = new DviSubscription(*device, *this, iHeaderCallback.Endpoint(), iHeaderCallback.Uri(), sid, duration);
+    SubscriptionDataUpnp* data = new SubscriptionDataUpnp(iHeaderCallback.Endpoint(), iHeaderCallback.Uri());
+    DviSubscription* subscription = new DviSubscription(*device, *this, data, sid, duration);
     DviSubscriptionManager::AddSubscription(*subscription);
 
     if (iHeaderExpect.Continue()) {
@@ -925,11 +955,12 @@ void DviSessionUpnp::InvocationWriteEnd()
     iInvocationSem.Signal();
 }
 
-IPropertyWriter* DviSessionUpnp::CreateWriter(const Endpoint& aSubscriber, const Brx& aSubscriberPath,
+IPropertyWriter* DviSessionUpnp::CreateWriter(const IDviSubscriptionUserData* aUserData,
                                               const Brx& aSid, TUint aSequenceNumber)
 {
     Endpoint publisher(iPort, iInterface);
-    return new PropertyWriterUpnp(publisher, aSubscriber, aSubscriberPath, aSid, aSequenceNumber);
+    const SubscriptionDataUpnp* data = reinterpret_cast<const SubscriptionDataUpnp*>(aUserData->Data());
+    return new PropertyWriterUpnp(publisher, data->Subscriber(), data->SubscriberPath(), aSid, aSequenceNumber);
 }
 
 
