@@ -160,7 +160,9 @@ TBool DviSubscription::HasExpired() const
 DviSubscription::~DviSubscription()
 {
     delete iTimer;
-    iUserData->Release();
+    if (iUserData != NULL) {
+        iUserData->Release();
+    }
 }
 
 void DviSubscription::Expired()

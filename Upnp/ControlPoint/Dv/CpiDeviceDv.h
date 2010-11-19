@@ -32,7 +32,7 @@ private: // ICpiProtocol
 private: // ICpiDeviceObserver
     void Release();
 private: // IPropertyWriterFactory
-    IPropertyWriter* CreateWriter(const IDviSubscriptionUserData& aUserData, const Brx& aSid, TUint aSequenceNumber);
+    IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData, const Brx& aSid, TUint aSequenceNumber);
 private:
     CpiDevice* iDeviceCp;
     DviDevice& iDeviceDv;
