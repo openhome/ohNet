@@ -142,6 +142,7 @@ private:
     TBool iStarted;
     Timer* iRefreshTimer;
     Semaphore iXmlFetchSem;
+    Mutex iXmlFetchLock;
 };
 
 /**
