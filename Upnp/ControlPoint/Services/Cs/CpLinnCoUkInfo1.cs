@@ -5,7 +5,48 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyLinnCoUkInfo1 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkInfo1
+    {
+        void SyncCounters(out uint aaTrackCount, out uint aaDetailsCount, out uint aaMetatextCount);
+        void BeginCounters(CpProxy.CallbackAsyncComplete aCallback);
+        void EndCounters(uint aAsyncHandle, out uint aaTrackCount, out uint aaDetailsCount, out uint aaMetatextCount);
+        void SyncTrack(out string aaUri, out string aaMetadata);
+        void BeginTrack(CpProxy.CallbackAsyncComplete aCallback);
+        void EndTrack(uint aAsyncHandle, out string aaUri, out string aaMetadata);
+        void SyncDetails(out uint aaDuration, out uint aaBitRate, out uint aaBitDepth, out uint aaSampleRate, out bool aaLossless, out string aaCodecName);
+        void BeginDetails(CpProxy.CallbackAsyncComplete aCallback);
+        void EndDetails(uint aAsyncHandle, out uint aaDuration, out uint aaBitRate, out uint aaBitDepth, out uint aaSampleRate, out bool aaLossless, out string aaCodecName);
+        void SyncMetatext(out string aaMetatext);
+        void BeginMetatext(CpProxy.CallbackAsyncComplete aCallback);
+        void EndMetatext(uint aAsyncHandle, out string aaMetatext);
+
+        void SetPropertyTrackCountChanged(CpProxy.CallbackPropertyChanged aTrackCountChanged);
+        void PropertyTrackCount(out uint aTrackCount);
+        void SetPropertyDetailsCountChanged(CpProxy.CallbackPropertyChanged aDetailsCountChanged);
+        void PropertyDetailsCount(out uint aDetailsCount);
+        void SetPropertyMetatextCountChanged(CpProxy.CallbackPropertyChanged aMetatextCountChanged);
+        void PropertyMetatextCount(out uint aMetatextCount);
+        void SetPropertyUriChanged(CpProxy.CallbackPropertyChanged aUriChanged);
+        void PropertyUri(out string aUri);
+        void SetPropertyMetadataChanged(CpProxy.CallbackPropertyChanged aMetadataChanged);
+        void PropertyMetadata(out string aMetadata);
+        void SetPropertyDurationChanged(CpProxy.CallbackPropertyChanged aDurationChanged);
+        void PropertyDuration(out uint aDuration);
+        void SetPropertyBitRateChanged(CpProxy.CallbackPropertyChanged aBitRateChanged);
+        void PropertyBitRate(out uint aBitRate);
+        void SetPropertyBitDepthChanged(CpProxy.CallbackPropertyChanged aBitDepthChanged);
+        void PropertyBitDepth(out uint aBitDepth);
+        void SetPropertySampleRateChanged(CpProxy.CallbackPropertyChanged aSampleRateChanged);
+        void PropertySampleRate(out uint aSampleRate);
+        void SetPropertyLosslessChanged(CpProxy.CallbackPropertyChanged aLosslessChanged);
+        void PropertyLossless(out bool aLossless);
+        void SetPropertyCodecNameChanged(CpProxy.CallbackPropertyChanged aCodecNameChanged);
+        void PropertyCodecName(out string aCodecName);
+        void SetPropertyMetatextChanged(CpProxy.CallbackPropertyChanged aMetatextChanged);
+        void PropertyMetatext(out string aMetatext);
+    }
+
+    public class CpProxyLinnCoUkInfo1 : CpProxy, IDisposable, ICpProxyLinnCoUkInfo1
     {
         [DllImport("CpLinnCoUkInfo1")]
         static extern uint CpProxyLinnCoUkInfo1Create(uint aDeviceHandle);
@@ -543,17 +584,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
             lock (this)
             {
                 if (iHandle == 0)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyLinnCoUkInfo1Destroy(iHandle);
                 iHandle = 0;
             }
-            CpProxyLinnCoUkInfo1Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

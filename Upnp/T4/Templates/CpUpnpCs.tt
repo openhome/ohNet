@@ -56,7 +56,23 @@ using Zapp;
 
 namespace Zapp
 {
-    public class <#=className#> : CpProxy, IDisposable
+    public interface I<#=className#>
+    {
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+        void Sync<#=a.name#>(<#=ArgsFull(a)#>);
+        void Begin<#=a.name#>(<#=InArgsFull(a, true)#>CpProxy.CallbackAsyncComplete aCallback);
+        void End<#=a.name#>(uint aAsyncHandle<#=OutArgsFull(a, true)#>);
+<#  } #>
+
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+        void SetProperty<#=s.name#>Changed(CpProxy.CallbackPropertyChanged a<#=s.name#>Changed);
+        void Property<#=s.name#>(out <#=argtype[s.type]#> a<#=s.name#>);
+<#  } #>
+    }
+
+    public class <#=className#> : CpProxy, IDisposable, I<#=className#>
     {
         [DllImport("<#=dllName#>")]
         static extern uint <#=className#>Create(uint aDeviceHandle);
@@ -321,17 +337,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
             lock (this)
             {
                 if (iHandle == 0)
                 {
                     return;
                 }
-                handle = iHandle;
+                <#=className#>Destroy(iHandle);
                 iHandle = 0;
             }
-            <#=className#>Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

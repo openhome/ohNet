@@ -6,3 +6,9 @@
    fun:pthread_create@@GLIBC_2*
    fun:OsThreadCreate
 }
+
+{
+   x64InvalidWrite
+   Memcheck:Value8
+   fun:do_lookup_x
+}

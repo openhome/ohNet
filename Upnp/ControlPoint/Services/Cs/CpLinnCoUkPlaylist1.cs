@@ -5,7 +5,56 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyLinnCoUkPlaylist1 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkPlaylist1
+    {
+        void SyncRead(uint aaId, out string aaUri, out string aaMetaData);
+        void BeginRead(uint aaId, CpProxy.CallbackAsyncComplete aCallback);
+        void EndRead(uint aAsyncHandle, out string aaUri, out string aaMetaData);
+        void SyncReadList(string aaIdList, out string aaMetaDataList);
+        void BeginReadList(string aaIdList, CpProxy.CallbackAsyncComplete aCallback);
+        void EndReadList(uint aAsyncHandle, out string aaMetaDataList);
+        void SyncInsert(uint aaAfterId, string aaUri, string aaMetaData, out uint aaNewId);
+        void BeginInsert(uint aaAfterId, string aaUri, string aaMetaData, CpProxy.CallbackAsyncComplete aCallback);
+        void EndInsert(uint aAsyncHandle, out uint aaNewId);
+        void SyncDelete(uint aaId);
+        void BeginDelete(uint aaId, CpProxy.CallbackAsyncComplete aCallback);
+        void EndDelete(uint aAsyncHandle);
+        void SyncDeleteAll();
+        void BeginDeleteAll(CpProxy.CallbackAsyncComplete aCallback);
+        void EndDeleteAll(uint aAsyncHandle);
+        void SyncSetRepeat(bool aaRepeat);
+        void BeginSetRepeat(bool aaRepeat, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetRepeat(uint aAsyncHandle);
+        void SyncRepeat(out bool aaRepeat);
+        void BeginRepeat(CpProxy.CallbackAsyncComplete aCallback);
+        void EndRepeat(uint aAsyncHandle, out bool aaRepeat);
+        void SyncSetShuffle(bool aaShuffle);
+        void BeginSetShuffle(bool aaShuffle, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetShuffle(uint aAsyncHandle);
+        void SyncShuffle(out bool aaShuffle);
+        void BeginShuffle(CpProxy.CallbackAsyncComplete aCallback);
+        void EndShuffle(uint aAsyncHandle, out bool aaShuffle);
+        void SyncTracksMax(out uint aaTracksMax);
+        void BeginTracksMax(CpProxy.CallbackAsyncComplete aCallback);
+        void EndTracksMax(uint aAsyncHandle, out uint aaTracksMax);
+        void SyncIdArray(out uint aaIdArrayToken, out string aaIdArray);
+        void BeginIdArray(CpProxy.CallbackAsyncComplete aCallback);
+        void EndIdArray(uint aAsyncHandle, out uint aaIdArrayToken, out string aaIdArray);
+        void SyncIdArrayChanged(uint aaIdArrayToken, out bool aaIdArrayChanged);
+        void BeginIdArrayChanged(uint aaIdArrayToken, CpProxy.CallbackAsyncComplete aCallback);
+        void EndIdArrayChanged(uint aAsyncHandle, out bool aaIdArrayChanged);
+
+        void SetPropertyIdArrayChanged(CpProxy.CallbackPropertyChanged aIdArrayChanged);
+        void PropertyIdArray(out string aIdArray);
+        void SetPropertyRepeatChanged(CpProxy.CallbackPropertyChanged aRepeatChanged);
+        void PropertyRepeat(out bool aRepeat);
+        void SetPropertyShuffleChanged(CpProxy.CallbackPropertyChanged aShuffleChanged);
+        void PropertyShuffle(out bool aShuffle);
+        void SetPropertyTracksMaxChanged(CpProxy.CallbackPropertyChanged aTracksMaxChanged);
+        void PropertyTracksMax(out uint aTracksMax);
+    }
+
+    public class CpProxyLinnCoUkPlaylist1 : CpProxy, IDisposable, ICpProxyLinnCoUkPlaylist1
     {
         [DllImport("CpLinnCoUkPlaylist1")]
         static extern uint CpProxyLinnCoUkPlaylist1Create(uint aDeviceHandle);
@@ -569,17 +618,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
             lock (this)
             {
                 if (iHandle == 0)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyLinnCoUkPlaylist1Destroy(iHandle);
                 iHandle = 0;
             }
-            CpProxyLinnCoUkPlaylist1Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

@@ -14,10 +14,12 @@ public:
     void EnableActionCreateWidget(CallbackTestWidgetController1CreateWidget aCallback, void* aPtr);
     void EnableActionRemoveWidget(CallbackTestWidgetController1RemoveWidget aCallback, void* aPtr);
     void EnableActionSetWidgetRegister(CallbackTestWidgetController1SetWidgetRegister aCallback, void* aPtr);
+    void EnableActionGetWidgetRegister(CallbackTestWidgetController1GetWidgetRegister aCallback, void* aPtr);
 private:
     void CreateWidget(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn);
     void RemoveWidget(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn);
     void SetWidgetRegister(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn, TUint aRegisterIndex, TUint aRegisterValue);
+    void GetWidgetRegister(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn, TUint aRegisterIndex, IInvocationResponseUint& aRegisterValue);
 private:
     CallbackTestWidgetController1CreateWidget iCallbackCreateWidget;
     void* iPtrCreateWidget;
@@ -25,6 +27,8 @@ private:
     void* iPtrRemoveWidget;
     CallbackTestWidgetController1SetWidgetRegister iCallbackSetWidgetRegister;
     void* iPtrSetWidgetRegister;
+    CallbackTestWidgetController1GetWidgetRegister iCallbackGetWidgetRegister;
+    void* iPtrGetWidgetRegister;
 };
 
 DvProviderZappOrgTestWidgetController1C::DvProviderZappOrgTestWidgetController1C(DvDevice& aDevice)
@@ -51,6 +55,13 @@ void DvProviderZappOrgTestWidgetController1C::EnableActionSetWidgetRegister(Call
     iCallbackSetWidgetRegister = aCallback;
     iPtrSetWidgetRegister = aPtr;
     DvProviderZappOrgTestWidgetController1::EnableActionSetWidgetRegister();
+}
+
+void DvProviderZappOrgTestWidgetController1C::EnableActionGetWidgetRegister(CallbackTestWidgetController1GetWidgetRegister aCallback, void* aPtr)
+{
+    iCallbackGetWidgetRegister = aCallback;
+    iPtrGetWidgetRegister = aPtr;
+    DvProviderZappOrgTestWidgetController1::EnableActionGetWidgetRegister();
 }
 
 void DvProviderZappOrgTestWidgetController1C::CreateWidget(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn)
@@ -86,6 +97,19 @@ void DvProviderZappOrgTestWidgetController1C::SetWidgetRegister(IInvocationRespo
     aResponse.End();
 }
 
+void DvProviderZappOrgTestWidgetController1C::GetWidgetRegister(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn, TUint aRegisterIndex, IInvocationResponseUint& aRegisterValue)
+{
+    uint32_t RegisterValue;
+    ASSERT(iCallbackGetWidgetRegister != NULL);
+    if (0 != iCallbackGetWidgetRegister(iPtrGetWidgetRegister, aVersion, (const char*)aWidgetUdn.Ptr(), aRegisterIndex, &RegisterValue)) {
+        aResponse.Error(502, Brn("Action failed"));
+        return;
+    }
+    aResponse.Start();
+    aRegisterValue.Write(RegisterValue);
+    aResponse.End();
+}
+
 
 
 THandle DvProviderZappOrgTestWidgetController1Create(DvDeviceC aDevice)
@@ -111,5 +135,10 @@ void DvProviderZappOrgTestWidgetController1EnableActionRemoveWidget(THandle aPro
 void DvProviderZappOrgTestWidgetController1EnableActionSetWidgetRegister(THandle aProvider, CallbackTestWidgetController1SetWidgetRegister aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderZappOrgTestWidgetController1C*>(aProvider)->EnableActionSetWidgetRegister(aCallback, aPtr);
+}
+
+void DvProviderZappOrgTestWidgetController1EnableActionGetWidgetRegister(THandle aProvider, CallbackTestWidgetController1GetWidgetRegister aCallback, void* aPtr)
+{
+    reinterpret_cast<DvProviderZappOrgTestWidgetController1C*>(aProvider)->EnableActionGetWidgetRegister(aCallback, aPtr);
 }
 

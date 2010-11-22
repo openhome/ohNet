@@ -136,7 +136,7 @@ void EventSessionUpnp::Run()
             LOG(kEvent, "EventSessionUpnp::Run, sid - ");
             LOG(kEvent, iHeaderSid.Sid());
             LOG(kEvent, " seq - %u\n", iHeaderSeq.Seq());
-            ProcessNotification(subscription->EventProcessor(), entity);
+            ProcessNotification(*subscription, entity);
         }
     }
     catch(HttpError) {

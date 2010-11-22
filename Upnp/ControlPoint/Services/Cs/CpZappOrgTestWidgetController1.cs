@@ -5,7 +5,24 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyZappOrgTestWidgetController1 : CpProxy, IDisposable
+    public interface ICpProxyZappOrgTestWidgetController1
+    {
+        void SyncCreateWidget(string aWidgetUdn);
+        void BeginCreateWidget(string aWidgetUdn, CpProxy.CallbackAsyncComplete aCallback);
+        void EndCreateWidget(uint aAsyncHandle);
+        void SyncRemoveWidget(string aWidgetUdn);
+        void BeginRemoveWidget(string aWidgetUdn, CpProxy.CallbackAsyncComplete aCallback);
+        void EndRemoveWidget(uint aAsyncHandle);
+        void SyncSetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, uint aRegisterValue);
+        void BeginSetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, uint aRegisterValue, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetWidgetRegister(uint aAsyncHandle);
+        void SyncGetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, out uint aRegisterValue);
+        void BeginGetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetWidgetRegister(uint aAsyncHandle, out uint aRegisterValue);
+
+    }
+
+    public class CpProxyZappOrgTestWidgetController1 : CpProxy, IDisposable, ICpProxyZappOrgTestWidgetController1
     {
         [DllImport("CpZappOrgTestWidgetController1")]
         static extern uint CpProxyZappOrgTestWidgetController1Create(uint aDeviceHandle);
@@ -29,6 +46,12 @@ namespace Zapp
         static extern unsafe void CpProxyZappOrgTestWidgetController1BeginSetWidgetRegister(uint aHandle, char* aWidgetUdn, uint aRegisterIndex, uint aRegisterValue, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestWidgetController1")]
         static extern unsafe int CpProxyZappOrgTestWidgetController1EndSetWidgetRegister(uint aHandle, uint aAsync);
+        [DllImport("CpZappOrgTestWidgetController1")]
+        static extern unsafe void CpProxyZappOrgTestWidgetController1SyncGetWidgetRegister(uint aHandle, char* aWidgetUdn, uint aRegisterIndex, uint* aRegisterValue);
+        [DllImport("CpZappOrgTestWidgetController1")]
+        static extern unsafe void CpProxyZappOrgTestWidgetController1BeginGetWidgetRegister(uint aHandle, char* aWidgetUdn, uint aRegisterIndex, CallbackActionComplete aCallback, IntPtr aPtr);
+        [DllImport("CpZappOrgTestWidgetController1")]
+        static extern unsafe int CpProxyZappOrgTestWidgetController1EndGetWidgetRegister(uint aHandle, uint aAsync, uint* aRegisterValue);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -124,6 +147,36 @@ namespace Zapp
 			}
         }
 
+        public unsafe void SyncGetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, out uint aRegisterValue)
+        {
+			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
+			fixed (uint* registerValue = &aRegisterValue)
+			{
+				CpProxyZappOrgTestWidgetController1SyncGetWidgetRegister(iHandle, widgetUdn, aRegisterIndex, registerValue);
+			}
+			Marshal.FreeHGlobal((IntPtr)widgetUdn);
+        }
+
+        public unsafe void BeginGetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, CallbackAsyncComplete aCallback)
+        {
+			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
+            GCHandle gch = GCHandle.Alloc(aCallback);
+            IntPtr ptr = GCHandle.ToIntPtr(gch);
+            CpProxyZappOrgTestWidgetController1BeginGetWidgetRegister(iHandle, widgetUdn, aRegisterIndex, iActionComplete, ptr);
+			Marshal.FreeHGlobal((IntPtr)widgetUdn);
+        }
+
+        public unsafe void EndGetWidgetRegister(uint aAsyncHandle, out uint aRegisterValue)
+        {
+			fixed (uint* registerValue = &aRegisterValue)
+			{
+				if (0 != CpProxyZappOrgTestWidgetController1EndGetWidgetRegister(iHandle, aAsyncHandle, registerValue))
+				{
+					throw(new ProxyError());
+				}
+			}
+        }
+
         public void Dispose()
         {
             DoDispose(true);
@@ -136,17 +189,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
             lock (this)
             {
                 if (iHandle == 0)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyZappOrgTestWidgetController1Destroy(iHandle);
                 iHandle = 0;
             }
-            CpProxyZappOrgTestWidgetController1Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

@@ -5,7 +5,43 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyLinnCoUkDelay1 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkDelay1
+    {
+        void SyncPresetXml(out string aaPresetXml);
+        void BeginPresetXml(CpProxy.CallbackAsyncComplete aCallback);
+        void EndPresetXml(uint aAsyncHandle, out string aaPresetXml);
+        void SyncPresetIndex(out uint aaIndex);
+        void BeginPresetIndex(CpProxy.CallbackAsyncComplete aCallback);
+        void EndPresetIndex(uint aAsyncHandle, out uint aaIndex);
+        void SyncSetPresetIndex(uint aaIndex);
+        void BeginSetPresetIndex(uint aaIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetPresetIndex(uint aAsyncHandle);
+        void SyncSetPresetDelay(uint aaIndex, uint aaDelay);
+        void BeginSetPresetDelay(uint aaIndex, uint aaDelay, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetPresetDelay(uint aAsyncHandle);
+        void SyncSetPresetVisible(uint aaIndex, bool aaVisible);
+        void BeginSetPresetVisible(uint aaIndex, bool aaVisible, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetPresetVisible(uint aAsyncHandle);
+        void SyncSetPresetName(uint aaIndex, string aaName);
+        void BeginSetPresetName(uint aaIndex, string aaName, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetPresetName(uint aAsyncHandle);
+        void SyncDelayMinimum(out uint aaDelay);
+        void BeginDelayMinimum(CpProxy.CallbackAsyncComplete aCallback);
+        void EndDelayMinimum(uint aAsyncHandle, out uint aaDelay);
+        void SyncDelayMaximum(out uint aaDelay);
+        void BeginDelayMaximum(CpProxy.CallbackAsyncComplete aCallback);
+        void EndDelayMaximum(uint aAsyncHandle, out uint aaDelay);
+        void SyncPresetCount(out uint aaCount);
+        void BeginPresetCount(CpProxy.CallbackAsyncComplete aCallback);
+        void EndPresetCount(uint aAsyncHandle, out uint aaCount);
+
+        void SetPropertyPresetXmlChanged(CpProxy.CallbackPropertyChanged aPresetXmlChanged);
+        void PropertyPresetXml(out string aPresetXml);
+        void SetPropertyPresetIndexChanged(CpProxy.CallbackPropertyChanged aPresetIndexChanged);
+        void PropertyPresetIndex(out uint aPresetIndex);
+    }
+
+    public class CpProxyLinnCoUkDelay1 : CpProxy, IDisposable, ICpProxyLinnCoUkDelay1
     {
         [DllImport("CpLinnCoUkDelay1")]
         static extern uint CpProxyLinnCoUkDelay1Create(uint aDeviceHandle);
@@ -382,17 +418,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
             lock (this)
             {
                 if (iHandle == 0)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyLinnCoUkDelay1Destroy(iHandle);
                 iHandle = 0;
             }
-            CpProxyLinnCoUkDelay1Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

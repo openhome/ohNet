@@ -5,7 +5,33 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyZappOrgTestLights1 : CpProxy, IDisposable
+    public interface ICpProxyZappOrgTestLights1
+    {
+        void SyncGetCount(out uint aCount);
+        void BeginGetCount(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetCount(uint aAsyncHandle, out uint aCount);
+        void SyncGetRoom(uint aIndex, out string aRoomName);
+        void BeginGetRoom(uint aIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetRoom(uint aAsyncHandle, out string aRoomName);
+        void SyncGetName(uint aIndex, out string aFriendlyName);
+        void BeginGetName(uint aIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetName(uint aAsyncHandle, out string aFriendlyName);
+        void SyncGetPosition(uint aIndex, out uint aX, out uint aY, out uint aZ);
+        void BeginGetPosition(uint aIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetPosition(uint aAsyncHandle, out uint aX, out uint aY, out uint aZ);
+        void SyncSetColor(uint aIndex, uint aColor);
+        void BeginSetColor(uint aIndex, uint aColor, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetColor(uint aAsyncHandle);
+        void SyncGetColor(uint aIndex, out uint aColor);
+        void BeginGetColor(uint aIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetColor(uint aAsyncHandle, out uint aColor);
+        void SyncGetColorComponents(uint aColor, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue);
+        void BeginGetColorComponents(uint aColor, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetColorComponents(uint aAsyncHandle, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue);
+
+    }
+
+    public class CpProxyZappOrgTestLights1 : CpProxy, IDisposable, ICpProxyZappOrgTestLights1
     {
         [DllImport("CpZappOrgTestLights1")]
         static extern uint CpProxyZappOrgTestLights1Create(uint aDeviceHandle);
@@ -274,17 +300,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
             lock (this)
             {
                 if (iHandle == 0)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyZappOrgTestLights1Destroy(iHandle);
                 iHandle = 0;
             }
-            CpProxyZappOrgTestLights1Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

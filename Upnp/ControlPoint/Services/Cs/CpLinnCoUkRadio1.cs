@@ -5,7 +5,74 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyLinnCoUkRadio1 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkRadio1
+    {
+        void SyncPlay();
+        void BeginPlay(CpProxy.CallbackAsyncComplete aCallback);
+        void EndPlay(uint aAsyncHandle);
+        void SyncPause();
+        void BeginPause(CpProxy.CallbackAsyncComplete aCallback);
+        void EndPause(uint aAsyncHandle);
+        void SyncStop();
+        void BeginStop(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStop(uint aAsyncHandle);
+        void SyncSeekSecondAbsolute(uint aaSecond);
+        void BeginSeekSecondAbsolute(uint aaSecond, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSeekSecondAbsolute(uint aAsyncHandle);
+        void SyncSeekSecondRelative(int aaSecond);
+        void BeginSeekSecondRelative(int aaSecond, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSeekSecondRelative(uint aAsyncHandle);
+        void SyncChannel(out string aaUri, out string aaMetadata);
+        void BeginChannel(CpProxy.CallbackAsyncComplete aCallback);
+        void EndChannel(uint aAsyncHandle, out string aaUri, out string aaMetadata);
+        void SyncSetChannel(string aaUri, string aaMetadata);
+        void BeginSetChannel(string aaUri, string aaMetadata, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetChannel(uint aAsyncHandle);
+        void SyncProtocolInfo(out string aaInfo);
+        void BeginProtocolInfo(CpProxy.CallbackAsyncComplete aCallback);
+        void EndProtocolInfo(uint aAsyncHandle, out string aaInfo);
+        void SyncTransportState(out string aaState);
+        void BeginTransportState(CpProxy.CallbackAsyncComplete aCallback);
+        void EndTransportState(uint aAsyncHandle, out string aaState);
+        void SyncId(out uint aaId);
+        void BeginId(CpProxy.CallbackAsyncComplete aCallback);
+        void EndId(uint aAsyncHandle, out uint aaId);
+        void SyncSetId(uint aaId, string aaUri);
+        void BeginSetId(uint aaId, string aaUri, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetId(uint aAsyncHandle);
+        void SyncRead(uint aaId, out string aaMetadata);
+        void BeginRead(uint aaId, CpProxy.CallbackAsyncComplete aCallback);
+        void EndRead(uint aAsyncHandle, out string aaMetadata);
+        void SyncReadList(string aaIdList, out string aaMetadataList);
+        void BeginReadList(string aaIdList, CpProxy.CallbackAsyncComplete aCallback);
+        void EndReadList(uint aAsyncHandle, out string aaMetadataList);
+        void SyncIdArray(out uint aaIdArrayToken, out string aaIdArray);
+        void BeginIdArray(CpProxy.CallbackAsyncComplete aCallback);
+        void EndIdArray(uint aAsyncHandle, out uint aaIdArrayToken, out string aaIdArray);
+        void SyncIdArrayChanged(uint aaIdArrayToken, out bool aaIdArrayChanged);
+        void BeginIdArrayChanged(uint aaIdArrayToken, CpProxy.CallbackAsyncComplete aCallback);
+        void EndIdArrayChanged(uint aAsyncHandle, out bool aaIdArrayChanged);
+        void SyncIdsMax(out uint aaIdsMax);
+        void BeginIdsMax(CpProxy.CallbackAsyncComplete aCallback);
+        void EndIdsMax(uint aAsyncHandle, out uint aaIdsMax);
+
+        void SetPropertyChannelUriChanged(CpProxy.CallbackPropertyChanged aChannelUriChanged);
+        void PropertyChannelUri(out string aChannelUri);
+        void SetPropertyChannelMetadataChanged(CpProxy.CallbackPropertyChanged aChannelMetadataChanged);
+        void PropertyChannelMetadata(out string aChannelMetadata);
+        void SetPropertyTransportStateChanged(CpProxy.CallbackPropertyChanged aTransportStateChanged);
+        void PropertyTransportState(out string aTransportState);
+        void SetPropertyProtocolInfoChanged(CpProxy.CallbackPropertyChanged aProtocolInfoChanged);
+        void PropertyProtocolInfo(out string aProtocolInfo);
+        void SetPropertyIdChanged(CpProxy.CallbackPropertyChanged aIdChanged);
+        void PropertyId(out uint aId);
+        void SetPropertyIdArrayChanged(CpProxy.CallbackPropertyChanged aIdArrayChanged);
+        void PropertyIdArray(out string aIdArray);
+        void SetPropertyIdsMaxChanged(CpProxy.CallbackPropertyChanged aIdsMaxChanged);
+        void PropertyIdsMax(out uint aIdsMax);
+    }
+
+    public class CpProxyLinnCoUkRadio1 : CpProxy, IDisposable, ICpProxyLinnCoUkRadio1
     {
         [DllImport("CpLinnCoUkRadio1")]
         static extern uint CpProxyLinnCoUkRadio1Create(uint aDeviceHandle);
@@ -788,17 +855,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
             lock (this)
             {
                 if (iHandle == 0)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyLinnCoUkRadio1Destroy(iHandle);
                 iHandle = 0;
             }
-            CpProxyLinnCoUkRadio1Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

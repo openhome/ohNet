@@ -5,7 +5,42 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyLinnCoUkJukebox1 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkJukebox1
+    {
+        void SyncSetPresetPrefix(string aaUri);
+        void BeginSetPresetPrefix(string aaUri, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetPresetPrefix(uint aAsyncHandle);
+        void SyncPresetPrefix(out string aaUri);
+        void BeginPresetPrefix(CpProxy.CallbackAsyncComplete aCallback);
+        void EndPresetPrefix(uint aAsyncHandle, out string aaUri);
+        void SyncSetAlbumArtFileName(string aaName);
+        void BeginSetAlbumArtFileName(string aaName, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetAlbumArtFileName(uint aAsyncHandle);
+        void SyncAlbumArtFileName(out string aaName);
+        void BeginAlbumArtFileName(CpProxy.CallbackAsyncComplete aCallback);
+        void EndAlbumArtFileName(uint aAsyncHandle, out string aaName);
+        void SyncSetCurrentPreset(uint aaPreset);
+        void BeginSetCurrentPreset(uint aaPreset, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetCurrentPreset(uint aAsyncHandle);
+        void SyncCurrentPreset(out uint aaPreset);
+        void BeginCurrentPreset(CpProxy.CallbackAsyncComplete aCallback);
+        void EndCurrentPreset(uint aAsyncHandle, out uint aaPreset);
+        void SyncPresetMetaData(uint aaPreset, out string aaMetaData);
+        void BeginPresetMetaData(uint aaPreset, CpProxy.CallbackAsyncComplete aCallback);
+        void EndPresetMetaData(uint aAsyncHandle, out string aaMetaData);
+        void SyncLoadManifest(out uint aaTotalPresets);
+        void BeginLoadManifest(CpProxy.CallbackAsyncComplete aCallback);
+        void EndLoadManifest(uint aAsyncHandle, out uint aaTotalPresets);
+
+        void SetPropertyCurrentPresetChanged(CpProxy.CallbackPropertyChanged aCurrentPresetChanged);
+        void PropertyCurrentPreset(out uint aCurrentPreset);
+        void SetPropertyPresetPrefixChanged(CpProxy.CallbackPropertyChanged aPresetPrefixChanged);
+        void PropertyPresetPrefix(out string aPresetPrefix);
+        void SetPropertyAlbumArtFileNameChanged(CpProxy.CallbackPropertyChanged aAlbumArtFileNameChanged);
+        void PropertyAlbumArtFileName(out string aAlbumArtFileName);
+    }
+
+    public class CpProxyLinnCoUkJukebox1 : CpProxy, IDisposable, ICpProxyLinnCoUkJukebox1
     {
         [DllImport("CpLinnCoUkJukebox1")]
         static extern uint CpProxyLinnCoUkJukebox1Create(uint aDeviceHandle);
@@ -391,17 +426,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
             lock (this)
             {
                 if (iHandle == 0)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyLinnCoUkJukebox1Destroy(iHandle);
                 iHandle = 0;
             }
-            CpProxyLinnCoUkJukebox1Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

@@ -5,7 +5,33 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyUpnpOrgConnectionManager1 : CpProxy, IDisposable
+    public interface ICpProxyUpnpOrgConnectionManager1
+    {
+        void SyncGetProtocolInfo(out string aSource, out string aSink);
+        void BeginGetProtocolInfo(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetProtocolInfo(uint aAsyncHandle, out string aSource, out string aSink);
+        void SyncPrepareForConnection(string aRemoteProtocolInfo, string aPeerConnectionManager, int aPeerConnectionID, string aDirection, out int aConnectionID, out int aAVTransportID, out int aRcsID);
+        void BeginPrepareForConnection(string aRemoteProtocolInfo, string aPeerConnectionManager, int aPeerConnectionID, string aDirection, CpProxy.CallbackAsyncComplete aCallback);
+        void EndPrepareForConnection(uint aAsyncHandle, out int aConnectionID, out int aAVTransportID, out int aRcsID);
+        void SyncConnectionComplete(int aConnectionID);
+        void BeginConnectionComplete(int aConnectionID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndConnectionComplete(uint aAsyncHandle);
+        void SyncGetCurrentConnectionIDs(out string aConnectionIDs);
+        void BeginGetCurrentConnectionIDs(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetCurrentConnectionIDs(uint aAsyncHandle, out string aConnectionIDs);
+        void SyncGetCurrentConnectionInfo(int aConnectionID, out int aRcsID, out int aAVTransportID, out string aProtocolInfo, out string aPeerConnectionManager, out int aPeerConnectionID, out string aDirection, out string aStatus);
+        void BeginGetCurrentConnectionInfo(int aConnectionID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetCurrentConnectionInfo(uint aAsyncHandle, out int aRcsID, out int aAVTransportID, out string aProtocolInfo, out string aPeerConnectionManager, out int aPeerConnectionID, out string aDirection, out string aStatus);
+
+        void SetPropertySourceProtocolInfoChanged(CpProxy.CallbackPropertyChanged aSourceProtocolInfoChanged);
+        void PropertySourceProtocolInfo(out string aSourceProtocolInfo);
+        void SetPropertySinkProtocolInfoChanged(CpProxy.CallbackPropertyChanged aSinkProtocolInfoChanged);
+        void PropertySinkProtocolInfo(out string aSinkProtocolInfo);
+        void SetPropertyCurrentConnectionIDsChanged(CpProxy.CallbackPropertyChanged aCurrentConnectionIDsChanged);
+        void PropertyCurrentConnectionIDs(out string aCurrentConnectionIDs);
+    }
+
+    public class CpProxyUpnpOrgConnectionManager1 : CpProxy, IDisposable, ICpProxyUpnpOrgConnectionManager1
     {
         [DllImport("CpUpnpOrgConnectionManager1")]
         static extern uint CpProxyUpnpOrgConnectionManager1Create(uint aDeviceHandle);
@@ -337,17 +363,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
             lock (this)
             {
                 if (iHandle == 0)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyUpnpOrgConnectionManager1Destroy(iHandle);
                 iHandle = 0;
             }
-            CpProxyUpnpOrgConnectionManager1Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

@@ -130,3 +130,36 @@ int32_t CpProxyZappOrgTestWidgetController1EndSetWidgetRegister(THandle aHandle,
     return err;
 }
 
+void CpProxyZappOrgTestWidgetController1SyncGetWidgetRegister(THandle aHandle, const char* aWidgetUdn, uint32_t aRegisterIndex, uint32_t* aRegisterValue)
+{
+    CpProxyZappOrgTestWidgetController1C* proxyC = reinterpret_cast<CpProxyZappOrgTestWidgetController1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    Brh buf_aWidgetUdn(aWidgetUdn);
+    proxyC->Proxy()->SyncGetWidgetRegister(buf_aWidgetUdn, aRegisterIndex, *aRegisterValue);
+}
+
+void CpProxyZappOrgTestWidgetController1BeginGetWidgetRegister(THandle aHandle, const char* aWidgetUdn, uint32_t aRegisterIndex, ZappCallbackAsync aCallback, void* aPtr)
+{
+    CpProxyZappOrgTestWidgetController1C* proxyC = reinterpret_cast<CpProxyZappOrgTestWidgetController1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    Brh buf_aWidgetUdn(aWidgetUdn);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    proxyC->Proxy()->BeginGetWidgetRegister(buf_aWidgetUdn, aRegisterIndex, functor);
+}
+
+int32_t CpProxyZappOrgTestWidgetController1EndGetWidgetRegister(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aRegisterValue)
+{
+    int32_t err = 0;
+    CpProxyZappOrgTestWidgetController1C* proxyC = reinterpret_cast<CpProxyZappOrgTestWidgetController1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    ASSERT(async != NULL);
+    try {
+        proxyC->Proxy()->EndGetWidgetRegister(*async, *aRegisterValue);
+    }
+    catch(...) {
+        err = -1;
+    }
+    return err;
+}
+

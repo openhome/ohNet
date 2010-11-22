@@ -29,15 +29,18 @@ protected:
     void EnableActionCreateWidget();
     void EnableActionRemoveWidget();
     void EnableActionSetWidgetRegister();
+    void EnableActionGetWidgetRegister();
 private:
     virtual void CreateWidget(uint32_t aVersion, const std::string& aWidgetUdn);
     virtual void RemoveWidget(uint32_t aVersion, const std::string& aWidgetUdn);
     virtual void SetWidgetRegister(uint32_t aVersion, const std::string& aWidgetUdn, uint32_t aRegisterIndex, uint32_t aRegisterValue);
+    virtual void GetWidgetRegister(uint32_t aVersion, const std::string& aWidgetUdn, uint32_t aRegisterIndex, uint32_t& aRegisterValue);
 private:
     DvProviderZappOrgTestWidgetController1Cpp();
     void DoCreateWidget(IDviInvocation& aInvocation, uint32_t aVersion);
     void DoRemoveWidget(IDviInvocation& aInvocation, uint32_t aVersion);
     void DoSetWidgetRegister(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoGetWidgetRegister(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
 };
 

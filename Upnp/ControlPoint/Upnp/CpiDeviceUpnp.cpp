@@ -307,6 +307,7 @@ CpiDeviceListUpnp::CpiDeviceListUpnp(FunctorCpiDevice aAdded, FunctorCpiDevice a
     : CpiDeviceList(aAdded, aRemoved)
     , iStarted(false)
     , iXmlFetchSem("DRLS", 0)
+    , iXmlFetchLock("DRLM")
 {
     NetworkInterfaceList& ifList = Stack::NetworkInterfaceList();
     NetworkInterface* current = ifList.CurrentInterface();
@@ -339,6 +340,7 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
         iMulticastListener->RemoveNotifyHandler(iNotifyHandlerId);
         Stack::MulticastListenerRelease(iInterface);
     }
+    delete iUnicastListener;
     Map::iterator it = iMap.begin();
     while (it != iMap.end()) {
         CpiDevice* device = reinterpret_cast<CpiDevice*>(it->second);
@@ -354,7 +356,9 @@ CpiDeviceListUpnp::~CpiDeviceListUpnp()
         iXmlFetchSem.Wait();
         xmlWaitCount--;
     }
-    delete iUnicastListener;
+    iXmlFetchLock.Wait();
+    // ensure we don't destroy this class before XmlFetchCompleted completes
+    iXmlFetchLock.Signal();
     delete iRefreshTimer;
 }
 
@@ -493,6 +497,7 @@ void CpiDeviceListUpnp::RemoveAll()
 
 void CpiDeviceListUpnp::XmlFetchCompleted(CpiDeviceUpnp& aDevice, TBool aError)
 {
+    AutoMutex a(iXmlFetchLock);
     if (aError) {
         Remove(aDevice.Udn());
     }

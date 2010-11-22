@@ -5,7 +5,25 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyLinnCoUkConfiguration1 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkConfiguration1
+    {
+        void SyncConfigurationXml(out string aaConfigurationXml);
+        void BeginConfigurationXml(CpProxy.CallbackAsyncComplete aCallback);
+        void EndConfigurationXml(uint aAsyncHandle, out string aaConfigurationXml);
+        void SyncParameterXml(out string aaParameterXml);
+        void BeginParameterXml(CpProxy.CallbackAsyncComplete aCallback);
+        void EndParameterXml(uint aAsyncHandle, out string aaParameterXml);
+        void SyncSetParameter(string aaTarget, string aaName, string aaValue);
+        void BeginSetParameter(string aaTarget, string aaName, string aaValue, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetParameter(uint aAsyncHandle);
+
+        void SetPropertyConfigurationXmlChanged(CpProxy.CallbackPropertyChanged aConfigurationXmlChanged);
+        void PropertyConfigurationXml(out string aConfigurationXml);
+        void SetPropertyParameterXmlChanged(CpProxy.CallbackPropertyChanged aParameterXmlChanged);
+        void PropertyParameterXml(out string aParameterXml);
+    }
+
+    public class CpProxyLinnCoUkConfiguration1 : CpProxy, IDisposable, ICpProxyLinnCoUkConfiguration1
     {
         [DllImport("CpLinnCoUkConfiguration1")]
         static extern uint CpProxyLinnCoUkConfiguration1Create(uint aDeviceHandle);
@@ -206,17 +224,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
             lock (this)
             {
                 if (iHandle == 0)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyLinnCoUkConfiguration1Destroy(iHandle);
                 iHandle = 0;
             }
-            CpProxyLinnCoUkConfiguration1Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

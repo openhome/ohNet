@@ -22,7 +22,7 @@ public:
     DllExport TBool GetAttribute(const char* aKey, Brh& aValue) const;
     DllExport CpiDevice& Device();
 protected:
-    ~CpDevice();
+    virtual ~CpDevice();
 private:
     CpDevice(const CpDevice&);
     void operator=(const CpDevice&);

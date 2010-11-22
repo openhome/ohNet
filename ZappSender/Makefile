@@ -43,17 +43,17 @@ rmdir = rm -rf
 
 $(objdir)/WavSender.exe :
 	mkdir -p $(objdir)
-	$(compiler)/DvMusicOpenhomeOrgSender1.$(objext) -c $(cflags) $(includes) DvMusicOpenhomeOrgSender1.cpp
+	$(compiler)/DvAvOpenhomeOrgSender1.$(objext) -c $(cflags) $(includes) DvAvOpenhomeOrgSender1.cpp
 	$(compiler)/Ohm.$(objext) -c $(cflags) $(includes) Ohm.cpp
 	$(compiler)/OhmSender.$(objext) -c $(cflags) $(includes) OhmSender.cpp
 	$(compiler)/WavSender.$(objext) -c $(cflags) $(includes) WavSender.cpp
-	$(link) $(linkoutput)$(objdir)/WavSender.$(exeext) $(objdir)/WavSender.$(objext) $(objdir)/DvMusicOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(zappdir)/$(libprefix)upnp_core.$(libext) $(zappdir)/TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)/WavSender.$(exeext) $(objdir)/WavSender.$(objext) $(objdir)/DvAvOpenhomeOrgSender1.$(objext) $(objdir)/Ohm.$(objext) $(objdir)/OhmSender.$(objext) $(zappdir)/$(libprefix)upnp_core.$(libext) $(zappdir)/TestFramework.$(libext)
 
 t4 = $(toolsDir)/TextTransform.exe
 
-gen: DvMusicOpenhomeOrgSender1.h DvMusicOpenhomeOrgSender1.cpp
+gen: DvAvOpenhomeOrgSender1.h DvAvOpenhomeOrgSender1.cpp
 
-DvMusicOpenhomeOrgSender1.h : $(templatesDir)/DvUpnpCppCoreHeader.tt Sender1.xml
-	$(t4) -o DvMusicOpenhomeOrgSender1.h $(templatesDir)/DvUpnpCppCoreHeader.tt -a "xml:Sender1.xml" -a domain:music.openhome.org -a type:Sender -a version:1
-DvMusicOpenhomeOrgSender1.cpp : ../Upnp/T4/Templates/DvUpnpCppCoreSource.tt Sender1.xml
-	$(t4) -o DvMusicOpenhomeOrgSender1.cpp $(templatesDir)/DvUpnpCppCoreSource.tt -a "xml:Sender1.xml" -a domain:music.openhome.org -a type:Sender -a version:1
+DvAvOpenhomeOrgSender1.h : $(templatesDir)/DvUpnpCppCoreHeader.tt Sender1.xml
+	$(t4) -o DvAvOpenhomeOrgSender1.h $(templatesDir)/DvUpnpCppCoreHeader.tt -a "xml:Sender1.xml" -a domain:av.openhome.org -a type:Sender -a version:1
+DvAvOpenhomeOrgSender1.cpp : ../Upnp/T4/Templates/DvUpnpCppCoreSource.tt Sender1.xml
+	$(t4) -o DvAvOpenhomeOrgSender1.cpp $(templatesDir)/DvUpnpCppCoreSource.tt -a "xml:Sender1.xml" -a domain:av.openhome.org -a type:Sender -a version:1

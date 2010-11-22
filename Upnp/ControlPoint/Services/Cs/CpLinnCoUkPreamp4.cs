@@ -5,7 +5,66 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyLinnCoUkPreamp4 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkPreamp4
+    {
+        void SyncVolumeInc();
+        void BeginVolumeInc(CpProxy.CallbackAsyncComplete aCallback);
+        void EndVolumeInc(uint aAsyncHandle);
+        void SyncVolumeDec();
+        void BeginVolumeDec(CpProxy.CallbackAsyncComplete aCallback);
+        void EndVolumeDec(uint aAsyncHandle);
+        void SyncSetVolume(uint aaVolume);
+        void BeginSetVolume(uint aaVolume, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetVolume(uint aAsyncHandle);
+        void SyncVolume(out uint aaVolume);
+        void BeginVolume(CpProxy.CallbackAsyncComplete aCallback);
+        void EndVolume(uint aAsyncHandle, out uint aaVolume);
+        void SyncSetMute(bool aaMute);
+        void BeginSetMute(bool aaMute, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetMute(uint aAsyncHandle);
+        void SyncMute(out bool aaMute);
+        void BeginMute(CpProxy.CallbackAsyncComplete aCallback);
+        void EndMute(uint aAsyncHandle, out bool aaMute);
+        void SyncSetBalance(int aaBalance);
+        void BeginSetBalance(int aaBalance, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetBalance(uint aAsyncHandle);
+        void SyncBalance(out int aaBalance);
+        void BeginBalance(CpProxy.CallbackAsyncComplete aCallback);
+        void EndBalance(uint aAsyncHandle, out int aaBalance);
+        void SyncSetVolumeLimit(uint aaVolumeLimit);
+        void BeginSetVolumeLimit(uint aaVolumeLimit, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetVolumeLimit(uint aAsyncHandle);
+        void SyncVolumeLimit(out uint aaVolumeLimit);
+        void BeginVolumeLimit(CpProxy.CallbackAsyncComplete aCallback);
+        void EndVolumeLimit(uint aAsyncHandle, out uint aaVolumeLimit);
+        void SyncSetStartupVolume(uint aaStartupVolume);
+        void BeginSetStartupVolume(uint aaStartupVolume, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetStartupVolume(uint aAsyncHandle);
+        void SyncStartupVolume(out uint aaStartupVolume);
+        void BeginStartupVolume(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStartupVolume(uint aAsyncHandle, out uint aaStartupVolume);
+        void SyncSetStartupVolumeEnabled(bool aaStartupVolumeEnabled);
+        void BeginSetStartupVolumeEnabled(bool aaStartupVolumeEnabled, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetStartupVolumeEnabled(uint aAsyncHandle);
+        void SyncStartupVolumeEnabled(out bool aaStartupVolumeEnabled);
+        void BeginStartupVolumeEnabled(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStartupVolumeEnabled(uint aAsyncHandle, out bool aaStartupVolumeEnabled);
+
+        void SetPropertyVolumeChanged(CpProxy.CallbackPropertyChanged aVolumeChanged);
+        void PropertyVolume(out uint aVolume);
+        void SetPropertyMuteChanged(CpProxy.CallbackPropertyChanged aMuteChanged);
+        void PropertyMute(out bool aMute);
+        void SetPropertyBalanceChanged(CpProxy.CallbackPropertyChanged aBalanceChanged);
+        void PropertyBalance(out int aBalance);
+        void SetPropertyVolumeLimitChanged(CpProxy.CallbackPropertyChanged aVolumeLimitChanged);
+        void PropertyVolumeLimit(out uint aVolumeLimit);
+        void SetPropertyStartupVolumeChanged(CpProxy.CallbackPropertyChanged aStartupVolumeChanged);
+        void PropertyStartupVolume(out uint aStartupVolume);
+        void SetPropertyStartupVolumeEnabledChanged(CpProxy.CallbackPropertyChanged aStartupVolumeEnabledChanged);
+        void PropertyStartupVolumeEnabled(out bool aStartupVolumeEnabled);
+    }
+
+    public class CpProxyLinnCoUkPreamp4 : CpProxy, IDisposable, ICpProxyLinnCoUkPreamp4
     {
         [DllImport("CpLinnCoUkPreamp4")]
         static extern uint CpProxyLinnCoUkPreamp4Create(uint aDeviceHandle);
@@ -646,17 +705,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
             lock (this)
             {
                 if (iHandle == 0)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyLinnCoUkPreamp4Destroy(iHandle);
                 iHandle = 0;
             }
-            CpProxyLinnCoUkPreamp4Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

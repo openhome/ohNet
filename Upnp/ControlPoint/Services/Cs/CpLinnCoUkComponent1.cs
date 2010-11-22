@@ -5,7 +5,53 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyLinnCoUkComponent1 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkComponent1
+    {
+        void SyncAmplifierEnabled(out bool aaEnabled);
+        void BeginAmplifierEnabled(CpProxy.CallbackAsyncComplete aCallback);
+        void EndAmplifierEnabled(uint aAsyncHandle, out bool aaEnabled);
+        void SyncSetAmplifierEnabled(bool aaEnabled);
+        void BeginSetAmplifierEnabled(bool aaEnabled, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetAmplifierEnabled(uint aAsyncHandle);
+        void SyncAmplifierAttenuation(out string aaAttenuation);
+        void BeginAmplifierAttenuation(CpProxy.CallbackAsyncComplete aCallback);
+        void EndAmplifierAttenuation(uint aAsyncHandle, out string aaAttenuation);
+        void SyncSetAmplifierAttenuation(string aaAttenuation);
+        void BeginSetAmplifierAttenuation(string aaAttenuation, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetAmplifierAttenuation(uint aAsyncHandle);
+        void SyncSetVolumeControlEnabled(bool aaEnabled);
+        void BeginSetVolumeControlEnabled(bool aaEnabled, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetVolumeControlEnabled(uint aAsyncHandle);
+        void SyncVolumeControlEnabled(out bool aaEnabled);
+        void BeginVolumeControlEnabled(CpProxy.CallbackAsyncComplete aCallback);
+        void EndVolumeControlEnabled(uint aAsyncHandle, out bool aaEnabled);
+        void SyncSetDigitalAudioOutputRaw(bool aaRaw);
+        void BeginSetDigitalAudioOutputRaw(bool aaRaw, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetDigitalAudioOutputRaw(uint aAsyncHandle);
+        void SyncDigitalAudioOutputRaw(out bool aaRaw);
+        void BeginDigitalAudioOutputRaw(CpProxy.CallbackAsyncComplete aCallback);
+        void EndDigitalAudioOutputRaw(uint aAsyncHandle, out bool aaRaw);
+        void SyncAmplifierOverTemperature(out bool aaOverTemperature);
+        void BeginAmplifierOverTemperature(CpProxy.CallbackAsyncComplete aCallback);
+        void EndAmplifierOverTemperature(uint aAsyncHandle, out bool aaOverTemperature);
+        void SyncEthernetLinkConnected(out bool aaLinkConnected);
+        void BeginEthernetLinkConnected(CpProxy.CallbackAsyncComplete aCallback);
+        void EndEthernetLinkConnected(uint aAsyncHandle, out bool aaLinkConnected);
+        void SyncLocate();
+        void BeginLocate(CpProxy.CallbackAsyncComplete aCallback);
+        void EndLocate(uint aAsyncHandle);
+
+        void SetPropertyAmplifierEnabledChanged(CpProxy.CallbackPropertyChanged aAmplifierEnabledChanged);
+        void PropertyAmplifierEnabled(out bool aAmplifierEnabled);
+        void SetPropertyAmplifierAttenuationChanged(CpProxy.CallbackPropertyChanged aAmplifierAttenuationChanged);
+        void PropertyAmplifierAttenuation(out string aAmplifierAttenuation);
+        void SetPropertyVolumeControlEnabledChanged(CpProxy.CallbackPropertyChanged aVolumeControlEnabledChanged);
+        void PropertyVolumeControlEnabled(out bool aVolumeControlEnabled);
+        void SetPropertyDigitalAudioOutputRawChanged(CpProxy.CallbackPropertyChanged aDigitalAudioOutputRawChanged);
+        void PropertyDigitalAudioOutputRaw(out bool aDigitalAudioOutputRaw);
+    }
+
+    public class CpProxyLinnCoUkComponent1 : CpProxy, IDisposable, ICpProxyLinnCoUkComponent1
     {
         [DllImport("CpLinnCoUkComponent1")]
         static extern uint CpProxyLinnCoUkComponent1Create(uint aDeviceHandle);
@@ -513,17 +559,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
             lock (this)
             {
                 if (iHandle == 0)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyLinnCoUkComponent1Destroy(iHandle);
                 iHandle = 0;
             }
-            CpProxyLinnCoUkComponent1Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

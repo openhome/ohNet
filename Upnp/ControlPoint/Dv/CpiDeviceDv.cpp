@@ -15,7 +15,6 @@ using namespace Zapp;
 
 CpiDeviceDv::CpiDeviceDv(DviDevice& aDevice)
     : iDeviceDv(aDevice)
-    , iEventProcessor(NULL)
     , iSubscriptionDv(NULL)
     , iSubscriptionCp(NULL)
 {
@@ -68,7 +67,6 @@ TBool CpiDeviceDv::GetAttribute(const char* aKey, Brh& aValue) const
 
 TUint CpiDeviceDv::Subscribe(CpiSubscription& aSubscription, const Uri& /*aSubscriber*/)
 {
-    iEventProcessor = &aSubscription.EventProcessor();
     iSubscriptionCp = &aSubscription;
     Brh sid;
     iDeviceDv.CreateSid(sid);
@@ -76,7 +74,7 @@ TUint CpiDeviceDv::Subscribe(CpiSubscription& aSubscription, const Uri& /*aSubsc
     Brh transfer(tmp);
     aSubscription.SetSid(transfer);
     TUint durationSecs = CpiSubscription::kDefaultDurationSecs;
-    iSubscriptionDv = new DviSubscription(iDeviceDv, *this, Endpoint(), Brn(""), sid, durationSecs); // !!!! refactor DviSubscription to replace aSubscriber +  aSubscriberPath with caller defined data
+    iSubscriptionDv = new DviSubscription(iDeviceDv, *this, NULL, sid, durationSecs);
     iSubscriptionDv->AddRef(); // guard against subscription expiring before client tries to renew or unsubscribe
     DviSubscriptionManager::AddSubscription(*iSubscriptionDv);
     DviService* service = Service(aSubscription.ServiceType());
@@ -100,7 +98,6 @@ void CpiDeviceDv::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
     iSubscriptionDv->RemoveRef();
     iSubscriptionDv = NULL;
     iSubscriptionCp = NULL;
-    iEventProcessor = NULL;
 }
 
 void CpiDeviceDv::Release()
@@ -109,15 +106,15 @@ void CpiDeviceDv::Release()
     delete this;
 }
 
-IPropertyWriter* CpiDeviceDv::CreateWriter(const Endpoint& /*aSubscriber*/, const Brx& /*aSubscriberPath*/,
+IPropertyWriter* CpiDeviceDv::CreateWriter(const IDviSubscriptionUserData* /*aUserData*/,
                                            const Brx& /*aSid*/, TUint aSequenceNumber)
 {
     if (!iSubscriptionCp->UpdateSequenceNumber(aSequenceNumber)) {
         iSubscriptionCp->SetNotificationError();
         return NULL;
     }
-    ASSERT(iEventProcessor != NULL);
-    return new PropertyWriterDv(*iEventProcessor);
+    ASSERT(iSubscriptionCp != NULL);
+    return new PropertyWriterDv(*iSubscriptionCp);
 }
 
 
@@ -127,6 +124,7 @@ InvocationDv::InvocationDv(Invocation& aInvocation, DviService& aService)
     : iInvocation(aInvocation)
     , iService(aService)
     , iSem("IDVS", 0)
+    , iWriteArg(NULL)
 {
 }
 
@@ -221,7 +219,7 @@ void InvocationDv::InvocationWriteUint(const TChar* aName, TUint aValue)
 
 void InvocationDv::InvocationWriteBinaryStart(const TChar* aName)
 {
-    ASSERT(iWriteArg != NULL);
+    ASSERT(iWriteArg == NULL);
     iWriteArg = OutputArgument(aName);
     ASSERT(static_cast<ArgumentBinary*>(iWriteArg)->Value().Bytes() == 0);
 }
@@ -244,7 +242,7 @@ void InvocationDv::InvocationWriteBinaryEnd(const TChar* aName)
 
 void InvocationDv::InvocationWriteStringStart(const TChar* aName)
 {
-    ASSERT(iWriteArg != NULL);
+    ASSERT(iWriteArg == NULL);
     iWriteArg = OutputArgument(aName);
     ASSERT(static_cast<ArgumentString*>(iWriteArg)->Value().Bytes() == 0);
 }

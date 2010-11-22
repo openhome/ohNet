@@ -17,17 +17,21 @@ namespace Zapp
         static extern void DvProviderZappOrgTestWidgetController1EnableActionRemoveWidget(uint aHandle, CallbackRemoveWidget aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestWidgetController1")]
         static extern void DvProviderZappOrgTestWidgetController1EnableActionSetWidgetRegister(uint aHandle, CallbackSetWidgetRegister aCallback, IntPtr aPtr);
+        [DllImport("DvZappOrgTestWidgetController1")]
+        static extern void DvProviderZappOrgTestWidgetController1EnableActionGetWidgetRegister(uint aHandle, CallbackGetWidgetRegister aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
         private unsafe delegate int CallbackCreateWidget(IntPtr aPtr, uint aVersion, char* aWidgetUdn);
         private unsafe delegate int CallbackRemoveWidget(IntPtr aPtr, uint aVersion, char* aWidgetUdn);
         private unsafe delegate int CallbackSetWidgetRegister(IntPtr aPtr, uint aVersion, char* aWidgetUdn, uint aRegisterIndex, uint aRegisterValue);
+        private unsafe delegate int CallbackGetWidgetRegister(IntPtr aPtr, uint aVersion, char* aWidgetUdn, uint aRegisterIndex, uint* aRegisterValue);
 
         private GCHandle iGch;
         private CallbackCreateWidget iCallbackCreateWidget;
         private CallbackRemoveWidget iCallbackRemoveWidget;
         private CallbackSetWidgetRegister iCallbackSetWidgetRegister;
+        private CallbackGetWidgetRegister iCallbackGetWidgetRegister;
 
         public DvProviderZappOrgTestWidgetController1(DvDevice aDevice)
         {
@@ -56,6 +60,13 @@ namespace Zapp
             DvProviderZappOrgTestWidgetController1EnableActionSetWidgetRegister(iHandle, iCallbackSetWidgetRegister, ptr);
         }
 
+        protected unsafe void EnableActionGetWidgetRegister()
+        {
+            iCallbackGetWidgetRegister = new CallbackGetWidgetRegister(DoGetWidgetRegister);
+            IntPtr ptr = GCHandle.ToIntPtr(iGch);
+            DvProviderZappOrgTestWidgetController1EnableActionGetWidgetRegister(iHandle, iCallbackGetWidgetRegister, ptr);
+        }
+
         protected virtual void CreateWidget(uint aVersion, string aWidgetUdn)
         {
             throw (new ActionDisabledError());
@@ -67,6 +78,11 @@ namespace Zapp
         }
 
         protected virtual void SetWidgetRegister(uint aVersion, string aWidgetUdn, uint aRegisterIndex, uint aRegisterValue)
+        {
+            throw (new ActionDisabledError());
+        }
+
+        protected virtual void GetWidgetRegister(uint aVersion, string aWidgetUdn, uint aRegisterIndex, out uint aRegisterValue)
         {
             throw (new ActionDisabledError());
         }
@@ -95,6 +111,17 @@ namespace Zapp
             DvProviderZappOrgTestWidgetController1 self = (DvProviderZappOrgTestWidgetController1)gch.Target;
             string widgetUdn = Marshal.PtrToStringAnsi((IntPtr)aWidgetUdn);
             self.SetWidgetRegister(aVersion, widgetUdn, aRegisterIndex, aRegisterValue);
+            return 0;
+        }
+
+        private static unsafe int DoGetWidgetRegister(IntPtr aPtr, uint aVersion, char* aWidgetUdn, uint aRegisterIndex, uint* aRegisterValue)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderZappOrgTestWidgetController1 self = (DvProviderZappOrgTestWidgetController1)gch.Target;
+            string widgetUdn = Marshal.PtrToStringAnsi((IntPtr)aWidgetUdn);
+            uint registerValue;
+            self.GetWidgetRegister(aVersion, widgetUdn, aRegisterIndex, out registerValue);
+            *aRegisterValue = registerValue;
             return 0;
         }
 

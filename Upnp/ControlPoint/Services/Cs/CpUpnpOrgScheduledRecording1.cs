@@ -5,7 +5,68 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyUpnpOrgScheduledRecording1 : CpProxy, IDisposable
+    public interface ICpProxyUpnpOrgScheduledRecording1
+    {
+        void SyncGetSortCapabilities(out string aSortCaps, out uint aSortLevelCap);
+        void BeginGetSortCapabilities(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetSortCapabilities(uint aAsyncHandle, out string aSortCaps, out uint aSortLevelCap);
+        void SyncGetPropertyList(string aDataTypeID, out string aPropertyList);
+        void BeginGetPropertyList(string aDataTypeID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetPropertyList(uint aAsyncHandle, out string aPropertyList);
+        void SyncGetAllowedValues(string aDataTypeID, string aFilter, out string aPropertyInfo);
+        void BeginGetAllowedValues(string aDataTypeID, string aFilter, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetAllowedValues(uint aAsyncHandle, out string aPropertyInfo);
+        void SyncGetStateUpdateID(out uint aId);
+        void BeginGetStateUpdateID(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetStateUpdateID(uint aAsyncHandle, out uint aId);
+        void SyncBrowseRecordSchedules(string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
+        void BeginBrowseRecordSchedules(string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, CpProxy.CallbackAsyncComplete aCallback);
+        void EndBrowseRecordSchedules(uint aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
+        void SyncBrowseRecordTasks(string aRecordScheduleID, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
+        void BeginBrowseRecordTasks(string aRecordScheduleID, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, CpProxy.CallbackAsyncComplete aCallback);
+        void EndBrowseRecordTasks(uint aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
+        void SyncCreateRecordSchedule(string aElements, out string aRecordScheduleID, out string aResult, out uint aUpdateID);
+        void BeginCreateRecordSchedule(string aElements, CpProxy.CallbackAsyncComplete aCallback);
+        void EndCreateRecordSchedule(uint aAsyncHandle, out string aRecordScheduleID, out string aResult, out uint aUpdateID);
+        void SyncDeleteRecordSchedule(string aRecordScheduleID);
+        void BeginDeleteRecordSchedule(string aRecordScheduleID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndDeleteRecordSchedule(uint aAsyncHandle);
+        void SyncGetRecordSchedule(string aRecordScheduleID, string aFilter, out string aResult, out uint aUpdateID);
+        void BeginGetRecordSchedule(string aRecordScheduleID, string aFilter, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetRecordSchedule(uint aAsyncHandle, out string aResult, out uint aUpdateID);
+        void SyncEnableRecordSchedule(string aRecordScheduleID);
+        void BeginEnableRecordSchedule(string aRecordScheduleID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndEnableRecordSchedule(uint aAsyncHandle);
+        void SyncDisableRecordSchedule(string aRecordScheduleID);
+        void BeginDisableRecordSchedule(string aRecordScheduleID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndDisableRecordSchedule(uint aAsyncHandle);
+        void SyncDeleteRecordTask(string aRecordTaskID);
+        void BeginDeleteRecordTask(string aRecordTaskID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndDeleteRecordTask(uint aAsyncHandle);
+        void SyncGetRecordTask(string aRecordTaskID, string aFilter, out string aResult, out uint aUpdateID);
+        void BeginGetRecordTask(string aRecordTaskID, string aFilter, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetRecordTask(uint aAsyncHandle, out string aResult, out uint aUpdateID);
+        void SyncEnableRecordTask(string aRecordTaskID);
+        void BeginEnableRecordTask(string aRecordTaskID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndEnableRecordTask(uint aAsyncHandle);
+        void SyncDisableRecordTask(string aRecordTaskID);
+        void BeginDisableRecordTask(string aRecordTaskID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndDisableRecordTask(uint aAsyncHandle);
+        void SyncResetRecordTask(string aRecordTaskID);
+        void BeginResetRecordTask(string aRecordTaskID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndResetRecordTask(uint aAsyncHandle);
+        void SyncGetRecordScheduleConflicts(string aRecordScheduleID, out string aRecordScheduleConflictIDList, out uint aUpdateID);
+        void BeginGetRecordScheduleConflicts(string aRecordScheduleID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetRecordScheduleConflicts(uint aAsyncHandle, out string aRecordScheduleConflictIDList, out uint aUpdateID);
+        void SyncGetRecordTaskConflicts(string aRecordTaskID, out string aRecordTaskConflictIDList, out uint aUpdateID);
+        void BeginGetRecordTaskConflicts(string aRecordTaskID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetRecordTaskConflicts(uint aAsyncHandle, out string aRecordTaskConflictIDList, out uint aUpdateID);
+
+        void SetPropertyLastChangeChanged(CpProxy.CallbackPropertyChanged aLastChangeChanged);
+        void PropertyLastChange(out string aLastChange);
+    }
+
+    public class CpProxyUpnpOrgScheduledRecording1 : CpProxy, IDisposable, ICpProxyUpnpOrgScheduledRecording1
     {
         [DllImport("CpUpnpOrgScheduledRecording1")]
         static extern uint CpProxyUpnpOrgScheduledRecording1Create(uint aDeviceHandle);
@@ -783,17 +844,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
             lock (this)
             {
                 if (iHandle == 0)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyUpnpOrgScheduledRecording1Destroy(iHandle);
                 iHandle = 0;
             }
-            CpProxyUpnpOrgScheduledRecording1Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

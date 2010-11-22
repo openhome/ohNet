@@ -92,10 +92,11 @@ private:
 class OhmHeaderAudio
 {
 public:
-    static const TUint kHeaderBytes = 40; // not including codec name
+    static const TUint kHeaderBytes = 46; // not including codec name
     static const TUint kReserved = 0;
     static const TUint kFlagHalt = 1;
     static const TUint kFlagLossless = 2;
+    static const TUint kFlagSync = 4;
 
 public:
     OhmHeaderAudio();
@@ -104,10 +105,12 @@ public:
                    TUint aSamples,
                    TUint aFrame,
                    TUint aTxTimestampPrev,
+                   TUint aSyncTimestamp,
                    TUint64 aSampleStart,
                    TUint64 aSamplesTotal,
                    TUint aSampleRate,
                    TUint aBitRate,
+                   TUint aVolumeOffset,
                    TUint aBitDepth,
                    TUint aChannels,
                    const Brx& aCodecName);
@@ -117,6 +120,7 @@ public:
     
     TBool Halt() const {return (iHalt);}
     TBool Lossless() const {return (iLossless);}
+    TBool Sync() const {return (iSync);}
     TUint Samples() const {return (iSamples);}
     TUint Frame() const {return (iFrame);}
     TUint TxTimestampPrev() const {return (iTxTimestampPrev);}
@@ -124,6 +128,7 @@ public:
     TUint64 SamplesTotal() const {return (iSamplesTotal);}
     TUint SampleRate() const {return (iSampleRate);}
     TUint BitRate() const {return (iBitRate);}
+    TInt VolumeOffset() const {return (iVolumeOffset);}
     TUint BitDepth() const {return (iBitDepth);}
     TUint Channels() const {return (iChannels);}
     const Brx& CodecName() const {return (iCodecName);}
@@ -135,30 +140,35 @@ private:
     //OhmMsgAudio
     //ByteStart Bytes                   Desc
     //0         1                       Msg Header Bytes (without the codec name)
-    //1         1                       Flags (lsb first: halt flag, lossless flag, all other bits 0)
+    //1         1                       Flags (lsb first: halt flag, lossless flag, sync flag all other bits 0)
     //2         2                       Samples in this msg
     //4         4                       Frame
     //8         4                       Sender timestamp of previous frame
-    //12        8                       Sample Start (first sample's offset from the beginiing of this track)
-    //20        8                       Samples Total (total samples for this track)
-    //28        4                       Sample Rate
-    //32        4                       Bit Rate
-    //36        1                       Bit depth of audio (16, 24)
-    //37        1                       Channels
-    //38        1                       Reserved (must be zero)
-    //39        1                       Codec Name Bytes
-    //40        n                       Codec Name
-    //40 + n    Msg Total Bytes - Msg Header Bytes - Code Name Bytes (Sample data in big endian, channels interleaved, packed)
+    //12        4                       Sync time of first sample in message
+    //16        8                       Sample Start (first sample's offset from the beginiing of this track)
+    //24        8                       Samples Total (total samples for this track)
+    //32        4                       Sample Rate
+    //36        4                       Bit Rate
+    //40		2						Volume Offset
+    //42        1                       Bit depth of audio (16, 24)
+    //43        1                       Channels
+    //44        1                       Reserved (must be zero)
+    //45        1                       Codec Name Bytes
+    //46        n                       Codec Name
+    //46 + n    Msg Total Bytes - Msg Header Bytes - Code Name Bytes (Sample data in big endian, channels interleaved, packed)
 
     TBool iHalt;
     TBool iLossless;
+    TBool iSync;
     TUint iSamples;
     TUint iFrame;
     TUint iTxTimestampPrev;
+    TUint iSyncTimestamp;
     TUint64 iSampleStart;
     TUint64 iSamplesTotal;
     TUint iSampleRate;
     TUint iBitRate;
+    TInt iVolumeOffset;
     TUint iBitDepth;
     TUint iChannels;
     Bws<Ohm::kMaxCodecNameBytes> iCodecName;

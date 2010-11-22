@@ -5,7 +5,20 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyZappOrgTestDimmableLight1 : CpProxy, IDisposable
+    public interface ICpProxyZappOrgTestDimmableLight1
+    {
+        void SyncGetLevel(out uint aLevel);
+        void BeginGetLevel(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetLevel(uint aAsyncHandle, out uint aLevel);
+        void SyncSetLevel(uint aLevel);
+        void BeginSetLevel(uint aLevel, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetLevel(uint aAsyncHandle);
+
+        void SetPropertyA_ARG_LevelChanged(CpProxy.CallbackPropertyChanged aA_ARG_LevelChanged);
+        void PropertyA_ARG_Level(out uint aA_ARG_Level);
+    }
+
+    public class CpProxyZappOrgTestDimmableLight1 : CpProxy, IDisposable, ICpProxyZappOrgTestDimmableLight1
     {
         [DllImport("CpZappOrgTestDimmableLight1")]
         static extern uint CpProxyZappOrgTestDimmableLight1Create(uint aDeviceHandle);
@@ -125,17 +138,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
             lock (this)
             {
                 if (iHandle == 0)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyZappOrgTestDimmableLight1Destroy(iHandle);
                 iHandle = 0;
             }
-            CpProxyZappOrgTestDimmableLight1Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

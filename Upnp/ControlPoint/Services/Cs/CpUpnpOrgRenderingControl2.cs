@@ -5,7 +5,125 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyUpnpOrgRenderingControl2 : CpProxy, IDisposable
+    public interface ICpProxyUpnpOrgRenderingControl2
+    {
+        void SyncListPresets(uint aInstanceID, out string aCurrentPresetNameList);
+        void BeginListPresets(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndListPresets(uint aAsyncHandle, out string aCurrentPresetNameList);
+        void SyncSelectPreset(uint aInstanceID, string aPresetName);
+        void BeginSelectPreset(uint aInstanceID, string aPresetName, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSelectPreset(uint aAsyncHandle);
+        void SyncGetBrightness(uint aInstanceID, out uint aCurrentBrightness);
+        void BeginGetBrightness(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetBrightness(uint aAsyncHandle, out uint aCurrentBrightness);
+        void SyncSetBrightness(uint aInstanceID, uint aDesiredBrightness);
+        void BeginSetBrightness(uint aInstanceID, uint aDesiredBrightness, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetBrightness(uint aAsyncHandle);
+        void SyncGetContrast(uint aInstanceID, out uint aCurrentContrast);
+        void BeginGetContrast(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetContrast(uint aAsyncHandle, out uint aCurrentContrast);
+        void SyncSetContrast(uint aInstanceID, uint aDesiredContrast);
+        void BeginSetContrast(uint aInstanceID, uint aDesiredContrast, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetContrast(uint aAsyncHandle);
+        void SyncGetSharpness(uint aInstanceID, out uint aCurrentSharpness);
+        void BeginGetSharpness(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetSharpness(uint aAsyncHandle, out uint aCurrentSharpness);
+        void SyncSetSharpness(uint aInstanceID, uint aDesiredSharpness);
+        void BeginSetSharpness(uint aInstanceID, uint aDesiredSharpness, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetSharpness(uint aAsyncHandle);
+        void SyncGetRedVideoGain(uint aInstanceID, out uint aCurrentRedVideoGain);
+        void BeginGetRedVideoGain(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetRedVideoGain(uint aAsyncHandle, out uint aCurrentRedVideoGain);
+        void SyncSetRedVideoGain(uint aInstanceID, uint aDesiredRedVideoGain);
+        void BeginSetRedVideoGain(uint aInstanceID, uint aDesiredRedVideoGain, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetRedVideoGain(uint aAsyncHandle);
+        void SyncGetGreenVideoGain(uint aInstanceID, out uint aCurrentGreenVideoGain);
+        void BeginGetGreenVideoGain(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetGreenVideoGain(uint aAsyncHandle, out uint aCurrentGreenVideoGain);
+        void SyncSetGreenVideoGain(uint aInstanceID, uint aDesiredGreenVideoGain);
+        void BeginSetGreenVideoGain(uint aInstanceID, uint aDesiredGreenVideoGain, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetGreenVideoGain(uint aAsyncHandle);
+        void SyncGetBlueVideoGain(uint aInstanceID, out uint aCurrentBlueVideoGain);
+        void BeginGetBlueVideoGain(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetBlueVideoGain(uint aAsyncHandle, out uint aCurrentBlueVideoGain);
+        void SyncSetBlueVideoGain(uint aInstanceID, uint aDesiredBlueVideoGain);
+        void BeginSetBlueVideoGain(uint aInstanceID, uint aDesiredBlueVideoGain, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetBlueVideoGain(uint aAsyncHandle);
+        void SyncGetRedVideoBlackLevel(uint aInstanceID, out uint aCurrentRedVideoBlackLevel);
+        void BeginGetRedVideoBlackLevel(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetRedVideoBlackLevel(uint aAsyncHandle, out uint aCurrentRedVideoBlackLevel);
+        void SyncSetRedVideoBlackLevel(uint aInstanceID, uint aDesiredRedVideoBlackLevel);
+        void BeginSetRedVideoBlackLevel(uint aInstanceID, uint aDesiredRedVideoBlackLevel, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetRedVideoBlackLevel(uint aAsyncHandle);
+        void SyncGetGreenVideoBlackLevel(uint aInstanceID, out uint aCurrentGreenVideoBlackLevel);
+        void BeginGetGreenVideoBlackLevel(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetGreenVideoBlackLevel(uint aAsyncHandle, out uint aCurrentGreenVideoBlackLevel);
+        void SyncSetGreenVideoBlackLevel(uint aInstanceID, uint aDesiredGreenVideoBlackLevel);
+        void BeginSetGreenVideoBlackLevel(uint aInstanceID, uint aDesiredGreenVideoBlackLevel, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetGreenVideoBlackLevel(uint aAsyncHandle);
+        void SyncGetBlueVideoBlackLevel(uint aInstanceID, out uint aCurrentBlueVideoBlackLevel);
+        void BeginGetBlueVideoBlackLevel(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetBlueVideoBlackLevel(uint aAsyncHandle, out uint aCurrentBlueVideoBlackLevel);
+        void SyncSetBlueVideoBlackLevel(uint aInstanceID, uint aDesiredBlueVideoBlackLevel);
+        void BeginSetBlueVideoBlackLevel(uint aInstanceID, uint aDesiredBlueVideoBlackLevel, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetBlueVideoBlackLevel(uint aAsyncHandle);
+        void SyncGetColorTemperature(uint aInstanceID, out uint aCurrentColorTemperature);
+        void BeginGetColorTemperature(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetColorTemperature(uint aAsyncHandle, out uint aCurrentColorTemperature);
+        void SyncSetColorTemperature(uint aInstanceID, uint aDesiredColorTemperature);
+        void BeginSetColorTemperature(uint aInstanceID, uint aDesiredColorTemperature, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetColorTemperature(uint aAsyncHandle);
+        void SyncGetHorizontalKeystone(uint aInstanceID, out int aCurrentHorizontalKeystone);
+        void BeginGetHorizontalKeystone(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetHorizontalKeystone(uint aAsyncHandle, out int aCurrentHorizontalKeystone);
+        void SyncSetHorizontalKeystone(uint aInstanceID, int aDesiredHorizontalKeystone);
+        void BeginSetHorizontalKeystone(uint aInstanceID, int aDesiredHorizontalKeystone, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetHorizontalKeystone(uint aAsyncHandle);
+        void SyncGetVerticalKeystone(uint aInstanceID, out int aCurrentVerticalKeystone);
+        void BeginGetVerticalKeystone(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetVerticalKeystone(uint aAsyncHandle, out int aCurrentVerticalKeystone);
+        void SyncSetVerticalKeystone(uint aInstanceID, int aDesiredVerticalKeystone);
+        void BeginSetVerticalKeystone(uint aInstanceID, int aDesiredVerticalKeystone, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetVerticalKeystone(uint aAsyncHandle);
+        void SyncGetMute(uint aInstanceID, string aChannel, out bool aCurrentMute);
+        void BeginGetMute(uint aInstanceID, string aChannel, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetMute(uint aAsyncHandle, out bool aCurrentMute);
+        void SyncSetMute(uint aInstanceID, string aChannel, bool aDesiredMute);
+        void BeginSetMute(uint aInstanceID, string aChannel, bool aDesiredMute, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetMute(uint aAsyncHandle);
+        void SyncGetVolume(uint aInstanceID, string aChannel, out uint aCurrentVolume);
+        void BeginGetVolume(uint aInstanceID, string aChannel, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetVolume(uint aAsyncHandle, out uint aCurrentVolume);
+        void SyncSetVolume(uint aInstanceID, string aChannel, uint aDesiredVolume);
+        void BeginSetVolume(uint aInstanceID, string aChannel, uint aDesiredVolume, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetVolume(uint aAsyncHandle);
+        void SyncGetVolumeDB(uint aInstanceID, string aChannel, out int aCurrentVolume);
+        void BeginGetVolumeDB(uint aInstanceID, string aChannel, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetVolumeDB(uint aAsyncHandle, out int aCurrentVolume);
+        void SyncSetVolumeDB(uint aInstanceID, string aChannel, int aDesiredVolume);
+        void BeginSetVolumeDB(uint aInstanceID, string aChannel, int aDesiredVolume, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetVolumeDB(uint aAsyncHandle);
+        void SyncGetVolumeDBRange(uint aInstanceID, string aChannel, out int aMinValue, out int aMaxValue);
+        void BeginGetVolumeDBRange(uint aInstanceID, string aChannel, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetVolumeDBRange(uint aAsyncHandle, out int aMinValue, out int aMaxValue);
+        void SyncGetLoudness(uint aInstanceID, string aChannel, out bool aCurrentLoudness);
+        void BeginGetLoudness(uint aInstanceID, string aChannel, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetLoudness(uint aAsyncHandle, out bool aCurrentLoudness);
+        void SyncSetLoudness(uint aInstanceID, string aChannel, bool aDesiredLoudness);
+        void BeginSetLoudness(uint aInstanceID, string aChannel, bool aDesiredLoudness, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetLoudness(uint aAsyncHandle);
+        void SyncGetStateVariables(uint aInstanceID, string aStateVariableList, out string aStateVariableValuePairs);
+        void BeginGetStateVariables(uint aInstanceID, string aStateVariableList, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetStateVariables(uint aAsyncHandle, out string aStateVariableValuePairs);
+        void SyncSetStateVariables(uint aInstanceID, string aRenderingControlUDN, string aServiceType, string aServiceId, string aStateVariableValuePairs, out string aStateVariableList);
+        void BeginSetStateVariables(uint aInstanceID, string aRenderingControlUDN, string aServiceType, string aServiceId, string aStateVariableValuePairs, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetStateVariables(uint aAsyncHandle, out string aStateVariableList);
+
+        void SetPropertyLastChangeChanged(CpProxy.CallbackPropertyChanged aLastChangeChanged);
+        void PropertyLastChange(out string aLastChange);
+    }
+
+    public class CpProxyUpnpOrgRenderingControl2 : CpProxy, IDisposable, ICpProxyUpnpOrgRenderingControl2
     {
         [DllImport("CpUpnpOrgRenderingControl2")]
         static extern uint CpProxyUpnpOrgRenderingControl2Create(uint aDeviceHandle);
@@ -1295,17 +1413,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
             lock (this)
             {
                 if (iHandle == 0)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyUpnpOrgRenderingControl2Destroy(iHandle);
                 iHandle = 0;
             }
-            CpProxyUpnpOrgRenderingControl2Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

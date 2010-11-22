@@ -295,15 +295,32 @@ void DeviceLights::WriteResource(const Brx& aUriTail, TIpAddress /*aInterface*/,
     for (TUint i=filePath.Bytes()-1; i>0; i--) {
         if (filePath[i] == '/' || filePath[i] == '\\') {
             break;
-        }    
+        }
         if (filePath[i] == '.') {
+            static const char* mimeMappings[][2] = {{"html", kZappMimeTypeHtml}
+                                                   ,{"htm",  kZappMimeTypeHtml}
+                                                   ,{"jpg",  kZappMimeTypeJpeg}
+                                                   ,{"jpeg", kZappMimeTypeJpeg}
+                                                   ,{"gif",  kZappMimeTypeGif}
+                                                   ,{"png",  kZappMimeTypePng}
+                                                   ,{"bmp",  kZappMimeTypeBmp}
+                                                   ,{"xml",  kZappMimeTypeXml}
+                                                   ,{"js",   kZappMimeTypeJs}
+                                                   ,{"css",  kZappMimeTypeCss}
+                                                   ,{NULL ,  NULL}};
             const char* ext = (const char*)filePath.Split(i+1, filePath.Bytes()-i-1).Ptr();
-            if (strcmp(ext, "html") == 0 || strcmp(ext, "htm") == 0) {
-                mime = kZappMimeTypeHtml;
+            TUint index = 0;
+            while (mimeMappings[index][0] != NULL) {
+                if (strcmp(ext, mimeMappings[index][0]) == 0) {
+                    mime = mimeMappings[index][1];
+                    break;
+                }
+                index++;
             }
             break;
         }
     }
+    Print("selected mime %s\n", mime);
     aResourceWriter.WriteResourceBegin(bytes, mime);
     do {
         TByte buf[kMaxReadSize];

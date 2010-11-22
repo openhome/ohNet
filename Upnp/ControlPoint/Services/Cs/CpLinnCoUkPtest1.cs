@@ -5,7 +5,21 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyLinnCoUkPtest1 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkPtest1
+    {
+        void SyncTestComPort(uint aaPort, out bool aaResult);
+        void BeginTestComPort(uint aaPort, CpProxy.CallbackAsyncComplete aCallback);
+        void EndTestComPort(uint aAsyncHandle, out bool aaResult);
+        void SyncLedsOn();
+        void BeginLedsOn(CpProxy.CallbackAsyncComplete aCallback);
+        void EndLedsOn(uint aAsyncHandle);
+        void SyncLedsOff();
+        void BeginLedsOff(CpProxy.CallbackAsyncComplete aCallback);
+        void EndLedsOff(uint aAsyncHandle);
+
+    }
+
+    public class CpProxyLinnCoUkPtest1 : CpProxy, IDisposable, ICpProxyLinnCoUkPtest1
     {
         [DllImport("CpLinnCoUkPtest1")]
         static extern uint CpProxyLinnCoUkPtest1Create(uint aDeviceHandle);
@@ -128,17 +142,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
             lock (this)
             {
                 if (iHandle == 0)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyLinnCoUkPtest1Destroy(iHandle);
                 iHandle = 0;
             }
-            CpProxyLinnCoUkPtest1Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

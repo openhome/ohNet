@@ -1,5 +1,5 @@
 #include "OhmSender.h"
-#include "DvMusicOpenhomeOrgSender1.h"
+#include "DvAvOpenhomeOrgSender1.h"
 #include <Ascii.h>
 #include <Maths.h>
 #include <Arch.h>
@@ -8,7 +8,7 @@
 
 namespace Zapp {
 
-	class ProviderSender : public DvServiceMusicOpenhomeOrgSender1
+	class ProviderSender : public DvProviderAvOpenhomeOrgSender1
 	{
 	    static const TUint kMaxMetadataBytes = 4096;
 	    static const TUint kTimeoutAudioPresentMs = 1000;
@@ -22,12 +22,14 @@ namespace Zapp {
 	    void SetStatusSending();
 	    void SetStatusBlocked();
 	    void SetStatusInactive();
+	    void SetStatusDisabled();
 	    
 	    void InformAudioPresent();
 	    
 	    ~ProviderSender() {}
 	    
 	private:
+	    virtual void PresentationUrl(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
 	    virtual void Metadata(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
 	    virtual void Audio(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aValue);
 	    virtual void Status(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue);
@@ -49,19 +51,31 @@ using namespace Zapp;
 // ProviderSender
 
 ProviderSender::ProviderSender(DvDevice& aDevice)
-    : DvServiceMusicOpenhomeOrgSender1(aDevice)
+    : DvProviderAvOpenhomeOrgSender1(aDevice)
     , iMutex("PSND")
     , iTimerAudioPresent(MakeFunctor(*this, &ProviderSender::TimerAudioPresentExpired))
 {
+    EnableActionPresentationUrl();
     EnableActionMetadata();
     EnableActionAudio();
     EnableActionStatus();
     EnableActionAttributes();
     
+    SetPropertyPresentationUrl(Brx::Empty());
     SetPropertyMetadata(Brx::Empty());
     SetPropertyAudio(false);
     SetStatusInactive();
     SetPropertyAttributes(Brx::Empty());
+}
+
+void ProviderSender::PresentationUrl(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue)
+{
+	Brhz value;
+    GetPropertyPresentationUrl(value);
+    aResponse.Start();
+    aValue.Write(value);
+    aValue.WriteFlush();
+    aResponse.End();
 }
 
 void ProviderSender::Metadata(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValue)
@@ -112,6 +126,7 @@ static const Brn kStatusReady("Ready");
 static const Brn kStatusSending("Sending");
 static const Brn kStatusBlocked("Blocked");
 static const Brn kStatusInactive("Inactive");
+static const Brn kStatusDisabled("Disabled");
 
 void ProviderSender::SetStatusReady()
 {
@@ -131,6 +146,11 @@ void ProviderSender::SetStatusBlocked()
 void ProviderSender::SetStatusInactive()
 {
     SetPropertyStatus(kStatusInactive);
+}
+
+void ProviderSender::SetStatusDisabled()
+{
+    SetPropertyStatus(kStatusDisabled);
 }
 
 void ProviderSender::InformAudioPresent()
@@ -282,10 +302,12 @@ void OhmSender::SendAudio(const TByte* aData, TUint aBytes)
                                samples,
                                iFrame,
                                iTimestamp,
+                               0, // sync timestamp
                                iSampleStart,
                                iSamplesTotal,
                                iSampleRate,
                                iBitRate,
+                               0, // volume offset
                                iBitDepth,
                                iChannels,
                                iCodecName);

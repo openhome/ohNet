@@ -38,6 +38,16 @@ void DvProviderZappOrgTestWidgetController1::EnableActionSetWidgetRegister()
     iService->AddAction(action, functor);
 }
 
+void DvProviderZappOrgTestWidgetController1::EnableActionGetWidgetRegister()
+{
+    Zapp::Action* action = new Zapp::Action("GetWidgetRegister");
+    action->AddInputParameter(new ParameterString("WidgetUdn"));
+    action->AddInputParameter(new ParameterUint("RegisterIndex"));
+    action->AddOutputParameter(new ParameterUint("RegisterValue"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestWidgetController1::DoGetWidgetRegister);
+    iService->AddAction(action, functor);
+}
+
 void DvProviderZappOrgTestWidgetController1::DoCreateWidget(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
@@ -70,6 +80,18 @@ void DvProviderZappOrgTestWidgetController1::DoSetWidgetRegister(IDviInvocation&
     SetWidgetRegister(resp, aVersion, WidgetUdn, RegisterIndex, RegisterValue);
 }
 
+void DvProviderZappOrgTestWidgetController1::DoGetWidgetRegister(IDviInvocation& aInvocation, TUint aVersion)
+{
+    aInvocation.InvocationReadStart();
+    Brhz WidgetUdn;
+    aInvocation.InvocationReadString("WidgetUdn", WidgetUdn);
+    TUint RegisterIndex = aInvocation.InvocationReadUint("RegisterIndex");
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
+    InvocationResponseUint respRegisterValue(aInvocation, "RegisterValue");
+    GetWidgetRegister(resp, aVersion, WidgetUdn, RegisterIndex, respRegisterValue);
+}
+
 void DvProviderZappOrgTestWidgetController1::CreateWidget(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aWidgetUdn*/)
 {
     ASSERTS();
@@ -81,6 +103,11 @@ void DvProviderZappOrgTestWidgetController1::RemoveWidget(IInvocationResponse& /
 }
 
 void DvProviderZappOrgTestWidgetController1::SetWidgetRegister(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aWidgetUdn*/, TUint /*aRegisterIndex*/, TUint /*aRegisterValue*/)
+{
+    ASSERTS();
+}
+
+void DvProviderZappOrgTestWidgetController1::GetWidgetRegister(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aWidgetUdn*/, TUint /*aRegisterIndex*/, IInvocationResponseUint& /*aRegisterValue*/)
 {
     ASSERTS();
 }

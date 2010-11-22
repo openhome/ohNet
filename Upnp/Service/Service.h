@@ -180,13 +180,6 @@ public:
     virtual ~IPropertyWriter() {}
 };
 
-class IPropertyWriterFactory
-{
-public:
-    virtual IPropertyWriter* CreateWriter(const Endpoint& aSubscriber, const Brx& aSubscriberPath,
-                                          const Brx& aSid, TUint aSequenceNumber) = 0;
-};
-
 /**
  * (Service) Property
  *

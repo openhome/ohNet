@@ -12,7 +12,7 @@ def build(aTarget):
     ret = os.system(buildCmd)
     if (0 != ret):
         print '\nBuild for ' + aTarget + ' failed, aborting'
-        sys.exit(ret)
+        sys.exit(1)
 
 def runBuilds():
     if gIncremental == 0:
@@ -40,7 +40,7 @@ def runTests():
         ret = subprocess.call(cmdLine)
         if ret != 0:
             print '\nTest ' + test.name + ' failed, aborting'
-            sys.exit(ret)
+            sys.exit(1)
 
 def runTestsValgrind():
     # clear any old output files
@@ -149,6 +149,8 @@ gAllTests = [ TestCase('TestBuffer', [], True)
              ,TestCase('TestDvDeviceStd', ['-l'], True)
              ,TestCase('TestDvDeviceC', [], True)
              ,TestCase('TestCpDeviceDv', [], True)
+             ,TestCase('TestCpDeviceDvStd', [], True)
+             ,TestCase('TestCpDeviceDvC', [], True)
              ,TestCase('TestProxyCs', [], False, False)
             ]
 

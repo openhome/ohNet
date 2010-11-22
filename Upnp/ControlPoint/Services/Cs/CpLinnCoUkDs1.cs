@@ -5,7 +5,60 @@ using Zapp;
 
 namespace Zapp
 {
-    public class CpProxyLinnCoUkDs1 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkDs1
+    {
+        void SyncPlay();
+        void BeginPlay(CpProxy.CallbackAsyncComplete aCallback);
+        void EndPlay(uint aAsyncHandle);
+        void SyncPause();
+        void BeginPause(CpProxy.CallbackAsyncComplete aCallback);
+        void EndPause(uint aAsyncHandle);
+        void SyncStop();
+        void BeginStop(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStop(uint aAsyncHandle);
+        void SyncSeekSecondAbsolute(uint aaSecond);
+        void BeginSeekSecondAbsolute(uint aaSecond, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSeekSecondAbsolute(uint aAsyncHandle);
+        void SyncSeekSecondRelative(int aaSecond);
+        void BeginSeekSecondRelative(int aaSecond, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSeekSecondRelative(uint aAsyncHandle);
+        void SyncSeekTrackId(uint aaTrackId);
+        void BeginSeekTrackId(uint aaTrackId, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSeekTrackId(uint aAsyncHandle);
+        void SyncSeekTrackAbsolute(uint aaTrack);
+        void BeginSeekTrackAbsolute(uint aaTrack, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSeekTrackAbsolute(uint aAsyncHandle);
+        void SyncSeekTrackRelative(int aaTrack);
+        void BeginSeekTrackRelative(int aaTrack, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSeekTrackRelative(uint aAsyncHandle);
+        void SyncState(out string aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out string aaTrackCodecName, out uint aaTrackId);
+        void BeginState(CpProxy.CallbackAsyncComplete aCallback);
+        void EndState(uint aAsyncHandle, out string aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out string aaTrackCodecName, out uint aaTrackId);
+        void SyncProtocolInfo(out string aaSupportedProtocols);
+        void BeginProtocolInfo(CpProxy.CallbackAsyncComplete aCallback);
+        void EndProtocolInfo(uint aAsyncHandle, out string aaSupportedProtocols);
+
+        void SetPropertySupportedProtocolsChanged(CpProxy.CallbackPropertyChanged aSupportedProtocolsChanged);
+        void PropertySupportedProtocols(out string aSupportedProtocols);
+        void SetPropertyTrackDurationChanged(CpProxy.CallbackPropertyChanged aTrackDurationChanged);
+        void PropertyTrackDuration(out uint aTrackDuration);
+        void SetPropertyTrackBitRateChanged(CpProxy.CallbackPropertyChanged aTrackBitRateChanged);
+        void PropertyTrackBitRate(out uint aTrackBitRate);
+        void SetPropertyTrackLosslessChanged(CpProxy.CallbackPropertyChanged aTrackLosslessChanged);
+        void PropertyTrackLossless(out bool aTrackLossless);
+        void SetPropertyTrackBitDepthChanged(CpProxy.CallbackPropertyChanged aTrackBitDepthChanged);
+        void PropertyTrackBitDepth(out uint aTrackBitDepth);
+        void SetPropertyTrackSampleRateChanged(CpProxy.CallbackPropertyChanged aTrackSampleRateChanged);
+        void PropertyTrackSampleRate(out uint aTrackSampleRate);
+        void SetPropertyTrackCodecNameChanged(CpProxy.CallbackPropertyChanged aTrackCodecNameChanged);
+        void PropertyTrackCodecName(out string aTrackCodecName);
+        void SetPropertyTrackIdChanged(CpProxy.CallbackPropertyChanged aTrackIdChanged);
+        void PropertyTrackId(out uint aTrackId);
+        void SetPropertyTransportStateChanged(CpProxy.CallbackPropertyChanged aTransportStateChanged);
+        void PropertyTransportState(out string aTransportState);
+    }
+
+    public class CpProxyLinnCoUkDs1 : CpProxy, IDisposable, ICpProxyLinnCoUkDs1
     {
         [DllImport("CpLinnCoUkDs1")]
         static extern uint CpProxyLinnCoUkDs1Create(uint aDeviceHandle);
@@ -626,17 +679,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            uint handle;
             lock (this)
             {
                 if (iHandle == 0)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyLinnCoUkDs1Destroy(iHandle);
                 iHandle = 0;
             }
-            CpProxyLinnCoUkDs1Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

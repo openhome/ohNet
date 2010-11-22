@@ -46,13 +46,6 @@ void CpiSubscription::RemoveRef()
     }
 }
 
-void CpiSubscription::StopUpdates()
-{
-    iLock.Wait();
-    iStopUpdates = true;
-    iLock.Signal();
-}
-
 TBool CpiSubscription::UpdateSequenceNumber(TUint aSequenceNumber)
 {
     if (aSequenceNumber != iNextSequenceNumber) {
@@ -74,6 +67,7 @@ void CpiSubscription::Unsubscribe()
 {
     AddRef();
     iLock.Wait();
+	iEventProcessor = NULL;
     if (iInterruptHandler != NULL) {
         iInterruptHandler->Interrupt();
     }
@@ -99,11 +93,6 @@ void CpiSubscription::SetSid(Brh& aSid)
 const Zapp::ServiceType& CpiSubscription::ServiceType() const
 {
     return iServiceType;
-}
-
-IEventProcessor& CpiSubscription::EventProcessor()
-{
-    return iEventProcessor;
 }
 
 void CpiSubscription::RunInSubscriber()
@@ -136,11 +125,10 @@ void CpiSubscription::RunInSubscriber()
 CpiSubscription::CpiSubscription(CpiDevice& aDevice, IEventProcessor& aEventProcessor, const Zapp::ServiceType& aServiceType)
     : iLock("SUBM")
     , iDevice(aDevice)
-    , iEventProcessor(aEventProcessor)
+    , iEventProcessor(&aEventProcessor)
     , iServiceType(aServiceType)
     , iPendingOperation(eNone)
     , iRefCount(1)
-    , iStopUpdates(false)
     , iInterruptHandler(NULL)
 {
     iTimer = new Timer(MakeFunctor(*this, &CpiSubscription::Renew));
@@ -272,6 +260,30 @@ void CpiSubscription::DoUnsubscribe()
     LOG(kEvent, "Unsubscribed sid ");
     LOG(kEvent, sid);
     LOG(kEvent, "\n");
+}
+
+void CpiSubscription::EventUpdateStart()
+{
+	AutoMutex a(iLock);
+	if (iEventProcessor != NULL) {
+		iEventProcessor->EventUpdateStart();
+	}
+}
+
+void CpiSubscription::EventUpdate(const Brx& aName, const Brx& aValue, IOutputProcessor& aProcessor)
+{
+	AutoMutex a(iLock);
+	if (iEventProcessor != NULL) {
+		iEventProcessor->EventUpdate(aName, aValue, aProcessor);
+	}
+}
+
+void CpiSubscription::EventUpdateEnd()
+{
+	AutoMutex a(iLock);
+	if (iEventProcessor != NULL) {
+		iEventProcessor->EventUpdateEnd();
+	}
 }
 
 
