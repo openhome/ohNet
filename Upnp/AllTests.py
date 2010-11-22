@@ -31,6 +31,8 @@ def runTests():
     testsToRun = [test for test in gAllTests if test.quick]
     if gFullTests == 1:
         testsToRun = [test for test in gAllTests]
+        if gNativeTestsOnly == 1:
+            testsToRun = [test for test in gAllTests if test.native]
     for test in testsToRun:
         print '\nTest: ' + test.name
         cmdLine = test.args
@@ -78,6 +80,7 @@ gBuildsCompleteTime = ''
 gBuildOnly = 0
 gFullTests = 0
 gIncremental = 0
+gNativeTestsOnly = 0
 gSilent = 0
 gTestsOnly = 0
 gValgrind = 0
@@ -88,6 +91,8 @@ for arg in sys.argv[1:]:
         gFullTests = 1
     elif arg == '-i' or arg == '--incremental':
         gIncremental = 1
+    elif arg == '-n' or arg == '--native':
+        gNativeTestsOnly = 1
     elif arg == '-s' or arg == '--silent':
         gSilent = 1
     elif arg == '-t' or arg == '--testsonly':

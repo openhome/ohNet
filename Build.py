@@ -72,6 +72,9 @@ def getArguments(module,nightly,arch,valgrind):
 				
 	elif module == "upnp" and arch == 'arm':
 				args = ' -b'
+
+	elif module == "upnp" and arch == 'x64':
+				args = ' -s -f -n'
 				
 	elif module == "upnp":
 				args = ' -s'
