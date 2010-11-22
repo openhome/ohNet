@@ -32,7 +32,7 @@ def getEnvironment():
 				ostype = 'Windows'
 				arch = 'x64'
 
-	if ostype == "Windows" or ostype == "Linux" and arch == "arm":
+	if ostype == "Windows" or (ostype == "Linux" and arch != "x86"):
 		valgrind = "0"
 		
 	else:
