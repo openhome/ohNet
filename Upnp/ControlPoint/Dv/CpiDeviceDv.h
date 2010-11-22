@@ -32,8 +32,7 @@ private: // ICpiProtocol
 private: // ICpiDeviceObserver
     void Release();
 private: // IPropertyWriterFactory
-    IPropertyWriter* CreateWriter(const Endpoint& aSubscriber, const Brx& aSubscriberPath,
-                                  const Brx& aSid, TUint aSequenceNumber); // !!!! aSubscriber + aSubscriberPath should be replaced by opaque subscription-owner-provided data
+    IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData, const Brx& aSid, TUint aSequenceNumber);
 private:
     CpiDevice* iDeviceCp;
     DviDevice& iDeviceDv;
