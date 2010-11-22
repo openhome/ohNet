@@ -117,6 +117,14 @@ void DvProviderZappOrgTestWidget1::EnableActionSetReadWriteRegister()
     iService->AddAction(action, functor);
 }
 
+void DvProviderZappOrgTestWidget1::EnableActionGetWidgetClass()
+{
+    Zapp::Action* action = new Zapp::Action("GetWidgetClass");
+    action->AddOutputParameter(new ParameterUint("WidgetClass"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestWidget1::DoGetWidgetClass);
+    iService->AddAction(action, functor);
+}
+
 void DvProviderZappOrgTestWidget1::DoSetReadWriteRegister(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
@@ -127,7 +135,21 @@ void DvProviderZappOrgTestWidget1::DoSetReadWriteRegister(IDviInvocation& aInvoc
     SetReadWriteRegister(resp, aVersion, RegisterIndex, RegisterValue);
 }
 
+void DvProviderZappOrgTestWidget1::DoGetWidgetClass(IDviInvocation& aInvocation, TUint aVersion)
+{
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
+    InvocationResponseUint respWidgetClass(aInvocation, "WidgetClass");
+    GetWidgetClass(resp, aVersion, respWidgetClass);
+}
+
 void DvProviderZappOrgTestWidget1::SetReadWriteRegister(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aRegisterIndex*/, TUint /*aRegisterValue*/)
+{
+    ASSERTS();
+}
+
+void DvProviderZappOrgTestWidget1::GetWidgetClass(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aWidgetClass*/)
 {
     ASSERTS();
 }

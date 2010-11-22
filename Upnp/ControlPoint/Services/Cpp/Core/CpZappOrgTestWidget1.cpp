@@ -28,6 +28,28 @@ void SyncSetReadWriteRegisterZappOrgTestWidget1::CompleteRequest(IAsync& aAsync)
 }
 
 
+class SyncGetWidgetClassZappOrgTestWidget1 : public SyncProxyAction
+{
+public:
+    SyncGetWidgetClassZappOrgTestWidget1(CpProxyZappOrgTestWidget1& aProxy, TUint& aWidgetClass);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyZappOrgTestWidget1& iService;
+    TUint& iWidgetClass;
+};
+
+SyncGetWidgetClassZappOrgTestWidget1::SyncGetWidgetClassZappOrgTestWidget1(CpProxyZappOrgTestWidget1& aProxy, TUint& aWidgetClass)
+    : iService(aProxy)
+    , iWidgetClass(aWidgetClass)
+{
+}
+
+void SyncGetWidgetClassZappOrgTestWidget1::CompleteRequest(IAsync& aAsync)
+{
+    iService.EndGetWidgetClass(aAsync, iWidgetClass);
+}
+
+
 CpProxyZappOrgTestWidget1::CpProxyZappOrgTestWidget1(CpDevice& aDevice)
     : CpProxy("zapp-org", "TestWidget", 1, aDevice.Device())
 {
@@ -38,6 +60,10 @@ CpProxyZappOrgTestWidget1::CpProxyZappOrgTestWidget1(CpDevice& aDevice)
     iActionSetReadWriteRegister->AddInputParameter(param);
     param = new Zapp::ParameterUint("RegisterValue");
     iActionSetReadWriteRegister->AddInputParameter(param);
+
+    iActionGetWidgetClass = new Action("GetWidgetClass");
+    param = new Zapp::ParameterUint("WidgetClass");
+    iActionGetWidgetClass->AddOutputParameter(param);
 
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyZappOrgTestWidget1::ReadWriteRegister0PropertyChanged);
@@ -70,6 +96,7 @@ CpProxyZappOrgTestWidget1::~CpProxyZappOrgTestWidget1()
 {
     DestroyService();
     delete iActionSetReadWriteRegister;
+    delete iActionGetWidgetClass;
 }
 
 void CpProxyZappOrgTestWidget1::SyncSetReadWriteRegister(TUint aRegisterIndex, TUint aRegisterValue)
@@ -98,6 +125,35 @@ void CpProxyZappOrgTestWidget1::EndSetReadWriteRegister(IAsync& aAsync)
     if (invocation.Error()) {
         THROW(ProxyError);
     }
+}
+
+void CpProxyZappOrgTestWidget1::SyncGetWidgetClass(TUint& aWidgetClass)
+{
+    SyncGetWidgetClassZappOrgTestWidget1 sync(*this, aWidgetClass);
+    BeginGetWidgetClass(sync.Functor());
+    sync.Wait();
+}
+
+void CpProxyZappOrgTestWidget1::BeginGetWidgetClass(FunctorAsync& aFunctor)
+{
+    Invocation* invocation = iService->Invocation(*iActionGetWidgetClass, aFunctor);
+    TUint outIndex = 0;
+    const Action::VectorParameters& outParams = iActionGetWidgetClass->OutputParameters();
+    invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
+    iInvocable.InvokeAction(*invocation);
+}
+
+void CpProxyZappOrgTestWidget1::EndGetWidgetClass(IAsync& aAsync, TUint& aWidgetClass)
+{
+    ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
+    Invocation& invocation = (Invocation&)aAsync;
+    ASSERT(invocation.Action().Name() == Brn("GetWidgetClass"));
+
+    if (invocation.Error()) {
+        THROW(ProxyError);
+    }
+    TUint index = 0;
+    aWidgetClass = ((ArgumentUint*)invocation.OutputArguments()[index++])->Value();
 }
 
 void CpProxyZappOrgTestWidget1::SetPropertyReadWriteRegister0Changed(Functor& aFunctor)

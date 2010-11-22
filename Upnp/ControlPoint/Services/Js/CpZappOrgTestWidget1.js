@@ -24,6 +24,7 @@ var ServiceTestWidget = function(udn){
 	this.serviceProperties = {};
 	this.serviceProperties["RegisterValue"] = new Zapp.ServiceProperty("RegisterValue");
 	this.serviceProperties["RegisterIndex"] = new Zapp.ServiceProperty("RegisterIndex");
+	this.serviceProperties["WidgetClass"] = new Zapp.ServiceProperty("WidgetClass");
 	this.serviceProperties["ReadWriteRegister0"] = new Zapp.ServiceProperty("ReadWriteRegister0");
 	this.serviceProperties["ReadWriteRegister1"] = new Zapp.ServiceProperty("ReadWriteRegister1");
 	this.serviceProperties["ReadWriteRegister2"] = new Zapp.ServiceProperty("ReadWriteRegister2");
@@ -78,6 +79,19 @@ ServiceTestWidget.prototype.RegisterValue_Changed = function (stateChangedFuncti
 */
 ServiceTestWidget.prototype.RegisterIndex_Changed = function (stateChangedFunction) {
     this.serviceProperties.RegisterIndex.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
+	});
+}
+
+
+/**
+* Adds a listener to handle "WidgetClass" property change events
+* @method WidgetClass_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestWidget.prototype.WidgetClass_Changed = function (stateChangedFunction) {
+    this.serviceProperties.WidgetClass.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readIntParameter(state)); 
 	});
@@ -201,6 +215,26 @@ ServiceTestWidget.prototype.SetReadWriteRegister = function(RegisterIndex, Regis
     request.writeIntParameter("RegisterIndex", RegisterIndex);
     request.writeIntParameter("RegisterValue", RegisterValue);
     request.send(function(result){
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to GetWidgetClass
+* @method GetWidgetClass
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestWidget.prototype.GetWidgetClass = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("GetWidgetClass", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+		result["WidgetClass"] = Zapp.SoapRequest.readIntParameter(result["WidgetClass"]);	
 	
 		if (successFunction){
 			successFunction(result);

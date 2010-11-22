@@ -12,11 +12,15 @@ class DvProviderZappOrgTestWidget1C : public DvProviderZappOrgTestWidget1
 public:
     DvProviderZappOrgTestWidget1C(DvDevice& aDevice);
     void EnableActionSetReadWriteRegister(CallbackTestWidget1SetReadWriteRegister aCallback, void* aPtr);
+    void EnableActionGetWidgetClass(CallbackTestWidget1GetWidgetClass aCallback, void* aPtr);
 private:
     void SetReadWriteRegister(IInvocationResponse& aResponse, TUint aVersion, TUint aRegisterIndex, TUint aRegisterValue);
+    void GetWidgetClass(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aWidgetClass);
 private:
     CallbackTestWidget1SetReadWriteRegister iCallbackSetReadWriteRegister;
     void* iPtrSetReadWriteRegister;
+    CallbackTestWidget1GetWidgetClass iCallbackGetWidgetClass;
+    void* iPtrGetWidgetClass;
 };
 
 DvProviderZappOrgTestWidget1C::DvProviderZappOrgTestWidget1C(DvDevice& aDevice)
@@ -31,6 +35,13 @@ void DvProviderZappOrgTestWidget1C::EnableActionSetReadWriteRegister(CallbackTes
     DvProviderZappOrgTestWidget1::EnableActionSetReadWriteRegister();
 }
 
+void DvProviderZappOrgTestWidget1C::EnableActionGetWidgetClass(CallbackTestWidget1GetWidgetClass aCallback, void* aPtr)
+{
+    iCallbackGetWidgetClass = aCallback;
+    iPtrGetWidgetClass = aPtr;
+    DvProviderZappOrgTestWidget1::EnableActionGetWidgetClass();
+}
+
 void DvProviderZappOrgTestWidget1C::SetReadWriteRegister(IInvocationResponse& aResponse, TUint aVersion, TUint aRegisterIndex, TUint aRegisterValue)
 {
     ASSERT(iCallbackSetReadWriteRegister != NULL);
@@ -39,6 +50,19 @@ void DvProviderZappOrgTestWidget1C::SetReadWriteRegister(IInvocationResponse& aR
         return;
     }
     aResponse.Start();
+    aResponse.End();
+}
+
+void DvProviderZappOrgTestWidget1C::GetWidgetClass(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aWidgetClass)
+{
+    uint32_t WidgetClass;
+    ASSERT(iCallbackGetWidgetClass != NULL);
+    if (0 != iCallbackGetWidgetClass(iPtrGetWidgetClass, aVersion, &WidgetClass)) {
+        aResponse.Error(502, Brn("Action failed"));
+        return;
+    }
+    aResponse.Start();
+    aWidgetClass.Write(WidgetClass);
     aResponse.End();
 }
 
@@ -57,6 +81,11 @@ void DvProviderZappOrgTestWidget1Destroy(THandle aProvider)
 void DvProviderZappOrgTestWidget1EnableActionSetReadWriteRegister(THandle aProvider, CallbackTestWidget1SetReadWriteRegister aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderZappOrgTestWidget1C*>(aProvider)->EnableActionSetReadWriteRegister(aCallback, aPtr);
+}
+
+void DvProviderZappOrgTestWidget1EnableActionGetWidgetClass(THandle aProvider, CallbackTestWidget1GetWidgetClass aCallback, void* aPtr)
+{
+    reinterpret_cast<DvProviderZappOrgTestWidget1C*>(aProvider)->EnableActionGetWidgetClass(aCallback, aPtr);
 }
 
 int32_t DvProviderZappOrgTestWidget1SetPropertyReadWriteRegister0(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
