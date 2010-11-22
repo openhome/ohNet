@@ -10,6 +10,9 @@ namespace Zapp
         void SyncSetReadWriteRegister(uint aRegisterIndex, uint aRegisterValue);
         void BeginSetReadWriteRegister(uint aRegisterIndex, uint aRegisterValue, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetReadWriteRegister(uint aAsyncHandle);
+        void SyncGetWidgetClass(out uint aWidgetClass);
+        void BeginGetWidgetClass(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetWidgetClass(uint aAsyncHandle, out uint aWidgetClass);
 
         void SetPropertyReadWriteRegister0Changed(CpProxy.CallbackPropertyChanged aReadWriteRegister0Changed);
         void PropertyReadWriteRegister0(out uint aReadWriteRegister0);
@@ -41,6 +44,12 @@ namespace Zapp
         static extern unsafe void CpProxyZappOrgTestWidget1BeginSetReadWriteRegister(uint aHandle, uint aRegisterIndex, uint aRegisterValue, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestWidget1")]
         static extern unsafe int CpProxyZappOrgTestWidget1EndSetReadWriteRegister(uint aHandle, uint aAsync);
+        [DllImport("CpZappOrgTestWidget1")]
+        static extern unsafe void CpProxyZappOrgTestWidget1SyncGetWidgetClass(uint aHandle, uint* aWidgetClass);
+        [DllImport("CpZappOrgTestWidget1")]
+        static extern unsafe void CpProxyZappOrgTestWidget1BeginGetWidgetClass(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        [DllImport("CpZappOrgTestWidget1")]
+        static extern unsafe int CpProxyZappOrgTestWidget1EndGetWidgetClass(uint aHandle, uint aAsync, uint* aWidgetClass);
         [DllImport("CpZappOrgTestWidget1")]
         static extern void CpProxyZappOrgTestWidget1SetPropertyReadWriteRegister0Changed(uint aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestWidget1")]
@@ -118,6 +127,32 @@ namespace Zapp
         {
 			{
 				if (0 != CpProxyZappOrgTestWidget1EndSetReadWriteRegister(iHandle, aAsyncHandle))
+				{
+					throw(new ProxyError());
+				}
+			}
+        }
+
+        public unsafe void SyncGetWidgetClass(out uint aWidgetClass)
+        {
+			fixed (uint* widgetClass = &aWidgetClass)
+			{
+				CpProxyZappOrgTestWidget1SyncGetWidgetClass(iHandle, widgetClass);
+			}
+        }
+
+        public unsafe void BeginGetWidgetClass(CallbackAsyncComplete aCallback)
+        {
+            GCHandle gch = GCHandle.Alloc(aCallback);
+            IntPtr ptr = GCHandle.ToIntPtr(gch);
+            CpProxyZappOrgTestWidget1BeginGetWidgetClass(iHandle, iActionComplete, ptr);
+        }
+
+        public unsafe void EndGetWidgetClass(uint aAsyncHandle, out uint aWidgetClass)
+        {
+			fixed (uint* widgetClass = &aWidgetClass)
+			{
+				if (0 != CpProxyZappOrgTestWidget1EndGetWidgetClass(iHandle, aAsyncHandle, widgetClass))
 				{
 					throw(new ProxyError());
 				}

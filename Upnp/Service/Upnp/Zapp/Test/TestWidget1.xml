@@ -11,6 +11,11 @@
             <dataType>ui1</dataType>
         </stateVariable>
         <stateVariable>
+            <name>A_ARG_TYPE_WidgetClass</name>
+            <sendEventsAttribute>no</sendEventsAttribute>
+            <dataType>ui4</dataType>
+        </stateVariable>
+        <stateVariable>
             <name>ReadWriteRegister0</name>
             <sendEventsAttribute>yes</sendEventsAttribute>
             <dataType>ui4</dataType>
@@ -64,6 +69,16 @@
                     <name>RegisterValue</name>
                     <direction>in</direction>
                     <relatedStateVariable>A_ARG_TYPE_RegisterValue</relatedStateVariable>
+                </argument>
+            </argumentList>
+        </action>
+        <action>
+            <name>GetWidgetClass</name>
+            <argumentList>
+                <argument>
+                    <name>WidgetClass</name>
+                    <direction>out</direction>
+                    <relatedStateVariable>A_ARG_TYPE_WidgetClass</relatedStateVariable>
                 </argument>
             </argumentList>
         </action>

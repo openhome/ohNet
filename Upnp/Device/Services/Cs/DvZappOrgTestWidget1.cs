@@ -45,13 +45,17 @@ namespace Zapp
         static extern unsafe void DvProviderZappOrgTestWidget1GetPropertyReadOnlyRegister7(uint aHandle, uint* aValue);
         [DllImport("DvZappOrgTestWidget1")]
         static extern void DvProviderZappOrgTestWidget1EnableActionSetReadWriteRegister(uint aHandle, CallbackSetReadWriteRegister aCallback, IntPtr aPtr);
+        [DllImport("DvZappOrgTestWidget1")]
+        static extern void DvProviderZappOrgTestWidget1EnableActionGetWidgetClass(uint aHandle, CallbackGetWidgetClass aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
         private unsafe delegate int CallbackSetReadWriteRegister(IntPtr aPtr, uint aVersion, uint aRegisterIndex, uint aRegisterValue);
+        private unsafe delegate int CallbackGetWidgetClass(IntPtr aPtr, uint aVersion, uint* aWidgetClass);
 
         private GCHandle iGch;
         private CallbackSetReadWriteRegister iCallbackSetReadWriteRegister;
+        private CallbackGetWidgetClass iCallbackGetWidgetClass;
 
         public DvProviderZappOrgTestWidget1(DvDevice aDevice)
         {
@@ -210,7 +214,19 @@ namespace Zapp
             DvProviderZappOrgTestWidget1EnableActionSetReadWriteRegister(iHandle, iCallbackSetReadWriteRegister, ptr);
         }
 
+        protected unsafe void EnableActionGetWidgetClass()
+        {
+            iCallbackGetWidgetClass = new CallbackGetWidgetClass(DoGetWidgetClass);
+            IntPtr ptr = GCHandle.ToIntPtr(iGch);
+            DvProviderZappOrgTestWidget1EnableActionGetWidgetClass(iHandle, iCallbackGetWidgetClass, ptr);
+        }
+
         protected virtual void SetReadWriteRegister(uint aVersion, uint aRegisterIndex, uint aRegisterValue)
+        {
+            throw (new ActionDisabledError());
+        }
+
+        protected virtual void GetWidgetClass(uint aVersion, out uint aWidgetClass)
         {
             throw (new ActionDisabledError());
         }
@@ -220,6 +236,16 @@ namespace Zapp
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestWidget1 self = (DvProviderZappOrgTestWidget1)gch.Target;
             self.SetReadWriteRegister(aVersion, aRegisterIndex, aRegisterValue);
+            return 0;
+        }
+
+        private static unsafe int DoGetWidgetClass(IntPtr aPtr, uint aVersion, uint* aWidgetClass)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderZappOrgTestWidget1 self = (DvProviderZappOrgTestWidget1)gch.Target;
+            uint widgetClass;
+            self.GetWidgetClass(aVersion, out widgetClass);
+            *aWidgetClass = widgetClass;
             return 0;
         }
 

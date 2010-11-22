@@ -62,6 +62,37 @@ int32_t CpProxyZappOrgTestWidget1EndSetReadWriteRegister(THandle aHandle, ZappHa
     return err;
 }
 
+void CpProxyZappOrgTestWidget1SyncGetWidgetClass(THandle aHandle, uint32_t* aWidgetClass)
+{
+    CpProxyZappOrgTestWidget1C* proxyC = reinterpret_cast<CpProxyZappOrgTestWidget1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    proxyC->Proxy()->SyncGetWidgetClass(*aWidgetClass);
+}
+
+void CpProxyZappOrgTestWidget1BeginGetWidgetClass(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+{
+    CpProxyZappOrgTestWidget1C* proxyC = reinterpret_cast<CpProxyZappOrgTestWidget1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    proxyC->Proxy()->BeginGetWidgetClass(functor);
+}
+
+int32_t CpProxyZappOrgTestWidget1EndGetWidgetClass(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aWidgetClass)
+{
+    int32_t err = 0;
+    CpProxyZappOrgTestWidget1C* proxyC = reinterpret_cast<CpProxyZappOrgTestWidget1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    ASSERT(async != NULL);
+    try {
+        proxyC->Proxy()->EndGetWidgetClass(*async, *aWidgetClass);
+    }
+    catch(...) {
+        err = -1;
+    }
+    return err;
+}
+
 void CpProxyZappOrgTestWidget1SetPropertyReadWriteRegister0Changed(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
     CpProxyZappOrgTestWidget1C* proxyC = reinterpret_cast<CpProxyZappOrgTestWidget1C*>(aHandle);

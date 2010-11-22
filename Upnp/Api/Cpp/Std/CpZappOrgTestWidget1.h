@@ -72,6 +72,32 @@ public:
     void EndSetReadWriteRegister(IAsync& aAsync);
 
     /**
+     * Invoke the action synchronously.  Blocks until the action has been processed
+     * on the device and sets any output arguments.
+     *
+     * @param[out] aWidgetClass
+     */
+    void SyncGetWidgetClass(uint32_t& aWidgetClass);
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the action
+     * later completes.  Any output arguments can then be retrieved by calling
+     * EndGetWidgetClass().
+     *
+     * @param[in] aFunctor   Callback to run when the action completes.
+     *                       This is guaranteed to be run but may indicate an error
+     */
+    void BeginGetWidgetClass(FunctorAsync& aFunctor);
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
+     * This may only be called from the callback set in the above Begin function.
+     *
+     * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
+     * @param[out] aWidgetClass
+     */
+    void EndGetWidgetClass(IAsync& aAsync, uint32_t& aWidgetClass);
+
+    /**
      * Set a callback to be run when the ReadWriteRegister0 state variable changes.
      *
      * Callbacks may be run in different threads but callbacks for a
@@ -235,6 +261,7 @@ private:
     void ReadOnlyRegister7PropertyChanged();
 private:
     Action* iActionSetReadWriteRegister;
+    Action* iActionGetWidgetClass;
     PropertyUint* iReadWriteRegister0;
     PropertyUint* iReadWriteRegister1;
     PropertyUint* iReadWriteRegister2;

@@ -41,11 +41,14 @@ public:
 protected:
     DvProviderZappOrgTestWidget1(DvDevice& aDevice);
     void EnableActionSetReadWriteRegister();
+    void EnableActionGetWidgetClass();
 private:
     virtual void SetReadWriteRegister(IInvocationResponse& aResponse, TUint aVersion, TUint aRegisterIndex, TUint aRegisterValue);
+    virtual void GetWidgetClass(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aWidgetClass);
 private:
     DvProviderZappOrgTestWidget1();
     void DoSetReadWriteRegister(IDviInvocation& aInvocation, TUint aVersion);
+    void DoGetWidgetClass(IDviInvocation& aInvocation, TUint aVersion);
 private:
     PropertyUint* iPropertyReadWriteRegister0;
     PropertyUint* iPropertyReadWriteRegister1;

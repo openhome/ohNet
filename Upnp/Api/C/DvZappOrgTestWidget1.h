@@ -9,11 +9,13 @@ extern "C" {
 #endif
 
 typedef int32_t (*CallbackTestWidget1SetReadWriteRegister)(void* aPtr, uint32_t aVersion, uint32_t aRegisterIndex, uint32_t aRegisterValue);
+typedef int32_t (*CallbackTestWidget1GetWidgetClass)(void* aPtr, uint32_t aVersion, uint32_t* aWidgetClass);
 
 DllExport THandle DvProviderZappOrgTestWidget1Create(DvDeviceC aDevice);
 DllExport void DvProviderZappOrgTestWidget1Destroy(THandle aProvider);
 
 DllExport void DvProviderZappOrgTestWidget1EnableActionSetReadWriteRegister(THandle aProvider, CallbackTestWidget1SetReadWriteRegister aCallback, void* aPtr);
+DllExport void DvProviderZappOrgTestWidget1EnableActionGetWidgetClass(THandle aProvider, CallbackTestWidget1GetWidgetClass aCallback, void* aPtr);
 
 DllExport int32_t DvProviderZappOrgTestWidget1SetPropertyReadWriteRegister0(THandle aProvider, uint32_t aValue, uint32_t* aChanged);
 DllExport void DvProviderZappOrgTestWidget1GetPropertyReadWriteRegister0(THandle aProvider, uint32_t* aValue);
