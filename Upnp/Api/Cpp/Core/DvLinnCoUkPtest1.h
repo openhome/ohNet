@@ -16,20 +16,61 @@ class PropertyString;
 class PropertyBinary;
 
 /**
- * Base Device for linn.co.uk:Ptest:1
+ * Provider for the linn.co.uk:Ptest:1 UPnP service
  */
 class DvProviderLinnCoUkPtest1 : public DvProvider
 {
 public:
     virtual ~DvProviderLinnCoUkPtest1() {}
 protected:
+    /**
+     * Constructor
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
     DvProviderLinnCoUkPtest1(DvDevice& aDevice);
+    /**
+     * Signal that the action TestComPort is supported.
+     * The action's availability will be published in the device's service.xml.
+     * DoTestComPort must be overridden if this is called.
+     */
     void EnableActionTestComPort();
+    /**
+     * Signal that the action LedsOn is supported.
+     * The action's availability will be published in the device's service.xml.
+     * DoLedsOn must be overridden if this is called.
+     */
     void EnableActionLedsOn();
+    /**
+     * Signal that the action LedsOff is supported.
+     * The action's availability will be published in the device's service.xml.
+     * DoLedsOff must be overridden if this is called.
+     */
     void EnableActionLedsOff();
 private:
+    /**
+     * TestComPort action.
+     *
+     * Will be called when the device stack receives an invocation of the
+     * TestComPort action for the owning device.
+     * Must be implemented iff EnableActionTestComPort was called.
+     */
     virtual void TestComPort(IInvocationResponse& aResponse, TUint aVersion, TUint aaPort, IInvocationResponseBool& aaResult);
+    /**
+     * LedsOn action.
+     *
+     * Will be called when the device stack receives an invocation of the
+     * LedsOn action for the owning device.
+     * Must be implemented iff EnableActionLedsOn was called.
+     */
     virtual void LedsOn(IInvocationResponse& aResponse, TUint aVersion);
+    /**
+     * LedsOff action.
+     *
+     * Will be called when the device stack receives an invocation of the
+     * LedsOff action for the owning device.
+     * Must be implemented iff EnableActionLedsOff was called.
+     */
     virtual void LedsOff(IInvocationResponse& aResponse, TUint aVersion);
 private:
     DvProviderLinnCoUkPtest1();
