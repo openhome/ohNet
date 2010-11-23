@@ -24,7 +24,7 @@ class DllExportClass DvProvider
 {
 public:
     /**
-     * Lock the provider's vector of properties, blocking publication of property updates
+     * Lock the provider's properties, blocking publication of updates.
      *
      * This is not necessary when updating a single property but is used by providers that have
      * >1 properties whose values are related.  Without locking, updates to some properties may
@@ -34,8 +34,9 @@ public:
      */
     void PropertiesLock();
     /**
-     * Unlock the provider's vector of properties, allowing publication of property updates.
+     * Unlock the provider's properties, allowing publication of updates.
      *
+     * Any pending updates will automatically be scheduled.
      * This must only be called following a call to PropertiesLock().
      */
     void PropertiesUnlock();
