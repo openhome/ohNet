@@ -63,13 +63,10 @@ Module = getModule()
 
 def getArguments(module,nightly,arch,valgrind):
 
-	if module == "upnp" and nightly == "1" and arch != "arm":
+	if module == "upnp" and nightly == "1" and arch == "x86":
 			if valgrind != "0":
 				args = ' -s -f -vg'
 				
-			else if arch == '64':
-				args = ' -s -f -n'
-
 			else:
 				args = ' -s -f'
 				
