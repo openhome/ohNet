@@ -16,6 +16,7 @@ void DvProviderZappOrgTestWidgetController1Cpp::EnableActionCreateWidget()
 {
     Zapp::Action* action = new Zapp::Action("CreateWidget");
     action->AddInputParameter(new ParameterString("WidgetUdn"));
+    action->AddInputParameter(new ParameterUint("WidgetClass"));
     FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestWidgetController1Cpp::DoCreateWidget);
     iService->AddAction(action, functor);
 }
@@ -54,8 +55,9 @@ void DvProviderZappOrgTestWidgetController1Cpp::DoCreateWidget(IDviInvocation& a
     Brhz buf_WidgetUdn;
     aInvocation.InvocationReadString("WidgetUdn", buf_WidgetUdn);
     std::string WidgetUdn((const char*)buf_WidgetUdn.Ptr(), buf_WidgetUdn.Bytes());
+    uint32_t WidgetClass = aInvocation.InvocationReadUint("WidgetClass");
     aInvocation.InvocationReadEnd();
-    CreateWidget(aVersion, WidgetUdn);
+    CreateWidget(aVersion, WidgetUdn, WidgetClass);
 	aInvocation.InvocationWriteStart();
 	aInvocation.InvocationWriteEnd();
 }
@@ -102,7 +104,7 @@ void DvProviderZappOrgTestWidgetController1Cpp::DoGetWidgetRegister(IDviInvocati
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvProviderZappOrgTestWidgetController1Cpp::CreateWidget(uint32_t /*aVersion*/, const std::string& /*aWidgetUdn*/)
+void DvProviderZappOrgTestWidgetController1Cpp::CreateWidget(uint32_t /*aVersion*/, const std::string& /*aWidgetUdn*/, uint32_t /*aWidgetClass*/)
 {
     ASSERTS();
 }

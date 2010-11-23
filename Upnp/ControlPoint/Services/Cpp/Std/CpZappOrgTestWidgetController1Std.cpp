@@ -101,6 +101,8 @@ CpProxyZappOrgTestWidgetController1Cpp::CpProxyZappOrgTestWidgetController1Cpp(C
     iActionCreateWidget = new Action("CreateWidget");
     param = new Zapp::ParameterString("WidgetUdn");
     iActionCreateWidget->AddInputParameter(param);
+    param = new Zapp::ParameterUint("WidgetClass");
+    iActionCreateWidget->AddInputParameter(param);
 
     iActionRemoveWidget = new Action("RemoveWidget");
     param = new Zapp::ParameterString("WidgetUdn");
@@ -132,14 +134,14 @@ CpProxyZappOrgTestWidgetController1Cpp::~CpProxyZappOrgTestWidgetController1Cpp(
     delete iActionGetWidgetRegister;
 }
 
-void CpProxyZappOrgTestWidgetController1Cpp::SyncCreateWidget(const std::string& aWidgetUdn)
+void CpProxyZappOrgTestWidgetController1Cpp::SyncCreateWidget(const std::string& aWidgetUdn, uint32_t aWidgetClass)
 {
     SyncCreateWidgetZappOrgTestWidgetController1Cpp sync(*this);
-    BeginCreateWidget(aWidgetUdn, sync.Functor());
+    BeginCreateWidget(aWidgetUdn, aWidgetClass, sync.Functor());
     sync.Wait();
 }
 
-void CpProxyZappOrgTestWidgetController1Cpp::BeginCreateWidget(const std::string& aWidgetUdn, FunctorAsync& aFunctor)
+void CpProxyZappOrgTestWidgetController1Cpp::BeginCreateWidget(const std::string& aWidgetUdn, uint32_t aWidgetClass, FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionCreateWidget, aFunctor);
     TUint inIndex = 0;
@@ -148,6 +150,7 @@ void CpProxyZappOrgTestWidgetController1Cpp::BeginCreateWidget(const std::string
         Brn buf((const TByte*)aWidgetUdn.c_str(), (TUint)aWidgetUdn.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
+    invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aWidgetClass));
     iInvocable.InvokeAction(*invocation);
 }
 

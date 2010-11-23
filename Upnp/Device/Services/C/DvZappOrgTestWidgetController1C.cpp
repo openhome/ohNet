@@ -16,7 +16,7 @@ public:
     void EnableActionSetWidgetRegister(CallbackTestWidgetController1SetWidgetRegister aCallback, void* aPtr);
     void EnableActionGetWidgetRegister(CallbackTestWidgetController1GetWidgetRegister aCallback, void* aPtr);
 private:
-    void CreateWidget(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn);
+    void CreateWidget(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn, TUint aWidgetClass);
     void RemoveWidget(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn);
     void SetWidgetRegister(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn, TUint aRegisterIndex, TUint aRegisterValue);
     void GetWidgetRegister(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn, TUint aRegisterIndex, IInvocationResponseUint& aRegisterValue);
@@ -64,10 +64,10 @@ void DvProviderZappOrgTestWidgetController1C::EnableActionGetWidgetRegister(Call
     DvProviderZappOrgTestWidgetController1::EnableActionGetWidgetRegister();
 }
 
-void DvProviderZappOrgTestWidgetController1C::CreateWidget(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn)
+void DvProviderZappOrgTestWidgetController1C::CreateWidget(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn, TUint aWidgetClass)
 {
     ASSERT(iCallbackCreateWidget != NULL);
-    if (0 != iCallbackCreateWidget(iPtrCreateWidget, aVersion, (const char*)aWidgetUdn.Ptr())) {
+    if (0 != iCallbackCreateWidget(iPtrCreateWidget, aVersion, (const char*)aWidgetUdn.Ptr(), aWidgetClass)) {
         aResponse.Error(502, Brn("Action failed"));
         return;
     }

@@ -61,7 +61,7 @@ private:
      * CreateWidget action for the owning device.
      * Must be implemented iff EnableActionCreateWidget was called.
      */
-    virtual void CreateWidget(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn);
+    virtual void CreateWidget(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn, TUint aWidgetClass);
     /**
      * RemoveWidget action.
      *

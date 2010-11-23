@@ -41,8 +41,9 @@ DllExport void CpProxyZappOrgTestWidgetController1Destroy(THandle aHandle);
  *
  * @param[in]  aHandle   Handle returned by CpProxyZappOrgTestWidgetController1Create
  * @param[in]  aWidgetUdn
+ * @param[in]  aWidgetClass
  */
-DllExport void CpProxyZappOrgTestWidgetController1SyncCreateWidget(THandle aHandle, const char* aWidgetUdn);
+DllExport void CpProxyZappOrgTestWidgetController1SyncCreateWidget(THandle aHandle, const char* aWidgetUdn, uint32_t aWidgetClass);
 /**
  * Invoke the action asynchronously.
  * Returns immediately and will run the client-specified callback when the action
@@ -51,11 +52,12 @@ DllExport void CpProxyZappOrgTestWidgetController1SyncCreateWidget(THandle aHand
  *
  * @param[in]  aHandle   Handle returned by CpProxyZappOrgTestWidgetController1Create
  * @param[in]  aWidgetUdn
+ * @param[in]  aWidgetClass
  * @param[in]  aCallback Callback to run when the action completes.
  *                       This is guaranteed to be run but may indicate an error
  * @param[in]  aPtr      Data to be passed to the callback
  */
-DllExport void CpProxyZappOrgTestWidgetController1BeginCreateWidget(THandle aHandle, const char* aWidgetUdn, ZappCallbackAsync aCallback, void* aPtr);
+DllExport void CpProxyZappOrgTestWidgetController1BeginCreateWidget(THandle aHandle, const char* aWidgetUdn, uint32_t aWidgetClass, ZappCallbackAsync aCallback, void* aPtr);
 /**
  * Retrieve the output arguments from an asynchronously invoked action.
  * This may only be called from the callback set in the above Begin function.

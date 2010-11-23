@@ -94,12 +94,14 @@ ServiceTestWidgetController.prototype.UDN_Changed = function (stateChangedFuncti
 * A service action to CreateWidget
 * @method CreateWidget
 * @param {String} WidgetUdn An action parameter
+* @param {Int} WidgetClass An action parameter
 * @param {Function} successFunction The function that is executed when the action has completed successfully
 * @param {Function} errorFunction The function that is executed when the action has cause an error
 */
-ServiceTestWidgetController.prototype.CreateWidget = function(WidgetUdn, successFunction, errorFunction){	
+ServiceTestWidgetController.prototype.CreateWidget = function(WidgetUdn, WidgetClass, successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("CreateWidget", this.url, this.domain, this.type, this.version);		
     request.writeStringParameter("WidgetUdn", WidgetUdn);
+    request.writeIntParameter("WidgetClass", WidgetClass);
     request.send(function(result){
 	
 		if (successFunction){

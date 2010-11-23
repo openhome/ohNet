@@ -25,6 +25,11 @@
                     <direction>in</direction>
                     <relatedStateVariable>A_ARG_TYPE_UDN</relatedStateVariable>
                 </argument>
+                <argument>
+                    <name>WidgetClass</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_TYPE_RegisterValue</relatedStateVariable>
+                </argument>
             </argumentList>
         </action>
         <action>

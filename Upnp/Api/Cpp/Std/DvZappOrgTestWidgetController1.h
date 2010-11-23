@@ -63,7 +63,7 @@ private:
      * CreateWidget action for the owning device.
      * Must be implemented iff EnableActionCreateWidget was called.
      */
-    virtual void CreateWidget(uint32_t aVersion, const std::string& aWidgetUdn);
+    virtual void CreateWidget(uint32_t aVersion, const std::string& aWidgetUdn, uint32_t aWidgetClass);
     /**
      * RemoveWidget action.
      *

@@ -17,10 +17,11 @@ extern "C" {
  * @param[in]  aPtr      Opaque data passed to DvProviderZappOrgTestWidgetController1EnableActionCreateWidget
  * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
  * @param[in]  aWidgetUdn
+ * @param[in]  aWidgetClass
  *
  * @return  0 if the action succeeded; non-zero if the action failed
  */
-typedef int32_t (*CallbackTestWidgetController1CreateWidget)(void* aPtr, uint32_t aVersion, const char* aWidgetUdn);
+typedef int32_t (*CallbackTestWidgetController1CreateWidget)(void* aPtr, uint32_t aVersion, const char* aWidgetUdn, uint32_t aWidgetClass);
 /**
  * Callback which runs when the RemoveWidget action is invoked
  *
