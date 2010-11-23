@@ -67,6 +67,9 @@ def getArguments(module,nightly,arch,valgrind):
 			if valgrind != "0":
 				args = ' -s -f -vg'
 				
+			else if arch == '64':
+				args = ' -s -f -n'
+
 			else:
 				args = ' -s -f'
 				
