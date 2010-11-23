@@ -29,7 +29,7 @@ protected:
     void EnableActionSetWidgetRegister();
     void EnableActionGetWidgetRegister();
 private:
-    virtual void CreateWidget(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn);
+    virtual void CreateWidget(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn, TUint aWidgetClass);
     virtual void RemoveWidget(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn);
     virtual void SetWidgetRegister(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn, TUint aRegisterIndex, TUint aRegisterValue);
     virtual void GetWidgetRegister(IInvocationResponse& aResponse, TUint aVersion, const Brx& aWidgetUdn, TUint aRegisterIndex, IInvocationResponseUint& aRegisterValue);

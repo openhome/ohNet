@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-typedef int32_t (*CallbackTestWidgetController1CreateWidget)(void* aPtr, uint32_t aVersion, const char* aWidgetUdn);
+typedef int32_t (*CallbackTestWidgetController1CreateWidget)(void* aPtr, uint32_t aVersion, const char* aWidgetUdn, uint32_t aWidgetClass);
 typedef int32_t (*CallbackTestWidgetController1RemoveWidget)(void* aPtr, uint32_t aVersion, const char* aWidgetUdn);
 typedef int32_t (*CallbackTestWidgetController1SetWidgetRegister)(void* aPtr, uint32_t aVersion, const char* aWidgetUdn, uint32_t aRegisterIndex, uint32_t aRegisterValue);
 typedef int32_t (*CallbackTestWidgetController1GetWidgetRegister)(void* aPtr, uint32_t aVersion, const char* aWidgetUdn, uint32_t aRegisterIndex, uint32_t* aRegisterValue);

@@ -47,8 +47,9 @@ public:
      * on the device and sets any output arguments.
      *
      * @param[in]  aWidgetUdn
+     * @param[in]  aWidgetClass
      */
-    void SyncCreateWidget(const Brx& aWidgetUdn);
+    void SyncCreateWidget(const Brx& aWidgetUdn, TUint aWidgetClass);
     /**
      * Invoke the action asynchronously.
      * Returns immediately and will run the client-specified callback when the action
@@ -56,10 +57,11 @@ public:
      * EndCreateWidget().
      *
      * @param[in] aWidgetUdn
+     * @param[in] aWidgetClass
      * @param[in] aFunctor   Callback to run when the action completes.
      *                       This is guaranteed to be run but may indicate an error
      */
-    void BeginCreateWidget(const Brx& aWidgetUdn, FunctorAsync& aFunctor);
+    void BeginCreateWidget(const Brx& aWidgetUdn, TUint aWidgetClass, FunctorAsync& aFunctor);
     /**
      * Retrieve the output arguments from an asynchronously invoked action.
      * This may only be called from the callback set in the above Begin function.

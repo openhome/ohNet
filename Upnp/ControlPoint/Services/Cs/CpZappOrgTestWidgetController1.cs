@@ -7,8 +7,8 @@ namespace Zapp
 {
     public interface ICpProxyZappOrgTestWidgetController1
     {
-        void SyncCreateWidget(string aWidgetUdn);
-        void BeginCreateWidget(string aWidgetUdn, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncCreateWidget(string aWidgetUdn, uint aWidgetClass);
+        void BeginCreateWidget(string aWidgetUdn, uint aWidgetClass, CpProxy.CallbackAsyncComplete aCallback);
         void EndCreateWidget(uint aAsyncHandle);
         void SyncRemoveWidget(string aWidgetUdn);
         void BeginRemoveWidget(string aWidgetUdn, CpProxy.CallbackAsyncComplete aCallback);
@@ -29,9 +29,9 @@ namespace Zapp
         [DllImport("CpZappOrgTestWidgetController1")]
         static extern void CpProxyZappOrgTestWidgetController1Destroy(uint aHandle);
         [DllImport("CpZappOrgTestWidgetController1")]
-        static extern unsafe void CpProxyZappOrgTestWidgetController1SyncCreateWidget(uint aHandle, char* aWidgetUdn);
+        static extern unsafe void CpProxyZappOrgTestWidgetController1SyncCreateWidget(uint aHandle, char* aWidgetUdn, uint aWidgetClass);
         [DllImport("CpZappOrgTestWidgetController1")]
-        static extern unsafe void CpProxyZappOrgTestWidgetController1BeginCreateWidget(uint aHandle, char* aWidgetUdn, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestWidgetController1BeginCreateWidget(uint aHandle, char* aWidgetUdn, uint aWidgetClass, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestWidgetController1")]
         static extern unsafe int CpProxyZappOrgTestWidgetController1EndCreateWidget(uint aHandle, uint aAsync);
         [DllImport("CpZappOrgTestWidgetController1")]
@@ -63,21 +63,21 @@ namespace Zapp
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SyncCreateWidget(string aWidgetUdn)
+        public unsafe void SyncCreateWidget(string aWidgetUdn, uint aWidgetClass)
         {
 			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
 			{
-				CpProxyZappOrgTestWidgetController1SyncCreateWidget(iHandle, widgetUdn);
+				CpProxyZappOrgTestWidgetController1SyncCreateWidget(iHandle, widgetUdn, aWidgetClass);
 			}
 			Marshal.FreeHGlobal((IntPtr)widgetUdn);
         }
 
-        public unsafe void BeginCreateWidget(string aWidgetUdn, CallbackAsyncComplete aCallback)
+        public unsafe void BeginCreateWidget(string aWidgetUdn, uint aWidgetClass, CallbackAsyncComplete aCallback)
         {
 			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestWidgetController1BeginCreateWidget(iHandle, widgetUdn, iActionComplete, ptr);
+            CpProxyZappOrgTestWidgetController1BeginCreateWidget(iHandle, widgetUdn, aWidgetClass, iActionComplete, ptr);
 			Marshal.FreeHGlobal((IntPtr)widgetUdn);
         }
 

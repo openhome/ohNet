@@ -31,21 +31,21 @@ void CpProxyZappOrgTestWidgetController1Destroy(THandle aHandle)
     delete proxyC;
 }
 
-void CpProxyZappOrgTestWidgetController1SyncCreateWidget(THandle aHandle, const char* aWidgetUdn)
+void CpProxyZappOrgTestWidgetController1SyncCreateWidget(THandle aHandle, const char* aWidgetUdn, uint32_t aWidgetClass)
 {
     CpProxyZappOrgTestWidgetController1C* proxyC = reinterpret_cast<CpProxyZappOrgTestWidgetController1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aWidgetUdn(aWidgetUdn);
-    proxyC->Proxy()->SyncCreateWidget(buf_aWidgetUdn);
+    proxyC->Proxy()->SyncCreateWidget(buf_aWidgetUdn, aWidgetClass);
 }
 
-void CpProxyZappOrgTestWidgetController1BeginCreateWidget(THandle aHandle, const char* aWidgetUdn, ZappCallbackAsync aCallback, void* aPtr)
+void CpProxyZappOrgTestWidgetController1BeginCreateWidget(THandle aHandle, const char* aWidgetUdn, uint32_t aWidgetClass, ZappCallbackAsync aCallback, void* aPtr)
 {
     CpProxyZappOrgTestWidgetController1C* proxyC = reinterpret_cast<CpProxyZappOrgTestWidgetController1C*>(aHandle);
     ASSERT(proxyC != NULL);
     Brh buf_aWidgetUdn(aWidgetUdn);
     FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
-    proxyC->Proxy()->BeginCreateWidget(buf_aWidgetUdn, functor);
+    proxyC->Proxy()->BeginCreateWidget(buf_aWidgetUdn, aWidgetClass, functor);
 }
 
 int32_t CpProxyZappOrgTestWidgetController1EndCreateWidget(THandle aHandle, ZappHandleAsync aAsync)
