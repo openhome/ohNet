@@ -59,7 +59,7 @@ class PropertyString;
 class PropertyBinary;
 
 /**
- * Base Device for <#=domain#>:<#=type#>:<#=version#>
+ * Provider for the <#=domain#>:<#=type#>:<#=version#> UPnP service
  */
 class <#=className#> : public DvProvider
 {
@@ -67,18 +67,43 @@ public:
     virtual ~<#=className#>() {}
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
+    /**
+     * Set the value of the <#=s.name#> property
+     *
+     * @return  true if the value has been updated; false if aValue was the same as the previous value
+     */
     TBool SetProperty<#=s.name#>(<#=inArgType[s.type]#> aValue);
+    /**
+     * Get a copy of the value of the <#=s.name#> property
+     */
     void GetProperty<#=s.name#>(<#=outArgTypeProperty[s.type]#> aValue);
 <#  } #>
 protected:
+    /**
+     * Constructor
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
     <#=className#>(DvDevice& aDevice);
 <#  foreach (Method a in u.methods) #>
 <#  { #>
+    /**
+     * Signal that the action <#=a.name#> is supported.
+     * The action's availability will be published in the device's service.xml.
+     * Do<#=a.name#> must be overridden if this is called.
+     */
     void EnableAction<#=a.name#>();
 <#  } #>
 private:
 <#  foreach (Method a in u.methods) #>
 <#  { #>
+    /**
+     * <#=a.name#> action.
+     *
+     * Will be called when the device stack receives an invocation of the
+     * <#=a.name#> action for the owning device.
+     * Must be implemented iff EnableAction<#=a.name#> was called.
+     */
     virtual void <#=a.name#>(IInvocationResponse& aResponse, TUint aVersion<#=ActionArgs(a)#>);
 <#  } #>
 private:

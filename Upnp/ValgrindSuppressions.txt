@@ -11,4 +11,5 @@
    x64InvalidWrite
    Memcheck:Value8
    fun:do_lookup_x
+   obj:/lib*/ld-*.so
 }
