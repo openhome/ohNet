@@ -8,7 +8,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.XPath;
 
-namespace Linn.Xml.UpnpServiceXml
+namespace Zapp.Xml.UpnpServiceXml
 {
     public class UpnpServiceXmlException : Exception
     {
