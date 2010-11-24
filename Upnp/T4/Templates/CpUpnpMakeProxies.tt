@@ -1,7 +1,7 @@
 <#@ assembly name="UpnpServiceMake.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="Linn.Xml.UpnpServiceXml" #>
+<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
 	Document u = new Document(TemplateArgument("xml"));

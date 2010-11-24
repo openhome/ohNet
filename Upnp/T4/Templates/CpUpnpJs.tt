@@ -9,7 +9,7 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Collections" #>
 <#@ import namespace="System.Collections.Generic" #> 
-<#@ import namespace="Linn.Xml.UpnpServiceXml" #>
+<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
 
 <#
 /**
