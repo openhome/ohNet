@@ -20,6 +20,8 @@ namespace Zapp {
 
 /**
  * List of all UPnP devices on the current subnet
+ *
+ * @see CpDeviceList
  */
 class DllExportClass CpDeviceListUpnpAll : public CpDeviceList
 {
