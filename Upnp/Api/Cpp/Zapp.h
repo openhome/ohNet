@@ -15,14 +15,74 @@
 
 namespace Zapp {
 
+/**
+ * @defgroup Core          Core Services
+ * @defgroup ControlPoint  Control Point Stack
+ * @defgroup Device        Device Stack
+ */
+/**
+ * @defgroup Callbacks     Callbacks
+ * @ingroup  Core
+ */
+/**
+ * @defgroup Proxies       Service Proxies
+ * @ingroup ControlPoint
+ */
+/**
+ * @defgroup Providers     Service Providers
+ * @ingroup Device
+ */
+    
+/**
+ * Represents a single network interface
+ * @ingroup Core
+ */
 class NetworkInterface
 {
 public:
+    /**
+     * Construct a network interface
+     *
+     * Not intended for external use
+     *
+     * @param[in] aAddress  IPv4 address for the interface (in network byte order)
+     * @param[in] aNetMask  IPv4 net mask for the interface (in network byte order)
+     * @param[in] aName     Name for the interface.  Will be copied inside this function
+     *                      so can safely be deleted by the caller when this returns
+     */
     NetworkInterface(TIpAddress aAddress, TIpAddress aNetMask, const char* aName);
+    /**
+     * Copy a NetworkInterface instance (probably using the output from UpnpLibrary::SubnetList())
+     *
+     * @return  Newly allocated NetworkInterface instance.  The caller is responsible for freeing this
+     */
     NetworkInterface* Clone() const;
+    /**
+     * Query the IP address of the interface
+     *
+     * @return  IPv4 address for the interface (in network byte order)
+     */
     TIpAddress Address() const;
+    /**
+     * Query the subnet the interface operates on
+     *
+     * @return  IPv4 address for the subnet (in network byte order)
+     */
     TIpAddress Subnet() const;
+    /**
+     * Query whether the subnet this interface operates on contains a given IP address
+     *
+     * @param[in] aAddress  IPv4 address being queried
+     *
+     * @return  true if the address is part of the same subnet as this interface; false otherwise
+     */
     bool ContainsAddress(TIpAddress aAddress);
+    /**
+     * Get the name of the subnet
+     *
+     * @return  The subnet name.  Can't be modified; will remain valid until this
+     *          NetworkInterface is deleted
+     */
     const char* Name() const;
 private:
     TIpAddress iAddress;
@@ -32,6 +92,13 @@ private:
 
 class DefaultAsyncHandler;
 class DefaultLogger;
+/**
+ * Initialisation options.
+ *
+ * Most options apply equally to Control Point and Device stacks.  Any functions that are
+ * specific to a particular stack include either 'Cp' or 'Dv'
+ * @ingroup Core
+ */
 class InitialisationParams
 {
 public:
@@ -192,6 +259,10 @@ private:
     uint32_t iDvNumWebSocketThreads;
 };
 
+/**
+ * Initialisation and finalisation of this library
+ * @ingroup Core
+ */
 class UpnpLibrary
 {
 public:

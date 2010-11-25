@@ -20,6 +20,7 @@ class PropertyUint;
 
 /**
  * Proxy for upnp.org:RenderingControl:1
+ * @ingroup Proxies
  */
 class CpProxyUpnpOrgRenderingControl1 : public CpProxy
 {

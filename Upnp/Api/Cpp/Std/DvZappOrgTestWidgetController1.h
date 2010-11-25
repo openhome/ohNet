@@ -19,6 +19,7 @@ class PropertyBinary;
 
 /**
  * Provider for the zapp.org:TestWidgetController:1 UPnP service
+ * @ingroup Providers
  */
 class DvProviderZappOrgTestWidgetController1Cpp : public DvProvider
 {

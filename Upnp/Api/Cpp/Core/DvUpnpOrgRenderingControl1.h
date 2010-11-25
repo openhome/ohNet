@@ -17,6 +17,7 @@ class PropertyBinary;
 
 /**
  * Provider for the upnp.org:RenderingControl:1 UPnP service
+ * @ingroup Providers
  */
 class DvProviderUpnpOrgRenderingControl1 : public DvProvider
 {

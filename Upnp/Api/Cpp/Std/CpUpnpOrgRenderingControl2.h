@@ -21,6 +21,7 @@ class PropertyUint;
 
 /**
  * Proxy for upnp.org:RenderingControl:2
+ * @ingroup Proxies
  */
 class CpProxyUpnpOrgRenderingControl2Cpp : public CpProxy
 {

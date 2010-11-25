@@ -9,6 +9,14 @@ namespace Zapp {
 
 typedef void (*ZappFunctorMsg)(void* aPtr, const char* aMsg);
 
+/**
+ * Callback used to pass a message (a nul-terminated const char*).
+ *
+ * Typically used for debug logging.
+ * Can be implemented using either a pointer to a member function or a pointer to a static
+ * or C-style function.
+ * @ingroup Callbacks
+ */
 class FunctorMsg
 {
 public:
@@ -70,6 +78,16 @@ public:
 };
 
 template<class Object, class CallType>
+/**
+ * Create a FunctorMsg around a non-const C++ member function
+ *
+ * @ingroup Callbacks
+ *
+ * @param[in] aC        this pointer for the callback
+ * @param[in] callback  Pointer to a non-const member function taking a const char*
+ *
+ * @return  a FunctorMsg object
+ */
 inline MemberTranslatorMsg<Object,void (CallType::*)(const char*)>
 MakeFunctorMsg(Object& aC, void(CallType::* const &aF)(const char*))
     {
@@ -77,6 +95,16 @@ MakeFunctorMsg(Object& aC, void(CallType::* const &aF)(const char*))
     return MemberTranslatorMsg<Object,MemFunc>(aC,aF);
     }
 
+/**
+ * Create a FunctorMsg around a C-style function pointer
+ *
+ * @ingroup Callbacks
+ *
+ * @param[in] aPtr       Opaque pointer which will be passed to aCallback
+ * @param[in] aCallback  Pointer to a (static or non-member) function taking a void* and const char*
+ *
+ * @return  a FunctorMsg object
+ */
 inline FunctionTranslatorMsg
 MakeFunctorMsgC(void* aPtr, ZappFunctorMsg aCallback)
     {

@@ -30,8 +30,8 @@ class DllExportClass DvDevice
 {
 public:
     /**
-     * Constructor.  Creates a device capable of operating on any of the protocols the device
-     * stack supports but with no services or attributes as yet
+     * Constructor.  Creates a device capable of serving UI files and of operating on any of the
+     * protocols the device stack supports but with no services or attributes as yet
      *
      * @param[in] aUdn    Universally unique identifier.  The caller is responsible for
      *                    calculating/assigning this

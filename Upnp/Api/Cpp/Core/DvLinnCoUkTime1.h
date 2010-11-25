@@ -17,6 +17,7 @@ class PropertyBinary;
 
 /**
  * Provider for the linn.co.uk:Time:1 UPnP service
+ * @ingroup Providers
  */
 class DvProviderLinnCoUkTime1 : public DvProvider
 {

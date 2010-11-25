@@ -19,6 +19,7 @@ class PropertyBinary;
 
 /**
  * Provider for the linn.co.uk:MediaTime:1 UPnP service
+ * @ingroup Providers
  */
 class DvProviderLinnCoUkMediaTime1Cpp : public DvProvider
 {

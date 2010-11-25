@@ -21,6 +21,7 @@ class PropertyUint;
 
 /**
  * Proxy for upnp.org:SwitchPower:1
+ * @ingroup Proxies
  */
 class CpProxyUpnpOrgSwitchPower1Cpp : public CpProxy
 {

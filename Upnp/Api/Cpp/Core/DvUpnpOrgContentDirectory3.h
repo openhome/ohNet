@@ -17,6 +17,7 @@ class PropertyBinary;
 
 /**
  * Provider for the upnp.org:ContentDirectory:3 UPnP service
+ * @ingroup Providers
  */
 class DvProviderUpnpOrgContentDirectory3 : public DvProvider
 {

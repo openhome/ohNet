@@ -21,6 +21,7 @@ class PropertyUint;
 
 /**
  * Proxy for zapp.org:TestWidget:1
+ * @ingroup Proxies
  */
 class CpProxyZappOrgTestWidget1Cpp : public CpProxy
 {

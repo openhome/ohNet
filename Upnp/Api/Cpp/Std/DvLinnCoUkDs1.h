@@ -19,6 +19,7 @@ class PropertyBinary;
 
 /**
  * Provider for the linn.co.uk:Ds:1 UPnP service
+ * @ingroup Providers
  */
 class DvProviderLinnCoUkDs1Cpp : public DvProvider
 {

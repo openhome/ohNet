@@ -1,7 +1,7 @@
 <#@ assembly name="UpnpServiceXml.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="Linn.Xml.UpnpServiceXml" #>
+<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
     string domain = TemplateArgument("domain");
@@ -60,6 +60,7 @@ class PropertyBinary;
 
 /**
  * Provider for the <#=domain#>:<#=type#>:<#=version#> UPnP service
+ * @ingroup Providers
  */
 class <#=className#> : public DvProvider
 {

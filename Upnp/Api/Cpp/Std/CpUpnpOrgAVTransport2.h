@@ -21,6 +21,7 @@ class PropertyUint;
 
 /**
  * Proxy for upnp.org:AVTransport:2
+ * @ingroup Proxies
  */
 class CpProxyUpnpOrgAVTransport2Cpp : public CpProxy
 {

@@ -40,8 +40,7 @@ DllExport void CpDeviceCAddRef(CpDeviceC aDevice);
  * Release a reference to a device.
  *
  * The device will be destroyed when the last reference is released.
- * Clients would normally release their reference to a device inside the 'removed'
- * version of DeviceListChanged
+ * Each call to CpDeviceCAddRef() must be matched by exactly one call to CpDeviceCRemoveRef()
  *
  * @param[in]  aDevice       Device.  Probably passed to the 'removed' version of DeviceListChanged
  */

@@ -19,6 +19,7 @@ class PropertyBinary;
 
 /**
  * Provider for the linn.co.uk:Volkano:1 UPnP service
+ * @ingroup Providers
  */
 class DvProviderLinnCoUkVolkano1Cpp : public DvProvider
 {
