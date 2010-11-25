@@ -89,6 +89,7 @@ class PropertyUint;
 
 /**
  * Proxy for <#=domain#>:<#=type#>:<#=version#>
+ * @ingroup Proxies
  */
 class <#=className#> : public CpProxy
 {

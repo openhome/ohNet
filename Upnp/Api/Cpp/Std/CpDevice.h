@@ -15,6 +15,7 @@ class CpiDevice;
  *
  * Instance of this class are reference counted and are automatically deleted
  * when the reference count falls to zero
+ * @ingroup ControlPoint
  */
 class CpDeviceCpp
 {
@@ -83,6 +84,7 @@ class FunctorCpiDevice;
  *
  * This class can't be directly instantiated.  Clients should instead use subclasses which
  * will define policy on how to detect devices etc.
+ * @ingroup ControlPoint
  */
 class CpDeviceListCpp
 {

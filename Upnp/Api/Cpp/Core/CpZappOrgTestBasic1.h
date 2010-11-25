@@ -20,6 +20,7 @@ class PropertyUint;
 
 /**
  * Proxy for zapp.org:TestBasic:1
+ * @ingroup Proxies
  */
 class CpProxyZappOrgTestBasic1 : public CpProxy
 {

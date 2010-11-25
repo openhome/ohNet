@@ -20,6 +20,7 @@ class PropertyUint;
 
 /**
  * Proxy for zapp.org:TestDimmableLight:1
+ * @ingroup Proxies
  */
 class CpProxyZappOrgTestDimmableLight1 : public CpProxy
 {

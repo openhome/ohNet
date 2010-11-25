@@ -17,6 +17,7 @@ class PropertyBinary;
 
 /**
  * Provider for the zapp.org:TestBasic:1 UPnP service
+ * @ingroup Providers
  */
 class DvProviderZappOrgTestBasic1 : public DvProvider
 {

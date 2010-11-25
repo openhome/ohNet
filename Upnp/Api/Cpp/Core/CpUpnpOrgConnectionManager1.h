@@ -20,6 +20,7 @@ class PropertyUint;
 
 /**
  * Proxy for upnp.org:ConnectionManager:1
+ * @ingroup Proxies
  */
 class CpProxyUpnpOrgConnectionManager1 : public CpProxy
 {

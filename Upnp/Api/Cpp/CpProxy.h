@@ -19,6 +19,9 @@ class IOutputProcessor;
 class IInvocable;
 class Property;
 
+/**
+ * @internal
+ */
 class IEventProcessor
 {
 public:
@@ -29,6 +32,7 @@ public:
 
 /**
  * Base class for all UPnP services
+ * @ingroup ControlPoint
  */
 class DllExportClass CpProxy : private IEventProcessor
 {

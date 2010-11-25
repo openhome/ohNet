@@ -21,6 +21,7 @@ class PropertyUint;
 
 /**
  * Proxy for linn.co.uk:Product:2
+ * @ingroup Proxies
  */
 class CpProxyLinnCoUkProduct2Cpp : public CpProxy
 {

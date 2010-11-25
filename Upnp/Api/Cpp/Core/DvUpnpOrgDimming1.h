@@ -17,6 +17,7 @@ class PropertyBinary;
 
 /**
  * Provider for the upnp.org:Dimming:1 UPnP service
+ * @ingroup Providers
  */
 class DvProviderUpnpOrgDimming1 : public DvProvider
 {

@@ -19,6 +19,7 @@ class PropertyBinary;
  *
  * Derivations will typically be by service-specific auto-generated code which will
  * offer 0..n actions and 0..n properties.
+ * @ingroup Device
  */
 class DllExportClass DvProvider
 {

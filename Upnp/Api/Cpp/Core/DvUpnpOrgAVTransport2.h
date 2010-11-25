@@ -17,6 +17,7 @@ class PropertyBinary;
 
 /**
  * Provider for the upnp.org:AVTransport:2 UPnP service
+ * @ingroup Providers
  */
 class DvProviderUpnpOrgAVTransport2 : public DvProvider
 {

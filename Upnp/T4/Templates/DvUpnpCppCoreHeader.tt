@@ -60,6 +60,7 @@ class PropertyBinary;
 
 /**
  * Provider for the <#=domain#>:<#=type#>:<#=version#> UPnP service
+ * @ingroup Providers
  */
 class <#=className#> : public DvProvider
 {

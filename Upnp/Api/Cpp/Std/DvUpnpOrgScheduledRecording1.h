@@ -19,6 +19,7 @@ class PropertyBinary;
 
 /**
  * Provider for the upnp.org:ScheduledRecording:1 UPnP service
+ * @ingroup Providers
  */
 class DvProviderUpnpOrgScheduledRecording1Cpp : public DvProvider
 {

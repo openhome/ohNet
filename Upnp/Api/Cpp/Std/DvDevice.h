@@ -12,6 +12,7 @@ namespace Zapp {
 
 /**
  * Interface used by devices to publish data (typically files).
+ * @ingroup Device
  */
 class IResourceManagerStd
 {
@@ -27,6 +28,7 @@ class DviDevice;
  * Has a universally unique name and operates on 0..n protocols.
  * Services are added by constructing DvProvider derived classes, passing a reference to a
  * DvDevice to their c'tor
+ * @ingroup Device
  */
 class DvDeviceStd : private IResourceManager
 {

@@ -20,6 +20,7 @@ class PropertyUint;
 
 /**
  * Proxy for linn.co.uk:Preamp:4
+ * @ingroup Proxies
  */
 class CpProxyLinnCoUkPreamp4 : public CpProxy
 {

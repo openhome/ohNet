@@ -21,6 +21,7 @@ class PropertyUint;
 
 /**
  * Proxy for upnp.org:ContentDirectory:3
+ * @ingroup Proxies
  */
 class CpProxyUpnpOrgContentDirectory3Cpp : public CpProxy
 {

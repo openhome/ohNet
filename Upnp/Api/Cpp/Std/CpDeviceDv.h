@@ -10,6 +10,7 @@ class CpiDeviceDv;
 
 /**
  * Control point device which communicates directly with a device stack's device
+ * @ingroup ControlPoint
  */
 class CpDeviceDvCpp : public CpDeviceCpp
 {

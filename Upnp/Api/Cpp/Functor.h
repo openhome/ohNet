@@ -22,6 +22,13 @@ namespace Zapp
 
 typedef void (*ZappFunctor)(void* aPtr);
 
+/**
+ * Generic callback
+ *
+ * Can be implemented using either a pointer to a member function or a pointer to a static
+ * or C-style function.
+ * @ingroup Callbacks
+ */
 class Functor
 {
 public:
@@ -82,6 +89,16 @@ public:
     }
 };
 
+/**
+ * Create a Functor around a C-style function pointer
+ *
+ * @ingroup Callbacks
+ *
+ * @param[in] aPtr       Opaque pointer which will be passed to aCallback
+ * @param[in] aCallback  Pointer to a (static or non-member) function taking a void*
+ *
+ * @return  a Functor object
+ */
 inline MemberTranslatorC
 MakeFunctor(void* aPtr, ZappFunctor aCallback)
     {
@@ -89,6 +106,16 @@ MakeFunctor(void* aPtr, ZappFunctor aCallback)
     }
 
 template<class Object, class TRT, class CallType>
+/**
+ * Create a Functor around a non-const C++ member function
+ *
+ * @ingroup Callbacks
+ *
+ * @param[in] aC        this pointer for the callback
+ * @param[in] callback  Pointer to a non-const member function taking no arguments
+ *
+ * @return  a Functor object
+ */
 inline MemberTranslator<Object,TRT (CallType::*)()>
 MakeFunctor(Object& aC, TRT(CallType::* const &aF)())
     {
@@ -97,6 +124,16 @@ MakeFunctor(Object& aC, TRT(CallType::* const &aF)())
     }
 
 template<class Object, class TRT, class CallType>
+/**
+ * Create a Functor around a const C++ member function
+ *
+ * @ingroup Callbacks
+ *
+ * @param[in] aC        this pointer for the callback
+ * @param[in] callback  Pointer to a const member function taking no arguments
+ *
+ * @return  a Functor object
+ */
 inline MemberTranslator<const Object,TRT (CallType::*)() const>
 MakeFunctor(const Object& aC, TRT(CallType::* const &aF)() const)
     {

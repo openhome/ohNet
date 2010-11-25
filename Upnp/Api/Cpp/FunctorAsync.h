@@ -21,6 +21,14 @@ public:
 
 typedef void (*ZappFunctorAsync)(void* aPtr, IAsync* aAsync);
 
+/**
+ * Callback used to indicate that an asynchronous operation has completed
+ *
+ * Most commonly used during action invocation in proxies.
+ * Can be implemented using either a pointer to a member function or a pointer to a static
+ * or C-style function.
+ * @ingroup Callbacks
+ */
 class FunctorAsync
 {
 public:
@@ -82,6 +90,16 @@ public:
 };
 
 template<class Object, class CallType>
+/**
+ * Create a FunctorAsync around a non-const C++ member function
+ *
+ * @ingroup Callbacks
+ *
+ * @param[in] aC        this pointer for the callback
+ * @param[in] callback  Pointer to a non-const member function taking an IAsync&
+ *
+ * @return  a FunctorAsync object
+ */
 inline MemberTranslatorAsync<Object,void (CallType::*)(IAsync&)>
 MakeFunctorAsync(Object& aC, void(CallType::* const &aF)(IAsync&))
     {
@@ -89,7 +107,16 @@ MakeFunctorAsync(Object& aC, void(CallType::* const &aF)(IAsync&))
     return MemberTranslatorAsync<Object,MemFunc>(aC,aF);
     }
 
-
+/**
+ * Create a FunctorAsync around a C-style function pointer
+ *
+ * @ingroup Callbacks
+ *
+ * @param[in] aPtr       Opaque pointer which will be passed to aCallback
+ * @param[in] aCallback  Pointer to a (static or non-member) function taking a void* and IAsync&
+ *
+ * @return  a FunctorAsync object
+ */
 inline FunctionTranslatorAsync
 MakeFunctorAsync(void* aPtr, ZappFunctorAsync aCallback)
     {
