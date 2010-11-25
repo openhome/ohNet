@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyLinnCoUkTime1
+    public interface ICpProxyLinnCoUkTime1 : ICpProxy, IDisposable
     {
         void SyncTime(out uint aaTrackCount, out uint aaDuration, out uint aaSeconds);
         void BeginTime(CpProxy.CallbackAsyncComplete aCallback);

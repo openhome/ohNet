@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyZappOrgTestLights1
+    public interface ICpProxyZappOrgTestLights1 : ICpProxy, IDisposable
     {
         void SyncGetCount(out uint aCount);
         void BeginGetCount(CpProxy.CallbackAsyncComplete aCallback);

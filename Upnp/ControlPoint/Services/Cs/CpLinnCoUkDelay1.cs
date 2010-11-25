@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyLinnCoUkDelay1
+    public interface ICpProxyLinnCoUkDelay1 : ICpProxy, IDisposable
     {
         void SyncPresetXml(out string aaPresetXml);
         void BeginPresetXml(CpProxy.CallbackAsyncComplete aCallback);

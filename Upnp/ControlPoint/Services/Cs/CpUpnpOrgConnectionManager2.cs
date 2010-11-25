@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyUpnpOrgConnectionManager2
+    public interface ICpProxyUpnpOrgConnectionManager2 : ICpProxy, IDisposable
     {
         void SyncGetProtocolInfo(out string aSource, out string aSink);
         void BeginGetProtocolInfo(CpProxy.CallbackAsyncComplete aCallback);

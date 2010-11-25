@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyUpnpOrgContentDirectory1
+    public interface ICpProxyUpnpOrgContentDirectory1 : ICpProxy, IDisposable
     {
         void SyncGetSearchCapabilities(out string aSearchCaps);
         void BeginGetSearchCapabilities(CpProxy.CallbackAsyncComplete aCallback);

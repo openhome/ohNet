@@ -56,7 +56,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface I<#=className#>
+    public interface I<#=className#> : ICpProxy, IDisposable
     {
 <#  foreach (Method a in u.methods) #>
 <#  { #>

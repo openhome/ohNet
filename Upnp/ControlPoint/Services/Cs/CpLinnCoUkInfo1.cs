@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyLinnCoUkInfo1
+    public interface ICpProxyLinnCoUkInfo1 : ICpProxy, IDisposable
     {
         void SyncCounters(out uint aaTrackCount, out uint aaDetailsCount, out uint aaMetatextCount);
         void BeginCounters(CpProxy.CallbackAsyncComplete aCallback);

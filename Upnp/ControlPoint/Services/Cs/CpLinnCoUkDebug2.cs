@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyLinnCoUkDebug2
+    public interface ICpProxyLinnCoUkDebug2 : ICpProxy, IDisposable
     {
         void SyncSetDebugLevel(uint aaDebugLevel);
         void BeginSetDebugLevel(uint aaDebugLevel, CpProxy.CallbackAsyncComplete aCallback);

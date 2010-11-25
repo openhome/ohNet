@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyZappOrgTestBasic1
+    public interface ICpProxyZappOrgTestBasic1 : ICpProxy, IDisposable
     {
         void SyncIncrement(uint aValue, out uint aResult);
         void BeginIncrement(uint aValue, CpProxy.CallbackAsyncComplete aCallback);

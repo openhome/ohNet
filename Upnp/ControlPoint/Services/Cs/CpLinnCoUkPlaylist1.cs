@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyLinnCoUkPlaylist1
+    public interface ICpProxyLinnCoUkPlaylist1 : ICpProxy, IDisposable
     {
         void SyncRead(uint aaId, out string aaUri, out string aaMetaData);
         void BeginRead(uint aaId, CpProxy.CallbackAsyncComplete aCallback);

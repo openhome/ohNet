@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyUpnpOrgAVTransport1
+    public interface ICpProxyUpnpOrgAVTransport1 : ICpProxy, IDisposable
     {
         void SyncSetAVTransportURI(uint aInstanceID, string aCurrentURI, string aCurrentURIMetaData);
         void BeginSetAVTransportURI(uint aInstanceID, string aCurrentURI, string aCurrentURIMetaData, CpProxy.CallbackAsyncComplete aCallback);

@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyLinnCoUkPreamp4
+    public interface ICpProxyLinnCoUkPreamp4 : ICpProxy, IDisposable
     {
         void SyncVolumeInc();
         void BeginVolumeInc(CpProxy.CallbackAsyncComplete aCallback);

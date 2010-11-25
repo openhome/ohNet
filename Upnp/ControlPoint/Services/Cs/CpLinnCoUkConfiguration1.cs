@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyLinnCoUkConfiguration1
+    public interface ICpProxyLinnCoUkConfiguration1 : ICpProxy, IDisposable
     {
         void SyncConfigurationXml(out string aaConfigurationXml);
         void BeginConfigurationXml(CpProxy.CallbackAsyncComplete aCallback);

@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyZappOrgTestWidgetController1
+    public interface ICpProxyZappOrgTestWidgetController1 : ICpProxy, IDisposable
     {
         void SyncCreateWidget(string aWidgetUdn, uint aWidgetClass);
         void BeginCreateWidget(string aWidgetUdn, uint aWidgetClass, CpProxy.CallbackAsyncComplete aCallback);

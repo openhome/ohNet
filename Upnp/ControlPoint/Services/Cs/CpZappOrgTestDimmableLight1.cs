@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyZappOrgTestDimmableLight1
+    public interface ICpProxyZappOrgTestDimmableLight1 : ICpProxy, IDisposable
     {
         void SyncGetLevel(out uint aLevel);
         void BeginGetLevel(CpProxy.CallbackAsyncComplete aCallback);

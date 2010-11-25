@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyLinnCoUkJukebox1
+    public interface ICpProxyLinnCoUkJukebox1 : ICpProxy, IDisposable
     {
         void SyncSetPresetPrefix(string aaUri);
         void BeginSetPresetPrefix(string aaUri, CpProxy.CallbackAsyncComplete aCallback);

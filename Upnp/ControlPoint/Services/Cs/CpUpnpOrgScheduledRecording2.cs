@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyUpnpOrgScheduledRecording2
+    public interface ICpProxyUpnpOrgScheduledRecording2 : ICpProxy, IDisposable
     {
         void SyncGetSortCapabilities(out string aSortCaps, out uint aSortLevelCap);
         void BeginGetSortCapabilities(CpProxy.CallbackAsyncComplete aCallback);

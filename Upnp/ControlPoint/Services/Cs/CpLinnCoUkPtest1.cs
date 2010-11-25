@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyLinnCoUkPtest1
+    public interface ICpProxyLinnCoUkPtest1 : ICpProxy, IDisposable
     {
         void SyncTestComPort(uint aaPort, out bool aaResult);
         void BeginTestComPort(uint aaPort, CpProxy.CallbackAsyncComplete aCallback);

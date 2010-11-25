@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyUpnpOrgRenderingControl1
+    public interface ICpProxyUpnpOrgRenderingControl1 : ICpProxy, IDisposable
     {
         void SyncListPresets(uint aInstanceID, out string aCurrentPresetNameList);
         void BeginListPresets(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);

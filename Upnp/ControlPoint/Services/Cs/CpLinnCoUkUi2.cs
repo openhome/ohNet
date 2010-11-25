@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyLinnCoUkUi2
+    public interface ICpProxyLinnCoUkUi2 : ICpProxy, IDisposable
     {
         void SyncDisplayTestPattern(int aaTestPattern);
         void BeginDisplayTestPattern(int aaTestPattern, CpProxy.CallbackAsyncComplete aCallback);

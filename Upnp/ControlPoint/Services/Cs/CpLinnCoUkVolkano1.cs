@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyLinnCoUkVolkano1
+    public interface ICpProxyLinnCoUkVolkano1 : ICpProxy, IDisposable
     {
         void SyncReboot();
         void BeginReboot(CpProxy.CallbackAsyncComplete aCallback);

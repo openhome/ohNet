@@ -8,6 +8,14 @@ namespace Zapp
     public class ProxyError : Exception
     {
     }
+    
+    public interface ICpProxy
+    {
+        void Subscribe();
+        void Unsubscribe();
+        void SetPropertyChanged(CpProxy.CallbackPropertyChanged aPropertyChanged);
+        void SetPropertyInitialEvent(CpProxy.CallbackPropertyChanged aInitialEvent);
+    }
 
     public class CpProxy
     {

@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyUpnpOrgSwitchPower1
+    public interface ICpProxyUpnpOrgSwitchPower1 : ICpProxy, IDisposable
     {
         void SyncSetTarget(bool anewTargetValue);
         void BeginSetTarget(bool anewTargetValue, CpProxy.CallbackAsyncComplete aCallback);

@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyUpnpOrgDimming1
+    public interface ICpProxyUpnpOrgDimming1 : ICpProxy, IDisposable
     {
         void SyncSetLoadLevelTarget(uint anewLoadlevelTarget);
         void BeginSetLoadLevelTarget(uint anewLoadlevelTarget, CpProxy.CallbackAsyncComplete aCallback);

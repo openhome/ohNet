@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyZappOrgTestWidget1
+    public interface ICpProxyZappOrgTestWidget1 : ICpProxy, IDisposable
     {
         void SyncSetReadWriteRegister(uint aRegisterIndex, uint aRegisterValue);
         void BeginSetReadWriteRegister(uint aRegisterIndex, uint aRegisterValue, CpProxy.CallbackAsyncComplete aCallback);

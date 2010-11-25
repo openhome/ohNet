@@ -5,7 +5,7 @@ using Zapp;
 
 namespace Zapp
 {
-    public interface ICpProxyLinnCoUkRadio1
+    public interface ICpProxyLinnCoUkRadio1 : ICpProxy, IDisposable
     {
         void SyncPlay();
         void BeginPlay(CpProxy.CallbackAsyncComplete aCallback);
