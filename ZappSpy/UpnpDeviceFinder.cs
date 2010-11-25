@@ -63,7 +63,7 @@ namespace ZappSpy
         public UpnpDeviceFinder(ZappLibraryWrapper aZappLibrary)
         {
             iZappLibrary = aZappLibrary;
-            iDeviceList = new Zapp.CpDeviceListUpnpRoot(
+            iDeviceList = new Zapp.ControlPoint.CpDeviceListUpnpRoot(
                 HandleDeviceAdded,
                 HandleDeviceRemoved);
             iDeviceList.Refresh();
@@ -77,7 +77,7 @@ namespace ZappSpy
         public UpnpDeviceFinder(ZappLibraryWrapper aZappLibrary, string aUuid)
         {
             iZappLibrary = aZappLibrary;
-            iDeviceList = new Zapp.CpDeviceListUpnpUuid(
+            iDeviceList = new Zapp.ControlPoint.CpDeviceListUpnpUuid(
                 aUuid,
                 HandleDeviceAdded,
                 HandleDeviceRemoved);
@@ -137,9 +137,9 @@ namespace ZappSpy
 
         private ZappLibraryWrapper iZappLibrary;
         private UpnpDeviceCollection iDevices = new UpnpDeviceCollection();
-        private Zapp.CpDeviceList iDeviceList;
+        private Zapp.ControlPoint.CpDeviceList iDeviceList;
 
-        private void HandleDeviceAdded(Zapp.CpDeviceList aList, Zapp.CpDevice aDevice)
+        private void HandleDeviceAdded(Zapp.ControlPoint.CpDeviceList aList, Zapp.ControlPoint.CpDevice aDevice)
         {
             string xml;
             if (!aDevice.GetAttribute("Upnp.DeviceXml", out xml))
@@ -167,7 +167,7 @@ namespace ZappSpy
             }
         }
 
-        private void HandleDeviceRemoved(Zapp.CpDeviceList aList, Zapp.CpDevice aDevice)
+        private void HandleDeviceRemoved(Zapp.ControlPoint.CpDeviceList aList, Zapp.ControlPoint.CpDevice aDevice)
         {
             UpnpDeviceInfo info;
             if (iDevices.TryGetDevice(aDevice.Udn(), out info))
