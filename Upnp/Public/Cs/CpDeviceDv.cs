@@ -2,14 +2,17 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Zapp
+namespace Zapp.ControlPoint
 {
+    /// <summary>
+    /// Control point device which communicates directly with a device stack's device
+    /// </summary>
     public class CpDeviceDv : CpDevice
     {
         [DllImport ("ZappUpnp", CharSet = CharSet.Ansi)]
         static extern uint CpDeviceDvCreate(uint aDevice);
 
-        public CpDeviceDv(DvDevice aDevice)
+        public CpDeviceDv(Device.DvDevice aDevice)
             : base(CpDeviceDvCreate(aDevice.Handle()))
         {
         }

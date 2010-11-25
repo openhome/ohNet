@@ -31,7 +31,7 @@ public:
 };
 
 /**
- * Base class for all UPnP services
+ * Base class for all proxies
  * @ingroup ControlPoint
  */
 class DllExportClass CpProxy : private IEventProcessor

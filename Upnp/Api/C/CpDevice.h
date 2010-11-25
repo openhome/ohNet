@@ -8,6 +8,11 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup ControlPoint
+ * @{
+ */
+
+/**
  * Opaque handle to a device
  */
 typedef THandle CpDeviceC;
@@ -84,6 +89,8 @@ DllExport void CpDeviceListDestroy(HandleCpDeviceList aListHandle);
  * @param[in]  aListHandle   List handle returned earlier from a protocol-specific constructor
  */
 DllExport void CpDeviceListRefresh(HandleCpDeviceList aListHandle);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Zapp;
 
-namespace Zapp
+namespace Zapp.Device.Providers
 {
     public class DvProviderZappOrgTestWidget1 : DvProvider, IDisposable
     {

@@ -16,24 +16,6 @@
 namespace Zapp {
 
 /**
- * @defgroup Core          Core Services
- * @defgroup ControlPoint  Control Point Stack
- * @defgroup Device        Device Stack
- */
-/**
- * @defgroup Callbacks     Callbacks
- * @ingroup  Core
- */
-/**
- * @defgroup Proxies       Service Proxies
- * @ingroup ControlPoint
- */
-/**
- * @defgroup Providers     Service Providers
- * @ingroup Device
- */
-    
-/**
  * Represents a single network interface
  * @ingroup Core
  */

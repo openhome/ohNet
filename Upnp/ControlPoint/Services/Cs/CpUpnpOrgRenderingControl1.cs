@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Zapp;
 
-namespace Zapp
+namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyUpnpOrgRenderingControl1 : ICpProxy, IDisposable
     {

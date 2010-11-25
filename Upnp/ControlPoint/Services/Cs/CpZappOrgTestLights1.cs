@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Zapp;
 
-namespace Zapp
+namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyZappOrgTestLights1 : ICpProxy, IDisposable
     {

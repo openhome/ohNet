@@ -9,8 +9,8 @@ namespace Zapp
     {
         public static void Main(string[] args)
         {
-            InitParams initParams = new InitParams();
-            Library lib = new Library();
+            Core.InitParams initParams = new Core.InitParams();
+            Core.Library lib = new Core.Library();
             lib.Initialise(ref initParams);
             lib.StartCp();
             new Runner();
@@ -20,10 +20,10 @@ namespace Zapp
 
     class Runner
     {
-        private List<CpDevice> iDeviceList;
+        private List<ControlPoint.CpDevice> iDeviceList;
         private uint iActionCount;
         private uint iSubscriptionCount;
-        private CpProxyUpnpOrgConnectionManager1 iConnMgr;
+        private ControlPoint.Proxies.CpProxyUpnpOrgConnectionManager1 iConnMgr;
         private string iExpectedSink;
         private DateTime iActionPollStopTime;
         private Semaphore iActionPollStop;
@@ -35,10 +35,10 @@ namespace Zapp
         public Runner()
         {
             iListFrozen = false;
-            iDeviceList = new List<CpDevice>();
-            CpDeviceList.ChangeHandler added = new CpDeviceList.ChangeHandler(DeviceAdded);
-            CpDeviceList.ChangeHandler removed = new CpDeviceList.ChangeHandler(DeviceRemoved);
-            CpDeviceListUpnpServiceType list = new CpDeviceListUpnpServiceType("upnp.org", "ConnectionManager", 1, added, removed);
+            iDeviceList = new List<ControlPoint.CpDevice>();
+            ControlPoint.CpDeviceList.ChangeHandler added = new ControlPoint.CpDeviceList.ChangeHandler(DeviceAdded);
+            ControlPoint.CpDeviceList.ChangeHandler removed = new ControlPoint.CpDeviceList.ChangeHandler(DeviceRemoved);
+            ControlPoint.CpDeviceListUpnpServiceType list = new ControlPoint.CpDeviceListUpnpServiceType("upnp.org", "ConnectionManager", 1, added, removed);
             //CpDeviceListUpnpUuid list = new CpDeviceListUpnpUuid("896659847466-a4badbeaacbc-737837", added, removed);
             Semaphore sem = new Semaphore(0, 1);
             sem.WaitOne(6000);
@@ -85,9 +85,9 @@ namespace Zapp
                 Console.Write("No devices found, so nothing to test\n");
                 return;
             }
-            CpDevice device = iDeviceList[0];
+            ControlPoint.CpDevice device = iDeviceList[0];
             Console.Write("\n\nSync call to device " + device.Udn() + "\n");
-            CpProxyUpnpOrgConnectionManager1 connMgr = new CpProxyUpnpOrgConnectionManager1(device);
+            ControlPoint.Proxies.CpProxyUpnpOrgConnectionManager1 connMgr = new ControlPoint.Proxies.CpProxyUpnpOrgConnectionManager1(device);
             string source;
             string sink;
             connMgr.SyncGetProtocolInfo(out source, out sink);
@@ -103,10 +103,10 @@ namespace Zapp
             timer.AutoReset = false;
             for (int i=0; i<iDeviceList.Count; i++)
             {
-                CpDevice device = iDeviceList[i];
+                ControlPoint.CpDevice device = iDeviceList[i];
                 uint countBefore = iActionCount;
                 Console.Write("Device " + device.Udn());
-                iConnMgr = new CpProxyUpnpOrgConnectionManager1(device);
+                iConnMgr = new ControlPoint.Proxies.CpProxyUpnpOrgConnectionManager1(device);
                 iActionPollStopTime = DateTime.Now.AddMilliseconds(kDevicePollMs);
                 timer.Interval = kDevicePollMs;
                 timer.Enabled = false;
@@ -127,14 +127,14 @@ namespace Zapp
             iSubscriptionSem = new Semaphore(0, 1);
             for (int i=0; i<iDeviceList.Count; i++)
             {
-                CpDevice device = iDeviceList[i];
+                ControlPoint.CpDevice device = iDeviceList[i];
                 string udn = device.Udn();
                 if (udn == "896659847466-a4badbeaacbc-737837" ||
                     udn == "541d0cb5-3b34-4264-8ff0-d8653acf6425")
                     continue;
                 uint countBefore = iSubscriptionCount;
                 Console.Write("Device " + device.Udn());
-                CpProxyUpnpOrgConnectionManager1 connMgr = new CpProxyUpnpOrgConnectionManager1(device);
+                ControlPoint.Proxies.CpProxyUpnpOrgConnectionManager1 connMgr = new ControlPoint.Proxies.CpProxyUpnpOrgConnectionManager1(device);
                 connMgr.SetPropertyChanged(PropertyChanged);
                 DateTime startTime = DateTime.Now;
                 while(true)
@@ -189,7 +189,7 @@ namespace Zapp
                     }
                 }
             }
-            catch (ProxyError) { }
+            catch (ControlPoint.ProxyError) { }
         }
 
         private void PropertyChanged()
@@ -197,7 +197,7 @@ namespace Zapp
             iSubscriptionSem.Release();
         }
 
-        private void DeviceAdded(CpDeviceList aList, CpDevice aDevice)
+        private void DeviceAdded(ControlPoint.CpDeviceList aList, ControlPoint.CpDevice aDevice)
         {
             lock (this)
             {
@@ -210,7 +210,7 @@ namespace Zapp
             }
         }
 
-        private void DeviceRemoved(CpDeviceList aList, CpDevice aDevice)
+        private void DeviceRemoved(ControlPoint.CpDeviceList aList, ControlPoint.CpDevice aDevice)
         {
             lock (this)
             {
@@ -231,7 +231,7 @@ namespace Zapp
             }
         }
 
-        private void PrintDeviceInfo(string aPrologue, CpDevice aDevice)
+        private void PrintDeviceInfo(string aPrologue, ControlPoint.CpDevice aDevice)
         {
             string location;
             aDevice.GetAttribute("Upnp.Location", out location);

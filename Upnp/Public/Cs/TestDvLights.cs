@@ -12,8 +12,8 @@ namespace Zapp
         {
             // !!!! add OptionParser class rather than relying on the user guessing that the first arg
             // is an int 1..3 and the second is the path of a folder that'll serve a test UI
-            InitParams initParams = new InitParams();
-            Library lib = new Library();
+            Core.InitParams initParams = new Core.InitParams();
+            Core.Library lib = new Core.Library();
             lib.Initialise(ref initParams);
             lib.StartDv();
             Console.Write("TestDvLights - starting\n");
@@ -71,11 +71,11 @@ namespace Zapp
         }
     }
 
-    class ProviderLights : DvProviderZappOrgTestLights1
+    class ProviderLights : Device.Providers.DvProviderZappOrgTestLights1
     {
         public List<Light> iLights;
 
-        public ProviderLights(DvDevice aDevice, int aMode)
+        public ProviderLights(Device.DvDevice aDevice, int aMode)
             : base(aDevice)
         {
             EnableActionGetCount();
@@ -186,9 +186,9 @@ namespace Zapp
         }
     }
 
-    class DeviceLights : IResourceManager, IDisposable
+    class DeviceLights : Device.IResourceManager, IDisposable
     {
-        private DvDevice iDevice;
+        private Device.DvDevice iDevice;
         private ProviderLights iLights;
         private string iConfigDir;
         public string iDeviceName;
@@ -197,7 +197,7 @@ namespace Zapp
         {
             iConfigDir = aConfigDir;
             RandomiseUdn(out iDeviceName);
-            iDevice = new DvDevice(iDeviceName, this);
+            iDevice = new Device.DvDevice(iDeviceName, this);
             iDevice.SetAttribute("Upnp.Domain", "zapp.org");
             iDevice.SetAttribute("Upnp.Type", "TestLights");
             iDevice.SetAttribute("Upnp.Version", "1");
@@ -220,7 +220,7 @@ namespace Zapp
             iDevice.Dispose();
         }
 
-        public override void WriteResource(string aUriTail, uint aIpAddress, IResourceWriter aWriter)
+        public void WriteResource(string aUriTail, uint aIpAddress, Device.IResourceWriter aWriter)
         {
             string path = iConfigDir;
             if (aUriTail.Length == 0)

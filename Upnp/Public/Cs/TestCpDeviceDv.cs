@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
+using Zapp.Core;
+using Zapp.ControlPoint;
+using Zapp.Device;
 
 namespace Zapp
 {

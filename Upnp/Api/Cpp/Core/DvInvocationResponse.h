@@ -6,6 +6,11 @@
 
 namespace Zapp {
 
+/**
+ * @addtogroup Device
+ * @{
+ */
+
 class IInvocationResponse
 {
 public:
@@ -53,6 +58,8 @@ public:
     virtual void WriteFlush() = 0;
 	virtual ~IInvocationResponseString() {}
 };
+
+/* @} */
 
 } // namespace Zapp
 

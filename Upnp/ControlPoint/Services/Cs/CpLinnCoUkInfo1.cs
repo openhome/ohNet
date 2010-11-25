@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Zapp;
 
-namespace Zapp
+namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyLinnCoUkInfo1 : ICpProxy, IDisposable
     {

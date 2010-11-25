@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
+using Zapp.Device;
+using Zapp.Device.Providers;
 
 namespace Zapp
 {

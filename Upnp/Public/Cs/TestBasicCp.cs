@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
+using Zapp.ControlPoint;
+using Zapp.ControlPoint.Proxies;
 
 namespace Zapp
 {
