@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the upnp.org:ScheduledRecording:2 UPnP service
+    /// </summary>
     public class DvProviderUpnpOrgScheduledRecording2 : DvProvider, IDisposable
     {
         [DllImport("DvUpnpOrgScheduledRecording2")]
@@ -93,15 +96,24 @@ namespace Zapp.Device.Providers
         private CallbackGetRecordScheduleConflicts iCallbackGetRecordScheduleConflicts;
         private CallbackGetRecordTaskConflicts iCallbackGetRecordTaskConflicts;
 
-        public DvProviderUpnpOrgScheduledRecording2(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderUpnpOrgScheduledRecording2(DvDevice aDevice)
         {
             iHandle = DvProviderUpnpOrgScheduledRecording2Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Set the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyLastChange(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderUpnpOrgScheduledRecording2SetPropertyLastChange(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -112,6 +124,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyLastChange(out string aValue)
         {
             char* value;
@@ -120,6 +136,11 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Signal that the action GetSortCapabilities is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetSortCapabilities must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetSortCapabilities()
         {
             iCallbackGetSortCapabilities = new CallbackGetSortCapabilities(DoGetSortCapabilities);
@@ -127,6 +148,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgScheduledRecording2EnableActionGetSortCapabilities(iHandle, iCallbackGetSortCapabilities, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetPropertyList is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetPropertyList must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetPropertyList()
         {
             iCallbackGetPropertyList = new CallbackGetPropertyList(DoGetPropertyList);
@@ -134,6 +160,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgScheduledRecording2EnableActionGetPropertyList(iHandle, iCallbackGetPropertyList, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetAllowedValues is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetAllowedValues must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetAllowedValues()
         {
             iCallbackGetAllowedValues = new CallbackGetAllowedValues(DoGetAllowedValues);
@@ -141,6 +172,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgScheduledRecording2EnableActionGetAllowedValues(iHandle, iCallbackGetAllowedValues, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetStateUpdateID is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetStateUpdateID must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetStateUpdateID()
         {
             iCallbackGetStateUpdateID = new CallbackGetStateUpdateID(DoGetStateUpdateID);
@@ -148,6 +184,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgScheduledRecording2EnableActionGetStateUpdateID(iHandle, iCallbackGetStateUpdateID, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action BrowseRecordSchedules is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoBrowseRecordSchedules must be overridden if this is called.</remarks>
         protected unsafe void EnableActionBrowseRecordSchedules()
         {
             iCallbackBrowseRecordSchedules = new CallbackBrowseRecordSchedules(DoBrowseRecordSchedules);
@@ -155,6 +196,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgScheduledRecording2EnableActionBrowseRecordSchedules(iHandle, iCallbackBrowseRecordSchedules, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action BrowseRecordTasks is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoBrowseRecordTasks must be overridden if this is called.</remarks>
         protected unsafe void EnableActionBrowseRecordTasks()
         {
             iCallbackBrowseRecordTasks = new CallbackBrowseRecordTasks(DoBrowseRecordTasks);
@@ -162,6 +208,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgScheduledRecording2EnableActionBrowseRecordTasks(iHandle, iCallbackBrowseRecordTasks, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action CreateRecordSchedule is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoCreateRecordSchedule must be overridden if this is called.</remarks>
         protected unsafe void EnableActionCreateRecordSchedule()
         {
             iCallbackCreateRecordSchedule = new CallbackCreateRecordSchedule(DoCreateRecordSchedule);
@@ -169,6 +220,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgScheduledRecording2EnableActionCreateRecordSchedule(iHandle, iCallbackCreateRecordSchedule, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DeleteRecordSchedule is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDeleteRecordSchedule must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDeleteRecordSchedule()
         {
             iCallbackDeleteRecordSchedule = new CallbackDeleteRecordSchedule(DoDeleteRecordSchedule);
@@ -176,6 +232,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgScheduledRecording2EnableActionDeleteRecordSchedule(iHandle, iCallbackDeleteRecordSchedule, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetRecordSchedule is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetRecordSchedule must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetRecordSchedule()
         {
             iCallbackGetRecordSchedule = new CallbackGetRecordSchedule(DoGetRecordSchedule);
@@ -183,6 +244,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgScheduledRecording2EnableActionGetRecordSchedule(iHandle, iCallbackGetRecordSchedule, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action EnableRecordSchedule is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoEnableRecordSchedule must be overridden if this is called.</remarks>
         protected unsafe void EnableActionEnableRecordSchedule()
         {
             iCallbackEnableRecordSchedule = new CallbackEnableRecordSchedule(DoEnableRecordSchedule);
@@ -190,6 +256,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgScheduledRecording2EnableActionEnableRecordSchedule(iHandle, iCallbackEnableRecordSchedule, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DisableRecordSchedule is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDisableRecordSchedule must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisableRecordSchedule()
         {
             iCallbackDisableRecordSchedule = new CallbackDisableRecordSchedule(DoDisableRecordSchedule);
@@ -197,6 +268,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgScheduledRecording2EnableActionDisableRecordSchedule(iHandle, iCallbackDisableRecordSchedule, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DeleteRecordTask is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDeleteRecordTask must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDeleteRecordTask()
         {
             iCallbackDeleteRecordTask = new CallbackDeleteRecordTask(DoDeleteRecordTask);
@@ -204,6 +280,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgScheduledRecording2EnableActionDeleteRecordTask(iHandle, iCallbackDeleteRecordTask, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetRecordTask is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetRecordTask must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetRecordTask()
         {
             iCallbackGetRecordTask = new CallbackGetRecordTask(DoGetRecordTask);
@@ -211,6 +292,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgScheduledRecording2EnableActionGetRecordTask(iHandle, iCallbackGetRecordTask, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action EnableRecordTask is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoEnableRecordTask must be overridden if this is called.</remarks>
         protected unsafe void EnableActionEnableRecordTask()
         {
             iCallbackEnableRecordTask = new CallbackEnableRecordTask(DoEnableRecordTask);
@@ -218,6 +304,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgScheduledRecording2EnableActionEnableRecordTask(iHandle, iCallbackEnableRecordTask, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DisableRecordTask is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDisableRecordTask must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisableRecordTask()
         {
             iCallbackDisableRecordTask = new CallbackDisableRecordTask(DoDisableRecordTask);
@@ -225,6 +316,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgScheduledRecording2EnableActionDisableRecordTask(iHandle, iCallbackDisableRecordTask, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action ResetRecordTask is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoResetRecordTask must be overridden if this is called.</remarks>
         protected unsafe void EnableActionResetRecordTask()
         {
             iCallbackResetRecordTask = new CallbackResetRecordTask(DoResetRecordTask);
@@ -232,6 +328,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgScheduledRecording2EnableActionResetRecordTask(iHandle, iCallbackResetRecordTask, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetRecordScheduleConflicts is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetRecordScheduleConflicts must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetRecordScheduleConflicts()
         {
             iCallbackGetRecordScheduleConflicts = new CallbackGetRecordScheduleConflicts(DoGetRecordScheduleConflicts);
@@ -239,6 +340,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgScheduledRecording2EnableActionGetRecordScheduleConflicts(iHandle, iCallbackGetRecordScheduleConflicts, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetRecordTaskConflicts is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetRecordTaskConflicts must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetRecordTaskConflicts()
         {
             iCallbackGetRecordTaskConflicts = new CallbackGetRecordTaskConflicts(DoGetRecordTaskConflicts);
@@ -246,91 +352,285 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgScheduledRecording2EnableActionGetRecordTaskConflicts(iHandle, iCallbackGetRecordTaskConflicts, ptr);
         }
 
+        /// <summary>
+        /// GetSortCapabilities action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetSortCapabilities action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetSortCapabilities was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aSortCaps"></param>
+        /// <param name="aSortLevelCap"></param>
         protected virtual void GetSortCapabilities(uint aVersion, out string aSortCaps, out uint aSortLevelCap)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetPropertyList action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetPropertyList action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetPropertyList was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aDataTypeID"></param>
+        /// <param name="aPropertyList"></param>
         protected virtual void GetPropertyList(uint aVersion, string aDataTypeID, out string aPropertyList)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetAllowedValues action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetAllowedValues action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetAllowedValues was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aDataTypeID"></param>
+        /// <param name="aFilter"></param>
+        /// <param name="aPropertyInfo"></param>
         protected virtual void GetAllowedValues(uint aVersion, string aDataTypeID, string aFilter, out string aPropertyInfo)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetStateUpdateID action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetStateUpdateID action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetStateUpdateID was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aId"></param>
         protected virtual void GetStateUpdateID(uint aVersion, out uint aId)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// BrowseRecordSchedules action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// BrowseRecordSchedules action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionBrowseRecordSchedules was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aFilter"></param>
+        /// <param name="aStartingIndex"></param>
+        /// <param name="aRequestedCount"></param>
+        /// <param name="aSortCriteria"></param>
+        /// <param name="aResult"></param>
+        /// <param name="aNumberReturned"></param>
+        /// <param name="aTotalMatches"></param>
+        /// <param name="aUpdateID"></param>
         protected virtual void BrowseRecordSchedules(uint aVersion, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// BrowseRecordTasks action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// BrowseRecordTasks action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionBrowseRecordTasks was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aRecordScheduleID"></param>
+        /// <param name="aFilter"></param>
+        /// <param name="aStartingIndex"></param>
+        /// <param name="aRequestedCount"></param>
+        /// <param name="aSortCriteria"></param>
+        /// <param name="aResult"></param>
+        /// <param name="aNumberReturned"></param>
+        /// <param name="aTotalMatches"></param>
+        /// <param name="aUpdateID"></param>
         protected virtual void BrowseRecordTasks(uint aVersion, string aRecordScheduleID, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// CreateRecordSchedule action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// CreateRecordSchedule action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionCreateRecordSchedule was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aElements"></param>
+        /// <param name="aRecordScheduleID"></param>
+        /// <param name="aResult"></param>
+        /// <param name="aUpdateID"></param>
         protected virtual void CreateRecordSchedule(uint aVersion, string aElements, out string aRecordScheduleID, out string aResult, out uint aUpdateID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DeleteRecordSchedule action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DeleteRecordSchedule action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDeleteRecordSchedule was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aRecordScheduleID"></param>
         protected virtual void DeleteRecordSchedule(uint aVersion, string aRecordScheduleID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetRecordSchedule action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetRecordSchedule action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetRecordSchedule was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aRecordScheduleID"></param>
+        /// <param name="aFilter"></param>
+        /// <param name="aResult"></param>
+        /// <param name="aUpdateID"></param>
         protected virtual void GetRecordSchedule(uint aVersion, string aRecordScheduleID, string aFilter, out string aResult, out uint aUpdateID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// EnableRecordSchedule action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// EnableRecordSchedule action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionEnableRecordSchedule was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aRecordScheduleID"></param>
         protected virtual void EnableRecordSchedule(uint aVersion, string aRecordScheduleID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DisableRecordSchedule action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DisableRecordSchedule action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDisableRecordSchedule was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aRecordScheduleID"></param>
         protected virtual void DisableRecordSchedule(uint aVersion, string aRecordScheduleID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DeleteRecordTask action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DeleteRecordTask action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDeleteRecordTask was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aRecordTaskID"></param>
         protected virtual void DeleteRecordTask(uint aVersion, string aRecordTaskID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetRecordTask action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetRecordTask action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetRecordTask was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aRecordTaskID"></param>
+        /// <param name="aFilter"></param>
+        /// <param name="aResult"></param>
+        /// <param name="aUpdateID"></param>
         protected virtual void GetRecordTask(uint aVersion, string aRecordTaskID, string aFilter, out string aResult, out uint aUpdateID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// EnableRecordTask action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// EnableRecordTask action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionEnableRecordTask was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aRecordTaskID"></param>
         protected virtual void EnableRecordTask(uint aVersion, string aRecordTaskID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DisableRecordTask action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DisableRecordTask action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDisableRecordTask was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aRecordTaskID"></param>
         protected virtual void DisableRecordTask(uint aVersion, string aRecordTaskID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// ResetRecordTask action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// ResetRecordTask action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionResetRecordTask was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aRecordTaskID"></param>
         protected virtual void ResetRecordTask(uint aVersion, string aRecordTaskID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetRecordScheduleConflicts action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetRecordScheduleConflicts action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetRecordScheduleConflicts was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aRecordScheduleID"></param>
+        /// <param name="aRecordScheduleConflictIDList"></param>
+        /// <param name="aUpdateID"></param>
         protected virtual void GetRecordScheduleConflicts(uint aVersion, string aRecordScheduleID, out string aRecordScheduleConflictIDList, out uint aUpdateID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetRecordTaskConflicts action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetRecordTaskConflicts action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetRecordTaskConflicts was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aRecordTaskID"></param>
+        /// <param name="aRecordTaskConflictIDList"></param>
+        /// <param name="aUpdateID"></param>
         protected virtual void GetRecordTaskConflicts(uint aVersion, string aRecordTaskID, out string aRecordTaskConflictIDList, out uint aUpdateID)
         {
             throw (new ActionDisabledError());
@@ -550,7 +850,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

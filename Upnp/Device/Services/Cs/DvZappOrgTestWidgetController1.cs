@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the zapp.org:TestWidgetController:1 UPnP service
+    /// </summary>
     public class DvProviderZappOrgTestWidgetController1 : DvProvider, IDisposable
     {
         [DllImport("DvZappOrgTestWidgetController1")]
@@ -33,12 +36,21 @@ namespace Zapp.Device.Providers
         private CallbackSetWidgetRegister iCallbackSetWidgetRegister;
         private CallbackGetWidgetRegister iCallbackGetWidgetRegister;
 
-        public DvProviderZappOrgTestWidgetController1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderZappOrgTestWidgetController1(DvDevice aDevice)
         {
             iHandle = DvProviderZappOrgTestWidgetController1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Signal that the action CreateWidget is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoCreateWidget must be overridden if this is called.</remarks>
         protected unsafe void EnableActionCreateWidget()
         {
             iCallbackCreateWidget = new CallbackCreateWidget(DoCreateWidget);
@@ -46,6 +58,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestWidgetController1EnableActionCreateWidget(iHandle, iCallbackCreateWidget, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action RemoveWidget is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoRemoveWidget must be overridden if this is called.</remarks>
         protected unsafe void EnableActionRemoveWidget()
         {
             iCallbackRemoveWidget = new CallbackRemoveWidget(DoRemoveWidget);
@@ -53,6 +70,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestWidgetController1EnableActionRemoveWidget(iHandle, iCallbackRemoveWidget, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetWidgetRegister is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetWidgetRegister must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetWidgetRegister()
         {
             iCallbackSetWidgetRegister = new CallbackSetWidgetRegister(DoSetWidgetRegister);
@@ -60,6 +82,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestWidgetController1EnableActionSetWidgetRegister(iHandle, iCallbackSetWidgetRegister, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetWidgetRegister is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetWidgetRegister must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetWidgetRegister()
         {
             iCallbackGetWidgetRegister = new CallbackGetWidgetRegister(DoGetWidgetRegister);
@@ -67,21 +94,62 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestWidgetController1EnableActionGetWidgetRegister(iHandle, iCallbackGetWidgetRegister, ptr);
         }
 
+        /// <summary>
+        /// CreateWidget action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// CreateWidget action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionCreateWidget was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aWidgetUdn"></param>
+        /// <param name="aWidgetClass"></param>
         protected virtual void CreateWidget(uint aVersion, string aWidgetUdn, uint aWidgetClass)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// RemoveWidget action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// RemoveWidget action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionRemoveWidget was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aWidgetUdn"></param>
         protected virtual void RemoveWidget(uint aVersion, string aWidgetUdn)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetWidgetRegister action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetWidgetRegister action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetWidgetRegister was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aWidgetUdn"></param>
+        /// <param name="aRegisterIndex"></param>
+        /// <param name="aRegisterValue"></param>
         protected virtual void SetWidgetRegister(uint aVersion, string aWidgetUdn, uint aRegisterIndex, uint aRegisterValue)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetWidgetRegister action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetWidgetRegister action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetWidgetRegister was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aWidgetUdn"></param>
+        /// <param name="aRegisterIndex"></param>
+        /// <param name="aRegisterValue"></param>
         protected virtual void GetWidgetRegister(uint aVersion, string aWidgetUdn, uint aRegisterIndex, out uint aRegisterValue)
         {
             throw (new ActionDisabledError());
@@ -125,7 +193,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

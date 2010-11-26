@@ -48,12 +48,24 @@ namespace Zapp.ControlPoint.Proxies
 
         private GCHandle iGch;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkPtest1(CpDevice aDevice)
         {
             iHandle = CpProxyLinnCoUkPtest1Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaPort"></param>
+        /// <param name="aaResult"></param>
         public unsafe void SyncTestComPort(uint aaPort, out bool aaResult)
         {
 			uint aResult;
@@ -63,6 +75,15 @@ namespace Zapp.ControlPoint.Proxies
 			aaResult = (aResult != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndTestComPort().</remarks>
+        /// <param name="aaPort"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginTestComPort(uint aaPort, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -70,6 +91,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkPtest1BeginTestComPort(iHandle, aaPort, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaResult"></param>
         public unsafe void EndTestComPort(uint aAsyncHandle, out bool aaResult)
         {
 			uint aResult;
@@ -82,6 +109,11 @@ namespace Zapp.ControlPoint.Proxies
 			aaResult = (aResult != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
         public unsafe void SyncLedsOn()
         {
 			{
@@ -89,6 +121,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndLedsOn().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginLedsOn(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -96,6 +136,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkPtest1BeginLedsOn(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndLedsOn(uint aAsyncHandle)
         {
 			{
@@ -106,6 +151,11 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
         public unsafe void SyncLedsOff()
         {
 			{
@@ -113,6 +163,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndLedsOff().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginLedsOff(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -120,6 +178,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkPtest1BeginLedsOff(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndLedsOff(uint aAsyncHandle)
         {
 			{
@@ -130,6 +193,9 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);

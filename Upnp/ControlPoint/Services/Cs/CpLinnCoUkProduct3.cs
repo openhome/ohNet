@@ -341,12 +341,23 @@ namespace Zapp.ControlPoint.Proxies
         private Callback iCallbackProductAnySourceVisibleChanged;
         private Callback iCallbackProductAnySourceTypeChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkProduct3(CpDevice aDevice)
         {
             iHandle = CpProxyLinnCoUkProduct3Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaType"></param>
         public unsafe void SyncType(out string aaType)
         {
 			char* aType;
@@ -357,6 +368,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aType);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndType().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginType(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -364,6 +383,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct3BeginType(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaType"></param>
         public unsafe void EndType(uint aAsyncHandle, out string aaType)
         {
 			char* aType;
@@ -377,6 +402,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aType);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaModel"></param>
         public unsafe void SyncModel(out string aaModel)
         {
 			char* aModel;
@@ -387,6 +418,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aModel);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndModel().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginModel(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -394,6 +433,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct3BeginModel(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaModel"></param>
         public unsafe void EndModel(uint aAsyncHandle, out string aaModel)
         {
 			char* aModel;
@@ -407,6 +452,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aModel);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaName"></param>
         public unsafe void SyncName(out string aaName)
         {
 			char* aName;
@@ -417,6 +468,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aName);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndName().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginName(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -424,6 +483,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct3BeginName(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaName"></param>
         public unsafe void EndName(uint aAsyncHandle, out string aaName)
         {
 			char* aName;
@@ -437,6 +502,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aName);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaName"></param>
         public unsafe void SyncSetName(string aaName)
         {
 			char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
@@ -446,6 +517,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aName);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetName().</remarks>
+        /// <param name="aaName"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetName(string aaName, CallbackAsyncComplete aCallback)
         {
 			char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
@@ -455,6 +535,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aName);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetName(uint aAsyncHandle)
         {
 			{
@@ -465,6 +550,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaRoom"></param>
         public unsafe void SyncRoom(out string aaRoom)
         {
 			char* aRoom;
@@ -475,6 +566,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aRoom);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndRoom().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginRoom(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -482,6 +581,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct3BeginRoom(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaRoom"></param>
         public unsafe void EndRoom(uint aAsyncHandle, out string aaRoom)
         {
 			char* aRoom;
@@ -495,6 +600,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aRoom);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaRoom"></param>
         public unsafe void SyncSetRoom(string aaRoom)
         {
 			char* aRoom = (char*)Marshal.StringToHGlobalAnsi(aaRoom);
@@ -504,6 +615,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aRoom);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetRoom().</remarks>
+        /// <param name="aaRoom"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetRoom(string aaRoom, CallbackAsyncComplete aCallback)
         {
 			char* aRoom = (char*)Marshal.StringToHGlobalAnsi(aaRoom);
@@ -513,6 +633,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aRoom);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetRoom(uint aAsyncHandle)
         {
 			{
@@ -523,6 +648,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaStandby"></param>
         public unsafe void SyncStandby(out bool aaStandby)
         {
 			uint aStandby;
@@ -532,6 +663,14 @@ namespace Zapp.ControlPoint.Proxies
 			aaStandby = (aStandby != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndStandby().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginStandby(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -539,6 +678,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct3BeginStandby(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaStandby"></param>
         public unsafe void EndStandby(uint aAsyncHandle, out bool aaStandby)
         {
 			uint aStandby;
@@ -551,6 +696,12 @@ namespace Zapp.ControlPoint.Proxies
 			aaStandby = (aStandby != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaStandby"></param>
         public unsafe void SyncSetStandby(bool aaStandby)
         {
 			uint aStandby = (aaStandby? 1u : 0u);
@@ -559,6 +710,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetStandby().</remarks>
+        /// <param name="aaStandby"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetStandby(bool aaStandby, CallbackAsyncComplete aCallback)
         {
 			uint aStandby = (aaStandby? 1u : 0u);
@@ -567,6 +727,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct3BeginSetStandby(iHandle, aStandby, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetStandby(uint aAsyncHandle)
         {
 			{
@@ -577,6 +742,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaSourceCount"></param>
         public unsafe void SyncSourceCount(out uint aaSourceCount)
         {
 			fixed (uint* aSourceCount = &aaSourceCount)
@@ -585,6 +756,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSourceCount().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSourceCount(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -592,6 +771,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct3BeginSourceCount(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaSourceCount"></param>
         public unsafe void EndSourceCount(uint aAsyncHandle, out uint aaSourceCount)
         {
 			fixed (uint* aSourceCount = &aaSourceCount)
@@ -603,6 +788,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaSourceXml"></param>
         public unsafe void SyncSourceXml(out string aaSourceXml)
         {
 			char* aSourceXml;
@@ -613,6 +804,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aSourceXml);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSourceXml().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSourceXml(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -620,6 +819,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct3BeginSourceXml(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaSourceXml"></param>
         public unsafe void EndSourceXml(uint aAsyncHandle, out string aaSourceXml)
         {
 			char* aSourceXml;
@@ -633,6 +838,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aSourceXml);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaSourceIndex"></param>
         public unsafe void SyncSourceIndex(out uint aaSourceIndex)
         {
 			fixed (uint* aSourceIndex = &aaSourceIndex)
@@ -641,6 +852,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSourceIndex().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSourceIndex(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -648,6 +867,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct3BeginSourceIndex(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaSourceIndex"></param>
         public unsafe void EndSourceIndex(uint aAsyncHandle, out uint aaSourceIndex)
         {
 			fixed (uint* aSourceIndex = &aaSourceIndex)
@@ -659,6 +884,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaSourceIndex"></param>
         public unsafe void SyncSetSourceIndex(uint aaSourceIndex)
         {
 			{
@@ -666,6 +897,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetSourceIndex().</remarks>
+        /// <param name="aaSourceIndex"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetSourceIndex(uint aaSourceIndex, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -673,6 +913,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct3BeginSetSourceIndex(iHandle, aaSourceIndex, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetSourceIndex(uint aAsyncHandle)
         {
 			{
@@ -683,6 +928,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaSourceName"></param>
         public unsafe void SyncSetSourceIndexByName(string aaSourceName)
         {
 			char* aSourceName = (char*)Marshal.StringToHGlobalAnsi(aaSourceName);
@@ -692,6 +943,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aSourceName);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetSourceIndexByName().</remarks>
+        /// <param name="aaSourceName"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetSourceIndexByName(string aaSourceName, CallbackAsyncComplete aCallback)
         {
 			char* aSourceName = (char*)Marshal.StringToHGlobalAnsi(aaSourceName);
@@ -701,6 +961,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aSourceName);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetSourceIndexByName(uint aAsyncHandle)
         {
 			{
@@ -711,6 +976,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaSourceName"></param>
         public unsafe void SyncSetStartupSourceIndexByName(string aaSourceName)
         {
 			char* aSourceName = (char*)Marshal.StringToHGlobalAnsi(aaSourceName);
@@ -720,6 +991,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aSourceName);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetStartupSourceIndexByName().</remarks>
+        /// <param name="aaSourceName"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetStartupSourceIndexByName(string aaSourceName, CallbackAsyncComplete aCallback)
         {
 			char* aSourceName = (char*)Marshal.StringToHGlobalAnsi(aaSourceName);
@@ -729,6 +1009,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aSourceName);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetStartupSourceIndexByName(uint aAsyncHandle)
         {
 			{
@@ -739,6 +1024,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaSourceIndex"></param>
         public unsafe void SyncStartupSourceIndex(out uint aaSourceIndex)
         {
 			fixed (uint* aSourceIndex = &aaSourceIndex)
@@ -747,6 +1038,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndStartupSourceIndex().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginStartupSourceIndex(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -754,6 +1053,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct3BeginStartupSourceIndex(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaSourceIndex"></param>
         public unsafe void EndStartupSourceIndex(uint aAsyncHandle, out uint aaSourceIndex)
         {
 			fixed (uint* aSourceIndex = &aaSourceIndex)
@@ -765,6 +1070,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaSourceIndex"></param>
         public unsafe void SyncSetStartupSourceIndex(uint aaSourceIndex)
         {
 			{
@@ -772,6 +1083,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetStartupSourceIndex().</remarks>
+        /// <param name="aaSourceIndex"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetStartupSourceIndex(uint aaSourceIndex, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -779,6 +1099,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct3BeginSetStartupSourceIndex(iHandle, aaSourceIndex, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetStartupSourceIndex(uint aAsyncHandle)
         {
 			{
@@ -789,6 +1114,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaStartupSourceEnabled"></param>
         public unsafe void SyncStartupSourceEnabled(out bool aaStartupSourceEnabled)
         {
 			uint aStartupSourceEnabled;
@@ -798,6 +1129,14 @@ namespace Zapp.ControlPoint.Proxies
 			aaStartupSourceEnabled = (aStartupSourceEnabled != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndStartupSourceEnabled().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginStartupSourceEnabled(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -805,6 +1144,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct3BeginStartupSourceEnabled(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaStartupSourceEnabled"></param>
         public unsafe void EndStartupSourceEnabled(uint aAsyncHandle, out bool aaStartupSourceEnabled)
         {
 			uint aStartupSourceEnabled;
@@ -817,6 +1162,12 @@ namespace Zapp.ControlPoint.Proxies
 			aaStartupSourceEnabled = (aStartupSourceEnabled != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaStartupSourceEnabled"></param>
         public unsafe void SyncSetStartupSourceEnabled(bool aaStartupSourceEnabled)
         {
 			uint aStartupSourceEnabled = (aaStartupSourceEnabled? 1u : 0u);
@@ -825,6 +1176,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetStartupSourceEnabled().</remarks>
+        /// <param name="aaStartupSourceEnabled"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetStartupSourceEnabled(bool aaStartupSourceEnabled, CallbackAsyncComplete aCallback)
         {
 			uint aStartupSourceEnabled = (aaStartupSourceEnabled? 1u : 0u);
@@ -833,6 +1193,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct3BeginSetStartupSourceEnabled(iHandle, aStartupSourceEnabled, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetStartupSourceEnabled(uint aAsyncHandle)
         {
 			{
@@ -843,6 +1208,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaSourceIndex"></param>
+        /// <param name="aaSourceName"></param>
         public unsafe void SyncSourceSystemName(uint aaSourceIndex, out string aaSourceName)
         {
 			char* aSourceName;
@@ -853,6 +1225,15 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aSourceName);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSourceSystemName().</remarks>
+        /// <param name="aaSourceIndex"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSourceSystemName(uint aaSourceIndex, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -860,6 +1241,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct3BeginSourceSystemName(iHandle, aaSourceIndex, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaSourceName"></param>
         public unsafe void EndSourceSystemName(uint aAsyncHandle, out string aaSourceName)
         {
 			char* aSourceName;
@@ -873,6 +1260,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aSourceName);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaSourceIndex"></param>
+        /// <param name="aaSourceName"></param>
         public unsafe void SyncSourceName(uint aaSourceIndex, out string aaSourceName)
         {
 			char* aSourceName;
@@ -883,6 +1277,15 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aSourceName);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSourceName().</remarks>
+        /// <param name="aaSourceIndex"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSourceName(uint aaSourceIndex, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -890,6 +1293,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct3BeginSourceName(iHandle, aaSourceIndex, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaSourceName"></param>
         public unsafe void EndSourceName(uint aAsyncHandle, out string aaSourceName)
         {
 			char* aSourceName;
@@ -903,6 +1312,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aSourceName);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaSourceIndex"></param>
+        /// <param name="aaSourceName"></param>
         public unsafe void SyncSetSourceName(uint aaSourceIndex, string aaSourceName)
         {
 			char* aSourceName = (char*)Marshal.StringToHGlobalAnsi(aaSourceName);
@@ -912,6 +1328,16 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aSourceName);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetSourceName().</remarks>
+        /// <param name="aaSourceIndex"></param>
+        /// <param name="aaSourceName"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetSourceName(uint aaSourceIndex, string aaSourceName, CallbackAsyncComplete aCallback)
         {
 			char* aSourceName = (char*)Marshal.StringToHGlobalAnsi(aaSourceName);
@@ -921,6 +1347,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aSourceName);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetSourceName(uint aAsyncHandle)
         {
 			{
@@ -931,6 +1362,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaSourceIndex"></param>
+        /// <param name="aaSourceType"></param>
         public unsafe void SyncSourceType(uint aaSourceIndex, out string aaSourceType)
         {
 			char* aSourceType;
@@ -941,6 +1379,15 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aSourceType);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSourceType().</remarks>
+        /// <param name="aaSourceIndex"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSourceType(uint aaSourceIndex, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -948,6 +1395,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct3BeginSourceType(iHandle, aaSourceIndex, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaSourceType"></param>
         public unsafe void EndSourceType(uint aAsyncHandle, out string aaSourceType)
         {
 			char* aSourceType;
@@ -961,6 +1414,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aSourceType);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaSourceIndex"></param>
+        /// <param name="aaSourceVisible"></param>
         public unsafe void SyncSourceVisible(uint aaSourceIndex, out bool aaSourceVisible)
         {
 			uint aSourceVisible;
@@ -970,6 +1430,15 @@ namespace Zapp.ControlPoint.Proxies
 			aaSourceVisible = (aSourceVisible != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSourceVisible().</remarks>
+        /// <param name="aaSourceIndex"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSourceVisible(uint aaSourceIndex, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -977,6 +1446,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct3BeginSourceVisible(iHandle, aaSourceIndex, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaSourceVisible"></param>
         public unsafe void EndSourceVisible(uint aAsyncHandle, out bool aaSourceVisible)
         {
 			uint aSourceVisible;
@@ -989,6 +1464,13 @@ namespace Zapp.ControlPoint.Proxies
 			aaSourceVisible = (aSourceVisible != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaSourceIndex"></param>
+        /// <param name="aaSourceVisible"></param>
         public unsafe void SyncSetSourceVisible(uint aaSourceIndex, bool aaSourceVisible)
         {
 			uint aSourceVisible = (aaSourceVisible? 1u : 0u);
@@ -997,6 +1479,16 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetSourceVisible().</remarks>
+        /// <param name="aaSourceIndex"></param>
+        /// <param name="aaSourceVisible"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetSourceVisible(uint aaSourceIndex, bool aaSourceVisible, CallbackAsyncComplete aCallback)
         {
 			uint aSourceVisible = (aaSourceVisible? 1u : 0u);
@@ -1005,6 +1497,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct3BeginSetSourceVisible(iHandle, aaSourceIndex, aSourceVisible, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetSourceVisible(uint aAsyncHandle)
         {
 			{
@@ -1015,6 +1512,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the ProductType state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
+        /// <param name="aProductTypeChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductTypeChanged(CallbackPropertyChanged aProductTypeChanged)
         {
             iProductTypeChanged = aProductTypeChanged;
@@ -1030,6 +1533,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iProductTypeChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the ProductModel state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
+        /// <param name="aProductModelChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductModelChanged(CallbackPropertyChanged aProductModelChanged)
         {
             iProductModelChanged = aProductModelChanged;
@@ -1045,6 +1554,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iProductModelChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the ProductName state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
+        /// <param name="aProductNameChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductNameChanged(CallbackPropertyChanged aProductNameChanged)
         {
             iProductNameChanged = aProductNameChanged;
@@ -1060,6 +1575,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iProductNameChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the ProductRoom state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
+        /// <param name="aProductRoomChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductRoomChanged(CallbackPropertyChanged aProductRoomChanged)
         {
             iProductRoomChanged = aProductRoomChanged;
@@ -1075,6 +1596,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iProductRoomChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the ProductStandby state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
+        /// <param name="aProductStandbyChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductStandbyChanged(CallbackPropertyChanged aProductStandbyChanged)
         {
             iProductStandbyChanged = aProductStandbyChanged;
@@ -1090,6 +1617,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iProductStandbyChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the ProductSourceIndex state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
+        /// <param name="aProductSourceIndexChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductSourceIndexChanged(CallbackPropertyChanged aProductSourceIndexChanged)
         {
             iProductSourceIndexChanged = aProductSourceIndexChanged;
@@ -1105,6 +1638,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iProductSourceIndexChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the ProductSourceCount state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
+        /// <param name="aProductSourceCountChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductSourceCountChanged(CallbackPropertyChanged aProductSourceCountChanged)
         {
             iProductSourceCountChanged = aProductSourceCountChanged;
@@ -1120,6 +1659,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iProductSourceCountChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the ProductSourceXml state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
+        /// <param name="aProductSourceXmlChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductSourceXmlChanged(CallbackPropertyChanged aProductSourceXmlChanged)
         {
             iProductSourceXmlChanged = aProductSourceXmlChanged;
@@ -1135,6 +1680,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iProductSourceXmlChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the StartupSourceIndex state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
+        /// <param name="aStartupSourceIndexChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyStartupSourceIndexChanged(CallbackPropertyChanged aStartupSourceIndexChanged)
         {
             iStartupSourceIndexChanged = aStartupSourceIndexChanged;
@@ -1150,6 +1701,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iStartupSourceIndexChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the StartupSourceEnabled state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
+        /// <param name="aStartupSourceEnabledChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyStartupSourceEnabledChanged(CallbackPropertyChanged aStartupSourceEnabledChanged)
         {
             iStartupSourceEnabledChanged = aStartupSourceEnabledChanged;
@@ -1165,6 +1722,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iStartupSourceEnabledChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the ProductAnySourceName state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
+        /// <param name="aProductAnySourceNameChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductAnySourceNameChanged(CallbackPropertyChanged aProductAnySourceNameChanged)
         {
             iProductAnySourceNameChanged = aProductAnySourceNameChanged;
@@ -1180,6 +1743,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iProductAnySourceNameChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the ProductAnySourceVisible state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
+        /// <param name="aProductAnySourceVisibleChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductAnySourceVisibleChanged(CallbackPropertyChanged aProductAnySourceVisibleChanged)
         {
             iProductAnySourceVisibleChanged = aProductAnySourceVisibleChanged;
@@ -1195,6 +1764,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iProductAnySourceVisibleChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the ProductAnySourceType state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkProduct3 instance will not overlap.</remarks>
+        /// <param name="aProductAnySourceTypeChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductAnySourceTypeChanged(CallbackPropertyChanged aProductAnySourceTypeChanged)
         {
             iProductAnySourceTypeChanged = aProductAnySourceTypeChanged;
@@ -1210,6 +1785,13 @@ namespace Zapp.ControlPoint.Proxies
             self.iProductAnySourceTypeChanged();
         }
 
+        /// <summary>
+        /// Query the value of the ProductType property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aProductType">Will be set to the value of the property</param>
         public unsafe void PropertyProductType(out string aProductType)
         {
 			char* ptr;
@@ -1218,6 +1800,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the ProductModel property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aProductModel">Will be set to the value of the property</param>
         public unsafe void PropertyProductModel(out string aProductModel)
         {
 			char* ptr;
@@ -1226,6 +1815,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the ProductName property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aProductName">Will be set to the value of the property</param>
         public unsafe void PropertyProductName(out string aProductName)
         {
 			char* ptr;
@@ -1234,6 +1830,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the ProductRoom property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aProductRoom">Will be set to the value of the property</param>
         public unsafe void PropertyProductRoom(out string aProductRoom)
         {
 			char* ptr;
@@ -1242,6 +1845,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the ProductStandby property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aProductStandby">Will be set to the value of the property</param>
         public unsafe void PropertyProductStandby(out bool aProductStandby)
         {
 			uint productStandby;
@@ -1249,6 +1859,13 @@ namespace Zapp.ControlPoint.Proxies
 			aProductStandby = (productStandby != 0);
         }
 
+        /// <summary>
+        /// Query the value of the ProductSourceIndex property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aProductSourceIndex">Will be set to the value of the property</param>
         public unsafe void PropertyProductSourceIndex(out uint aProductSourceIndex)
         {
 			fixed (uint* productSourceIndex = &aProductSourceIndex)
@@ -1257,6 +1874,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the ProductSourceCount property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aProductSourceCount">Will be set to the value of the property</param>
         public unsafe void PropertyProductSourceCount(out uint aProductSourceCount)
         {
 			fixed (uint* productSourceCount = &aProductSourceCount)
@@ -1265,6 +1889,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the ProductSourceXml property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aProductSourceXml">Will be set to the value of the property</param>
         public unsafe void PropertyProductSourceXml(out string aProductSourceXml)
         {
 			char* ptr;
@@ -1273,6 +1904,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the StartupSourceIndex property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aStartupSourceIndex">Will be set to the value of the property</param>
         public unsafe void PropertyStartupSourceIndex(out uint aStartupSourceIndex)
         {
 			fixed (uint* startupSourceIndex = &aStartupSourceIndex)
@@ -1281,6 +1919,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the StartupSourceEnabled property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aStartupSourceEnabled">Will be set to the value of the property</param>
         public unsafe void PropertyStartupSourceEnabled(out bool aStartupSourceEnabled)
         {
 			uint startupSourceEnabled;
@@ -1288,6 +1933,13 @@ namespace Zapp.ControlPoint.Proxies
 			aStartupSourceEnabled = (startupSourceEnabled != 0);
         }
 
+        /// <summary>
+        /// Query the value of the ProductAnySourceName property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aProductAnySourceName">Will be set to the value of the property</param>
         public unsafe void PropertyProductAnySourceName(out uint aProductAnySourceName)
         {
 			fixed (uint* productAnySourceName = &aProductAnySourceName)
@@ -1296,6 +1948,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the ProductAnySourceVisible property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aProductAnySourceVisible">Will be set to the value of the property</param>
         public unsafe void PropertyProductAnySourceVisible(out uint aProductAnySourceVisible)
         {
 			fixed (uint* productAnySourceVisible = &aProductAnySourceVisible)
@@ -1304,6 +1963,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the ProductAnySourceType property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aProductAnySourceType">Will be set to the value of the property</param>
         public unsafe void PropertyProductAnySourceType(out uint aProductAnySourceType)
         {
 			fixed (uint* productAnySourceType = &aProductAnySourceType)
@@ -1312,6 +1978,9 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);

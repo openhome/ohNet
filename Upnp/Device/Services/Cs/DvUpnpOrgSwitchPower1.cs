@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the upnp.org:SwitchPower:1 UPnP service
+    /// </summary>
     public class DvProviderUpnpOrgSwitchPower1 : DvProvider, IDisposable
     {
         [DllImport("DvUpnpOrgSwitchPower1")]
@@ -33,15 +36,24 @@ namespace Zapp.Device.Providers
         private CallbackGetTarget iCallbackGetTarget;
         private CallbackGetStatus iCallbackGetStatus;
 
-        public DvProviderUpnpOrgSwitchPower1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderUpnpOrgSwitchPower1(DvDevice aDevice)
         {
             iHandle = DvProviderUpnpOrgSwitchPower1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Set the value of the Status property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyStatus(bool aValue)
         {
-        uint changed;
+            uint changed;
             int value = (aValue ? 1 : 0);
             if (0 != DvProviderUpnpOrgSwitchPower1SetPropertyStatus(iHandle, value, &changed))
             {
@@ -50,6 +62,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the Status property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyStatus(out bool aValue)
         {
             int value;
@@ -57,6 +73,11 @@ namespace Zapp.Device.Providers
             aValue = (value != 0);
         }
 
+        /// <summary>
+        /// Signal that the action SetTarget is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetTarget must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetTarget()
         {
             iCallbackSetTarget = new CallbackSetTarget(DoSetTarget);
@@ -64,6 +85,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgSwitchPower1EnableActionSetTarget(iHandle, iCallbackSetTarget, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetTarget is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetTarget must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetTarget()
         {
             iCallbackGetTarget = new CallbackGetTarget(DoGetTarget);
@@ -71,6 +97,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgSwitchPower1EnableActionGetTarget(iHandle, iCallbackGetTarget, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetStatus is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetStatus must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetStatus()
         {
             iCallbackGetStatus = new CallbackGetStatus(DoGetStatus);
@@ -78,16 +109,43 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgSwitchPower1EnableActionGetStatus(iHandle, iCallbackGetStatus, ptr);
         }
 
+        /// <summary>
+        /// SetTarget action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetTarget action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetTarget was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="anewTargetValue"></param>
         protected virtual void SetTarget(uint aVersion, bool anewTargetValue)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetTarget action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetTarget action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetTarget was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aRetTargetValue"></param>
         protected virtual void GetTarget(uint aVersion, out bool aRetTargetValue)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetStatus action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetStatus action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetStatus was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aResultStatus"></param>
         protected virtual void GetStatus(uint aVersion, out bool aResultStatus)
         {
             throw (new ActionDisabledError());
@@ -122,7 +180,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

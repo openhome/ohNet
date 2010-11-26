@@ -56,6 +56,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the <#=domain#>:<#=type#>:<#=version#> UPnP service
+    /// </summary>
     public class <#=className#> : DvProvider, IDisposable
     {
         [DllImport("<#=dllName#>")]
@@ -98,7 +101,11 @@ namespace Zapp.Device.Providers
         private Callback<#=a.name#> iCallback<#=a.name#>;
 <#  } #>
 
-        public <#=className#>(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected <#=className#>(DvDevice aDevice)
         {
             iHandle = <#=className#>Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
@@ -106,9 +113,14 @@ namespace Zapp.Device.Providers
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
 
+        /// <summary>
+        /// Set the value of the <#=s.name#> property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetProperty<#=s.name#>(<#=argtype[s.type]#> aValue)
         {
-        uint changed;
+            uint changed;
 <#      if (s.type == "boolean") #>
 <#      { #>
             int value = (aValue ? 1 : 0);
@@ -139,6 +151,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the <#=s.name#> property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetProperty<#=s.name#>(out <#=argtype[s.type]#> aValue)
         {
 <#      if (s.type == "boolean") #>
@@ -174,6 +190,11 @@ namespace Zapp.Device.Providers
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
+        /// <summary>
+        /// Signal that the action <#=a.name#> is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// Do<#=a.name#> must be overridden if this is called.</remarks>
         protected unsafe void EnableAction<#=a.name#>()
         {
             iCallback<#=a.name#> = new Callback<#=a.name#>(Do<#=a.name#>);
@@ -184,6 +205,22 @@ namespace Zapp.Device.Providers
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
+        /// <summary>
+        /// <#=a.name#> action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// <#=a.name#> action for the owning device.
+        ///
+        /// Must be implemented iff EnableAction<#=a.name#> was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+        /// <param name="a<#=i.name#>"></param>
+<#      } #>
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+        /// <param name="a<#=o.name#>"></param>
+<#      } #>
         protected virtual void <#=a.name#>(uint aVersion<#=ArgsFull(a)#>)
         {
             throw (new ActionDisabledError());
@@ -240,7 +277,9 @@ namespace Zapp.Device.Providers
         }
 <#  } #>
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

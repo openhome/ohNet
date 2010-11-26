@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the zapp.org:TestLights:1 UPnP service
+    /// </summary>
     public class DvProviderZappOrgTestLights1 : DvProvider, IDisposable
     {
         [DllImport("DvZappOrgTestLights1")]
@@ -45,12 +48,21 @@ namespace Zapp.Device.Providers
         private CallbackGetColor iCallbackGetColor;
         private CallbackGetColorComponents iCallbackGetColorComponents;
 
-        public DvProviderZappOrgTestLights1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderZappOrgTestLights1(DvDevice aDevice)
         {
             iHandle = DvProviderZappOrgTestLights1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Signal that the action GetCount is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetCount must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetCount()
         {
             iCallbackGetCount = new CallbackGetCount(DoGetCount);
@@ -58,6 +70,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestLights1EnableActionGetCount(iHandle, iCallbackGetCount, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetRoom is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetRoom must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetRoom()
         {
             iCallbackGetRoom = new CallbackGetRoom(DoGetRoom);
@@ -65,6 +82,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestLights1EnableActionGetRoom(iHandle, iCallbackGetRoom, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetName is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetName must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetName()
         {
             iCallbackGetName = new CallbackGetName(DoGetName);
@@ -72,6 +94,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestLights1EnableActionGetName(iHandle, iCallbackGetName, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetPosition is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetPosition must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetPosition()
         {
             iCallbackGetPosition = new CallbackGetPosition(DoGetPosition);
@@ -79,6 +106,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestLights1EnableActionGetPosition(iHandle, iCallbackGetPosition, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetColor is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetColor must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetColor()
         {
             iCallbackSetColor = new CallbackSetColor(DoSetColor);
@@ -86,6 +118,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestLights1EnableActionSetColor(iHandle, iCallbackSetColor, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetColor is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetColor must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetColor()
         {
             iCallbackGetColor = new CallbackGetColor(DoGetColor);
@@ -93,6 +130,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestLights1EnableActionGetColor(iHandle, iCallbackGetColor, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetColorComponents is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetColorComponents must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetColorComponents()
         {
             iCallbackGetColorComponents = new CallbackGetColorComponents(DoGetColorComponents);
@@ -100,36 +142,110 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestLights1EnableActionGetColorComponents(iHandle, iCallbackGetColorComponents, ptr);
         }
 
+        /// <summary>
+        /// GetCount action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetCount action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetCount was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aCount"></param>
         protected virtual void GetCount(uint aVersion, out uint aCount)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetRoom action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetRoom action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetRoom was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aIndex"></param>
+        /// <param name="aRoomName"></param>
         protected virtual void GetRoom(uint aVersion, uint aIndex, out string aRoomName)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetName action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetName action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetName was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aIndex"></param>
+        /// <param name="aFriendlyName"></param>
         protected virtual void GetName(uint aVersion, uint aIndex, out string aFriendlyName)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetPosition action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetPosition action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetPosition was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aIndex"></param>
+        /// <param name="aX"></param>
+        /// <param name="aY"></param>
+        /// <param name="aZ"></param>
         protected virtual void GetPosition(uint aVersion, uint aIndex, out uint aX, out uint aY, out uint aZ)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetColor action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetColor action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetColor was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aIndex"></param>
+        /// <param name="aColor"></param>
         protected virtual void SetColor(uint aVersion, uint aIndex, uint aColor)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetColor action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetColor action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetColor was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aIndex"></param>
+        /// <param name="aColor"></param>
         protected virtual void GetColor(uint aVersion, uint aIndex, out uint aColor)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetColorComponents action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetColorComponents action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetColorComponents was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aColor"></param>
+        /// <param name="aBrightness"></param>
+        /// <param name="aRed"></param>
+        /// <param name="aGreen"></param>
+        /// <param name="aBlue"></param>
         protected virtual void GetColorComponents(uint aVersion, uint aColor, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue)
         {
             throw (new ActionDisabledError());
@@ -213,7 +329,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

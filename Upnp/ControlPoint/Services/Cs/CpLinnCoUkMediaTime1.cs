@@ -38,12 +38,23 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iSecondsChanged;
         private Callback iCallbackSecondsChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkMediaTime1(CpDevice aDevice)
         {
             iHandle = CpProxyLinnCoUkMediaTime1Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaSeconds"></param>
         public unsafe void SyncSeconds(out uint aaSeconds)
         {
 			fixed (uint* aSeconds = &aaSeconds)
@@ -52,6 +63,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSeconds().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSeconds(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -59,6 +78,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkMediaTime1BeginSeconds(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaSeconds"></param>
         public unsafe void EndSeconds(uint aAsyncHandle, out uint aaSeconds)
         {
 			fixed (uint* aSeconds = &aaSeconds)
@@ -70,6 +95,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the Seconds state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkMediaTime1 instance will not overlap.</remarks>
+        /// <param name="aSecondsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertySecondsChanged(CallbackPropertyChanged aSecondsChanged)
         {
             iSecondsChanged = aSecondsChanged;
@@ -85,6 +116,13 @@ namespace Zapp.ControlPoint.Proxies
             self.iSecondsChanged();
         }
 
+        /// <summary>
+        /// Query the value of the Seconds property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aSeconds">Will be set to the value of the property</param>
         public unsafe void PropertySeconds(out uint aSeconds)
         {
 			fixed (uint* seconds = &aSeconds)
@@ -93,6 +131,9 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);

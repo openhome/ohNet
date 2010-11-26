@@ -191,12 +191,24 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iLastChangeChanged;
         private Callback iCallbackLastChangeChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyUpnpOrgScheduledRecording1(CpDevice aDevice)
         {
             iHandle = CpProxyUpnpOrgScheduledRecording1Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aSortCaps"></param>
+        /// <param name="aSortLevelCap"></param>
         public unsafe void SyncGetSortCapabilities(out string aSortCaps, out uint aSortLevelCap)
         {
 			char* sortCaps;
@@ -208,6 +220,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(sortCaps);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetSortCapabilities().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetSortCapabilities(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -215,6 +235,13 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgScheduledRecording1BeginGetSortCapabilities(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aSortCaps"></param>
+        /// <param name="aSortLevelCap"></param>
         public unsafe void EndGetSortCapabilities(uint aAsyncHandle, out string aSortCaps, out uint aSortLevelCap)
         {
 			char* sortCaps;
@@ -229,6 +256,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(sortCaps);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aDataTypeID"></param>
+        /// <param name="aPropertyList"></param>
         public unsafe void SyncGetPropertyList(string aDataTypeID, out string aPropertyList)
         {
 			char* dataTypeID = (char*)Marshal.StringToHGlobalAnsi(aDataTypeID);
@@ -241,6 +275,15 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(propertyList);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetPropertyList().</remarks>
+        /// <param name="aDataTypeID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetPropertyList(string aDataTypeID, CallbackAsyncComplete aCallback)
         {
 			char* dataTypeID = (char*)Marshal.StringToHGlobalAnsi(aDataTypeID);
@@ -250,6 +293,12 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)dataTypeID);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aPropertyList"></param>
         public unsafe void EndGetPropertyList(uint aAsyncHandle, out string aPropertyList)
         {
 			char* propertyList;
@@ -263,6 +312,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(propertyList);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aDataTypeID"></param>
+        /// <param name="aFilter"></param>
+        /// <param name="aPropertyInfo"></param>
         public unsafe void SyncGetAllowedValues(string aDataTypeID, string aFilter, out string aPropertyInfo)
         {
 			char* dataTypeID = (char*)Marshal.StringToHGlobalAnsi(aDataTypeID);
@@ -277,6 +334,16 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(propertyInfo);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetAllowedValues().</remarks>
+        /// <param name="aDataTypeID"></param>
+        /// <param name="aFilter"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetAllowedValues(string aDataTypeID, string aFilter, CallbackAsyncComplete aCallback)
         {
 			char* dataTypeID = (char*)Marshal.StringToHGlobalAnsi(aDataTypeID);
@@ -288,6 +355,12 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)filter);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aPropertyInfo"></param>
         public unsafe void EndGetAllowedValues(uint aAsyncHandle, out string aPropertyInfo)
         {
 			char* propertyInfo;
@@ -301,6 +374,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(propertyInfo);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aId"></param>
         public unsafe void SyncGetStateUpdateID(out uint aId)
         {
 			fixed (uint* id = &aId)
@@ -309,6 +388,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetStateUpdateID().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetStateUpdateID(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -316,6 +403,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgScheduledRecording1BeginGetStateUpdateID(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aId"></param>
         public unsafe void EndGetStateUpdateID(uint aAsyncHandle, out uint aId)
         {
 			fixed (uint* id = &aId)
@@ -327,6 +420,19 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aFilter"></param>
+        /// <param name="aStartingIndex"></param>
+        /// <param name="aRequestedCount"></param>
+        /// <param name="aSortCriteria"></param>
+        /// <param name="aResult"></param>
+        /// <param name="aNumberReturned"></param>
+        /// <param name="aTotalMatches"></param>
+        /// <param name="aUpdateID"></param>
         public unsafe void SyncBrowseRecordSchedules(string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
 			char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
@@ -344,6 +450,18 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(result);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndBrowseRecordSchedules().</remarks>
+        /// <param name="aFilter"></param>
+        /// <param name="aStartingIndex"></param>
+        /// <param name="aRequestedCount"></param>
+        /// <param name="aSortCriteria"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginBrowseRecordSchedules(string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, CallbackAsyncComplete aCallback)
         {
 			char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
@@ -355,6 +473,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)sortCriteria);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aResult"></param>
+        /// <param name="aNumberReturned"></param>
+        /// <param name="aTotalMatches"></param>
+        /// <param name="aUpdateID"></param>
         public unsafe void EndBrowseRecordSchedules(uint aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
 			char* result;
@@ -371,6 +498,20 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(result);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aRecordScheduleID"></param>
+        /// <param name="aFilter"></param>
+        /// <param name="aStartingIndex"></param>
+        /// <param name="aRequestedCount"></param>
+        /// <param name="aSortCriteria"></param>
+        /// <param name="aResult"></param>
+        /// <param name="aNumberReturned"></param>
+        /// <param name="aTotalMatches"></param>
+        /// <param name="aUpdateID"></param>
         public unsafe void SyncBrowseRecordTasks(string aRecordScheduleID, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
 			char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
@@ -390,6 +531,19 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(result);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndBrowseRecordTasks().</remarks>
+        /// <param name="aRecordScheduleID"></param>
+        /// <param name="aFilter"></param>
+        /// <param name="aStartingIndex"></param>
+        /// <param name="aRequestedCount"></param>
+        /// <param name="aSortCriteria"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginBrowseRecordTasks(string aRecordScheduleID, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, CallbackAsyncComplete aCallback)
         {
 			char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
@@ -403,6 +557,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)sortCriteria);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aResult"></param>
+        /// <param name="aNumberReturned"></param>
+        /// <param name="aTotalMatches"></param>
+        /// <param name="aUpdateID"></param>
         public unsafe void EndBrowseRecordTasks(uint aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
 			char* result;
@@ -419,6 +582,15 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(result);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aElements"></param>
+        /// <param name="aRecordScheduleID"></param>
+        /// <param name="aResult"></param>
+        /// <param name="aUpdateID"></param>
         public unsafe void SyncCreateRecordSchedule(string aElements, out string aRecordScheduleID, out string aResult, out uint aUpdateID)
         {
 			char* elements = (char*)Marshal.StringToHGlobalAnsi(aElements);
@@ -435,6 +607,15 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(result);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndCreateRecordSchedule().</remarks>
+        /// <param name="aElements"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginCreateRecordSchedule(string aElements, CallbackAsyncComplete aCallback)
         {
 			char* elements = (char*)Marshal.StringToHGlobalAnsi(aElements);
@@ -444,6 +625,14 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)elements);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aRecordScheduleID"></param>
+        /// <param name="aResult"></param>
+        /// <param name="aUpdateID"></param>
         public unsafe void EndCreateRecordSchedule(uint aAsyncHandle, out string aRecordScheduleID, out string aResult, out uint aUpdateID)
         {
 			char* recordScheduleID;
@@ -461,6 +650,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(result);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aRecordScheduleID"></param>
         public unsafe void SyncDeleteRecordSchedule(string aRecordScheduleID)
         {
 			char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
@@ -470,6 +665,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)recordScheduleID);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndDeleteRecordSchedule().</remarks>
+        /// <param name="aRecordScheduleID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDeleteRecordSchedule(string aRecordScheduleID, CallbackAsyncComplete aCallback)
         {
 			char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
@@ -479,6 +683,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)recordScheduleID);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndDeleteRecordSchedule(uint aAsyncHandle)
         {
 			{
@@ -489,6 +698,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aRecordScheduleID"></param>
+        /// <param name="aFilter"></param>
+        /// <param name="aResult"></param>
+        /// <param name="aUpdateID"></param>
         public unsafe void SyncGetRecordSchedule(string aRecordScheduleID, string aFilter, out string aResult, out uint aUpdateID)
         {
 			char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
@@ -504,6 +722,16 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(result);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetRecordSchedule().</remarks>
+        /// <param name="aRecordScheduleID"></param>
+        /// <param name="aFilter"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetRecordSchedule(string aRecordScheduleID, string aFilter, CallbackAsyncComplete aCallback)
         {
 			char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
@@ -515,6 +743,13 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)filter);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aResult"></param>
+        /// <param name="aUpdateID"></param>
         public unsafe void EndGetRecordSchedule(uint aAsyncHandle, out string aResult, out uint aUpdateID)
         {
 			char* result;
@@ -529,6 +764,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(result);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aRecordScheduleID"></param>
         public unsafe void SyncEnableRecordSchedule(string aRecordScheduleID)
         {
 			char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
@@ -538,6 +779,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)recordScheduleID);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndEnableRecordSchedule().</remarks>
+        /// <param name="aRecordScheduleID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginEnableRecordSchedule(string aRecordScheduleID, CallbackAsyncComplete aCallback)
         {
 			char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
@@ -547,6 +797,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)recordScheduleID);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndEnableRecordSchedule(uint aAsyncHandle)
         {
 			{
@@ -557,6 +812,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aRecordScheduleID"></param>
         public unsafe void SyncDisableRecordSchedule(string aRecordScheduleID)
         {
 			char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
@@ -566,6 +827,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)recordScheduleID);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndDisableRecordSchedule().</remarks>
+        /// <param name="aRecordScheduleID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDisableRecordSchedule(string aRecordScheduleID, CallbackAsyncComplete aCallback)
         {
 			char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
@@ -575,6 +845,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)recordScheduleID);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndDisableRecordSchedule(uint aAsyncHandle)
         {
 			{
@@ -585,6 +860,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aRecordTaskID"></param>
         public unsafe void SyncDeleteRecordTask(string aRecordTaskID)
         {
 			char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
@@ -594,6 +875,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)recordTaskID);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndDeleteRecordTask().</remarks>
+        /// <param name="aRecordTaskID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDeleteRecordTask(string aRecordTaskID, CallbackAsyncComplete aCallback)
         {
 			char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
@@ -603,6 +893,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)recordTaskID);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndDeleteRecordTask(uint aAsyncHandle)
         {
 			{
@@ -613,6 +908,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aRecordTaskID"></param>
+        /// <param name="aFilter"></param>
+        /// <param name="aResult"></param>
+        /// <param name="aUpdateID"></param>
         public unsafe void SyncGetRecordTask(string aRecordTaskID, string aFilter, out string aResult, out uint aUpdateID)
         {
 			char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
@@ -628,6 +932,16 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(result);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetRecordTask().</remarks>
+        /// <param name="aRecordTaskID"></param>
+        /// <param name="aFilter"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetRecordTask(string aRecordTaskID, string aFilter, CallbackAsyncComplete aCallback)
         {
 			char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
@@ -639,6 +953,13 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)filter);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aResult"></param>
+        /// <param name="aUpdateID"></param>
         public unsafe void EndGetRecordTask(uint aAsyncHandle, out string aResult, out uint aUpdateID)
         {
 			char* result;
@@ -653,6 +974,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(result);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aRecordTaskID"></param>
         public unsafe void SyncEnableRecordTask(string aRecordTaskID)
         {
 			char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
@@ -662,6 +989,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)recordTaskID);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndEnableRecordTask().</remarks>
+        /// <param name="aRecordTaskID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginEnableRecordTask(string aRecordTaskID, CallbackAsyncComplete aCallback)
         {
 			char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
@@ -671,6 +1007,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)recordTaskID);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndEnableRecordTask(uint aAsyncHandle)
         {
 			{
@@ -681,6 +1022,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aRecordTaskID"></param>
         public unsafe void SyncDisableRecordTask(string aRecordTaskID)
         {
 			char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
@@ -690,6 +1037,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)recordTaskID);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndDisableRecordTask().</remarks>
+        /// <param name="aRecordTaskID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDisableRecordTask(string aRecordTaskID, CallbackAsyncComplete aCallback)
         {
 			char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
@@ -699,6 +1055,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)recordTaskID);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndDisableRecordTask(uint aAsyncHandle)
         {
 			{
@@ -709,6 +1070,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aRecordTaskID"></param>
         public unsafe void SyncResetRecordTask(string aRecordTaskID)
         {
 			char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
@@ -718,6 +1085,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)recordTaskID);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndResetRecordTask().</remarks>
+        /// <param name="aRecordTaskID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginResetRecordTask(string aRecordTaskID, CallbackAsyncComplete aCallback)
         {
 			char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
@@ -727,6 +1103,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)recordTaskID);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndResetRecordTask(uint aAsyncHandle)
         {
 			{
@@ -737,6 +1118,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aRecordScheduleID"></param>
+        /// <param name="aRecordScheduleConflictIDList"></param>
+        /// <param name="aUpdateID"></param>
         public unsafe void SyncGetRecordScheduleConflicts(string aRecordScheduleID, out string aRecordScheduleConflictIDList, out uint aUpdateID)
         {
 			char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
@@ -750,6 +1139,15 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(recordScheduleConflictIDList);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetRecordScheduleConflicts().</remarks>
+        /// <param name="aRecordScheduleID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetRecordScheduleConflicts(string aRecordScheduleID, CallbackAsyncComplete aCallback)
         {
 			char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
@@ -759,6 +1157,13 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)recordScheduleID);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aRecordScheduleConflictIDList"></param>
+        /// <param name="aUpdateID"></param>
         public unsafe void EndGetRecordScheduleConflicts(uint aAsyncHandle, out string aRecordScheduleConflictIDList, out uint aUpdateID)
         {
 			char* recordScheduleConflictIDList;
@@ -773,6 +1178,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(recordScheduleConflictIDList);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aRecordTaskID"></param>
+        /// <param name="aRecordTaskConflictIDList"></param>
+        /// <param name="aUpdateID"></param>
         public unsafe void SyncGetRecordTaskConflicts(string aRecordTaskID, out string aRecordTaskConflictIDList, out uint aUpdateID)
         {
 			char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
@@ -786,6 +1199,15 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(recordTaskConflictIDList);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetRecordTaskConflicts().</remarks>
+        /// <param name="aRecordTaskID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetRecordTaskConflicts(string aRecordTaskID, CallbackAsyncComplete aCallback)
         {
 			char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
@@ -795,6 +1217,13 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)recordTaskID);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aRecordTaskConflictIDList"></param>
+        /// <param name="aUpdateID"></param>
         public unsafe void EndGetRecordTaskConflicts(uint aAsyncHandle, out string aRecordTaskConflictIDList, out uint aUpdateID)
         {
 			char* recordTaskConflictIDList;
@@ -809,6 +1238,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(recordTaskConflictIDList);
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the LastChange state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyUpnpOrgScheduledRecording1 instance will not overlap.</remarks>
+        /// <param name="aLastChangeChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyLastChangeChanged(CallbackPropertyChanged aLastChangeChanged)
         {
             iLastChangeChanged = aLastChangeChanged;
@@ -824,6 +1259,13 @@ namespace Zapp.ControlPoint.Proxies
             self.iLastChangeChanged();
         }
 
+        /// <summary>
+        /// Query the value of the LastChange property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aLastChange">Will be set to the value of the property</param>
         public unsafe void PropertyLastChange(out string aLastChange)
         {
 			char* ptr;
@@ -832,6 +1274,9 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);

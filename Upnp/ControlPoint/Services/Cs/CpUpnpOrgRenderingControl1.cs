@@ -344,12 +344,24 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iLastChangeChanged;
         private Callback iCallbackLastChangeChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyUpnpOrgRenderingControl1(CpDevice aDevice)
         {
             iHandle = CpProxyUpnpOrgRenderingControl1Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentPresetNameList"></param>
         public unsafe void SyncListPresets(uint aInstanceID, out string aCurrentPresetNameList)
         {
 			char* currentPresetNameList;
@@ -360,6 +372,15 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(currentPresetNameList);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndListPresets().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginListPresets(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -367,6 +388,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginListPresets(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aCurrentPresetNameList"></param>
         public unsafe void EndListPresets(uint aAsyncHandle, out string aCurrentPresetNameList)
         {
 			char* currentPresetNameList;
@@ -380,6 +407,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(currentPresetNameList);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aPresetName"></param>
         public unsafe void SyncSelectPreset(uint aInstanceID, string aPresetName)
         {
 			char* presetName = (char*)Marshal.StringToHGlobalAnsi(aPresetName);
@@ -389,6 +423,16 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)presetName);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSelectPreset().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aPresetName"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSelectPreset(uint aInstanceID, string aPresetName, CallbackAsyncComplete aCallback)
         {
 			char* presetName = (char*)Marshal.StringToHGlobalAnsi(aPresetName);
@@ -398,6 +442,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)presetName);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSelectPreset(uint aAsyncHandle)
         {
 			{
@@ -408,6 +457,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentBrightness"></param>
         public unsafe void SyncGetBrightness(uint aInstanceID, out uint aCurrentBrightness)
         {
 			fixed (uint* currentBrightness = &aCurrentBrightness)
@@ -416,6 +472,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetBrightness().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetBrightness(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -423,6 +488,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginGetBrightness(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aCurrentBrightness"></param>
         public unsafe void EndGetBrightness(uint aAsyncHandle, out uint aCurrentBrightness)
         {
 			fixed (uint* currentBrightness = &aCurrentBrightness)
@@ -434,6 +505,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredBrightness"></param>
         public unsafe void SyncSetBrightness(uint aInstanceID, uint aDesiredBrightness)
         {
 			{
@@ -441,6 +519,16 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetBrightness().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredBrightness"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetBrightness(uint aInstanceID, uint aDesiredBrightness, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -448,6 +536,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginSetBrightness(iHandle, aInstanceID, aDesiredBrightness, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetBrightness(uint aAsyncHandle)
         {
 			{
@@ -458,6 +551,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentContrast"></param>
         public unsafe void SyncGetContrast(uint aInstanceID, out uint aCurrentContrast)
         {
 			fixed (uint* currentContrast = &aCurrentContrast)
@@ -466,6 +566,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetContrast().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetContrast(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -473,6 +582,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginGetContrast(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aCurrentContrast"></param>
         public unsafe void EndGetContrast(uint aAsyncHandle, out uint aCurrentContrast)
         {
 			fixed (uint* currentContrast = &aCurrentContrast)
@@ -484,6 +599,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredContrast"></param>
         public unsafe void SyncSetContrast(uint aInstanceID, uint aDesiredContrast)
         {
 			{
@@ -491,6 +613,16 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetContrast().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredContrast"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetContrast(uint aInstanceID, uint aDesiredContrast, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -498,6 +630,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginSetContrast(iHandle, aInstanceID, aDesiredContrast, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetContrast(uint aAsyncHandle)
         {
 			{
@@ -508,6 +645,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentSharpness"></param>
         public unsafe void SyncGetSharpness(uint aInstanceID, out uint aCurrentSharpness)
         {
 			fixed (uint* currentSharpness = &aCurrentSharpness)
@@ -516,6 +660,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetSharpness().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetSharpness(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -523,6 +676,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginGetSharpness(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aCurrentSharpness"></param>
         public unsafe void EndGetSharpness(uint aAsyncHandle, out uint aCurrentSharpness)
         {
 			fixed (uint* currentSharpness = &aCurrentSharpness)
@@ -534,6 +693,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredSharpness"></param>
         public unsafe void SyncSetSharpness(uint aInstanceID, uint aDesiredSharpness)
         {
 			{
@@ -541,6 +707,16 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetSharpness().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredSharpness"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetSharpness(uint aInstanceID, uint aDesiredSharpness, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -548,6 +724,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginSetSharpness(iHandle, aInstanceID, aDesiredSharpness, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetSharpness(uint aAsyncHandle)
         {
 			{
@@ -558,6 +739,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentRedVideoGain"></param>
         public unsafe void SyncGetRedVideoGain(uint aInstanceID, out uint aCurrentRedVideoGain)
         {
 			fixed (uint* currentRedVideoGain = &aCurrentRedVideoGain)
@@ -566,6 +754,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetRedVideoGain().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetRedVideoGain(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -573,6 +770,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginGetRedVideoGain(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aCurrentRedVideoGain"></param>
         public unsafe void EndGetRedVideoGain(uint aAsyncHandle, out uint aCurrentRedVideoGain)
         {
 			fixed (uint* currentRedVideoGain = &aCurrentRedVideoGain)
@@ -584,6 +787,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredRedVideoGain"></param>
         public unsafe void SyncSetRedVideoGain(uint aInstanceID, uint aDesiredRedVideoGain)
         {
 			{
@@ -591,6 +801,16 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetRedVideoGain().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredRedVideoGain"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetRedVideoGain(uint aInstanceID, uint aDesiredRedVideoGain, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -598,6 +818,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginSetRedVideoGain(iHandle, aInstanceID, aDesiredRedVideoGain, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetRedVideoGain(uint aAsyncHandle)
         {
 			{
@@ -608,6 +833,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentGreenVideoGain"></param>
         public unsafe void SyncGetGreenVideoGain(uint aInstanceID, out uint aCurrentGreenVideoGain)
         {
 			fixed (uint* currentGreenVideoGain = &aCurrentGreenVideoGain)
@@ -616,6 +848,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetGreenVideoGain().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetGreenVideoGain(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -623,6 +864,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginGetGreenVideoGain(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aCurrentGreenVideoGain"></param>
         public unsafe void EndGetGreenVideoGain(uint aAsyncHandle, out uint aCurrentGreenVideoGain)
         {
 			fixed (uint* currentGreenVideoGain = &aCurrentGreenVideoGain)
@@ -634,6 +881,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredGreenVideoGain"></param>
         public unsafe void SyncSetGreenVideoGain(uint aInstanceID, uint aDesiredGreenVideoGain)
         {
 			{
@@ -641,6 +895,16 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetGreenVideoGain().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredGreenVideoGain"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetGreenVideoGain(uint aInstanceID, uint aDesiredGreenVideoGain, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -648,6 +912,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginSetGreenVideoGain(iHandle, aInstanceID, aDesiredGreenVideoGain, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetGreenVideoGain(uint aAsyncHandle)
         {
 			{
@@ -658,6 +927,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentBlueVideoGain"></param>
         public unsafe void SyncGetBlueVideoGain(uint aInstanceID, out uint aCurrentBlueVideoGain)
         {
 			fixed (uint* currentBlueVideoGain = &aCurrentBlueVideoGain)
@@ -666,6 +942,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetBlueVideoGain().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetBlueVideoGain(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -673,6 +958,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginGetBlueVideoGain(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aCurrentBlueVideoGain"></param>
         public unsafe void EndGetBlueVideoGain(uint aAsyncHandle, out uint aCurrentBlueVideoGain)
         {
 			fixed (uint* currentBlueVideoGain = &aCurrentBlueVideoGain)
@@ -684,6 +975,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredBlueVideoGain"></param>
         public unsafe void SyncSetBlueVideoGain(uint aInstanceID, uint aDesiredBlueVideoGain)
         {
 			{
@@ -691,6 +989,16 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetBlueVideoGain().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredBlueVideoGain"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetBlueVideoGain(uint aInstanceID, uint aDesiredBlueVideoGain, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -698,6 +1006,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginSetBlueVideoGain(iHandle, aInstanceID, aDesiredBlueVideoGain, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetBlueVideoGain(uint aAsyncHandle)
         {
 			{
@@ -708,6 +1021,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentRedVideoBlackLevel"></param>
         public unsafe void SyncGetRedVideoBlackLevel(uint aInstanceID, out uint aCurrentRedVideoBlackLevel)
         {
 			fixed (uint* currentRedVideoBlackLevel = &aCurrentRedVideoBlackLevel)
@@ -716,6 +1036,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetRedVideoBlackLevel().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetRedVideoBlackLevel(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -723,6 +1052,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginGetRedVideoBlackLevel(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aCurrentRedVideoBlackLevel"></param>
         public unsafe void EndGetRedVideoBlackLevel(uint aAsyncHandle, out uint aCurrentRedVideoBlackLevel)
         {
 			fixed (uint* currentRedVideoBlackLevel = &aCurrentRedVideoBlackLevel)
@@ -734,6 +1069,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredRedVideoBlackLevel"></param>
         public unsafe void SyncSetRedVideoBlackLevel(uint aInstanceID, uint aDesiredRedVideoBlackLevel)
         {
 			{
@@ -741,6 +1083,16 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetRedVideoBlackLevel().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredRedVideoBlackLevel"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetRedVideoBlackLevel(uint aInstanceID, uint aDesiredRedVideoBlackLevel, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -748,6 +1100,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginSetRedVideoBlackLevel(iHandle, aInstanceID, aDesiredRedVideoBlackLevel, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetRedVideoBlackLevel(uint aAsyncHandle)
         {
 			{
@@ -758,6 +1115,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentGreenVideoBlackLevel"></param>
         public unsafe void SyncGetGreenVideoBlackLevel(uint aInstanceID, out uint aCurrentGreenVideoBlackLevel)
         {
 			fixed (uint* currentGreenVideoBlackLevel = &aCurrentGreenVideoBlackLevel)
@@ -766,6 +1130,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetGreenVideoBlackLevel().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetGreenVideoBlackLevel(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -773,6 +1146,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginGetGreenVideoBlackLevel(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aCurrentGreenVideoBlackLevel"></param>
         public unsafe void EndGetGreenVideoBlackLevel(uint aAsyncHandle, out uint aCurrentGreenVideoBlackLevel)
         {
 			fixed (uint* currentGreenVideoBlackLevel = &aCurrentGreenVideoBlackLevel)
@@ -784,6 +1163,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredGreenVideoBlackLevel"></param>
         public unsafe void SyncSetGreenVideoBlackLevel(uint aInstanceID, uint aDesiredGreenVideoBlackLevel)
         {
 			{
@@ -791,6 +1177,16 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetGreenVideoBlackLevel().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredGreenVideoBlackLevel"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetGreenVideoBlackLevel(uint aInstanceID, uint aDesiredGreenVideoBlackLevel, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -798,6 +1194,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginSetGreenVideoBlackLevel(iHandle, aInstanceID, aDesiredGreenVideoBlackLevel, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetGreenVideoBlackLevel(uint aAsyncHandle)
         {
 			{
@@ -808,6 +1209,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentBlueVideoBlackLevel"></param>
         public unsafe void SyncGetBlueVideoBlackLevel(uint aInstanceID, out uint aCurrentBlueVideoBlackLevel)
         {
 			fixed (uint* currentBlueVideoBlackLevel = &aCurrentBlueVideoBlackLevel)
@@ -816,6 +1224,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetBlueVideoBlackLevel().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetBlueVideoBlackLevel(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -823,6 +1240,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginGetBlueVideoBlackLevel(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aCurrentBlueVideoBlackLevel"></param>
         public unsafe void EndGetBlueVideoBlackLevel(uint aAsyncHandle, out uint aCurrentBlueVideoBlackLevel)
         {
 			fixed (uint* currentBlueVideoBlackLevel = &aCurrentBlueVideoBlackLevel)
@@ -834,6 +1257,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredBlueVideoBlackLevel"></param>
         public unsafe void SyncSetBlueVideoBlackLevel(uint aInstanceID, uint aDesiredBlueVideoBlackLevel)
         {
 			{
@@ -841,6 +1271,16 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetBlueVideoBlackLevel().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredBlueVideoBlackLevel"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetBlueVideoBlackLevel(uint aInstanceID, uint aDesiredBlueVideoBlackLevel, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -848,6 +1288,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginSetBlueVideoBlackLevel(iHandle, aInstanceID, aDesiredBlueVideoBlackLevel, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetBlueVideoBlackLevel(uint aAsyncHandle)
         {
 			{
@@ -858,6 +1303,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentColorTemperature"></param>
         public unsafe void SyncGetColorTemperature(uint aInstanceID, out uint aCurrentColorTemperature)
         {
 			fixed (uint* currentColorTemperature = &aCurrentColorTemperature)
@@ -866,6 +1318,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetColorTemperature().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetColorTemperature(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -873,6 +1334,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginGetColorTemperature(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aCurrentColorTemperature"></param>
         public unsafe void EndGetColorTemperature(uint aAsyncHandle, out uint aCurrentColorTemperature)
         {
 			fixed (uint* currentColorTemperature = &aCurrentColorTemperature)
@@ -884,6 +1351,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredColorTemperature"></param>
         public unsafe void SyncSetColorTemperature(uint aInstanceID, uint aDesiredColorTemperature)
         {
 			{
@@ -891,6 +1365,16 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetColorTemperature().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredColorTemperature"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetColorTemperature(uint aInstanceID, uint aDesiredColorTemperature, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -898,6 +1382,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginSetColorTemperature(iHandle, aInstanceID, aDesiredColorTemperature, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetColorTemperature(uint aAsyncHandle)
         {
 			{
@@ -908,6 +1397,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentHorizontalKeystone"></param>
         public unsafe void SyncGetHorizontalKeystone(uint aInstanceID, out int aCurrentHorizontalKeystone)
         {
 			fixed (int* currentHorizontalKeystone = &aCurrentHorizontalKeystone)
@@ -916,6 +1412,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetHorizontalKeystone().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetHorizontalKeystone(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -923,6 +1428,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginGetHorizontalKeystone(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aCurrentHorizontalKeystone"></param>
         public unsafe void EndGetHorizontalKeystone(uint aAsyncHandle, out int aCurrentHorizontalKeystone)
         {
 			fixed (int* currentHorizontalKeystone = &aCurrentHorizontalKeystone)
@@ -934,6 +1445,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredHorizontalKeystone"></param>
         public unsafe void SyncSetHorizontalKeystone(uint aInstanceID, int aDesiredHorizontalKeystone)
         {
 			{
@@ -941,6 +1459,16 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetHorizontalKeystone().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredHorizontalKeystone"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetHorizontalKeystone(uint aInstanceID, int aDesiredHorizontalKeystone, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -948,6 +1476,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginSetHorizontalKeystone(iHandle, aInstanceID, aDesiredHorizontalKeystone, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetHorizontalKeystone(uint aAsyncHandle)
         {
 			{
@@ -958,6 +1491,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentVerticalKeystone"></param>
         public unsafe void SyncGetVerticalKeystone(uint aInstanceID, out int aCurrentVerticalKeystone)
         {
 			fixed (int* currentVerticalKeystone = &aCurrentVerticalKeystone)
@@ -966,6 +1506,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetVerticalKeystone().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetVerticalKeystone(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -973,6 +1522,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginGetVerticalKeystone(iHandle, aInstanceID, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aCurrentVerticalKeystone"></param>
         public unsafe void EndGetVerticalKeystone(uint aAsyncHandle, out int aCurrentVerticalKeystone)
         {
 			fixed (int* currentVerticalKeystone = &aCurrentVerticalKeystone)
@@ -984,6 +1539,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredVerticalKeystone"></param>
         public unsafe void SyncSetVerticalKeystone(uint aInstanceID, int aDesiredVerticalKeystone)
         {
 			{
@@ -991,6 +1553,16 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetVerticalKeystone().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredVerticalKeystone"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetVerticalKeystone(uint aInstanceID, int aDesiredVerticalKeystone, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -998,6 +1570,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgRenderingControl1BeginSetVerticalKeystone(iHandle, aInstanceID, aDesiredVerticalKeystone, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetVerticalKeystone(uint aAsyncHandle)
         {
 			{
@@ -1008,6 +1585,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aCurrentMute"></param>
         public unsafe void SyncGetMute(uint aInstanceID, string aChannel, out bool aCurrentMute)
         {
 			char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
@@ -1019,6 +1604,16 @@ namespace Zapp.ControlPoint.Proxies
 			aCurrentMute = (currentMute != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetMute().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetMute(uint aInstanceID, string aChannel, CallbackAsyncComplete aCallback)
         {
 			char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
@@ -1028,6 +1623,12 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aCurrentMute"></param>
         public unsafe void EndGetMute(uint aAsyncHandle, out bool aCurrentMute)
         {
 			uint currentMute;
@@ -1040,6 +1641,14 @@ namespace Zapp.ControlPoint.Proxies
 			aCurrentMute = (currentMute != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aDesiredMute"></param>
         public unsafe void SyncSetMute(uint aInstanceID, string aChannel, bool aDesiredMute)
         {
 			char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
@@ -1050,6 +1659,17 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetMute().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aDesiredMute"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetMute(uint aInstanceID, string aChannel, bool aDesiredMute, CallbackAsyncComplete aCallback)
         {
 			char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
@@ -1060,6 +1680,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetMute(uint aAsyncHandle)
         {
 			{
@@ -1070,6 +1695,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aCurrentVolume"></param>
         public unsafe void SyncGetVolume(uint aInstanceID, string aChannel, out uint aCurrentVolume)
         {
 			char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
@@ -1080,6 +1713,16 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetVolume().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetVolume(uint aInstanceID, string aChannel, CallbackAsyncComplete aCallback)
         {
 			char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
@@ -1089,6 +1732,12 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aCurrentVolume"></param>
         public unsafe void EndGetVolume(uint aAsyncHandle, out uint aCurrentVolume)
         {
 			fixed (uint* currentVolume = &aCurrentVolume)
@@ -1100,6 +1749,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aDesiredVolume"></param>
         public unsafe void SyncSetVolume(uint aInstanceID, string aChannel, uint aDesiredVolume)
         {
 			char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
@@ -1109,6 +1766,17 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetVolume().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aDesiredVolume"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetVolume(uint aInstanceID, string aChannel, uint aDesiredVolume, CallbackAsyncComplete aCallback)
         {
 			char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
@@ -1118,6 +1786,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetVolume(uint aAsyncHandle)
         {
 			{
@@ -1128,6 +1801,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aCurrentVolume"></param>
         public unsafe void SyncGetVolumeDB(uint aInstanceID, string aChannel, out int aCurrentVolume)
         {
 			char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
@@ -1138,6 +1819,16 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetVolumeDB().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetVolumeDB(uint aInstanceID, string aChannel, CallbackAsyncComplete aCallback)
         {
 			char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
@@ -1147,6 +1838,12 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aCurrentVolume"></param>
         public unsafe void EndGetVolumeDB(uint aAsyncHandle, out int aCurrentVolume)
         {
 			fixed (int* currentVolume = &aCurrentVolume)
@@ -1158,6 +1855,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aDesiredVolume"></param>
         public unsafe void SyncSetVolumeDB(uint aInstanceID, string aChannel, int aDesiredVolume)
         {
 			char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
@@ -1167,6 +1872,17 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetVolumeDB().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aDesiredVolume"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetVolumeDB(uint aInstanceID, string aChannel, int aDesiredVolume, CallbackAsyncComplete aCallback)
         {
 			char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
@@ -1176,6 +1892,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetVolumeDB(uint aAsyncHandle)
         {
 			{
@@ -1186,6 +1907,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aMinValue"></param>
+        /// <param name="aMaxValue"></param>
         public unsafe void SyncGetVolumeDBRange(uint aInstanceID, string aChannel, out int aMinValue, out int aMaxValue)
         {
 			char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
@@ -1197,6 +1927,16 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetVolumeDBRange().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetVolumeDBRange(uint aInstanceID, string aChannel, CallbackAsyncComplete aCallback)
         {
 			char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
@@ -1206,6 +1946,13 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aMinValue"></param>
+        /// <param name="aMaxValue"></param>
         public unsafe void EndGetVolumeDBRange(uint aAsyncHandle, out int aMinValue, out int aMaxValue)
         {
 			fixed (int* minValue = &aMinValue)
@@ -1218,6 +1965,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aCurrentLoudness"></param>
         public unsafe void SyncGetLoudness(uint aInstanceID, string aChannel, out bool aCurrentLoudness)
         {
 			char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
@@ -1229,6 +1984,16 @@ namespace Zapp.ControlPoint.Proxies
 			aCurrentLoudness = (currentLoudness != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetLoudness().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetLoudness(uint aInstanceID, string aChannel, CallbackAsyncComplete aCallback)
         {
 			char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
@@ -1238,6 +2003,12 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aCurrentLoudness"></param>
         public unsafe void EndGetLoudness(uint aAsyncHandle, out bool aCurrentLoudness)
         {
 			uint currentLoudness;
@@ -1250,6 +2021,14 @@ namespace Zapp.ControlPoint.Proxies
 			aCurrentLoudness = (currentLoudness != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aDesiredLoudness"></param>
         public unsafe void SyncSetLoudness(uint aInstanceID, string aChannel, bool aDesiredLoudness)
         {
 			char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
@@ -1260,6 +2039,17 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetLoudness().</remarks>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aDesiredLoudness"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetLoudness(uint aInstanceID, string aChannel, bool aDesiredLoudness, CallbackAsyncComplete aCallback)
         {
 			char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
@@ -1270,6 +2060,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)channel);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetLoudness(uint aAsyncHandle)
         {
 			{
@@ -1280,6 +2075,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the LastChange state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyUpnpOrgRenderingControl1 instance will not overlap.</remarks>
+        /// <param name="aLastChangeChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyLastChangeChanged(CallbackPropertyChanged aLastChangeChanged)
         {
             iLastChangeChanged = aLastChangeChanged;
@@ -1295,6 +2096,13 @@ namespace Zapp.ControlPoint.Proxies
             self.iLastChangeChanged();
         }
 
+        /// <summary>
+        /// Query the value of the LastChange property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aLastChange">Will be set to the value of the property</param>
         public unsafe void PropertyLastChange(out string aLastChange)
         {
 			char* ptr;
@@ -1303,6 +2111,9 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);

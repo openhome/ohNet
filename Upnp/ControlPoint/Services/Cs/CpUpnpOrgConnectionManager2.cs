@@ -90,12 +90,24 @@ namespace Zapp.ControlPoint.Proxies
         private Callback iCallbackSinkProtocolInfoChanged;
         private Callback iCallbackCurrentConnectionIDsChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyUpnpOrgConnectionManager2(CpDevice aDevice)
         {
             iHandle = CpProxyUpnpOrgConnectionManager2Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aSource"></param>
+        /// <param name="aSink"></param>
         public unsafe void SyncGetProtocolInfo(out string aSource, out string aSink)
         {
 			char* source;
@@ -109,6 +121,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(sink);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetProtocolInfo().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetProtocolInfo(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -116,6 +136,13 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgConnectionManager2BeginGetProtocolInfo(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aSource"></param>
+        /// <param name="aSink"></param>
         public unsafe void EndGetProtocolInfo(uint aAsyncHandle, out string aSource, out string aSink)
         {
 			char* source;
@@ -132,6 +159,18 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(sink);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aRemoteProtocolInfo"></param>
+        /// <param name="aPeerConnectionManager"></param>
+        /// <param name="aPeerConnectionID"></param>
+        /// <param name="aDirection"></param>
+        /// <param name="aConnectionID"></param>
+        /// <param name="aAVTransportID"></param>
+        /// <param name="aRcsID"></param>
         public unsafe void SyncPrepareForConnection(string aRemoteProtocolInfo, string aPeerConnectionManager, int aPeerConnectionID, string aDirection, out int aConnectionID, out int aAVTransportID, out int aRcsID)
         {
 			char* remoteProtocolInfo = (char*)Marshal.StringToHGlobalAnsi(aRemoteProtocolInfo);
@@ -148,6 +187,18 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)direction);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndPrepareForConnection().</remarks>
+        /// <param name="aRemoteProtocolInfo"></param>
+        /// <param name="aPeerConnectionManager"></param>
+        /// <param name="aPeerConnectionID"></param>
+        /// <param name="aDirection"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginPrepareForConnection(string aRemoteProtocolInfo, string aPeerConnectionManager, int aPeerConnectionID, string aDirection, CallbackAsyncComplete aCallback)
         {
 			char* remoteProtocolInfo = (char*)Marshal.StringToHGlobalAnsi(aRemoteProtocolInfo);
@@ -161,6 +212,14 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)direction);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aConnectionID"></param>
+        /// <param name="aAVTransportID"></param>
+        /// <param name="aRcsID"></param>
         public unsafe void EndPrepareForConnection(uint aAsyncHandle, out int aConnectionID, out int aAVTransportID, out int aRcsID)
         {
 			fixed (int* connectionID = &aConnectionID)
@@ -174,6 +233,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aConnectionID"></param>
         public unsafe void SyncConnectionComplete(int aConnectionID)
         {
 			{
@@ -181,6 +246,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndConnectionComplete().</remarks>
+        /// <param name="aConnectionID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginConnectionComplete(int aConnectionID, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -188,6 +262,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgConnectionManager2BeginConnectionComplete(iHandle, aConnectionID, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndConnectionComplete(uint aAsyncHandle)
         {
 			{
@@ -198,6 +277,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aConnectionIDs"></param>
         public unsafe void SyncGetCurrentConnectionIDs(out string aConnectionIDs)
         {
 			char* connectionIDs;
@@ -208,6 +293,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(connectionIDs);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetCurrentConnectionIDs().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetCurrentConnectionIDs(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -215,6 +308,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgConnectionManager2BeginGetCurrentConnectionIDs(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aConnectionIDs"></param>
         public unsafe void EndGetCurrentConnectionIDs(uint aAsyncHandle, out string aConnectionIDs)
         {
 			char* connectionIDs;
@@ -228,6 +327,19 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(connectionIDs);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aConnectionID"></param>
+        /// <param name="aRcsID"></param>
+        /// <param name="aAVTransportID"></param>
+        /// <param name="aProtocolInfo"></param>
+        /// <param name="aPeerConnectionManager"></param>
+        /// <param name="aPeerConnectionID"></param>
+        /// <param name="aDirection"></param>
+        /// <param name="aStatus"></param>
         public unsafe void SyncGetCurrentConnectionInfo(int aConnectionID, out int aRcsID, out int aAVTransportID, out string aProtocolInfo, out string aPeerConnectionManager, out int aPeerConnectionID, out string aDirection, out string aStatus)
         {
 			char* protocolInfo;
@@ -250,6 +362,15 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(status);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetCurrentConnectionInfo().</remarks>
+        /// <param name="aConnectionID"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetCurrentConnectionInfo(int aConnectionID, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -257,6 +378,18 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyUpnpOrgConnectionManager2BeginGetCurrentConnectionInfo(iHandle, aConnectionID, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aRcsID"></param>
+        /// <param name="aAVTransportID"></param>
+        /// <param name="aProtocolInfo"></param>
+        /// <param name="aPeerConnectionManager"></param>
+        /// <param name="aPeerConnectionID"></param>
+        /// <param name="aDirection"></param>
+        /// <param name="aStatus"></param>
         public unsafe void EndGetCurrentConnectionInfo(uint aAsyncHandle, out int aRcsID, out int aAVTransportID, out string aProtocolInfo, out string aPeerConnectionManager, out int aPeerConnectionID, out string aDirection, out string aStatus)
         {
 			char* protocolInfo;
@@ -282,6 +415,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(status);
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the SourceProtocolInfo state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyUpnpOrgConnectionManager2 instance will not overlap.</remarks>
+        /// <param name="aSourceProtocolInfoChanged">The delegate to run when the state variable changes</param>
         public void SetPropertySourceProtocolInfoChanged(CallbackPropertyChanged aSourceProtocolInfoChanged)
         {
             iSourceProtocolInfoChanged = aSourceProtocolInfoChanged;
@@ -297,6 +436,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iSourceProtocolInfoChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the SinkProtocolInfo state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyUpnpOrgConnectionManager2 instance will not overlap.</remarks>
+        /// <param name="aSinkProtocolInfoChanged">The delegate to run when the state variable changes</param>
         public void SetPropertySinkProtocolInfoChanged(CallbackPropertyChanged aSinkProtocolInfoChanged)
         {
             iSinkProtocolInfoChanged = aSinkProtocolInfoChanged;
@@ -312,6 +457,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iSinkProtocolInfoChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the CurrentConnectionIDs state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyUpnpOrgConnectionManager2 instance will not overlap.</remarks>
+        /// <param name="aCurrentConnectionIDsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyCurrentConnectionIDsChanged(CallbackPropertyChanged aCurrentConnectionIDsChanged)
         {
             iCurrentConnectionIDsChanged = aCurrentConnectionIDsChanged;
@@ -327,6 +478,13 @@ namespace Zapp.ControlPoint.Proxies
             self.iCurrentConnectionIDsChanged();
         }
 
+        /// <summary>
+        /// Query the value of the SourceProtocolInfo property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aSourceProtocolInfo">Will be set to the value of the property</param>
         public unsafe void PropertySourceProtocolInfo(out string aSourceProtocolInfo)
         {
 			char* ptr;
@@ -335,6 +493,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the SinkProtocolInfo property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aSinkProtocolInfo">Will be set to the value of the property</param>
         public unsafe void PropertySinkProtocolInfo(out string aSinkProtocolInfo)
         {
 			char* ptr;
@@ -343,6 +508,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the CurrentConnectionIDs property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aCurrentConnectionIDs">Will be set to the value of the property</param>
         public unsafe void PropertyCurrentConnectionIDs(out string aCurrentConnectionIDs)
         {
 			char* ptr;
@@ -351,6 +523,9 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);

@@ -143,12 +143,23 @@ namespace Zapp.ControlPoint.Proxies
         private Callback iCallbackDiscPlayerConnectedChanged;
         private Callback iCallbackDiscPlayerComPortChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkProxyManager1(CpDevice aDevice)
         {
             iHandle = CpProxyLinnCoUkProxyManager1Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaConnected"></param>
         public unsafe void SyncKontrolProductConnected(out string aaConnected)
         {
 			char* aConnected;
@@ -159,6 +170,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aConnected);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndKontrolProductConnected().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginKontrolProductConnected(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -166,6 +185,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProxyManager1BeginKontrolProductConnected(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaConnected"></param>
         public unsafe void EndKontrolProductConnected(uint aAsyncHandle, out string aaConnected)
         {
 			char* aConnected;
@@ -179,6 +204,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aConnected);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaConnected"></param>
         public unsafe void SyncSetKontrolProductConnected(string aaConnected)
         {
 			char* aConnected = (char*)Marshal.StringToHGlobalAnsi(aaConnected);
@@ -188,6 +219,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aConnected);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetKontrolProductConnected().</remarks>
+        /// <param name="aaConnected"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetKontrolProductConnected(string aaConnected, CallbackAsyncComplete aCallback)
         {
 			char* aConnected = (char*)Marshal.StringToHGlobalAnsi(aaConnected);
@@ -197,6 +237,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aConnected);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetKontrolProductConnected(uint aAsyncHandle)
         {
 			{
@@ -207,6 +252,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaPort"></param>
         public unsafe void SyncKontrolProductComPort(out uint aaPort)
         {
 			fixed (uint* aPort = &aaPort)
@@ -215,6 +266,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndKontrolProductComPort().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginKontrolProductComPort(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -222,6 +281,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProxyManager1BeginKontrolProductComPort(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaPort"></param>
         public unsafe void EndKontrolProductComPort(uint aAsyncHandle, out uint aaPort)
         {
 			fixed (uint* aPort = &aaPort)
@@ -233,6 +298,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaConnected"></param>
         public unsafe void SyncSetKontrolProductComPort(uint aaConnected)
         {
 			{
@@ -240,6 +311,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetKontrolProductComPort().</remarks>
+        /// <param name="aaConnected"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetKontrolProductComPort(uint aaConnected, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -247,6 +327,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProxyManager1BeginSetKontrolProductComPort(iHandle, aaConnected, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetKontrolProductComPort(uint aAsyncHandle)
         {
 			{
@@ -257,6 +342,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaConnected"></param>
         public unsafe void SyncDiscPlayerConnected(out string aaConnected)
         {
 			char* aConnected;
@@ -267,6 +358,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aConnected);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndDiscPlayerConnected().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDiscPlayerConnected(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -274,6 +373,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProxyManager1BeginDiscPlayerConnected(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaConnected"></param>
         public unsafe void EndDiscPlayerConnected(uint aAsyncHandle, out string aaConnected)
         {
 			char* aConnected;
@@ -287,6 +392,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aConnected);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaConnected"></param>
         public unsafe void SyncSetDiscPlayerConnected(string aaConnected)
         {
 			char* aConnected = (char*)Marshal.StringToHGlobalAnsi(aaConnected);
@@ -296,6 +407,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aConnected);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetDiscPlayerConnected().</remarks>
+        /// <param name="aaConnected"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetDiscPlayerConnected(string aaConnected, CallbackAsyncComplete aCallback)
         {
 			char* aConnected = (char*)Marshal.StringToHGlobalAnsi(aaConnected);
@@ -305,6 +425,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aConnected);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetDiscPlayerConnected(uint aAsyncHandle)
         {
 			{
@@ -315,6 +440,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaPort"></param>
         public unsafe void SyncDiscPlayerComPort(out uint aaPort)
         {
 			fixed (uint* aPort = &aaPort)
@@ -323,6 +454,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndDiscPlayerComPort().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDiscPlayerComPort(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -330,6 +469,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProxyManager1BeginDiscPlayerComPort(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaPort"></param>
         public unsafe void EndDiscPlayerComPort(uint aAsyncHandle, out uint aaPort)
         {
 			fixed (uint* aPort = &aaPort)
@@ -341,6 +486,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaConnected"></param>
         public unsafe void SyncSetDiscPlayerComPort(uint aaConnected)
         {
 			{
@@ -348,6 +499,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetDiscPlayerComPort().</remarks>
+        /// <param name="aaConnected"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetDiscPlayerComPort(uint aaConnected, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -355,6 +515,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProxyManager1BeginSetDiscPlayerComPort(iHandle, aaConnected, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetDiscPlayerComPort(uint aAsyncHandle)
         {
 			{
@@ -365,6 +530,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaResult"></param>
         public unsafe void SyncTestKontrolProductConnection(out bool aaResult)
         {
 			uint aResult;
@@ -374,6 +545,14 @@ namespace Zapp.ControlPoint.Proxies
 			aaResult = (aResult != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndTestKontrolProductConnection().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginTestKontrolProductConnection(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -381,6 +560,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProxyManager1BeginTestKontrolProductConnection(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaResult"></param>
         public unsafe void EndTestKontrolProductConnection(uint aAsyncHandle, out bool aaResult)
         {
 			uint aResult;
@@ -393,6 +578,12 @@ namespace Zapp.ControlPoint.Proxies
 			aaResult = (aResult != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaResult"></param>
         public unsafe void SyncTestDiscPlayerConnection(out bool aaResult)
         {
 			uint aResult;
@@ -402,6 +593,14 @@ namespace Zapp.ControlPoint.Proxies
 			aaResult = (aResult != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndTestDiscPlayerConnection().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginTestDiscPlayerConnection(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -409,6 +608,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProxyManager1BeginTestDiscPlayerConnection(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaResult"></param>
         public unsafe void EndTestDiscPlayerConnection(uint aAsyncHandle, out bool aaResult)
         {
 			uint aResult;
@@ -421,6 +626,12 @@ namespace Zapp.ControlPoint.Proxies
 			aaResult = (aResult != 0);
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the KontrolProductConnected state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkProxyManager1 instance will not overlap.</remarks>
+        /// <param name="aKontrolProductConnectedChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyKontrolProductConnectedChanged(CallbackPropertyChanged aKontrolProductConnectedChanged)
         {
             iKontrolProductConnectedChanged = aKontrolProductConnectedChanged;
@@ -436,6 +647,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iKontrolProductConnectedChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the KontrolProductComPort state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkProxyManager1 instance will not overlap.</remarks>
+        /// <param name="aKontrolProductComPortChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyKontrolProductComPortChanged(CallbackPropertyChanged aKontrolProductComPortChanged)
         {
             iKontrolProductComPortChanged = aKontrolProductComPortChanged;
@@ -451,6 +668,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iKontrolProductComPortChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the DiscPlayerConnected state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkProxyManager1 instance will not overlap.</remarks>
+        /// <param name="aDiscPlayerConnectedChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDiscPlayerConnectedChanged(CallbackPropertyChanged aDiscPlayerConnectedChanged)
         {
             iDiscPlayerConnectedChanged = aDiscPlayerConnectedChanged;
@@ -466,6 +689,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iDiscPlayerConnectedChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the DiscPlayerComPort state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkProxyManager1 instance will not overlap.</remarks>
+        /// <param name="aDiscPlayerComPortChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDiscPlayerComPortChanged(CallbackPropertyChanged aDiscPlayerComPortChanged)
         {
             iDiscPlayerComPortChanged = aDiscPlayerComPortChanged;
@@ -481,6 +710,13 @@ namespace Zapp.ControlPoint.Proxies
             self.iDiscPlayerComPortChanged();
         }
 
+        /// <summary>
+        /// Query the value of the KontrolProductConnected property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aKontrolProductConnected">Will be set to the value of the property</param>
         public unsafe void PropertyKontrolProductConnected(out string aKontrolProductConnected)
         {
 			char* ptr;
@@ -489,6 +725,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the KontrolProductComPort property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aKontrolProductComPort">Will be set to the value of the property</param>
         public unsafe void PropertyKontrolProductComPort(out uint aKontrolProductComPort)
         {
 			fixed (uint* kontrolProductComPort = &aKontrolProductComPort)
@@ -497,6 +740,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the DiscPlayerConnected property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aDiscPlayerConnected">Will be set to the value of the property</param>
         public unsafe void PropertyDiscPlayerConnected(out string aDiscPlayerConnected)
         {
 			char* ptr;
@@ -505,6 +755,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the DiscPlayerComPort property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aDiscPlayerComPort">Will be set to the value of the property</param>
         public unsafe void PropertyDiscPlayerComPort(out uint aDiscPlayerComPort)
         {
 			fixed (uint* discPlayerComPort = &aDiscPlayerComPort)
@@ -513,6 +770,9 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);

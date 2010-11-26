@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the linn.co.uk:Configuration:1 UPnP service
+    /// </summary>
     public class DvProviderLinnCoUkConfiguration1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkConfiguration1")]
@@ -37,15 +40,24 @@ namespace Zapp.Device.Providers
         private CallbackParameterXml iCallbackParameterXml;
         private CallbackSetParameter iCallbackSetParameter;
 
-        public DvProviderLinnCoUkConfiguration1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderLinnCoUkConfiguration1(DvDevice aDevice)
         {
             iHandle = DvProviderLinnCoUkConfiguration1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Set the value of the ConfigurationXml property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyConfigurationXml(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderLinnCoUkConfiguration1SetPropertyConfigurationXml(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -56,6 +68,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the ConfigurationXml property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyConfigurationXml(out string aValue)
         {
             char* value;
@@ -64,9 +80,14 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Set the value of the ParameterXml property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyParameterXml(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderLinnCoUkConfiguration1SetPropertyParameterXml(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -77,6 +98,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the ParameterXml property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyParameterXml(out string aValue)
         {
             char* value;
@@ -85,6 +110,11 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Signal that the action ConfigurationXml is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoConfigurationXml must be overridden if this is called.</remarks>
         protected unsafe void EnableActionConfigurationXml()
         {
             iCallbackConfigurationXml = new CallbackConfigurationXml(DoConfigurationXml);
@@ -92,6 +122,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkConfiguration1EnableActionConfigurationXml(iHandle, iCallbackConfigurationXml, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action ParameterXml is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoParameterXml must be overridden if this is called.</remarks>
         protected unsafe void EnableActionParameterXml()
         {
             iCallbackParameterXml = new CallbackParameterXml(DoParameterXml);
@@ -99,6 +134,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkConfiguration1EnableActionParameterXml(iHandle, iCallbackParameterXml, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetParameter is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetParameter must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetParameter()
         {
             iCallbackSetParameter = new CallbackSetParameter(DoSetParameter);
@@ -106,16 +146,45 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkConfiguration1EnableActionSetParameter(iHandle, iCallbackSetParameter, ptr);
         }
 
+        /// <summary>
+        /// ConfigurationXml action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// ConfigurationXml action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionConfigurationXml was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaConfigurationXml"></param>
         protected virtual void ConfigurationXml(uint aVersion, out string aaConfigurationXml)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// ParameterXml action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// ParameterXml action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionParameterXml was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaParameterXml"></param>
         protected virtual void ParameterXml(uint aVersion, out string aaParameterXml)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetParameter action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetParameter action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetParameter was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaTarget"></param>
+        /// <param name="aaName"></param>
+        /// <param name="aaValue"></param>
         protected virtual void SetParameter(uint aVersion, string aaTarget, string aaName, string aaValue)
         {
             throw (new ActionDisabledError());
@@ -152,7 +221,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

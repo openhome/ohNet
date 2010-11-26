@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the linn.co.uk:Preamp:4 UPnP service
+    /// </summary>
     public class DvProviderLinnCoUkPreamp4 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkPreamp4")]
@@ -97,15 +100,24 @@ namespace Zapp.Device.Providers
         private CallbackSetStartupVolumeEnabled iCallbackSetStartupVolumeEnabled;
         private CallbackStartupVolumeEnabled iCallbackStartupVolumeEnabled;
 
-        public DvProviderLinnCoUkPreamp4(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderLinnCoUkPreamp4(DvDevice aDevice)
         {
             iHandle = DvProviderLinnCoUkPreamp4Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Set the value of the Volume property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyVolume(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkPreamp4SetPropertyVolume(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -113,6 +125,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the Volume property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyVolume(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -121,9 +137,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the Mute property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyMute(bool aValue)
         {
-        uint changed;
+            uint changed;
             int value = (aValue ? 1 : 0);
             if (0 != DvProviderLinnCoUkPreamp4SetPropertyMute(iHandle, value, &changed))
             {
@@ -132,6 +153,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the Mute property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyMute(out bool aValue)
         {
             int value;
@@ -139,9 +164,14 @@ namespace Zapp.Device.Providers
             aValue = (value != 0);
         }
 
+        /// <summary>
+        /// Set the value of the Balance property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyBalance(int aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkPreamp4SetPropertyBalance(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -149,6 +179,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the Balance property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyBalance(out int aValue)
         {
             fixed (int* value = &aValue)
@@ -157,9 +191,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the VolumeLimit property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyVolumeLimit(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkPreamp4SetPropertyVolumeLimit(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -167,6 +206,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the VolumeLimit property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyVolumeLimit(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -175,9 +218,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the StartupVolume property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyStartupVolume(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkPreamp4SetPropertyStartupVolume(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -185,6 +233,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the StartupVolume property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyStartupVolume(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -193,9 +245,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the StartupVolumeEnabled property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyStartupVolumeEnabled(bool aValue)
         {
-        uint changed;
+            uint changed;
             int value = (aValue ? 1 : 0);
             if (0 != DvProviderLinnCoUkPreamp4SetPropertyStartupVolumeEnabled(iHandle, value, &changed))
             {
@@ -204,6 +261,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the StartupVolumeEnabled property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyStartupVolumeEnabled(out bool aValue)
         {
             int value;
@@ -211,6 +272,11 @@ namespace Zapp.Device.Providers
             aValue = (value != 0);
         }
 
+        /// <summary>
+        /// Signal that the action VolumeInc is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoVolumeInc must be overridden if this is called.</remarks>
         protected unsafe void EnableActionVolumeInc()
         {
             iCallbackVolumeInc = new CallbackVolumeInc(DoVolumeInc);
@@ -218,6 +284,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPreamp4EnableActionVolumeInc(iHandle, iCallbackVolumeInc, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action VolumeDec is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoVolumeDec must be overridden if this is called.</remarks>
         protected unsafe void EnableActionVolumeDec()
         {
             iCallbackVolumeDec = new CallbackVolumeDec(DoVolumeDec);
@@ -225,6 +296,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPreamp4EnableActionVolumeDec(iHandle, iCallbackVolumeDec, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetVolume is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetVolume must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetVolume()
         {
             iCallbackSetVolume = new CallbackSetVolume(DoSetVolume);
@@ -232,6 +308,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPreamp4EnableActionSetVolume(iHandle, iCallbackSetVolume, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Volume is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoVolume must be overridden if this is called.</remarks>
         protected unsafe void EnableActionVolume()
         {
             iCallbackVolume = new CallbackVolume(DoVolume);
@@ -239,6 +320,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPreamp4EnableActionVolume(iHandle, iCallbackVolume, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetMute is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetMute must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetMute()
         {
             iCallbackSetMute = new CallbackSetMute(DoSetMute);
@@ -246,6 +332,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPreamp4EnableActionSetMute(iHandle, iCallbackSetMute, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Mute is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoMute must be overridden if this is called.</remarks>
         protected unsafe void EnableActionMute()
         {
             iCallbackMute = new CallbackMute(DoMute);
@@ -253,6 +344,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPreamp4EnableActionMute(iHandle, iCallbackMute, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetBalance is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetBalance must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetBalance()
         {
             iCallbackSetBalance = new CallbackSetBalance(DoSetBalance);
@@ -260,6 +356,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPreamp4EnableActionSetBalance(iHandle, iCallbackSetBalance, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Balance is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoBalance must be overridden if this is called.</remarks>
         protected unsafe void EnableActionBalance()
         {
             iCallbackBalance = new CallbackBalance(DoBalance);
@@ -267,6 +368,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPreamp4EnableActionBalance(iHandle, iCallbackBalance, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetVolumeLimit is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetVolumeLimit must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetVolumeLimit()
         {
             iCallbackSetVolumeLimit = new CallbackSetVolumeLimit(DoSetVolumeLimit);
@@ -274,6 +380,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPreamp4EnableActionSetVolumeLimit(iHandle, iCallbackSetVolumeLimit, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action VolumeLimit is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoVolumeLimit must be overridden if this is called.</remarks>
         protected unsafe void EnableActionVolumeLimit()
         {
             iCallbackVolumeLimit = new CallbackVolumeLimit(DoVolumeLimit);
@@ -281,6 +392,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPreamp4EnableActionVolumeLimit(iHandle, iCallbackVolumeLimit, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetStartupVolume is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetStartupVolume must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetStartupVolume()
         {
             iCallbackSetStartupVolume = new CallbackSetStartupVolume(DoSetStartupVolume);
@@ -288,6 +404,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPreamp4EnableActionSetStartupVolume(iHandle, iCallbackSetStartupVolume, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action StartupVolume is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoStartupVolume must be overridden if this is called.</remarks>
         protected unsafe void EnableActionStartupVolume()
         {
             iCallbackStartupVolume = new CallbackStartupVolume(DoStartupVolume);
@@ -295,6 +416,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPreamp4EnableActionStartupVolume(iHandle, iCallbackStartupVolume, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetStartupVolumeEnabled is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetStartupVolumeEnabled must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetStartupVolumeEnabled()
         {
             iCallbackSetStartupVolumeEnabled = new CallbackSetStartupVolumeEnabled(DoSetStartupVolumeEnabled);
@@ -302,6 +428,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPreamp4EnableActionSetStartupVolumeEnabled(iHandle, iCallbackSetStartupVolumeEnabled, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action StartupVolumeEnabled is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoStartupVolumeEnabled must be overridden if this is called.</remarks>
         protected unsafe void EnableActionStartupVolumeEnabled()
         {
             iCallbackStartupVolumeEnabled = new CallbackStartupVolumeEnabled(DoStartupVolumeEnabled);
@@ -309,71 +440,195 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPreamp4EnableActionStartupVolumeEnabled(iHandle, iCallbackStartupVolumeEnabled, ptr);
         }
 
+        /// <summary>
+        /// VolumeInc action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// VolumeInc action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionVolumeInc was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void VolumeInc(uint aVersion)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// VolumeDec action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// VolumeDec action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionVolumeDec was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void VolumeDec(uint aVersion)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetVolume action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetVolume action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetVolume was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaVolume"></param>
         protected virtual void SetVolume(uint aVersion, uint aaVolume)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Volume action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Volume action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionVolume was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaVolume"></param>
         protected virtual void Volume(uint aVersion, out uint aaVolume)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetMute action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetMute action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetMute was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaMute"></param>
         protected virtual void SetMute(uint aVersion, bool aaMute)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Mute action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Mute action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionMute was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaMute"></param>
         protected virtual void Mute(uint aVersion, out bool aaMute)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetBalance action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetBalance action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetBalance was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaBalance"></param>
         protected virtual void SetBalance(uint aVersion, int aaBalance)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Balance action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Balance action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionBalance was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaBalance"></param>
         protected virtual void Balance(uint aVersion, out int aaBalance)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetVolumeLimit action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetVolumeLimit action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetVolumeLimit was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaVolumeLimit"></param>
         protected virtual void SetVolumeLimit(uint aVersion, uint aaVolumeLimit)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// VolumeLimit action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// VolumeLimit action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionVolumeLimit was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaVolumeLimit"></param>
         protected virtual void VolumeLimit(uint aVersion, out uint aaVolumeLimit)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetStartupVolume action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetStartupVolume action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetStartupVolume was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaStartupVolume"></param>
         protected virtual void SetStartupVolume(uint aVersion, uint aaStartupVolume)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// StartupVolume action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// StartupVolume action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionStartupVolume was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaStartupVolume"></param>
         protected virtual void StartupVolume(uint aVersion, out uint aaStartupVolume)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetStartupVolumeEnabled action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetStartupVolumeEnabled action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetStartupVolumeEnabled was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaStartupVolumeEnabled"></param>
         protected virtual void SetStartupVolumeEnabled(uint aVersion, bool aaStartupVolumeEnabled)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// StartupVolumeEnabled action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// StartupVolumeEnabled action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionStartupVolumeEnabled was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaStartupVolumeEnabled"></param>
         protected virtual void StartupVolumeEnabled(uint aVersion, out bool aaStartupVolumeEnabled)
         {
             throw (new ActionDisabledError());
@@ -505,7 +760,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the linn.co.uk:Ptest:1 UPnP service
+    /// </summary>
     public class DvProviderLinnCoUkPtest1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkPtest1")]
@@ -29,12 +32,21 @@ namespace Zapp.Device.Providers
         private CallbackLedsOn iCallbackLedsOn;
         private CallbackLedsOff iCallbackLedsOff;
 
-        public DvProviderLinnCoUkPtest1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderLinnCoUkPtest1(DvDevice aDevice)
         {
             iHandle = DvProviderLinnCoUkPtest1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Signal that the action TestComPort is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoTestComPort must be overridden if this is called.</remarks>
         protected unsafe void EnableActionTestComPort()
         {
             iCallbackTestComPort = new CallbackTestComPort(DoTestComPort);
@@ -42,6 +54,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPtest1EnableActionTestComPort(iHandle, iCallbackTestComPort, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action LedsOn is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoLedsOn must be overridden if this is called.</remarks>
         protected unsafe void EnableActionLedsOn()
         {
             iCallbackLedsOn = new CallbackLedsOn(DoLedsOn);
@@ -49,6 +66,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPtest1EnableActionLedsOn(iHandle, iCallbackLedsOn, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action LedsOff is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoLedsOff must be overridden if this is called.</remarks>
         protected unsafe void EnableActionLedsOff()
         {
             iCallbackLedsOff = new CallbackLedsOff(DoLedsOff);
@@ -56,16 +78,42 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPtest1EnableActionLedsOff(iHandle, iCallbackLedsOff, ptr);
         }
 
+        /// <summary>
+        /// TestComPort action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// TestComPort action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionTestComPort was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaPort"></param>
+        /// <param name="aaResult"></param>
         protected virtual void TestComPort(uint aVersion, uint aaPort, out bool aaResult)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// LedsOn action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// LedsOn action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionLedsOn was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void LedsOn(uint aVersion)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// LedsOff action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// LedsOff action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionLedsOff was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void LedsOff(uint aVersion)
         {
             throw (new ActionDisabledError());
@@ -97,7 +145,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

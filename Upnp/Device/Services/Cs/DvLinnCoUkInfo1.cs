@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the linn.co.uk:Info:1 UPnP service
+    /// </summary>
     public class DvProviderLinnCoUkInfo1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkInfo1")]
@@ -81,15 +84,24 @@ namespace Zapp.Device.Providers
         private CallbackDetails iCallbackDetails;
         private CallbackMetatext iCallbackMetatext;
 
-        public DvProviderLinnCoUkInfo1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderLinnCoUkInfo1(DvDevice aDevice)
         {
             iHandle = DvProviderLinnCoUkInfo1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Set the value of the TrackCount property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyTrackCount(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkInfo1SetPropertyTrackCount(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -97,6 +109,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the TrackCount property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyTrackCount(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -105,9 +121,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the DetailsCount property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyDetailsCount(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkInfo1SetPropertyDetailsCount(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -115,6 +136,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the DetailsCount property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyDetailsCount(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -123,9 +148,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the MetatextCount property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyMetatextCount(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkInfo1SetPropertyMetatextCount(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -133,6 +163,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the MetatextCount property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyMetatextCount(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -141,9 +175,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the Uri property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyUri(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderLinnCoUkInfo1SetPropertyUri(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -154,6 +193,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the Uri property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyUri(out string aValue)
         {
             char* value;
@@ -162,9 +205,14 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Set the value of the Metadata property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyMetadata(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderLinnCoUkInfo1SetPropertyMetadata(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -175,6 +223,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the Metadata property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyMetadata(out string aValue)
         {
             char* value;
@@ -183,9 +235,14 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Set the value of the Duration property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyDuration(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkInfo1SetPropertyDuration(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -193,6 +250,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the Duration property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyDuration(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -201,9 +262,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the BitRate property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyBitRate(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkInfo1SetPropertyBitRate(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -211,6 +277,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the BitRate property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyBitRate(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -219,9 +289,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the BitDepth property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyBitDepth(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkInfo1SetPropertyBitDepth(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -229,6 +304,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the BitDepth property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyBitDepth(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -237,9 +316,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the SampleRate property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertySampleRate(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkInfo1SetPropertySampleRate(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -247,6 +331,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the SampleRate property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertySampleRate(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -255,9 +343,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the Lossless property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyLossless(bool aValue)
         {
-        uint changed;
+            uint changed;
             int value = (aValue ? 1 : 0);
             if (0 != DvProviderLinnCoUkInfo1SetPropertyLossless(iHandle, value, &changed))
             {
@@ -266,6 +359,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the Lossless property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyLossless(out bool aValue)
         {
             int value;
@@ -273,9 +370,14 @@ namespace Zapp.Device.Providers
             aValue = (value != 0);
         }
 
+        /// <summary>
+        /// Set the value of the CodecName property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyCodecName(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderLinnCoUkInfo1SetPropertyCodecName(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -286,6 +388,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the CodecName property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyCodecName(out string aValue)
         {
             char* value;
@@ -294,9 +400,14 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Set the value of the Metatext property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyMetatext(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderLinnCoUkInfo1SetPropertyMetatext(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -307,6 +418,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the Metatext property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyMetatext(out string aValue)
         {
             char* value;
@@ -315,6 +430,11 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Signal that the action Counters is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoCounters must be overridden if this is called.</remarks>
         protected unsafe void EnableActionCounters()
         {
             iCallbackCounters = new CallbackCounters(DoCounters);
@@ -322,6 +442,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkInfo1EnableActionCounters(iHandle, iCallbackCounters, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Track is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoTrack must be overridden if this is called.</remarks>
         protected unsafe void EnableActionTrack()
         {
             iCallbackTrack = new CallbackTrack(DoTrack);
@@ -329,6 +454,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkInfo1EnableActionTrack(iHandle, iCallbackTrack, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Details is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDetails must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDetails()
         {
             iCallbackDetails = new CallbackDetails(DoDetails);
@@ -336,6 +466,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkInfo1EnableActionDetails(iHandle, iCallbackDetails, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Metatext is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoMetatext must be overridden if this is called.</remarks>
         protected unsafe void EnableActionMetatext()
         {
             iCallbackMetatext = new CallbackMetatext(DoMetatext);
@@ -343,21 +478,65 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkInfo1EnableActionMetatext(iHandle, iCallbackMetatext, ptr);
         }
 
+        /// <summary>
+        /// Counters action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Counters action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionCounters was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaTrackCount"></param>
+        /// <param name="aaDetailsCount"></param>
+        /// <param name="aaMetatextCount"></param>
         protected virtual void Counters(uint aVersion, out uint aaTrackCount, out uint aaDetailsCount, out uint aaMetatextCount)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Track action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Track action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionTrack was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaUri"></param>
+        /// <param name="aaMetadata"></param>
         protected virtual void Track(uint aVersion, out string aaUri, out string aaMetadata)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Details action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Details action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDetails was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaDuration"></param>
+        /// <param name="aaBitRate"></param>
+        /// <param name="aaBitDepth"></param>
+        /// <param name="aaSampleRate"></param>
+        /// <param name="aaLossless"></param>
+        /// <param name="aaCodecName"></param>
         protected virtual void Details(uint aVersion, out uint aaDuration, out uint aaBitRate, out uint aaBitDepth, out uint aaSampleRate, out bool aaLossless, out string aaCodecName)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Metatext action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Metatext action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionMetatext was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaMetatext"></param>
         protected virtual void Metatext(uint aVersion, out string aaMetatext)
         {
             throw (new ActionDisabledError());
@@ -419,7 +598,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

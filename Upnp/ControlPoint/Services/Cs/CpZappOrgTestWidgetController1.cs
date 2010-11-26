@@ -57,12 +57,24 @@ namespace Zapp.ControlPoint.Proxies
 
         private GCHandle iGch;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyZappOrgTestWidgetController1(CpDevice aDevice)
         {
             iHandle = CpProxyZappOrgTestWidgetController1Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aWidgetUdn"></param>
+        /// <param name="aWidgetClass"></param>
         public unsafe void SyncCreateWidget(string aWidgetUdn, uint aWidgetClass)
         {
 			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
@@ -72,6 +84,16 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)widgetUdn);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndCreateWidget().</remarks>
+        /// <param name="aWidgetUdn"></param>
+        /// <param name="aWidgetClass"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginCreateWidget(string aWidgetUdn, uint aWidgetClass, CallbackAsyncComplete aCallback)
         {
 			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
@@ -81,6 +103,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)widgetUdn);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndCreateWidget(uint aAsyncHandle)
         {
 			{
@@ -91,6 +118,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aWidgetUdn"></param>
         public unsafe void SyncRemoveWidget(string aWidgetUdn)
         {
 			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
@@ -100,6 +133,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)widgetUdn);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndRemoveWidget().</remarks>
+        /// <param name="aWidgetUdn"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginRemoveWidget(string aWidgetUdn, CallbackAsyncComplete aCallback)
         {
 			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
@@ -109,6 +151,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)widgetUdn);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndRemoveWidget(uint aAsyncHandle)
         {
 			{
@@ -119,6 +166,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aWidgetUdn"></param>
+        /// <param name="aRegisterIndex"></param>
+        /// <param name="aRegisterValue"></param>
         public unsafe void SyncSetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, uint aRegisterValue)
         {
 			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
@@ -128,6 +183,17 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)widgetUdn);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetWidgetRegister().</remarks>
+        /// <param name="aWidgetUdn"></param>
+        /// <param name="aRegisterIndex"></param>
+        /// <param name="aRegisterValue"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, uint aRegisterValue, CallbackAsyncComplete aCallback)
         {
 			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
@@ -137,6 +203,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)widgetUdn);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetWidgetRegister(uint aAsyncHandle)
         {
 			{
@@ -147,6 +218,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aWidgetUdn"></param>
+        /// <param name="aRegisterIndex"></param>
+        /// <param name="aRegisterValue"></param>
         public unsafe void SyncGetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, out uint aRegisterValue)
         {
 			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
@@ -157,6 +236,16 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)widgetUdn);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetWidgetRegister().</remarks>
+        /// <param name="aWidgetUdn"></param>
+        /// <param name="aRegisterIndex"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, CallbackAsyncComplete aCallback)
         {
 			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
@@ -166,6 +255,12 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)widgetUdn);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aRegisterValue"></param>
         public unsafe void EndGetWidgetRegister(uint aAsyncHandle, out uint aRegisterValue)
         {
 			fixed (uint* registerValue = &aRegisterValue)
@@ -177,6 +272,9 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);

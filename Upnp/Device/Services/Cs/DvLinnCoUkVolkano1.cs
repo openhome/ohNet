@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the linn.co.uk:Volkano:1 UPnP service
+    /// </summary>
     public class DvProviderLinnCoUkVolkano1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkVolkano1")]
@@ -61,12 +64,21 @@ namespace Zapp.Device.Providers
         private CallbackMaxBoards iCallbackMaxBoards;
         private CallbackSoftwareVersion iCallbackSoftwareVersion;
 
-        public DvProviderLinnCoUkVolkano1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderLinnCoUkVolkano1(DvDevice aDevice)
         {
             iHandle = DvProviderLinnCoUkVolkano1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Signal that the action Reboot is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoReboot must be overridden if this is called.</remarks>
         protected unsafe void EnableActionReboot()
         {
             iCallbackReboot = new CallbackReboot(DoReboot);
@@ -74,6 +86,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkVolkano1EnableActionReboot(iHandle, iCallbackReboot, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action BootMode is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoBootMode must be overridden if this is called.</remarks>
         protected unsafe void EnableActionBootMode()
         {
             iCallbackBootMode = new CallbackBootMode(DoBootMode);
@@ -81,6 +98,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkVolkano1EnableActionBootMode(iHandle, iCallbackBootMode, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetBootMode is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetBootMode must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetBootMode()
         {
             iCallbackSetBootMode = new CallbackSetBootMode(DoSetBootMode);
@@ -88,6 +110,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkVolkano1EnableActionSetBootMode(iHandle, iCallbackSetBootMode, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action BspType is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoBspType must be overridden if this is called.</remarks>
         protected unsafe void EnableActionBspType()
         {
             iCallbackBspType = new CallbackBspType(DoBspType);
@@ -95,6 +122,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkVolkano1EnableActionBspType(iHandle, iCallbackBspType, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action UglyName is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoUglyName must be overridden if this is called.</remarks>
         protected unsafe void EnableActionUglyName()
         {
             iCallbackUglyName = new CallbackUglyName(DoUglyName);
@@ -102,6 +134,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkVolkano1EnableActionUglyName(iHandle, iCallbackUglyName, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action MacAddress is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoMacAddress must be overridden if this is called.</remarks>
         protected unsafe void EnableActionMacAddress()
         {
             iCallbackMacAddress = new CallbackMacAddress(DoMacAddress);
@@ -109,6 +146,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkVolkano1EnableActionMacAddress(iHandle, iCallbackMacAddress, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action ProductId is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoProductId must be overridden if this is called.</remarks>
         protected unsafe void EnableActionProductId()
         {
             iCallbackProductId = new CallbackProductId(DoProductId);
@@ -116,6 +158,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkVolkano1EnableActionProductId(iHandle, iCallbackProductId, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action BoardId is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoBoardId must be overridden if this is called.</remarks>
         protected unsafe void EnableActionBoardId()
         {
             iCallbackBoardId = new CallbackBoardId(DoBoardId);
@@ -123,6 +170,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkVolkano1EnableActionBoardId(iHandle, iCallbackBoardId, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action BoardType is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoBoardType must be overridden if this is called.</remarks>
         protected unsafe void EnableActionBoardType()
         {
             iCallbackBoardType = new CallbackBoardType(DoBoardType);
@@ -130,6 +182,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkVolkano1EnableActionBoardType(iHandle, iCallbackBoardType, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action MaxBoards is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoMaxBoards must be overridden if this is called.</remarks>
         protected unsafe void EnableActionMaxBoards()
         {
             iCallbackMaxBoards = new CallbackMaxBoards(DoMaxBoards);
@@ -137,6 +194,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkVolkano1EnableActionMaxBoards(iHandle, iCallbackMaxBoards, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SoftwareVersion is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSoftwareVersion must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSoftwareVersion()
         {
             iCallbackSoftwareVersion = new CallbackSoftwareVersion(DoSoftwareVersion);
@@ -144,56 +206,156 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkVolkano1EnableActionSoftwareVersion(iHandle, iCallbackSoftwareVersion, ptr);
         }
 
+        /// <summary>
+        /// Reboot action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Reboot action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionReboot was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void Reboot(uint aVersion)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// BootMode action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// BootMode action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionBootMode was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaMode"></param>
         protected virtual void BootMode(uint aVersion, out string aaMode)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetBootMode action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetBootMode action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetBootMode was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaMode"></param>
         protected virtual void SetBootMode(uint aVersion, string aaMode)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// BspType action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// BspType action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionBspType was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaBspType"></param>
         protected virtual void BspType(uint aVersion, out string aaBspType)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// UglyName action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// UglyName action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionUglyName was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaUglyName"></param>
         protected virtual void UglyName(uint aVersion, out string aaUglyName)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// MacAddress action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// MacAddress action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionMacAddress was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaMacAddress"></param>
         protected virtual void MacAddress(uint aVersion, out string aaMacAddress)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// ProductId action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// ProductId action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionProductId was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaProductNumber"></param>
         protected virtual void ProductId(uint aVersion, out string aaProductNumber)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// BoardId action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// BoardId action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionBoardId was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaIndex"></param>
+        /// <param name="aaBoardNumber"></param>
         protected virtual void BoardId(uint aVersion, uint aaIndex, out string aaBoardNumber)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// BoardType action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// BoardType action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionBoardType was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaIndex"></param>
+        /// <param name="aaBoardNumber"></param>
         protected virtual void BoardType(uint aVersion, uint aaIndex, out string aaBoardNumber)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// MaxBoards action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// MaxBoards action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionMaxBoards was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaMaxBoards"></param>
         protected virtual void MaxBoards(uint aVersion, out uint aaMaxBoards)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SoftwareVersion action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SoftwareVersion action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSoftwareVersion was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSoftwareVersion"></param>
         protected virtual void SoftwareVersion(uint aVersion, out string aaSoftwareVersion)
         {
             throw (new ActionDisabledError());
@@ -306,7 +468,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

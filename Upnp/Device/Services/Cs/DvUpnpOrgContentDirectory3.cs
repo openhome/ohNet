@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the upnp.org:ContentDirectory:3 UPnP service
+    /// </summary>
     public class DvProviderUpnpOrgContentDirectory3 : DvProvider, IDisposable
     {
         [DllImport("DvUpnpOrgContentDirectory3")]
@@ -113,15 +116,24 @@ namespace Zapp.Device.Providers
         private CallbackFreeFormQuery iCallbackFreeFormQuery;
         private CallbackGetFreeFormQueryCapabilities iCallbackGetFreeFormQueryCapabilities;
 
-        public DvProviderUpnpOrgContentDirectory3(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderUpnpOrgContentDirectory3(DvDevice aDevice)
         {
             iHandle = DvProviderUpnpOrgContentDirectory3Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Set the value of the SystemUpdateID property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertySystemUpdateID(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderUpnpOrgContentDirectory3SetPropertySystemUpdateID(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -129,6 +141,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the SystemUpdateID property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertySystemUpdateID(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -137,9 +153,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the ContainerUpdateIDs property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyContainerUpdateIDs(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderUpnpOrgContentDirectory3SetPropertyContainerUpdateIDs(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -150,6 +171,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the ContainerUpdateIDs property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyContainerUpdateIDs(out string aValue)
         {
             char* value;
@@ -158,9 +183,14 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Set the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyLastChange(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderUpnpOrgContentDirectory3SetPropertyLastChange(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -171,6 +201,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyLastChange(out string aValue)
         {
             char* value;
@@ -179,9 +213,14 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Set the value of the TransferIDs property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyTransferIDs(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderUpnpOrgContentDirectory3SetPropertyTransferIDs(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -192,6 +231,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the TransferIDs property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyTransferIDs(out string aValue)
         {
             char* value;
@@ -200,6 +243,11 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Signal that the action GetSearchCapabilities is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetSearchCapabilities must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetSearchCapabilities()
         {
             iCallbackGetSearchCapabilities = new CallbackGetSearchCapabilities(DoGetSearchCapabilities);
@@ -207,6 +255,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgContentDirectory3EnableActionGetSearchCapabilities(iHandle, iCallbackGetSearchCapabilities, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetSortCapabilities is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetSortCapabilities must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetSortCapabilities()
         {
             iCallbackGetSortCapabilities = new CallbackGetSortCapabilities(DoGetSortCapabilities);
@@ -214,6 +267,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgContentDirectory3EnableActionGetSortCapabilities(iHandle, iCallbackGetSortCapabilities, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetSortExtensionCapabilities is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetSortExtensionCapabilities must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetSortExtensionCapabilities()
         {
             iCallbackGetSortExtensionCapabilities = new CallbackGetSortExtensionCapabilities(DoGetSortExtensionCapabilities);
@@ -221,6 +279,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgContentDirectory3EnableActionGetSortExtensionCapabilities(iHandle, iCallbackGetSortExtensionCapabilities, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetFeatureList is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetFeatureList must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetFeatureList()
         {
             iCallbackGetFeatureList = new CallbackGetFeatureList(DoGetFeatureList);
@@ -228,6 +291,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgContentDirectory3EnableActionGetFeatureList(iHandle, iCallbackGetFeatureList, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetSystemUpdateID is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetSystemUpdateID must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetSystemUpdateID()
         {
             iCallbackGetSystemUpdateID = new CallbackGetSystemUpdateID(DoGetSystemUpdateID);
@@ -235,6 +303,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgContentDirectory3EnableActionGetSystemUpdateID(iHandle, iCallbackGetSystemUpdateID, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetServiceResetToken is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetServiceResetToken must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetServiceResetToken()
         {
             iCallbackGetServiceResetToken = new CallbackGetServiceResetToken(DoGetServiceResetToken);
@@ -242,6 +315,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgContentDirectory3EnableActionGetServiceResetToken(iHandle, iCallbackGetServiceResetToken, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Browse is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoBrowse must be overridden if this is called.</remarks>
         protected unsafe void EnableActionBrowse()
         {
             iCallbackBrowse = new CallbackBrowse(DoBrowse);
@@ -249,6 +327,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgContentDirectory3EnableActionBrowse(iHandle, iCallbackBrowse, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Search is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSearch must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSearch()
         {
             iCallbackSearch = new CallbackSearch(DoSearch);
@@ -256,6 +339,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgContentDirectory3EnableActionSearch(iHandle, iCallbackSearch, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action CreateObject is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoCreateObject must be overridden if this is called.</remarks>
         protected unsafe void EnableActionCreateObject()
         {
             iCallbackCreateObject = new CallbackCreateObject(DoCreateObject);
@@ -263,6 +351,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgContentDirectory3EnableActionCreateObject(iHandle, iCallbackCreateObject, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DestroyObject is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDestroyObject must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDestroyObject()
         {
             iCallbackDestroyObject = new CallbackDestroyObject(DoDestroyObject);
@@ -270,6 +363,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgContentDirectory3EnableActionDestroyObject(iHandle, iCallbackDestroyObject, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action UpdateObject is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoUpdateObject must be overridden if this is called.</remarks>
         protected unsafe void EnableActionUpdateObject()
         {
             iCallbackUpdateObject = new CallbackUpdateObject(DoUpdateObject);
@@ -277,6 +375,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgContentDirectory3EnableActionUpdateObject(iHandle, iCallbackUpdateObject, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action MoveObject is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoMoveObject must be overridden if this is called.</remarks>
         protected unsafe void EnableActionMoveObject()
         {
             iCallbackMoveObject = new CallbackMoveObject(DoMoveObject);
@@ -284,6 +387,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgContentDirectory3EnableActionMoveObject(iHandle, iCallbackMoveObject, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action ImportResource is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoImportResource must be overridden if this is called.</remarks>
         protected unsafe void EnableActionImportResource()
         {
             iCallbackImportResource = new CallbackImportResource(DoImportResource);
@@ -291,6 +399,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgContentDirectory3EnableActionImportResource(iHandle, iCallbackImportResource, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action ExportResource is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoExportResource must be overridden if this is called.</remarks>
         protected unsafe void EnableActionExportResource()
         {
             iCallbackExportResource = new CallbackExportResource(DoExportResource);
@@ -298,6 +411,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgContentDirectory3EnableActionExportResource(iHandle, iCallbackExportResource, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DeleteResource is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDeleteResource must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDeleteResource()
         {
             iCallbackDeleteResource = new CallbackDeleteResource(DoDeleteResource);
@@ -305,6 +423,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgContentDirectory3EnableActionDeleteResource(iHandle, iCallbackDeleteResource, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action StopTransferResource is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoStopTransferResource must be overridden if this is called.</remarks>
         protected unsafe void EnableActionStopTransferResource()
         {
             iCallbackStopTransferResource = new CallbackStopTransferResource(DoStopTransferResource);
@@ -312,6 +435,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgContentDirectory3EnableActionStopTransferResource(iHandle, iCallbackStopTransferResource, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetTransferProgress is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetTransferProgress must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetTransferProgress()
         {
             iCallbackGetTransferProgress = new CallbackGetTransferProgress(DoGetTransferProgress);
@@ -319,6 +447,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgContentDirectory3EnableActionGetTransferProgress(iHandle, iCallbackGetTransferProgress, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action CreateReference is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoCreateReference must be overridden if this is called.</remarks>
         protected unsafe void EnableActionCreateReference()
         {
             iCallbackCreateReference = new CallbackCreateReference(DoCreateReference);
@@ -326,6 +459,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgContentDirectory3EnableActionCreateReference(iHandle, iCallbackCreateReference, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action FreeFormQuery is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoFreeFormQuery must be overridden if this is called.</remarks>
         protected unsafe void EnableActionFreeFormQuery()
         {
             iCallbackFreeFormQuery = new CallbackFreeFormQuery(DoFreeFormQuery);
@@ -333,6 +471,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgContentDirectory3EnableActionFreeFormQuery(iHandle, iCallbackFreeFormQuery, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetFreeFormQueryCapabilities is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetFreeFormQueryCapabilities must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetFreeFormQueryCapabilities()
         {
             iCallbackGetFreeFormQueryCapabilities = new CallbackGetFreeFormQueryCapabilities(DoGetFreeFormQueryCapabilities);
@@ -340,101 +483,319 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgContentDirectory3EnableActionGetFreeFormQueryCapabilities(iHandle, iCallbackGetFreeFormQueryCapabilities, ptr);
         }
 
+        /// <summary>
+        /// GetSearchCapabilities action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetSearchCapabilities action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetSearchCapabilities was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aSearchCaps"></param>
         protected virtual void GetSearchCapabilities(uint aVersion, out string aSearchCaps)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetSortCapabilities action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetSortCapabilities action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetSortCapabilities was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aSortCaps"></param>
         protected virtual void GetSortCapabilities(uint aVersion, out string aSortCaps)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetSortExtensionCapabilities action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetSortExtensionCapabilities action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetSortExtensionCapabilities was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aSortExtensionCaps"></param>
         protected virtual void GetSortExtensionCapabilities(uint aVersion, out string aSortExtensionCaps)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetFeatureList action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetFeatureList action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetFeatureList was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aFeatureList"></param>
         protected virtual void GetFeatureList(uint aVersion, out string aFeatureList)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetSystemUpdateID action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetSystemUpdateID action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetSystemUpdateID was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aId"></param>
         protected virtual void GetSystemUpdateID(uint aVersion, out uint aId)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetServiceResetToken action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetServiceResetToken action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetServiceResetToken was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aResetToken"></param>
         protected virtual void GetServiceResetToken(uint aVersion, out string aResetToken)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Browse action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Browse action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionBrowse was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aObjectID"></param>
+        /// <param name="aBrowseFlag"></param>
+        /// <param name="aFilter"></param>
+        /// <param name="aStartingIndex"></param>
+        /// <param name="aRequestedCount"></param>
+        /// <param name="aSortCriteria"></param>
+        /// <param name="aResult"></param>
+        /// <param name="aNumberReturned"></param>
+        /// <param name="aTotalMatches"></param>
+        /// <param name="aUpdateID"></param>
         protected virtual void Browse(uint aVersion, string aObjectID, string aBrowseFlag, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Search action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Search action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSearch was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aContainerID"></param>
+        /// <param name="aSearchCriteria"></param>
+        /// <param name="aFilter"></param>
+        /// <param name="aStartingIndex"></param>
+        /// <param name="aRequestedCount"></param>
+        /// <param name="aSortCriteria"></param>
+        /// <param name="aResult"></param>
+        /// <param name="aNumberReturned"></param>
+        /// <param name="aTotalMatches"></param>
+        /// <param name="aUpdateID"></param>
         protected virtual void Search(uint aVersion, string aContainerID, string aSearchCriteria, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// CreateObject action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// CreateObject action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionCreateObject was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aContainerID"></param>
+        /// <param name="aElements"></param>
+        /// <param name="aObjectID"></param>
+        /// <param name="aResult"></param>
         protected virtual void CreateObject(uint aVersion, string aContainerID, string aElements, out string aObjectID, out string aResult)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DestroyObject action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DestroyObject action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDestroyObject was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aObjectID"></param>
         protected virtual void DestroyObject(uint aVersion, string aObjectID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// UpdateObject action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// UpdateObject action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionUpdateObject was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aObjectID"></param>
+        /// <param name="aCurrentTagValue"></param>
+        /// <param name="aNewTagValue"></param>
         protected virtual void UpdateObject(uint aVersion, string aObjectID, string aCurrentTagValue, string aNewTagValue)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// MoveObject action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// MoveObject action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionMoveObject was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aObjectID"></param>
+        /// <param name="aNewParentID"></param>
+        /// <param name="aNewObjectID"></param>
         protected virtual void MoveObject(uint aVersion, string aObjectID, string aNewParentID, out string aNewObjectID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// ImportResource action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// ImportResource action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionImportResource was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aSourceURI"></param>
+        /// <param name="aDestinationURI"></param>
+        /// <param name="aTransferID"></param>
         protected virtual void ImportResource(uint aVersion, string aSourceURI, string aDestinationURI, out uint aTransferID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// ExportResource action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// ExportResource action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionExportResource was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aSourceURI"></param>
+        /// <param name="aDestinationURI"></param>
+        /// <param name="aTransferID"></param>
         protected virtual void ExportResource(uint aVersion, string aSourceURI, string aDestinationURI, out uint aTransferID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DeleteResource action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DeleteResource action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDeleteResource was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aResourceURI"></param>
         protected virtual void DeleteResource(uint aVersion, string aResourceURI)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// StopTransferResource action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// StopTransferResource action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionStopTransferResource was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aTransferID"></param>
         protected virtual void StopTransferResource(uint aVersion, uint aTransferID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetTransferProgress action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetTransferProgress action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetTransferProgress was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aTransferID"></param>
+        /// <param name="aTransferStatus"></param>
+        /// <param name="aTransferLength"></param>
+        /// <param name="aTransferTotal"></param>
         protected virtual void GetTransferProgress(uint aVersion, uint aTransferID, out string aTransferStatus, out string aTransferLength, out string aTransferTotal)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// CreateReference action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// CreateReference action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionCreateReference was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aContainerID"></param>
+        /// <param name="aObjectID"></param>
+        /// <param name="aNewID"></param>
         protected virtual void CreateReference(uint aVersion, string aContainerID, string aObjectID, out string aNewID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// FreeFormQuery action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// FreeFormQuery action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionFreeFormQuery was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aContainerID"></param>
+        /// <param name="aCDSView"></param>
+        /// <param name="aQueryRequest"></param>
+        /// <param name="aQueryResult"></param>
+        /// <param name="aUpdateID"></param>
         protected virtual void FreeFormQuery(uint aVersion, string aContainerID, uint aCDSView, string aQueryRequest, out string aQueryResult, out uint aUpdateID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetFreeFormQueryCapabilities action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetFreeFormQueryCapabilities action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetFreeFormQueryCapabilities was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aFFQCapabilities"></param>
         protected virtual void GetFreeFormQueryCapabilities(uint aVersion, out string aFFQCapabilities)
         {
             throw (new ActionDisabledError());
@@ -677,7 +1038,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

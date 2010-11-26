@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the zapp.org:TestBasic:1 UPnP service
+    /// </summary>
     public class DvProviderZappOrgTestBasic1 : DvProvider, IDisposable
     {
         [DllImport("DvZappOrgTestBasic1")]
@@ -113,15 +116,24 @@ namespace Zapp.Device.Providers
         private CallbackWriteFile iCallbackWriteFile;
         private CallbackShutdown iCallbackShutdown;
 
-        public DvProviderZappOrgTestBasic1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderZappOrgTestBasic1(DvDevice aDevice)
         {
             iHandle = DvProviderZappOrgTestBasic1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Set the value of the VarUint property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyVarUint(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderZappOrgTestBasic1SetPropertyVarUint(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -129,6 +141,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the VarUint property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyVarUint(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -137,9 +153,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the VarInt property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyVarInt(int aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderZappOrgTestBasic1SetPropertyVarInt(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -147,6 +168,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the VarInt property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyVarInt(out int aValue)
         {
             fixed (int* value = &aValue)
@@ -155,9 +180,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the VarBool property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyVarBool(bool aValue)
         {
-        uint changed;
+            uint changed;
             int value = (aValue ? 1 : 0);
             if (0 != DvProviderZappOrgTestBasic1SetPropertyVarBool(iHandle, value, &changed))
             {
@@ -166,6 +196,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the VarBool property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyVarBool(out bool aValue)
         {
             int value;
@@ -173,9 +207,14 @@ namespace Zapp.Device.Providers
             aValue = (value != 0);
         }
 
+        /// <summary>
+        /// Set the value of the VarStr property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyVarStr(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderZappOrgTestBasic1SetPropertyVarStr(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -186,6 +225,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the VarStr property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyVarStr(out string aValue)
         {
             char* value;
@@ -194,9 +237,14 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Set the value of the VarBin property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyVarBin(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int valueLen = aValue.Length;
             int err = DvProviderZappOrgTestBasic1SetPropertyVarBin(iHandle, value, valueLen, &changed);
@@ -208,6 +256,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the VarBin property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyVarBin(out string aValue)
         {
             char* value;
@@ -217,6 +269,11 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Signal that the action Increment is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoIncrement must be overridden if this is called.</remarks>
         protected unsafe void EnableActionIncrement()
         {
             iCallbackIncrement = new CallbackIncrement(DoIncrement);
@@ -224,6 +281,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestBasic1EnableActionIncrement(iHandle, iCallbackIncrement, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Decrement is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDecrement must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDecrement()
         {
             iCallbackDecrement = new CallbackDecrement(DoDecrement);
@@ -231,6 +293,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestBasic1EnableActionDecrement(iHandle, iCallbackDecrement, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Toggle is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoToggle must be overridden if this is called.</remarks>
         protected unsafe void EnableActionToggle()
         {
             iCallbackToggle = new CallbackToggle(DoToggle);
@@ -238,6 +305,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestBasic1EnableActionToggle(iHandle, iCallbackToggle, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action EchoString is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoEchoString must be overridden if this is called.</remarks>
         protected unsafe void EnableActionEchoString()
         {
             iCallbackEchoString = new CallbackEchoString(DoEchoString);
@@ -245,6 +317,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestBasic1EnableActionEchoString(iHandle, iCallbackEchoString, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action EchoBinary is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoEchoBinary must be overridden if this is called.</remarks>
         protected unsafe void EnableActionEchoBinary()
         {
             iCallbackEchoBinary = new CallbackEchoBinary(DoEchoBinary);
@@ -252,6 +329,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestBasic1EnableActionEchoBinary(iHandle, iCallbackEchoBinary, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetUint is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetUint must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetUint()
         {
             iCallbackSetUint = new CallbackSetUint(DoSetUint);
@@ -259,6 +341,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestBasic1EnableActionSetUint(iHandle, iCallbackSetUint, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetUint is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetUint must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetUint()
         {
             iCallbackGetUint = new CallbackGetUint(DoGetUint);
@@ -266,6 +353,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestBasic1EnableActionGetUint(iHandle, iCallbackGetUint, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetInt is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetInt must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetInt()
         {
             iCallbackSetInt = new CallbackSetInt(DoSetInt);
@@ -273,6 +365,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestBasic1EnableActionSetInt(iHandle, iCallbackSetInt, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetInt is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetInt must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetInt()
         {
             iCallbackGetInt = new CallbackGetInt(DoGetInt);
@@ -280,6 +377,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestBasic1EnableActionGetInt(iHandle, iCallbackGetInt, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetBool is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetBool must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetBool()
         {
             iCallbackSetBool = new CallbackSetBool(DoSetBool);
@@ -287,6 +389,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestBasic1EnableActionSetBool(iHandle, iCallbackSetBool, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetBool is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetBool must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetBool()
         {
             iCallbackGetBool = new CallbackGetBool(DoGetBool);
@@ -294,6 +401,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestBasic1EnableActionGetBool(iHandle, iCallbackGetBool, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetMultiple is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetMultiple must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetMultiple()
         {
             iCallbackSetMultiple = new CallbackSetMultiple(DoSetMultiple);
@@ -301,6 +413,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestBasic1EnableActionSetMultiple(iHandle, iCallbackSetMultiple, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetString is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetString must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetString()
         {
             iCallbackSetString = new CallbackSetString(DoSetString);
@@ -308,6 +425,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestBasic1EnableActionSetString(iHandle, iCallbackSetString, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetString is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetString must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetString()
         {
             iCallbackGetString = new CallbackGetString(DoGetString);
@@ -315,6 +437,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestBasic1EnableActionGetString(iHandle, iCallbackGetString, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetBinary is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetBinary must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetBinary()
         {
             iCallbackSetBinary = new CallbackSetBinary(DoSetBinary);
@@ -322,6 +449,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestBasic1EnableActionSetBinary(iHandle, iCallbackSetBinary, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetBinary is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetBinary must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetBinary()
         {
             iCallbackGetBinary = new CallbackGetBinary(DoGetBinary);
@@ -329,6 +461,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestBasic1EnableActionGetBinary(iHandle, iCallbackGetBinary, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action ToggleBool is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoToggleBool must be overridden if this is called.</remarks>
         protected unsafe void EnableActionToggleBool()
         {
             iCallbackToggleBool = new CallbackToggleBool(DoToggleBool);
@@ -336,6 +473,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestBasic1EnableActionToggleBool(iHandle, iCallbackToggleBool, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action WriteFile is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoWriteFile must be overridden if this is called.</remarks>
         protected unsafe void EnableActionWriteFile()
         {
             iCallbackWriteFile = new CallbackWriteFile(DoWriteFile);
@@ -343,6 +485,11 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestBasic1EnableActionWriteFile(iHandle, iCallbackWriteFile, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Shutdown is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoShutdown must be overridden if this is called.</remarks>
         protected unsafe void EnableActionShutdown()
         {
             iCallbackShutdown = new CallbackShutdown(DoShutdown);
@@ -350,96 +497,273 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestBasic1EnableActionShutdown(iHandle, iCallbackShutdown, ptr);
         }
 
+        /// <summary>
+        /// Increment action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Increment action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionIncrement was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aValue"></param>
+        /// <param name="aResult"></param>
         protected virtual void Increment(uint aVersion, uint aValue, out uint aResult)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Decrement action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Decrement action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDecrement was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aValue"></param>
+        /// <param name="aResult"></param>
         protected virtual void Decrement(uint aVersion, int aValue, out int aResult)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Toggle action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Toggle action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionToggle was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aValue"></param>
+        /// <param name="aResult"></param>
         protected virtual void Toggle(uint aVersion, bool aValue, out bool aResult)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// EchoString action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// EchoString action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionEchoString was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aValue"></param>
+        /// <param name="aResult"></param>
         protected virtual void EchoString(uint aVersion, string aValue, out string aResult)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// EchoBinary action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// EchoBinary action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionEchoBinary was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aValue"></param>
+        /// <param name="aResult"></param>
         protected virtual void EchoBinary(uint aVersion, string aValue, out string aResult)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetUint action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetUint action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetUint was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aValueUint"></param>
         protected virtual void SetUint(uint aVersion, uint aValueUint)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetUint action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetUint action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetUint was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aValueUint"></param>
         protected virtual void GetUint(uint aVersion, out uint aValueUint)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetInt action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetInt action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetInt was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aValueInt"></param>
         protected virtual void SetInt(uint aVersion, int aValueInt)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetInt action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetInt action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetInt was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aValueInt"></param>
         protected virtual void GetInt(uint aVersion, out int aValueInt)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetBool action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetBool action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetBool was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aValueBool"></param>
         protected virtual void SetBool(uint aVersion, bool aValueBool)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetBool action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetBool action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetBool was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aValueBool"></param>
         protected virtual void GetBool(uint aVersion, out bool aValueBool)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetMultiple action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetMultiple action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetMultiple was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aValueUint"></param>
+        /// <param name="aValueInt"></param>
+        /// <param name="aValueBool"></param>
         protected virtual void SetMultiple(uint aVersion, uint aValueUint, int aValueInt, bool aValueBool)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetString action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetString action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetString was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aValueStr"></param>
         protected virtual void SetString(uint aVersion, string aValueStr)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetString action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetString action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetString was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aValueStr"></param>
         protected virtual void GetString(uint aVersion, out string aValueStr)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetBinary action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetBinary action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetBinary was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aValueBin"></param>
         protected virtual void SetBinary(uint aVersion, string aValueBin)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetBinary action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetBinary action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetBinary was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aValueBin"></param>
         protected virtual void GetBinary(uint aVersion, out string aValueBin)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// ToggleBool action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// ToggleBool action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionToggleBool was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void ToggleBool(uint aVersion)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// WriteFile action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// WriteFile action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionWriteFile was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aData"></param>
+        /// <param name="aFileFullName"></param>
         protected virtual void WriteFile(uint aVersion, string aData, string aFileFullName)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Shutdown action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Shutdown action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionShutdown was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void Shutdown(uint aVersion)
         {
             throw (new ActionDisabledError());
@@ -628,7 +952,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

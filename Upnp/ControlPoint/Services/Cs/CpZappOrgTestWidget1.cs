@@ -103,12 +103,24 @@ namespace Zapp.ControlPoint.Proxies
         private Callback iCallbackReadOnlyRegister6Changed;
         private Callback iCallbackReadOnlyRegister7Changed;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyZappOrgTestWidget1(CpDevice aDevice)
         {
             iHandle = CpProxyZappOrgTestWidget1Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aRegisterIndex"></param>
+        /// <param name="aRegisterValue"></param>
         public unsafe void SyncSetReadWriteRegister(uint aRegisterIndex, uint aRegisterValue)
         {
 			{
@@ -116,6 +128,16 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetReadWriteRegister().</remarks>
+        /// <param name="aRegisterIndex"></param>
+        /// <param name="aRegisterValue"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetReadWriteRegister(uint aRegisterIndex, uint aRegisterValue, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -123,6 +145,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestWidget1BeginSetReadWriteRegister(iHandle, aRegisterIndex, aRegisterValue, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetReadWriteRegister(uint aAsyncHandle)
         {
 			{
@@ -133,6 +160,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aWidgetClass"></param>
         public unsafe void SyncGetWidgetClass(out uint aWidgetClass)
         {
 			fixed (uint* widgetClass = &aWidgetClass)
@@ -141,6 +174,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetWidgetClass().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetWidgetClass(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -148,6 +189,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestWidget1BeginGetWidgetClass(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aWidgetClass"></param>
         public unsafe void EndGetWidgetClass(uint aAsyncHandle, out uint aWidgetClass)
         {
 			fixed (uint* widgetClass = &aWidgetClass)
@@ -159,6 +206,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the ReadWriteRegister0 state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyZappOrgTestWidget1 instance will not overlap.</remarks>
+        /// <param name="aReadWriteRegister0Changed">The delegate to run when the state variable changes</param>
         public void SetPropertyReadWriteRegister0Changed(CallbackPropertyChanged aReadWriteRegister0Changed)
         {
             iReadWriteRegister0Changed = aReadWriteRegister0Changed;
@@ -174,6 +227,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iReadWriteRegister0Changed();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the ReadWriteRegister1 state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyZappOrgTestWidget1 instance will not overlap.</remarks>
+        /// <param name="aReadWriteRegister1Changed">The delegate to run when the state variable changes</param>
         public void SetPropertyReadWriteRegister1Changed(CallbackPropertyChanged aReadWriteRegister1Changed)
         {
             iReadWriteRegister1Changed = aReadWriteRegister1Changed;
@@ -189,6 +248,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iReadWriteRegister1Changed();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the ReadWriteRegister2 state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyZappOrgTestWidget1 instance will not overlap.</remarks>
+        /// <param name="aReadWriteRegister2Changed">The delegate to run when the state variable changes</param>
         public void SetPropertyReadWriteRegister2Changed(CallbackPropertyChanged aReadWriteRegister2Changed)
         {
             iReadWriteRegister2Changed = aReadWriteRegister2Changed;
@@ -204,6 +269,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iReadWriteRegister2Changed();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the ReadWriteRegister3 state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyZappOrgTestWidget1 instance will not overlap.</remarks>
+        /// <param name="aReadWriteRegister3Changed">The delegate to run when the state variable changes</param>
         public void SetPropertyReadWriteRegister3Changed(CallbackPropertyChanged aReadWriteRegister3Changed)
         {
             iReadWriteRegister3Changed = aReadWriteRegister3Changed;
@@ -219,6 +290,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iReadWriteRegister3Changed();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the ReadOnlyRegister4 state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyZappOrgTestWidget1 instance will not overlap.</remarks>
+        /// <param name="aReadOnlyRegister4Changed">The delegate to run when the state variable changes</param>
         public void SetPropertyReadOnlyRegister4Changed(CallbackPropertyChanged aReadOnlyRegister4Changed)
         {
             iReadOnlyRegister4Changed = aReadOnlyRegister4Changed;
@@ -234,6 +311,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iReadOnlyRegister4Changed();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the ReadOnlyRegister5 state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyZappOrgTestWidget1 instance will not overlap.</remarks>
+        /// <param name="aReadOnlyRegister5Changed">The delegate to run when the state variable changes</param>
         public void SetPropertyReadOnlyRegister5Changed(CallbackPropertyChanged aReadOnlyRegister5Changed)
         {
             iReadOnlyRegister5Changed = aReadOnlyRegister5Changed;
@@ -249,6 +332,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iReadOnlyRegister5Changed();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the ReadOnlyRegister6 state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyZappOrgTestWidget1 instance will not overlap.</remarks>
+        /// <param name="aReadOnlyRegister6Changed">The delegate to run when the state variable changes</param>
         public void SetPropertyReadOnlyRegister6Changed(CallbackPropertyChanged aReadOnlyRegister6Changed)
         {
             iReadOnlyRegister6Changed = aReadOnlyRegister6Changed;
@@ -264,6 +353,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iReadOnlyRegister6Changed();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the ReadOnlyRegister7 state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyZappOrgTestWidget1 instance will not overlap.</remarks>
+        /// <param name="aReadOnlyRegister7Changed">The delegate to run when the state variable changes</param>
         public void SetPropertyReadOnlyRegister7Changed(CallbackPropertyChanged aReadOnlyRegister7Changed)
         {
             iReadOnlyRegister7Changed = aReadOnlyRegister7Changed;
@@ -279,6 +374,13 @@ namespace Zapp.ControlPoint.Proxies
             self.iReadOnlyRegister7Changed();
         }
 
+        /// <summary>
+        /// Query the value of the ReadWriteRegister0 property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aReadWriteRegister0">Will be set to the value of the property</param>
         public unsafe void PropertyReadWriteRegister0(out uint aReadWriteRegister0)
         {
 			fixed (uint* readWriteRegister0 = &aReadWriteRegister0)
@@ -287,6 +389,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the ReadWriteRegister1 property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aReadWriteRegister1">Will be set to the value of the property</param>
         public unsafe void PropertyReadWriteRegister1(out uint aReadWriteRegister1)
         {
 			fixed (uint* readWriteRegister1 = &aReadWriteRegister1)
@@ -295,6 +404,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the ReadWriteRegister2 property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aReadWriteRegister2">Will be set to the value of the property</param>
         public unsafe void PropertyReadWriteRegister2(out uint aReadWriteRegister2)
         {
 			fixed (uint* readWriteRegister2 = &aReadWriteRegister2)
@@ -303,6 +419,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the ReadWriteRegister3 property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aReadWriteRegister3">Will be set to the value of the property</param>
         public unsafe void PropertyReadWriteRegister3(out uint aReadWriteRegister3)
         {
 			fixed (uint* readWriteRegister3 = &aReadWriteRegister3)
@@ -311,6 +434,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the ReadOnlyRegister4 property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aReadOnlyRegister4">Will be set to the value of the property</param>
         public unsafe void PropertyReadOnlyRegister4(out uint aReadOnlyRegister4)
         {
 			fixed (uint* readOnlyRegister4 = &aReadOnlyRegister4)
@@ -319,6 +449,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the ReadOnlyRegister5 property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aReadOnlyRegister5">Will be set to the value of the property</param>
         public unsafe void PropertyReadOnlyRegister5(out uint aReadOnlyRegister5)
         {
 			fixed (uint* readOnlyRegister5 = &aReadOnlyRegister5)
@@ -327,6 +464,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the ReadOnlyRegister6 property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aReadOnlyRegister6">Will be set to the value of the property</param>
         public unsafe void PropertyReadOnlyRegister6(out uint aReadOnlyRegister6)
         {
 			fixed (uint* readOnlyRegister6 = &aReadOnlyRegister6)
@@ -335,6 +479,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the ReadOnlyRegister7 property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aReadOnlyRegister7">Will be set to the value of the property</param>
         public unsafe void PropertyReadOnlyRegister7(out uint aReadOnlyRegister7)
         {
 			fixed (uint* readOnlyRegister7 = &aReadOnlyRegister7)
@@ -343,6 +494,9 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);

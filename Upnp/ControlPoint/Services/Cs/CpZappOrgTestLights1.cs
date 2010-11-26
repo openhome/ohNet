@@ -84,12 +84,23 @@ namespace Zapp.ControlPoint.Proxies
 
         private GCHandle iGch;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyZappOrgTestLights1(CpDevice aDevice)
         {
             iHandle = CpProxyZappOrgTestLights1Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aCount"></param>
         public unsafe void SyncGetCount(out uint aCount)
         {
 			fixed (uint* count = &aCount)
@@ -98,6 +109,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetCount().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetCount(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -105,6 +124,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestLights1BeginGetCount(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aCount"></param>
         public unsafe void EndGetCount(uint aAsyncHandle, out uint aCount)
         {
 			fixed (uint* count = &aCount)
@@ -116,6 +141,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aIndex"></param>
+        /// <param name="aRoomName"></param>
         public unsafe void SyncGetRoom(uint aIndex, out string aRoomName)
         {
 			char* roomName;
@@ -126,6 +158,15 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(roomName);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetRoom().</remarks>
+        /// <param name="aIndex"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetRoom(uint aIndex, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -133,6 +174,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestLights1BeginGetRoom(iHandle, aIndex, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aRoomName"></param>
         public unsafe void EndGetRoom(uint aAsyncHandle, out string aRoomName)
         {
 			char* roomName;
@@ -146,6 +193,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(roomName);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aIndex"></param>
+        /// <param name="aFriendlyName"></param>
         public unsafe void SyncGetName(uint aIndex, out string aFriendlyName)
         {
 			char* friendlyName;
@@ -156,6 +210,15 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(friendlyName);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetName().</remarks>
+        /// <param name="aIndex"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetName(uint aIndex, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -163,6 +226,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestLights1BeginGetName(iHandle, aIndex, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aFriendlyName"></param>
         public unsafe void EndGetName(uint aAsyncHandle, out string aFriendlyName)
         {
 			char* friendlyName;
@@ -176,6 +245,15 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(friendlyName);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aIndex"></param>
+        /// <param name="aX"></param>
+        /// <param name="aY"></param>
+        /// <param name="aZ"></param>
         public unsafe void SyncGetPosition(uint aIndex, out uint aX, out uint aY, out uint aZ)
         {
 			fixed (uint* x = &aX)
@@ -186,6 +264,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetPosition().</remarks>
+        /// <param name="aIndex"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetPosition(uint aIndex, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -193,6 +280,14 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestLights1BeginGetPosition(iHandle, aIndex, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aX"></param>
+        /// <param name="aY"></param>
+        /// <param name="aZ"></param>
         public unsafe void EndGetPosition(uint aAsyncHandle, out uint aX, out uint aY, out uint aZ)
         {
 			fixed (uint* x = &aX)
@@ -206,6 +301,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aIndex"></param>
+        /// <param name="aColor"></param>
         public unsafe void SyncSetColor(uint aIndex, uint aColor)
         {
 			{
@@ -213,6 +315,16 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetColor().</remarks>
+        /// <param name="aIndex"></param>
+        /// <param name="aColor"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetColor(uint aIndex, uint aColor, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -220,6 +332,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestLights1BeginSetColor(iHandle, aIndex, aColor, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetColor(uint aAsyncHandle)
         {
 			{
@@ -230,6 +347,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aIndex"></param>
+        /// <param name="aColor"></param>
         public unsafe void SyncGetColor(uint aIndex, out uint aColor)
         {
 			fixed (uint* color = &aColor)
@@ -238,6 +362,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetColor().</remarks>
+        /// <param name="aIndex"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetColor(uint aIndex, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -245,6 +378,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestLights1BeginGetColor(iHandle, aIndex, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aColor"></param>
         public unsafe void EndGetColor(uint aAsyncHandle, out uint aColor)
         {
 			fixed (uint* color = &aColor)
@@ -256,6 +395,16 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aColor"></param>
+        /// <param name="aBrightness"></param>
+        /// <param name="aRed"></param>
+        /// <param name="aGreen"></param>
+        /// <param name="aBlue"></param>
         public unsafe void SyncGetColorComponents(uint aColor, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue)
         {
 			fixed (uint* brightness = &aBrightness)
@@ -267,6 +416,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetColorComponents().</remarks>
+        /// <param name="aColor"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetColorComponents(uint aColor, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -274,6 +432,15 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestLights1BeginGetColorComponents(iHandle, aColor, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aBrightness"></param>
+        /// <param name="aRed"></param>
+        /// <param name="aGreen"></param>
+        /// <param name="aBlue"></param>
         public unsafe void EndGetColorComponents(uint aAsyncHandle, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue)
         {
 			fixed (uint* brightness = &aBrightness)
@@ -288,6 +455,9 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);

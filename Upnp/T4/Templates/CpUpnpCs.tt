@@ -72,6 +72,9 @@ namespace Zapp.ControlPoint.Proxies
 <#  } #>
     }
 
+    /// <summary>
+    /// Proxy for the <#=domain#>:<#=type#>:<#=version#> UPnP service
+    /// </summary>
     public class <#=className#> : CpProxy, IDisposable, I<#=className#>
     {
         [DllImport("<#=dllName#>")]
@@ -117,6 +120,11 @@ namespace Zapp.ControlPoint.Proxies
         private Callback iCallback<#=s.name#>Changed;
 <#  } #>
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public <#=className#>(CpDevice aDevice)
         {
             iHandle = <#=className#>Create(aDevice.Handle());
@@ -125,6 +133,19 @@ namespace Zapp.ControlPoint.Proxies
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+        /// <param name="a<#=i.name#>"></param>
+<#      } #>
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+        /// <param name="a<#=o.name#>"></param>
+<#      } #>
         public unsafe void Sync<#=a.name#>(<#=ArgsFull(a)#>)
         {
 <#      foreach (Argument i in a.inargs) #>
@@ -193,6 +214,18 @@ namespace Zapp.ControlPoint.Proxies
 <#      } #>
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// End<#=a.name#>().</remarks>
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+        /// <param name="a<#=i.name#>"></param>
+<#      } #>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void Begin<#=a.name#>(<#=InArgsFull(a, true)#>CallbackAsyncComplete aCallback)
         {
 <#      foreach (Argument i in a.inargs) #>
@@ -222,6 +255,15 @@ namespace Zapp.ControlPoint.Proxies
 <#      } #>
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+        /// <param name="a<#=o.name#>"></param>
+<#      } #>
         public unsafe void End<#=a.name#>(uint aAsyncHandle<#=OutArgsFull(a, true)#>)
         {
 <#      foreach (Argument o in a.outargs) #>
@@ -274,6 +316,12 @@ namespace Zapp.ControlPoint.Proxies
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
 
+        /// <summary>
+        /// Set a delegate to be run when the <#=s.name#> state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// <#=className#> instance will not overlap.</remarks>
+        /// <param name="a<#=s.name#>Changed">The delegate to run when the state variable changes</param>
         public void SetProperty<#=s.name#>Changed(CallbackPropertyChanged a<#=s.name#>Changed)
         {
             i<#=s.name#>Changed = a<#=s.name#>Changed;
@@ -292,6 +340,13 @@ namespace Zapp.ControlPoint.Proxies
 
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
+        /// <summary>
+        /// Query the value of the <#=s.name#> property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="a<#=s.name#>">Will be set to the value of the property</param>
         public unsafe void Property<#=s.name#>(out <#=argtype[s.type]#> a<#=s.name#>)
         {
 <#      if (s.type == "boolean") #>
@@ -325,6 +380,9 @@ namespace Zapp.ControlPoint.Proxies
         }
 
 <#  } #>
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);

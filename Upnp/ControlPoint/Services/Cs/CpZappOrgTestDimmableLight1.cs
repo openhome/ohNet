@@ -47,12 +47,23 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iA_ARG_LevelChanged;
         private Callback iCallbackA_ARG_LevelChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyZappOrgTestDimmableLight1(CpDevice aDevice)
         {
             iHandle = CpProxyZappOrgTestDimmableLight1Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aLevel"></param>
         public unsafe void SyncGetLevel(out uint aLevel)
         {
 			fixed (uint* level = &aLevel)
@@ -61,6 +72,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetLevel().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetLevel(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -68,6 +87,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestDimmableLight1BeginGetLevel(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aLevel"></param>
         public unsafe void EndGetLevel(uint aAsyncHandle, out uint aLevel)
         {
 			fixed (uint* level = &aLevel)
@@ -79,6 +104,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aLevel"></param>
         public unsafe void SyncSetLevel(uint aLevel)
         {
 			{
@@ -86,6 +117,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetLevel().</remarks>
+        /// <param name="aLevel"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetLevel(uint aLevel, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -93,6 +133,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestDimmableLight1BeginSetLevel(iHandle, aLevel, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetLevel(uint aAsyncHandle)
         {
 			{
@@ -103,6 +148,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the A_ARG_Level state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyZappOrgTestDimmableLight1 instance will not overlap.</remarks>
+        /// <param name="aA_ARG_LevelChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyA_ARG_LevelChanged(CallbackPropertyChanged aA_ARG_LevelChanged)
         {
             iA_ARG_LevelChanged = aA_ARG_LevelChanged;
@@ -118,6 +169,13 @@ namespace Zapp.ControlPoint.Proxies
             self.iA_ARG_LevelChanged();
         }
 
+        /// <summary>
+        /// Query the value of the A_ARG_Level property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aA_ARG_Level">Will be set to the value of the property</param>
         public unsafe void PropertyA_ARG_Level(out uint aA_ARG_Level)
         {
 			fixed (uint* a_ARG_Level = &aA_ARG_Level)
@@ -126,6 +184,9 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);

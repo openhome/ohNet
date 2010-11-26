@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the linn.co.uk:Debug:2 UPnP service
+    /// </summary>
     public class DvProviderLinnCoUkDebug2 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkDebug2")]
@@ -29,12 +32,21 @@ namespace Zapp.Device.Providers
         private CallbackDebugLevel iCallbackDebugLevel;
         private CallbackMemWrite iCallbackMemWrite;
 
-        public DvProviderLinnCoUkDebug2(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderLinnCoUkDebug2(DvDevice aDevice)
         {
             iHandle = DvProviderLinnCoUkDebug2Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Signal that the action SetDebugLevel is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetDebugLevel must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetDebugLevel()
         {
             iCallbackSetDebugLevel = new CallbackSetDebugLevel(DoSetDebugLevel);
@@ -42,6 +54,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDebug2EnableActionSetDebugLevel(iHandle, iCallbackSetDebugLevel, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DebugLevel is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDebugLevel must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDebugLevel()
         {
             iCallbackDebugLevel = new CallbackDebugLevel(DoDebugLevel);
@@ -49,6 +66,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDebug2EnableActionDebugLevel(iHandle, iCallbackDebugLevel, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action MemWrite is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoMemWrite must be overridden if this is called.</remarks>
         protected unsafe void EnableActionMemWrite()
         {
             iCallbackMemWrite = new CallbackMemWrite(DoMemWrite);
@@ -56,16 +78,44 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDebug2EnableActionMemWrite(iHandle, iCallbackMemWrite, ptr);
         }
 
+        /// <summary>
+        /// SetDebugLevel action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetDebugLevel action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetDebugLevel was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaDebugLevel"></param>
         protected virtual void SetDebugLevel(uint aVersion, uint aaDebugLevel)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DebugLevel action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DebugLevel action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDebugLevel was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaDebugLevel"></param>
         protected virtual void DebugLevel(uint aVersion, out uint aaDebugLevel)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// MemWrite action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// MemWrite action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionMemWrite was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaMemAddress"></param>
+        /// <param name="aaMemData"></param>
         protected virtual void MemWrite(uint aVersion, uint aaMemAddress, string aaMemData)
         {
             throw (new ActionDisabledError());
@@ -98,7 +148,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

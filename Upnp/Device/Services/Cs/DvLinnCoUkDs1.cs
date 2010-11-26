@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the linn.co.uk:Ds:1 UPnP service
+    /// </summary>
     public class DvProviderLinnCoUkDs1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkDs1")]
@@ -93,15 +96,24 @@ namespace Zapp.Device.Providers
         private CallbackState iCallbackState;
         private CallbackProtocolInfo iCallbackProtocolInfo;
 
-        public DvProviderLinnCoUkDs1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderLinnCoUkDs1(DvDevice aDevice)
         {
             iHandle = DvProviderLinnCoUkDs1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Set the value of the SupportedProtocols property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertySupportedProtocols(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderLinnCoUkDs1SetPropertySupportedProtocols(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -112,6 +124,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the SupportedProtocols property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertySupportedProtocols(out string aValue)
         {
             char* value;
@@ -120,9 +136,14 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Set the value of the TrackDuration property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyTrackDuration(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkDs1SetPropertyTrackDuration(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -130,6 +151,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the TrackDuration property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyTrackDuration(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -138,9 +163,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the TrackBitRate property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyTrackBitRate(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkDs1SetPropertyTrackBitRate(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -148,6 +178,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the TrackBitRate property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyTrackBitRate(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -156,9 +190,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the TrackLossless property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyTrackLossless(bool aValue)
         {
-        uint changed;
+            uint changed;
             int value = (aValue ? 1 : 0);
             if (0 != DvProviderLinnCoUkDs1SetPropertyTrackLossless(iHandle, value, &changed))
             {
@@ -167,6 +206,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the TrackLossless property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyTrackLossless(out bool aValue)
         {
             int value;
@@ -174,9 +217,14 @@ namespace Zapp.Device.Providers
             aValue = (value != 0);
         }
 
+        /// <summary>
+        /// Set the value of the TrackBitDepth property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyTrackBitDepth(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkDs1SetPropertyTrackBitDepth(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -184,6 +232,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the TrackBitDepth property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyTrackBitDepth(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -192,9 +244,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the TrackSampleRate property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyTrackSampleRate(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkDs1SetPropertyTrackSampleRate(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -202,6 +259,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the TrackSampleRate property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyTrackSampleRate(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -210,9 +271,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the TrackCodecName property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyTrackCodecName(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderLinnCoUkDs1SetPropertyTrackCodecName(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -223,6 +289,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the TrackCodecName property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyTrackCodecName(out string aValue)
         {
             char* value;
@@ -231,9 +301,14 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Set the value of the TrackId property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyTrackId(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkDs1SetPropertyTrackId(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -241,6 +316,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the TrackId property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyTrackId(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -249,9 +328,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the TransportState property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyTransportState(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderLinnCoUkDs1SetPropertyTransportState(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -262,6 +346,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the TransportState property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyTransportState(out string aValue)
         {
             char* value;
@@ -270,6 +358,11 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Signal that the action Play is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoPlay must be overridden if this is called.</remarks>
         protected unsafe void EnableActionPlay()
         {
             iCallbackPlay = new CallbackPlay(DoPlay);
@@ -277,6 +370,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDs1EnableActionPlay(iHandle, iCallbackPlay, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Pause is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoPause must be overridden if this is called.</remarks>
         protected unsafe void EnableActionPause()
         {
             iCallbackPause = new CallbackPause(DoPause);
@@ -284,6 +382,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDs1EnableActionPause(iHandle, iCallbackPause, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Stop is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoStop must be overridden if this is called.</remarks>
         protected unsafe void EnableActionStop()
         {
             iCallbackStop = new CallbackStop(DoStop);
@@ -291,6 +394,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDs1EnableActionStop(iHandle, iCallbackStop, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SeekSecondAbsolute is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSeekSecondAbsolute must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSeekSecondAbsolute()
         {
             iCallbackSeekSecondAbsolute = new CallbackSeekSecondAbsolute(DoSeekSecondAbsolute);
@@ -298,6 +406,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDs1EnableActionSeekSecondAbsolute(iHandle, iCallbackSeekSecondAbsolute, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SeekSecondRelative is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSeekSecondRelative must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSeekSecondRelative()
         {
             iCallbackSeekSecondRelative = new CallbackSeekSecondRelative(DoSeekSecondRelative);
@@ -305,6 +418,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDs1EnableActionSeekSecondRelative(iHandle, iCallbackSeekSecondRelative, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SeekTrackId is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSeekTrackId must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSeekTrackId()
         {
             iCallbackSeekTrackId = new CallbackSeekTrackId(DoSeekTrackId);
@@ -312,6 +430,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDs1EnableActionSeekTrackId(iHandle, iCallbackSeekTrackId, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SeekTrackAbsolute is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSeekTrackAbsolute must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSeekTrackAbsolute()
         {
             iCallbackSeekTrackAbsolute = new CallbackSeekTrackAbsolute(DoSeekTrackAbsolute);
@@ -319,6 +442,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDs1EnableActionSeekTrackAbsolute(iHandle, iCallbackSeekTrackAbsolute, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SeekTrackRelative is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSeekTrackRelative must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSeekTrackRelative()
         {
             iCallbackSeekTrackRelative = new CallbackSeekTrackRelative(DoSeekTrackRelative);
@@ -326,6 +454,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDs1EnableActionSeekTrackRelative(iHandle, iCallbackSeekTrackRelative, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action State is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoState must be overridden if this is called.</remarks>
         protected unsafe void EnableActionState()
         {
             iCallbackState = new CallbackState(DoState);
@@ -333,6 +466,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDs1EnableActionState(iHandle, iCallbackState, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action ProtocolInfo is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoProtocolInfo must be overridden if this is called.</remarks>
         protected unsafe void EnableActionProtocolInfo()
         {
             iCallbackProtocolInfo = new CallbackProtocolInfo(DoProtocolInfo);
@@ -340,51 +478,145 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDs1EnableActionProtocolInfo(iHandle, iCallbackProtocolInfo, ptr);
         }
 
+        /// <summary>
+        /// Play action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Play action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionPlay was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void Play(uint aVersion)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Pause action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Pause action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionPause was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void Pause(uint aVersion)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Stop action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Stop action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionStop was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void Stop(uint aVersion)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SeekSecondAbsolute action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SeekSecondAbsolute action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSeekSecondAbsolute was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSecond"></param>
         protected virtual void SeekSecondAbsolute(uint aVersion, uint aaSecond)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SeekSecondRelative action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SeekSecondRelative action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSeekSecondRelative was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSecond"></param>
         protected virtual void SeekSecondRelative(uint aVersion, int aaSecond)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SeekTrackId action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SeekTrackId action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSeekTrackId was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaTrackId"></param>
         protected virtual void SeekTrackId(uint aVersion, uint aaTrackId)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SeekTrackAbsolute action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SeekTrackAbsolute action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSeekTrackAbsolute was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaTrack"></param>
         protected virtual void SeekTrackAbsolute(uint aVersion, uint aaTrack)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SeekTrackRelative action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SeekTrackRelative action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSeekTrackRelative was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaTrack"></param>
         protected virtual void SeekTrackRelative(uint aVersion, int aaTrack)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// State action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// State action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionState was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaTransportState"></param>
+        /// <param name="aaTrackDuration"></param>
+        /// <param name="aaTrackBitRate"></param>
+        /// <param name="aaTrackLossless"></param>
+        /// <param name="aaTrackBitDepth"></param>
+        /// <param name="aaTrackSampleRate"></param>
+        /// <param name="aaTrackCodecName"></param>
+        /// <param name="aaTrackId"></param>
         protected virtual void State(uint aVersion, out string aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out string aaTrackCodecName, out uint aaTrackId)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// ProtocolInfo action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// ProtocolInfo action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionProtocolInfo was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSupportedProtocols"></param>
         protected virtual void ProtocolInfo(uint aVersion, out string aaSupportedProtocols)
         {
             throw (new ActionDisabledError());
@@ -488,7 +720,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

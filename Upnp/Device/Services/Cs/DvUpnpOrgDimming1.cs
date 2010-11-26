@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the upnp.org:Dimming:1 UPnP service
+    /// </summary>
     public class DvProviderUpnpOrgDimming1 : DvProvider, IDisposable
     {
         [DllImport("DvUpnpOrgDimming1")]
@@ -121,15 +124,24 @@ namespace Zapp.Device.Providers
         private CallbackGetRampPaused iCallbackGetRampPaused;
         private CallbackGetRampTime iCallbackGetRampTime;
 
-        public DvProviderUpnpOrgDimming1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderUpnpOrgDimming1(DvDevice aDevice)
         {
             iHandle = DvProviderUpnpOrgDimming1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Set the value of the LoadLevelStatus property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyLoadLevelStatus(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderUpnpOrgDimming1SetPropertyLoadLevelStatus(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -137,6 +149,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the LoadLevelStatus property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyLoadLevelStatus(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -145,9 +161,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the StepDelta property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyStepDelta(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderUpnpOrgDimming1SetPropertyStepDelta(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -155,6 +176,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the StepDelta property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyStepDelta(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -163,9 +188,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the RampRate property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyRampRate(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderUpnpOrgDimming1SetPropertyRampRate(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -173,6 +203,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the RampRate property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyRampRate(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -181,9 +215,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the IsRamping property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyIsRamping(bool aValue)
         {
-        uint changed;
+            uint changed;
             int value = (aValue ? 1 : 0);
             if (0 != DvProviderUpnpOrgDimming1SetPropertyIsRamping(iHandle, value, &changed))
             {
@@ -192,6 +231,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the IsRamping property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyIsRamping(out bool aValue)
         {
             int value;
@@ -199,9 +242,14 @@ namespace Zapp.Device.Providers
             aValue = (value != 0);
         }
 
+        /// <summary>
+        /// Set the value of the RampPaused property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyRampPaused(bool aValue)
         {
-        uint changed;
+            uint changed;
             int value = (aValue ? 1 : 0);
             if (0 != DvProviderUpnpOrgDimming1SetPropertyRampPaused(iHandle, value, &changed))
             {
@@ -210,6 +258,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the RampPaused property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyRampPaused(out bool aValue)
         {
             int value;
@@ -217,6 +269,11 @@ namespace Zapp.Device.Providers
             aValue = (value != 0);
         }
 
+        /// <summary>
+        /// Signal that the action SetLoadLevelTarget is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetLoadLevelTarget must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetLoadLevelTarget()
         {
             iCallbackSetLoadLevelTarget = new CallbackSetLoadLevelTarget(DoSetLoadLevelTarget);
@@ -224,6 +281,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgDimming1EnableActionSetLoadLevelTarget(iHandle, iCallbackSetLoadLevelTarget, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetLoadLevelTarget is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetLoadLevelTarget must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetLoadLevelTarget()
         {
             iCallbackGetLoadLevelTarget = new CallbackGetLoadLevelTarget(DoGetLoadLevelTarget);
@@ -231,6 +293,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgDimming1EnableActionGetLoadLevelTarget(iHandle, iCallbackGetLoadLevelTarget, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetLoadLevelStatus is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetLoadLevelStatus must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetLoadLevelStatus()
         {
             iCallbackGetLoadLevelStatus = new CallbackGetLoadLevelStatus(DoGetLoadLevelStatus);
@@ -238,6 +305,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgDimming1EnableActionGetLoadLevelStatus(iHandle, iCallbackGetLoadLevelStatus, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetOnEffectLevel is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetOnEffectLevel must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetOnEffectLevel()
         {
             iCallbackSetOnEffectLevel = new CallbackSetOnEffectLevel(DoSetOnEffectLevel);
@@ -245,6 +317,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgDimming1EnableActionSetOnEffectLevel(iHandle, iCallbackSetOnEffectLevel, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetOnEffect is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetOnEffect must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetOnEffect()
         {
             iCallbackSetOnEffect = new CallbackSetOnEffect(DoSetOnEffect);
@@ -252,6 +329,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgDimming1EnableActionSetOnEffect(iHandle, iCallbackSetOnEffect, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetOnEffectParameters is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetOnEffectParameters must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetOnEffectParameters()
         {
             iCallbackGetOnEffectParameters = new CallbackGetOnEffectParameters(DoGetOnEffectParameters);
@@ -259,6 +341,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgDimming1EnableActionGetOnEffectParameters(iHandle, iCallbackGetOnEffectParameters, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action StepUp is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoStepUp must be overridden if this is called.</remarks>
         protected unsafe void EnableActionStepUp()
         {
             iCallbackStepUp = new CallbackStepUp(DoStepUp);
@@ -266,6 +353,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgDimming1EnableActionStepUp(iHandle, iCallbackStepUp, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action StepDown is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoStepDown must be overridden if this is called.</remarks>
         protected unsafe void EnableActionStepDown()
         {
             iCallbackStepDown = new CallbackStepDown(DoStepDown);
@@ -273,6 +365,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgDimming1EnableActionStepDown(iHandle, iCallbackStepDown, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action StartRampUp is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoStartRampUp must be overridden if this is called.</remarks>
         protected unsafe void EnableActionStartRampUp()
         {
             iCallbackStartRampUp = new CallbackStartRampUp(DoStartRampUp);
@@ -280,6 +377,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgDimming1EnableActionStartRampUp(iHandle, iCallbackStartRampUp, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action StartRampDown is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoStartRampDown must be overridden if this is called.</remarks>
         protected unsafe void EnableActionStartRampDown()
         {
             iCallbackStartRampDown = new CallbackStartRampDown(DoStartRampDown);
@@ -287,6 +389,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgDimming1EnableActionStartRampDown(iHandle, iCallbackStartRampDown, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action StopRamp is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoStopRamp must be overridden if this is called.</remarks>
         protected unsafe void EnableActionStopRamp()
         {
             iCallbackStopRamp = new CallbackStopRamp(DoStopRamp);
@@ -294,6 +401,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgDimming1EnableActionStopRamp(iHandle, iCallbackStopRamp, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action StartRampToLevel is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoStartRampToLevel must be overridden if this is called.</remarks>
         protected unsafe void EnableActionStartRampToLevel()
         {
             iCallbackStartRampToLevel = new CallbackStartRampToLevel(DoStartRampToLevel);
@@ -301,6 +413,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgDimming1EnableActionStartRampToLevel(iHandle, iCallbackStartRampToLevel, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetStepDelta is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetStepDelta must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetStepDelta()
         {
             iCallbackSetStepDelta = new CallbackSetStepDelta(DoSetStepDelta);
@@ -308,6 +425,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgDimming1EnableActionSetStepDelta(iHandle, iCallbackSetStepDelta, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetStepDelta is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetStepDelta must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetStepDelta()
         {
             iCallbackGetStepDelta = new CallbackGetStepDelta(DoGetStepDelta);
@@ -315,6 +437,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgDimming1EnableActionGetStepDelta(iHandle, iCallbackGetStepDelta, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetRampRate is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetRampRate must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetRampRate()
         {
             iCallbackSetRampRate = new CallbackSetRampRate(DoSetRampRate);
@@ -322,6 +449,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgDimming1EnableActionSetRampRate(iHandle, iCallbackSetRampRate, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetRampRate is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetRampRate must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetRampRate()
         {
             iCallbackGetRampRate = new CallbackGetRampRate(DoGetRampRate);
@@ -329,6 +461,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgDimming1EnableActionGetRampRate(iHandle, iCallbackGetRampRate, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action PauseRamp is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoPauseRamp must be overridden if this is called.</remarks>
         protected unsafe void EnableActionPauseRamp()
         {
             iCallbackPauseRamp = new CallbackPauseRamp(DoPauseRamp);
@@ -336,6 +473,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgDimming1EnableActionPauseRamp(iHandle, iCallbackPauseRamp, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action ResumeRamp is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoResumeRamp must be overridden if this is called.</remarks>
         protected unsafe void EnableActionResumeRamp()
         {
             iCallbackResumeRamp = new CallbackResumeRamp(DoResumeRamp);
@@ -343,6 +485,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgDimming1EnableActionResumeRamp(iHandle, iCallbackResumeRamp, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetIsRamping is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetIsRamping must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetIsRamping()
         {
             iCallbackGetIsRamping = new CallbackGetIsRamping(DoGetIsRamping);
@@ -350,6 +497,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgDimming1EnableActionGetIsRamping(iHandle, iCallbackGetIsRamping, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetRampPaused is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetRampPaused must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetRampPaused()
         {
             iCallbackGetRampPaused = new CallbackGetRampPaused(DoGetRampPaused);
@@ -357,6 +509,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgDimming1EnableActionGetRampPaused(iHandle, iCallbackGetRampPaused, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetRampTime is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetRampTime must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetRampTime()
         {
             iCallbackGetRampTime = new CallbackGetRampTime(DoGetRampTime);
@@ -364,106 +521,290 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgDimming1EnableActionGetRampTime(iHandle, iCallbackGetRampTime, ptr);
         }
 
+        /// <summary>
+        /// SetLoadLevelTarget action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetLoadLevelTarget action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetLoadLevelTarget was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="anewLoadlevelTarget"></param>
         protected virtual void SetLoadLevelTarget(uint aVersion, uint anewLoadlevelTarget)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetLoadLevelTarget action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetLoadLevelTarget action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetLoadLevelTarget was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aGetLoadlevelTarget"></param>
         protected virtual void GetLoadLevelTarget(uint aVersion, out uint aGetLoadlevelTarget)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetLoadLevelStatus action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetLoadLevelStatus action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetLoadLevelStatus was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aretLoadlevelStatus"></param>
         protected virtual void GetLoadLevelStatus(uint aVersion, out uint aretLoadlevelStatus)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetOnEffectLevel action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetOnEffectLevel action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetOnEffectLevel was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="anewOnEffectLevel"></param>
         protected virtual void SetOnEffectLevel(uint aVersion, uint anewOnEffectLevel)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetOnEffect action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetOnEffect action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetOnEffect was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="anewOnEffect"></param>
         protected virtual void SetOnEffect(uint aVersion, string anewOnEffect)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetOnEffectParameters action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetOnEffectParameters action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetOnEffectParameters was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aretOnEffect"></param>
+        /// <param name="aretOnEffectLevel"></param>
         protected virtual void GetOnEffectParameters(uint aVersion, out string aretOnEffect, out uint aretOnEffectLevel)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// StepUp action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// StepUp action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionStepUp was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void StepUp(uint aVersion)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// StepDown action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// StepDown action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionStepDown was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void StepDown(uint aVersion)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// StartRampUp action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// StartRampUp action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionStartRampUp was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void StartRampUp(uint aVersion)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// StartRampDown action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// StartRampDown action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionStartRampDown was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void StartRampDown(uint aVersion)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// StopRamp action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// StopRamp action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionStopRamp was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void StopRamp(uint aVersion)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// StartRampToLevel action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// StartRampToLevel action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionStartRampToLevel was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="anewLoadLevelTarget"></param>
+        /// <param name="anewRampTime"></param>
         protected virtual void StartRampToLevel(uint aVersion, uint anewLoadLevelTarget, uint anewRampTime)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetStepDelta action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetStepDelta action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetStepDelta was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="anewStepDelta"></param>
         protected virtual void SetStepDelta(uint aVersion, uint anewStepDelta)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetStepDelta action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetStepDelta action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetStepDelta was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aretStepDelta"></param>
         protected virtual void GetStepDelta(uint aVersion, out uint aretStepDelta)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetRampRate action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetRampRate action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetRampRate was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="anewRampRate"></param>
         protected virtual void SetRampRate(uint aVersion, uint anewRampRate)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetRampRate action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetRampRate action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetRampRate was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aretRampRate"></param>
         protected virtual void GetRampRate(uint aVersion, out uint aretRampRate)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// PauseRamp action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// PauseRamp action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionPauseRamp was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void PauseRamp(uint aVersion)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// ResumeRamp action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// ResumeRamp action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionResumeRamp was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void ResumeRamp(uint aVersion)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetIsRamping action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetIsRamping action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetIsRamping was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aretIsRamping"></param>
         protected virtual void GetIsRamping(uint aVersion, out bool aretIsRamping)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetRampPaused action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetRampPaused action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetRampPaused was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aretRampPaused"></param>
         protected virtual void GetRampPaused(uint aVersion, out bool aretRampPaused)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetRampTime action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetRampTime action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetRampTime was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aretRampTime"></param>
         protected virtual void GetRampTime(uint aVersion, out uint aretRampTime)
         {
             throw (new ActionDisabledError());
@@ -656,7 +997,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the upnp.org:AVTransport:2 UPnP service
+    /// </summary>
     public class DvProviderUpnpOrgAVTransport2 : DvProvider, IDisposable
     {
         [DllImport("DvUpnpOrgAVTransport2")]
@@ -109,15 +112,24 @@ namespace Zapp.Device.Providers
         private CallbackGetStateVariables iCallbackGetStateVariables;
         private CallbackSetStateVariables iCallbackSetStateVariables;
 
-        public DvProviderUpnpOrgAVTransport2(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderUpnpOrgAVTransport2(DvDevice aDevice)
         {
             iHandle = DvProviderUpnpOrgAVTransport2Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Set the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyLastChange(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderUpnpOrgAVTransport2SetPropertyLastChange(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -128,6 +140,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyLastChange(out string aValue)
         {
             char* value;
@@ -136,9 +152,14 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Set the value of the DRMState property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyDRMState(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderUpnpOrgAVTransport2SetPropertyDRMState(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -149,6 +170,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the DRMState property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyDRMState(out string aValue)
         {
             char* value;
@@ -157,6 +182,11 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Signal that the action SetAVTransportURI is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetAVTransportURI must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetAVTransportURI()
         {
             iCallbackSetAVTransportURI = new CallbackSetAVTransportURI(DoSetAVTransportURI);
@@ -164,6 +194,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgAVTransport2EnableActionSetAVTransportURI(iHandle, iCallbackSetAVTransportURI, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetNextAVTransportURI is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetNextAVTransportURI must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetNextAVTransportURI()
         {
             iCallbackSetNextAVTransportURI = new CallbackSetNextAVTransportURI(DoSetNextAVTransportURI);
@@ -171,6 +206,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgAVTransport2EnableActionSetNextAVTransportURI(iHandle, iCallbackSetNextAVTransportURI, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetMediaInfo is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetMediaInfo must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetMediaInfo()
         {
             iCallbackGetMediaInfo = new CallbackGetMediaInfo(DoGetMediaInfo);
@@ -178,6 +218,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgAVTransport2EnableActionGetMediaInfo(iHandle, iCallbackGetMediaInfo, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetMediaInfo_Ext is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetMediaInfo_Ext must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetMediaInfo_Ext()
         {
             iCallbackGetMediaInfo_Ext = new CallbackGetMediaInfo_Ext(DoGetMediaInfo_Ext);
@@ -185,6 +230,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgAVTransport2EnableActionGetMediaInfo_Ext(iHandle, iCallbackGetMediaInfo_Ext, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetTransportInfo is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetTransportInfo must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetTransportInfo()
         {
             iCallbackGetTransportInfo = new CallbackGetTransportInfo(DoGetTransportInfo);
@@ -192,6 +242,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgAVTransport2EnableActionGetTransportInfo(iHandle, iCallbackGetTransportInfo, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetPositionInfo is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetPositionInfo must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetPositionInfo()
         {
             iCallbackGetPositionInfo = new CallbackGetPositionInfo(DoGetPositionInfo);
@@ -199,6 +254,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgAVTransport2EnableActionGetPositionInfo(iHandle, iCallbackGetPositionInfo, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetDeviceCapabilities is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetDeviceCapabilities must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetDeviceCapabilities()
         {
             iCallbackGetDeviceCapabilities = new CallbackGetDeviceCapabilities(DoGetDeviceCapabilities);
@@ -206,6 +266,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgAVTransport2EnableActionGetDeviceCapabilities(iHandle, iCallbackGetDeviceCapabilities, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetTransportSettings is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetTransportSettings must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetTransportSettings()
         {
             iCallbackGetTransportSettings = new CallbackGetTransportSettings(DoGetTransportSettings);
@@ -213,6 +278,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgAVTransport2EnableActionGetTransportSettings(iHandle, iCallbackGetTransportSettings, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Stop is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoStop must be overridden if this is called.</remarks>
         protected unsafe void EnableActionStop()
         {
             iCallbackStop = new CallbackStop(DoStop);
@@ -220,6 +290,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgAVTransport2EnableActionStop(iHandle, iCallbackStop, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Play is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoPlay must be overridden if this is called.</remarks>
         protected unsafe void EnableActionPlay()
         {
             iCallbackPlay = new CallbackPlay(DoPlay);
@@ -227,6 +302,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgAVTransport2EnableActionPlay(iHandle, iCallbackPlay, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Pause is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoPause must be overridden if this is called.</remarks>
         protected unsafe void EnableActionPause()
         {
             iCallbackPause = new CallbackPause(DoPause);
@@ -234,6 +314,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgAVTransport2EnableActionPause(iHandle, iCallbackPause, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Record is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoRecord must be overridden if this is called.</remarks>
         protected unsafe void EnableActionRecord()
         {
             iCallbackRecord = new CallbackRecord(DoRecord);
@@ -241,6 +326,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgAVTransport2EnableActionRecord(iHandle, iCallbackRecord, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Seek is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSeek must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSeek()
         {
             iCallbackSeek = new CallbackSeek(DoSeek);
@@ -248,6 +338,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgAVTransport2EnableActionSeek(iHandle, iCallbackSeek, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Next is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoNext must be overridden if this is called.</remarks>
         protected unsafe void EnableActionNext()
         {
             iCallbackNext = new CallbackNext(DoNext);
@@ -255,6 +350,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgAVTransport2EnableActionNext(iHandle, iCallbackNext, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Previous is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoPrevious must be overridden if this is called.</remarks>
         protected unsafe void EnableActionPrevious()
         {
             iCallbackPrevious = new CallbackPrevious(DoPrevious);
@@ -262,6 +362,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgAVTransport2EnableActionPrevious(iHandle, iCallbackPrevious, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetPlayMode is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetPlayMode must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetPlayMode()
         {
             iCallbackSetPlayMode = new CallbackSetPlayMode(DoSetPlayMode);
@@ -269,6 +374,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgAVTransport2EnableActionSetPlayMode(iHandle, iCallbackSetPlayMode, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetRecordQualityMode is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetRecordQualityMode must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetRecordQualityMode()
         {
             iCallbackSetRecordQualityMode = new CallbackSetRecordQualityMode(DoSetRecordQualityMode);
@@ -276,6 +386,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgAVTransport2EnableActionSetRecordQualityMode(iHandle, iCallbackSetRecordQualityMode, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetCurrentTransportActions is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetCurrentTransportActions must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetCurrentTransportActions()
         {
             iCallbackGetCurrentTransportActions = new CallbackGetCurrentTransportActions(DoGetCurrentTransportActions);
@@ -283,6 +398,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgAVTransport2EnableActionGetCurrentTransportActions(iHandle, iCallbackGetCurrentTransportActions, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetDRMState is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetDRMState must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetDRMState()
         {
             iCallbackGetDRMState = new CallbackGetDRMState(DoGetDRMState);
@@ -290,6 +410,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgAVTransport2EnableActionGetDRMState(iHandle, iCallbackGetDRMState, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetStateVariables is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetStateVariables must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetStateVariables()
         {
             iCallbackGetStateVariables = new CallbackGetStateVariables(DoGetStateVariables);
@@ -297,6 +422,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgAVTransport2EnableActionGetStateVariables(iHandle, iCallbackGetStateVariables, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetStateVariables is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetStateVariables must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetStateVariables()
         {
             iCallbackSetStateVariables = new CallbackSetStateVariables(DoSetStateVariables);
@@ -304,106 +434,348 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgAVTransport2EnableActionSetStateVariables(iHandle, iCallbackSetStateVariables, ptr);
         }
 
+        /// <summary>
+        /// SetAVTransportURI action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetAVTransportURI action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetAVTransportURI was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentURI"></param>
+        /// <param name="aCurrentURIMetaData"></param>
         protected virtual void SetAVTransportURI(uint aVersion, uint aInstanceID, string aCurrentURI, string aCurrentURIMetaData)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetNextAVTransportURI action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetNextAVTransportURI action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetNextAVTransportURI was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aNextURI"></param>
+        /// <param name="aNextURIMetaData"></param>
         protected virtual void SetNextAVTransportURI(uint aVersion, uint aInstanceID, string aNextURI, string aNextURIMetaData)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetMediaInfo action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetMediaInfo action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetMediaInfo was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aNrTracks"></param>
+        /// <param name="aMediaDuration"></param>
+        /// <param name="aCurrentURI"></param>
+        /// <param name="aCurrentURIMetaData"></param>
+        /// <param name="aNextURI"></param>
+        /// <param name="aNextURIMetaData"></param>
+        /// <param name="aPlayMedium"></param>
+        /// <param name="aRecordMedium"></param>
+        /// <param name="aWriteStatus"></param>
         protected virtual void GetMediaInfo(uint aVersion, uint aInstanceID, out uint aNrTracks, out string aMediaDuration, out string aCurrentURI, out string aCurrentURIMetaData, out string aNextURI, out string aNextURIMetaData, out string aPlayMedium, out string aRecordMedium, out string aWriteStatus)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetMediaInfo_Ext action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetMediaInfo_Ext action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetMediaInfo_Ext was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentType"></param>
+        /// <param name="aNrTracks"></param>
+        /// <param name="aMediaDuration"></param>
+        /// <param name="aCurrentURI"></param>
+        /// <param name="aCurrentURIMetaData"></param>
+        /// <param name="aNextURI"></param>
+        /// <param name="aNextURIMetaData"></param>
+        /// <param name="aPlayMedium"></param>
+        /// <param name="aRecordMedium"></param>
+        /// <param name="aWriteStatus"></param>
         protected virtual void GetMediaInfo_Ext(uint aVersion, uint aInstanceID, out string aCurrentType, out uint aNrTracks, out string aMediaDuration, out string aCurrentURI, out string aCurrentURIMetaData, out string aNextURI, out string aNextURIMetaData, out string aPlayMedium, out string aRecordMedium, out string aWriteStatus)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetTransportInfo action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetTransportInfo action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetTransportInfo was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentTransportState"></param>
+        /// <param name="aCurrentTransportStatus"></param>
+        /// <param name="aCurrentSpeed"></param>
         protected virtual void GetTransportInfo(uint aVersion, uint aInstanceID, out string aCurrentTransportState, out string aCurrentTransportStatus, out string aCurrentSpeed)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetPositionInfo action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetPositionInfo action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetPositionInfo was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aTrack"></param>
+        /// <param name="aTrackDuration"></param>
+        /// <param name="aTrackMetaData"></param>
+        /// <param name="aTrackURI"></param>
+        /// <param name="aRelTime"></param>
+        /// <param name="aAbsTime"></param>
+        /// <param name="aRelCount"></param>
+        /// <param name="aAbsCount"></param>
         protected virtual void GetPositionInfo(uint aVersion, uint aInstanceID, out uint aTrack, out string aTrackDuration, out string aTrackMetaData, out string aTrackURI, out string aRelTime, out string aAbsTime, out int aRelCount, out int aAbsCount)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetDeviceCapabilities action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetDeviceCapabilities action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetDeviceCapabilities was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aPlayMedia"></param>
+        /// <param name="aRecMedia"></param>
+        /// <param name="aRecQualityModes"></param>
         protected virtual void GetDeviceCapabilities(uint aVersion, uint aInstanceID, out string aPlayMedia, out string aRecMedia, out string aRecQualityModes)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetTransportSettings action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetTransportSettings action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetTransportSettings was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aPlayMode"></param>
+        /// <param name="aRecQualityMode"></param>
         protected virtual void GetTransportSettings(uint aVersion, uint aInstanceID, out string aPlayMode, out string aRecQualityMode)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Stop action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Stop action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionStop was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
         protected virtual void Stop(uint aVersion, uint aInstanceID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Play action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Play action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionPlay was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aSpeed"></param>
         protected virtual void Play(uint aVersion, uint aInstanceID, string aSpeed)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Pause action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Pause action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionPause was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
         protected virtual void Pause(uint aVersion, uint aInstanceID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Record action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Record action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionRecord was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
         protected virtual void Record(uint aVersion, uint aInstanceID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Seek action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Seek action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSeek was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aUnit"></param>
+        /// <param name="aTarget"></param>
         protected virtual void Seek(uint aVersion, uint aInstanceID, string aUnit, string aTarget)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Next action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Next action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionNext was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
         protected virtual void Next(uint aVersion, uint aInstanceID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Previous action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Previous action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionPrevious was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
         protected virtual void Previous(uint aVersion, uint aInstanceID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetPlayMode action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetPlayMode action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetPlayMode was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aNewPlayMode"></param>
         protected virtual void SetPlayMode(uint aVersion, uint aInstanceID, string aNewPlayMode)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetRecordQualityMode action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetRecordQualityMode action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetRecordQualityMode was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aNewRecordQualityMode"></param>
         protected virtual void SetRecordQualityMode(uint aVersion, uint aInstanceID, string aNewRecordQualityMode)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetCurrentTransportActions action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetCurrentTransportActions action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetCurrentTransportActions was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aActions"></param>
         protected virtual void GetCurrentTransportActions(uint aVersion, uint aInstanceID, out string aActions)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetDRMState action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetDRMState action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetDRMState was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentDRMState"></param>
         protected virtual void GetDRMState(uint aVersion, uint aInstanceID, out string aCurrentDRMState)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetStateVariables action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetStateVariables action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetStateVariables was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aStateVariableList"></param>
+        /// <param name="aStateVariableValuePairs"></param>
         protected virtual void GetStateVariables(uint aVersion, uint aInstanceID, string aStateVariableList, out string aStateVariableValuePairs)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetStateVariables action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetStateVariables action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetStateVariables was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aAVTransportUDN"></param>
+        /// <param name="aServiceType"></param>
+        /// <param name="aServiceId"></param>
+        /// <param name="aStateVariableValuePairs"></param>
+        /// <param name="aStateVariableList"></param>
         protected virtual void SetStateVariables(uint aVersion, uint aInstanceID, string aAVTransportUDN, string aServiceType, string aServiceId, string aStateVariableValuePairs, out string aStateVariableList)
         {
             throw (new ActionDisabledError());
@@ -669,7 +1041,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

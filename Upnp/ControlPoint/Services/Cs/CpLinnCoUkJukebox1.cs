@@ -117,12 +117,23 @@ namespace Zapp.ControlPoint.Proxies
         private Callback iCallbackPresetPrefixChanged;
         private Callback iCallbackAlbumArtFileNameChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkJukebox1(CpDevice aDevice)
         {
             iHandle = CpProxyLinnCoUkJukebox1Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaUri"></param>
         public unsafe void SyncSetPresetPrefix(string aaUri)
         {
 			char* aUri = (char*)Marshal.StringToHGlobalAnsi(aaUri);
@@ -132,6 +143,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aUri);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetPresetPrefix().</remarks>
+        /// <param name="aaUri"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetPresetPrefix(string aaUri, CallbackAsyncComplete aCallback)
         {
 			char* aUri = (char*)Marshal.StringToHGlobalAnsi(aaUri);
@@ -141,6 +161,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aUri);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetPresetPrefix(uint aAsyncHandle)
         {
 			{
@@ -151,6 +176,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaUri"></param>
         public unsafe void SyncPresetPrefix(out string aaUri)
         {
 			char* aUri;
@@ -161,6 +192,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aUri);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndPresetPrefix().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginPresetPrefix(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -168,6 +207,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkJukebox1BeginPresetPrefix(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaUri"></param>
         public unsafe void EndPresetPrefix(uint aAsyncHandle, out string aaUri)
         {
 			char* aUri;
@@ -181,6 +226,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aUri);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaName"></param>
         public unsafe void SyncSetAlbumArtFileName(string aaName)
         {
 			char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
@@ -190,6 +241,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aName);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetAlbumArtFileName().</remarks>
+        /// <param name="aaName"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetAlbumArtFileName(string aaName, CallbackAsyncComplete aCallback)
         {
 			char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
@@ -199,6 +259,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aName);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetAlbumArtFileName(uint aAsyncHandle)
         {
 			{
@@ -209,6 +274,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaName"></param>
         public unsafe void SyncAlbumArtFileName(out string aaName)
         {
 			char* aName;
@@ -219,6 +290,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aName);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndAlbumArtFileName().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginAlbumArtFileName(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -226,6 +305,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkJukebox1BeginAlbumArtFileName(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaName"></param>
         public unsafe void EndAlbumArtFileName(uint aAsyncHandle, out string aaName)
         {
 			char* aName;
@@ -239,6 +324,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aName);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaPreset"></param>
         public unsafe void SyncSetCurrentPreset(uint aaPreset)
         {
 			{
@@ -246,6 +337,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetCurrentPreset().</remarks>
+        /// <param name="aaPreset"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetCurrentPreset(uint aaPreset, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -253,6 +353,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkJukebox1BeginSetCurrentPreset(iHandle, aaPreset, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetCurrentPreset(uint aAsyncHandle)
         {
 			{
@@ -263,6 +368,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaPreset"></param>
         public unsafe void SyncCurrentPreset(out uint aaPreset)
         {
 			fixed (uint* aPreset = &aaPreset)
@@ -271,6 +382,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndCurrentPreset().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginCurrentPreset(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -278,6 +397,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkJukebox1BeginCurrentPreset(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaPreset"></param>
         public unsafe void EndCurrentPreset(uint aAsyncHandle, out uint aaPreset)
         {
 			fixed (uint* aPreset = &aaPreset)
@@ -289,6 +414,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaPreset"></param>
+        /// <param name="aaMetaData"></param>
         public unsafe void SyncPresetMetaData(uint aaPreset, out string aaMetaData)
         {
 			char* aMetaData;
@@ -299,6 +431,15 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aMetaData);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndPresetMetaData().</remarks>
+        /// <param name="aaPreset"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginPresetMetaData(uint aaPreset, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -306,6 +447,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkJukebox1BeginPresetMetaData(iHandle, aaPreset, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaMetaData"></param>
         public unsafe void EndPresetMetaData(uint aAsyncHandle, out string aaMetaData)
         {
 			char* aMetaData;
@@ -319,6 +466,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aMetaData);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaTotalPresets"></param>
         public unsafe void SyncLoadManifest(out uint aaTotalPresets)
         {
 			fixed (uint* aTotalPresets = &aaTotalPresets)
@@ -327,6 +480,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndLoadManifest().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginLoadManifest(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -334,6 +495,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkJukebox1BeginLoadManifest(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaTotalPresets"></param>
         public unsafe void EndLoadManifest(uint aAsyncHandle, out uint aaTotalPresets)
         {
 			fixed (uint* aTotalPresets = &aaTotalPresets)
@@ -345,6 +512,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the CurrentPreset state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkJukebox1 instance will not overlap.</remarks>
+        /// <param name="aCurrentPresetChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyCurrentPresetChanged(CallbackPropertyChanged aCurrentPresetChanged)
         {
             iCurrentPresetChanged = aCurrentPresetChanged;
@@ -360,6 +533,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iCurrentPresetChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the PresetPrefix state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkJukebox1 instance will not overlap.</remarks>
+        /// <param name="aPresetPrefixChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyPresetPrefixChanged(CallbackPropertyChanged aPresetPrefixChanged)
         {
             iPresetPrefixChanged = aPresetPrefixChanged;
@@ -375,6 +554,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iPresetPrefixChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the AlbumArtFileName state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkJukebox1 instance will not overlap.</remarks>
+        /// <param name="aAlbumArtFileNameChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyAlbumArtFileNameChanged(CallbackPropertyChanged aAlbumArtFileNameChanged)
         {
             iAlbumArtFileNameChanged = aAlbumArtFileNameChanged;
@@ -390,6 +575,13 @@ namespace Zapp.ControlPoint.Proxies
             self.iAlbumArtFileNameChanged();
         }
 
+        /// <summary>
+        /// Query the value of the CurrentPreset property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aCurrentPreset">Will be set to the value of the property</param>
         public unsafe void PropertyCurrentPreset(out uint aCurrentPreset)
         {
 			fixed (uint* currentPreset = &aCurrentPreset)
@@ -398,6 +590,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the PresetPrefix property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aPresetPrefix">Will be set to the value of the property</param>
         public unsafe void PropertyPresetPrefix(out string aPresetPrefix)
         {
 			char* ptr;
@@ -406,6 +605,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the AlbumArtFileName property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aAlbumArtFileName">Will be set to the value of the property</param>
         public unsafe void PropertyAlbumArtFileName(out string aAlbumArtFileName)
         {
 			char* ptr;
@@ -414,6 +620,9 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);

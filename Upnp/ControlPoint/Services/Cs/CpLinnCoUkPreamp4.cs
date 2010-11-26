@@ -195,12 +195,22 @@ namespace Zapp.ControlPoint.Proxies
         private Callback iCallbackStartupVolumeChanged;
         private Callback iCallbackStartupVolumeEnabledChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkPreamp4(CpDevice aDevice)
         {
             iHandle = CpProxyLinnCoUkPreamp4Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
         public unsafe void SyncVolumeInc()
         {
 			{
@@ -208,6 +218,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndVolumeInc().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginVolumeInc(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -215,6 +233,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkPreamp4BeginVolumeInc(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndVolumeInc(uint aAsyncHandle)
         {
 			{
@@ -225,6 +248,11 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
         public unsafe void SyncVolumeDec()
         {
 			{
@@ -232,6 +260,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndVolumeDec().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginVolumeDec(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -239,6 +275,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkPreamp4BeginVolumeDec(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndVolumeDec(uint aAsyncHandle)
         {
 			{
@@ -249,6 +290,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaVolume"></param>
         public unsafe void SyncSetVolume(uint aaVolume)
         {
 			{
@@ -256,6 +303,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetVolume().</remarks>
+        /// <param name="aaVolume"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetVolume(uint aaVolume, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -263,6 +319,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkPreamp4BeginSetVolume(iHandle, aaVolume, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetVolume(uint aAsyncHandle)
         {
 			{
@@ -273,6 +334,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaVolume"></param>
         public unsafe void SyncVolume(out uint aaVolume)
         {
 			fixed (uint* aVolume = &aaVolume)
@@ -281,6 +348,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndVolume().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginVolume(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -288,6 +363,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkPreamp4BeginVolume(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaVolume"></param>
         public unsafe void EndVolume(uint aAsyncHandle, out uint aaVolume)
         {
 			fixed (uint* aVolume = &aaVolume)
@@ -299,6 +380,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaMute"></param>
         public unsafe void SyncSetMute(bool aaMute)
         {
 			uint aMute = (aaMute? 1u : 0u);
@@ -307,6 +394,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetMute().</remarks>
+        /// <param name="aaMute"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetMute(bool aaMute, CallbackAsyncComplete aCallback)
         {
 			uint aMute = (aaMute? 1u : 0u);
@@ -315,6 +411,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkPreamp4BeginSetMute(iHandle, aMute, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetMute(uint aAsyncHandle)
         {
 			{
@@ -325,6 +426,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaMute"></param>
         public unsafe void SyncMute(out bool aaMute)
         {
 			uint aMute;
@@ -334,6 +441,14 @@ namespace Zapp.ControlPoint.Proxies
 			aaMute = (aMute != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndMute().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginMute(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -341,6 +456,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkPreamp4BeginMute(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaMute"></param>
         public unsafe void EndMute(uint aAsyncHandle, out bool aaMute)
         {
 			uint aMute;
@@ -353,6 +474,12 @@ namespace Zapp.ControlPoint.Proxies
 			aaMute = (aMute != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaBalance"></param>
         public unsafe void SyncSetBalance(int aaBalance)
         {
 			{
@@ -360,6 +487,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetBalance().</remarks>
+        /// <param name="aaBalance"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetBalance(int aaBalance, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -367,6 +503,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkPreamp4BeginSetBalance(iHandle, aaBalance, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetBalance(uint aAsyncHandle)
         {
 			{
@@ -377,6 +518,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaBalance"></param>
         public unsafe void SyncBalance(out int aaBalance)
         {
 			fixed (int* aBalance = &aaBalance)
@@ -385,6 +532,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndBalance().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginBalance(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -392,6 +547,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkPreamp4BeginBalance(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaBalance"></param>
         public unsafe void EndBalance(uint aAsyncHandle, out int aaBalance)
         {
 			fixed (int* aBalance = &aaBalance)
@@ -403,6 +564,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaVolumeLimit"></param>
         public unsafe void SyncSetVolumeLimit(uint aaVolumeLimit)
         {
 			{
@@ -410,6 +577,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetVolumeLimit().</remarks>
+        /// <param name="aaVolumeLimit"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetVolumeLimit(uint aaVolumeLimit, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -417,6 +593,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkPreamp4BeginSetVolumeLimit(iHandle, aaVolumeLimit, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetVolumeLimit(uint aAsyncHandle)
         {
 			{
@@ -427,6 +608,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaVolumeLimit"></param>
         public unsafe void SyncVolumeLimit(out uint aaVolumeLimit)
         {
 			fixed (uint* aVolumeLimit = &aaVolumeLimit)
@@ -435,6 +622,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndVolumeLimit().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginVolumeLimit(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -442,6 +637,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkPreamp4BeginVolumeLimit(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaVolumeLimit"></param>
         public unsafe void EndVolumeLimit(uint aAsyncHandle, out uint aaVolumeLimit)
         {
 			fixed (uint* aVolumeLimit = &aaVolumeLimit)
@@ -453,6 +654,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaStartupVolume"></param>
         public unsafe void SyncSetStartupVolume(uint aaStartupVolume)
         {
 			{
@@ -460,6 +667,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetStartupVolume().</remarks>
+        /// <param name="aaStartupVolume"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetStartupVolume(uint aaStartupVolume, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -467,6 +683,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkPreamp4BeginSetStartupVolume(iHandle, aaStartupVolume, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetStartupVolume(uint aAsyncHandle)
         {
 			{
@@ -477,6 +698,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaStartupVolume"></param>
         public unsafe void SyncStartupVolume(out uint aaStartupVolume)
         {
 			fixed (uint* aStartupVolume = &aaStartupVolume)
@@ -485,6 +712,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndStartupVolume().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginStartupVolume(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -492,6 +727,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkPreamp4BeginStartupVolume(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaStartupVolume"></param>
         public unsafe void EndStartupVolume(uint aAsyncHandle, out uint aaStartupVolume)
         {
 			fixed (uint* aStartupVolume = &aaStartupVolume)
@@ -503,6 +744,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaStartupVolumeEnabled"></param>
         public unsafe void SyncSetStartupVolumeEnabled(bool aaStartupVolumeEnabled)
         {
 			uint aStartupVolumeEnabled = (aaStartupVolumeEnabled? 1u : 0u);
@@ -511,6 +758,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetStartupVolumeEnabled().</remarks>
+        /// <param name="aaStartupVolumeEnabled"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetStartupVolumeEnabled(bool aaStartupVolumeEnabled, CallbackAsyncComplete aCallback)
         {
 			uint aStartupVolumeEnabled = (aaStartupVolumeEnabled? 1u : 0u);
@@ -519,6 +775,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkPreamp4BeginSetStartupVolumeEnabled(iHandle, aStartupVolumeEnabled, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetStartupVolumeEnabled(uint aAsyncHandle)
         {
 			{
@@ -529,6 +790,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaStartupVolumeEnabled"></param>
         public unsafe void SyncStartupVolumeEnabled(out bool aaStartupVolumeEnabled)
         {
 			uint aStartupVolumeEnabled;
@@ -538,6 +805,14 @@ namespace Zapp.ControlPoint.Proxies
 			aaStartupVolumeEnabled = (aStartupVolumeEnabled != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndStartupVolumeEnabled().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginStartupVolumeEnabled(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -545,6 +820,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkPreamp4BeginStartupVolumeEnabled(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaStartupVolumeEnabled"></param>
         public unsafe void EndStartupVolumeEnabled(uint aAsyncHandle, out bool aaStartupVolumeEnabled)
         {
 			uint aStartupVolumeEnabled;
@@ -557,6 +838,12 @@ namespace Zapp.ControlPoint.Proxies
 			aaStartupVolumeEnabled = (aStartupVolumeEnabled != 0);
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the Volume state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkPreamp4 instance will not overlap.</remarks>
+        /// <param name="aVolumeChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVolumeChanged(CallbackPropertyChanged aVolumeChanged)
         {
             iVolumeChanged = aVolumeChanged;
@@ -572,6 +859,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iVolumeChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the Mute state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkPreamp4 instance will not overlap.</remarks>
+        /// <param name="aMuteChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyMuteChanged(CallbackPropertyChanged aMuteChanged)
         {
             iMuteChanged = aMuteChanged;
@@ -587,6 +880,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iMuteChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the Balance state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkPreamp4 instance will not overlap.</remarks>
+        /// <param name="aBalanceChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyBalanceChanged(CallbackPropertyChanged aBalanceChanged)
         {
             iBalanceChanged = aBalanceChanged;
@@ -602,6 +901,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iBalanceChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the VolumeLimit state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkPreamp4 instance will not overlap.</remarks>
+        /// <param name="aVolumeLimitChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVolumeLimitChanged(CallbackPropertyChanged aVolumeLimitChanged)
         {
             iVolumeLimitChanged = aVolumeLimitChanged;
@@ -617,6 +922,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iVolumeLimitChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the StartupVolume state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkPreamp4 instance will not overlap.</remarks>
+        /// <param name="aStartupVolumeChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyStartupVolumeChanged(CallbackPropertyChanged aStartupVolumeChanged)
         {
             iStartupVolumeChanged = aStartupVolumeChanged;
@@ -632,6 +943,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iStartupVolumeChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the StartupVolumeEnabled state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkPreamp4 instance will not overlap.</remarks>
+        /// <param name="aStartupVolumeEnabledChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyStartupVolumeEnabledChanged(CallbackPropertyChanged aStartupVolumeEnabledChanged)
         {
             iStartupVolumeEnabledChanged = aStartupVolumeEnabledChanged;
@@ -647,6 +964,13 @@ namespace Zapp.ControlPoint.Proxies
             self.iStartupVolumeEnabledChanged();
         }
 
+        /// <summary>
+        /// Query the value of the Volume property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aVolume">Will be set to the value of the property</param>
         public unsafe void PropertyVolume(out uint aVolume)
         {
 			fixed (uint* volume = &aVolume)
@@ -655,6 +979,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the Mute property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aMute">Will be set to the value of the property</param>
         public unsafe void PropertyMute(out bool aMute)
         {
 			uint mute;
@@ -662,6 +993,13 @@ namespace Zapp.ControlPoint.Proxies
 			aMute = (mute != 0);
         }
 
+        /// <summary>
+        /// Query the value of the Balance property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aBalance">Will be set to the value of the property</param>
         public unsafe void PropertyBalance(out int aBalance)
         {
 			fixed (int* balance = &aBalance)
@@ -670,6 +1008,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the VolumeLimit property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aVolumeLimit">Will be set to the value of the property</param>
         public unsafe void PropertyVolumeLimit(out uint aVolumeLimit)
         {
 			fixed (uint* volumeLimit = &aVolumeLimit)
@@ -678,6 +1023,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the StartupVolume property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aStartupVolume">Will be set to the value of the property</param>
         public unsafe void PropertyStartupVolume(out uint aStartupVolume)
         {
 			fixed (uint* startupVolume = &aStartupVolume)
@@ -686,6 +1038,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the StartupVolumeEnabled property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aStartupVolumeEnabled">Will be set to the value of the property</param>
         public unsafe void PropertyStartupVolumeEnabled(out bool aStartupVolumeEnabled)
         {
 			uint startupVolumeEnabled;
@@ -693,6 +1052,9 @@ namespace Zapp.ControlPoint.Proxies
 			aStartupVolumeEnabled = (startupVolumeEnabled != 0);
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);

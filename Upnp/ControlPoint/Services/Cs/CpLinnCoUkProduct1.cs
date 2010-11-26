@@ -73,12 +73,23 @@ namespace Zapp.ControlPoint.Proxies
         private Callback iCallbackRoomChanged;
         private Callback iCallbackStandbyChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkProduct1(CpDevice aDevice)
         {
             iHandle = CpProxyLinnCoUkProduct1Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaRoom"></param>
         public unsafe void SyncRoom(out string aaRoom)
         {
 			char* aRoom;
@@ -89,6 +100,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aRoom);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndRoom().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginRoom(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -96,6 +115,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct1BeginRoom(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaRoom"></param>
         public unsafe void EndRoom(uint aAsyncHandle, out string aaRoom)
         {
 			char* aRoom;
@@ -109,6 +134,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aRoom);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaRoom"></param>
         public unsafe void SyncSetRoom(string aaRoom)
         {
 			char* aRoom = (char*)Marshal.StringToHGlobalAnsi(aaRoom);
@@ -118,6 +149,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aRoom);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetRoom().</remarks>
+        /// <param name="aaRoom"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetRoom(string aaRoom, CallbackAsyncComplete aCallback)
         {
 			char* aRoom = (char*)Marshal.StringToHGlobalAnsi(aaRoom);
@@ -127,6 +167,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aRoom);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetRoom(uint aAsyncHandle)
         {
 			{
@@ -137,6 +182,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaStandby"></param>
         public unsafe void SyncStandby(out bool aaStandby)
         {
 			uint aStandby;
@@ -146,6 +197,14 @@ namespace Zapp.ControlPoint.Proxies
 			aaStandby = (aStandby != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndStandby().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginStandby(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -153,6 +212,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct1BeginStandby(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaStandby"></param>
         public unsafe void EndStandby(uint aAsyncHandle, out bool aaStandby)
         {
 			uint aStandby;
@@ -165,6 +230,12 @@ namespace Zapp.ControlPoint.Proxies
 			aaStandby = (aStandby != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaStandby"></param>
         public unsafe void SyncSetStandby(bool aaStandby)
         {
 			uint aStandby = (aaStandby? 1u : 0u);
@@ -173,6 +244,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetStandby().</remarks>
+        /// <param name="aaStandby"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetStandby(bool aaStandby, CallbackAsyncComplete aCallback)
         {
 			uint aStandby = (aaStandby? 1u : 0u);
@@ -181,6 +261,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkProduct1BeginSetStandby(iHandle, aStandby, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetStandby(uint aAsyncHandle)
         {
 			{
@@ -191,6 +276,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the Room state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkProduct1 instance will not overlap.</remarks>
+        /// <param name="aRoomChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyRoomChanged(CallbackPropertyChanged aRoomChanged)
         {
             iRoomChanged = aRoomChanged;
@@ -206,6 +297,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iRoomChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the Standby state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkProduct1 instance will not overlap.</remarks>
+        /// <param name="aStandbyChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyStandbyChanged(CallbackPropertyChanged aStandbyChanged)
         {
             iStandbyChanged = aStandbyChanged;
@@ -221,6 +318,13 @@ namespace Zapp.ControlPoint.Proxies
             self.iStandbyChanged();
         }
 
+        /// <summary>
+        /// Query the value of the Room property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aRoom">Will be set to the value of the property</param>
         public unsafe void PropertyRoom(out string aRoom)
         {
 			char* ptr;
@@ -229,6 +333,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the Standby property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aStandby">Will be set to the value of the property</param>
         public unsafe void PropertyStandby(out bool aStandby)
         {
 			uint standby;
@@ -236,6 +347,9 @@ namespace Zapp.ControlPoint.Proxies
 			aStandby = (standby != 0);
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);

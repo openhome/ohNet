@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the linn.co.uk:Playlist:1 UPnP service
+    /// </summary>
     public class DvProviderLinnCoUkPlaylist1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkPlaylist1")]
@@ -81,15 +84,24 @@ namespace Zapp.Device.Providers
         private CallbackIdArray iCallbackIdArray;
         private CallbackIdArrayChanged iCallbackIdArrayChanged;
 
-        public DvProviderLinnCoUkPlaylist1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderLinnCoUkPlaylist1(DvDevice aDevice)
         {
             iHandle = DvProviderLinnCoUkPlaylist1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Set the value of the IdArray property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyIdArray(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int valueLen = aValue.Length;
             int err = DvProviderLinnCoUkPlaylist1SetPropertyIdArray(iHandle, value, valueLen, &changed);
@@ -101,6 +113,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the IdArray property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyIdArray(out string aValue)
         {
             char* value;
@@ -110,9 +126,14 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Set the value of the Repeat property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyRepeat(bool aValue)
         {
-        uint changed;
+            uint changed;
             int value = (aValue ? 1 : 0);
             if (0 != DvProviderLinnCoUkPlaylist1SetPropertyRepeat(iHandle, value, &changed))
             {
@@ -121,6 +142,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the Repeat property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyRepeat(out bool aValue)
         {
             int value;
@@ -128,9 +153,14 @@ namespace Zapp.Device.Providers
             aValue = (value != 0);
         }
 
+        /// <summary>
+        /// Set the value of the Shuffle property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyShuffle(bool aValue)
         {
-        uint changed;
+            uint changed;
             int value = (aValue ? 1 : 0);
             if (0 != DvProviderLinnCoUkPlaylist1SetPropertyShuffle(iHandle, value, &changed))
             {
@@ -139,6 +169,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the Shuffle property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyShuffle(out bool aValue)
         {
             int value;
@@ -146,9 +180,14 @@ namespace Zapp.Device.Providers
             aValue = (value != 0);
         }
 
+        /// <summary>
+        /// Set the value of the TracksMax property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyTracksMax(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkPlaylist1SetPropertyTracksMax(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -156,6 +195,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the TracksMax property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyTracksMax(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -164,6 +207,11 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Signal that the action Read is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoRead must be overridden if this is called.</remarks>
         protected unsafe void EnableActionRead()
         {
             iCallbackRead = new CallbackRead(DoRead);
@@ -171,6 +219,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPlaylist1EnableActionRead(iHandle, iCallbackRead, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action ReadList is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoReadList must be overridden if this is called.</remarks>
         protected unsafe void EnableActionReadList()
         {
             iCallbackReadList = new CallbackReadList(DoReadList);
@@ -178,6 +231,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPlaylist1EnableActionReadList(iHandle, iCallbackReadList, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Insert is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoInsert must be overridden if this is called.</remarks>
         protected unsafe void EnableActionInsert()
         {
             iCallbackInsert = new CallbackInsert(DoInsert);
@@ -185,6 +243,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPlaylist1EnableActionInsert(iHandle, iCallbackInsert, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Delete is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDelete must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDelete()
         {
             iCallbackDelete = new CallbackDelete(DoDelete);
@@ -192,6 +255,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPlaylist1EnableActionDelete(iHandle, iCallbackDelete, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DeleteAll is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDeleteAll must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDeleteAll()
         {
             iCallbackDeleteAll = new CallbackDeleteAll(DoDeleteAll);
@@ -199,6 +267,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPlaylist1EnableActionDeleteAll(iHandle, iCallbackDeleteAll, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetRepeat is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetRepeat must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetRepeat()
         {
             iCallbackSetRepeat = new CallbackSetRepeat(DoSetRepeat);
@@ -206,6 +279,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPlaylist1EnableActionSetRepeat(iHandle, iCallbackSetRepeat, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Repeat is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoRepeat must be overridden if this is called.</remarks>
         protected unsafe void EnableActionRepeat()
         {
             iCallbackRepeat = new CallbackRepeat(DoRepeat);
@@ -213,6 +291,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPlaylist1EnableActionRepeat(iHandle, iCallbackRepeat, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetShuffle is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetShuffle must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetShuffle()
         {
             iCallbackSetShuffle = new CallbackSetShuffle(DoSetShuffle);
@@ -220,6 +303,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPlaylist1EnableActionSetShuffle(iHandle, iCallbackSetShuffle, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Shuffle is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoShuffle must be overridden if this is called.</remarks>
         protected unsafe void EnableActionShuffle()
         {
             iCallbackShuffle = new CallbackShuffle(DoShuffle);
@@ -227,6 +315,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPlaylist1EnableActionShuffle(iHandle, iCallbackShuffle, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action TracksMax is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoTracksMax must be overridden if this is called.</remarks>
         protected unsafe void EnableActionTracksMax()
         {
             iCallbackTracksMax = new CallbackTracksMax(DoTracksMax);
@@ -234,6 +327,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPlaylist1EnableActionTracksMax(iHandle, iCallbackTracksMax, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action IdArray is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoIdArray must be overridden if this is called.</remarks>
         protected unsafe void EnableActionIdArray()
         {
             iCallbackIdArray = new CallbackIdArray(DoIdArray);
@@ -241,6 +339,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPlaylist1EnableActionIdArray(iHandle, iCallbackIdArray, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action IdArrayChanged is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoIdArrayChanged must be overridden if this is called.</remarks>
         protected unsafe void EnableActionIdArrayChanged()
         {
             iCallbackIdArrayChanged = new CallbackIdArrayChanged(DoIdArrayChanged);
@@ -248,61 +351,176 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkPlaylist1EnableActionIdArrayChanged(iHandle, iCallbackIdArrayChanged, ptr);
         }
 
+        /// <summary>
+        /// Read action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Read action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionRead was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaId"></param>
+        /// <param name="aaUri"></param>
+        /// <param name="aaMetaData"></param>
         protected virtual void Read(uint aVersion, uint aaId, out string aaUri, out string aaMetaData)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// ReadList action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// ReadList action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionReadList was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaIdList"></param>
+        /// <param name="aaMetaDataList"></param>
         protected virtual void ReadList(uint aVersion, string aaIdList, out string aaMetaDataList)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Insert action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Insert action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionInsert was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaAfterId"></param>
+        /// <param name="aaUri"></param>
+        /// <param name="aaMetaData"></param>
+        /// <param name="aaNewId"></param>
         protected virtual void Insert(uint aVersion, uint aaAfterId, string aaUri, string aaMetaData, out uint aaNewId)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Delete action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Delete action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDelete was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaId"></param>
         protected virtual void Delete(uint aVersion, uint aaId)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DeleteAll action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DeleteAll action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDeleteAll was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void DeleteAll(uint aVersion)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetRepeat action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetRepeat action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetRepeat was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaRepeat"></param>
         protected virtual void SetRepeat(uint aVersion, bool aaRepeat)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Repeat action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Repeat action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionRepeat was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaRepeat"></param>
         protected virtual void Repeat(uint aVersion, out bool aaRepeat)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetShuffle action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetShuffle action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetShuffle was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaShuffle"></param>
         protected virtual void SetShuffle(uint aVersion, bool aaShuffle)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Shuffle action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Shuffle action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionShuffle was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaShuffle"></param>
         protected virtual void Shuffle(uint aVersion, out bool aaShuffle)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// TracksMax action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// TracksMax action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionTracksMax was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaTracksMax"></param>
         protected virtual void TracksMax(uint aVersion, out uint aaTracksMax)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// IdArray action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// IdArray action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionIdArray was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaIdArrayToken"></param>
+        /// <param name="aaIdArray"></param>
         protected virtual void IdArray(uint aVersion, out uint aaIdArrayToken, out string aaIdArray)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// IdArrayChanged action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// IdArrayChanged action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionIdArrayChanged was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaIdArrayToken"></param>
+        /// <param name="aaIdArrayChanged"></param>
         protected virtual void IdArrayChanged(uint aVersion, uint aaIdArrayToken, out bool aaIdArrayChanged)
         {
             throw (new ActionDisabledError());
@@ -430,7 +648,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

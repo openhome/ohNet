@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the linn.co.uk:ProxyManager:1 UPnP service
+    /// </summary>
     public class DvProviderLinnCoUkProxyManager1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkProxyManager1")]
@@ -73,15 +76,24 @@ namespace Zapp.Device.Providers
         private CallbackTestKontrolProductConnection iCallbackTestKontrolProductConnection;
         private CallbackTestDiscPlayerConnection iCallbackTestDiscPlayerConnection;
 
-        public DvProviderLinnCoUkProxyManager1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderLinnCoUkProxyManager1(DvDevice aDevice)
         {
             iHandle = DvProviderLinnCoUkProxyManager1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Set the value of the KontrolProductConnected property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyKontrolProductConnected(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderLinnCoUkProxyManager1SetPropertyKontrolProductConnected(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -92,6 +104,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the KontrolProductConnected property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyKontrolProductConnected(out string aValue)
         {
             char* value;
@@ -100,9 +116,14 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Set the value of the KontrolProductComPort property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyKontrolProductComPort(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkProxyManager1SetPropertyKontrolProductComPort(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -110,6 +131,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the KontrolProductComPort property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyKontrolProductComPort(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -118,9 +143,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the DiscPlayerConnected property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyDiscPlayerConnected(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderLinnCoUkProxyManager1SetPropertyDiscPlayerConnected(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -131,6 +161,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the DiscPlayerConnected property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyDiscPlayerConnected(out string aValue)
         {
             char* value;
@@ -139,9 +173,14 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Set the value of the DiscPlayerComPort property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyDiscPlayerComPort(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkProxyManager1SetPropertyDiscPlayerComPort(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -149,6 +188,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the DiscPlayerComPort property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyDiscPlayerComPort(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -157,6 +200,11 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Signal that the action KontrolProductConnected is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoKontrolProductConnected must be overridden if this is called.</remarks>
         protected unsafe void EnableActionKontrolProductConnected()
         {
             iCallbackKontrolProductConnected = new CallbackKontrolProductConnected(DoKontrolProductConnected);
@@ -164,6 +212,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProxyManager1EnableActionKontrolProductConnected(iHandle, iCallbackKontrolProductConnected, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetKontrolProductConnected is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetKontrolProductConnected must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetKontrolProductConnected()
         {
             iCallbackSetKontrolProductConnected = new CallbackSetKontrolProductConnected(DoSetKontrolProductConnected);
@@ -171,6 +224,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProxyManager1EnableActionSetKontrolProductConnected(iHandle, iCallbackSetKontrolProductConnected, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action KontrolProductComPort is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoKontrolProductComPort must be overridden if this is called.</remarks>
         protected unsafe void EnableActionKontrolProductComPort()
         {
             iCallbackKontrolProductComPort = new CallbackKontrolProductComPort(DoKontrolProductComPort);
@@ -178,6 +236,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProxyManager1EnableActionKontrolProductComPort(iHandle, iCallbackKontrolProductComPort, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetKontrolProductComPort is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetKontrolProductComPort must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetKontrolProductComPort()
         {
             iCallbackSetKontrolProductComPort = new CallbackSetKontrolProductComPort(DoSetKontrolProductComPort);
@@ -185,6 +248,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProxyManager1EnableActionSetKontrolProductComPort(iHandle, iCallbackSetKontrolProductComPort, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DiscPlayerConnected is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDiscPlayerConnected must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDiscPlayerConnected()
         {
             iCallbackDiscPlayerConnected = new CallbackDiscPlayerConnected(DoDiscPlayerConnected);
@@ -192,6 +260,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProxyManager1EnableActionDiscPlayerConnected(iHandle, iCallbackDiscPlayerConnected, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetDiscPlayerConnected is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetDiscPlayerConnected must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetDiscPlayerConnected()
         {
             iCallbackSetDiscPlayerConnected = new CallbackSetDiscPlayerConnected(DoSetDiscPlayerConnected);
@@ -199,6 +272,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProxyManager1EnableActionSetDiscPlayerConnected(iHandle, iCallbackSetDiscPlayerConnected, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DiscPlayerComPort is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDiscPlayerComPort must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDiscPlayerComPort()
         {
             iCallbackDiscPlayerComPort = new CallbackDiscPlayerComPort(DoDiscPlayerComPort);
@@ -206,6 +284,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProxyManager1EnableActionDiscPlayerComPort(iHandle, iCallbackDiscPlayerComPort, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetDiscPlayerComPort is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetDiscPlayerComPort must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetDiscPlayerComPort()
         {
             iCallbackSetDiscPlayerComPort = new CallbackSetDiscPlayerComPort(DoSetDiscPlayerComPort);
@@ -213,6 +296,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProxyManager1EnableActionSetDiscPlayerComPort(iHandle, iCallbackSetDiscPlayerComPort, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action TestKontrolProductConnection is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoTestKontrolProductConnection must be overridden if this is called.</remarks>
         protected unsafe void EnableActionTestKontrolProductConnection()
         {
             iCallbackTestKontrolProductConnection = new CallbackTestKontrolProductConnection(DoTestKontrolProductConnection);
@@ -220,6 +308,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProxyManager1EnableActionTestKontrolProductConnection(iHandle, iCallbackTestKontrolProductConnection, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action TestDiscPlayerConnection is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoTestDiscPlayerConnection must be overridden if this is called.</remarks>
         protected unsafe void EnableActionTestDiscPlayerConnection()
         {
             iCallbackTestDiscPlayerConnection = new CallbackTestDiscPlayerConnection(DoTestDiscPlayerConnection);
@@ -227,51 +320,141 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProxyManager1EnableActionTestDiscPlayerConnection(iHandle, iCallbackTestDiscPlayerConnection, ptr);
         }
 
+        /// <summary>
+        /// KontrolProductConnected action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// KontrolProductConnected action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionKontrolProductConnected was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaConnected"></param>
         protected virtual void KontrolProductConnected(uint aVersion, out string aaConnected)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetKontrolProductConnected action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetKontrolProductConnected action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetKontrolProductConnected was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaConnected"></param>
         protected virtual void SetKontrolProductConnected(uint aVersion, string aaConnected)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// KontrolProductComPort action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// KontrolProductComPort action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionKontrolProductComPort was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaPort"></param>
         protected virtual void KontrolProductComPort(uint aVersion, out uint aaPort)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetKontrolProductComPort action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetKontrolProductComPort action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetKontrolProductComPort was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaConnected"></param>
         protected virtual void SetKontrolProductComPort(uint aVersion, uint aaConnected)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DiscPlayerConnected action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DiscPlayerConnected action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDiscPlayerConnected was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaConnected"></param>
         protected virtual void DiscPlayerConnected(uint aVersion, out string aaConnected)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetDiscPlayerConnected action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetDiscPlayerConnected action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetDiscPlayerConnected was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaConnected"></param>
         protected virtual void SetDiscPlayerConnected(uint aVersion, string aaConnected)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DiscPlayerComPort action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DiscPlayerComPort action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDiscPlayerComPort was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaPort"></param>
         protected virtual void DiscPlayerComPort(uint aVersion, out uint aaPort)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetDiscPlayerComPort action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetDiscPlayerComPort action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetDiscPlayerComPort was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaConnected"></param>
         protected virtual void SetDiscPlayerComPort(uint aVersion, uint aaConnected)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// TestKontrolProductConnection action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// TestKontrolProductConnection action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionTestKontrolProductConnection was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaResult"></param>
         protected virtual void TestKontrolProductConnection(uint aVersion, out bool aaResult)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// TestDiscPlayerConnection action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// TestDiscPlayerConnection action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionTestDiscPlayerConnection was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaResult"></param>
         protected virtual void TestDiscPlayerConnection(uint aVersion, out bool aaResult)
         {
             throw (new ActionDisabledError());
@@ -371,7 +554,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

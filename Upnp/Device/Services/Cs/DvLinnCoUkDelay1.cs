@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the linn.co.uk:Delay:1 UPnP service
+    /// </summary>
     public class DvProviderLinnCoUkDelay1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkDelay1")]
@@ -61,15 +64,24 @@ namespace Zapp.Device.Providers
         private CallbackDelayMaximum iCallbackDelayMaximum;
         private CallbackPresetCount iCallbackPresetCount;
 
-        public DvProviderLinnCoUkDelay1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderLinnCoUkDelay1(DvDevice aDevice)
         {
             iHandle = DvProviderLinnCoUkDelay1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Set the value of the PresetXml property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyPresetXml(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderLinnCoUkDelay1SetPropertyPresetXml(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -80,6 +92,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the PresetXml property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyPresetXml(out string aValue)
         {
             char* value;
@@ -88,9 +104,14 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Set the value of the PresetIndex property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyPresetIndex(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkDelay1SetPropertyPresetIndex(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -98,6 +119,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the PresetIndex property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyPresetIndex(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -106,6 +131,11 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Signal that the action PresetXml is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoPresetXml must be overridden if this is called.</remarks>
         protected unsafe void EnableActionPresetXml()
         {
             iCallbackPresetXml = new CallbackPresetXml(DoPresetXml);
@@ -113,6 +143,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDelay1EnableActionPresetXml(iHandle, iCallbackPresetXml, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action PresetIndex is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoPresetIndex must be overridden if this is called.</remarks>
         protected unsafe void EnableActionPresetIndex()
         {
             iCallbackPresetIndex = new CallbackPresetIndex(DoPresetIndex);
@@ -120,6 +155,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDelay1EnableActionPresetIndex(iHandle, iCallbackPresetIndex, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetPresetIndex is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetPresetIndex must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetPresetIndex()
         {
             iCallbackSetPresetIndex = new CallbackSetPresetIndex(DoSetPresetIndex);
@@ -127,6 +167,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDelay1EnableActionSetPresetIndex(iHandle, iCallbackSetPresetIndex, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetPresetDelay is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetPresetDelay must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetPresetDelay()
         {
             iCallbackSetPresetDelay = new CallbackSetPresetDelay(DoSetPresetDelay);
@@ -134,6 +179,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDelay1EnableActionSetPresetDelay(iHandle, iCallbackSetPresetDelay, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetPresetVisible is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetPresetVisible must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetPresetVisible()
         {
             iCallbackSetPresetVisible = new CallbackSetPresetVisible(DoSetPresetVisible);
@@ -141,6 +191,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDelay1EnableActionSetPresetVisible(iHandle, iCallbackSetPresetVisible, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetPresetName is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetPresetName must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetPresetName()
         {
             iCallbackSetPresetName = new CallbackSetPresetName(DoSetPresetName);
@@ -148,6 +203,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDelay1EnableActionSetPresetName(iHandle, iCallbackSetPresetName, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DelayMinimum is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDelayMinimum must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDelayMinimum()
         {
             iCallbackDelayMinimum = new CallbackDelayMinimum(DoDelayMinimum);
@@ -155,6 +215,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDelay1EnableActionDelayMinimum(iHandle, iCallbackDelayMinimum, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DelayMaximum is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDelayMaximum must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDelayMaximum()
         {
             iCallbackDelayMaximum = new CallbackDelayMaximum(DoDelayMaximum);
@@ -162,6 +227,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDelay1EnableActionDelayMaximum(iHandle, iCallbackDelayMaximum, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action PresetCount is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoPresetCount must be overridden if this is called.</remarks>
         protected unsafe void EnableActionPresetCount()
         {
             iCallbackPresetCount = new CallbackPresetCount(DoPresetCount);
@@ -169,46 +239,130 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDelay1EnableActionPresetCount(iHandle, iCallbackPresetCount, ptr);
         }
 
+        /// <summary>
+        /// PresetXml action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// PresetXml action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionPresetXml was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaPresetXml"></param>
         protected virtual void PresetXml(uint aVersion, out string aaPresetXml)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// PresetIndex action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// PresetIndex action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionPresetIndex was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaIndex"></param>
         protected virtual void PresetIndex(uint aVersion, out uint aaIndex)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetPresetIndex action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetPresetIndex action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetPresetIndex was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaIndex"></param>
         protected virtual void SetPresetIndex(uint aVersion, uint aaIndex)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetPresetDelay action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetPresetDelay action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetPresetDelay was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaIndex"></param>
+        /// <param name="aaDelay"></param>
         protected virtual void SetPresetDelay(uint aVersion, uint aaIndex, uint aaDelay)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetPresetVisible action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetPresetVisible action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetPresetVisible was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaIndex"></param>
+        /// <param name="aaVisible"></param>
         protected virtual void SetPresetVisible(uint aVersion, uint aaIndex, bool aaVisible)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetPresetName action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetPresetName action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetPresetName was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaIndex"></param>
+        /// <param name="aaName"></param>
         protected virtual void SetPresetName(uint aVersion, uint aaIndex, string aaName)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DelayMinimum action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DelayMinimum action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDelayMinimum was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaDelay"></param>
         protected virtual void DelayMinimum(uint aVersion, out uint aaDelay)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DelayMaximum action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DelayMaximum action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDelayMaximum was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaDelay"></param>
         protected virtual void DelayMaximum(uint aVersion, out uint aaDelay)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// PresetCount action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// PresetCount action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionPresetCount was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaCount"></param>
         protected virtual void PresetCount(uint aVersion, out uint aaCount)
         {
             throw (new ActionDisabledError());
@@ -298,7 +452,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

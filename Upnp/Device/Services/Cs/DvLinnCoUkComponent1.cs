@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the linn.co.uk:Component:1 UPnP service
+    /// </summary>
     public class DvProviderLinnCoUkComponent1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkComponent1")]
@@ -77,15 +80,24 @@ namespace Zapp.Device.Providers
         private CallbackEthernetLinkConnected iCallbackEthernetLinkConnected;
         private CallbackLocate iCallbackLocate;
 
-        public DvProviderLinnCoUkComponent1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderLinnCoUkComponent1(DvDevice aDevice)
         {
             iHandle = DvProviderLinnCoUkComponent1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Set the value of the AmplifierEnabled property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyAmplifierEnabled(bool aValue)
         {
-        uint changed;
+            uint changed;
             int value = (aValue ? 1 : 0);
             if (0 != DvProviderLinnCoUkComponent1SetPropertyAmplifierEnabled(iHandle, value, &changed))
             {
@@ -94,6 +106,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the AmplifierEnabled property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyAmplifierEnabled(out bool aValue)
         {
             int value;
@@ -101,9 +117,14 @@ namespace Zapp.Device.Providers
             aValue = (value != 0);
         }
 
+        /// <summary>
+        /// Set the value of the AmplifierAttenuation property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyAmplifierAttenuation(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderLinnCoUkComponent1SetPropertyAmplifierAttenuation(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -114,6 +135,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the AmplifierAttenuation property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyAmplifierAttenuation(out string aValue)
         {
             char* value;
@@ -122,9 +147,14 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Set the value of the VolumeControlEnabled property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyVolumeControlEnabled(bool aValue)
         {
-        uint changed;
+            uint changed;
             int value = (aValue ? 1 : 0);
             if (0 != DvProviderLinnCoUkComponent1SetPropertyVolumeControlEnabled(iHandle, value, &changed))
             {
@@ -133,6 +163,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the VolumeControlEnabled property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyVolumeControlEnabled(out bool aValue)
         {
             int value;
@@ -140,9 +174,14 @@ namespace Zapp.Device.Providers
             aValue = (value != 0);
         }
 
+        /// <summary>
+        /// Set the value of the DigitalAudioOutputRaw property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyDigitalAudioOutputRaw(bool aValue)
         {
-        uint changed;
+            uint changed;
             int value = (aValue ? 1 : 0);
             if (0 != DvProviderLinnCoUkComponent1SetPropertyDigitalAudioOutputRaw(iHandle, value, &changed))
             {
@@ -151,6 +190,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the DigitalAudioOutputRaw property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyDigitalAudioOutputRaw(out bool aValue)
         {
             int value;
@@ -158,6 +201,11 @@ namespace Zapp.Device.Providers
             aValue = (value != 0);
         }
 
+        /// <summary>
+        /// Signal that the action AmplifierEnabled is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoAmplifierEnabled must be overridden if this is called.</remarks>
         protected unsafe void EnableActionAmplifierEnabled()
         {
             iCallbackAmplifierEnabled = new CallbackAmplifierEnabled(DoAmplifierEnabled);
@@ -165,6 +213,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkComponent1EnableActionAmplifierEnabled(iHandle, iCallbackAmplifierEnabled, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetAmplifierEnabled is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetAmplifierEnabled must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetAmplifierEnabled()
         {
             iCallbackSetAmplifierEnabled = new CallbackSetAmplifierEnabled(DoSetAmplifierEnabled);
@@ -172,6 +225,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkComponent1EnableActionSetAmplifierEnabled(iHandle, iCallbackSetAmplifierEnabled, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action AmplifierAttenuation is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoAmplifierAttenuation must be overridden if this is called.</remarks>
         protected unsafe void EnableActionAmplifierAttenuation()
         {
             iCallbackAmplifierAttenuation = new CallbackAmplifierAttenuation(DoAmplifierAttenuation);
@@ -179,6 +237,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkComponent1EnableActionAmplifierAttenuation(iHandle, iCallbackAmplifierAttenuation, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetAmplifierAttenuation is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetAmplifierAttenuation must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetAmplifierAttenuation()
         {
             iCallbackSetAmplifierAttenuation = new CallbackSetAmplifierAttenuation(DoSetAmplifierAttenuation);
@@ -186,6 +249,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkComponent1EnableActionSetAmplifierAttenuation(iHandle, iCallbackSetAmplifierAttenuation, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetVolumeControlEnabled is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetVolumeControlEnabled must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetVolumeControlEnabled()
         {
             iCallbackSetVolumeControlEnabled = new CallbackSetVolumeControlEnabled(DoSetVolumeControlEnabled);
@@ -193,6 +261,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkComponent1EnableActionSetVolumeControlEnabled(iHandle, iCallbackSetVolumeControlEnabled, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action VolumeControlEnabled is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoVolumeControlEnabled must be overridden if this is called.</remarks>
         protected unsafe void EnableActionVolumeControlEnabled()
         {
             iCallbackVolumeControlEnabled = new CallbackVolumeControlEnabled(DoVolumeControlEnabled);
@@ -200,6 +273,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkComponent1EnableActionVolumeControlEnabled(iHandle, iCallbackVolumeControlEnabled, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetDigitalAudioOutputRaw is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetDigitalAudioOutputRaw must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetDigitalAudioOutputRaw()
         {
             iCallbackSetDigitalAudioOutputRaw = new CallbackSetDigitalAudioOutputRaw(DoSetDigitalAudioOutputRaw);
@@ -207,6 +285,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkComponent1EnableActionSetDigitalAudioOutputRaw(iHandle, iCallbackSetDigitalAudioOutputRaw, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DigitalAudioOutputRaw is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDigitalAudioOutputRaw must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDigitalAudioOutputRaw()
         {
             iCallbackDigitalAudioOutputRaw = new CallbackDigitalAudioOutputRaw(DoDigitalAudioOutputRaw);
@@ -214,6 +297,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkComponent1EnableActionDigitalAudioOutputRaw(iHandle, iCallbackDigitalAudioOutputRaw, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action AmplifierOverTemperature is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoAmplifierOverTemperature must be overridden if this is called.</remarks>
         protected unsafe void EnableActionAmplifierOverTemperature()
         {
             iCallbackAmplifierOverTemperature = new CallbackAmplifierOverTemperature(DoAmplifierOverTemperature);
@@ -221,6 +309,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkComponent1EnableActionAmplifierOverTemperature(iHandle, iCallbackAmplifierOverTemperature, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action EthernetLinkConnected is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoEthernetLinkConnected must be overridden if this is called.</remarks>
         protected unsafe void EnableActionEthernetLinkConnected()
         {
             iCallbackEthernetLinkConnected = new CallbackEthernetLinkConnected(DoEthernetLinkConnected);
@@ -228,6 +321,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkComponent1EnableActionEthernetLinkConnected(iHandle, iCallbackEthernetLinkConnected, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Locate is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoLocate must be overridden if this is called.</remarks>
         protected unsafe void EnableActionLocate()
         {
             iCallbackLocate = new CallbackLocate(DoLocate);
@@ -235,56 +333,154 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkComponent1EnableActionLocate(iHandle, iCallbackLocate, ptr);
         }
 
+        /// <summary>
+        /// AmplifierEnabled action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// AmplifierEnabled action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionAmplifierEnabled was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaEnabled"></param>
         protected virtual void AmplifierEnabled(uint aVersion, out bool aaEnabled)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetAmplifierEnabled action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetAmplifierEnabled action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetAmplifierEnabled was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaEnabled"></param>
         protected virtual void SetAmplifierEnabled(uint aVersion, bool aaEnabled)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// AmplifierAttenuation action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// AmplifierAttenuation action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionAmplifierAttenuation was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaAttenuation"></param>
         protected virtual void AmplifierAttenuation(uint aVersion, out string aaAttenuation)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetAmplifierAttenuation action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetAmplifierAttenuation action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetAmplifierAttenuation was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaAttenuation"></param>
         protected virtual void SetAmplifierAttenuation(uint aVersion, string aaAttenuation)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetVolumeControlEnabled action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetVolumeControlEnabled action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetVolumeControlEnabled was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaEnabled"></param>
         protected virtual void SetVolumeControlEnabled(uint aVersion, bool aaEnabled)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// VolumeControlEnabled action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// VolumeControlEnabled action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionVolumeControlEnabled was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaEnabled"></param>
         protected virtual void VolumeControlEnabled(uint aVersion, out bool aaEnabled)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetDigitalAudioOutputRaw action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetDigitalAudioOutputRaw action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetDigitalAudioOutputRaw was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaRaw"></param>
         protected virtual void SetDigitalAudioOutputRaw(uint aVersion, bool aaRaw)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DigitalAudioOutputRaw action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DigitalAudioOutputRaw action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDigitalAudioOutputRaw was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaRaw"></param>
         protected virtual void DigitalAudioOutputRaw(uint aVersion, out bool aaRaw)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// AmplifierOverTemperature action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// AmplifierOverTemperature action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionAmplifierOverTemperature was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaOverTemperature"></param>
         protected virtual void AmplifierOverTemperature(uint aVersion, out bool aaOverTemperature)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// EthernetLinkConnected action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// EthernetLinkConnected action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionEthernetLinkConnected was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaLinkConnected"></param>
         protected virtual void EthernetLinkConnected(uint aVersion, out bool aaLinkConnected)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Locate action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Locate action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionLocate was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void Locate(uint aVersion)
         {
             throw (new ActionDisabledError());
@@ -394,7 +590,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the upnp.org:RenderingControl:2 UPnP service
+    /// </summary>
     public class DvProviderUpnpOrgRenderingControl2 : DvProvider, IDisposable
     {
         [DllImport("DvUpnpOrgRenderingControl2")]
@@ -169,15 +172,24 @@ namespace Zapp.Device.Providers
         private CallbackGetStateVariables iCallbackGetStateVariables;
         private CallbackSetStateVariables iCallbackSetStateVariables;
 
-        public DvProviderUpnpOrgRenderingControl2(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderUpnpOrgRenderingControl2(DvDevice aDevice)
         {
             iHandle = DvProviderUpnpOrgRenderingControl2Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Set the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyLastChange(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderUpnpOrgRenderingControl2SetPropertyLastChange(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -188,6 +200,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyLastChange(out string aValue)
         {
             char* value;
@@ -196,6 +212,11 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Signal that the action ListPresets is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoListPresets must be overridden if this is called.</remarks>
         protected unsafe void EnableActionListPresets()
         {
             iCallbackListPresets = new CallbackListPresets(DoListPresets);
@@ -203,6 +224,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionListPresets(iHandle, iCallbackListPresets, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SelectPreset is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSelectPreset must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSelectPreset()
         {
             iCallbackSelectPreset = new CallbackSelectPreset(DoSelectPreset);
@@ -210,6 +236,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionSelectPreset(iHandle, iCallbackSelectPreset, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetBrightness is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetBrightness must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetBrightness()
         {
             iCallbackGetBrightness = new CallbackGetBrightness(DoGetBrightness);
@@ -217,6 +248,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionGetBrightness(iHandle, iCallbackGetBrightness, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetBrightness is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetBrightness must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetBrightness()
         {
             iCallbackSetBrightness = new CallbackSetBrightness(DoSetBrightness);
@@ -224,6 +260,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionSetBrightness(iHandle, iCallbackSetBrightness, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetContrast is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetContrast must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetContrast()
         {
             iCallbackGetContrast = new CallbackGetContrast(DoGetContrast);
@@ -231,6 +272,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionGetContrast(iHandle, iCallbackGetContrast, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetContrast is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetContrast must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetContrast()
         {
             iCallbackSetContrast = new CallbackSetContrast(DoSetContrast);
@@ -238,6 +284,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionSetContrast(iHandle, iCallbackSetContrast, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetSharpness is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetSharpness must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetSharpness()
         {
             iCallbackGetSharpness = new CallbackGetSharpness(DoGetSharpness);
@@ -245,6 +296,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionGetSharpness(iHandle, iCallbackGetSharpness, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetSharpness is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetSharpness must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetSharpness()
         {
             iCallbackSetSharpness = new CallbackSetSharpness(DoSetSharpness);
@@ -252,6 +308,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionSetSharpness(iHandle, iCallbackSetSharpness, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetRedVideoGain is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetRedVideoGain must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetRedVideoGain()
         {
             iCallbackGetRedVideoGain = new CallbackGetRedVideoGain(DoGetRedVideoGain);
@@ -259,6 +320,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionGetRedVideoGain(iHandle, iCallbackGetRedVideoGain, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetRedVideoGain is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetRedVideoGain must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetRedVideoGain()
         {
             iCallbackSetRedVideoGain = new CallbackSetRedVideoGain(DoSetRedVideoGain);
@@ -266,6 +332,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionSetRedVideoGain(iHandle, iCallbackSetRedVideoGain, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetGreenVideoGain is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetGreenVideoGain must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetGreenVideoGain()
         {
             iCallbackGetGreenVideoGain = new CallbackGetGreenVideoGain(DoGetGreenVideoGain);
@@ -273,6 +344,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionGetGreenVideoGain(iHandle, iCallbackGetGreenVideoGain, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetGreenVideoGain is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetGreenVideoGain must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetGreenVideoGain()
         {
             iCallbackSetGreenVideoGain = new CallbackSetGreenVideoGain(DoSetGreenVideoGain);
@@ -280,6 +356,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionSetGreenVideoGain(iHandle, iCallbackSetGreenVideoGain, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetBlueVideoGain is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetBlueVideoGain must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetBlueVideoGain()
         {
             iCallbackGetBlueVideoGain = new CallbackGetBlueVideoGain(DoGetBlueVideoGain);
@@ -287,6 +368,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionGetBlueVideoGain(iHandle, iCallbackGetBlueVideoGain, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetBlueVideoGain is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetBlueVideoGain must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetBlueVideoGain()
         {
             iCallbackSetBlueVideoGain = new CallbackSetBlueVideoGain(DoSetBlueVideoGain);
@@ -294,6 +380,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionSetBlueVideoGain(iHandle, iCallbackSetBlueVideoGain, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetRedVideoBlackLevel is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetRedVideoBlackLevel must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetRedVideoBlackLevel()
         {
             iCallbackGetRedVideoBlackLevel = new CallbackGetRedVideoBlackLevel(DoGetRedVideoBlackLevel);
@@ -301,6 +392,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionGetRedVideoBlackLevel(iHandle, iCallbackGetRedVideoBlackLevel, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetRedVideoBlackLevel is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetRedVideoBlackLevel must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetRedVideoBlackLevel()
         {
             iCallbackSetRedVideoBlackLevel = new CallbackSetRedVideoBlackLevel(DoSetRedVideoBlackLevel);
@@ -308,6 +404,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionSetRedVideoBlackLevel(iHandle, iCallbackSetRedVideoBlackLevel, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetGreenVideoBlackLevel is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetGreenVideoBlackLevel must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetGreenVideoBlackLevel()
         {
             iCallbackGetGreenVideoBlackLevel = new CallbackGetGreenVideoBlackLevel(DoGetGreenVideoBlackLevel);
@@ -315,6 +416,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionGetGreenVideoBlackLevel(iHandle, iCallbackGetGreenVideoBlackLevel, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetGreenVideoBlackLevel is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetGreenVideoBlackLevel must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetGreenVideoBlackLevel()
         {
             iCallbackSetGreenVideoBlackLevel = new CallbackSetGreenVideoBlackLevel(DoSetGreenVideoBlackLevel);
@@ -322,6 +428,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionSetGreenVideoBlackLevel(iHandle, iCallbackSetGreenVideoBlackLevel, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetBlueVideoBlackLevel is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetBlueVideoBlackLevel must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetBlueVideoBlackLevel()
         {
             iCallbackGetBlueVideoBlackLevel = new CallbackGetBlueVideoBlackLevel(DoGetBlueVideoBlackLevel);
@@ -329,6 +440,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionGetBlueVideoBlackLevel(iHandle, iCallbackGetBlueVideoBlackLevel, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetBlueVideoBlackLevel is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetBlueVideoBlackLevel must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetBlueVideoBlackLevel()
         {
             iCallbackSetBlueVideoBlackLevel = new CallbackSetBlueVideoBlackLevel(DoSetBlueVideoBlackLevel);
@@ -336,6 +452,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionSetBlueVideoBlackLevel(iHandle, iCallbackSetBlueVideoBlackLevel, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetColorTemperature is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetColorTemperature must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetColorTemperature()
         {
             iCallbackGetColorTemperature = new CallbackGetColorTemperature(DoGetColorTemperature);
@@ -343,6 +464,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionGetColorTemperature(iHandle, iCallbackGetColorTemperature, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetColorTemperature is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetColorTemperature must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetColorTemperature()
         {
             iCallbackSetColorTemperature = new CallbackSetColorTemperature(DoSetColorTemperature);
@@ -350,6 +476,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionSetColorTemperature(iHandle, iCallbackSetColorTemperature, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetHorizontalKeystone is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetHorizontalKeystone must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetHorizontalKeystone()
         {
             iCallbackGetHorizontalKeystone = new CallbackGetHorizontalKeystone(DoGetHorizontalKeystone);
@@ -357,6 +488,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionGetHorizontalKeystone(iHandle, iCallbackGetHorizontalKeystone, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetHorizontalKeystone is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetHorizontalKeystone must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetHorizontalKeystone()
         {
             iCallbackSetHorizontalKeystone = new CallbackSetHorizontalKeystone(DoSetHorizontalKeystone);
@@ -364,6 +500,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionSetHorizontalKeystone(iHandle, iCallbackSetHorizontalKeystone, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetVerticalKeystone is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetVerticalKeystone must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetVerticalKeystone()
         {
             iCallbackGetVerticalKeystone = new CallbackGetVerticalKeystone(DoGetVerticalKeystone);
@@ -371,6 +512,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionGetVerticalKeystone(iHandle, iCallbackGetVerticalKeystone, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetVerticalKeystone is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetVerticalKeystone must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetVerticalKeystone()
         {
             iCallbackSetVerticalKeystone = new CallbackSetVerticalKeystone(DoSetVerticalKeystone);
@@ -378,6 +524,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionSetVerticalKeystone(iHandle, iCallbackSetVerticalKeystone, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetMute is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetMute must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetMute()
         {
             iCallbackGetMute = new CallbackGetMute(DoGetMute);
@@ -385,6 +536,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionGetMute(iHandle, iCallbackGetMute, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetMute is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetMute must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetMute()
         {
             iCallbackSetMute = new CallbackSetMute(DoSetMute);
@@ -392,6 +548,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionSetMute(iHandle, iCallbackSetMute, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetVolume is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetVolume must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetVolume()
         {
             iCallbackGetVolume = new CallbackGetVolume(DoGetVolume);
@@ -399,6 +560,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionGetVolume(iHandle, iCallbackGetVolume, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetVolume is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetVolume must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetVolume()
         {
             iCallbackSetVolume = new CallbackSetVolume(DoSetVolume);
@@ -406,6 +572,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionSetVolume(iHandle, iCallbackSetVolume, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetVolumeDB is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetVolumeDB must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetVolumeDB()
         {
             iCallbackGetVolumeDB = new CallbackGetVolumeDB(DoGetVolumeDB);
@@ -413,6 +584,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionGetVolumeDB(iHandle, iCallbackGetVolumeDB, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetVolumeDB is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetVolumeDB must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetVolumeDB()
         {
             iCallbackSetVolumeDB = new CallbackSetVolumeDB(DoSetVolumeDB);
@@ -420,6 +596,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionSetVolumeDB(iHandle, iCallbackSetVolumeDB, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetVolumeDBRange is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetVolumeDBRange must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetVolumeDBRange()
         {
             iCallbackGetVolumeDBRange = new CallbackGetVolumeDBRange(DoGetVolumeDBRange);
@@ -427,6 +608,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionGetVolumeDBRange(iHandle, iCallbackGetVolumeDBRange, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetLoudness is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetLoudness must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetLoudness()
         {
             iCallbackGetLoudness = new CallbackGetLoudness(DoGetLoudness);
@@ -434,6 +620,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionGetLoudness(iHandle, iCallbackGetLoudness, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetLoudness is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetLoudness must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetLoudness()
         {
             iCallbackSetLoudness = new CallbackSetLoudness(DoSetLoudness);
@@ -441,6 +632,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionSetLoudness(iHandle, iCallbackSetLoudness, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetStateVariables is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetStateVariables must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetStateVariables()
         {
             iCallbackGetStateVariables = new CallbackGetStateVariables(DoGetStateVariables);
@@ -448,6 +644,11 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionGetStateVariables(iHandle, iCallbackGetStateVariables, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetStateVariables is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetStateVariables must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetStateVariables()
         {
             iCallbackSetStateVariables = new CallbackSetStateVariables(DoSetStateVariables);
@@ -455,186 +656,571 @@ namespace Zapp.Device.Providers
             DvProviderUpnpOrgRenderingControl2EnableActionSetStateVariables(iHandle, iCallbackSetStateVariables, ptr);
         }
 
+        /// <summary>
+        /// ListPresets action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// ListPresets action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionListPresets was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentPresetNameList"></param>
         protected virtual void ListPresets(uint aVersion, uint aInstanceID, out string aCurrentPresetNameList)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SelectPreset action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SelectPreset action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSelectPreset was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aPresetName"></param>
         protected virtual void SelectPreset(uint aVersion, uint aInstanceID, string aPresetName)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetBrightness action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetBrightness action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetBrightness was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentBrightness"></param>
         protected virtual void GetBrightness(uint aVersion, uint aInstanceID, out uint aCurrentBrightness)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetBrightness action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetBrightness action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetBrightness was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredBrightness"></param>
         protected virtual void SetBrightness(uint aVersion, uint aInstanceID, uint aDesiredBrightness)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetContrast action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetContrast action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetContrast was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentContrast"></param>
         protected virtual void GetContrast(uint aVersion, uint aInstanceID, out uint aCurrentContrast)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetContrast action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetContrast action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetContrast was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredContrast"></param>
         protected virtual void SetContrast(uint aVersion, uint aInstanceID, uint aDesiredContrast)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetSharpness action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetSharpness action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetSharpness was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentSharpness"></param>
         protected virtual void GetSharpness(uint aVersion, uint aInstanceID, out uint aCurrentSharpness)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetSharpness action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetSharpness action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetSharpness was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredSharpness"></param>
         protected virtual void SetSharpness(uint aVersion, uint aInstanceID, uint aDesiredSharpness)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetRedVideoGain action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetRedVideoGain action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetRedVideoGain was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentRedVideoGain"></param>
         protected virtual void GetRedVideoGain(uint aVersion, uint aInstanceID, out uint aCurrentRedVideoGain)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetRedVideoGain action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetRedVideoGain action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetRedVideoGain was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredRedVideoGain"></param>
         protected virtual void SetRedVideoGain(uint aVersion, uint aInstanceID, uint aDesiredRedVideoGain)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetGreenVideoGain action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetGreenVideoGain action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetGreenVideoGain was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentGreenVideoGain"></param>
         protected virtual void GetGreenVideoGain(uint aVersion, uint aInstanceID, out uint aCurrentGreenVideoGain)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetGreenVideoGain action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetGreenVideoGain action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetGreenVideoGain was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredGreenVideoGain"></param>
         protected virtual void SetGreenVideoGain(uint aVersion, uint aInstanceID, uint aDesiredGreenVideoGain)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetBlueVideoGain action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetBlueVideoGain action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetBlueVideoGain was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentBlueVideoGain"></param>
         protected virtual void GetBlueVideoGain(uint aVersion, uint aInstanceID, out uint aCurrentBlueVideoGain)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetBlueVideoGain action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetBlueVideoGain action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetBlueVideoGain was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredBlueVideoGain"></param>
         protected virtual void SetBlueVideoGain(uint aVersion, uint aInstanceID, uint aDesiredBlueVideoGain)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetRedVideoBlackLevel action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetRedVideoBlackLevel action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetRedVideoBlackLevel was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentRedVideoBlackLevel"></param>
         protected virtual void GetRedVideoBlackLevel(uint aVersion, uint aInstanceID, out uint aCurrentRedVideoBlackLevel)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetRedVideoBlackLevel action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetRedVideoBlackLevel action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetRedVideoBlackLevel was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredRedVideoBlackLevel"></param>
         protected virtual void SetRedVideoBlackLevel(uint aVersion, uint aInstanceID, uint aDesiredRedVideoBlackLevel)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetGreenVideoBlackLevel action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetGreenVideoBlackLevel action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetGreenVideoBlackLevel was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentGreenVideoBlackLevel"></param>
         protected virtual void GetGreenVideoBlackLevel(uint aVersion, uint aInstanceID, out uint aCurrentGreenVideoBlackLevel)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetGreenVideoBlackLevel action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetGreenVideoBlackLevel action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetGreenVideoBlackLevel was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredGreenVideoBlackLevel"></param>
         protected virtual void SetGreenVideoBlackLevel(uint aVersion, uint aInstanceID, uint aDesiredGreenVideoBlackLevel)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetBlueVideoBlackLevel action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetBlueVideoBlackLevel action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetBlueVideoBlackLevel was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentBlueVideoBlackLevel"></param>
         protected virtual void GetBlueVideoBlackLevel(uint aVersion, uint aInstanceID, out uint aCurrentBlueVideoBlackLevel)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetBlueVideoBlackLevel action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetBlueVideoBlackLevel action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetBlueVideoBlackLevel was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredBlueVideoBlackLevel"></param>
         protected virtual void SetBlueVideoBlackLevel(uint aVersion, uint aInstanceID, uint aDesiredBlueVideoBlackLevel)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetColorTemperature action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetColorTemperature action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetColorTemperature was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentColorTemperature"></param>
         protected virtual void GetColorTemperature(uint aVersion, uint aInstanceID, out uint aCurrentColorTemperature)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetColorTemperature action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetColorTemperature action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetColorTemperature was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredColorTemperature"></param>
         protected virtual void SetColorTemperature(uint aVersion, uint aInstanceID, uint aDesiredColorTemperature)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetHorizontalKeystone action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetHorizontalKeystone action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetHorizontalKeystone was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentHorizontalKeystone"></param>
         protected virtual void GetHorizontalKeystone(uint aVersion, uint aInstanceID, out int aCurrentHorizontalKeystone)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetHorizontalKeystone action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetHorizontalKeystone action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetHorizontalKeystone was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredHorizontalKeystone"></param>
         protected virtual void SetHorizontalKeystone(uint aVersion, uint aInstanceID, int aDesiredHorizontalKeystone)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetVerticalKeystone action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetVerticalKeystone action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetVerticalKeystone was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentVerticalKeystone"></param>
         protected virtual void GetVerticalKeystone(uint aVersion, uint aInstanceID, out int aCurrentVerticalKeystone)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetVerticalKeystone action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetVerticalKeystone action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetVerticalKeystone was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aDesiredVerticalKeystone"></param>
         protected virtual void SetVerticalKeystone(uint aVersion, uint aInstanceID, int aDesiredVerticalKeystone)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetMute action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetMute action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetMute was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aCurrentMute"></param>
         protected virtual void GetMute(uint aVersion, uint aInstanceID, string aChannel, out bool aCurrentMute)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetMute action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetMute action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetMute was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aDesiredMute"></param>
         protected virtual void SetMute(uint aVersion, uint aInstanceID, string aChannel, bool aDesiredMute)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetVolume action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetVolume action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetVolume was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aCurrentVolume"></param>
         protected virtual void GetVolume(uint aVersion, uint aInstanceID, string aChannel, out uint aCurrentVolume)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetVolume action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetVolume action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetVolume was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aDesiredVolume"></param>
         protected virtual void SetVolume(uint aVersion, uint aInstanceID, string aChannel, uint aDesiredVolume)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetVolumeDB action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetVolumeDB action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetVolumeDB was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aCurrentVolume"></param>
         protected virtual void GetVolumeDB(uint aVersion, uint aInstanceID, string aChannel, out int aCurrentVolume)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetVolumeDB action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetVolumeDB action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetVolumeDB was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aDesiredVolume"></param>
         protected virtual void SetVolumeDB(uint aVersion, uint aInstanceID, string aChannel, int aDesiredVolume)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetVolumeDBRange action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetVolumeDBRange action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetVolumeDBRange was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aMinValue"></param>
+        /// <param name="aMaxValue"></param>
         protected virtual void GetVolumeDBRange(uint aVersion, uint aInstanceID, string aChannel, out int aMinValue, out int aMaxValue)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetLoudness action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetLoudness action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetLoudness was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aCurrentLoudness"></param>
         protected virtual void GetLoudness(uint aVersion, uint aInstanceID, string aChannel, out bool aCurrentLoudness)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetLoudness action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetLoudness action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetLoudness was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aChannel"></param>
+        /// <param name="aDesiredLoudness"></param>
         protected virtual void SetLoudness(uint aVersion, uint aInstanceID, string aChannel, bool aDesiredLoudness)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetStateVariables action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetStateVariables action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetStateVariables was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aStateVariableList"></param>
+        /// <param name="aStateVariableValuePairs"></param>
         protected virtual void GetStateVariables(uint aVersion, uint aInstanceID, string aStateVariableList, out string aStateVariableValuePairs)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetStateVariables action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetStateVariables action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetStateVariables was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aRenderingControlUDN"></param>
+        /// <param name="aServiceType"></param>
+        /// <param name="aServiceId"></param>
+        /// <param name="aStateVariableValuePairs"></param>
+        /// <param name="aStateVariableList"></param>
         protected virtual void SetStateVariables(uint aVersion, uint aInstanceID, string aRenderingControlUDN, string aServiceType, string aServiceId, string aStateVariableValuePairs, out string aStateVariableList)
         {
             throw (new ActionDisabledError());
@@ -995,7 +1581,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

@@ -325,12 +325,23 @@ namespace Zapp.ControlPoint.Proxies
         private Callback iCallbackTerminalInputNameChanged;
         private Callback iCallbackDisplayPixelsChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkUi2(CpDevice aDevice)
         {
             iHandle = CpProxyLinnCoUkUi2Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaTestPattern"></param>
         public unsafe void SyncDisplayTestPattern(int aaTestPattern)
         {
 			{
@@ -338,6 +349,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndDisplayTestPattern().</remarks>
+        /// <param name="aaTestPattern"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDisplayTestPattern(int aaTestPattern, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -345,6 +365,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginDisplayTestPattern(iHandle, aaTestPattern, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndDisplayTestPattern(uint aAsyncHandle)
         {
 			{
@@ -355,6 +380,11 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
         public unsafe void SyncDisplayFill()
         {
 			{
@@ -362,6 +392,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndDisplayFill().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDisplayFill(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -369,6 +407,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginDisplayFill(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndDisplayFill(uint aAsyncHandle)
         {
 			{
@@ -379,6 +422,11 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
         public unsafe void SyncDisplayClear()
         {
 			{
@@ -386,6 +434,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndDisplayClear().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDisplayClear(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -393,6 +449,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginDisplayClear(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndDisplayClear(uint aAsyncHandle)
         {
 			{
@@ -403,6 +464,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaEnabled"></param>
         public unsafe void SyncSetTestModeEnabled(bool aaEnabled)
         {
 			uint aEnabled = (aaEnabled? 1u : 0u);
@@ -411,6 +478,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetTestModeEnabled().</remarks>
+        /// <param name="aaEnabled"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetTestModeEnabled(bool aaEnabled, CallbackAsyncComplete aCallback)
         {
 			uint aEnabled = (aaEnabled? 1u : 0u);
@@ -419,6 +495,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginSetTestModeEnabled(iHandle, aEnabled, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetTestModeEnabled(uint aAsyncHandle)
         {
 			{
@@ -429,6 +510,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaCode"></param>
         public unsafe void SyncSimulateInfraredInput(uint aaCode)
         {
 			{
@@ -436,6 +523,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSimulateInfraredInput().</remarks>
+        /// <param name="aaCode"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSimulateInfraredInput(uint aaCode, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -443,6 +539,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginSimulateInfraredInput(iHandle, aaCode, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSimulateInfraredInput(uint aAsyncHandle)
         {
 			{
@@ -453,6 +554,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaCode"></param>
         public unsafe void SyncSimulateButtonInput(uint aaCode)
         {
 			{
@@ -460,6 +567,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSimulateButtonInput().</remarks>
+        /// <param name="aaCode"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSimulateButtonInput(uint aaCode, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -467,6 +583,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginSimulateButtonInput(iHandle, aaCode, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSimulateButtonInput(uint aAsyncHandle)
         {
 			{
@@ -477,6 +598,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaLightLevel"></param>
         public unsafe void SyncSimulateLightSensor(uint aaLightLevel)
         {
 			{
@@ -484,6 +611,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSimulateLightSensor().</remarks>
+        /// <param name="aaLightLevel"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSimulateLightSensor(uint aaLightLevel, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -491,6 +627,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginSimulateLightSensor(iHandle, aaLightLevel, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSimulateLightSensor(uint aAsyncHandle)
         {
 			{
@@ -501,6 +642,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaLightLevel"></param>
         public unsafe void SyncGetLightSensorData(out uint aaLightLevel)
         {
 			fixed (uint* aLightLevel = &aaLightLevel)
@@ -509,6 +656,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetLightSensorData().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetLightSensorData(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -516,6 +671,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginGetLightSensorData(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaLightLevel"></param>
         public unsafe void EndGetLightSensorData(uint aAsyncHandle, out uint aaLightLevel)
         {
 			fixed (uint* aLightLevel = &aaLightLevel)
@@ -527,6 +688,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaBrightness"></param>
         public unsafe void SyncSetDisplayBrightness(uint aaBrightness)
         {
 			{
@@ -534,6 +701,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetDisplayBrightness().</remarks>
+        /// <param name="aaBrightness"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetDisplayBrightness(uint aaBrightness, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -541,6 +717,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginSetDisplayBrightness(iHandle, aaBrightness, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetDisplayBrightness(uint aAsyncHandle)
         {
 			{
@@ -551,6 +732,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaBrightnessAuto"></param>
         public unsafe void SyncSetDisplayBrightnessAuto(bool aaBrightnessAuto)
         {
 			uint aBrightnessAuto = (aaBrightnessAuto? 1u : 0u);
@@ -559,6 +746,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetDisplayBrightnessAuto().</remarks>
+        /// <param name="aaBrightnessAuto"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetDisplayBrightnessAuto(bool aaBrightnessAuto, CallbackAsyncComplete aCallback)
         {
 			uint aBrightnessAuto = (aaBrightnessAuto? 1u : 0u);
@@ -567,6 +763,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginSetDisplayBrightnessAuto(iHandle, aBrightnessAuto, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetDisplayBrightnessAuto(uint aAsyncHandle)
         {
 			{
@@ -577,6 +778,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaCommands"></param>
         public unsafe void SyncSetInfraredCommands(string aaCommands)
         {
 			char* aCommands = (char*)Marshal.StringToHGlobalAnsi(aaCommands);
@@ -586,6 +793,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aCommands);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetInfraredCommands().</remarks>
+        /// <param name="aaCommands"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetInfraredCommands(string aaCommands, CallbackAsyncComplete aCallback)
         {
 			char* aCommands = (char*)Marshal.StringToHGlobalAnsi(aaCommands);
@@ -595,6 +811,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aCommands);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetInfraredCommands(uint aAsyncHandle)
         {
 			{
@@ -605,6 +826,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaCommands"></param>
         public unsafe void SyncInfraredCommands(out string aaCommands)
         {
 			char* aCommands;
@@ -615,6 +842,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aCommands);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndInfraredCommands().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginInfraredCommands(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -622,6 +857,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginInfraredCommands(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaCommands"></param>
         public unsafe void EndInfraredCommands(uint aAsyncHandle, out string aaCommands)
         {
 			char* aCommands;
@@ -635,6 +876,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aCommands);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaCommands"></param>
         public unsafe void SyncSetInfraredTerminalCommands(string aaCommands)
         {
 			char* aCommands = (char*)Marshal.StringToHGlobalAnsi(aaCommands);
@@ -644,6 +891,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aCommands);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetInfraredTerminalCommands().</remarks>
+        /// <param name="aaCommands"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetInfraredTerminalCommands(string aaCommands, CallbackAsyncComplete aCallback)
         {
 			char* aCommands = (char*)Marshal.StringToHGlobalAnsi(aaCommands);
@@ -653,6 +909,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aCommands);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetInfraredTerminalCommands(uint aAsyncHandle)
         {
 			{
@@ -663,6 +924,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaCommands"></param>
         public unsafe void SyncInfraredTerminalCommands(out string aaCommands)
         {
 			char* aCommands;
@@ -673,6 +940,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aCommands);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndInfraredTerminalCommands().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginInfraredTerminalCommands(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -680,6 +955,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginInfraredTerminalCommands(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaCommands"></param>
         public unsafe void EndInfraredTerminalCommands(uint aAsyncHandle, out string aaCommands)
         {
 			char* aCommands;
@@ -693,6 +974,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aCommands);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaBrightness"></param>
         public unsafe void SyncDisplayBrightness(out uint aaBrightness)
         {
 			fixed (uint* aBrightness = &aaBrightness)
@@ -701,6 +988,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndDisplayBrightness().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDisplayBrightness(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -708,6 +1003,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginDisplayBrightness(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaBrightness"></param>
         public unsafe void EndDisplayBrightness(uint aAsyncHandle, out uint aaBrightness)
         {
 			fixed (uint* aBrightness = &aaBrightness)
@@ -719,6 +1020,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaBrightnessAuto"></param>
         public unsafe void SyncDisplayBrightnessAuto(out bool aaBrightnessAuto)
         {
 			uint aBrightnessAuto;
@@ -728,6 +1035,14 @@ namespace Zapp.ControlPoint.Proxies
 			aaBrightnessAuto = (aBrightnessAuto != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndDisplayBrightnessAuto().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDisplayBrightnessAuto(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -735,6 +1050,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginDisplayBrightnessAuto(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaBrightnessAuto"></param>
         public unsafe void EndDisplayBrightnessAuto(uint aAsyncHandle, out bool aaBrightnessAuto)
         {
 			uint aBrightnessAuto;
@@ -747,6 +1068,12 @@ namespace Zapp.ControlPoint.Proxies
 			aaBrightnessAuto = (aBrightnessAuto != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaUpsideDown"></param>
         public unsafe void SyncDisplayUpsideDown(out bool aaUpsideDown)
         {
 			uint aUpsideDown;
@@ -756,6 +1083,14 @@ namespace Zapp.ControlPoint.Proxies
 			aaUpsideDown = (aUpsideDown != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndDisplayUpsideDown().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDisplayUpsideDown(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -763,6 +1098,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginDisplayUpsideDown(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaUpsideDown"></param>
         public unsafe void EndDisplayUpsideDown(uint aAsyncHandle, out bool aaUpsideDown)
         {
 			uint aUpsideDown;
@@ -775,6 +1116,12 @@ namespace Zapp.ControlPoint.Proxies
 			aaUpsideDown = (aUpsideDown != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaUpsideDown"></param>
         public unsafe void SyncSetDisplayUpsideDown(bool aaUpsideDown)
         {
 			uint aUpsideDown = (aaUpsideDown? 1u : 0u);
@@ -783,6 +1130,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetDisplayUpsideDown().</remarks>
+        /// <param name="aaUpsideDown"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetDisplayUpsideDown(bool aaUpsideDown, CallbackAsyncComplete aCallback)
         {
 			uint aUpsideDown = (aaUpsideDown? 1u : 0u);
@@ -791,6 +1147,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginSetDisplayUpsideDown(iHandle, aUpsideDown, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetDisplayUpsideDown(uint aAsyncHandle)
         {
 			{
@@ -801,6 +1162,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaDisplayScrollText"></param>
         public unsafe void SyncSetDisplayScrollText(bool aaDisplayScrollText)
         {
 			uint aDisplayScrollText = (aaDisplayScrollText? 1u : 0u);
@@ -809,6 +1176,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetDisplayScrollText().</remarks>
+        /// <param name="aaDisplayScrollText"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetDisplayScrollText(bool aaDisplayScrollText, CallbackAsyncComplete aCallback)
         {
 			uint aDisplayScrollText = (aaDisplayScrollText? 1u : 0u);
@@ -817,6 +1193,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginSetDisplayScrollText(iHandle, aDisplayScrollText, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetDisplayScrollText(uint aAsyncHandle)
         {
 			{
@@ -827,6 +1208,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaDisplayScrollTextEnabled"></param>
         public unsafe void SyncDisplayScrollText(out bool aaDisplayScrollTextEnabled)
         {
 			uint aDisplayScrollTextEnabled;
@@ -836,6 +1223,14 @@ namespace Zapp.ControlPoint.Proxies
 			aaDisplayScrollTextEnabled = (aDisplayScrollTextEnabled != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndDisplayScrollText().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDisplayScrollText(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -843,6 +1238,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginDisplayScrollText(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaDisplayScrollTextEnabled"></param>
         public unsafe void EndDisplayScrollText(uint aAsyncHandle, out bool aaDisplayScrollTextEnabled)
         {
 			uint aDisplayScrollTextEnabled;
@@ -855,6 +1256,12 @@ namespace Zapp.ControlPoint.Proxies
 			aaDisplayScrollTextEnabled = (aDisplayScrollTextEnabled != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaEnabled"></param>
         public unsafe void SyncSetDisplaySleep(bool aaEnabled)
         {
 			uint aEnabled = (aaEnabled? 1u : 0u);
@@ -863,6 +1270,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetDisplaySleep().</remarks>
+        /// <param name="aaEnabled"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetDisplaySleep(bool aaEnabled, CallbackAsyncComplete aCallback)
         {
 			uint aEnabled = (aaEnabled? 1u : 0u);
@@ -871,6 +1287,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginSetDisplaySleep(iHandle, aEnabled, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetDisplaySleep(uint aAsyncHandle)
         {
 			{
@@ -881,6 +1302,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaEnabled"></param>
         public unsafe void SyncDisplaySleep(out bool aaEnabled)
         {
 			uint aEnabled;
@@ -890,6 +1317,14 @@ namespace Zapp.ControlPoint.Proxies
 			aaEnabled = (aEnabled != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndDisplaySleep().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDisplaySleep(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -897,6 +1332,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginDisplaySleep(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaEnabled"></param>
         public unsafe void EndDisplaySleep(uint aAsyncHandle, out bool aaEnabled)
         {
 			uint aEnabled;
@@ -909,6 +1350,12 @@ namespace Zapp.ControlPoint.Proxies
 			aaEnabled = (aEnabled != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaOff"></param>
         public unsafe void SyncSetDisplayLedOff(bool aaOff)
         {
 			uint aOff = (aaOff? 1u : 0u);
@@ -917,6 +1364,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetDisplayLedOff().</remarks>
+        /// <param name="aaOff"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetDisplayLedOff(bool aaOff, CallbackAsyncComplete aCallback)
         {
 			uint aOff = (aaOff? 1u : 0u);
@@ -925,6 +1381,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginSetDisplayLedOff(iHandle, aOff, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetDisplayLedOff(uint aAsyncHandle)
         {
 			{
@@ -935,6 +1396,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaOff"></param>
         public unsafe void SyncDisplayLedOff(out bool aaOff)
         {
 			uint aOff;
@@ -944,6 +1411,14 @@ namespace Zapp.ControlPoint.Proxies
 			aaOff = (aOff != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndDisplayLedOff().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDisplayLedOff(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -951,6 +1426,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkUi2BeginDisplayLedOff(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaOff"></param>
         public unsafe void EndDisplayLedOff(uint aAsyncHandle, out bool aaOff)
         {
 			uint aOff;
@@ -963,6 +1444,12 @@ namespace Zapp.ControlPoint.Proxies
 			aaOff = (aOff != 0);
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the DisplayBrightness state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
+        /// <param name="aDisplayBrightnessChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDisplayBrightnessChanged(CallbackPropertyChanged aDisplayBrightnessChanged)
         {
             iDisplayBrightnessChanged = aDisplayBrightnessChanged;
@@ -978,6 +1465,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iDisplayBrightnessChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the DisplayBrightnessAuto state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
+        /// <param name="aDisplayBrightnessAutoChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDisplayBrightnessAutoChanged(CallbackPropertyChanged aDisplayBrightnessAutoChanged)
         {
             iDisplayBrightnessAutoChanged = aDisplayBrightnessAutoChanged;
@@ -993,6 +1486,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iDisplayBrightnessAutoChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the InfraredCommands state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
+        /// <param name="aInfraredCommandsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyInfraredCommandsChanged(CallbackPropertyChanged aInfraredCommandsChanged)
         {
             iInfraredCommandsChanged = aInfraredCommandsChanged;
@@ -1008,6 +1507,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iInfraredCommandsChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the InfraredTerminalCommands state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
+        /// <param name="aInfraredTerminalCommandsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyInfraredTerminalCommandsChanged(CallbackPropertyChanged aInfraredTerminalCommandsChanged)
         {
             iInfraredTerminalCommandsChanged = aInfraredTerminalCommandsChanged;
@@ -1023,6 +1528,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iInfraredTerminalCommandsChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the DisplayUpsideDown state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
+        /// <param name="aDisplayUpsideDownChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDisplayUpsideDownChanged(CallbackPropertyChanged aDisplayUpsideDownChanged)
         {
             iDisplayUpsideDownChanged = aDisplayUpsideDownChanged;
@@ -1038,6 +1549,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iDisplayUpsideDownChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the DisplayScrollText state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
+        /// <param name="aDisplayScrollTextChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDisplayScrollTextChanged(CallbackPropertyChanged aDisplayScrollTextChanged)
         {
             iDisplayScrollTextChanged = aDisplayScrollTextChanged;
@@ -1053,6 +1570,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iDisplayScrollTextChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the DisplaySleep state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
+        /// <param name="aDisplaySleepChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDisplaySleepChanged(CallbackPropertyChanged aDisplaySleepChanged)
         {
             iDisplaySleepChanged = aDisplaySleepChanged;
@@ -1068,6 +1591,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iDisplaySleepChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the DisplayLedOff state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
+        /// <param name="aDisplayLedOffChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDisplayLedOffChanged(CallbackPropertyChanged aDisplayLedOffChanged)
         {
             iDisplayLedOffChanged = aDisplayLedOffChanged;
@@ -1083,6 +1612,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iDisplayLedOffChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the TerminalInputCode state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
+        /// <param name="aTerminalInputCodeChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTerminalInputCodeChanged(CallbackPropertyChanged aTerminalInputCodeChanged)
         {
             iTerminalInputCodeChanged = aTerminalInputCodeChanged;
@@ -1098,6 +1633,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iTerminalInputCodeChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the TerminalInputName state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
+        /// <param name="aTerminalInputNameChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTerminalInputNameChanged(CallbackPropertyChanged aTerminalInputNameChanged)
         {
             iTerminalInputNameChanged = aTerminalInputNameChanged;
@@ -1113,6 +1654,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iTerminalInputNameChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the DisplayPixels state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkUi2 instance will not overlap.</remarks>
+        /// <param name="aDisplayPixelsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDisplayPixelsChanged(CallbackPropertyChanged aDisplayPixelsChanged)
         {
             iDisplayPixelsChanged = aDisplayPixelsChanged;
@@ -1128,6 +1675,13 @@ namespace Zapp.ControlPoint.Proxies
             self.iDisplayPixelsChanged();
         }
 
+        /// <summary>
+        /// Query the value of the DisplayBrightness property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aDisplayBrightness">Will be set to the value of the property</param>
         public unsafe void PropertyDisplayBrightness(out uint aDisplayBrightness)
         {
 			fixed (uint* displayBrightness = &aDisplayBrightness)
@@ -1136,6 +1690,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the DisplayBrightnessAuto property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aDisplayBrightnessAuto">Will be set to the value of the property</param>
         public unsafe void PropertyDisplayBrightnessAuto(out bool aDisplayBrightnessAuto)
         {
 			uint displayBrightnessAuto;
@@ -1143,6 +1704,13 @@ namespace Zapp.ControlPoint.Proxies
 			aDisplayBrightnessAuto = (displayBrightnessAuto != 0);
         }
 
+        /// <summary>
+        /// Query the value of the InfraredCommands property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aInfraredCommands">Will be set to the value of the property</param>
         public unsafe void PropertyInfraredCommands(out string aInfraredCommands)
         {
 			char* ptr;
@@ -1151,6 +1719,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the InfraredTerminalCommands property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aInfraredTerminalCommands">Will be set to the value of the property</param>
         public unsafe void PropertyInfraredTerminalCommands(out string aInfraredTerminalCommands)
         {
 			char* ptr;
@@ -1159,6 +1734,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the DisplayUpsideDown property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aDisplayUpsideDown">Will be set to the value of the property</param>
         public unsafe void PropertyDisplayUpsideDown(out bool aDisplayUpsideDown)
         {
 			uint displayUpsideDown;
@@ -1166,6 +1748,13 @@ namespace Zapp.ControlPoint.Proxies
 			aDisplayUpsideDown = (displayUpsideDown != 0);
         }
 
+        /// <summary>
+        /// Query the value of the DisplayScrollText property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aDisplayScrollText">Will be set to the value of the property</param>
         public unsafe void PropertyDisplayScrollText(out bool aDisplayScrollText)
         {
 			uint displayScrollText;
@@ -1173,6 +1762,13 @@ namespace Zapp.ControlPoint.Proxies
 			aDisplayScrollText = (displayScrollText != 0);
         }
 
+        /// <summary>
+        /// Query the value of the DisplaySleep property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aDisplaySleep">Will be set to the value of the property</param>
         public unsafe void PropertyDisplaySleep(out bool aDisplaySleep)
         {
 			uint displaySleep;
@@ -1180,6 +1776,13 @@ namespace Zapp.ControlPoint.Proxies
 			aDisplaySleep = (displaySleep != 0);
         }
 
+        /// <summary>
+        /// Query the value of the DisplayLedOff property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aDisplayLedOff">Will be set to the value of the property</param>
         public unsafe void PropertyDisplayLedOff(out bool aDisplayLedOff)
         {
 			uint displayLedOff;
@@ -1187,6 +1790,13 @@ namespace Zapp.ControlPoint.Proxies
 			aDisplayLedOff = (displayLedOff != 0);
         }
 
+        /// <summary>
+        /// Query the value of the TerminalInputCode property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aTerminalInputCode">Will be set to the value of the property</param>
         public unsafe void PropertyTerminalInputCode(out uint aTerminalInputCode)
         {
 			fixed (uint* terminalInputCode = &aTerminalInputCode)
@@ -1195,6 +1805,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the TerminalInputName property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aTerminalInputName">Will be set to the value of the property</param>
         public unsafe void PropertyTerminalInputName(out string aTerminalInputName)
         {
 			char* ptr;
@@ -1203,6 +1820,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the DisplayPixels property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aDisplayPixels">Will be set to the value of the property</param>
         public unsafe void PropertyDisplayPixels(out string aDisplayPixels)
         {
 			char* ptr;
@@ -1212,6 +1836,9 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);

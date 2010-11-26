@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the linn.co.uk:Jukebox:1 UPnP service
+    /// </summary>
     public class DvProviderLinnCoUkJukebox1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkJukebox1")]
@@ -61,15 +64,24 @@ namespace Zapp.Device.Providers
         private CallbackPresetMetaData iCallbackPresetMetaData;
         private CallbackLoadManifest iCallbackLoadManifest;
 
-        public DvProviderLinnCoUkJukebox1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderLinnCoUkJukebox1(DvDevice aDevice)
         {
             iHandle = DvProviderLinnCoUkJukebox1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Set the value of the CurrentPreset property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyCurrentPreset(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkJukebox1SetPropertyCurrentPreset(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -77,6 +89,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the CurrentPreset property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyCurrentPreset(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -85,9 +101,14 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Set the value of the PresetPrefix property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyPresetPrefix(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderLinnCoUkJukebox1SetPropertyPresetPrefix(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -98,6 +119,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the PresetPrefix property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyPresetPrefix(out string aValue)
         {
             char* value;
@@ -106,9 +131,14 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Set the value of the AlbumArtFileName property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyAlbumArtFileName(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderLinnCoUkJukebox1SetPropertyAlbumArtFileName(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -119,6 +149,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the AlbumArtFileName property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyAlbumArtFileName(out string aValue)
         {
             char* value;
@@ -127,6 +161,11 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Signal that the action SetPresetPrefix is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetPresetPrefix must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetPresetPrefix()
         {
             iCallbackSetPresetPrefix = new CallbackSetPresetPrefix(DoSetPresetPrefix);
@@ -134,6 +173,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkJukebox1EnableActionSetPresetPrefix(iHandle, iCallbackSetPresetPrefix, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action PresetPrefix is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoPresetPrefix must be overridden if this is called.</remarks>
         protected unsafe void EnableActionPresetPrefix()
         {
             iCallbackPresetPrefix = new CallbackPresetPrefix(DoPresetPrefix);
@@ -141,6 +185,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkJukebox1EnableActionPresetPrefix(iHandle, iCallbackPresetPrefix, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetAlbumArtFileName is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetAlbumArtFileName must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetAlbumArtFileName()
         {
             iCallbackSetAlbumArtFileName = new CallbackSetAlbumArtFileName(DoSetAlbumArtFileName);
@@ -148,6 +197,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkJukebox1EnableActionSetAlbumArtFileName(iHandle, iCallbackSetAlbumArtFileName, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action AlbumArtFileName is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoAlbumArtFileName must be overridden if this is called.</remarks>
         protected unsafe void EnableActionAlbumArtFileName()
         {
             iCallbackAlbumArtFileName = new CallbackAlbumArtFileName(DoAlbumArtFileName);
@@ -155,6 +209,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkJukebox1EnableActionAlbumArtFileName(iHandle, iCallbackAlbumArtFileName, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetCurrentPreset is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetCurrentPreset must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetCurrentPreset()
         {
             iCallbackSetCurrentPreset = new CallbackSetCurrentPreset(DoSetCurrentPreset);
@@ -162,6 +221,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkJukebox1EnableActionSetCurrentPreset(iHandle, iCallbackSetCurrentPreset, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action CurrentPreset is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoCurrentPreset must be overridden if this is called.</remarks>
         protected unsafe void EnableActionCurrentPreset()
         {
             iCallbackCurrentPreset = new CallbackCurrentPreset(DoCurrentPreset);
@@ -169,6 +233,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkJukebox1EnableActionCurrentPreset(iHandle, iCallbackCurrentPreset, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action PresetMetaData is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoPresetMetaData must be overridden if this is called.</remarks>
         protected unsafe void EnableActionPresetMetaData()
         {
             iCallbackPresetMetaData = new CallbackPresetMetaData(DoPresetMetaData);
@@ -176,6 +245,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkJukebox1EnableActionPresetMetaData(iHandle, iCallbackPresetMetaData, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action LoadManifest is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoLoadManifest must be overridden if this is called.</remarks>
         protected unsafe void EnableActionLoadManifest()
         {
             iCallbackLoadManifest = new CallbackLoadManifest(DoLoadManifest);
@@ -183,41 +257,114 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkJukebox1EnableActionLoadManifest(iHandle, iCallbackLoadManifest, ptr);
         }
 
+        /// <summary>
+        /// SetPresetPrefix action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetPresetPrefix action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetPresetPrefix was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaUri"></param>
         protected virtual void SetPresetPrefix(uint aVersion, string aaUri)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// PresetPrefix action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// PresetPrefix action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionPresetPrefix was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaUri"></param>
         protected virtual void PresetPrefix(uint aVersion, out string aaUri)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetAlbumArtFileName action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetAlbumArtFileName action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetAlbumArtFileName was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaName"></param>
         protected virtual void SetAlbumArtFileName(uint aVersion, string aaName)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// AlbumArtFileName action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// AlbumArtFileName action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionAlbumArtFileName was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaName"></param>
         protected virtual void AlbumArtFileName(uint aVersion, out string aaName)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetCurrentPreset action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetCurrentPreset action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetCurrentPreset was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaPreset"></param>
         protected virtual void SetCurrentPreset(uint aVersion, uint aaPreset)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// CurrentPreset action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// CurrentPreset action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionCurrentPreset was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaPreset"></param>
         protected virtual void CurrentPreset(uint aVersion, out uint aaPreset)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// PresetMetaData action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// PresetMetaData action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionPresetMetaData was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaPreset"></param>
+        /// <param name="aaMetaData"></param>
         protected virtual void PresetMetaData(uint aVersion, uint aaPreset, out string aaMetaData)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// LoadManifest action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// LoadManifest action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionLoadManifest was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaTotalPresets"></param>
         protected virtual void LoadManifest(uint aVersion, out uint aaTotalPresets)
         {
             throw (new ActionDisabledError());
@@ -299,7 +446,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

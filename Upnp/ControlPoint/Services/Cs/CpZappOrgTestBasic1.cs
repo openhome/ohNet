@@ -232,12 +232,24 @@ namespace Zapp.ControlPoint.Proxies
         private Callback iCallbackVarStrChanged;
         private Callback iCallbackVarBinChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyZappOrgTestBasic1(CpDevice aDevice)
         {
             iHandle = CpProxyZappOrgTestBasic1Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValue"></param>
+        /// <param name="aResult"></param>
         public unsafe void SyncIncrement(uint aValue, out uint aResult)
         {
 			fixed (uint* result = &aResult)
@@ -246,6 +258,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndIncrement().</remarks>
+        /// <param name="aValue"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginIncrement(uint aValue, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -253,6 +274,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestBasic1BeginIncrement(iHandle, aValue, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aResult"></param>
         public unsafe void EndIncrement(uint aAsyncHandle, out uint aResult)
         {
 			fixed (uint* result = &aResult)
@@ -264,6 +291,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValue"></param>
+        /// <param name="aResult"></param>
         public unsafe void SyncDecrement(int aValue, out int aResult)
         {
 			fixed (int* result = &aResult)
@@ -272,6 +306,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndDecrement().</remarks>
+        /// <param name="aValue"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDecrement(int aValue, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -279,6 +322,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestBasic1BeginDecrement(iHandle, aValue, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aResult"></param>
         public unsafe void EndDecrement(uint aAsyncHandle, out int aResult)
         {
 			fixed (int* result = &aResult)
@@ -290,6 +339,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValue"></param>
+        /// <param name="aResult"></param>
         public unsafe void SyncToggle(bool aValue, out bool aResult)
         {
 			uint value = (aValue? 1u : 0u);
@@ -300,6 +356,15 @@ namespace Zapp.ControlPoint.Proxies
 			aResult = (result != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndToggle().</remarks>
+        /// <param name="aValue"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginToggle(bool aValue, CallbackAsyncComplete aCallback)
         {
 			uint value = (aValue? 1u : 0u);
@@ -308,6 +373,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestBasic1BeginToggle(iHandle, value, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aResult"></param>
         public unsafe void EndToggle(uint aAsyncHandle, out bool aResult)
         {
 			uint result;
@@ -320,6 +391,13 @@ namespace Zapp.ControlPoint.Proxies
 			aResult = (result != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValue"></param>
+        /// <param name="aResult"></param>
         public unsafe void SyncEchoString(string aValue, out string aResult)
         {
 			char* value = (char*)Marshal.StringToHGlobalAnsi(aValue);
@@ -332,6 +410,15 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(result);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndEchoString().</remarks>
+        /// <param name="aValue"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginEchoString(string aValue, CallbackAsyncComplete aCallback)
         {
 			char* value = (char*)Marshal.StringToHGlobalAnsi(aValue);
@@ -341,6 +428,12 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)value);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aResult"></param>
         public unsafe void EndEchoString(uint aAsyncHandle, out string aResult)
         {
 			char* result;
@@ -354,6 +447,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(result);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValue"></param>
+        /// <param name="aResult"></param>
         public unsafe void SyncEchoBinary(string aValue, out string aResult)
         {
 			char* value = (char*)Marshal.StringToHGlobalAnsi(aValue);
@@ -368,6 +468,15 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(result);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndEchoBinary().</remarks>
+        /// <param name="aValue"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginEchoBinary(string aValue, CallbackAsyncComplete aCallback)
         {
 			char* value = (char*)Marshal.StringToHGlobalAnsi(aValue);
@@ -378,6 +487,12 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)value);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aResult"></param>
         public unsafe void EndEchoBinary(uint aAsyncHandle, out string aResult)
         {
 			char* result;
@@ -392,6 +507,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(result);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValueUint"></param>
         public unsafe void SyncSetUint(uint aValueUint)
         {
 			{
@@ -399,6 +520,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetUint().</remarks>
+        /// <param name="aValueUint"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetUint(uint aValueUint, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -406,6 +536,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestBasic1BeginSetUint(iHandle, aValueUint, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetUint(uint aAsyncHandle)
         {
 			{
@@ -416,6 +551,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValueUint"></param>
         public unsafe void SyncGetUint(out uint aValueUint)
         {
 			fixed (uint* valueUint = &aValueUint)
@@ -424,6 +565,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetUint().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetUint(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -431,6 +580,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestBasic1BeginGetUint(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aValueUint"></param>
         public unsafe void EndGetUint(uint aAsyncHandle, out uint aValueUint)
         {
 			fixed (uint* valueUint = &aValueUint)
@@ -442,6 +597,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValueInt"></param>
         public unsafe void SyncSetInt(int aValueInt)
         {
 			{
@@ -449,6 +610,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetInt().</remarks>
+        /// <param name="aValueInt"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetInt(int aValueInt, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -456,6 +626,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestBasic1BeginSetInt(iHandle, aValueInt, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetInt(uint aAsyncHandle)
         {
 			{
@@ -466,6 +641,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValueInt"></param>
         public unsafe void SyncGetInt(out int aValueInt)
         {
 			fixed (int* valueInt = &aValueInt)
@@ -474,6 +655,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetInt().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetInt(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -481,6 +670,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestBasic1BeginGetInt(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aValueInt"></param>
         public unsafe void EndGetInt(uint aAsyncHandle, out int aValueInt)
         {
 			fixed (int* valueInt = &aValueInt)
@@ -492,6 +687,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValueBool"></param>
         public unsafe void SyncSetBool(bool aValueBool)
         {
 			uint valueBool = (aValueBool? 1u : 0u);
@@ -500,6 +701,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetBool().</remarks>
+        /// <param name="aValueBool"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetBool(bool aValueBool, CallbackAsyncComplete aCallback)
         {
 			uint valueBool = (aValueBool? 1u : 0u);
@@ -508,6 +718,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestBasic1BeginSetBool(iHandle, valueBool, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetBool(uint aAsyncHandle)
         {
 			{
@@ -518,6 +733,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValueBool"></param>
         public unsafe void SyncGetBool(out bool aValueBool)
         {
 			uint valueBool;
@@ -527,6 +748,14 @@ namespace Zapp.ControlPoint.Proxies
 			aValueBool = (valueBool != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetBool().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetBool(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -534,6 +763,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestBasic1BeginGetBool(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aValueBool"></param>
         public unsafe void EndGetBool(uint aAsyncHandle, out bool aValueBool)
         {
 			uint valueBool;
@@ -546,6 +781,14 @@ namespace Zapp.ControlPoint.Proxies
 			aValueBool = (valueBool != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValueUint"></param>
+        /// <param name="aValueInt"></param>
+        /// <param name="aValueBool"></param>
         public unsafe void SyncSetMultiple(uint aValueUint, int aValueInt, bool aValueBool)
         {
 			uint valueBool = (aValueBool? 1u : 0u);
@@ -554,6 +797,17 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetMultiple().</remarks>
+        /// <param name="aValueUint"></param>
+        /// <param name="aValueInt"></param>
+        /// <param name="aValueBool"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetMultiple(uint aValueUint, int aValueInt, bool aValueBool, CallbackAsyncComplete aCallback)
         {
 			uint valueBool = (aValueBool? 1u : 0u);
@@ -562,6 +816,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestBasic1BeginSetMultiple(iHandle, aValueUint, aValueInt, valueBool, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetMultiple(uint aAsyncHandle)
         {
 			{
@@ -572,6 +831,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValueStr"></param>
         public unsafe void SyncSetString(string aValueStr)
         {
 			char* valueStr = (char*)Marshal.StringToHGlobalAnsi(aValueStr);
@@ -581,6 +846,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)valueStr);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetString().</remarks>
+        /// <param name="aValueStr"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetString(string aValueStr, CallbackAsyncComplete aCallback)
         {
 			char* valueStr = (char*)Marshal.StringToHGlobalAnsi(aValueStr);
@@ -590,6 +864,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)valueStr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetString(uint aAsyncHandle)
         {
 			{
@@ -600,6 +879,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValueStr"></param>
         public unsafe void SyncGetString(out string aValueStr)
         {
 			char* valueStr;
@@ -610,6 +895,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(valueStr);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetString().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetString(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -617,6 +910,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestBasic1BeginGetString(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aValueStr"></param>
         public unsafe void EndGetString(uint aAsyncHandle, out string aValueStr)
         {
 			char* valueStr;
@@ -630,6 +929,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(valueStr);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValueBin"></param>
         public unsafe void SyncSetBinary(string aValueBin)
         {
 			char* valueBin = (char*)Marshal.StringToHGlobalAnsi(aValueBin);
@@ -640,6 +945,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)valueBin);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetBinary().</remarks>
+        /// <param name="aValueBin"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetBinary(string aValueBin, CallbackAsyncComplete aCallback)
         {
 			char* valueBin = (char*)Marshal.StringToHGlobalAnsi(aValueBin);
@@ -650,6 +964,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)valueBin);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetBinary(uint aAsyncHandle)
         {
 			{
@@ -660,6 +979,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aValueBin"></param>
         public unsafe void SyncGetBinary(out string aValueBin)
         {
 			char* valueBin;
@@ -671,6 +996,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(valueBin);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetBinary().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetBinary(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -678,6 +1011,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestBasic1BeginGetBinary(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aValueBin"></param>
         public unsafe void EndGetBinary(uint aAsyncHandle, out string aValueBin)
         {
 			char* valueBin;
@@ -692,6 +1031,11 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(valueBin);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
         public unsafe void SyncToggleBool()
         {
 			{
@@ -699,6 +1043,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndToggleBool().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginToggleBool(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -706,6 +1058,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestBasic1BeginToggleBool(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndToggleBool(uint aAsyncHandle)
         {
 			{
@@ -716,6 +1073,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aData"></param>
+        /// <param name="aFileFullName"></param>
         public unsafe void SyncWriteFile(string aData, string aFileFullName)
         {
 			char* data = (char*)Marshal.StringToHGlobalAnsi(aData);
@@ -727,6 +1091,16 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)fileFullName);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndWriteFile().</remarks>
+        /// <param name="aData"></param>
+        /// <param name="aFileFullName"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginWriteFile(string aData, string aFileFullName, CallbackAsyncComplete aCallback)
         {
 			char* data = (char*)Marshal.StringToHGlobalAnsi(aData);
@@ -738,6 +1112,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)fileFullName);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndWriteFile(uint aAsyncHandle)
         {
 			{
@@ -748,6 +1127,11 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
         public unsafe void SyncShutdown()
         {
 			{
@@ -755,6 +1139,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndShutdown().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginShutdown(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -762,6 +1154,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyZappOrgTestBasic1BeginShutdown(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndShutdown(uint aAsyncHandle)
         {
 			{
@@ -772,6 +1169,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the VarUint state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyZappOrgTestBasic1 instance will not overlap.</remarks>
+        /// <param name="aVarUintChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVarUintChanged(CallbackPropertyChanged aVarUintChanged)
         {
             iVarUintChanged = aVarUintChanged;
@@ -787,6 +1190,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iVarUintChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the VarInt state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyZappOrgTestBasic1 instance will not overlap.</remarks>
+        /// <param name="aVarIntChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVarIntChanged(CallbackPropertyChanged aVarIntChanged)
         {
             iVarIntChanged = aVarIntChanged;
@@ -802,6 +1211,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iVarIntChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the VarBool state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyZappOrgTestBasic1 instance will not overlap.</remarks>
+        /// <param name="aVarBoolChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVarBoolChanged(CallbackPropertyChanged aVarBoolChanged)
         {
             iVarBoolChanged = aVarBoolChanged;
@@ -817,6 +1232,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iVarBoolChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the VarStr state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyZappOrgTestBasic1 instance will not overlap.</remarks>
+        /// <param name="aVarStrChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVarStrChanged(CallbackPropertyChanged aVarStrChanged)
         {
             iVarStrChanged = aVarStrChanged;
@@ -832,6 +1253,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iVarStrChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the VarBin state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyZappOrgTestBasic1 instance will not overlap.</remarks>
+        /// <param name="aVarBinChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVarBinChanged(CallbackPropertyChanged aVarBinChanged)
         {
             iVarBinChanged = aVarBinChanged;
@@ -847,6 +1274,13 @@ namespace Zapp.ControlPoint.Proxies
             self.iVarBinChanged();
         }
 
+        /// <summary>
+        /// Query the value of the VarUint property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aVarUint">Will be set to the value of the property</param>
         public unsafe void PropertyVarUint(out uint aVarUint)
         {
 			fixed (uint* varUint = &aVarUint)
@@ -855,6 +1289,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the VarInt property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aVarInt">Will be set to the value of the property</param>
         public unsafe void PropertyVarInt(out int aVarInt)
         {
 			fixed (int* varInt = &aVarInt)
@@ -863,6 +1304,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the VarBool property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aVarBool">Will be set to the value of the property</param>
         public unsafe void PropertyVarBool(out bool aVarBool)
         {
 			uint varBool;
@@ -870,6 +1318,13 @@ namespace Zapp.ControlPoint.Proxies
 			aVarBool = (varBool != 0);
         }
 
+        /// <summary>
+        /// Query the value of the VarStr property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aVarStr">Will be set to the value of the property</param>
         public unsafe void PropertyVarStr(out string aVarStr)
         {
 			char* ptr;
@@ -878,6 +1333,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the VarBin property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aVarBin">Will be set to the value of the property</param>
         public unsafe void PropertyVarBin(out string aVarBin)
         {
 			char* ptr;
@@ -887,6 +1349,9 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);

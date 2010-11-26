@@ -152,12 +152,23 @@ namespace Zapp.ControlPoint.Proxies
         private Callback iCallbackVolumeControlEnabledChanged;
         private Callback iCallbackDigitalAudioOutputRawChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkComponent1(CpDevice aDevice)
         {
             iHandle = CpProxyLinnCoUkComponent1Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaEnabled"></param>
         public unsafe void SyncAmplifierEnabled(out bool aaEnabled)
         {
 			uint aEnabled;
@@ -167,6 +178,14 @@ namespace Zapp.ControlPoint.Proxies
 			aaEnabled = (aEnabled != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndAmplifierEnabled().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginAmplifierEnabled(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -174,6 +193,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkComponent1BeginAmplifierEnabled(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaEnabled"></param>
         public unsafe void EndAmplifierEnabled(uint aAsyncHandle, out bool aaEnabled)
         {
 			uint aEnabled;
@@ -186,6 +211,12 @@ namespace Zapp.ControlPoint.Proxies
 			aaEnabled = (aEnabled != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaEnabled"></param>
         public unsafe void SyncSetAmplifierEnabled(bool aaEnabled)
         {
 			uint aEnabled = (aaEnabled? 1u : 0u);
@@ -194,6 +225,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetAmplifierEnabled().</remarks>
+        /// <param name="aaEnabled"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetAmplifierEnabled(bool aaEnabled, CallbackAsyncComplete aCallback)
         {
 			uint aEnabled = (aaEnabled? 1u : 0u);
@@ -202,6 +242,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkComponent1BeginSetAmplifierEnabled(iHandle, aEnabled, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetAmplifierEnabled(uint aAsyncHandle)
         {
 			{
@@ -212,6 +257,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaAttenuation"></param>
         public unsafe void SyncAmplifierAttenuation(out string aaAttenuation)
         {
 			char* aAttenuation;
@@ -222,6 +273,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aAttenuation);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndAmplifierAttenuation().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginAmplifierAttenuation(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -229,6 +288,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkComponent1BeginAmplifierAttenuation(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaAttenuation"></param>
         public unsafe void EndAmplifierAttenuation(uint aAsyncHandle, out string aaAttenuation)
         {
 			char* aAttenuation;
@@ -242,6 +307,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aAttenuation);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaAttenuation"></param>
         public unsafe void SyncSetAmplifierAttenuation(string aaAttenuation)
         {
 			char* aAttenuation = (char*)Marshal.StringToHGlobalAnsi(aaAttenuation);
@@ -251,6 +322,15 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aAttenuation);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetAmplifierAttenuation().</remarks>
+        /// <param name="aaAttenuation"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetAmplifierAttenuation(string aaAttenuation, CallbackAsyncComplete aCallback)
         {
 			char* aAttenuation = (char*)Marshal.StringToHGlobalAnsi(aaAttenuation);
@@ -260,6 +340,11 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aAttenuation);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetAmplifierAttenuation(uint aAsyncHandle)
         {
 			{
@@ -270,6 +355,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaEnabled"></param>
         public unsafe void SyncSetVolumeControlEnabled(bool aaEnabled)
         {
 			uint aEnabled = (aaEnabled? 1u : 0u);
@@ -278,6 +369,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetVolumeControlEnabled().</remarks>
+        /// <param name="aaEnabled"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetVolumeControlEnabled(bool aaEnabled, CallbackAsyncComplete aCallback)
         {
 			uint aEnabled = (aaEnabled? 1u : 0u);
@@ -286,6 +386,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkComponent1BeginSetVolumeControlEnabled(iHandle, aEnabled, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetVolumeControlEnabled(uint aAsyncHandle)
         {
 			{
@@ -296,6 +401,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaEnabled"></param>
         public unsafe void SyncVolumeControlEnabled(out bool aaEnabled)
         {
 			uint aEnabled;
@@ -305,6 +416,14 @@ namespace Zapp.ControlPoint.Proxies
 			aaEnabled = (aEnabled != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndVolumeControlEnabled().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginVolumeControlEnabled(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -312,6 +431,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkComponent1BeginVolumeControlEnabled(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaEnabled"></param>
         public unsafe void EndVolumeControlEnabled(uint aAsyncHandle, out bool aaEnabled)
         {
 			uint aEnabled;
@@ -324,6 +449,12 @@ namespace Zapp.ControlPoint.Proxies
 			aaEnabled = (aEnabled != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaRaw"></param>
         public unsafe void SyncSetDigitalAudioOutputRaw(bool aaRaw)
         {
 			uint aRaw = (aaRaw? 1u : 0u);
@@ -332,6 +463,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetDigitalAudioOutputRaw().</remarks>
+        /// <param name="aaRaw"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetDigitalAudioOutputRaw(bool aaRaw, CallbackAsyncComplete aCallback)
         {
 			uint aRaw = (aaRaw? 1u : 0u);
@@ -340,6 +480,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkComponent1BeginSetDigitalAudioOutputRaw(iHandle, aRaw, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetDigitalAudioOutputRaw(uint aAsyncHandle)
         {
 			{
@@ -350,6 +495,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaRaw"></param>
         public unsafe void SyncDigitalAudioOutputRaw(out bool aaRaw)
         {
 			uint aRaw;
@@ -359,6 +510,14 @@ namespace Zapp.ControlPoint.Proxies
 			aaRaw = (aRaw != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndDigitalAudioOutputRaw().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDigitalAudioOutputRaw(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -366,6 +525,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkComponent1BeginDigitalAudioOutputRaw(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaRaw"></param>
         public unsafe void EndDigitalAudioOutputRaw(uint aAsyncHandle, out bool aaRaw)
         {
 			uint aRaw;
@@ -378,6 +543,12 @@ namespace Zapp.ControlPoint.Proxies
 			aaRaw = (aRaw != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaOverTemperature"></param>
         public unsafe void SyncAmplifierOverTemperature(out bool aaOverTemperature)
         {
 			uint aOverTemperature;
@@ -387,6 +558,14 @@ namespace Zapp.ControlPoint.Proxies
 			aaOverTemperature = (aOverTemperature != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndAmplifierOverTemperature().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginAmplifierOverTemperature(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -394,6 +573,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkComponent1BeginAmplifierOverTemperature(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaOverTemperature"></param>
         public unsafe void EndAmplifierOverTemperature(uint aAsyncHandle, out bool aaOverTemperature)
         {
 			uint aOverTemperature;
@@ -406,6 +591,12 @@ namespace Zapp.ControlPoint.Proxies
 			aaOverTemperature = (aOverTemperature != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaLinkConnected"></param>
         public unsafe void SyncEthernetLinkConnected(out bool aaLinkConnected)
         {
 			uint aLinkConnected;
@@ -415,6 +606,14 @@ namespace Zapp.ControlPoint.Proxies
 			aaLinkConnected = (aLinkConnected != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndEthernetLinkConnected().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginEthernetLinkConnected(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -422,6 +621,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkComponent1BeginEthernetLinkConnected(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaLinkConnected"></param>
         public unsafe void EndEthernetLinkConnected(uint aAsyncHandle, out bool aaLinkConnected)
         {
 			uint aLinkConnected;
@@ -434,6 +639,11 @@ namespace Zapp.ControlPoint.Proxies
 			aaLinkConnected = (aLinkConnected != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
         public unsafe void SyncLocate()
         {
 			{
@@ -441,6 +651,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndLocate().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginLocate(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -448,6 +666,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkComponent1BeginLocate(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndLocate(uint aAsyncHandle)
         {
 			{
@@ -458,6 +681,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the AmplifierEnabled state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkComponent1 instance will not overlap.</remarks>
+        /// <param name="aAmplifierEnabledChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyAmplifierEnabledChanged(CallbackPropertyChanged aAmplifierEnabledChanged)
         {
             iAmplifierEnabledChanged = aAmplifierEnabledChanged;
@@ -473,6 +702,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iAmplifierEnabledChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the AmplifierAttenuation state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkComponent1 instance will not overlap.</remarks>
+        /// <param name="aAmplifierAttenuationChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyAmplifierAttenuationChanged(CallbackPropertyChanged aAmplifierAttenuationChanged)
         {
             iAmplifierAttenuationChanged = aAmplifierAttenuationChanged;
@@ -488,6 +723,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iAmplifierAttenuationChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the VolumeControlEnabled state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkComponent1 instance will not overlap.</remarks>
+        /// <param name="aVolumeControlEnabledChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVolumeControlEnabledChanged(CallbackPropertyChanged aVolumeControlEnabledChanged)
         {
             iVolumeControlEnabledChanged = aVolumeControlEnabledChanged;
@@ -503,6 +744,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iVolumeControlEnabledChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the DigitalAudioOutputRaw state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkComponent1 instance will not overlap.</remarks>
+        /// <param name="aDigitalAudioOutputRawChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDigitalAudioOutputRawChanged(CallbackPropertyChanged aDigitalAudioOutputRawChanged)
         {
             iDigitalAudioOutputRawChanged = aDigitalAudioOutputRawChanged;
@@ -518,6 +765,13 @@ namespace Zapp.ControlPoint.Proxies
             self.iDigitalAudioOutputRawChanged();
         }
 
+        /// <summary>
+        /// Query the value of the AmplifierEnabled property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aAmplifierEnabled">Will be set to the value of the property</param>
         public unsafe void PropertyAmplifierEnabled(out bool aAmplifierEnabled)
         {
 			uint amplifierEnabled;
@@ -525,6 +779,13 @@ namespace Zapp.ControlPoint.Proxies
 			aAmplifierEnabled = (amplifierEnabled != 0);
         }
 
+        /// <summary>
+        /// Query the value of the AmplifierAttenuation property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aAmplifierAttenuation">Will be set to the value of the property</param>
         public unsafe void PropertyAmplifierAttenuation(out string aAmplifierAttenuation)
         {
 			char* ptr;
@@ -533,6 +794,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the VolumeControlEnabled property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aVolumeControlEnabled">Will be set to the value of the property</param>
         public unsafe void PropertyVolumeControlEnabled(out bool aVolumeControlEnabled)
         {
 			uint volumeControlEnabled;
@@ -540,6 +808,13 @@ namespace Zapp.ControlPoint.Proxies
 			aVolumeControlEnabled = (volumeControlEnabled != 0);
         }
 
+        /// <summary>
+        /// Query the value of the DigitalAudioOutputRaw property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aDigitalAudioOutputRaw">Will be set to the value of the property</param>
         public unsafe void PropertyDigitalAudioOutputRaw(out bool aDigitalAudioOutputRaw)
         {
 			uint digitalAudioOutputRaw;
@@ -547,6 +822,9 @@ namespace Zapp.ControlPoint.Proxies
 			aDigitalAudioOutputRaw = (digitalAudioOutputRaw != 0);
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);

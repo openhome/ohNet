@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the linn.co.uk:Product:2 UPnP service
+    /// </summary>
     public class DvProviderLinnCoUkProduct2 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkProduct2")]
@@ -81,15 +84,24 @@ namespace Zapp.Device.Providers
         private CallbackSetSourceIndex iCallbackSetSourceIndex;
         private CallbackSourceType iCallbackSourceType;
 
-        public DvProviderLinnCoUkProduct2(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderLinnCoUkProduct2(DvDevice aDevice)
         {
             iHandle = DvProviderLinnCoUkProduct2Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Set the value of the ProductName property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyProductName(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderLinnCoUkProduct2SetPropertyProductName(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -100,6 +112,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the ProductName property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyProductName(out string aValue)
         {
             char* value;
@@ -108,9 +124,14 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Set the value of the ProductRoom property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyProductRoom(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderLinnCoUkProduct2SetPropertyProductRoom(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -121,6 +142,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the ProductRoom property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyProductRoom(out string aValue)
         {
             char* value;
@@ -129,9 +154,14 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Set the value of the ProductStandby property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyProductStandby(bool aValue)
         {
-        uint changed;
+            uint changed;
             int value = (aValue ? 1 : 0);
             if (0 != DvProviderLinnCoUkProduct2SetPropertyProductStandby(iHandle, value, &changed))
             {
@@ -140,6 +170,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the ProductStandby property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyProductStandby(out bool aValue)
         {
             int value;
@@ -147,9 +181,14 @@ namespace Zapp.Device.Providers
             aValue = (value != 0);
         }
 
+        /// <summary>
+        /// Set the value of the ProductSourceIndex property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyProductSourceIndex(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkProduct2SetPropertyProductSourceIndex(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -157,6 +196,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the ProductSourceIndex property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyProductSourceIndex(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -165,6 +208,11 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Signal that the action Type is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoType must be overridden if this is called.</remarks>
         protected unsafe void EnableActionType()
         {
             iCallbackType = new CallbackType(DoType);
@@ -172,6 +220,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProduct2EnableActionType(iHandle, iCallbackType, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Model is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoModel must be overridden if this is called.</remarks>
         protected unsafe void EnableActionModel()
         {
             iCallbackModel = new CallbackModel(DoModel);
@@ -179,6 +232,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProduct2EnableActionModel(iHandle, iCallbackModel, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Name is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoName must be overridden if this is called.</remarks>
         protected unsafe void EnableActionName()
         {
             iCallbackName = new CallbackName(DoName);
@@ -186,6 +244,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProduct2EnableActionName(iHandle, iCallbackName, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetName is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetName must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetName()
         {
             iCallbackSetName = new CallbackSetName(DoSetName);
@@ -193,6 +256,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProduct2EnableActionSetName(iHandle, iCallbackSetName, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Room is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoRoom must be overridden if this is called.</remarks>
         protected unsafe void EnableActionRoom()
         {
             iCallbackRoom = new CallbackRoom(DoRoom);
@@ -200,6 +268,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProduct2EnableActionRoom(iHandle, iCallbackRoom, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetRoom is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetRoom must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetRoom()
         {
             iCallbackSetRoom = new CallbackSetRoom(DoSetRoom);
@@ -207,6 +280,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProduct2EnableActionSetRoom(iHandle, iCallbackSetRoom, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Standby is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoStandby must be overridden if this is called.</remarks>
         protected unsafe void EnableActionStandby()
         {
             iCallbackStandby = new CallbackStandby(DoStandby);
@@ -214,6 +292,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProduct2EnableActionStandby(iHandle, iCallbackStandby, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetStandby is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetStandby must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetStandby()
         {
             iCallbackSetStandby = new CallbackSetStandby(DoSetStandby);
@@ -221,6 +304,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProduct2EnableActionSetStandby(iHandle, iCallbackSetStandby, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SourceCount is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSourceCount must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSourceCount()
         {
             iCallbackSourceCount = new CallbackSourceCount(DoSourceCount);
@@ -228,6 +316,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProduct2EnableActionSourceCount(iHandle, iCallbackSourceCount, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SourceIndex is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSourceIndex must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSourceIndex()
         {
             iCallbackSourceIndex = new CallbackSourceIndex(DoSourceIndex);
@@ -235,6 +328,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProduct2EnableActionSourceIndex(iHandle, iCallbackSourceIndex, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetSourceIndex is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetSourceIndex must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetSourceIndex()
         {
             iCallbackSetSourceIndex = new CallbackSetSourceIndex(DoSetSourceIndex);
@@ -242,6 +340,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProduct2EnableActionSetSourceIndex(iHandle, iCallbackSetSourceIndex, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SourceType is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSourceType must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSourceType()
         {
             iCallbackSourceType = new CallbackSourceType(DoSourceType);
@@ -249,61 +352,170 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProduct2EnableActionSourceType(iHandle, iCallbackSourceType, ptr);
         }
 
+        /// <summary>
+        /// Type action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Type action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionType was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaType"></param>
         protected virtual void Type(uint aVersion, out string aaType)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Model action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Model action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionModel was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaModel"></param>
         protected virtual void Model(uint aVersion, out string aaModel)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Name action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Name action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionName was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaName"></param>
         protected virtual void Name(uint aVersion, out string aaName)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetName action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetName action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetName was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaName"></param>
         protected virtual void SetName(uint aVersion, string aaName)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Room action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Room action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionRoom was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaRoom"></param>
         protected virtual void Room(uint aVersion, out string aaRoom)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetRoom action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetRoom action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetRoom was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaRoom"></param>
         protected virtual void SetRoom(uint aVersion, string aaRoom)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Standby action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Standby action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionStandby was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaStandby"></param>
         protected virtual void Standby(uint aVersion, out bool aaStandby)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetStandby action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetStandby action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetStandby was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaStandby"></param>
         protected virtual void SetStandby(uint aVersion, bool aaStandby)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SourceCount action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SourceCount action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSourceCount was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSourceCount"></param>
         protected virtual void SourceCount(uint aVersion, out uint aaSourceCount)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SourceIndex action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SourceIndex action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSourceIndex was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSourceIndex"></param>
         protected virtual void SourceIndex(uint aVersion, out uint aaSourceIndex)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetSourceIndex action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetSourceIndex action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetSourceIndex was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSourceIndex"></param>
         protected virtual void SetSourceIndex(uint aVersion, uint aaSourceIndex)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SourceType action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SourceType action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSourceType was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSourceIndex"></param>
+        /// <param name="aaSourceType"></param>
         protected virtual void SourceType(uint aVersion, uint aaSourceIndex, out string aaSourceType)
         {
             throw (new ActionDisabledError());
@@ -424,7 +636,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

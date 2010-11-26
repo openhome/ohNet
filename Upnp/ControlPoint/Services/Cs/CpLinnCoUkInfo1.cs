@@ -153,12 +153,25 @@ namespace Zapp.ControlPoint.Proxies
         private Callback iCallbackCodecNameChanged;
         private Callback iCallbackMetatextChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkInfo1(CpDevice aDevice)
         {
             iHandle = CpProxyLinnCoUkInfo1Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaTrackCount"></param>
+        /// <param name="aaDetailsCount"></param>
+        /// <param name="aaMetatextCount"></param>
         public unsafe void SyncCounters(out uint aaTrackCount, out uint aaDetailsCount, out uint aaMetatextCount)
         {
 			fixed (uint* aTrackCount = &aaTrackCount)
@@ -169,6 +182,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndCounters().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginCounters(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -176,6 +197,14 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkInfo1BeginCounters(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaTrackCount"></param>
+        /// <param name="aaDetailsCount"></param>
+        /// <param name="aaMetatextCount"></param>
         public unsafe void EndCounters(uint aAsyncHandle, out uint aaTrackCount, out uint aaDetailsCount, out uint aaMetatextCount)
         {
 			fixed (uint* aTrackCount = &aaTrackCount)
@@ -189,6 +218,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaUri"></param>
+        /// <param name="aaMetadata"></param>
         public unsafe void SyncTrack(out string aaUri, out string aaMetadata)
         {
 			char* aUri;
@@ -202,6 +238,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aMetadata);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndTrack().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginTrack(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -209,6 +253,13 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkInfo1BeginTrack(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaUri"></param>
+        /// <param name="aaMetadata"></param>
         public unsafe void EndTrack(uint aAsyncHandle, out string aaUri, out string aaMetadata)
         {
 			char* aUri;
@@ -225,6 +276,17 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aMetadata);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaDuration"></param>
+        /// <param name="aaBitRate"></param>
+        /// <param name="aaBitDepth"></param>
+        /// <param name="aaSampleRate"></param>
+        /// <param name="aaLossless"></param>
+        /// <param name="aaCodecName"></param>
         public unsafe void SyncDetails(out uint aaDuration, out uint aaBitRate, out uint aaBitDepth, out uint aaSampleRate, out bool aaLossless, out string aaCodecName)
         {
 			uint aLossless;
@@ -241,6 +303,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aCodecName);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndDetails().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDetails(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -248,6 +318,17 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkInfo1BeginDetails(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaDuration"></param>
+        /// <param name="aaBitRate"></param>
+        /// <param name="aaBitDepth"></param>
+        /// <param name="aaSampleRate"></param>
+        /// <param name="aaLossless"></param>
+        /// <param name="aaCodecName"></param>
         public unsafe void EndDetails(uint aAsyncHandle, out uint aaDuration, out uint aaBitRate, out uint aaBitDepth, out uint aaSampleRate, out bool aaLossless, out string aaCodecName)
         {
 			uint aLossless;
@@ -267,6 +348,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aCodecName);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaMetatext"></param>
         public unsafe void SyncMetatext(out string aaMetatext)
         {
 			char* aMetatext;
@@ -277,6 +364,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aMetatext);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndMetatext().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginMetatext(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -284,6 +379,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkInfo1BeginMetatext(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaMetatext"></param>
         public unsafe void EndMetatext(uint aAsyncHandle, out string aaMetatext)
         {
 			char* aMetatext;
@@ -297,6 +398,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aMetatext);
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the TrackCount state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkInfo1 instance will not overlap.</remarks>
+        /// <param name="aTrackCountChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackCountChanged(CallbackPropertyChanged aTrackCountChanged)
         {
             iTrackCountChanged = aTrackCountChanged;
@@ -312,6 +419,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iTrackCountChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the DetailsCount state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkInfo1 instance will not overlap.</remarks>
+        /// <param name="aDetailsCountChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDetailsCountChanged(CallbackPropertyChanged aDetailsCountChanged)
         {
             iDetailsCountChanged = aDetailsCountChanged;
@@ -327,6 +440,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iDetailsCountChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the MetatextCount state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkInfo1 instance will not overlap.</remarks>
+        /// <param name="aMetatextCountChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyMetatextCountChanged(CallbackPropertyChanged aMetatextCountChanged)
         {
             iMetatextCountChanged = aMetatextCountChanged;
@@ -342,6 +461,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iMetatextCountChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the Uri state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkInfo1 instance will not overlap.</remarks>
+        /// <param name="aUriChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyUriChanged(CallbackPropertyChanged aUriChanged)
         {
             iUriChanged = aUriChanged;
@@ -357,6 +482,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iUriChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the Metadata state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkInfo1 instance will not overlap.</remarks>
+        /// <param name="aMetadataChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyMetadataChanged(CallbackPropertyChanged aMetadataChanged)
         {
             iMetadataChanged = aMetadataChanged;
@@ -372,6 +503,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iMetadataChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the Duration state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkInfo1 instance will not overlap.</remarks>
+        /// <param name="aDurationChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDurationChanged(CallbackPropertyChanged aDurationChanged)
         {
             iDurationChanged = aDurationChanged;
@@ -387,6 +524,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iDurationChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the BitRate state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkInfo1 instance will not overlap.</remarks>
+        /// <param name="aBitRateChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyBitRateChanged(CallbackPropertyChanged aBitRateChanged)
         {
             iBitRateChanged = aBitRateChanged;
@@ -402,6 +545,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iBitRateChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the BitDepth state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkInfo1 instance will not overlap.</remarks>
+        /// <param name="aBitDepthChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyBitDepthChanged(CallbackPropertyChanged aBitDepthChanged)
         {
             iBitDepthChanged = aBitDepthChanged;
@@ -417,6 +566,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iBitDepthChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the SampleRate state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkInfo1 instance will not overlap.</remarks>
+        /// <param name="aSampleRateChanged">The delegate to run when the state variable changes</param>
         public void SetPropertySampleRateChanged(CallbackPropertyChanged aSampleRateChanged)
         {
             iSampleRateChanged = aSampleRateChanged;
@@ -432,6 +587,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iSampleRateChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the Lossless state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkInfo1 instance will not overlap.</remarks>
+        /// <param name="aLosslessChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyLosslessChanged(CallbackPropertyChanged aLosslessChanged)
         {
             iLosslessChanged = aLosslessChanged;
@@ -447,6 +608,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iLosslessChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the CodecName state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkInfo1 instance will not overlap.</remarks>
+        /// <param name="aCodecNameChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyCodecNameChanged(CallbackPropertyChanged aCodecNameChanged)
         {
             iCodecNameChanged = aCodecNameChanged;
@@ -462,6 +629,12 @@ namespace Zapp.ControlPoint.Proxies
             self.iCodecNameChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the Metatext state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkInfo1 instance will not overlap.</remarks>
+        /// <param name="aMetatextChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyMetatextChanged(CallbackPropertyChanged aMetatextChanged)
         {
             iMetatextChanged = aMetatextChanged;
@@ -477,6 +650,13 @@ namespace Zapp.ControlPoint.Proxies
             self.iMetatextChanged();
         }
 
+        /// <summary>
+        /// Query the value of the TrackCount property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aTrackCount">Will be set to the value of the property</param>
         public unsafe void PropertyTrackCount(out uint aTrackCount)
         {
 			fixed (uint* trackCount = &aTrackCount)
@@ -485,6 +665,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the DetailsCount property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aDetailsCount">Will be set to the value of the property</param>
         public unsafe void PropertyDetailsCount(out uint aDetailsCount)
         {
 			fixed (uint* detailsCount = &aDetailsCount)
@@ -493,6 +680,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the MetatextCount property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aMetatextCount">Will be set to the value of the property</param>
         public unsafe void PropertyMetatextCount(out uint aMetatextCount)
         {
 			fixed (uint* metatextCount = &aMetatextCount)
@@ -501,6 +695,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the Uri property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aUri">Will be set to the value of the property</param>
         public unsafe void PropertyUri(out string aUri)
         {
 			char* ptr;
@@ -509,6 +710,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the Metadata property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aMetadata">Will be set to the value of the property</param>
         public unsafe void PropertyMetadata(out string aMetadata)
         {
 			char* ptr;
@@ -517,6 +725,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the Duration property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aDuration">Will be set to the value of the property</param>
         public unsafe void PropertyDuration(out uint aDuration)
         {
 			fixed (uint* duration = &aDuration)
@@ -525,6 +740,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the BitRate property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aBitRate">Will be set to the value of the property</param>
         public unsafe void PropertyBitRate(out uint aBitRate)
         {
 			fixed (uint* bitRate = &aBitRate)
@@ -533,6 +755,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the BitDepth property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aBitDepth">Will be set to the value of the property</param>
         public unsafe void PropertyBitDepth(out uint aBitDepth)
         {
 			fixed (uint* bitDepth = &aBitDepth)
@@ -541,6 +770,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the SampleRate property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aSampleRate">Will be set to the value of the property</param>
         public unsafe void PropertySampleRate(out uint aSampleRate)
         {
 			fixed (uint* sampleRate = &aSampleRate)
@@ -549,6 +785,13 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Query the value of the Lossless property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aLossless">Will be set to the value of the property</param>
         public unsafe void PropertyLossless(out bool aLossless)
         {
 			uint lossless;
@@ -556,6 +799,13 @@ namespace Zapp.ControlPoint.Proxies
 			aLossless = (lossless != 0);
         }
 
+        /// <summary>
+        /// Query the value of the CodecName property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aCodecName">Will be set to the value of the property</param>
         public unsafe void PropertyCodecName(out string aCodecName)
         {
 			char* ptr;
@@ -564,6 +814,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the Metatext property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aMetatext">Will be set to the value of the property</param>
         public unsafe void PropertyMetatext(out string aMetatext)
         {
 			char* ptr;
@@ -572,6 +829,9 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);

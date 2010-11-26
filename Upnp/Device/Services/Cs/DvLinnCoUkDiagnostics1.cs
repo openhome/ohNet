@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the linn.co.uk:Diagnostics:1 UPnP service
+    /// </summary>
     public class DvProviderLinnCoUkDiagnostics1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkDiagnostics1")]
@@ -73,15 +76,24 @@ namespace Zapp.Device.Providers
         private CallbackSetStateVariablePeriod iCallbackSetStateVariablePeriod;
         private CallbackReboot iCallbackReboot;
 
-        public DvProviderLinnCoUkDiagnostics1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderLinnCoUkDiagnostics1(DvDevice aDevice)
         {
             iHandle = DvProviderLinnCoUkDiagnostics1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Set the value of the aStateVariable property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyaStateVariable(uint aValue)
         {
-        uint changed;
+            uint changed;
             if (0 != DvProviderLinnCoUkDiagnostics1SetPropertyaStateVariable(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
@@ -89,6 +101,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the aStateVariable property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyaStateVariable(out uint aValue)
         {
             fixed (uint* value = &aValue)
@@ -97,6 +113,11 @@ namespace Zapp.Device.Providers
             }
         }
 
+        /// <summary>
+        /// Signal that the action Echo is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoEcho must be overridden if this is called.</remarks>
         protected unsafe void EnableActionEcho()
         {
             iCallbackEcho = new CallbackEcho(DoEcho);
@@ -104,6 +125,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDiagnostics1EnableActionEcho(iHandle, iCallbackEcho, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action ElfFile is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoElfFile must be overridden if this is called.</remarks>
         protected unsafe void EnableActionElfFile()
         {
             iCallbackElfFile = new CallbackElfFile(DoElfFile);
@@ -111,6 +137,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDiagnostics1EnableActionElfFile(iHandle, iCallbackElfFile, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action ElfFingerprint is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoElfFingerprint must be overridden if this is called.</remarks>
         protected unsafe void EnableActionElfFingerprint()
         {
             iCallbackElfFingerprint = new CallbackElfFingerprint(DoElfFingerprint);
@@ -118,6 +149,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDiagnostics1EnableActionElfFingerprint(iHandle, iCallbackElfFingerprint, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action CrashDataStatus is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoCrashDataStatus must be overridden if this is called.</remarks>
         protected unsafe void EnableActionCrashDataStatus()
         {
             iCallbackCrashDataStatus = new CallbackCrashDataStatus(DoCrashDataStatus);
@@ -125,6 +161,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDiagnostics1EnableActionCrashDataStatus(iHandle, iCallbackCrashDataStatus, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action CrashDataFetch is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoCrashDataFetch must be overridden if this is called.</remarks>
         protected unsafe void EnableActionCrashDataFetch()
         {
             iCallbackCrashDataFetch = new CallbackCrashDataFetch(DoCrashDataFetch);
@@ -132,6 +173,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDiagnostics1EnableActionCrashDataFetch(iHandle, iCallbackCrashDataFetch, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action CrashDataClear is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoCrashDataClear must be overridden if this is called.</remarks>
         protected unsafe void EnableActionCrashDataClear()
         {
             iCallbackCrashDataClear = new CallbackCrashDataClear(DoCrashDataClear);
@@ -139,6 +185,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDiagnostics1EnableActionCrashDataClear(iHandle, iCallbackCrashDataClear, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SysLog is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSysLog must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSysLog()
         {
             iCallbackSysLog = new CallbackSysLog(DoSysLog);
@@ -146,6 +197,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDiagnostics1EnableActionSysLog(iHandle, iCallbackSysLog, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Diagnostic is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDiagnostic must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDiagnostic()
         {
             iCallbackDiagnostic = new CallbackDiagnostic(DoDiagnostic);
@@ -153,6 +209,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDiagnostics1EnableActionDiagnostic(iHandle, iCallbackDiagnostic, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action StateVariable is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoStateVariable must be overridden if this is called.</remarks>
         protected unsafe void EnableActionStateVariable()
         {
             iCallbackStateVariable = new CallbackStateVariable(DoStateVariable);
@@ -160,6 +221,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDiagnostics1EnableActionStateVariable(iHandle, iCallbackStateVariable, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetStateVariable is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetStateVariable must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetStateVariable()
         {
             iCallbackSetStateVariable = new CallbackSetStateVariable(DoSetStateVariable);
@@ -167,6 +233,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDiagnostics1EnableActionSetStateVariable(iHandle, iCallbackSetStateVariable, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action StateVariablePeriod is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoStateVariablePeriod must be overridden if this is called.</remarks>
         protected unsafe void EnableActionStateVariablePeriod()
         {
             iCallbackStateVariablePeriod = new CallbackStateVariablePeriod(DoStateVariablePeriod);
@@ -174,6 +245,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDiagnostics1EnableActionStateVariablePeriod(iHandle, iCallbackStateVariablePeriod, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetStateVariablePeriod is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetStateVariablePeriod must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetStateVariablePeriod()
         {
             iCallbackSetStateVariablePeriod = new CallbackSetStateVariablePeriod(DoSetStateVariablePeriod);
@@ -181,6 +257,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDiagnostics1EnableActionSetStateVariablePeriod(iHandle, iCallbackSetStateVariablePeriod, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Reboot is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoReboot must be overridden if this is called.</remarks>
         protected unsafe void EnableActionReboot()
         {
             iCallbackReboot = new CallbackReboot(DoReboot);
@@ -188,66 +269,184 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkDiagnostics1EnableActionReboot(iHandle, iCallbackReboot, ptr);
         }
 
+        /// <summary>
+        /// Echo action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Echo action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionEcho was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaIn"></param>
+        /// <param name="aaOut"></param>
         protected virtual void Echo(uint aVersion, string aaIn, out string aaOut)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// ElfFile action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// ElfFile action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionElfFile was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaElfFile"></param>
         protected virtual void ElfFile(uint aVersion, out string aaElfFile)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// ElfFingerprint action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// ElfFingerprint action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionElfFingerprint was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaElfFileFingerprint"></param>
         protected virtual void ElfFingerprint(uint aVersion, out string aaElfFileFingerprint)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// CrashDataStatus action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// CrashDataStatus action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionCrashDataStatus was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaCrashDataStatus"></param>
         protected virtual void CrashDataStatus(uint aVersion, out string aaCrashDataStatus)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// CrashDataFetch action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// CrashDataFetch action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionCrashDataFetch was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaCrashData"></param>
         protected virtual void CrashDataFetch(uint aVersion, out string aaCrashData)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// CrashDataClear action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// CrashDataClear action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionCrashDataClear was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void CrashDataClear(uint aVersion)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SysLog action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SysLog action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSysLog was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSysLog"></param>
         protected virtual void SysLog(uint aVersion, out string aaSysLog)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Diagnostic action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Diagnostic action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDiagnostic was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaDiagnosticType"></param>
+        /// <param name="aaDiagnosticInfo"></param>
         protected virtual void Diagnostic(uint aVersion, string aaDiagnosticType, out string aaDiagnosticInfo)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// StateVariable action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// StateVariable action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionStateVariable was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaStateVariable"></param>
         protected virtual void StateVariable(uint aVersion, out uint aaStateVariable)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetStateVariable action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetStateVariable action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetStateVariable was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaStateVariable"></param>
         protected virtual void SetStateVariable(uint aVersion, uint aaStateVariable)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// StateVariablePeriod action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// StateVariablePeriod action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionStateVariablePeriod was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaPeriod"></param>
         protected virtual void StateVariablePeriod(uint aVersion, out uint aaPeriod)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetStateVariablePeriod action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetStateVariablePeriod action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetStateVariablePeriod was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaPeriod"></param>
         protected virtual void SetStateVariablePeriod(uint aVersion, uint aaPeriod)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Reboot action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Reboot action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionReboot was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaDelay"></param>
         protected virtual void Reboot(uint aVersion, uint aaDelay)
         {
             throw (new ActionDisabledError());
@@ -379,7 +578,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

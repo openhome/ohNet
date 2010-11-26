@@ -146,12 +146,24 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iaStateVariableChanged;
         private Callback iCallbackaStateVariableChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkDiagnostics1(CpDevice aDevice)
         {
             iHandle = CpProxyLinnCoUkDiagnostics1Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaIn"></param>
+        /// <param name="aaOut"></param>
         public unsafe void SyncEcho(string aaIn, out string aaOut)
         {
 			char* aIn = (char*)Marshal.StringToHGlobalAnsi(aaIn);
@@ -164,6 +176,15 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aOut);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndEcho().</remarks>
+        /// <param name="aaIn"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginEcho(string aaIn, CallbackAsyncComplete aCallback)
         {
 			char* aIn = (char*)Marshal.StringToHGlobalAnsi(aaIn);
@@ -173,6 +194,12 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aIn);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaOut"></param>
         public unsafe void EndEcho(uint aAsyncHandle, out string aaOut)
         {
 			char* aOut;
@@ -186,6 +213,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aOut);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaElfFile"></param>
         public unsafe void SyncElfFile(out string aaElfFile)
         {
 			char* aElfFile;
@@ -196,6 +229,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aElfFile);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndElfFile().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginElfFile(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -203,6 +244,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkDiagnostics1BeginElfFile(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaElfFile"></param>
         public unsafe void EndElfFile(uint aAsyncHandle, out string aaElfFile)
         {
 			char* aElfFile;
@@ -216,6 +263,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aElfFile);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaElfFileFingerprint"></param>
         public unsafe void SyncElfFingerprint(out string aaElfFileFingerprint)
         {
 			char* aElfFileFingerprint;
@@ -226,6 +279,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aElfFileFingerprint);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndElfFingerprint().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginElfFingerprint(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -233,6 +294,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkDiagnostics1BeginElfFingerprint(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaElfFileFingerprint"></param>
         public unsafe void EndElfFingerprint(uint aAsyncHandle, out string aaElfFileFingerprint)
         {
 			char* aElfFileFingerprint;
@@ -246,6 +313,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aElfFileFingerprint);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaCrashDataStatus"></param>
         public unsafe void SyncCrashDataStatus(out string aaCrashDataStatus)
         {
 			char* aCrashDataStatus;
@@ -256,6 +329,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aCrashDataStatus);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndCrashDataStatus().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginCrashDataStatus(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -263,6 +344,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkDiagnostics1BeginCrashDataStatus(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaCrashDataStatus"></param>
         public unsafe void EndCrashDataStatus(uint aAsyncHandle, out string aaCrashDataStatus)
         {
 			char* aCrashDataStatus;
@@ -276,6 +363,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aCrashDataStatus);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaCrashData"></param>
         public unsafe void SyncCrashDataFetch(out string aaCrashData)
         {
 			char* aCrashData;
@@ -287,6 +380,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aCrashData);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndCrashDataFetch().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginCrashDataFetch(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -294,6 +395,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkDiagnostics1BeginCrashDataFetch(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaCrashData"></param>
         public unsafe void EndCrashDataFetch(uint aAsyncHandle, out string aaCrashData)
         {
 			char* aCrashData;
@@ -308,6 +415,11 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aCrashData);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
         public unsafe void SyncCrashDataClear()
         {
 			{
@@ -315,6 +427,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndCrashDataClear().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginCrashDataClear(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -322,6 +442,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkDiagnostics1BeginCrashDataClear(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndCrashDataClear(uint aAsyncHandle)
         {
 			{
@@ -332,6 +457,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaSysLog"></param>
         public unsafe void SyncSysLog(out string aaSysLog)
         {
 			char* aSysLog;
@@ -343,6 +474,14 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aSysLog);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSysLog().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSysLog(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -350,6 +489,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkDiagnostics1BeginSysLog(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaSysLog"></param>
         public unsafe void EndSysLog(uint aAsyncHandle, out string aaSysLog)
         {
 			char* aSysLog;
@@ -364,6 +509,13 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aSysLog);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaDiagnosticType"></param>
+        /// <param name="aaDiagnosticInfo"></param>
         public unsafe void SyncDiagnostic(string aaDiagnosticType, out string aaDiagnosticInfo)
         {
 			char* aDiagnosticType = (char*)Marshal.StringToHGlobalAnsi(aaDiagnosticType);
@@ -376,6 +528,15 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aDiagnosticInfo);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndDiagnostic().</remarks>
+        /// <param name="aaDiagnosticType"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDiagnostic(string aaDiagnosticType, CallbackAsyncComplete aCallback)
         {
 			char* aDiagnosticType = (char*)Marshal.StringToHGlobalAnsi(aaDiagnosticType);
@@ -385,6 +546,12 @@ namespace Zapp.ControlPoint.Proxies
 			Marshal.FreeHGlobal((IntPtr)aDiagnosticType);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaDiagnosticInfo"></param>
         public unsafe void EndDiagnostic(uint aAsyncHandle, out string aaDiagnosticInfo)
         {
 			char* aDiagnosticInfo;
@@ -398,6 +565,12 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(aDiagnosticInfo);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaStateVariable"></param>
         public unsafe void SyncStateVariable(out uint aaStateVariable)
         {
 			fixed (uint* aStateVariable = &aaStateVariable)
@@ -406,6 +579,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndStateVariable().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginStateVariable(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -413,6 +594,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkDiagnostics1BeginStateVariable(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaStateVariable"></param>
         public unsafe void EndStateVariable(uint aAsyncHandle, out uint aaStateVariable)
         {
 			fixed (uint* aStateVariable = &aaStateVariable)
@@ -424,6 +611,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaStateVariable"></param>
         public unsafe void SyncSetStateVariable(uint aaStateVariable)
         {
 			{
@@ -431,6 +624,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetStateVariable().</remarks>
+        /// <param name="aaStateVariable"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetStateVariable(uint aaStateVariable, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -438,6 +640,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkDiagnostics1BeginSetStateVariable(iHandle, aaStateVariable, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetStateVariable(uint aAsyncHandle)
         {
 			{
@@ -448,6 +655,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaPeriod"></param>
         public unsafe void SyncStateVariablePeriod(out uint aaPeriod)
         {
 			fixed (uint* aPeriod = &aaPeriod)
@@ -456,6 +669,14 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndStateVariablePeriod().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginStateVariablePeriod(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -463,6 +684,12 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkDiagnostics1BeginStateVariablePeriod(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaPeriod"></param>
         public unsafe void EndStateVariablePeriod(uint aAsyncHandle, out uint aaPeriod)
         {
 			fixed (uint* aPeriod = &aaPeriod)
@@ -474,6 +701,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaPeriod"></param>
         public unsafe void SyncSetStateVariablePeriod(uint aaPeriod)
         {
 			{
@@ -481,6 +714,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetStateVariablePeriod().</remarks>
+        /// <param name="aaPeriod"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetStateVariablePeriod(uint aaPeriod, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -488,6 +730,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkDiagnostics1BeginSetStateVariablePeriod(iHandle, aaPeriod, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetStateVariablePeriod(uint aAsyncHandle)
         {
 			{
@@ -498,6 +745,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaDelay"></param>
         public unsafe void SyncReboot(uint aaDelay)
         {
 			{
@@ -505,6 +758,15 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndReboot().</remarks>
+        /// <param name="aaDelay"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginReboot(uint aaDelay, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -512,6 +774,11 @@ namespace Zapp.ControlPoint.Proxies
             CpProxyLinnCoUkDiagnostics1BeginReboot(iHandle, aaDelay, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndReboot(uint aAsyncHandle)
         {
 			{
@@ -522,6 +789,12 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the aStateVariable state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkDiagnostics1 instance will not overlap.</remarks>
+        /// <param name="aaStateVariableChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyaStateVariableChanged(CallbackPropertyChanged aaStateVariableChanged)
         {
             iaStateVariableChanged = aaStateVariableChanged;
@@ -537,6 +810,13 @@ namespace Zapp.ControlPoint.Proxies
             self.iaStateVariableChanged();
         }
 
+        /// <summary>
+        /// Query the value of the aStateVariable property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+	    /// to Unsubscribe().</remarks>
+        /// <param name="aaStateVariable">Will be set to the value of the property</param>
         public unsafe void PropertyaStateVariable(out uint aaStateVariable)
         {
 			fixed (uint* aStateVariable = &aaStateVariable)
@@ -545,6 +825,9 @@ namespace Zapp.ControlPoint.Proxies
 			}
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);

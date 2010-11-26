@@ -5,6 +5,9 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    /// <summary>
+    /// Provider for the linn.co.uk:Product:1 UPnP service
+    /// </summary>
     public class DvProviderLinnCoUkProduct1 : DvProvider, IDisposable
     {
         [DllImport("DvLinnCoUkProduct1")]
@@ -41,15 +44,24 @@ namespace Zapp.Device.Providers
         private CallbackStandby iCallbackStandby;
         private CallbackSetStandby iCallbackSetStandby;
 
-        public DvProviderLinnCoUkProduct1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderLinnCoUkProduct1(DvDevice aDevice)
         {
             iHandle = DvProviderLinnCoUkProduct1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Set the value of the Room property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyRoom(string aValue)
         {
-        uint changed;
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int err = DvProviderLinnCoUkProduct1SetPropertyRoom(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
@@ -60,6 +72,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the Room property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyRoom(out string aValue)
         {
             char* value;
@@ -68,9 +84,14 @@ namespace Zapp.Device.Providers
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Set the value of the Standby property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
         public unsafe bool SetPropertyStandby(bool aValue)
         {
-        uint changed;
+            uint changed;
             int value = (aValue ? 1 : 0);
             if (0 != DvProviderLinnCoUkProduct1SetPropertyStandby(iHandle, value, &changed))
             {
@@ -79,6 +100,10 @@ namespace Zapp.Device.Providers
             return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the Standby property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyStandby(out bool aValue)
         {
             int value;
@@ -86,6 +111,11 @@ namespace Zapp.Device.Providers
             aValue = (value != 0);
         }
 
+        /// <summary>
+        /// Signal that the action Room is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoRoom must be overridden if this is called.</remarks>
         protected unsafe void EnableActionRoom()
         {
             iCallbackRoom = new CallbackRoom(DoRoom);
@@ -93,6 +123,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProduct1EnableActionRoom(iHandle, iCallbackRoom, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetRoom is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetRoom must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetRoom()
         {
             iCallbackSetRoom = new CallbackSetRoom(DoSetRoom);
@@ -100,6 +135,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProduct1EnableActionSetRoom(iHandle, iCallbackSetRoom, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Standby is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoStandby must be overridden if this is called.</remarks>
         protected unsafe void EnableActionStandby()
         {
             iCallbackStandby = new CallbackStandby(DoStandby);
@@ -107,6 +147,11 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProduct1EnableActionStandby(iHandle, iCallbackStandby, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetStandby is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetStandby must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetStandby()
         {
             iCallbackSetStandby = new CallbackSetStandby(DoSetStandby);
@@ -114,21 +159,57 @@ namespace Zapp.Device.Providers
             DvProviderLinnCoUkProduct1EnableActionSetStandby(iHandle, iCallbackSetStandby, ptr);
         }
 
+        /// <summary>
+        /// Room action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Room action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionRoom was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaRoom"></param>
         protected virtual void Room(uint aVersion, out string aaRoom)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetRoom action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetRoom action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetRoom was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaRoom"></param>
         protected virtual void SetRoom(uint aVersion, string aaRoom)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Standby action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Standby action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionStandby was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaStandby"></param>
         protected virtual void Standby(uint aVersion, out bool aaStandby)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetStandby action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetStandby action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetStandby was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaStandby"></param>
         protected virtual void SetStandby(uint aVersion, bool aaStandby)
         {
             throw (new ActionDisabledError());
@@ -172,7 +253,9 @@ namespace Zapp.Device.Providers
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();
