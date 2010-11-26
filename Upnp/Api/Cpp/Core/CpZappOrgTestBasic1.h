@@ -497,6 +497,57 @@ public:
     void EndToggleBool(IAsync& aAsync);
 
     /**
+     * Invoke the action synchronously.  Blocks until the action has been processed
+     * on the device and sets any output arguments.
+     *
+     * @param[in]  aData
+     * @param[in]  aFileFullName
+     */
+    void SyncWriteFile(const Brx& aData, const Brx& aFileFullName);
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the action
+     * later completes.  Any output arguments can then be retrieved by calling
+     * EndWriteFile().
+     *
+     * @param[in] aData
+     * @param[in] aFileFullName
+     * @param[in] aFunctor   Callback to run when the action completes.
+     *                       This is guaranteed to be run but may indicate an error
+     */
+    void BeginWriteFile(const Brx& aData, const Brx& aFileFullName, FunctorAsync& aFunctor);
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
+     * This may only be called from the callback set in the above Begin function.
+     *
+     * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
+     */
+    void EndWriteFile(IAsync& aAsync);
+
+    /**
+     * Invoke the action synchronously.  Blocks until the action has been processed
+     * on the device and sets any output arguments.
+     */
+    void SyncShutdown();
+    /**
+     * Invoke the action asynchronously.
+     * Returns immediately and will run the client-specified callback when the action
+     * later completes.  Any output arguments can then be retrieved by calling
+     * EndShutdown().
+     *
+     * @param[in] aFunctor   Callback to run when the action completes.
+     *                       This is guaranteed to be run but may indicate an error
+     */
+    void BeginShutdown(FunctorAsync& aFunctor);
+    /**
+     * Retrieve the output arguments from an asynchronously invoked action.
+     * This may only be called from the callback set in the above Begin function.
+     *
+     * @param[in]  aAsync  Argument passed to the callback set in the above Begin function
+     */
+    void EndShutdown(IAsync& aAsync);
+
+    /**
      * Set a callback to be run when the VarUint state variable changes.
      *
      * Callbacks may be run in different threads but callbacks for a
@@ -616,6 +667,8 @@ private:
     Action* iActionSetBinary;
     Action* iActionGetBinary;
     Action* iActionToggleBool;
+    Action* iActionWriteFile;
+    Action* iActionShutdown;
     PropertyUint* iVarUint;
     PropertyInt* iVarInt;
     PropertyBool* iVarBool;

@@ -191,6 +191,26 @@ typedef int32_t (*CallbackTestBasic1GetBinary)(void* aPtr, uint32_t aVersion, ch
  * @return  0 if the action succeeded; non-zero if the action failed
  */
 typedef int32_t (*CallbackTestBasic1ToggleBool)(void* aPtr, uint32_t aVersion);
+/**
+ * Callback which runs when the WriteFile action is invoked
+ *
+ * @param[in]  aPtr      Opaque data passed to DvProviderZappOrgTestBasic1EnableActionWriteFile
+ * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ * @param[in]  aData
+ * @param[in]  aFileFullName
+ *
+ * @return  0 if the action succeeded; non-zero if the action failed
+ */
+typedef int32_t (*CallbackTestBasic1WriteFile)(void* aPtr, uint32_t aVersion, const char* aData, const char* aFileFullName);
+/**
+ * Callback which runs when the Shutdown action is invoked
+ *
+ * @param[in]  aPtr      Opaque data passed to DvProviderZappOrgTestBasic1EnableActionShutdown
+ * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+ *
+ * @return  0 if the action succeeded; non-zero if the action failed
+ */
+typedef int32_t (*CallbackTestBasic1Shutdown)(void* aPtr, uint32_t aVersion);
 
 /**
  * Provider constructor
@@ -395,6 +415,28 @@ DllExport void DvProviderZappOrgTestBasic1EnableActionGetBinary(THandle aProvide
  * @param[in] aPtr       Client-specified data which will be passed to the callback
  */
 DllExport void DvProviderZappOrgTestBasic1EnableActionToggleBool(THandle aProvider, CallbackTestBasic1ToggleBool aCallback, void* aPtr);
+/**
+ * Register a callback for the action WriteFile
+ *
+ * If this is called, the action's availability will be published in the device's service.xml.
+ * If this is not called, any attempt to invoke the action on a control point will fail.
+ *
+ * @param[in] aProvider  Handle returned by DvProviderZappOrgTestBasic1Create
+ * @param[in] aCallback  Callback which will be run when the action is invoked
+ * @param[in] aPtr       Client-specified data which will be passed to the callback
+ */
+DllExport void DvProviderZappOrgTestBasic1EnableActionWriteFile(THandle aProvider, CallbackTestBasic1WriteFile aCallback, void* aPtr);
+/**
+ * Register a callback for the action Shutdown
+ *
+ * If this is called, the action's availability will be published in the device's service.xml.
+ * If this is not called, any attempt to invoke the action on a control point will fail.
+ *
+ * @param[in] aProvider  Handle returned by DvProviderZappOrgTestBasic1Create
+ * @param[in] aCallback  Callback which will be run when the action is invoked
+ * @param[in] aPtr       Client-specified data which will be passed to the callback
+ */
+DllExport void DvProviderZappOrgTestBasic1EnableActionShutdown(THandle aProvider, CallbackTestBasic1Shutdown aCallback, void* aPtr);
 
 /**
  * Set the value of the VarUint property

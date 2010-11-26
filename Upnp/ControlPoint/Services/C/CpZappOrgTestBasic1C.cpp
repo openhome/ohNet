@@ -600,6 +600,72 @@ int32_t CpProxyZappOrgTestBasic1EndToggleBool(THandle aHandle, ZappHandleAsync a
     return err;
 }
 
+void CpProxyZappOrgTestBasic1SyncWriteFile(THandle aHandle, const char* aData, const char* aFileFullName)
+{
+    CpProxyZappOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyZappOrgTestBasic1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    Brh buf_aData(aData);
+    Brh buf_aFileFullName(aFileFullName);
+    proxyC->Proxy()->SyncWriteFile(buf_aData, buf_aFileFullName);
+}
+
+void CpProxyZappOrgTestBasic1BeginWriteFile(THandle aHandle, const char* aData, const char* aFileFullName, ZappCallbackAsync aCallback, void* aPtr)
+{
+    CpProxyZappOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyZappOrgTestBasic1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    Brh buf_aData(aData);
+    Brh buf_aFileFullName(aFileFullName);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    proxyC->Proxy()->BeginWriteFile(buf_aData, buf_aFileFullName, functor);
+}
+
+int32_t CpProxyZappOrgTestBasic1EndWriteFile(THandle aHandle, ZappHandleAsync aAsync)
+{
+    int32_t err = 0;
+    CpProxyZappOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyZappOrgTestBasic1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    ASSERT(async != NULL);
+    try {
+        proxyC->Proxy()->EndWriteFile(*async);
+    }
+    catch(...) {
+        err = -1;
+    }
+    return err;
+}
+
+void CpProxyZappOrgTestBasic1SyncShutdown(THandle aHandle)
+{
+    CpProxyZappOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyZappOrgTestBasic1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    proxyC->Proxy()->SyncShutdown();
+}
+
+void CpProxyZappOrgTestBasic1BeginShutdown(THandle aHandle, ZappCallbackAsync aCallback, void* aPtr)
+{
+    CpProxyZappOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyZappOrgTestBasic1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    FunctorAsync functor = MakeFunctorAsync(aPtr, (ZappFunctorAsync)aCallback);
+    proxyC->Proxy()->BeginShutdown(functor);
+}
+
+int32_t CpProxyZappOrgTestBasic1EndShutdown(THandle aHandle, ZappHandleAsync aAsync)
+{
+    int32_t err = 0;
+    CpProxyZappOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyZappOrgTestBasic1C*>(aHandle);
+    ASSERT(proxyC != NULL);
+    IAsync* async = reinterpret_cast<IAsync*>(aAsync);
+    ASSERT(async != NULL);
+    try {
+        proxyC->Proxy()->EndShutdown(*async);
+    }
+    catch(...) {
+        err = -1;
+    }
+    return err;
+}
+
 void CpProxyZappOrgTestBasic1SetPropertyVarUintChanged(THandle aHandle, ZappCallback aCallback, void* aPtr)
 {
     CpProxyZappOrgTestBasic1C* proxyC = reinterpret_cast<CpProxyZappOrgTestBasic1C*>(aHandle);

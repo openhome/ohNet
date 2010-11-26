@@ -214,6 +214,22 @@ void DvProviderZappOrgTestBasic1::EnableActionToggleBool()
     iService->AddAction(action, functor);
 }
 
+void DvProviderZappOrgTestBasic1::EnableActionWriteFile()
+{
+    Zapp::Action* action = new Zapp::Action("WriteFile");
+    action->AddInputParameter(new ParameterString("Data"));
+    action->AddInputParameter(new ParameterString("FileFullName"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestBasic1::DoWriteFile);
+    iService->AddAction(action, functor);
+}
+
+void DvProviderZappOrgTestBasic1::EnableActionShutdown()
+{
+    Zapp::Action* action = new Zapp::Action("Shutdown");
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestBasic1::DoShutdown);
+    iService->AddAction(action, functor);
+}
+
 void DvProviderZappOrgTestBasic1::DoIncrement(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
@@ -377,6 +393,26 @@ void DvProviderZappOrgTestBasic1::DoToggleBool(IDviInvocation& aInvocation, TUin
     ToggleBool(resp, aVersion);
 }
 
+void DvProviderZappOrgTestBasic1::DoWriteFile(IDviInvocation& aInvocation, TUint aVersion)
+{
+    aInvocation.InvocationReadStart();
+    Brhz Data;
+    aInvocation.InvocationReadString("Data", Data);
+    Brhz FileFullName;
+    aInvocation.InvocationReadString("FileFullName", FileFullName);
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
+    WriteFile(resp, aVersion, Data, FileFullName);
+}
+
+void DvProviderZappOrgTestBasic1::DoShutdown(IDviInvocation& aInvocation, TUint aVersion)
+{
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
+    Shutdown(resp, aVersion);
+}
+
 void DvProviderZappOrgTestBasic1::Increment(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aValue*/, IInvocationResponseUint& /*aResult*/)
 {
     ASSERTS();
@@ -458,6 +494,16 @@ void DvProviderZappOrgTestBasic1::GetBinary(IInvocationResponse& /*aResponse*/, 
 }
 
 void DvProviderZappOrgTestBasic1::ToggleBool(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/)
+{
+    ASSERTS();
+}
+
+void DvProviderZappOrgTestBasic1::WriteFile(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aData*/, const Brx& /*aFileFullName*/)
+{
+    ASSERTS();
+}
+
+void DvProviderZappOrgTestBasic1::Shutdown(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/)
 {
     ASSERTS();
 }

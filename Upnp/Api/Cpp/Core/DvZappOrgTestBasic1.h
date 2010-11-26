@@ -182,6 +182,18 @@ protected:
      * DoToggleBool must be overridden if this is called.
      */
     void EnableActionToggleBool();
+    /**
+     * Signal that the action WriteFile is supported.
+     * The action's availability will be published in the device's service.xml.
+     * DoWriteFile must be overridden if this is called.
+     */
+    void EnableActionWriteFile();
+    /**
+     * Signal that the action Shutdown is supported.
+     * The action's availability will be published in the device's service.xml.
+     * DoShutdown must be overridden if this is called.
+     */
+    void EnableActionShutdown();
 private:
     /**
      * Increment action.
@@ -319,6 +331,22 @@ private:
      * Must be implemented iff EnableActionToggleBool was called.
      */
     virtual void ToggleBool(IInvocationResponse& aResponse, TUint aVersion);
+    /**
+     * WriteFile action.
+     *
+     * Will be called when the device stack receives an invocation of the
+     * WriteFile action for the owning device.
+     * Must be implemented iff EnableActionWriteFile was called.
+     */
+    virtual void WriteFile(IInvocationResponse& aResponse, TUint aVersion, const Brx& aData, const Brx& aFileFullName);
+    /**
+     * Shutdown action.
+     *
+     * Will be called when the device stack receives an invocation of the
+     * Shutdown action for the owning device.
+     * Must be implemented iff EnableActionShutdown was called.
+     */
+    virtual void Shutdown(IInvocationResponse& aResponse, TUint aVersion);
 private:
     DvProviderZappOrgTestBasic1();
     void DoIncrement(IDviInvocation& aInvocation, TUint aVersion);
@@ -338,6 +366,8 @@ private:
     void DoSetBinary(IDviInvocation& aInvocation, TUint aVersion);
     void DoGetBinary(IDviInvocation& aInvocation, TUint aVersion);
     void DoToggleBool(IDviInvocation& aInvocation, TUint aVersion);
+    void DoWriteFile(IDviInvocation& aInvocation, TUint aVersion);
+    void DoShutdown(IDviInvocation& aInvocation, TUint aVersion);
 private:
     PropertyUint* iPropertyVarUint;
     PropertyInt* iPropertyVarInt;

@@ -351,9 +351,6 @@ namespace Zapp.ControlPoint.Proxies
             ZappFree(ptr);
         }
 
-        /// <summary>
-        /// Must be called for each class instance.  Must be called before Core.Library.Close().
-        /// </summary>
         public void Dispose()
         {
             DoDispose(true);

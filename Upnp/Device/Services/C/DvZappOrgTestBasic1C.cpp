@@ -28,6 +28,8 @@ public:
     void EnableActionSetBinary(CallbackTestBasic1SetBinary aCallback, void* aPtr);
     void EnableActionGetBinary(CallbackTestBasic1GetBinary aCallback, void* aPtr);
     void EnableActionToggleBool(CallbackTestBasic1ToggleBool aCallback, void* aPtr);
+    void EnableActionWriteFile(CallbackTestBasic1WriteFile aCallback, void* aPtr);
+    void EnableActionShutdown(CallbackTestBasic1Shutdown aCallback, void* aPtr);
 private:
     void Increment(IInvocationResponse& aResponse, TUint aVersion, TUint aValue, IInvocationResponseUint& aResult);
     void Decrement(IInvocationResponse& aResponse, TUint aVersion, TInt aValue, IInvocationResponseInt& aResult);
@@ -46,6 +48,8 @@ private:
     void SetBinary(IInvocationResponse& aResponse, TUint aVersion, const Brx& aValueBin);
     void GetBinary(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBinary& aValueBin);
     void ToggleBool(IInvocationResponse& aResponse, TUint aVersion);
+    void WriteFile(IInvocationResponse& aResponse, TUint aVersion, const Brx& aData, const Brx& aFileFullName);
+    void Shutdown(IInvocationResponse& aResponse, TUint aVersion);
 private:
     CallbackTestBasic1Increment iCallbackIncrement;
     void* iPtrIncrement;
@@ -81,6 +85,10 @@ private:
     void* iPtrGetBinary;
     CallbackTestBasic1ToggleBool iCallbackToggleBool;
     void* iPtrToggleBool;
+    CallbackTestBasic1WriteFile iCallbackWriteFile;
+    void* iPtrWriteFile;
+    CallbackTestBasic1Shutdown iCallbackShutdown;
+    void* iPtrShutdown;
 };
 
 DvProviderZappOrgTestBasic1C::DvProviderZappOrgTestBasic1C(DvDevice& aDevice)
@@ -205,6 +213,20 @@ void DvProviderZappOrgTestBasic1C::EnableActionToggleBool(CallbackTestBasic1Togg
     iCallbackToggleBool = aCallback;
     iPtrToggleBool = aPtr;
     DvProviderZappOrgTestBasic1::EnableActionToggleBool();
+}
+
+void DvProviderZappOrgTestBasic1C::EnableActionWriteFile(CallbackTestBasic1WriteFile aCallback, void* aPtr)
+{
+    iCallbackWriteFile = aCallback;
+    iPtrWriteFile = aPtr;
+    DvProviderZappOrgTestBasic1::EnableActionWriteFile();
+}
+
+void DvProviderZappOrgTestBasic1C::EnableActionShutdown(CallbackTestBasic1Shutdown aCallback, void* aPtr)
+{
+    iCallbackShutdown = aCallback;
+    iPtrShutdown = aPtr;
+    DvProviderZappOrgTestBasic1::EnableActionShutdown();
 }
 
 void DvProviderZappOrgTestBasic1C::Increment(IInvocationResponse& aResponse, TUint aVersion, TUint aValue, IInvocationResponseUint& aResult)
@@ -430,6 +452,28 @@ void DvProviderZappOrgTestBasic1C::ToggleBool(IInvocationResponse& aResponse, TU
     aResponse.End();
 }
 
+void DvProviderZappOrgTestBasic1C::WriteFile(IInvocationResponse& aResponse, TUint aVersion, const Brx& aData, const Brx& aFileFullName)
+{
+    ASSERT(iCallbackWriteFile != NULL);
+    if (0 != iCallbackWriteFile(iPtrWriteFile, aVersion, (const char*)aData.Ptr(), (const char*)aFileFullName.Ptr())) {
+        aResponse.Error(502, Brn("Action failed"));
+        return;
+    }
+    aResponse.Start();
+    aResponse.End();
+}
+
+void DvProviderZappOrgTestBasic1C::Shutdown(IInvocationResponse& aResponse, TUint aVersion)
+{
+    ASSERT(iCallbackShutdown != NULL);
+    if (0 != iCallbackShutdown(iPtrShutdown, aVersion)) {
+        aResponse.Error(502, Brn("Action failed"));
+        return;
+    }
+    aResponse.Start();
+    aResponse.End();
+}
+
 
 
 THandle DvProviderZappOrgTestBasic1Create(DvDeviceC aDevice)
@@ -525,6 +569,16 @@ void DvProviderZappOrgTestBasic1EnableActionGetBinary(THandle aProvider, Callbac
 void DvProviderZappOrgTestBasic1EnableActionToggleBool(THandle aProvider, CallbackTestBasic1ToggleBool aCallback, void* aPtr)
 {
     reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionToggleBool(aCallback, aPtr);
+}
+
+void DvProviderZappOrgTestBasic1EnableActionWriteFile(THandle aProvider, CallbackTestBasic1WriteFile aCallback, void* aPtr)
+{
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionWriteFile(aCallback, aPtr);
+}
+
+void DvProviderZappOrgTestBasic1EnableActionShutdown(THandle aProvider, CallbackTestBasic1Shutdown aCallback, void* aPtr)
+{
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionShutdown(aCallback, aPtr);
 }
 
 int32_t DvProviderZappOrgTestBasic1SetPropertyVarUint(THandle aProvider, uint32_t aValue, uint32_t* aChanged)

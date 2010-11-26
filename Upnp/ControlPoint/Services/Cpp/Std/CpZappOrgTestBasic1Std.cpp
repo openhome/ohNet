@@ -371,6 +371,46 @@ void SyncToggleBoolZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
 }
 
 
+class SyncWriteFileZappOrgTestBasic1Cpp : public SyncProxyAction
+{
+public:
+    SyncWriteFileZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyZappOrgTestBasic1Cpp& iService;
+};
+
+SyncWriteFileZappOrgTestBasic1Cpp::SyncWriteFileZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy)
+    : iService(aProxy)
+{
+}
+
+void SyncWriteFileZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
+{
+    iService.EndWriteFile(aAsync);
+}
+
+
+class SyncShutdownZappOrgTestBasic1Cpp : public SyncProxyAction
+{
+public:
+    SyncShutdownZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy);
+    virtual void CompleteRequest(IAsync& aAsync);
+private:
+    CpProxyZappOrgTestBasic1Cpp& iService;
+};
+
+SyncShutdownZappOrgTestBasic1Cpp::SyncShutdownZappOrgTestBasic1Cpp(CpProxyZappOrgTestBasic1Cpp& aProxy)
+    : iService(aProxy)
+{
+}
+
+void SyncShutdownZappOrgTestBasic1Cpp::CompleteRequest(IAsync& aAsync)
+{
+    iService.EndShutdown(aAsync);
+}
+
+
 CpProxyZappOrgTestBasic1Cpp::CpProxyZappOrgTestBasic1Cpp(CpDeviceCpp& aDevice)
     : CpProxy("zapp-org", "TestBasic", 1, aDevice.Device())
 {
@@ -456,6 +496,14 @@ CpProxyZappOrgTestBasic1Cpp::CpProxyZappOrgTestBasic1Cpp(CpDeviceCpp& aDevice)
 
     iActionToggleBool = new Action("ToggleBool");
 
+    iActionWriteFile = new Action("WriteFile");
+    param = new Zapp::ParameterString("Data");
+    iActionWriteFile->AddInputParameter(param);
+    param = new Zapp::ParameterString("FileFullName");
+    iActionWriteFile->AddInputParameter(param);
+
+    iActionShutdown = new Action("Shutdown");
+
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyZappOrgTestBasic1Cpp::VarUintPropertyChanged);
     iVarUint = new PropertyUint("VarUint", functor);
@@ -494,6 +542,8 @@ CpProxyZappOrgTestBasic1Cpp::~CpProxyZappOrgTestBasic1Cpp()
     delete iActionSetBinary;
     delete iActionGetBinary;
     delete iActionToggleBool;
+    delete iActionWriteFile;
+    delete iActionShutdown;
 }
 
 void CpProxyZappOrgTestBasic1Cpp::SyncIncrement(uint32_t aValue, uint32_t& aResult)
@@ -1007,6 +1057,64 @@ void CpProxyZappOrgTestBasic1Cpp::EndToggleBool(IAsync& aAsync)
     ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
     Invocation& invocation = (Invocation&)aAsync;
     ASSERT(invocation.Action().Name() == Brn("ToggleBool"));
+
+    if (invocation.Error()) {
+        THROW(ProxyError);
+    }
+}
+
+void CpProxyZappOrgTestBasic1Cpp::SyncWriteFile(const std::string& aData, const std::string& aFileFullName)
+{
+    SyncWriteFileZappOrgTestBasic1Cpp sync(*this);
+    BeginWriteFile(aData, aFileFullName, sync.Functor());
+    sync.Wait();
+}
+
+void CpProxyZappOrgTestBasic1Cpp::BeginWriteFile(const std::string& aData, const std::string& aFileFullName, FunctorAsync& aFunctor)
+{
+    Invocation* invocation = iService->Invocation(*iActionWriteFile, aFunctor);
+    TUint inIndex = 0;
+    const Action::VectorParameters& inParams = iActionWriteFile->InputParameters();
+    {
+        Brn buf((const TByte*)aData.c_str(), (TUint)aData.length());
+        invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
+    }
+    {
+        Brn buf((const TByte*)aFileFullName.c_str(), (TUint)aFileFullName.length());
+        invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
+    }
+    iInvocable.InvokeAction(*invocation);
+}
+
+void CpProxyZappOrgTestBasic1Cpp::EndWriteFile(IAsync& aAsync)
+{
+    ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
+    Invocation& invocation = (Invocation&)aAsync;
+    ASSERT(invocation.Action().Name() == Brn("WriteFile"));
+
+    if (invocation.Error()) {
+        THROW(ProxyError);
+    }
+}
+
+void CpProxyZappOrgTestBasic1Cpp::SyncShutdown()
+{
+    SyncShutdownZappOrgTestBasic1Cpp sync(*this);
+    BeginShutdown(sync.Functor());
+    sync.Wait();
+}
+
+void CpProxyZappOrgTestBasic1Cpp::BeginShutdown(FunctorAsync& aFunctor)
+{
+    Invocation* invocation = iService->Invocation(*iActionShutdown, aFunctor);
+    iInvocable.InvokeAction(*invocation);
+}
+
+void CpProxyZappOrgTestBasic1Cpp::EndShutdown(IAsync& aAsync)
+{
+    ASSERT(((Async&)aAsync).Type() == Async::eInvocation);
+    Invocation& invocation = (Invocation&)aAsync;
+    ASSERT(invocation.Action().Name() == Brn("Shutdown"));
 
     if (invocation.Error()) {
         THROW(ProxyError);

@@ -218,6 +218,22 @@ void DvProviderZappOrgTestBasic1Cpp::EnableActionToggleBool()
     iService->AddAction(action, functor);
 }
 
+void DvProviderZappOrgTestBasic1Cpp::EnableActionWriteFile()
+{
+    Zapp::Action* action = new Zapp::Action("WriteFile");
+    action->AddInputParameter(new ParameterString("Data"));
+    action->AddInputParameter(new ParameterString("FileFullName"));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestBasic1Cpp::DoWriteFile);
+    iService->AddAction(action, functor);
+}
+
+void DvProviderZappOrgTestBasic1Cpp::EnableActionShutdown()
+{
+    Zapp::Action* action = new Zapp::Action("Shutdown");
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestBasic1Cpp::DoShutdown);
+    iService->AddAction(action, functor);
+}
+
 void DvProviderZappOrgTestBasic1Cpp::DoIncrement(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
@@ -430,6 +446,30 @@ void DvProviderZappOrgTestBasic1Cpp::DoToggleBool(IDviInvocation& aInvocation, T
 	aInvocation.InvocationWriteEnd();
 }
 
+void DvProviderZappOrgTestBasic1Cpp::DoWriteFile(IDviInvocation& aInvocation, TUint aVersion)
+{
+    aInvocation.InvocationReadStart();
+    Brhz buf_Data;
+    aInvocation.InvocationReadString("Data", buf_Data);
+    std::string Data((const char*)buf_Data.Ptr(), buf_Data.Bytes());
+    Brhz buf_FileFullName;
+    aInvocation.InvocationReadString("FileFullName", buf_FileFullName);
+    std::string FileFullName((const char*)buf_FileFullName.Ptr(), buf_FileFullName.Bytes());
+    aInvocation.InvocationReadEnd();
+    WriteFile(aVersion, Data, FileFullName);
+	aInvocation.InvocationWriteStart();
+	aInvocation.InvocationWriteEnd();
+}
+
+void DvProviderZappOrgTestBasic1Cpp::DoShutdown(IDviInvocation& aInvocation, TUint aVersion)
+{
+    aInvocation.InvocationReadStart();
+    aInvocation.InvocationReadEnd();
+    Shutdown(aVersion);
+	aInvocation.InvocationWriteStart();
+	aInvocation.InvocationWriteEnd();
+}
+
 void DvProviderZappOrgTestBasic1Cpp::Increment(uint32_t /*aVersion*/, uint32_t /*aValue*/, uint32_t& /*aResult*/)
 {
     ASSERTS();
@@ -511,6 +551,16 @@ void DvProviderZappOrgTestBasic1Cpp::GetBinary(uint32_t /*aVersion*/, std::strin
 }
 
 void DvProviderZappOrgTestBasic1Cpp::ToggleBool(uint32_t /*aVersion*/)
+{
+    ASSERTS();
+}
+
+void DvProviderZappOrgTestBasic1Cpp::WriteFile(uint32_t /*aVersion*/, const std::string& /*aData*/, const std::string& /*aFileFullName*/)
+{
+    ASSERTS();
+}
+
+void DvProviderZappOrgTestBasic1Cpp::Shutdown(uint32_t /*aVersion*/)
 {
     ASSERTS();
 }

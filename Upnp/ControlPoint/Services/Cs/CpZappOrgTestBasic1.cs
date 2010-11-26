@@ -58,6 +58,12 @@ namespace Zapp.ControlPoint.Proxies
         void SyncToggleBool();
         void BeginToggleBool(CpProxy.CallbackAsyncComplete aCallback);
         void EndToggleBool(uint aAsyncHandle);
+        void SyncWriteFile(string aData, string aFileFullName);
+        void BeginWriteFile(string aData, string aFileFullName, CpProxy.CallbackAsyncComplete aCallback);
+        void EndWriteFile(uint aAsyncHandle);
+        void SyncShutdown();
+        void BeginShutdown(CpProxy.CallbackAsyncComplete aCallback);
+        void EndShutdown(uint aAsyncHandle);
 
         void SetPropertyVarUintChanged(CpProxy.CallbackPropertyChanged aVarUintChanged);
         void PropertyVarUint(out uint aVarUint);
@@ -179,6 +185,18 @@ namespace Zapp.ControlPoint.Proxies
         static extern unsafe void CpProxyZappOrgTestBasic1BeginToggleBool(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
         static extern unsafe int CpProxyZappOrgTestBasic1EndToggleBool(uint aHandle, uint aAsync);
+        [DllImport("CpZappOrgTestBasic1")]
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncWriteFile(uint aHandle, char* aData, char* aFileFullName);
+        [DllImport("CpZappOrgTestBasic1")]
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginWriteFile(uint aHandle, char* aData, char* aFileFullName, CallbackActionComplete aCallback, IntPtr aPtr);
+        [DllImport("CpZappOrgTestBasic1")]
+        static extern unsafe int CpProxyZappOrgTestBasic1EndWriteFile(uint aHandle, uint aAsync);
+        [DllImport("CpZappOrgTestBasic1")]
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncShutdown(uint aHandle);
+        [DllImport("CpZappOrgTestBasic1")]
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginShutdown(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        [DllImport("CpZappOrgTestBasic1")]
+        static extern unsafe int CpProxyZappOrgTestBasic1EndShutdown(uint aHandle, uint aAsync);
         [DllImport("CpZappOrgTestBasic1")]
         static extern void CpProxyZappOrgTestBasic1SetPropertyVarUintChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
@@ -692,6 +710,62 @@ namespace Zapp.ControlPoint.Proxies
         {
 			{
 				if (0 != CpProxyZappOrgTestBasic1EndToggleBool(iHandle, aAsyncHandle))
+				{
+					throw(new ProxyError());
+				}
+			}
+        }
+
+        public unsafe void SyncWriteFile(string aData, string aFileFullName)
+        {
+			char* data = (char*)Marshal.StringToHGlobalAnsi(aData);
+			char* fileFullName = (char*)Marshal.StringToHGlobalAnsi(aFileFullName);
+			{
+				CpProxyZappOrgTestBasic1SyncWriteFile(iHandle, data, fileFullName);
+			}
+			Marshal.FreeHGlobal((IntPtr)data);
+			Marshal.FreeHGlobal((IntPtr)fileFullName);
+        }
+
+        public unsafe void BeginWriteFile(string aData, string aFileFullName, CallbackAsyncComplete aCallback)
+        {
+			char* data = (char*)Marshal.StringToHGlobalAnsi(aData);
+			char* fileFullName = (char*)Marshal.StringToHGlobalAnsi(aFileFullName);
+            GCHandle gch = GCHandle.Alloc(aCallback);
+            IntPtr ptr = GCHandle.ToIntPtr(gch);
+            CpProxyZappOrgTestBasic1BeginWriteFile(iHandle, data, fileFullName, iActionComplete, ptr);
+			Marshal.FreeHGlobal((IntPtr)data);
+			Marshal.FreeHGlobal((IntPtr)fileFullName);
+        }
+
+        public unsafe void EndWriteFile(uint aAsyncHandle)
+        {
+			{
+				if (0 != CpProxyZappOrgTestBasic1EndWriteFile(iHandle, aAsyncHandle))
+				{
+					throw(new ProxyError());
+				}
+			}
+        }
+
+        public unsafe void SyncShutdown()
+        {
+			{
+				CpProxyZappOrgTestBasic1SyncShutdown(iHandle);
+			}
+        }
+
+        public unsafe void BeginShutdown(CallbackAsyncComplete aCallback)
+        {
+            GCHandle gch = GCHandle.Alloc(aCallback);
+            IntPtr ptr = GCHandle.ToIntPtr(gch);
+            CpProxyZappOrgTestBasic1BeginShutdown(iHandle, iActionComplete, ptr);
+        }
+
+        public unsafe void EndShutdown(uint aAsyncHandle)
+        {
+			{
+				if (0 != CpProxyZappOrgTestBasic1EndShutdown(iHandle, aAsyncHandle))
 				{
 					throw(new ProxyError());
 				}

@@ -15,6 +15,7 @@
 #include <Stream.h>
 #include <Zapp.h>
 #include <Debug.h>
+#include <Stack.h>
 
 using namespace Zapp;
 
@@ -974,7 +975,7 @@ DviServerUpnp::DviServerUpnp()
 
 SocketTcpServer* DviServerUpnp::CreateServer(const NetworkInterface& aNif)
 {
-    SocketTcpServer* server = new SocketTcpServer("DSVU", 0, aNif.Address());
+    SocketTcpServer* server = new SocketTcpServer("DSVU", Stack::InitParams().DvServerPort(), aNif.Address());
     server->Add("DSES", new DviSessionUpnp(aNif.Address(), server->Port()));
     return server;
 }

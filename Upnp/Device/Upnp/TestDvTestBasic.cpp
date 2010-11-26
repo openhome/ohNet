@@ -34,6 +34,8 @@ private:
     void GetString(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValueStr);
     void SetBinary(IInvocationResponse& aResponse, TUint aVersion, const Brx& aValueBin);
     void GetBinary(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBinary& aValueBin);
+    void WriteFile(IInvocationResponse& aResponse, TUint aVersion, const Brx& aData, const Brx& aFileFullName);
+    void Shutdown(IInvocationResponse& aResponse, TUint aVersion);
 };
 
 class DeviceBasic : public IResourceManager
@@ -75,6 +77,8 @@ ProviderTestBasic::ProviderTestBasic(DvDevice& aDevice)
     EnableActionGetString();
     EnableActionSetBinary();
     EnableActionGetBinary();
+    EnableActionWriteFile();
+    EnableActionShutdown();
 }
 
 void ProviderTestBasic::Increment(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aValue, IInvocationResponseUint& aResult)
@@ -207,6 +211,26 @@ void ProviderTestBasic::GetBinary(IInvocationResponse& aResponse, TUint /*aVersi
     aResponse.End();
 }
 
+void ProviderTestBasic::WriteFile(IInvocationResponse& aResponse, TUint /*aVersion*/, const Brx& aData, const Brx& aFileFullName)
+{
+    char* name = (char*)malloc(aFileFullName.Bytes()+1);
+    (void)memcpy(name, aFileFullName.Ptr(), aFileFullName.Bytes());
+    FILE* fp = fopen(name, "wb");
+    free(name);
+    (void)fwrite(aData.Ptr(), aData.Bytes(), 1, fp);
+    (void)fflush(fp);
+    (void)fclose(fp);
+    aResponse.Start();
+    aResponse.End();
+}
+
+void ProviderTestBasic::Shutdown(IInvocationResponse& aResponse, TUint /*aVersion*/)
+{
+    aResponse.Start();
+    aResponse.End();
+    putchar('q');
+}
+
 
 DeviceBasic::DeviceBasic(const Brx& aConfigDir)
     : iConfigDir(aConfigDir)
@@ -297,6 +321,8 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     Brn emptyString("");
     OptionString config("-c", "--config", emptyString, "[full dir path] to folder containing web UI");
     parser.AddOption(&config);
+    OptionUint port("-p", "--port", 0, "Port to run device stack server on (0 - default - allows OS to choose)");
+    parser.AddOption(&port);
     if (!parser.Parse(aArgc, aArgv) || parser.HelpDisplayed()) {
         return;
     }
@@ -305,6 +331,7 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
         return;
     }
 
+    aInitParams->SetDvServerPort(port.Value());
     aInitParams->SetDvNumWebSocketThreads(5);
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartDv();

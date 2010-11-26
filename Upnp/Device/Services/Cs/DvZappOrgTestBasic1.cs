@@ -65,6 +65,10 @@ namespace Zapp.Device.Providers
         static extern void DvProviderZappOrgTestBasic1EnableActionGetBinary(uint aHandle, CallbackGetBinary aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestBasic1")]
         static extern void DvProviderZappOrgTestBasic1EnableActionToggleBool(uint aHandle, CallbackToggleBool aCallback, IntPtr aPtr);
+        [DllImport("DvZappOrgTestBasic1")]
+        static extern void DvProviderZappOrgTestBasic1EnableActionWriteFile(uint aHandle, CallbackWriteFile aCallback, IntPtr aPtr);
+        [DllImport("DvZappOrgTestBasic1")]
+        static extern void DvProviderZappOrgTestBasic1EnableActionShutdown(uint aHandle, CallbackShutdown aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -85,6 +89,8 @@ namespace Zapp.Device.Providers
         private unsafe delegate int CallbackSetBinary(IntPtr aPtr, uint aVersion, char* aValueBin, int aValueBinLen);
         private unsafe delegate int CallbackGetBinary(IntPtr aPtr, uint aVersion, char** aValueBin, int* aValueBinLen);
         private unsafe delegate int CallbackToggleBool(IntPtr aPtr, uint aVersion);
+        private unsafe delegate int CallbackWriteFile(IntPtr aPtr, uint aVersion, char* aData, char* aFileFullName);
+        private unsafe delegate int CallbackShutdown(IntPtr aPtr, uint aVersion);
 
         private GCHandle iGch;
         private CallbackIncrement iCallbackIncrement;
@@ -104,6 +110,8 @@ namespace Zapp.Device.Providers
         private CallbackSetBinary iCallbackSetBinary;
         private CallbackGetBinary iCallbackGetBinary;
         private CallbackToggleBool iCallbackToggleBool;
+        private CallbackWriteFile iCallbackWriteFile;
+        private CallbackShutdown iCallbackShutdown;
 
         public DvProviderZappOrgTestBasic1(DvDevice aDevice)
         {
@@ -328,6 +336,20 @@ namespace Zapp.Device.Providers
             DvProviderZappOrgTestBasic1EnableActionToggleBool(iHandle, iCallbackToggleBool, ptr);
         }
 
+        protected unsafe void EnableActionWriteFile()
+        {
+            iCallbackWriteFile = new CallbackWriteFile(DoWriteFile);
+            IntPtr ptr = GCHandle.ToIntPtr(iGch);
+            DvProviderZappOrgTestBasic1EnableActionWriteFile(iHandle, iCallbackWriteFile, ptr);
+        }
+
+        protected unsafe void EnableActionShutdown()
+        {
+            iCallbackShutdown = new CallbackShutdown(DoShutdown);
+            IntPtr ptr = GCHandle.ToIntPtr(iGch);
+            DvProviderZappOrgTestBasic1EnableActionShutdown(iHandle, iCallbackShutdown, ptr);
+        }
+
         protected virtual void Increment(uint aVersion, uint aValue, out uint aResult)
         {
             throw (new ActionDisabledError());
@@ -409,6 +431,16 @@ namespace Zapp.Device.Providers
         }
 
         protected virtual void ToggleBool(uint aVersion)
+        {
+            throw (new ActionDisabledError());
+        }
+
+        protected virtual void WriteFile(uint aVersion, string aData, string aFileFullName)
+        {
+            throw (new ActionDisabledError());
+        }
+
+        protected virtual void Shutdown(uint aVersion)
         {
             throw (new ActionDisabledError());
         }
@@ -575,6 +607,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             self.ToggleBool(aVersion);
+            return 0;
+        }
+
+        private static unsafe int DoWriteFile(IntPtr aPtr, uint aVersion, char* aData, char* aFileFullName)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
+            string data = Marshal.PtrToStringAnsi((IntPtr)aData);
+            string fileFullName = Marshal.PtrToStringAnsi((IntPtr)aFileFullName);
+            self.WriteFile(aVersion, data, fileFullName);
+            return 0;
+        }
+
+        private static unsafe int DoShutdown(IntPtr aPtr, uint aVersion)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(aPtr);
+            DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
+            self.Shutdown(aVersion);
             return 0;
         }
 

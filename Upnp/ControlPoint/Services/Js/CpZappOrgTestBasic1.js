@@ -37,6 +37,7 @@ var ServiceTestBasic = function(udn){
 	this.serviceProperties["VarBool"] = new Zapp.ServiceProperty("VarBool");
 	this.serviceProperties["VarStr"] = new Zapp.ServiceProperty("VarStr");
 	this.serviceProperties["VarBin"] = new Zapp.ServiceProperty("VarBin");
+	this.serviceProperties["A_ARG_WriteData"] = new Zapp.ServiceProperty("A_ARG_WriteData");
 }
 
 
@@ -254,6 +255,19 @@ ServiceTestBasic.prototype.VarBin_Changed = function (stateChangedFunction) {
     this.serviceProperties.VarBin.addListener(function (state) 
 	{ 
 		stateChangedFunction(Zapp.SoapRequest.readBinaryParameter(state)); 
+	});
+}
+
+
+/**
+* Adds a listener to handle "A_ARG_WriteData" property change events
+* @method A_ARG_WriteData_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+ServiceTestBasic.prototype.A_ARG_WriteData_Changed = function (stateChangedFunction) {
+    this.serviceProperties.A_ARG_WriteData.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.readStringParameter(state)); 
 	});
 }
 
@@ -606,6 +620,48 @@ ServiceTestBasic.prototype.GetBinary = function(successFunction, errorFunction){
 */
 ServiceTestBasic.prototype.ToggleBool = function(successFunction, errorFunction){	
 	var request = new Zapp.SoapRequest("ToggleBool", this.url, this.domain, this.type, this.version);		
+    request.send(function(result){
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to WriteFile
+* @method WriteFile
+* @param {String} Data An action parameter
+* @param {String} FileFullName An action parameter
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestBasic.prototype.WriteFile = function(Data, FileFullName, successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("WriteFile", this.url, this.domain, this.type, this.version);		
+    request.writeStringParameter("Data", Data);
+    request.writeStringParameter("FileFullName", FileFullName);
+    request.send(function(result){
+	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+
+/**
+* A service action to Shutdown
+* @method Shutdown
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+ServiceTestBasic.prototype.Shutdown = function(successFunction, errorFunction){	
+	var request = new Zapp.SoapRequest("Shutdown", this.url, this.domain, this.type, this.version);		
     request.send(function(result){
 	
 		if (successFunction){

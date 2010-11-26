@@ -184,6 +184,18 @@ protected:
      * DoToggleBool must be overridden if this is called.
      */
     void EnableActionToggleBool();
+    /**
+     * Signal that the action WriteFile is supported.
+     * The action's availability will be published in the device's service.xml.
+     * DoWriteFile must be overridden if this is called.
+     */
+    void EnableActionWriteFile();
+    /**
+     * Signal that the action Shutdown is supported.
+     * The action's availability will be published in the device's service.xml.
+     * DoShutdown must be overridden if this is called.
+     */
+    void EnableActionShutdown();
 private:
     /**
      * Increment action.
@@ -321,6 +333,22 @@ private:
      * Must be implemented iff EnableActionToggleBool was called.
      */
     virtual void ToggleBool(uint32_t aVersion);
+    /**
+     * WriteFile action.
+     *
+     * Will be called when the device stack receives an invocation of the
+     * WriteFile action for the owning device.
+     * Must be implemented iff EnableActionWriteFile was called.
+     */
+    virtual void WriteFile(uint32_t aVersion, const std::string& aData, const std::string& aFileFullName);
+    /**
+     * Shutdown action.
+     *
+     * Will be called when the device stack receives an invocation of the
+     * Shutdown action for the owning device.
+     * Must be implemented iff EnableActionShutdown was called.
+     */
+    virtual void Shutdown(uint32_t aVersion);
 private:
     DvProviderZappOrgTestBasic1Cpp();
     void DoIncrement(IDviInvocation& aInvocation, uint32_t aVersion);
@@ -340,6 +368,8 @@ private:
     void DoSetBinary(IDviInvocation& aInvocation, uint32_t aVersion);
     void DoGetBinary(IDviInvocation& aInvocation, uint32_t aVersion);
     void DoToggleBool(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoWriteFile(IDviInvocation& aInvocation, uint32_t aVersion);
+    void DoShutdown(IDviInvocation& aInvocation, uint32_t aVersion);
 private:
     PropertyUint* iPropertyVarUint;
     PropertyInt* iPropertyVarInt;
