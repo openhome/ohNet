@@ -494,6 +494,12 @@ $(objdir)TestDvTestBasic.$(exeext) :  upnp_core $(objdir)TestDvTestBasic.$(objex
 $(objdir)TestDvTestBasic.$(objext) : Device/Upnp/TestDvTestBasic.cpp $(headers)
 	$(compiler)TestDvTestBasic.$(objext) -c $(cflags) $(includes) Device/Upnp/TestDvTestBasic.cpp
 
+TestDeviceFinder: $(objdir)TestDeviceFinder.$(exeext) 
+$(objdir)TestDeviceFinder.$(exeext) :  upnp_core $(objdir)TestDeviceFinder.$(objext) TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestDeviceFinder.$(exeext) $(objdir)TestDeviceFinder.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+$(objdir)TestDeviceFinder.$(objext) : ControlPoint/TestDeviceFinder.cpp $(headers)
+	$(compiler)TestDeviceFinder.$(objext) -c $(cflags) $(includes) ControlPoint/TestDeviceFinder.cpp
+
 TestDvDeviceStd: $(objdir)TestDvDeviceStd.$(exeext) 
 $(objdir)TestDvDeviceStd.$(exeext) :  upnp_core $(objdir)TestDvDeviceStd.$(objext) $(objdir)TestBasicCpStd.$(objext) $(objdir)TestBasicDvStd.$(objext) $(objdir)DvZappOrgTestBasic1Std.$(objext) $(objdir)CpZappOrgTestBasic1Std.$(objext) TestFramework.$(libext)
 	$(link) $(linkoutput)$(objdir)TestDvDeviceStd.$(exeext) $(objdir)TestDvDeviceStd.$(objext) $(objdir)TestBasicCpStd.$(objext) $(objdir)TestBasicDvStd.$(objext) $(objdir)DvZappOrgTestBasic1Std.$(objext) $(objdir)CpZappOrgTestBasic1Std.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
@@ -532,7 +538,7 @@ $(objdir)TestCpDeviceDvC.$(exeext) :  upnp_core $(objdir)TestCpDeviceDvC.$(objex
 $(objdir)TestCpDeviceDvC.$(objext) : Public/C/TestCpDeviceDvC.cpp $(headers)
 	$(compiler)TestCpDeviceDvC.$(objext) -c $(cflags) $(includes) Public/C/TestCpDeviceDvC.cpp
 
-Tests: TestBuffer TestThread TestFifo TestQueue TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestProxyCs
+Tests: TestBuffer TestThread TestFifo TestQueue TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestProxyCs
 
 Zapp.net.dll : $(objdir)Zapp.net.dll
 

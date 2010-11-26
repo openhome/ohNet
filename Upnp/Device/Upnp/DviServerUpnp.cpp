@@ -975,7 +975,7 @@ DviServerUpnp::DviServerUpnp()
 
 SocketTcpServer* DviServerUpnp::CreateServer(const NetworkInterface& aNif)
 {
-    SocketTcpServer* server = new SocketTcpServer("DSVU", Stack::InitParams().DvServerPort(), aNif.Address());
+    SocketTcpServer* server = new SocketTcpServer("DSVU", 0, aNif.Address());
     server->Add("DSES", new DviSessionUpnp(aNif.Address(), server->Port()));
     return server;
 }
