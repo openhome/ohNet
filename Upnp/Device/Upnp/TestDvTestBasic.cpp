@@ -7,6 +7,7 @@
 #include <Zapp.h>
 #include <MimeTypes.h>
 
+#include <stdlib.h>
 #include <vector>
 #include <sys/stat.h>
 
