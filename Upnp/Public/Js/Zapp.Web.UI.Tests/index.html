@@ -10,10 +10,11 @@
     <script type="text/javascript">
         var kAsyncTimeoutMS = 5000; //300;
         var _Y;
+         var proxy;
         function pageLoad() {
             YUI({ logInclude: { TestRunner: true} }).use('test', function (Y) {
                 _Y = Y;
-                var proxy;
+               
                 var testCase = new Y.Test.Case({
 
                     name: "Test Proxy",
@@ -379,8 +380,12 @@
             var resultsXML = this.getResults(_Y.Test.Format.JUnitXML);
             //         alert(resultsXML);
             //   alert(resultsXML);
-            //     window.close();
-            $("#results").text(resultsXML);
+           
+            proxy.WriteFile(resultsXML,"C:\\temp.txt");
+          //  $("#results").text(resultsXML);
+            
+            
+            setTimeout(function() { window.close(); },2000);
         }
       
     </script>
