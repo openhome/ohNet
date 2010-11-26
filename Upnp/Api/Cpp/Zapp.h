@@ -176,14 +176,6 @@ public:
 	 */
 	void SetDvMaxUpdateTime(uint32_t aSecs);
     /**
-     * Set which port the device stack server should run on
-     *
-     * Intended for test programs only.  Strongly not recommended for use elsewhere.
-     *
-     * @param[in] aPort  TCP port number.  Defaults to 0, wllowing the OS to select the best port
-     */
-    void SetDvServerPort(uint32_t aPort);
-    /**
      * Set the number of threads which should be dedicated to publishing
      * changes to state variables on a service + device.
      * A higher number of threads will allow faster publication of changes
@@ -218,7 +210,6 @@ public:
 	ZappCallbackFreeExternal FreeExternal() const;
     bool UseLoopbackNetworkInterface() const;
 	uint32_t DvMaxUpdateTimeSecs() const;
-    uint32_t DvServerPort() const;
     uint32_t DvNumPublisherThreads() const;
     uint32_t DvNumWebSocketThreads() const;
 private:
@@ -246,7 +237,6 @@ private:
 	ZappCallbackFreeExternal iFreeExternal;
     bool iUseLoopbackNetworkInterface;
 	uint32_t iDvMaxUpdateTimeSecs;
-    uint32_t iDvServerPort;
 	uint32_t iDvNumPublisherThreads;
     uint32_t iDvNumWebSocketThreads;
 };

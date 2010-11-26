@@ -322,8 +322,8 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
     Brn emptyString("");
     OptionString config("-c", "--config", emptyString, "[full dir path] to folder containing web UI");
     parser.AddOption(&config);
-    OptionUint port("-p", "--port", 0, "Port to run device stack server on (0 - default - allows OS to choose)");
-    parser.AddOption(&port);
+    OptionBool loopback("-l", "--loopback", "Use the loopback adapter only");
+    parser.AddOption(&loopback);
     if (!parser.Parse(aArgc, aArgv) || parser.HelpDisplayed()) {
         return;
     }
@@ -332,7 +332,9 @@ void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], Initialisatio
         return;
     }
 
-    aInitParams->SetDvServerPort(port.Value());
+    if (loopback.IsSet()) {
+        aInitParams->SetUseLoopbackNetworkInterface();
+    }
     aInitParams->SetDvNumWebSocketThreads(5);
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartDv();
