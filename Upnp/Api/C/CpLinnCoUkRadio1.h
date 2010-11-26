@@ -14,6 +14,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpProxyLinnCoUkRadio1
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of CpProxyLinnCoUkRadio1 without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -714,6 +720,8 @@ DllExport void CpProxyLinnCoUkRadio1PropertyIdArray(THandle aHandle, char** aIdA
  * @param[out] aIdsMax
  */
 DllExport void CpProxyLinnCoUkRadio1PropertyIdsMax(THandle aHandle, uint32_t* aIdsMax);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

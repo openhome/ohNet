@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderLinnCoUkRadio1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the Play action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderLinnCoUkRadio1EnableActionPlay
@@ -498,6 +504,8 @@ DllExport int32_t DvProviderLinnCoUkRadio1SetPropertyIdsMax(THandle aProvider, u
  * @param[out] aValue     Value for the property
  */
 DllExport void DvProviderLinnCoUkRadio1GetPropertyIdsMax(THandle aProvider, uint32_t* aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

@@ -14,6 +14,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpProxyLinnCoUkPtest1
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of CpProxyLinnCoUkPtest1 without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -132,6 +138,8 @@ DllExport void CpProxyLinnCoUkPtest1BeginLedsOff(THandle aHandle, ZappCallbackAs
  */
 DllExport int32_t CpProxyLinnCoUkPtest1EndLedsOff(THandle aHandle, ZappHandleAsync aAsync);
 
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

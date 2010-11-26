@@ -14,6 +14,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpProxyLinnCoUkJukebox1
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of CpProxyLinnCoUkJukebox1 without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -361,6 +367,8 @@ DllExport void CpProxyLinnCoUkJukebox1PropertyPresetPrefix(THandle aHandle, char
  * @param[out] aAlbumArtFileName
  */
 DllExport void CpProxyLinnCoUkJukebox1PropertyAlbumArtFileName(THandle aHandle, char** aAlbumArtFileName);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

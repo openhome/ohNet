@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderZappOrgTestWidget1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the SetReadWriteRegister action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderZappOrgTestWidget1EnableActionSetReadWriteRegister
@@ -216,6 +222,8 @@ DllExport int32_t DvProviderZappOrgTestWidget1SetPropertyReadOnlyRegister7(THand
  * @param[out] aValue     Value for the property
  */
 DllExport void DvProviderZappOrgTestWidget1GetPropertyReadOnlyRegister7(THandle aProvider, uint32_t* aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

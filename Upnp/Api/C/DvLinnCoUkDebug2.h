@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderLinnCoUkDebug2
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the SetDebugLevel action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderLinnCoUkDebug2EnableActionSetDebugLevel
@@ -94,6 +100,8 @@ DllExport void DvProviderLinnCoUkDebug2EnableActionDebugLevel(THandle aProvider,
  */
 DllExport void DvProviderLinnCoUkDebug2EnableActionMemWrite(THandle aProvider, CallbackDebug2MemWrite aCallback, void* aPtr);
 
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

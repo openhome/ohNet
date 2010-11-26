@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderLinnCoUkComponent1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the AmplifierEnabled action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderLinnCoUkComponent1EnableActionAmplifierEnabled
@@ -331,6 +337,8 @@ DllExport int32_t DvProviderLinnCoUkComponent1SetPropertyDigitalAudioOutputRaw(T
  * @param[out] aValue     Value for the property
  */
 DllExport void DvProviderLinnCoUkComponent1GetPropertyDigitalAudioOutputRaw(THandle aProvider, uint32_t* aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

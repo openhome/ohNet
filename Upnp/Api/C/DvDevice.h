@@ -16,6 +16,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvDevice
+ * @ingroup Device
+ * @{
+ */
+
+/**
  * Opaque handle to a device
  */
 typedef THandle DvDeviceC;
@@ -183,6 +189,8 @@ DllExport void DvDeviceSetAttribute(DvDeviceC aDevice, const char* aKey, const c
  * @param[in] aXml     One or more tag+value blocks
  */
 DllExport void DvDeviceSetXmlExtension(DvDeviceC aDevice, const char* aXml);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

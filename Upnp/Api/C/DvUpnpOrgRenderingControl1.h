@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderUpnpOrgRenderingControl1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the ListPresets action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgRenderingControl1EnableActionListPresets
@@ -827,6 +833,8 @@ DllExport int32_t DvProviderUpnpOrgRenderingControl1SetPropertyLastChange(THandl
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void DvProviderUpnpOrgRenderingControl1GetPropertyLastChange(THandle aProvider, char** aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

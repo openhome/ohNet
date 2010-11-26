@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderLinnCoUkDs1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the Play action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderLinnCoUkDs1EnableActionPlay
@@ -405,6 +411,8 @@ DllExport int32_t DvProviderLinnCoUkDs1SetPropertyTransportState(THandle aProvid
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void DvProviderLinnCoUkDs1GetPropertyTransportState(THandle aProvider, char** aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

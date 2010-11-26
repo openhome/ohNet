@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderLinnCoUkJukebox1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the SetPresetPrefix action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderLinnCoUkJukebox1EnableActionSetPresetPrefix
@@ -252,6 +258,8 @@ DllExport int32_t DvProviderLinnCoUkJukebox1SetPropertyAlbumArtFileName(THandle 
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void DvProviderLinnCoUkJukebox1GetPropertyAlbumArtFileName(THandle aProvider, char** aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

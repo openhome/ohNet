@@ -55,6 +55,12 @@
 extern "C" {
 #endif
 
+/**
+ * @addtogroup <#=className#>
+ * @ingroup Providers
+ * @{
+ */
+
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 /**
@@ -158,6 +164,8 @@ DllExport int32_t <#=className#>SetProperty<#=s.name#>(THandle aProvider, <#=Pro
  */
 DllExport void <#=className#>GetProperty<#=s.name#>(THandle aProvider, <#=PropertyOutArgs(s)#>);
 <#  } #>
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

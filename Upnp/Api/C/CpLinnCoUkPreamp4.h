@@ -14,6 +14,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpProxyLinnCoUkPreamp4
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of CpProxyLinnCoUkPreamp4 without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -613,6 +619,8 @@ DllExport void CpProxyLinnCoUkPreamp4PropertyStartupVolume(THandle aHandle, uint
  * @param[out] aStartupVolumeEnabled
  */
 DllExport void CpProxyLinnCoUkPreamp4PropertyStartupVolumeEnabled(THandle aHandle, uint32_t* aStartupVolumeEnabled);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

@@ -14,6 +14,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpProxyLinnCoUkPlaylist1
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of CpProxyLinnCoUkPlaylist1 without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -528,6 +534,8 @@ DllExport void CpProxyLinnCoUkPlaylist1PropertyShuffle(THandle aHandle, uint32_t
  * @param[out] aTracksMax
  */
 DllExport void CpProxyLinnCoUkPlaylist1PropertyTracksMax(THandle aHandle, uint32_t* aTracksMax);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

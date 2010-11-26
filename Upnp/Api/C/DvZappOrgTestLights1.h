@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderZappOrgTestLights1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the GetCount action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderZappOrgTestLights1EnableActionGetCount
@@ -187,6 +193,8 @@ DllExport void DvProviderZappOrgTestLights1EnableActionGetColor(THandle aProvide
  */
 DllExport void DvProviderZappOrgTestLights1EnableActionGetColorComponents(THandle aProvider, CallbackTestLights1GetColorComponents aCallback, void* aPtr);
 
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

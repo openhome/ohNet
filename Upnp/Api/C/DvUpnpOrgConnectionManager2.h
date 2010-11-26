@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderUpnpOrgConnectionManager2
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the GetProtocolInfo action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgConnectionManager2EnableActionGetProtocolInfo
@@ -202,6 +208,8 @@ DllExport int32_t DvProviderUpnpOrgConnectionManager2SetPropertyCurrentConnectio
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void DvProviderUpnpOrgConnectionManager2GetPropertyCurrentConnectionIDs(THandle aProvider, char** aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

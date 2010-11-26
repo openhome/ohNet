@@ -8,7 +8,8 @@ extern "C" {
 #endif
 
 /**
- * @addtogroup ControlPoint
+ * @addtogroup CpDevice
+ * @ingroup ControlPoint
  * @{
  */
 
@@ -73,6 +74,13 @@ DllExport int32_t CpDeviceCGetAttribute(CpDeviceC aDevice, const char* aKey, cha
  *                           the device has been removed from its container list.
  */
 typedef void (*ZappCallbackDevice)(void* aPtr, CpDeviceC aDevice);
+
+/* @} */
+/**
+ * @addtogroup CpDeviceList
+ * @ingroup ControlPoint
+ * @{
+ */
 
 /**
  * Destroy a device list.

@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderLinnCoUkMediaTime1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the Seconds action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderLinnCoUkMediaTime1EnableActionSeconds
@@ -68,6 +74,8 @@ DllExport int32_t DvProviderLinnCoUkMediaTime1SetPropertySeconds(THandle aProvid
  * @param[out] aValue     Value for the property
  */
 DllExport void DvProviderLinnCoUkMediaTime1GetPropertySeconds(THandle aProvider, uint32_t* aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

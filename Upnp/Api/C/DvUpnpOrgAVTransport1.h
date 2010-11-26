@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderUpnpOrgAVTransport1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the SetAVTransportURI action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgAVTransport1EnableActionSetAVTransportURI
@@ -439,6 +445,8 @@ DllExport int32_t DvProviderUpnpOrgAVTransport1SetPropertyLastChange(THandle aPr
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void DvProviderUpnpOrgAVTransport1GetPropertyLastChange(THandle aProvider, char** aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

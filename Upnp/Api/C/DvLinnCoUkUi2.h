@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderLinnCoUkUi2
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the DisplayTestPattern action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderLinnCoUkUi2EnableActionDisplayTestPattern
@@ -731,6 +737,8 @@ DllExport int32_t DvProviderLinnCoUkUi2SetPropertyDisplayPixels(THandle aProvide
  * @param[out] aValueLen  Size in bytes pointed to by aValue
  */
 DllExport void DvProviderLinnCoUkUi2GetPropertyDisplayPixels(THandle aProvider, char** aValue, uint32_t* aValueLen);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

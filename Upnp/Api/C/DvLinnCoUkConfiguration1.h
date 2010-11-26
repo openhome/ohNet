@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderLinnCoUkConfiguration1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the ConfigurationXml action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderLinnCoUkConfiguration1EnableActionConfigurationXml
@@ -130,6 +136,8 @@ DllExport int32_t DvProviderLinnCoUkConfiguration1SetPropertyParameterXml(THandl
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void DvProviderLinnCoUkConfiguration1GetPropertyParameterXml(THandle aProvider, char** aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderLinnCoUkPreamp4
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the VolumeInc action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderLinnCoUkPreamp4EnableActionVolumeInc
@@ -429,6 +435,8 @@ DllExport int32_t DvProviderLinnCoUkPreamp4SetPropertyStartupVolumeEnabled(THand
  * @param[out] aValue     Value for the property
  */
 DllExport void DvProviderLinnCoUkPreamp4GetPropertyStartupVolumeEnabled(THandle aProvider, uint32_t* aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

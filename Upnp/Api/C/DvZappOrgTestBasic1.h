@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderZappOrgTestBasic1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the Increment action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderZappOrgTestBasic1EnableActionIncrement
@@ -530,6 +536,8 @@ DllExport int32_t DvProviderZappOrgTestBasic1SetPropertyVarBin(THandle aProvider
  * @param[out] aValueLen  Size in bytes pointed to by aValue
  */
 DllExport void DvProviderZappOrgTestBasic1GetPropertyVarBin(THandle aProvider, char** aValue, uint32_t* aValueLen);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

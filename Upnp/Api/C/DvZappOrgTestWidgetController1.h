@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderZappOrgTestWidgetController1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the CreateWidget action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderZappOrgTestWidgetController1EnableActionCreateWidget
@@ -118,6 +124,8 @@ DllExport void DvProviderZappOrgTestWidgetController1EnableActionSetWidgetRegist
  */
 DllExport void DvProviderZappOrgTestWidgetController1EnableActionGetWidgetRegister(THandle aProvider, CallbackTestWidgetController1GetWidgetRegister aCallback, void* aPtr);
 
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

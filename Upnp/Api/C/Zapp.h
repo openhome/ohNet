@@ -14,6 +14,7 @@ typedef THandle ZappHandleInitParams;
 
 /**
  * Callback which runs when a library component has a message to deliver
+ * @ingroup Callbacks
  *
  * @param[in] aPtr   Client-specified data
  * @param[in] aMsg   Nul-terminated message
@@ -21,16 +22,24 @@ typedef THandle ZappHandleInitParams;
 typedef void (*ZappCallbackMsg)(void* aPtr, const char* aMsg);
 /**
  * Callback which runs to notify a listener of a change in a library component
+ * @ingroup Callbacks
  *
  * @param[in] aPtr   Client-specified data
  */
 typedef void (*ZappCallback)(void* aPtr);
 /**
  * Callback pointing to function which can be used to free memory allocated by a client
+ * @ingroup Callbacks
  *
  * @param[in] aPtr   Client-allocated memory to be freed
  */
 typedef void (*ZappCallbackFreeExternal)(void* aPtr);
+
+/**
+ * @addtogroup Library
+ * @ingroup Core
+ * @{
+ */
 
 /**
  * Initialise the UPnP library.
@@ -84,13 +93,12 @@ DllExport void ZappLibraryStartCombined();
  */
 DllExport void ZappLibraryClose();
 
+/* @} */
 /**
- * Free memory returned by the library.
- * Use of this function is optional.  Calling free() directly is acceptable.
- *
- * @param[in] ptr              Pointer to be freed
+ * @addtogroup InitParams
+ * @ingroup Core
+ * @{
  */
-DllExport void ZappFree(void* aPtr);
 
 /**
  * Create the initialisation parameters which must be passed to the library's initialiser
@@ -426,6 +434,14 @@ DllExport uint32_t ZappInitParamsDvNumPublisherThreads(ZappHandleInitParams aPar
  */
 DllExport uint32_t ZappInitParamsDvNumWebSocketThreads(ZappHandleInitParams aParams);
 
+/* @} */
+
+/**
+ * @addtogroup NetworkInterface
+ * @ingroup Core
+ * @{
+ */
+
 /**
  * Query the address of a network interface
  *
@@ -504,6 +520,23 @@ DllExport void ZappSetCurrentSubnet(ZappHandleNetworkInterface aSubnet);
  */
 DllExport void ZappSetDefaultSubnet();
 
+/* @} */
+
+/**
+ * @addtogroup Memory
+ * @ingroup Core
+ * @{
+ */
+
+/**
+ * Free memory returned by the library.
+ *
+ * Use of this function is optional.  Calling free() directly is acceptable.
+ *
+ * @param[in] ptr              Pointer to be freed
+ */
+DllExport void ZappFree(void* aPtr);
+
 /**
  * Free memory which was allocated by the client
  *
@@ -511,6 +544,7 @@ DllExport void ZappSetDefaultSubnet();
  */
 DllExport void ZappFreeExternal(void* aPtr);
 
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

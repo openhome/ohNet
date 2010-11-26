@@ -14,6 +14,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpProxyZappOrgTestBasic1
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of CpProxyZappOrgTestBasic1 without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -783,6 +789,8 @@ DllExport void CpProxyZappOrgTestBasic1PropertyVarStr(THandle aHandle, char** aV
  * @param[out] aLen
  */
 DllExport void CpProxyZappOrgTestBasic1PropertyVarBin(THandle aHandle, char** aVarBin, uint32_t* aLen);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

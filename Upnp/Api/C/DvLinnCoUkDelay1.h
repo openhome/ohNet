@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderLinnCoUkDelay1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the PresetXml action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderLinnCoUkDelay1EnableActionPresetXml
@@ -257,6 +263,8 @@ DllExport int32_t DvProviderLinnCoUkDelay1SetPropertyPresetIndex(THandle aProvid
  * @param[out] aValue     Value for the property
  */
 DllExport void DvProviderLinnCoUkDelay1GetPropertyPresetIndex(THandle aProvider, uint32_t* aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

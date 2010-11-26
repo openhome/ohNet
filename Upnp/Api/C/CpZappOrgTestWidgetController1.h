@@ -14,6 +14,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpProxyZappOrgTestWidgetController1
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of CpProxyZappOrgTestWidgetController1 without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -177,6 +183,8 @@ DllExport void CpProxyZappOrgTestWidgetController1BeginGetWidgetRegister(THandle
  */
 DllExport int32_t CpProxyZappOrgTestWidgetController1EndGetWidgetRegister(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aRegisterValue);
 
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

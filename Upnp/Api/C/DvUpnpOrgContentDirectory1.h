@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderUpnpOrgContentDirectory1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the GetSearchCapabilities action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgContentDirectory1EnableActionGetSearchCapabilities
@@ -409,6 +415,8 @@ DllExport int32_t DvProviderUpnpOrgContentDirectory1SetPropertyContainerUpdateID
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void DvProviderUpnpOrgContentDirectory1GetPropertyContainerUpdateIDs(THandle aProvider, char** aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

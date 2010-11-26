@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderZappOrgTestDimmableLight1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the GetLevel action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderZappOrgTestDimmableLight1EnableActionGetLevel
@@ -89,6 +95,8 @@ DllExport int32_t DvProviderZappOrgTestDimmableLight1SetPropertyA_ARG_Level(THan
  * @param[out] aValue     Value for the property
  */
 DllExport void DvProviderZappOrgTestDimmableLight1GetPropertyA_ARG_Level(THandle aProvider, uint32_t* aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

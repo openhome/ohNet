@@ -14,6 +14,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpProxyUpnpOrgContentDirectory1
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of CpProxyUpnpOrgContentDirectory1 without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -621,6 +627,8 @@ DllExport void CpProxyUpnpOrgContentDirectory1PropertySystemUpdateID(THandle aHa
  * @param[out] aContainerUpdateIDs
  */
 DllExport void CpProxyUpnpOrgContentDirectory1PropertyContainerUpdateIDs(THandle aHandle, char** aContainerUpdateIDs);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

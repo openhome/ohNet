@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderLinnCoUkPlaylist1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the Read action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderLinnCoUkPlaylist1EnableActionRead
@@ -363,6 +369,8 @@ DllExport int32_t DvProviderLinnCoUkPlaylist1SetPropertyTracksMax(THandle aProvi
  * @param[out] aValue     Value for the property
  */
 DllExport void DvProviderLinnCoUkPlaylist1GetPropertyTracksMax(THandle aProvider, uint32_t* aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

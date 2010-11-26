@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderLinnCoUkVolkano1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the Reboot action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderLinnCoUkVolkano1EnableActionReboot
@@ -261,6 +267,8 @@ DllExport void DvProviderLinnCoUkVolkano1EnableActionMaxBoards(THandle aProvider
  */
 DllExport void DvProviderLinnCoUkVolkano1EnableActionSoftwareVersion(THandle aProvider, CallbackVolkano1SoftwareVersion aCallback, void* aPtr);
 
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

@@ -14,6 +14,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpProxyLinnCoUkProxyManager1
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of CpProxyLinnCoUkProxyManager1 without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -445,6 +451,8 @@ DllExport void CpProxyLinnCoUkProxyManager1PropertyDiscPlayerConnected(THandle a
  * @param[out] aDiscPlayerComPort
  */
 DllExport void CpProxyLinnCoUkProxyManager1PropertyDiscPlayerComPort(THandle aHandle, uint32_t* aDiscPlayerComPort);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderUpnpOrgSwitchPower1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the SetTarget action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgSwitchPower1EnableActionSetTarget
@@ -110,6 +116,8 @@ DllExport int32_t DvProviderUpnpOrgSwitchPower1SetPropertyStatus(THandle aProvid
  * @param[out] aValue     Value for the property
  */
 DllExport void DvProviderUpnpOrgSwitchPower1GetPropertyStatus(THandle aProvider, uint32_t* aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

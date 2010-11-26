@@ -63,6 +63,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup <#=className#>
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of <#=className#> without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -185,6 +191,8 @@ DllExport void <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[
 DllExport void <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>);
 <#      } #>
 <#  } #>
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

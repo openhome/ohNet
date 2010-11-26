@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderLinnCoUkInfo1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the Counters action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderLinnCoUkInfo1EnableActionCounters
@@ -337,6 +343,8 @@ DllExport int32_t DvProviderLinnCoUkInfo1SetPropertyMetatext(THandle aProvider, 
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void DvProviderLinnCoUkInfo1GetPropertyMetatext(THandle aProvider, char** aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

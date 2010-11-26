@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderUpnpOrgDimming1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the SetLoadLevelTarget action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgDimming1EnableActionSetLoadLevelTarget
@@ -555,6 +561,8 @@ DllExport int32_t DvProviderUpnpOrgDimming1SetPropertyRampPaused(THandle aProvid
  * @param[out] aValue     Value for the property
  */
 DllExport void DvProviderUpnpOrgDimming1GetPropertyRampPaused(THandle aProvider, uint32_t* aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

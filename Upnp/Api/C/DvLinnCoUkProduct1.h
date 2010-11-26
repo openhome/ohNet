@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderLinnCoUkProduct1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the Room action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderLinnCoUkProduct1EnableActionRoom
@@ -149,6 +155,8 @@ DllExport int32_t DvProviderLinnCoUkProduct1SetPropertyStandby(THandle aProvider
  * @param[out] aValue     Value for the property
  */
 DllExport void DvProviderLinnCoUkProduct1GetPropertyStandby(THandle aProvider, uint32_t* aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

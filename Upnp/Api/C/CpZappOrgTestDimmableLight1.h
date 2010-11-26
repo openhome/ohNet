@@ -14,6 +14,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpProxyZappOrgTestDimmableLight1
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of CpProxyZappOrgTestDimmableLight1 without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -121,6 +127,8 @@ DllExport void CpProxyZappOrgTestDimmableLight1SetPropertyA_ARG_LevelChanged(THa
  * @param[out] aA_ARG_Level
  */
 DllExport void CpProxyZappOrgTestDimmableLight1PropertyA_ARG_Level(THandle aHandle, uint32_t* aA_ARG_Level);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderUpnpOrgScheduledRecording2
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the GetSortCapabilities action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderUpnpOrgScheduledRecording2EnableActionGetSortCapabilities
@@ -457,6 +463,8 @@ DllExport int32_t DvProviderUpnpOrgScheduledRecording2SetPropertyLastChange(THan
  * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
  */
 DllExport void DvProviderUpnpOrgScheduledRecording2GetPropertyLastChange(THandle aProvider, char** aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

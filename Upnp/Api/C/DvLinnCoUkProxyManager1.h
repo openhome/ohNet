@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderLinnCoUkProxyManager1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the KontrolProductConnected action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderLinnCoUkProxyManager1EnableActionKontrolProductConnected
@@ -311,6 +317,8 @@ DllExport int32_t DvProviderLinnCoUkProxyManager1SetPropertyDiscPlayerComPort(TH
  * @param[out] aValue     Value for the property
  */
 DllExport void DvProviderLinnCoUkProxyManager1GetPropertyDiscPlayerComPort(THandle aProvider, uint32_t* aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

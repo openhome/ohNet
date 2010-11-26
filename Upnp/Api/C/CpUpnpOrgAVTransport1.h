@@ -14,6 +14,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpProxyUpnpOrgAVTransport1
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of CpProxyUpnpOrgAVTransport1 without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -686,6 +692,8 @@ DllExport void CpProxyUpnpOrgAVTransport1SetPropertyLastChangeChanged(THandle aH
  * @param[out] aLastChange
  */
 DllExport void CpProxyUpnpOrgAVTransport1PropertyLastChange(THandle aHandle, char** aLastChange);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

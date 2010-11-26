@@ -8,6 +8,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProvider
+ * @ingroup Device
+ * @{
+ */
+
+/**
  * Lock the provider's properties, blocking publication of updates.
  *
  * This is not necessary when updating a single property but is used by providers that have
@@ -29,6 +35,8 @@ DllExport void DvProviderPropertiesLock(THandle aProvider);
  * @param[in] aProvider   Handle to a provider
  */
 DllExport void DvProviderPropertiesUnlock(THandle aProvider);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

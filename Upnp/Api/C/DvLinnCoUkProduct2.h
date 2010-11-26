@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderLinnCoUkProduct2
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the Type action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderLinnCoUkProduct2EnableActionType
@@ -354,6 +360,8 @@ DllExport int32_t DvProviderLinnCoUkProduct2SetPropertyProductSourceIndex(THandl
  * @param[out] aValue     Value for the property
  */
 DllExport void DvProviderLinnCoUkProduct2GetPropertyProductSourceIndex(THandle aProvider, uint32_t* aValue);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

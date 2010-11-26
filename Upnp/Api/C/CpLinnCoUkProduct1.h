@@ -14,6 +14,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpProxyLinnCoUkProduct1
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of CpProxyLinnCoUkProduct1 without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -207,6 +213,8 @@ DllExport void CpProxyLinnCoUkProduct1PropertyRoom(THandle aHandle, char** aRoom
  * @param[out] aStandby
  */
 DllExport void CpProxyLinnCoUkProduct1PropertyStandby(THandle aHandle, uint32_t* aStandby);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

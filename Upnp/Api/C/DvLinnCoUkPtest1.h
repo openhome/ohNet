@@ -12,6 +12,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup DvProviderLinnCoUkPtest1
+ * @ingroup Providers
+ * @{
+ */
+
+/**
  * Callback which runs when the TestComPort action is invoked
  *
  * @param[in]  aPtr      Opaque data passed to DvProviderLinnCoUkPtest1EnableActionTestComPort
@@ -91,6 +97,8 @@ DllExport void DvProviderLinnCoUkPtest1EnableActionLedsOn(THandle aProvider, Cal
  */
 DllExport void DvProviderLinnCoUkPtest1EnableActionLedsOff(THandle aProvider, CallbackPtest1LedsOff aCallback, void* aPtr);
 
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"
