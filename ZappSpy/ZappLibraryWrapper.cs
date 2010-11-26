@@ -10,7 +10,7 @@ namespace ZappSpy
         private Zapp.Core.Library iLibrary;
         public ZappLibraryWrapper()
         {
-            Zapp.InitParams initialisationParams = new Zapp.InitParams
+            Zapp.Core.InitParams initialisationParams = new Zapp.Core.InitParams
             {
                 // Nothing to set, yet!
             };
