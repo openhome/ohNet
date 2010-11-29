@@ -3,7 +3,7 @@
 /**
 * Service Proxy for zapp.org:TestBasic:1
 * @module Zapp
-* @title TestBasic
+* @class TestBasic
 */
 
 var ServiceTestBasic = function(udn){	
@@ -44,7 +44,7 @@ var ServiceTestBasic = function(udn){
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServiceTestBasic.prototype.subscribe = function (serviceAddedFunction) {
@@ -54,8 +54,7 @@ ServiceTestBasic.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServiceTestBasic.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);
