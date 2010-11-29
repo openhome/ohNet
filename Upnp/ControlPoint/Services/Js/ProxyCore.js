@@ -2,7 +2,6 @@
 * The Zapp object is the single global object used by Zapp Services to
 * facilitate actions and subscriptions. 
 * @module Zapp
-* @title Zapp
 */
 
 if (typeof Zapp == "undefined" || !Zapp) {

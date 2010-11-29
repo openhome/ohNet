@@ -3,7 +3,7 @@
 /**
 * Service Proxy for linn.co.uk:Debug:2
 * @module Zapp
-* @title Debug
+* @class Debug
 */
 
 var ServiceDebug = function(udn){	
@@ -31,7 +31,7 @@ var ServiceDebug = function(udn){
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServiceDebug.prototype.subscribe = function (serviceAddedFunction) {
@@ -41,8 +41,7 @@ ServiceDebug.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServiceDebug.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);

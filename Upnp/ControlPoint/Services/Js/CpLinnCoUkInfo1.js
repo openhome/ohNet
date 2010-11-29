@@ -3,7 +3,7 @@
 /**
 * Service Proxy for linn.co.uk:Info:1
 * @module Zapp
-* @title Info
+* @class Info
 */
 
 var ServiceInfo = function(udn){	
@@ -40,7 +40,7 @@ var ServiceInfo = function(udn){
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServiceInfo.prototype.subscribe = function (serviceAddedFunction) {
@@ -50,8 +50,7 @@ ServiceInfo.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServiceInfo.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);

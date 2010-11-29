@@ -3,7 +3,7 @@
 /**
 * Service Proxy for upnp.org:SwitchPower:1
 * @module Zapp
-* @title SwitchPower
+* @class SwitchPower
 */
 
 var ServiceSwitchPower = function(udn){	
@@ -30,7 +30,7 @@ var ServiceSwitchPower = function(udn){
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServiceSwitchPower.prototype.subscribe = function (serviceAddedFunction) {
@@ -40,8 +40,7 @@ ServiceSwitchPower.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServiceSwitchPower.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);

@@ -3,7 +3,7 @@
 /**
 * Service Proxy for linn.co.uk:Radio:1
 * @module Zapp
-* @title Radio
+* @class Radio
 */
 
 var ServiceRadio = function(udn){	
@@ -44,7 +44,7 @@ ServiceRadio.kTransportStateBuffering = "Buffering";
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServiceRadio.prototype.subscribe = function (serviceAddedFunction) {
@@ -54,8 +54,7 @@ ServiceRadio.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServiceRadio.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);

@@ -1,4 +1,4 @@
-﻿<#@ template language="C#v3.5" debug="true" hostSpecific="true" #>
+<#@ template language="C#v3.5" debug="true" hostSpecific="true" #>
 <#@ output extension=".js" #>
 <#@ Assembly Name="System.Core.dll" #>
 <#@ Assembly Name="System.Windows.Forms.dll" #>
@@ -12,12 +12,6 @@
 <#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
 
 <#
-/**
-* T4 Template to generate service proxies
-* @module Zapp
-* @title CpUpnpJs
-*/
-
 // Initialise parameters
 	string xmlArg = TemplateArgument("xml");
 	string domainArg = TemplateArgument("domain");
@@ -78,7 +72,7 @@
 /**
 * Service Proxy for <#=domain#>:<#=type#>:<#=version#>
 * @module Zapp
-* @title <#=type#>
+* @class <#=type#>
 */
 
 var Service<#=type#> = function(udn){	
@@ -114,7 +108,7 @@ Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 Service<#=type#>.prototype.subscribe = function (serviceAddedFunction) {
@@ -124,8 +118,7 @@ Service<#=type#>.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 Service<#=type#>.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);

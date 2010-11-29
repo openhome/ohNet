@@ -3,7 +3,7 @@
 /**
 * Service Proxy for linn.co.uk:Ui:2
 * @module Zapp
-* @title Ui
+* @class Ui
 */
 
 var ServiceUi = function(udn){	
@@ -50,7 +50,7 @@ ServiceUi.kInfraredTerminalCommandsDvd = "Dvd";
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServiceUi.prototype.subscribe = function (serviceAddedFunction) {
@@ -60,8 +60,7 @@ ServiceUi.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServiceUi.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);

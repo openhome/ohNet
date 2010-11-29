@@ -3,7 +3,7 @@
 /**
 * Service Proxy for linn.co.uk:MediaTime:1
 * @module Zapp
-* @title MediaTime
+* @class MediaTime
 */
 
 var ServiceMediaTime = function(udn){	
@@ -29,7 +29,7 @@ var ServiceMediaTime = function(udn){
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServiceMediaTime.prototype.subscribe = function (serviceAddedFunction) {
@@ -39,8 +39,7 @@ ServiceMediaTime.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServiceMediaTime.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);

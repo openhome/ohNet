@@ -3,7 +3,7 @@
 /**
 * Service Proxy for linn.co.uk:Component:1
 * @module Zapp
-* @title Component
+* @class Component
 */
 
 var ServiceComponent = function(udn){	
@@ -37,7 +37,7 @@ ServiceComponent.kAmplifierAttenuation0Db = "0dB";
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServiceComponent.prototype.subscribe = function (serviceAddedFunction) {
@@ -47,8 +47,7 @@ ServiceComponent.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServiceComponent.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);

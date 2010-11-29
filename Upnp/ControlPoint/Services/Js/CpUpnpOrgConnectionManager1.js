@@ -3,7 +3,7 @@
 /**
 * Service Proxy for upnp.org:ConnectionManager:1
 * @module Zapp
-* @title ConnectionManager
+* @class ConnectionManager
 */
 
 var ServiceConnectionManager = function(udn){	
@@ -45,7 +45,7 @@ ServiceConnectionManager.kDirectionOutput = "Output";
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServiceConnectionManager.prototype.subscribe = function (serviceAddedFunction) {
@@ -55,8 +55,7 @@ ServiceConnectionManager.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServiceConnectionManager.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);

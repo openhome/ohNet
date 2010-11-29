@@ -3,7 +3,7 @@
 /**
 * Service Proxy for linn.co.uk:Ptest:1
 * @module Zapp
-* @title Ptest
+* @class Ptest
 */
 
 var ServicePtest = function(udn){	
@@ -30,7 +30,7 @@ var ServicePtest = function(udn){
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServicePtest.prototype.subscribe = function (serviceAddedFunction) {
@@ -40,8 +40,7 @@ ServicePtest.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServicePtest.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);

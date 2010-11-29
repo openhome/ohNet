@@ -3,7 +3,7 @@
 /**
 * Service Proxy for linn.co.uk:ProxyManager:1
 * @module Zapp
-* @title ProxyManager
+* @class ProxyManager
 */
 
 var ServiceProxyManager = function(udn){	
@@ -54,7 +54,7 @@ ServiceProxyManager.kDiscPlayerConnectedClassikMusic = "Classik Music";
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServiceProxyManager.prototype.subscribe = function (serviceAddedFunction) {
@@ -64,8 +64,7 @@ ServiceProxyManager.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServiceProxyManager.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);

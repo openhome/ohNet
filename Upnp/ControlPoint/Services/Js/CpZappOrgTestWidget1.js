@@ -3,7 +3,7 @@
 /**
 * Service Proxy for zapp.org:TestWidget:1
 * @module Zapp
-* @title TestWidget
+* @class TestWidget
 */
 
 var ServiceTestWidget = function(udn){	
@@ -39,7 +39,7 @@ var ServiceTestWidget = function(udn){
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServiceTestWidget.prototype.subscribe = function (serviceAddedFunction) {
@@ -49,8 +49,7 @@ ServiceTestWidget.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServiceTestWidget.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);
