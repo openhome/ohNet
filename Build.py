@@ -61,14 +61,14 @@ def getModule():
 		
 Module = getModule()
 
-def getArguments(module,nightly,arch,valgrind):
+def getArguments(module,nightly,arch,valgrind,os):
 
 	if module == "upnp" and nightly == "1" and arch == "x86":
 			if valgrind != "0":
 				args = ' -s -f -vg'
 				
 			else:
-				args = ' -s -f'
+				args = ' -s -f -j'
 				
 	elif module == "upnp" and arch == 'arm':
 				args = ' -b'
@@ -76,6 +76,9 @@ def getArguments(module,nightly,arch,valgrind):
 	elif module == "upnp" and arch == 'x64':
 				args = ' -s -f -n'
 				
+	elif module == "upnp" and arch == 'x86' and os == 'Windows':
+				args = ' -s -j'
+
 	elif module == "upnp":
 				args = ' -s'
 				
@@ -84,7 +87,7 @@ def getArguments(module,nightly,arch,valgrind):
 
 	return {'args':args}
 	
-Arguments = getArguments(Module['module'],Environment['nightly_run'],Environment['arch'],Environment['valgrind_run'])
+Arguments = getArguments(Module['module'],Environment['nightly_run'],Environment['arch'],Environment['valgrind_run'],Environment['ostype'])
 			
 
 def Build(tool, cmd, args):
