@@ -3,7 +3,7 @@
 /**
 * Service Proxy for zapp.org:TestDimmableLight:1
 * @module Zapp
-* @title TestDimmableLight
+* @class TestDimmableLight
 */
 
 var ServiceTestDimmableLight = function(udn){	
@@ -29,7 +29,7 @@ var ServiceTestDimmableLight = function(udn){
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServiceTestDimmableLight.prototype.subscribe = function (serviceAddedFunction) {
@@ -39,8 +39,7 @@ ServiceTestDimmableLight.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServiceTestDimmableLight.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);

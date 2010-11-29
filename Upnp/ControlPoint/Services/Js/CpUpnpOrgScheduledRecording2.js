@@ -3,7 +3,7 @@
 /**
 * Service Proxy for upnp.org:ScheduledRecording:2
 * @module Zapp
-* @title ScheduledRecording
+* @class ScheduledRecording
 */
 
 var ServiceScheduledRecording = function(udn){	
@@ -46,7 +46,7 @@ ServiceScheduledRecording.kDataTypeIDAArgTypeRecordScheduleParts = "A_ARG_TYPE_R
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServiceScheduledRecording.prototype.subscribe = function (serviceAddedFunction) {
@@ -56,8 +56,7 @@ ServiceScheduledRecording.prototype.subscribe = function (serviceAddedFunction) 
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServiceScheduledRecording.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);

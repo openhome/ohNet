@@ -3,7 +3,7 @@
 /**
 * Service Proxy for upnp.org:AVTransport:2
 * @module Zapp
-* @title AVTransport
+* @class AVTransport
 */
 
 var ServiceAVTransport = function(udn){	
@@ -76,7 +76,7 @@ ServiceAVTransport.kSeekModeTrackNr = "TRACK_NR";
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServiceAVTransport.prototype.subscribe = function (serviceAddedFunction) {
@@ -86,8 +86,7 @@ ServiceAVTransport.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServiceAVTransport.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);

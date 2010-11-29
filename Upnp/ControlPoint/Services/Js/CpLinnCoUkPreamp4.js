@@ -3,7 +3,7 @@
 /**
 * Service Proxy for linn.co.uk:Preamp:4
 * @module Zapp
-* @title Preamp
+* @class Preamp
 */
 
 var ServicePreamp = function(udn){	
@@ -38,7 +38,7 @@ var ServicePreamp = function(udn){
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServicePreamp.prototype.subscribe = function (serviceAddedFunction) {
@@ -48,8 +48,7 @@ ServicePreamp.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServicePreamp.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);

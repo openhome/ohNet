@@ -3,7 +3,7 @@
 /**
 * Service Proxy for linn.co.uk:Time:1
 * @module Zapp
-* @title Time
+* @class Time
 */
 
 var ServiceTime = function(udn){	
@@ -31,7 +31,7 @@ var ServiceTime = function(udn){
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServiceTime.prototype.subscribe = function (serviceAddedFunction) {
@@ -41,8 +41,7 @@ ServiceTime.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServiceTime.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);

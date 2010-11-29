@@ -3,7 +3,7 @@
 /**
 * Service Proxy for upnp.org:RenderingControl:2
 * @module Zapp
-* @title RenderingControl
+* @class RenderingControl
 */
 
 var ServiceRenderingControl = function(udn){	
@@ -56,7 +56,7 @@ ServiceRenderingControl.kPresetNameFactoryDefaults = "FactoryDefaults";
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServiceRenderingControl.prototype.subscribe = function (serviceAddedFunction) {
@@ -66,8 +66,7 @@ ServiceRenderingControl.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServiceRenderingControl.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);

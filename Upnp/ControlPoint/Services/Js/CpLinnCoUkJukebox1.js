@@ -3,7 +3,7 @@
 /**
 * Service Proxy for linn.co.uk:Jukebox:1
 * @module Zapp
-* @title Jukebox
+* @class Jukebox
 */
 
 var ServiceJukebox = function(udn){	
@@ -32,7 +32,7 @@ var ServiceJukebox = function(udn){
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServiceJukebox.prototype.subscribe = function (serviceAddedFunction) {
@@ -42,8 +42,7 @@ ServiceJukebox.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServiceJukebox.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);

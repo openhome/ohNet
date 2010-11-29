@@ -3,7 +3,7 @@
 /**
 * Service Proxy for linn.co.uk:Playlist:1
 * @module Zapp
-* @title Playlist
+* @class Playlist
 */
 
 var ServicePlaylist = function(udn){	
@@ -36,7 +36,7 @@ var ServicePlaylist = function(udn){
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServicePlaylist.prototype.subscribe = function (serviceAddedFunction) {
@@ -46,8 +46,7 @@ ServicePlaylist.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServicePlaylist.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);

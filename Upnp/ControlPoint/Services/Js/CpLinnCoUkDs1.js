@@ -3,7 +3,7 @@
 /**
 * Service Proxy for linn.co.uk:Ds:1
 * @module Zapp
-* @title Ds
+* @class Ds
 */
 
 var ServiceDs = function(udn){	
@@ -43,7 +43,7 @@ ServiceDs.kTransportStateBuffering = "Buffering";
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServiceDs.prototype.subscribe = function (serviceAddedFunction) {
@@ -53,8 +53,7 @@ ServiceDs.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServiceDs.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);

@@ -3,7 +3,7 @@
 /**
 * Service Proxy for upnp.org:ContentDirectory:1
 * @module Zapp
-* @title ContentDirectory
+* @class ContentDirectory
 */
 
 var ServiceContentDirectory = function(udn){	
@@ -54,7 +54,7 @@ ServiceContentDirectory.kTransferStatusStopped = "STOPPED";
 
 /**
 * Subscribes the service to the subscription manager to listen for property change events
-* @method Subscribed
+* @method Subscribe
 * @param {Function} serviceAddedFunction The function that executes once the subscription is successful
 */
 ServiceContentDirectory.prototype.subscribe = function (serviceAddedFunction) {
@@ -64,8 +64,7 @@ ServiceContentDirectory.prototype.subscribe = function (serviceAddedFunction) {
 
 /**
 * Unsubscribes the service from the subscription manager to stop listening for property change events
-* @method Subscribed
-* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+* @method Unsubscribe
 */
 ServiceContentDirectory.prototype.unsubscribe = function () {
     Zapp.SubscriptionManager.removeService(this.subscriptionId);
