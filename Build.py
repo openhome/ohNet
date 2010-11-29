@@ -23,7 +23,7 @@ def getEnvironment():
 				
 
         elif os.environ.get('label') == 'windows-x86':
-				tool = 'call vcvarsall.bat && set'
+				tool = 'call vcvarsall.bat && set LOCALAPPDATA=%APPDATA%'
 				ostype = 'Windows'
 				arch = 'x86'
 
