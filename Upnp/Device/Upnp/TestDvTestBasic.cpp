@@ -214,8 +214,10 @@ void ProviderTestBasic::GetBinary(IInvocationResponse& aResponse, TUint /*aVersi
 
 void ProviderTestBasic::WriteFile(IInvocationResponse& aResponse, TUint /*aVersion*/, const Brx& aData, const Brx& aFileFullName)
 {
-    char* name = (char*)malloc(aFileFullName.Bytes()+1);
+    TUint len = aFileFullName.Bytes();
+    char* name = (char*)malloc(len+1);
     (void)memcpy(name, aFileFullName.Ptr(), aFileFullName.Bytes());
+    name[len] = 0;
     FILE* fp = fopen(name, "wb");
     free(name);
     (void)fwrite(aData.Ptr(), aData.Bytes(), 1, fp);
