@@ -323,43 +323,6 @@
                         this.wait(kAsyncTimeoutMS);
                     },
 
-//                    testMultiple: function () {
-//                        _this = this;
-//                        proxy2.SetBool(false);
-//                        var GetUintDone = false;
-//                         var GetIntDone = false;
-//                          var GetBoolDone = false;
-//                            proxy2.VarUint_Changed(function (state) {
-//                                Y.Assert.areEqual(state, -123456789);
-//                                GetUintDone = true;
-//                                if(GetUintDone && GetIntDone && GetBoolDone)
-//                                {
-//                                    _this.resume();
-//                                }
-//                            });
-//                        proxy2.VarInt_Changed(function (state) {
-//                                Y.Assert.areEqual(state, 123456789);
-//                                GetIntDone = true;
-//                                 if(GetUintDone && GetIntDone && GetBoolDone)
-//                                {
-//                                    _this.resume();
-//                                }
-//                            });
-//                       proxy2.VarBool_Changed(function (state) {
-//                                Y.Assert.areEqual(state, true);
-//                                GetBoolDone = true;
-//                              if(GetUintDone && GetIntDone && GetBoolDone)
-//                                {
-//                                    _this.resume();
-//                                }
-//                            });
-
-//                        proxy2.SetMultiple(-123456789,123456789,true);
-
-//                        this.wait(kAsyncTimeoutMS);
-//                    }
-
-
                 });
 
 
@@ -367,9 +330,6 @@
                 Y.Test.Runner.subscribe(Y.Test.Runner.COMPLETE_EVENT, onComplete);
 
                 Y.Test.Runner.run();
-
-                //     var resultsXML = Y.Test.Runner.getResult(Y.Test.Format.XML);
-                //     alert(resultsXML);
             });
 
 
@@ -378,15 +338,16 @@
 
         function onComplete(results) {
             var resultsXML = this.getResults(_Y.Test.Format.JUnitXML);
-            proxy.WriteFile(resultsXML,"C:\\temp.txt",function () {
-            window.close();
+
+            proxy.WriteFile(resultsXML,"xout\\ProxyJsTest.xml",
+            function () {
+               window.close();
             },function() {
-            window.close();
+               window.close();
             });
             
-            
             setTimeout(function() {   window.close();  },5000); // Close window after 5 seconds as a fall back
-        }
+        } 
       
     </script>
 </head>
