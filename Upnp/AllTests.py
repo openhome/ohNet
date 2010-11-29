@@ -84,6 +84,7 @@ gNativeTestsOnly = 0
 gSilent = 0
 gTestsOnly = 0
 gValgrind = 0
+gJsOnly = 0
 for arg in sys.argv[1:]:
     if arg == '-b' or arg == '--buildonly':
         gBuildOnly = 1
@@ -95,6 +96,8 @@ for arg in sys.argv[1:]:
         gNativeTestsOnly = 1
     elif arg == '-s' or arg == '--silent':
         gSilent = 1
+    elif arg == '-j' or arg == '--jsonly':
+        gJsOnly = 1
     elif arg == '-t' or arg == '--testsonly':
         gTestsOnly = 1
     elif arg == '-vg' or arg == '--valgrind':
@@ -159,6 +162,34 @@ gAllTests = [ TestCase('TestBuffer', [], True)
              ,TestCase('TestProxyCs', [], False, False)
             ]
 
+def JsOnly():
+
+		print "running javascript tests"
+		
+		if not os.path.exists("xout"):
+			os.mkdir("xout")
+
+		LocalAppData = os.environ.get('LOCALAPPDATA')
+		Chrome = LocalAppData + "\\" + "Google\Chrome\Application\chrome.exe"
+		WorkSpace = os.environ.get('WORKSPACE')
+		UIPath = WorkSpace + "\\" + "Upnp\Public\Js\Zapp.Web.UI.Tests"
+		TestBasic = "Build\Obj\Windows\TestDvTestBasic.exe"
+		TestDeviceFinder = "Build\Obj\Windows\TestDeviceFinder.exe"
+		
+		os.system("start \"UI Test\" /Min " + TestBasic + " -l -c " + UIPath)
+		
+		devpath = subprocess.Popen([TestDeviceFinder, '-l', '-s', 'zapp.org:service:TestBasic:1'],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+		output, errors = devpath.communicate() 
+		
+		print errors
+
+		os.system(Chrome + ' ' + errors)
+	
+		time.sleep(10)
+
+		os.system("tskill TestDvTestBasic")
+	
+
 if gTestsOnly == 0:
     runBuilds()
 gBuildsCompleteTime = time.strftime('%H:%M:%S')
@@ -167,6 +198,8 @@ if gBuildOnly == 0:
         runTestsValgrind()
     else:
         runTests()
+	if gJsOnly == 1:
+		JsOnly()
     print '\nFinished.  All tests passed'
 print 'Start time: ' + gStartTime
 print 'Builds complete: ' + gBuildsCompleteTime
