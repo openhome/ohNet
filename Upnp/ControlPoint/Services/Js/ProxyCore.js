@@ -1,592 +1,746 @@
-﻿var SubscriptionManager = (function () {
+﻿/**
+* The Zapp object is the single global object used by Zapp Services to
+* facilitate actions and subscriptions. 
+* @module Zapp
+* @title Zapp
+*/
+
+if (typeof Zapp == "undefined" || !Zapp) {
+    /**
+    * The Zapp global namespace object.  If Zapp is already defined, the
+    * existing Zapp object will not be overwritten so that defined
+    * namespaces are preserved.
+    * @class Zapp
+    * @static
+    */
+    var Zapp = {};
+}
+
+/**
+* Manages the subscriptions to the Zapp Services.
+* Subscribed services are notified of property state changes.
+* @namespace Zapp
+* @class SubscriptionManager
+* @static
+*/
+Zapp.SubscriptionManager = (function () {
+
+    // Constants 
+    var VERSION = "1.0";
+    var DEFAULT_SUBSCRIPTION_TIMEOUT_SEC = 30; // The default suggested timeout in seconds for each subscription.
+    var RENEW_TRIGGER = 0.7; // The multiplier in which to send the renewal message. (Send renew message every RENEW_TRIGGER * DEFAULT_SUBSCRIPTION_TIMEOUT_SEC)
+    var DEBUG = false; // A flag to enable debugging messages written to console
+
 
     // Private Variables
-    var iRenewalPollingInterval = 0;
-    var iServices = {};
-    var iPort = 0;
-    var started = false;
-    var socket = null;
-    var DEBUG = false;
-    var DEBUGPOLL = false;
+    var services = []; // Collection of Zapp services
+    var websocket = null; // HTML 5 web socket object to handle property state events
+    var subscriptionCounter = -1; // A unique identifier for each subscription (zero-based).
+    var subscriptionTimeoutSec = -1; // The suggested timeout in seconds for each subscription.
 
-    //  Private Methods
 
-    function log(msg) {
-        if (DEBUG)
-            console.log(msg);
-    }
+    // Public Variables
+    var running = false; // A flag to state if the Subscription Manager is running
 
-    function GenerateSubscriptionId() {
-        log("*** GenerateSubscriptionId ***");
-        var uid = Math.random().toString(16).replace(".", "") + (new Date()).valueOf().toString(16);
-        log("RET :" + uid);
-        log("");
-        return uid;
-    }
 
-    function SubscribeMessage(aService, aTimeoutSeconds) {
-        log("*** SubscribeMessage ***");
-        log("VAR : Udn :" + aService.Udn());
-        log("VAR : Service Name :" + aService.ServiceName());
-        log("VAR : Subscription Id :" + aService.SubscriptionId());
-        log("VAR : kDefaultTimeOutMinutes:" + SubscriptionManager.kDefaultTimeOutMinutes);
-        log("VAR : aTimeoutSeconds:" + aTimeoutSeconds);
-        log("CALC : Timeout:" + (aTimeoutSeconds ? aTimeoutSeconds : SubscriptionManager.kDefaultTimeOutMinutes));
+    // Functions
+
+    /**
+    * Generates the next subscription id to identity the subscription
+    * @method generateSubscriptionId
+    * @return {Int} The next subscription id (Increment)
+    */
+    var generateSubscriptionId = function () {
+
+        subscriptionCounter = subscriptionCounter + 1;
+
+        if (DEBUG) {
+            console.log("generateSubscriptionId/subscriptionCounter: " + subscriptionCounter);
+        }
+
+        return subscriptionCounter;
+    };
+
+
+    /**
+    * Generates the subscribe message to register the service's subscription
+    * @method subscribeMessage
+    * @param {Object} service The service interested in subscribing
+    * @return {String} The subscribe message to be sent to the Zapp service 
+    */
+    var subscribeMessage = function (service) {
 
         var message = "<?xml verison='1.0' ?>";
         message += "<ROOT>";
         message += "<METHOD>Subscribe</METHOD>";
-        message += "<UDN>" + aService.Udn() + "</UDN>";
-        message += "<SERVICE>" + aService.ServiceName() + "</SERVICE>";
-        message += "<SID>" + aService.SubscriptionId() + "</SID>";
+        message += "<UDN>" + service.udn + "</UDN>";
+        message += "<SERVICE>" + service.serviceName + "</SERVICE>";
+        message += "<SID>" + service.subscriptionId + "</SID>";
         message += "<NT>upnp:event</NT>";
-        message += "<TIMEOUT>" + (aTimeoutSeconds ? aTimeoutSeconds : SubscriptionManager.kDefaultTimeOutMinutes) + "</TIMEOUT>";
+        message += "<TIMEOUT>" + subscriptionTimeoutSec + "</TIMEOUT>";
         message += "</ROOT>";
 
-        log("RET :" + message);
-        log("");
-        return message;
-    }
+        if (DEBUG) {
+            console.log("subscribeMessage/message: " + message);
+        }
 
-    function UnsubscribeMessage(aSubscriptionId) {
-        log("*** UnsubscribeMessage ***");
-        log("VAR : aSubscriptionId :" + aSubscriptionId);
+        return message;
+    };
+
+
+    /**
+    * Generates the Unsubscribe message to unregister the service's subscription
+    * @method unsubscribeMessage
+    * @param {Int} subscriptionId The subscription id of the service interested in unsubscribing
+    * @return {String} The unsubscribe message to be sent to the Zapp service 
+    */
+    var unsubscribeMessage = function (subscriptionId) {
 
         var message = "<?xml verison='1.0' ?>";
         message += "<ROOT>";
         message += "<METHOD>Unsubscribe</METHOD>";
-        message += "<SID>" + aSubscriptionId + "</SID>";
+        message += "<SID>" + subscriptionId + "</SID>";
         message += "</ROOT>";
 
-        log("RET :" + message);
-        log("");
-        return message;
-    }
+        if (DEBUG) {
+            console.log("unsubscribeMessage/message: " + message);
+        }
 
-    function RenewMessage(aSubscriptionId) {
-        log("*** RenewMessage ***");
-        log("VAR : aSubscriptionId :" + aSubscriptionId);
+        return message;
+    };
+
+
+    /**
+    * Generates the Renew message to renew the service's subscription
+    * @method renewMessage
+    * @param {Int} subscriptionId The subscription id of the service interested in renewing the subscription
+    * @return {String} The renew message to be sent to the Zapp service 
+    */
+    var renewMessage = function (subscriptionId) {
 
         var message = "<?xml verison='1.0' ?>";
         message += "<ROOT>";
         message += "<METHOD>Renew</METHOD>";
-        message += "<SID>" + aSubscriptionId + "</SID>";
-        message += "<TIMEOUT>" + kDefaultSubscriptionTimeoutSeconds + "</TIMEOUT>";
+        message += "<SID>" + subscriptionId + "</SID>";
+        message += "<TIMEOUT>" + subscriptionTimeoutSec + "</TIMEOUT>";
         message += "</ROOT>";
 
-        log("RET :" + message);
-        log("");
+        if (DEBUG) {
+            console.log("renewMessage/message: " + message);
+        }
 
         return message;
-    }
+    };
 
-    function SetSubscriptionTimeout(aSubscriptionId, aTimeoutSeconds) {
-        log("*** SetSubscriptionTimeout ***");
-        log("VAR : aSubscriptionId :" + aSubscriptionId);
-        log("VAR : aTimeoutSeconds :" + aTimeoutSeconds);
 
-        if (iServices[aSubscriptionId]) {
+    /**
+    * Starts the timer to renew subscriptions.  
+    * The actual subscription timeout is returned by the Zapp Service. 
+    * subscriptionTimeoutSec is the suggested timeout sent to the server.
+    * @method setSubscriptionTimeout
+    * @param {Int} subscriptionId The subscription id of the service
+    * @param {Int} timeoutSeconds The actual subscription timeout
+    */
+    var setSubscriptionTimeout = function (subscriptionId, timeoutSeconds) {
 
-            log("CALL : RenewSubscription :" + aTimeoutSeconds * 1000);
+        var service = services[subscriptionId];
+        if (service) {
+            var actualSubscriptionTimeoutMs = timeoutSeconds * 1000 * RENEW_TRIGGER;
 
-            log("CALL : RenewSubscription with kRenewTrigger :" + aTimeoutSeconds * 1000 * SubscriptionManager.kRenewTrigger);
             var timer = setTimeout(function () {
-                RenewSubscription(aSubscriptionId);
-            }, (aTimeoutSeconds * 1000 * SubscriptionManager.kRenewTrigger));
+                renewSubscription(subscriptionId);
+            }, actualSubscriptionTimeoutMs);
 
-            iServices[aSubscriptionId].SubscriptionTimer = timer;
+            service.SubscriptionTimer = timer; // Keep a reference to the timer so we can clear it when the service unsubscribes
 
-            log("CALC :iServices[aSubscriptionId].SubscriptionTimer :" + iServices[aSubscriptionId].SubscriptionTimer);
-        }
-        else {
-            log("NULL : iServices[aSubscriptionId] :" + iServices[aSubscriptionId]);
-        }
-        log("");
-    }
-
-    function ServiceNames() {
-        var result = [];
-        for (var srv in iServices) {
-            result[result.length] = srv;
-        }
-        return result;
-    }
-
-    function SetPropertyUpdate(aSubscriptionId, aPropertyName, aPropertyValue) {
-        log("*** SetPropertyUpdate ***");
-        log("VAR : aSubscriptionId :" + aSubscriptionId);
-        log("VAR : aPropertyName :" + aPropertyName);
-        log("VAR : aPropertyValue :" + aPropertyValue);
-        if (iServices[aSubscriptionId]) {
-            if (iServices[aSubscriptionId].iVariables[aPropertyName]) {
-                iServices[aSubscriptionId].iVariables[aPropertyName].SetValue(aPropertyValue);
-                log("CALC :iServices[aSubscriptionId].iVariables[aPropertyName].iValue :" + iServices[aSubscriptionId].iVariables[aPropertyName].iValue);
-            }
-            else {
-                log("NULL : iServices[aSubscriptionId].iVariables[aPropertyName] :" + iServices[aSubscriptionId].iVariables[aPropertyName]);
+            if (DEBUG) {
+                console.log("setSubscriptionTimeout/actualSubscriptionTimeoutMs:" + actualSubscriptionTimeoutMs);
             }
         }
         else {
-            log("NULL : iServices[aSubscriptionId] :" + iServices[aSubscriptionId]);
+            if (DEBUG) {
+                console.log("setSubscriptionTimeout/service: NULL");
+            }
         }
-        log("");
-    }
+    };
 
-    function RenewSubscriptions() {
-        if (DEBUGPOLL) {
-            log("*** RenewSubscriptions ***");
-            var d = new Date();
-            log("TIME :" + d.getTime());
-        }
-        for (var srv in iServices) {
-            var service = iServices[srv];
-            if (service.SubscriptionTimeoutSec && service.LastRenewed) {
-                var timeoutMS = service.SubscriptionTimeoutSec * 1000; // to ms
-                var renewDate = service.LastRenewed;
-                if (DEBUGPOLL) {
-                    log("VAR : service.SubscriptionTimeoutSec :" + service.SubscriptionTimeoutSec);
-                    log("VAR : service.LastRenewed :" + service.LastRenewed);
-                    log("VAR : timeoutMS :" + timeoutMS);
-                    log("VAR : kRenewTrigger :" + SubscriptionManager.kRenewTrigger);
-                }
-                var now = new Date();
-                var diff = now.getTime() - renewDate;
 
-                if (DEBUGPOLL) {
-                    log("VAR : now.getTime() :" + now.getTime());
-                    log("VAR : diff :" + diff);
-                    log("VAR : timeoutMS * SubscriptionManager.kRenewTrigger :" + timeoutMS * SubscriptionManager.kRenewTrigger);
-                    log("VAR : diff > (timeoutMS * SubscriptionManager.kRenewTrigger) :" + diff > (timeoutMS * SubscriptionManager.kRenewTrigger));
-                }
-                if (diff > (timeoutMS * SubscriptionManager.kRenewTrigger) && socket && socket.readyState == 1) {
-                    if (DEBUGPOLL)
-                        log("CON : Renew Detected");
-                    service.LastRenewed = now.getTime();
-                    if (DEBUGPOLL) {
-                        log("CALC : service.LastRenewed :" + service.LastRenewed);
-                        log("CALL : RenewMessage");
-                    }
-                    socket.send(RenewMessage(service.SubscriptionId(), service.SubscriptionTimeoutSec));
+    /**
+    * Calls SetValue of the property to notify listeners
+    * @method setPropertyUpdate
+    * @param {Int} subscriptionId The subscription id of the service
+    * @param {String} propertyName The property name to update
+    * @param {String} propertyValue The new value of the property
+    */
+    var setPropertyUpdate = function (subscriptionId, propertyName, propertyValue) {
+
+        var service = services[subscriptionId];
+        if (service) {
+            var property = service.serviceProperties[propertyName];
+            if (property) {
+                property.setValue(propertyValue);
+                if (DEBUG) {
+                    console.log("setPropertyUpdate/aSubscriptionId: " + subscriptionId);
+                    console.log("setPropertyUpdate/propertyName: " + propertyName);
+                    console.log("setPropertyUpdate/propertyValue: " + propertyValue);
                 }
             }
             else {
-                if (DEBUGPOLL) {
-                    log("NULL : service.SubscriptionTimeoutSec :" + service.SubscriptionTimeoutSec);
-                    log("NULL : service.LastRenewed :" + service.LastRenewed);
-                }
-            }
-        }
-        log("");
-    }
-
-    function RenewSubscription(aSubscriptionId) {
-        if (DEBUGPOLL) {
-            log("*** RenewSubscription ***");
-            log("VAR : aSubscriptionId :" + aSubscriptionId);
-            var d = new Date();
-            log("TIME :" + d.getMinutes() + " " + d.getSeconds());
-
-        }
-        if (iServices[aSubscriptionId]) {
-            if (DEBUGPOLL) {
-                log("iServices[aSubscriptionId] :" + iServices[aSubscriptionId]);
-            }
-
-            if (iServices[aSubscriptionId].SubscriptionTimer) {
-                socket.send(RenewMessage(iServices[aSubscriptionId].SubscriptionId()));
-            }
-            else {
-                if (DEBUGPOLL) {
-                    log("NULL : (iServices[aSubscriptionId].SubscriptionTimer :" + iServices[aSubscriptionId].SubscriptionTimer);
+                if (DEBUG) {
+                    console.log("setPropertyUpdate/service: NULL");
                 }
             }
         }
         else {
-            if (DEBUGPOLL) {
-                log("NULL : iServices[aSubscriptionId] :" + iServices[aSubscriptionId])
+            if (DEBUG) {
+                console.log("setPropertyUpdate/service: NULL");
             }
         }
-        if (DEBUGPOLL) {
-            log("");
-        }
-    }
+    };
 
-    function ReceiveMessage(aMessage) {
-        log("*** ReceiveMessage ***");
-        log("CON : window.DOMParser : " + window.DOMParser);
-        if (window.DOMParser) {
+
+    /**
+    * Sends a renew socket message to renew the subscription
+    * @method renewSubscription
+    * @param {Int} subscriptionId The subscription id of the service
+    */
+    var renewSubscription = function (subscriptionId) {
+
+        var service = services[subscriptionId];
+        if (service) {
+            if (service.SubscriptionTimer) {
+                websocket.send(renewMessage(subscriptionId));
+                if (DEBUG) {
+                    console.log("renewSubscription/subscriptionId: " + subscriptionId);
+                }
+            }
+            else {
+                if (DEBUG) {
+                    console.log("renewSubscription/service.SubscriptionTimer: NULL");
+                }
+            }
+        }
+        else {
+            if (DEBUG) {
+                console.log("renewSubscription/service: NULL");
+            }
+        }
+    };
+
+    /**
+    * Parses the XML message recieved from the Zapp Service
+    * @method receiveMessage
+    * @param {String} message The XML message
+    */
+    var receiveMessage = function (message) {
+        if (window.DOMParser) { // NON-IE
             parser = new DOMParser();
-            xmlDoc = parser.parseFromString(aMessage, "text/xml");
-            var x = xmlDoc.childNodes;
+            xmlDoc = parser.parseFromString(message, "text/xml");
 
-            x = xmlDoc.getElementsByTagNameNS("*", "METHOD");
-            var method = x[0].textContent;
-            log("VAR : method : " + method);
-            x = xmlDoc.getElementsByTagNameNS("*", "SID");
+            var methodNode = xmlDoc.getElementsByTagNameNS("*", "METHOD"); // NON-IE
+            var method = methodNode[0].textContent;
 
-            var subId = x[0].textContent;
-            log("VAR : subId : " + subId);
+            var subscriptionIdNode = xmlDoc.getElementsByTagNameNS("*", "SID"); // NON-IE
+            var subscriptionId = subscriptionIdNode[0].textContent;
+
+            if (DEBUG) {
+                console.log("receiveMessage/method: " + method);
+            }
 
             if (method == "PropertyUpdate") {
-                x = xmlDoc.getElementsByTagNameNS("*", "property");
-                for (var i = 0; i < x.length; i++) {
-                    var y = x[i].childNodes[0];
-                    if (y) {
-                        var propertyName = y.tagName;
-                        var propertyValue = y.textContent;
-                        log("VAR : propertyName : " + propertyName);
-                        log("VAR : propertyValue : " + propertyValue);
-                        log("CALL : SetPropertyUpdate");
-                        SetPropertyUpdate(subId, propertyName, propertyValue);
-                    }
-                }
+                receivePropertyUpdate(subscriptionId, xmlDoc);
             }
             else if (method == "SubscriptionTimeout") {
-                x = xmlDoc.getElementsByTagNameNS("*", "TIMEOUT");
-                if (x) {
-                    log("VAR : timeout : " + x[0].textContent);
-                    log("CALL : SetSubscriptionTimeout");
+                receiveSubscriptionTimeout(subscriptionId, xmlDoc);
+            }
+        }
+        else {
+            alert("Zapp.SubscriptionManager: Cannot parse subscription message as browser does not support it.");
+            if (DEBUG) {
+                console.log("receiveMessage/window.DOMParser: NULL");
+            }
+        }
+    };
 
-                    if (iServices[subId].aSubscribeSuccessFunction) {
-                        iServices[subId].aSubscribeSuccessFunction();
-                        iServices[subId].aSubscribeSuccessFunction = null;
+
+    /**
+    * Traveres the XML object to extract the property updates
+    * @method receivePropertyUpdate
+    * @param {Int} subscriptionId The subscription id of the service
+    * @param {Object} xmlDoc The XML to traverse
+    */
+    var receivePropertyUpdate = function (subscriptionId, xmlDoc) {
+
+        var properties = xmlDoc.getElementsByTagNameNS("*", "property"); // NON-IE
+        if (properties) {
+            for (var i = properties.length - 1; i > -1; i--) {
+                var property = properties[i].childNodes[0];
+                if (property) {
+                    setPropertyUpdate(subscriptionId, property.tagName, property.textContent);
+                    if (DEBUG) {
+                        console.log("receivePropertyUpdate/subscriptionId: " + subscriptionId);
+                        console.log("receivePropertyUpdate/property.tagName: " + property.tagName);
+                        console.log("receivePropertyUpdate/property.textContent: " + property.textContent);
                     }
-                    SetSubscriptionTimeout(subId, x[0].textContent);
+                }
+                else {
+                    if (DEBUG) {
+                        console.log("receivePropertyUpdate/property: NULL");
+                    }
                 }
             }
         }
-        else // Internet Explorer - TODO REMOVE!
-        {
-            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
-            xmlDoc.async = "false";
-            xmlDoc.loadXML(aMessage);
+        else {
+            if (DEBUG) {
+                console.log("receivePropertyUpdate/properties: NULL");
+            }
+        }
 
-            x = xmlDoc.getElementsByTagName("METHOD");
-            var method = x[0].text;
-            x = xmlDoc.getElementsByTagName("SID");
-            var subId = x[0].text;
+    };
 
-            if (method == "PropertyUpdate") {
+    /**
+    * Traveres the XML object to extract the subscription timeout
+    * @method receiveSubscriptionTimeout
+    * @param {Int} subscriptionId The subscription id of the service
+    * @param {Object} xmlDoc The XML to traverse
+    */
+    var receiveSubscriptionTimeout = function (subscriptionId, xmlDoc) {
 
-                x = xmlDoc.getElementsByTagName("e:property");
-                for (var i = 0; i < x.length; i++) {
-                    var y = x[i].childNodes;
-                    if (y.length > 0) {
-                        var propertyName = y[0].nodeName;
-                        var propertyValue = y[0].text;
-                        SetPropertyUpdate(subId, propertyName, propertyValue);
-                    }
+        var timeoutNode = xmlDoc.getElementsByTagNameNS("*", "TIMEOUT");
+        if (timeoutNode) {
+            var timeout = timeoutNode[0].textContent;
+            if (timeout) {
+                var service = services[subscriptionId];
+
+                if (service.serviceAddedFunction) {
+                    service.serviceAddedFunction();
+                    service.serviceAddedFunction = null;
+                }
+                setSubscriptionTimeout(subscriptionId, timeout);
+
+                if (DEBUG) {
+                    console.log("receiveSubscriptionTimeout/subscriptionId: " + subscriptionId);
+                    console.log("receiveSubscriptionTimeout/timeout: " + timeout);
                 }
             }
-            else if (method == "SubscriptionTimeout") {
-
-                x = xmlDoc.getElementsByTagName("TIMEOUT");
-                if (x) {
-                    SetSubscriptionTimeout(subId, x[0].text);
+            else {
+                if (DEBUG) {
+                    console.log("receiveSubscriptionTimeout/timeoutNode: NULL");
                 }
             }
         }
-        log("");
-    }
+        else {
+            if (DEBUG) {
+                console.log("receiveSubscriptionTimeout/timeouts: NULL");
+            }
+        }
 
-    function onSocketError(event) {
-        log("*** onSocketError ***");
-        log("VAR : event.data :" + event.data);
-        log("");
-    }
+    };
 
-    function onSocketClose() {
-        log("*** onSocketClose ***");
 
-        log("VAR : iServices :" + iServices);
-        log("");
-    }
+    /**
+    * Socket event for when an error occurs.  Debugging purposes only.
+    * @method onSocketError
+    */
+    var onSocketError = function () {
+        if (DEBUG) {
+            console.log("onSocketError");
+        }
+    };
 
-    function onSocketMessage(event) {
-        log("*** onSocketMessage ***");
-        log("VAR : event.data :" + event.data);
-        ReceiveMessage(event.data);
-        log("");
-    }
 
-    function onSocketOpen(event) {
-        log("*** onSocketOpen ***");
+    /**
+    * Socket event for when the socket is closed.  Debugging purposes only.
+    * @method onSocketClose
+    */
+    var onSocketClose = function () {
+        if (DEBUG) {
+            console.log("onSocketClose");
+        }
+    };
 
-        log("");
-    }
+    /**
+    * Socket event for when the socket is opened.  Debugging purposes only.
+    * @method onSocketOpen
+    */
+    var onSocketOpen = function () {
+        if (DEBUG) {
+            console.log("onSocketOpen");
+        }
+    };
+
+    /**
+    * Socket event for when a message is recieved.
+    * @method onSocketMessage
+    * @param {Object} event The data received
+    */
+    var onSocketMessage = function (event) {
+        receiveMessage(event.data);
+
+        if (DEBUG) {
+            console.log("onSocketMessage/event.data: " + event.data);
+        }
+    };
+
+
+    /**
+    * Starts the Subscription Manager and opens a Web Socket.
+    * @method start
+    * @param {Function} startedFunction The function to call once the Subscription Manager successfully starts.
+    * @param {Boolean} debugMode A switch to turn debugging on to log debugging messages to console.
+    * @param {Int} subscriptionTimeoutSeconds The suggested subscription timeout value.  Overrides the default.
+    */
+    var start = function (startedFunction, debugMode, subscriptionTimeoutSeconds) {
+
+        if (debugMode) {
+            DEBUG = debugMode;
+            console.log("*** Zapp.SubscriptionManager v" + VERSION + " ***");
+        }
+
+        subscriptionTimeoutSec = subscriptionTimeoutSeconds ? subscriptionTimeoutSeconds : DEFAULT_SUBSCRIPTION_TIMEOUT_SEC;
+        var websocketSupported = ("WebSocket" in window);
+        if (websocketSupported) { // NON-IE check if Websockets is supported
+            var websocketServerLocation = "ws://" + window.location.hostname + ":54321/";
+            websocket = new WebSocket(websocketServerLocation, "upnp:event"); // TODO : Needs to acquire the port
+
+            if (DEBUG) {
+                console.log("start/websocketServerLocation: " + websocketServerLocation);
+            }
+
+            websocket.onmessage = onSocketMessage;
+            websocket.onerror = onSocketError;
+            websocket.onclose = onSocketClose;
+            websocket.onopen = startedFunction;
+        }
+        else {
+            if (DEBUG) {
+                console.log("start/websocketSupported: NULL");
+            }
+            alert("Zapp.SubscriptionManager: Cannot start Subscription Manager as browser does not support web sockets.");
+            running = false;
+        }
+
+        running = true;
+    };
+
+
+    /**
+    * Stops the Subscription Manager and removes all services
+    * @method stop
+    */
+    var stop = function () {
+        for (var i = services.length - 1; i > -1; i--) {
+            var service = services[i];
+            if (service) {
+
+                if (DEBUG) {
+                    console.log("stop/service.subscriptionId: " + service.subscriptionId);
+                }
+
+                this.RemoveService(service.subscriptionId);
+            }
+            else {
+                if (DEBUG) {
+                    console.log("stop/service: NULL");
+                }
+            }
+        }
+        if (websocket) {
+            websocket.close();
+        }
+    };
+
+    /**
+    * Adds a new service to the Services collection and subscribes for property changes
+    * @method addService
+    * @param {Object} service The Service to be added
+    * @param {Function} serviceAddedFunction The function to call once the service has been successfully added
+    */
+    var addService = function (service, serviceAddedFunction) {
+
+        if (running) {
+
+            var uId = generateSubscriptionId();
+            service.subscriptionId = uId;
+            services[uId] = service;
+
+            if (serviceAddedFunction) {
+                service.serviceAddedFunction = serviceAddedFunction;
+            }
+            websocket.send(subscribeMessage(service));
+            if (DEBUG) {
+                console.log("addService/service.subscriptionId : " + service.subscriptionId);
+            }
+        }
+        else {
+            if (DEBUG) {
+                console.log("addService/running: false");
+            }
+            alert("Subscription Manager is not running.  Please ensure 'Zapp.SubscriptionManager.start();' has been called prior to subscribing.");
+        }
+    };
+
+    /**
+    * Removes a service from the Services collection and unsubscribes
+    * @method removeService
+    * @param {Int} subscriptionId The subscription id of the service
+    */
+    var removeService = function (subscriptionId) {
+        var service = services[subscriptionId];
+
+        if (service) {
+
+            websocket.send(unsubscribeMessage(subscriptionId));
+
+            if (service.SubscriptionTimer) { // Stop in-progress timers
+                clearTimeout(service.SubscriptionTimer);
+            }
+            delete services[subscriptionId];
+
+            if (DEBUG) {
+                console.log("removeService\services[aSubscriptionId] (Should be null): " + services[subscriptionId]);
+            }
+        }
+        else {
+            if (DEBUG) {
+                console.log("removeService\service: NULL");
+            }
+        }
+    };
 
     return {
         // Public Variables
-        kDefaultSubscriptionTimeoutSeconds: 30,
-        kDefaulTimeoutSeconds: 60,
-        kRenewTrigger: 0.7,
-        kDefaultPort: 54321,
-
+        running: running,
 
         // Public Methods
-        EnableDebugging: function (poll) {
-            DEBUG = true;
-            if (poll)
-                DEBUGPOLL = true;
-            log("Debugging Enabled");
-        },
-
-        Start: function (aSuccessFunction, aDefaultSubscriptionTimeoutSeconds) {
-            log("*** Start ***");
-            log("VAR : aDefaultSubscriptionTimeoutSeconds :" + aDefaultSubscriptionTimeoutSeconds);
-            kDefaultSubscriptionTimeoutSeconds = aDefaultSubscriptionTimeoutSeconds ? aDefaultSubscriptionTimeoutSeconds : SubscriptionManager.kDefaultSubscriptionTimeoutSeconds;
-            log("CALC : aRenewalPollingInterval ? aRenewalPollingInterval : SubscriptionManager.kDefaultPollTimeSeconds :" + (aDefaultSubscriptionTimeoutSeconds ? aDefaultSubscriptionTimeoutSeconds : SubscriptionManager.kDefaultSubscriptionTimeoutSeconds));
-            iPort = SubscriptionManager.kDefaultPort;
-            log("VAR : SubscriptionManager.kDefaultPort :" + SubscriptionManager.kDefaultPort);
-            started = true;
-            if ("WebSocket" in window) {
-                log("CON : Web Socket Supported");
-                socket = new WebSocket("ws://" + window.location.hostname + ":54321/", "upnp:event");
-                //socket = new WebSocket("ws://10.2.11.245:54321/", "upnp:event");
-                socket.onmessage = onSocketMessage;
-                socket.onerror = onSocketError;
-                socket.onclose = onSocketClose;
-                socket.onopen = aSuccessFunction;
-            }
-            else {
-                log("CON : Web Socket Unsupport");
-                alert("Cannot Start Subscription Manager as browser does not support web sockets");
-                started = false;
-            }
-            log("");
-
-        },
-
-        Stop: function () {
-            log("*** Stop ***");
-            var serviceNames = ServiceNames();
-            for (var i = 0; i < serviceNames.length; i++) {
-                log("VAR : serviceNames[i] :" + serviceNames[i]);
-                log("CALL : RemoveService");
-                if (iServices[serviceNames[i]]) {
-                    this.RemoveService(iServices[serviceNames[i]].SubscriptionId());
-                }
-            }
-            if (socket) {
-                socket.close();
-            }
-            log("");
-        },
-
-        AddService: function (aService, aSuccessFunction) {
-            log("*** AddService ***");
-            if (started) {
-                log("CON : Subscription Manager running");
-                var UId = GenerateSubscriptionId();
-                aService.SetSubscriptionId(UId);
-                log("VAR :  aService.SubscriptionId():" + aService.SubscriptionId());
-                iServices[aService.SubscriptionId()] = aService;
-                if (aSuccessFunction) {
-                    iServices[aService.SubscriptionId()].aSubscribeSuccessFunction = aSuccessFunction;
-                }
-                log("CALL : SubscribeMessage");
-                socket.send(SubscribeMessage(aService, SubscriptionManager.kDefaultSubscriptionTimeoutSeconds));
-            }
-            else {
-                log("CON : Subscription Manager is not running");
-                alert("Subscription Manager is not running.  Please ensure 'SubscriptionManager.Start();' has been called prior to subscribing.");
-            }
-            log("");
-        },
-
-        RemoveService: function (aSubscriptionId) {
-            log("*** RemoveService ***");
-            log("VAR : aSubscriptionId :" + aSubscriptionId);
-
-            if (iServices[aSubscriptionId]) {
-                log("CALL : UnsubscribeMessage");
-                socket.send(UnsubscribeMessage(aSubscriptionId));
-                log("DEL : " + aSubscriptionId);
-                delete iServices[aSubscriptionId];
-              
-                log("CALC : iServices[aSubscriptionId]:" + iServices[aSubscriptionId]);
-            }
-            else {
-                log("NULL : iServices[aSubscriptionId]:" + iServices[aSubscriptionId]);
-            }
-            log("");
-        },
-
-        Port: function () {
-            log("*** Port ***");
-            log("RET : iPort" + iPort);
-            log("");
-            return iPort;
-        }
-
+        start: start,
+        stop: stop,
+        addService: addService,
+        removeService: removeService
     };
 })();
 
 
 
-var ServiceVariable = function (aName) {
-    this.iName = aName;
-    this.iValue = null;
-    this.iListeners = [];
+
+/**
+* A Service Property that can be monitored of state changes
+* @namespace Zapp
+* @class ServiceProperty
+*/
+Zapp.ServiceProperty = function (name) {
+    this.name = name; // The name of the property
+    this.value = null; // The value of the property
+    this.listeners = []; // A collection of listeners to notify of property value changes
 }
 
-ServiceVariable.prototype.Name = function () {
-    return this.iName;
-}
-
-ServiceVariable.prototype.Value = function () {
-    return this.iValue;
-}
-
-ServiceVariable.prototype.SetValue = function (aValue) {
-    if (this.iValue != aValue) {
-        this.iValue = aValue;
-        for (var i = 0; i < this.iListeners.length; i++) {
+/**
+* Notifies all listeners of its value change and calls the event handler
+* @method setValue
+* @param {String | Int | Boolean} value The new value for the property
+*/
+Zapp.ServiceProperty.prototype.setValue = function (value) {
+    if (this.value != value) {
+        this.value = value;
+        for (var i = this.listeners.length - 1; i > -1; i--) {
             try {
-                this.iListeners[i].call(this, aValue);
+                this.listeners[i].call(this, value);
+
             } catch (e) {
-                console.log("Error caught in SetValue: " + e);
+                console.log("setValue: " + e);
             }
         }
     }
 }
 
-ServiceVariable.prototype.AddListener = function (aListener) {
-    this.iListeners[this.iListeners.length] = aListener;
+/**
+* Adds a new event handler function to the listeners for the property
+* @method addListener
+* @param {Function} listener The event handler function to execute when the property value changes
+*/
+Zapp.ServiceProperty.prototype.addListener = function (listener) {
+    this.listeners[this.listeners.length] = listener;
 }
 
 
-var kEnvelopeStart = '<?xml version="1.0"?>' +
+
+
+/**
+* A wrapper for sending and receiving soap messages via jQuery ajax
+* @namespace Zapp
+* @class SoapRequest
+*/
+
+jQuery.ajaxSetup({
+    timeout: 10000 // The timeout value in milliseconds of the request
+});
+
+Zapp.SoapRequest = function (action, url, domain, type, version) {
+    this.action = action; // The action to invoke
+    this.url = url; // The soap web service url
+    this.type = type;
+    this.version = version;
+    this.domain = domain;
+    this.envelope = ""; // The soap envelope
+    this.writeEnvelopeStart(action);
+}
+
+/**
+* Builds the start of the soap message
+* @method writeEnvelopeStart
+*/
+Zapp.SoapRequest.prototype.writeEnvelopeStart = function () {
+    var envelopeStart = '<?xml version="1.0"?>' +
         '<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">' +
         '<s:Body s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><u:';
 
-var kAjaxTimeout = 10000;
-
-var SoapRequest = function (aAction, aUrl, aDomain, aType, aVersion) {
-    this.iAction = aAction;
-    this.iUrl = aUrl;
-    this.iType = aType;
-    this.iVersion = aVersion;
-    this.iDomain = aDomain;
-    this.iEnvelope = "";
-    this.WriteEnvelopeStart(aAction);
+    this.envelope += envelopeStart;
+    this.envelope += this.action;
+    this.envelope += ' xmlns:u="urn:';
+    this.envelope += this.domain;
+    this.envelope += ':service:';
+    this.envelope += this.type;
+    this.envelope += ':';
+    this.envelope += this.version;
+    this.envelope += '">';
 }
 
-SoapRequest.prototype.WriteEnvelopeStart = function () {
-    this.iEnvelope += kEnvelopeStart;
-    this.iEnvelope += this.iAction;
-    this.iEnvelope += ' xmlns:u="urn:';
-    this.iEnvelope += this.iDomain;
-    this.iEnvelope += ':service:';
-    this.iEnvelope += this.iType;
-    this.iEnvelope += ':';
-    this.iEnvelope += this.iVersion;
-    this.iEnvelope += '">';
+
+/**
+* Builds the end of the soap message
+* @method writeEnvelopeEnd
+*/
+Zapp.SoapRequest.prototype.writeEnvelopeEnd = function () {
+    this.envelope += "</u:";
+    this.envelope += this.action;
+    this.envelope += "></s:Body></s:Envelope>";
 }
 
-SoapRequest.prototype.WriteEnvelopeEnd = function () {
-    this.iEnvelope += "</u:";
-    this.iEnvelope += this.iAction;
-    this.iEnvelope += "></s:Body></s:Envelope>";
-}
 
-SoapRequest.prototype.GetSoapAction = function () {
+/**
+* Builds the action of the soap message
+* @method getSoapAction
+*/
+Zapp.SoapRequest.prototype.getSoapAction = function () {
     var soapAction = 'urn:';
-    soapAction += this.iDomain;
+    soapAction += this.domain;
     soapAction += ':service:';
-    soapAction += this.iType;
+    soapAction += this.type;
     soapAction += ':';
-    soapAction += this.iVersion;
+    soapAction += this.version;
     soapAction += '#';
-    soapAction += this.iAction;
+    soapAction += this.action;
     return soapAction;
 }
 
-SoapRequest.prototype.CreateAjaxRequest = function (aCallbackFunction, aErrorFunction) {
-    var thisObj = this;
+
+/**
+* Executes the ajax request
+* @method send
+* @param {Function} successFunction The function to execute once the ajax request returns
+* @param {Function} errorFunction The function to execute if an error occurs in the ajax request
+*/
+Zapp.SoapRequest.prototype.send = function (successFunction, errorFunction) {
+    var _this = this;
+    this.writeEnvelopeEnd();
+    return this.createAjaxRequest(
+		function (transport) {
+		    if (transport.responseXML.getElementsByTagName("faultcode").length > 0) {
+		        errorFunction(_this.getTransportErrorMessage(transport), transport);
+		    } else {
+		        var outParameters = transport.responseXML.getElementsByTagNameNS("*", _this.action + "Response")[0].childNodes;
+
+		        // Parse the output
+		        var result = {};
+		        for (var i = 0, il = outParameters.length; i < il; i++) {
+		            var nodeValue = "";
+                    // one result is expected
+		            var children = outParameters[i].childNodes;
+		            if (children.length > 0) {
+		                nodeValue = children[0].nodeValue;
+		            }
+		            result[outParameters[i].nodeName] = (nodeValue != "" ? nodeValue : null);
+		        }
+		        successFunction(result);
+		    }
+		},
+		function (transport) {
+		    if (errorFunction) {
+		        errorFunction(_this.getTransportErrorMessage(transport), transport);
+		    }
+		    else {
+		        defaultErrorFunction(XMLHttpRequest, errorType, errorThrown);
+		    }
+		}
+	);
+}
+
+
+/**
+* A wrapper of the jQuery ajax request
+* @method createAjaxRequest
+* @param {Function} successFunction The function to execute once the ajax request returns
+* @param {Function} errorFunction The function to execute if an error occurs in the ajax request
+*/
+Zapp.SoapRequest.prototype.createAjaxRequest = function (successFunction, errorFunction) {
+    var _this = this;
     return new jQuery.ajax({
         async: true,
-        url: this.iUrl,
+        url: this.url,
         type: "POST",
         dataType: "xml",
-        data: this.iEnvelope,
-        timeout: 10000,
+        data: this.envelope,
         success: function (data, textStatus, XMLHttpRequest) {
             if (XMLHttpRequest.status) {
-                if (aCallbackFunction) {
+                if (successFunction) {
                     try {
-                        aCallbackFunction(XMLHttpRequest);
+                        successFunction(XMLHttpRequest);
                     } catch (e) {
-                        console.log("Exception caught in callback" + e.message);
-                        if (aErrorFunction) { aErrorFunction(textStatus); };
+                        console.log("createAjaxRequest: " + e.message);
+                        if (errorFunction) { errorFunction(textStatus); };
                     }
                 }
             } else {
-                console.log("Request has no transport status: " + thisObj.iUrl);
-                if (aErrorFunction) { aErrorFunction(textStatus); };
+                console.log("createAjaxRequest: " + _this.url);
+                if (errorFunction) { errorFunction(); };
             }
         },
         processData: false,
-        error: function (xhr, ajaxOptions, thrownError) {
-            if (!aOnError) return;
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            if (errorFunction) {
+                errorFunction(XMLHttpRequest);
+            }
 
-            aOnError(xhr, ajaxOptions, thrownError);
         },
         beforeSend: function (req) {
-            req.setRequestHeader("SOAPAction", thisObj.GetSoapAction());
+            req.setRequestHeader("SOAPAction", _this.getSoapAction());
         },
         contentType: "text/xml; charset=\"utf-8\""
     });
 };
 
-SoapRequest.prototype.getElementsByTagNameNS = function (tagName, ns, scope) {
-    var elementListForReturn = scope.getElementsByTagName(ns + ":" + tagName);
-    if (elementListForReturn.length == 0) {
-        elementListForReturn = scope.getElementsByTagName(tagName);
-        if (elementListForReturn.length == 0 && document.getElementsByTagNameNS) {
-            elementListForReturn = scope.getElementsByTagNameNS(ns, tagName);
-        }
-    }
-    return elementListForReturn;
+
+/**
+* Provides a default error handler to output the error to console
+* @method defaultErrorFunction
+* @param {Object} XMLHttpRequest The XMLHTTPRequest
+* @param {String} textStatus The error type
+* @param {Object} errorThrown The exception object if applicable
+*/
+Zapp.SoapRequest.prototype.defaultErrorFunction = function (XMLHttpRequest, textStatus, errorThrown) {
+    console.log("defaultErrorFunction/XMLHttpRequest: " + XMLHttpRequest);
+    console.log("defaultErrorFunction/textStatus: " + textStatus);
+    console.log("defaultErrorFunction/errorThrown: " + errorThrown);
 }
 
-SoapRequest.ReadIntParameter = function (aValue) {
-    return aValue * 1;
-}
 
-SoapRequest.ReadBoolParameter = function (aValue) {
-    return (aValue == "1" || aValue == "true" || aValue == "yes") ? true : false;
-}
-
-SoapRequest.ReadStringParameter = function (aValue) {
-    return aValue;
-}
-
-SoapRequest.ReadBinaryParameter = function (aValue) {
-    return atob(aValue);
-}
-
-SoapRequest.prototype.WriteIntParameter = function (aTagName, aValue) {
-    this.WriteParameter(aTagName, "" + (aValue ? aValue : "0"));
-}
-
-SoapRequest.prototype.WriteBoolParameter = function (aTagName, aValue) {
-    this.WriteParameter(aTagName, aValue ? "1" : "0");
-}
-
-SoapRequest.prototype.WriteStringParameter = function (aTagName, aValue) {
-    this.WriteParameter(aTagName, (aValue ? aValue : ""));
-}
-
-SoapRequest.prototype.WriteBinaryParameter = function (aTagName, aValue) {
-    this.WriteParameter(aTagName, (aValue ? btoa(aValue) : ""));
-}
-
-SoapRequest.prototype.WriteParameter = function (aTagName, aValue) {
-    this.iEnvelope += "<" + aTagName + ">" + aValue.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</" + aTagName + ">";
-}
-
-SoapRequest.prototype.GetTransportErrorMessage = function (transport) {
+/**
+* Parses the SOAP error message into a readable string
+* @method getTransportErrorMessage
+* @param {Object} transport The XMLHttpRequest object
+* @return {String} A readable error message
+*/
+Zapp.SoapRequest.prototype.getTransportErrorMessage = function (transport) {
     var errorString = "Error:";
     try {
         errorString += "\nstatus: " + transport.statusText;
@@ -608,43 +762,97 @@ SoapRequest.prototype.GetTransportErrorMessage = function (transport) {
     return errorString;
 }
 
-SoapRequest.prototype.Send = function (onSuccess, onError) {
-    var thisObj = this;
-    this.WriteEnvelopeEnd();
-    return this.CreateAjaxRequest(
-		function (transport) {
-		    if (transport.responseXML.getElementsByTagName("faultcode").length > 0) {
-		        onError(thisObj.GetTransportErrorMessage(transport), transport);
-		    } else {
-		        var outParameters = thisObj.getElementsByTagNameNS(thisObj.iAction + "Response", "u", transport.responseXML)[0].childNodes;
 
-		        var result = {};
-		        for (var i = 0; i < outParameters.length; i++) {
-		            var nodeValue = "";
-		            var childNodes = outParameters[i].childNodes;
-
-		            for (var j = 0; j < childNodes.length; j++) {
-		                nodeValue += childNodes[j].nodeValue;
-		            }
-		            result[outParameters[i].nodeName.replace(/.*:/, "")] = (nodeValue != "" ? nodeValue : null);
-		         }
-		        onSuccess(result);
-		    }
-		},
-		function (transport) {
-		    onError(thisObj.GetTransportErrorMessage(transport), transport);
-		}
-	);
+/**
+* Helper to Read an Int
+* @method readIntParameter
+* @param {String} value The value to be read as an Integer
+* @static
+* @return {Int} The integer value
+*/
+Zapp.SoapRequest.readIntParameter = function (value) {
+    return value * 1;
 }
 
+/**
+* Helper to Read an Bool
+* @method readBoolParameter
+* @param {String} value The value to be read as a Boolean
+* @static
+* @return {Boolean} The boolean value
+*/
+Zapp.SoapRequest.readBoolParameter = function (value) {
+    return (value == "1" || value == "true" || value == "yes") ? true : false;
+}
 
-$(document).ready(function () {
-   // SubscriptionManager.EnableDebugging(false);
-   // SubscriptionManager.Start();
-});
+/**
+* Helper to Read a String
+* @method readStringParameter
+* @param {String} value The value to be read as a String (no logic required)
+* @static
+* @return {String} The string value
+*/
+Zapp.SoapRequest.readStringParameter = function (value) {
+    return value;
+}
 
-$(window).unload(function () {
-    // subManager.UnsubscribeAll();
-    SubscriptionManager.Stop();
-    // Close SOcket
-});
+/**
+* Helper to Read a Binary
+* @method readBinaryParameter
+* @param {String} value The value to be read as a String (no logic required)
+* @static
+* @return {String} The binary value converted from base64
+*/
+Zapp.SoapRequest.readBinaryParameter = function (value) {
+    return atob(value); // NON-IE
+}
+
+/**
+* Helper to write an Integer into a xml tag
+* @method writeIntParameter
+* @param {String} tagName The xml tag name to be inserted into the SOAP envelope
+* @param {String} value The xml tag value to be inserted into the SOAP envelope
+*/
+Zapp.SoapRequest.prototype.writeIntParameter = function (tagName, value) {
+    this.writeParameter(tagName, "" + (value ? value : "0"));
+}
+
+/**
+* Helper to write a Boolean into a xml tag
+* @method writeBoolParameter
+* @param {String} tagName The xml tag name to be inserted into the SOAP envelope
+* @param {String} value The xml tag value to be inserted into the SOAP envelope
+*/
+Zapp.SoapRequest.prototype.writeBoolParameter = function (tagName, value) {
+    this.writeParameter(tagName, value ? "1" : "0");
+}
+
+/**
+* Helper to write a String into a xml tag
+* @method writeBoolParameter
+* @param {String} tagName The xml tag name to be inserted into the SOAP envelope
+* @param {String} value The xml tag value to be inserted into the SOAP envelope
+*/
+Zapp.SoapRequest.prototype.writeStringParameter = function (tagName, value) {
+    this.writeParameter(tagName, (value ? value : ""));
+}
+
+/**
+* Helper to write Binary into a xml tag
+* @method writeBinaryParameter
+* @param {String} tagName The xml tag name to be inserted into the SOAP envelope
+* @param {String} value The xml tag value to be inserted into the SOAP envelope
+*/
+Zapp.SoapRequest.prototype.writeBinaryParameter = function (tagName, value) {
+    this.writeParameter(tagName, (value ? btoa(value) : ""));
+}
+
+/**
+* Helper to format the tag and value into a xml tag and insert into the SOAP enveloper
+* @method writeParameter
+* @param {String} tagName The xml tag name to be inserted into the SOAP envelope
+* @param {String} value The xml tag value to be inserted into the SOAP envelope
+*/
+Zapp.SoapRequest.prototype.writeParameter = function (tagName, value) {
+    this.envelope += "<" + tagName + ">" + value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</" + tagName + ">";
+}

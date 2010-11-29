@@ -378,14 +378,14 @@
 
         function onComplete(results) {
             var resultsXML = this.getResults(_Y.Test.Format.JUnitXML);
-            //         alert(resultsXML);
-            //   alert(resultsXML);
-           
-            proxy.WriteFile(resultsXML,"C:\\temp.txt");
-          //  $("#results").text(resultsXML);
+            proxy.WriteFile(resultsXML,"C:\\temp.txt",function () {
+            window.close();
+            },function() {
+            window.close();
+            });
             
             
-            setTimeout(function() { window.close(); },2000);
+            setTimeout(function() {   window.close();  },5000); // Close window after 5 seconds as a fall back
         }
       
     </script>
