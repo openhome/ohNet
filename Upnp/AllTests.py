@@ -174,7 +174,7 @@ def JsOnly():
 
 		
 		jsfailed = open("xout/ProxyJsTest.xml", "w")
-		jsfailed.writelines('<?xml version="1.0" encoding="UTF-8"?><testsuite errors="0" failures="1" name="ProxyJsTest" tests="0"><testcase classname="exists" name="no" time="0"></testcase></testsuite>')
+		jsfailed.writelines('<?xml version="1.0" encoding="UTF-8"?><testsuites><testsuite name="Test Proxy" tests="1" failures="1" time="0.01"><testcase name="No Results Output" time="0.01"><failure message="No XML Results Output from JS Proxy Tests."><![CDATA[No XML Results Output from JS Proxy Tests.]]></failure></testcase></testsuite></testsuites>')
 		jsfailed.close()
 
 		LocalAppData = os.environ.get('LOCALAPPDATA')
