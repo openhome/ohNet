@@ -100,8 +100,17 @@ def Build(tool, cmd, args):
                 print ret        
 		sys.exit(10)
 
+def DummyXML():
+
+		if not os.path.exists("xout"):
+			os.mkdir("xout")
+		dummy = open("Upnp/xout/dummy.xml", "w")
+		dummy.writelines('<?xml version="1.0" encoding="UTF-8"?><testsuite errors="0" failures="0" name="no-xmltests" tests="0"><testcase classname="no-xmltests" name="xmltests-off" time="0"></testcase></testsuite>')
+		dummy.close()
+
 
 Build(Environment['tool'],Module['cmd'],Arguments['args'])
+DummyXML()
 
 vgpath = "Upnp/vgout"
 

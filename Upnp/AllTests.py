@@ -165,10 +165,17 @@ gAllTests = [ TestCase('TestBuffer', [], True)
 
 def JsOnly():
 
+
+		
 		print "running javascript tests"
 		
 		if not os.path.exists("xout"):
 			os.mkdir("xout")
+
+		
+		jsfailed = open("xout/ProxyJsTest.xml", "w")
+		jsfailed.writelines('<?xml version="1.0" encoding="UTF-8"?><testsuite errors="0" failures="1" name="ProxyJsTest" tests="0"><testcase classname="exists" name="no" time="0"></testcase></testsuite>')
+		jsfailed.close()
 
 		LocalAppData = os.environ.get('LOCALAPPDATA')
 		WorkSpace = os.environ.get('WORKSPACE')
@@ -189,7 +196,6 @@ def JsOnly():
 		subprocess.call([Chrome, devfinder_out])
 
 		os.kill(testbasic.pid, signal.SIGTERM)
-	
 
 if gTestsOnly == 0:
     runBuilds()
@@ -201,6 +207,7 @@ if gBuildOnly == 0:
         runTests()
 	if gJsOnly == 1:
 		JsOnly()
+		
     print '\nFinished.  All tests passed'
 print 'Start time: ' + gStartTime
 print 'Builds complete: ' + gBuildsCompleteTime
