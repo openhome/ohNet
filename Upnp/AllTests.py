@@ -170,24 +170,24 @@ def JsOnly():
 			os.mkdir("xout")
 
 		LocalAppData = os.environ.get('LOCALAPPDATA')
-		Chrome = LocalAppData + "\\" + "Google\Chrome\Application\chrome.exe"
 		WorkSpace = os.environ.get('WORKSPACE')
-		UIPath = WorkSpace + "\\" + "Upnp\Public\Js\Zapp.Web.UI.Tests"
+
+		UIPath = os.path.join(WorkSpace, 'Upnp\Public\Js\Zapp.Web.UI.Tests')
+		Chrome = os.path.join(LocalAppData, 'Google\chrome\Application\Chrome.exe')
+
 		TestBasic = "Build\Obj\Windows\TestDvTestBasic.exe"
 		TestDeviceFinder = "Build\Obj\Windows\TestDeviceFinder.exe"
 		
-		os.system("start \"UI Test\" /Min " + TestBasic + " -l -c " + UIPath)
-		
-		devpath = subprocess.Popen([TestDeviceFinder, '-l', '-s', 'zapp.org:service:TestBasic:1'],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-		output, errors = devpath.communicate() 
-		
-		print errors
+		testbasic = subprocess.Popen([TestBasic, '-l', '-c', UIPath])
 
-		os.system(Chrome + ' ' + errors)
-	
-		time.sleep(10)
+		devfinder = subprocess.Popen([TestDeviceFinder, '-l', '-s', 'zapp.org:service:TestBasic:1'],stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+			
+		devfinder_out = devfinder.communicate() 
 
-		os.system("tskill TestDvTestBasic")
+
+		subprocess.call([Chrome, devfinder_out])
+
+		os.kill(testbasic.pid, signal.SIGTERM)
 	
 
 if gTestsOnly == 0:
