@@ -25,7 +25,7 @@ namespace Zapp.Device.Providers
     /// <summary>
     /// Provider for the upnp.org:ScheduledRecording:2 UPnP service
     /// </summary>
-    public class DvProviderUpnpOrgScheduledRecording2 : DvProvider, IDisposable
+    public class DvProviderUpnpOrgScheduledRecording2 : DvProvider, IDisposable, IDvProviderUpnpOrgScheduledRecording2
     {
         [DllImport("DvUpnpOrgScheduledRecording2")]
         static extern uint DvProviderUpnpOrgScheduledRecording2Create(uint aDeviceHandle);

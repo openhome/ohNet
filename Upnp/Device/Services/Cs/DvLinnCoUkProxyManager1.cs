@@ -64,7 +64,7 @@ namespace Zapp.Device.Providers
     /// <summary>
     /// Provider for the linn.co.uk:ProxyManager:1 UPnP service
     /// </summary>
-    public class DvProviderLinnCoUkProxyManager1 : DvProvider, IDisposable
+    public class DvProviderLinnCoUkProxyManager1 : DvProvider, IDisposable, IDvProviderLinnCoUkProxyManager1
     {
         [DllImport("DvLinnCoUkProxyManager1")]
         static extern uint DvProviderLinnCoUkProxyManager1Create(uint aDeviceHandle);

@@ -12,7 +12,7 @@ namespace Zapp.Device.Providers
     /// <summary>
     /// Provider for the linn.co.uk:Ptest:1 UPnP service
     /// </summary>
-    public class DvProviderLinnCoUkPtest1 : DvProvider, IDisposable
+    public class DvProviderLinnCoUkPtest1 : DvProvider, IDisposable, IDvProviderLinnCoUkPtest1
     {
         [DllImport("DvLinnCoUkPtest1")]
         static extern uint DvProviderLinnCoUkPtest1Create(uint aDeviceHandle);

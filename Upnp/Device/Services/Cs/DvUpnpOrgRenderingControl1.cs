@@ -25,7 +25,7 @@ namespace Zapp.Device.Providers
     /// <summary>
     /// Provider for the upnp.org:RenderingControl:1 UPnP service
     /// </summary>
-    public class DvProviderUpnpOrgRenderingControl1 : DvProvider, IDisposable
+    public class DvProviderUpnpOrgRenderingControl1 : DvProvider, IDisposable, IDvProviderUpnpOrgRenderingControl1
     {
         [DllImport("DvUpnpOrgRenderingControl1")]
         static extern uint DvProviderUpnpOrgRenderingControl1Create(uint aDeviceHandle);

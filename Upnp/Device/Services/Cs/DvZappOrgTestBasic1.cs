@@ -77,7 +77,7 @@ namespace Zapp.Device.Providers
     /// <summary>
     /// Provider for the zapp.org:TestBasic:1 UPnP service
     /// </summary>
-    public class DvProviderZappOrgTestBasic1 : DvProvider, IDisposable
+    public class DvProviderZappOrgTestBasic1 : DvProvider, IDisposable, IDvProviderZappOrgTestBasic1
     {
         [DllImport("DvZappOrgTestBasic1")]
         static extern uint DvProviderZappOrgTestBasic1Create(uint aDeviceHandle);

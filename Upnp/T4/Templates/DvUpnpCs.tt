@@ -78,7 +78,7 @@ namespace Zapp.Device.Providers
     /// <summary>
     /// Provider for the <#=domain#>:<#=type#>:<#=version#> UPnP service
     /// </summary>
-    public class <#=className#> : DvProvider, IDisposable
+    public class <#=className#> : DvProvider, IDisposable, I<#=className#>
     {
         [DllImport("<#=dllName#>")]
         static extern uint <#=className#>Create(uint aDeviceHandle);

@@ -38,7 +38,7 @@ namespace Zapp.Device.Providers
     /// <summary>
     /// Provider for the linn.co.uk:Delay:1 UPnP service
     /// </summary>
-    public class DvProviderLinnCoUkDelay1 : DvProvider, IDisposable
+    public class DvProviderLinnCoUkDelay1 : DvProvider, IDisposable, IDvProviderLinnCoUkDelay1
     {
         [DllImport("DvLinnCoUkDelay1")]
         static extern uint DvProviderLinnCoUkDelay1Create(uint aDeviceHandle);

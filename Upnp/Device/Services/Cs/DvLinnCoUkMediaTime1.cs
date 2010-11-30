@@ -25,7 +25,7 @@ namespace Zapp.Device.Providers
     /// <summary>
     /// Provider for the linn.co.uk:MediaTime:1 UPnP service
     /// </summary>
-    public class DvProviderLinnCoUkMediaTime1 : DvProvider, IDisposable
+    public class DvProviderLinnCoUkMediaTime1 : DvProvider, IDisposable, IDvProviderLinnCoUkMediaTime1
     {
         [DllImport("DvLinnCoUkMediaTime1")]
         static extern uint DvProviderLinnCoUkMediaTime1Create(uint aDeviceHandle);

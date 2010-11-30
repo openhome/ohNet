@@ -12,7 +12,7 @@ namespace Zapp.Device.Providers
     /// <summary>
     /// Provider for the zapp.org:TestLights:1 UPnP service
     /// </summary>
-    public class DvProviderZappOrgTestLights1 : DvProvider, IDisposable
+    public class DvProviderZappOrgTestLights1 : DvProvider, IDisposable, IDvProviderZappOrgTestLights1
     {
         [DllImport("DvZappOrgTestLights1")]
         static extern uint DvProviderZappOrgTestLights1Create(uint aDeviceHandle);

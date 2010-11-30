@@ -25,7 +25,7 @@ namespace Zapp.Device.Providers
     /// <summary>
     /// Provider for the upnp.org:SwitchPower:1 UPnP service
     /// </summary>
-    public class DvProviderUpnpOrgSwitchPower1 : DvProvider, IDisposable
+    public class DvProviderUpnpOrgSwitchPower1 : DvProvider, IDisposable, IDvProviderUpnpOrgSwitchPower1
     {
         [DllImport("DvUpnpOrgSwitchPower1")]
         static extern uint DvProviderUpnpOrgSwitchPower1Create(uint aDeviceHandle);

@@ -64,7 +64,7 @@ namespace Zapp.Device.Providers
     /// <summary>
     /// Provider for the upnp.org:ContentDirectory:3 UPnP service
     /// </summary>
-    public class DvProviderUpnpOrgContentDirectory3 : DvProvider, IDisposable
+    public class DvProviderUpnpOrgContentDirectory3 : DvProvider, IDisposable, IDvProviderUpnpOrgContentDirectory3
     {
         [DllImport("DvUpnpOrgContentDirectory3")]
         static extern uint DvProviderUpnpOrgContentDirectory3Create(uint aDeviceHandle);

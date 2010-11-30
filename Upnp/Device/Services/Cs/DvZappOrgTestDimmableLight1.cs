@@ -25,7 +25,7 @@ namespace Zapp.Device.Providers
     /// <summary>
     /// Provider for the zapp.org:TestDimmableLight:1 UPnP service
     /// </summary>
-    public class DvProviderZappOrgTestDimmableLight1 : DvProvider, IDisposable
+    public class DvProviderZappOrgTestDimmableLight1 : DvProvider, IDisposable, IDvProviderZappOrgTestDimmableLight1
     {
         [DllImport("DvZappOrgTestDimmableLight1")]
         static extern uint DvProviderZappOrgTestDimmableLight1Create(uint aDeviceHandle);

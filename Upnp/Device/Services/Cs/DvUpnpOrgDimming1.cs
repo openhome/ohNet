@@ -77,7 +77,7 @@ namespace Zapp.Device.Providers
     /// <summary>
     /// Provider for the upnp.org:Dimming:1 UPnP service
     /// </summary>
-    public class DvProviderUpnpOrgDimming1 : DvProvider, IDisposable
+    public class DvProviderUpnpOrgDimming1 : DvProvider, IDisposable, IDvProviderUpnpOrgDimming1
     {
         [DllImport("DvUpnpOrgDimming1")]
         static extern uint DvProviderUpnpOrgDimming1Create(uint aDeviceHandle);

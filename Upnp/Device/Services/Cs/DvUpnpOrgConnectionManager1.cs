@@ -51,7 +51,7 @@ namespace Zapp.Device.Providers
     /// <summary>
     /// Provider for the upnp.org:ConnectionManager:1 UPnP service
     /// </summary>
-    public class DvProviderUpnpOrgConnectionManager1 : DvProvider, IDisposable
+    public class DvProviderUpnpOrgConnectionManager1 : DvProvider, IDisposable, IDvProviderUpnpOrgConnectionManager1
     {
         [DllImport("DvUpnpOrgConnectionManager1")]
         static extern uint DvProviderUpnpOrgConnectionManager1Create(uint aDeviceHandle);

@@ -64,7 +64,7 @@ namespace Zapp.Device.Providers
     /// <summary>
     /// Provider for the linn.co.uk:Playlist:1 UPnP service
     /// </summary>
-    public class DvProviderLinnCoUkPlaylist1 : DvProvider, IDisposable
+    public class DvProviderLinnCoUkPlaylist1 : DvProvider, IDisposable, IDvProviderLinnCoUkPlaylist1
     {
         [DllImport("DvLinnCoUkPlaylist1")]
         static extern uint DvProviderLinnCoUkPlaylist1Create(uint aDeviceHandle);

@@ -103,7 +103,7 @@ namespace Zapp.Device.Providers
     /// <summary>
     /// Provider for the linn.co.uk:Radio:1 UPnP service
     /// </summary>
-    public class DvProviderLinnCoUkRadio1 : DvProvider, IDisposable
+    public class DvProviderLinnCoUkRadio1 : DvProvider, IDisposable, IDvProviderLinnCoUkRadio1
     {
         [DllImport("DvLinnCoUkRadio1")]
         static extern uint DvProviderLinnCoUkRadio1Create(uint aDeviceHandle);

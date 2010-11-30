@@ -25,7 +25,7 @@ namespace Zapp.Device.Providers
     /// <summary>
     /// Provider for the upnp.org:AVTransport:1 UPnP service
     /// </summary>
-    public class DvProviderUpnpOrgAVTransport1 : DvProvider, IDisposable
+    public class DvProviderUpnpOrgAVTransport1 : DvProvider, IDisposable, IDvProviderUpnpOrgAVTransport1
     {
         [DllImport("DvUpnpOrgAVTransport1")]
         static extern uint DvProviderUpnpOrgAVTransport1Create(uint aDeviceHandle);
