@@ -92,7 +92,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyReadWriteRegister0(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderZappOrgTestWidget1GetPropertyReadWriteRegister0(iHandle, value);
             }
         }
@@ -119,7 +119,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyReadWriteRegister1(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderZappOrgTestWidget1GetPropertyReadWriteRegister1(iHandle, value);
             }
         }
@@ -146,7 +146,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyReadWriteRegister2(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderZappOrgTestWidget1GetPropertyReadWriteRegister2(iHandle, value);
             }
         }
@@ -173,7 +173,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyReadWriteRegister3(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderZappOrgTestWidget1GetPropertyReadWriteRegister3(iHandle, value);
             }
         }
@@ -200,7 +200,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyReadOnlyRegister4(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderZappOrgTestWidget1GetPropertyReadOnlyRegister4(iHandle, value);
             }
         }
@@ -227,7 +227,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyReadOnlyRegister5(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderZappOrgTestWidget1GetPropertyReadOnlyRegister5(iHandle, value);
             }
         }
@@ -254,7 +254,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyReadOnlyRegister6(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderZappOrgTestWidget1GetPropertyReadOnlyRegister6(iHandle, value);
             }
         }
@@ -281,7 +281,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyReadOnlyRegister7(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderZappOrgTestWidget1GetPropertyReadOnlyRegister7(iHandle, value);
             }
         }

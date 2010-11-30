@@ -83,6 +83,9 @@ namespace Zapp.ControlPoint.Proxies
         void PropertyRampPaused(out bool aRampPaused);
     }
 
+    /// <summary>
+    /// Proxy for the upnp.org:Dimming:1 UPnP service
+    /// </summary>
     public class CpProxyUpnpOrgDimming1 : CpProxy, IDisposable, ICpProxyUpnpOrgDimming1
     {
         [DllImport("CpUpnpOrgDimming1")]
@@ -269,9 +272,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="anewLoadlevelTarget"></param>
         public unsafe void SyncSetLoadLevelTarget(uint anewLoadlevelTarget)
         {
-			{
-				CpProxyUpnpOrgDimming1SyncSetLoadLevelTarget(iHandle, anewLoadlevelTarget);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncSetLoadLevelTarget(iHandle, anewLoadlevelTarget);
+            }
         }
 
         /// <summary>
@@ -297,12 +300,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetLoadLevelTarget(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndSetLoadLevelTarget(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndSetLoadLevelTarget(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -313,10 +316,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aGetLoadlevelTarget"></param>
         public unsafe void SyncGetLoadLevelTarget(out uint aGetLoadlevelTarget)
         {
-			fixed (uint* getLoadlevelTarget = &aGetLoadlevelTarget)
-			{
-				CpProxyUpnpOrgDimming1SyncGetLoadLevelTarget(iHandle, getLoadlevelTarget);
-			}
+            fixed (uint* getLoadlevelTarget = &aGetLoadlevelTarget)
+            {
+                CpProxyUpnpOrgDimming1SyncGetLoadLevelTarget(iHandle, getLoadlevelTarget);
+            }
         }
 
         /// <summary>
@@ -342,13 +345,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aGetLoadlevelTarget"></param>
         public unsafe void EndGetLoadLevelTarget(uint aAsyncHandle, out uint aGetLoadlevelTarget)
         {
-			fixed (uint* getLoadlevelTarget = &aGetLoadlevelTarget)
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndGetLoadLevelTarget(iHandle, aAsyncHandle, getLoadlevelTarget))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* getLoadlevelTarget = &aGetLoadlevelTarget)
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndGetLoadLevelTarget(iHandle, aAsyncHandle, getLoadlevelTarget))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -359,10 +362,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aretLoadlevelStatus"></param>
         public unsafe void SyncGetLoadLevelStatus(out uint aretLoadlevelStatus)
         {
-			fixed (uint* retLoadlevelStatus = &aretLoadlevelStatus)
-			{
-				CpProxyUpnpOrgDimming1SyncGetLoadLevelStatus(iHandle, retLoadlevelStatus);
-			}
+            fixed (uint* retLoadlevelStatus = &aretLoadlevelStatus)
+            {
+                CpProxyUpnpOrgDimming1SyncGetLoadLevelStatus(iHandle, retLoadlevelStatus);
+            }
         }
 
         /// <summary>
@@ -388,13 +391,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aretLoadlevelStatus"></param>
         public unsafe void EndGetLoadLevelStatus(uint aAsyncHandle, out uint aretLoadlevelStatus)
         {
-			fixed (uint* retLoadlevelStatus = &aretLoadlevelStatus)
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndGetLoadLevelStatus(iHandle, aAsyncHandle, retLoadlevelStatus))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* retLoadlevelStatus = &aretLoadlevelStatus)
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndGetLoadLevelStatus(iHandle, aAsyncHandle, retLoadlevelStatus))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -405,9 +408,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="anewOnEffectLevel"></param>
         public unsafe void SyncSetOnEffectLevel(uint anewOnEffectLevel)
         {
-			{
-				CpProxyUpnpOrgDimming1SyncSetOnEffectLevel(iHandle, anewOnEffectLevel);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncSetOnEffectLevel(iHandle, anewOnEffectLevel);
+            }
         }
 
         /// <summary>
@@ -433,12 +436,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetOnEffectLevel(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndSetOnEffectLevel(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndSetOnEffectLevel(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -449,11 +452,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="anewOnEffect"></param>
         public unsafe void SyncSetOnEffect(string anewOnEffect)
         {
-			char* newOnEffect = (char*)Marshal.StringToHGlobalAnsi(anewOnEffect);
-			{
-				CpProxyUpnpOrgDimming1SyncSetOnEffect(iHandle, newOnEffect);
-			}
-			Marshal.FreeHGlobal((IntPtr)newOnEffect);
+            char* newOnEffect = (char*)Marshal.StringToHGlobalAnsi(anewOnEffect);
+            {
+                CpProxyUpnpOrgDimming1SyncSetOnEffect(iHandle, newOnEffect);
+            }
+            Marshal.FreeHGlobal((IntPtr)newOnEffect);
         }
 
         /// <summary>
@@ -467,11 +470,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetOnEffect(string anewOnEffect, CallbackAsyncComplete aCallback)
         {
-			char* newOnEffect = (char*)Marshal.StringToHGlobalAnsi(anewOnEffect);
+            char* newOnEffect = (char*)Marshal.StringToHGlobalAnsi(anewOnEffect);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgDimming1BeginSetOnEffect(iHandle, newOnEffect, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)newOnEffect);
+            Marshal.FreeHGlobal((IntPtr)newOnEffect);
         }
 
         /// <summary>
@@ -481,12 +484,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetOnEffect(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndSetOnEffect(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndSetOnEffect(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -498,11 +501,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aretOnEffectLevel"></param>
         public unsafe void SyncGetOnEffectParameters(out string aretOnEffect, out uint aretOnEffectLevel)
         {
-			char* retOnEffect;
-			fixed (uint* retOnEffectLevel = &aretOnEffectLevel)
-			{
-				CpProxyUpnpOrgDimming1SyncGetOnEffectParameters(iHandle, &retOnEffect, retOnEffectLevel);
-			}
+            char* retOnEffect;
+            fixed (uint* retOnEffectLevel = &aretOnEffectLevel)
+            {
+                CpProxyUpnpOrgDimming1SyncGetOnEffectParameters(iHandle, &retOnEffect, retOnEffectLevel);
+            }
             aretOnEffect = Marshal.PtrToStringAnsi((IntPtr)retOnEffect);
             ZappFree(retOnEffect);
         }
@@ -531,14 +534,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aretOnEffectLevel"></param>
         public unsafe void EndGetOnEffectParameters(uint aAsyncHandle, out string aretOnEffect, out uint aretOnEffectLevel)
         {
-			char* retOnEffect;
-			fixed (uint* retOnEffectLevel = &aretOnEffectLevel)
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndGetOnEffectParameters(iHandle, aAsyncHandle, &retOnEffect, retOnEffectLevel))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* retOnEffect;
+            fixed (uint* retOnEffectLevel = &aretOnEffectLevel)
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndGetOnEffectParameters(iHandle, aAsyncHandle, &retOnEffect, retOnEffectLevel))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aretOnEffect = Marshal.PtrToStringAnsi((IntPtr)retOnEffect);
             ZappFree(retOnEffect);
         }
@@ -550,9 +553,9 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         public unsafe void SyncStepUp()
         {
-			{
-				CpProxyUpnpOrgDimming1SyncStepUp(iHandle);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncStepUp(iHandle);
+            }
         }
 
         /// <summary>
@@ -577,12 +580,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndStepUp(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndStepUp(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndStepUp(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -592,9 +595,9 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         public unsafe void SyncStepDown()
         {
-			{
-				CpProxyUpnpOrgDimming1SyncStepDown(iHandle);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncStepDown(iHandle);
+            }
         }
 
         /// <summary>
@@ -619,12 +622,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndStepDown(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndStepDown(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndStepDown(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -634,9 +637,9 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         public unsafe void SyncStartRampUp()
         {
-			{
-				CpProxyUpnpOrgDimming1SyncStartRampUp(iHandle);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncStartRampUp(iHandle);
+            }
         }
 
         /// <summary>
@@ -661,12 +664,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndStartRampUp(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndStartRampUp(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndStartRampUp(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -676,9 +679,9 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         public unsafe void SyncStartRampDown()
         {
-			{
-				CpProxyUpnpOrgDimming1SyncStartRampDown(iHandle);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncStartRampDown(iHandle);
+            }
         }
 
         /// <summary>
@@ -703,12 +706,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndStartRampDown(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndStartRampDown(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndStartRampDown(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -718,9 +721,9 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         public unsafe void SyncStopRamp()
         {
-			{
-				CpProxyUpnpOrgDimming1SyncStopRamp(iHandle);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncStopRamp(iHandle);
+            }
         }
 
         /// <summary>
@@ -745,12 +748,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndStopRamp(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndStopRamp(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndStopRamp(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -762,9 +765,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="anewRampTime"></param>
         public unsafe void SyncStartRampToLevel(uint anewLoadLevelTarget, uint anewRampTime)
         {
-			{
-				CpProxyUpnpOrgDimming1SyncStartRampToLevel(iHandle, anewLoadLevelTarget, anewRampTime);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncStartRampToLevel(iHandle, anewLoadLevelTarget, anewRampTime);
+            }
         }
 
         /// <summary>
@@ -791,12 +794,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndStartRampToLevel(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndStartRampToLevel(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndStartRampToLevel(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -807,9 +810,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="anewStepDelta"></param>
         public unsafe void SyncSetStepDelta(uint anewStepDelta)
         {
-			{
-				CpProxyUpnpOrgDimming1SyncSetStepDelta(iHandle, anewStepDelta);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncSetStepDelta(iHandle, anewStepDelta);
+            }
         }
 
         /// <summary>
@@ -835,12 +838,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetStepDelta(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndSetStepDelta(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndSetStepDelta(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -851,10 +854,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aretStepDelta"></param>
         public unsafe void SyncGetStepDelta(out uint aretStepDelta)
         {
-			fixed (uint* retStepDelta = &aretStepDelta)
-			{
-				CpProxyUpnpOrgDimming1SyncGetStepDelta(iHandle, retStepDelta);
-			}
+            fixed (uint* retStepDelta = &aretStepDelta)
+            {
+                CpProxyUpnpOrgDimming1SyncGetStepDelta(iHandle, retStepDelta);
+            }
         }
 
         /// <summary>
@@ -880,13 +883,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aretStepDelta"></param>
         public unsafe void EndGetStepDelta(uint aAsyncHandle, out uint aretStepDelta)
         {
-			fixed (uint* retStepDelta = &aretStepDelta)
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndGetStepDelta(iHandle, aAsyncHandle, retStepDelta))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* retStepDelta = &aretStepDelta)
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndGetStepDelta(iHandle, aAsyncHandle, retStepDelta))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -897,9 +900,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="anewRampRate"></param>
         public unsafe void SyncSetRampRate(uint anewRampRate)
         {
-			{
-				CpProxyUpnpOrgDimming1SyncSetRampRate(iHandle, anewRampRate);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncSetRampRate(iHandle, anewRampRate);
+            }
         }
 
         /// <summary>
@@ -925,12 +928,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetRampRate(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndSetRampRate(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndSetRampRate(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -941,10 +944,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aretRampRate"></param>
         public unsafe void SyncGetRampRate(out uint aretRampRate)
         {
-			fixed (uint* retRampRate = &aretRampRate)
-			{
-				CpProxyUpnpOrgDimming1SyncGetRampRate(iHandle, retRampRate);
-			}
+            fixed (uint* retRampRate = &aretRampRate)
+            {
+                CpProxyUpnpOrgDimming1SyncGetRampRate(iHandle, retRampRate);
+            }
         }
 
         /// <summary>
@@ -970,13 +973,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aretRampRate"></param>
         public unsafe void EndGetRampRate(uint aAsyncHandle, out uint aretRampRate)
         {
-			fixed (uint* retRampRate = &aretRampRate)
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndGetRampRate(iHandle, aAsyncHandle, retRampRate))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* retRampRate = &aretRampRate)
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndGetRampRate(iHandle, aAsyncHandle, retRampRate))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -986,9 +989,9 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         public unsafe void SyncPauseRamp()
         {
-			{
-				CpProxyUpnpOrgDimming1SyncPauseRamp(iHandle);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncPauseRamp(iHandle);
+            }
         }
 
         /// <summary>
@@ -1013,12 +1016,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndPauseRamp(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndPauseRamp(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndPauseRamp(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -1028,9 +1031,9 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         public unsafe void SyncResumeRamp()
         {
-			{
-				CpProxyUpnpOrgDimming1SyncResumeRamp(iHandle);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncResumeRamp(iHandle);
+            }
         }
 
         /// <summary>
@@ -1055,12 +1058,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndResumeRamp(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndResumeRamp(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndResumeRamp(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -1071,11 +1074,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aretIsRamping"></param>
         public unsafe void SyncGetIsRamping(out bool aretIsRamping)
         {
-			uint retIsRamping;
-			{
-				CpProxyUpnpOrgDimming1SyncGetIsRamping(iHandle, &retIsRamping);
-			}
-			aretIsRamping = (retIsRamping != 0);
+            uint retIsRamping;
+            {
+                CpProxyUpnpOrgDimming1SyncGetIsRamping(iHandle, &retIsRamping);
+            }
+            aretIsRamping = (retIsRamping != 0);
         }
 
         /// <summary>
@@ -1101,14 +1104,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aretIsRamping"></param>
         public unsafe void EndGetIsRamping(uint aAsyncHandle, out bool aretIsRamping)
         {
-			uint retIsRamping;
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndGetIsRamping(iHandle, aAsyncHandle, &retIsRamping))
-				{
-					throw(new ProxyError());
-				}
-			}
-			aretIsRamping = (retIsRamping != 0);
+            uint retIsRamping;
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndGetIsRamping(iHandle, aAsyncHandle, &retIsRamping))
+                {
+                    throw(new ProxyError());
+                }
+            }
+            aretIsRamping = (retIsRamping != 0);
         }
 
         /// <summary>
@@ -1119,11 +1122,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aretRampPaused"></param>
         public unsafe void SyncGetRampPaused(out bool aretRampPaused)
         {
-			uint retRampPaused;
-			{
-				CpProxyUpnpOrgDimming1SyncGetRampPaused(iHandle, &retRampPaused);
-			}
-			aretRampPaused = (retRampPaused != 0);
+            uint retRampPaused;
+            {
+                CpProxyUpnpOrgDimming1SyncGetRampPaused(iHandle, &retRampPaused);
+            }
+            aretRampPaused = (retRampPaused != 0);
         }
 
         /// <summary>
@@ -1149,14 +1152,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aretRampPaused"></param>
         public unsafe void EndGetRampPaused(uint aAsyncHandle, out bool aretRampPaused)
         {
-			uint retRampPaused;
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndGetRampPaused(iHandle, aAsyncHandle, &retRampPaused))
-				{
-					throw(new ProxyError());
-				}
-			}
-			aretRampPaused = (retRampPaused != 0);
+            uint retRampPaused;
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndGetRampPaused(iHandle, aAsyncHandle, &retRampPaused))
+                {
+                    throw(new ProxyError());
+                }
+            }
+            aretRampPaused = (retRampPaused != 0);
         }
 
         /// <summary>
@@ -1167,10 +1170,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aretRampTime"></param>
         public unsafe void SyncGetRampTime(out uint aretRampTime)
         {
-			fixed (uint* retRampTime = &aretRampTime)
-			{
-				CpProxyUpnpOrgDimming1SyncGetRampTime(iHandle, retRampTime);
-			}
+            fixed (uint* retRampTime = &aretRampTime)
+            {
+                CpProxyUpnpOrgDimming1SyncGetRampTime(iHandle, retRampTime);
+            }
         }
 
         /// <summary>
@@ -1196,13 +1199,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aretRampTime"></param>
         public unsafe void EndGetRampTime(uint aAsyncHandle, out uint aretRampTime)
         {
-			fixed (uint* retRampTime = &aretRampTime)
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndGetRampTime(iHandle, aAsyncHandle, retRampTime))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* retRampTime = &aretRampTime)
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndGetRampTime(iHandle, aAsyncHandle, retRampTime))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -1315,14 +1318,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aLoadLevelStatus">Will be set to the value of the property</param>
         public unsafe void PropertyLoadLevelStatus(out uint aLoadLevelStatus)
         {
-			fixed (uint* loadLevelStatus = &aLoadLevelStatus)
-			{
-	            CpProxyUpnpOrgDimming1PropertyLoadLevelStatus(iHandle, loadLevelStatus);
-			}
+            fixed (uint* loadLevelStatus = &aLoadLevelStatus)
+            {
+                CpProxyUpnpOrgDimming1PropertyLoadLevelStatus(iHandle, loadLevelStatus);
+            }
         }
 
         /// <summary>
@@ -1330,14 +1333,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aStepDelta">Will be set to the value of the property</param>
         public unsafe void PropertyStepDelta(out uint aStepDelta)
         {
-			fixed (uint* stepDelta = &aStepDelta)
-			{
-	            CpProxyUpnpOrgDimming1PropertyStepDelta(iHandle, stepDelta);
-			}
+            fixed (uint* stepDelta = &aStepDelta)
+            {
+                CpProxyUpnpOrgDimming1PropertyStepDelta(iHandle, stepDelta);
+            }
         }
 
         /// <summary>
@@ -1345,14 +1348,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aRampRate">Will be set to the value of the property</param>
         public unsafe void PropertyRampRate(out uint aRampRate)
         {
-			fixed (uint* rampRate = &aRampRate)
-			{
-	            CpProxyUpnpOrgDimming1PropertyRampRate(iHandle, rampRate);
-			}
+            fixed (uint* rampRate = &aRampRate)
+            {
+                CpProxyUpnpOrgDimming1PropertyRampRate(iHandle, rampRate);
+            }
         }
 
         /// <summary>
@@ -1360,13 +1363,13 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aIsRamping">Will be set to the value of the property</param>
         public unsafe void PropertyIsRamping(out bool aIsRamping)
         {
-			uint isRamping;
-	        CpProxyUpnpOrgDimming1PropertyIsRamping(iHandle, &isRamping);
-			aIsRamping = (isRamping != 0);
+            uint isRamping;
+            CpProxyUpnpOrgDimming1PropertyIsRamping(iHandle, &isRamping);
+            aIsRamping = (isRamping != 0);
         }
 
         /// <summary>
@@ -1374,13 +1377,13 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aRampPaused">Will be set to the value of the property</param>
         public unsafe void PropertyRampPaused(out bool aRampPaused)
         {
-			uint rampPaused;
-	        CpProxyUpnpOrgDimming1PropertyRampPaused(iHandle, &rampPaused);
-			aRampPaused = (rampPaused != 0);
+            uint rampPaused;
+            CpProxyUpnpOrgDimming1PropertyRampPaused(iHandle, &rampPaused);
+            aRampPaused = (rampPaused != 0);
         }
 
         /// <summary>

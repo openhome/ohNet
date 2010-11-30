@@ -132,7 +132,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyVolume(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkPreamp4GetPropertyVolume(iHandle, value);
             }
         }
@@ -186,7 +186,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyBalance(out int aValue)
         {
             fixed (int* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkPreamp4GetPropertyBalance(iHandle, value);
             }
         }
@@ -213,7 +213,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyVolumeLimit(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkPreamp4GetPropertyVolumeLimit(iHandle, value);
             }
         }
@@ -240,7 +240,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyStartupVolume(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkPreamp4GetPropertyStartupVolume(iHandle, value);
             }
         }

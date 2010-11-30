@@ -347,7 +347,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyProductSourceIndex(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkProduct3GetPropertyProductSourceIndex(iHandle, value);
             }
         }
@@ -374,7 +374,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyProductSourceCount(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkProduct3GetPropertyProductSourceCount(iHandle, value);
             }
         }
@@ -431,7 +431,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyStartupSourceIndex(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkProduct3GetPropertyStartupSourceIndex(iHandle, value);
             }
         }
@@ -485,7 +485,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyProductAnySourceName(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkProduct3GetPropertyProductAnySourceName(iHandle, value);
             }
         }
@@ -512,7 +512,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyProductAnySourceVisible(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkProduct3GetPropertyProductAnySourceVisible(iHandle, value);
             }
         }
@@ -539,7 +539,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyProductAnySourceType(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkProduct3GetPropertyProductAnySourceType(iHandle, value);
             }
         }

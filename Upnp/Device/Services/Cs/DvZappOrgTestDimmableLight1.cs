@@ -64,7 +64,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyA_ARG_Level(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderZappOrgTestDimmableLight1GetPropertyA_ARG_Level(iHandle, value);
             }
         }

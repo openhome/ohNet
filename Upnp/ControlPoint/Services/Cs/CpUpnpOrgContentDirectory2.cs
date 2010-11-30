@@ -67,6 +67,9 @@ namespace Zapp.ControlPoint.Proxies
         void PropertyTransferIDs(out string aTransferIDs);
     }
 
+    /// <summary>
+    /// Proxy for the upnp.org:ContentDirectory:2 UPnP service
+    /// </summary>
     public class CpProxyUpnpOrgContentDirectory2 : CpProxy, IDisposable, ICpProxyUpnpOrgContentDirectory2
     {
         [DllImport("CpUpnpOrgContentDirectory2")]
@@ -217,10 +220,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSearchCaps"></param>
         public unsafe void SyncGetSearchCapabilities(out string aSearchCaps)
         {
-			char* searchCaps;
-			{
-				CpProxyUpnpOrgContentDirectory2SyncGetSearchCapabilities(iHandle, &searchCaps);
-			}
+            char* searchCaps;
+            {
+                CpProxyUpnpOrgContentDirectory2SyncGetSearchCapabilities(iHandle, &searchCaps);
+            }
             aSearchCaps = Marshal.PtrToStringAnsi((IntPtr)searchCaps);
             ZappFree(searchCaps);
         }
@@ -248,13 +251,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSearchCaps"></param>
         public unsafe void EndGetSearchCapabilities(uint aAsyncHandle, out string aSearchCaps)
         {
-			char* searchCaps;
-			{
-				if (0 != CpProxyUpnpOrgContentDirectory2EndGetSearchCapabilities(iHandle, aAsyncHandle, &searchCaps))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* searchCaps;
+            {
+                if (0 != CpProxyUpnpOrgContentDirectory2EndGetSearchCapabilities(iHandle, aAsyncHandle, &searchCaps))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aSearchCaps = Marshal.PtrToStringAnsi((IntPtr)searchCaps);
             ZappFree(searchCaps);
         }
@@ -267,10 +270,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSortCaps"></param>
         public unsafe void SyncGetSortCapabilities(out string aSortCaps)
         {
-			char* sortCaps;
-			{
-				CpProxyUpnpOrgContentDirectory2SyncGetSortCapabilities(iHandle, &sortCaps);
-			}
+            char* sortCaps;
+            {
+                CpProxyUpnpOrgContentDirectory2SyncGetSortCapabilities(iHandle, &sortCaps);
+            }
             aSortCaps = Marshal.PtrToStringAnsi((IntPtr)sortCaps);
             ZappFree(sortCaps);
         }
@@ -298,13 +301,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSortCaps"></param>
         public unsafe void EndGetSortCapabilities(uint aAsyncHandle, out string aSortCaps)
         {
-			char* sortCaps;
-			{
-				if (0 != CpProxyUpnpOrgContentDirectory2EndGetSortCapabilities(iHandle, aAsyncHandle, &sortCaps))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* sortCaps;
+            {
+                if (0 != CpProxyUpnpOrgContentDirectory2EndGetSortCapabilities(iHandle, aAsyncHandle, &sortCaps))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aSortCaps = Marshal.PtrToStringAnsi((IntPtr)sortCaps);
             ZappFree(sortCaps);
         }
@@ -317,10 +320,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSortExtensionCaps"></param>
         public unsafe void SyncGetSortExtensionCapabilities(out string aSortExtensionCaps)
         {
-			char* sortExtensionCaps;
-			{
-				CpProxyUpnpOrgContentDirectory2SyncGetSortExtensionCapabilities(iHandle, &sortExtensionCaps);
-			}
+            char* sortExtensionCaps;
+            {
+                CpProxyUpnpOrgContentDirectory2SyncGetSortExtensionCapabilities(iHandle, &sortExtensionCaps);
+            }
             aSortExtensionCaps = Marshal.PtrToStringAnsi((IntPtr)sortExtensionCaps);
             ZappFree(sortExtensionCaps);
         }
@@ -348,13 +351,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSortExtensionCaps"></param>
         public unsafe void EndGetSortExtensionCapabilities(uint aAsyncHandle, out string aSortExtensionCaps)
         {
-			char* sortExtensionCaps;
-			{
-				if (0 != CpProxyUpnpOrgContentDirectory2EndGetSortExtensionCapabilities(iHandle, aAsyncHandle, &sortExtensionCaps))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* sortExtensionCaps;
+            {
+                if (0 != CpProxyUpnpOrgContentDirectory2EndGetSortExtensionCapabilities(iHandle, aAsyncHandle, &sortExtensionCaps))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aSortExtensionCaps = Marshal.PtrToStringAnsi((IntPtr)sortExtensionCaps);
             ZappFree(sortExtensionCaps);
         }
@@ -367,10 +370,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aFeatureList"></param>
         public unsafe void SyncGetFeatureList(out string aFeatureList)
         {
-			char* featureList;
-			{
-				CpProxyUpnpOrgContentDirectory2SyncGetFeatureList(iHandle, &featureList);
-			}
+            char* featureList;
+            {
+                CpProxyUpnpOrgContentDirectory2SyncGetFeatureList(iHandle, &featureList);
+            }
             aFeatureList = Marshal.PtrToStringAnsi((IntPtr)featureList);
             ZappFree(featureList);
         }
@@ -398,13 +401,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aFeatureList"></param>
         public unsafe void EndGetFeatureList(uint aAsyncHandle, out string aFeatureList)
         {
-			char* featureList;
-			{
-				if (0 != CpProxyUpnpOrgContentDirectory2EndGetFeatureList(iHandle, aAsyncHandle, &featureList))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* featureList;
+            {
+                if (0 != CpProxyUpnpOrgContentDirectory2EndGetFeatureList(iHandle, aAsyncHandle, &featureList))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aFeatureList = Marshal.PtrToStringAnsi((IntPtr)featureList);
             ZappFree(featureList);
         }
@@ -417,10 +420,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aId"></param>
         public unsafe void SyncGetSystemUpdateID(out uint aId)
         {
-			fixed (uint* id = &aId)
-			{
-				CpProxyUpnpOrgContentDirectory2SyncGetSystemUpdateID(iHandle, id);
-			}
+            fixed (uint* id = &aId)
+            {
+                CpProxyUpnpOrgContentDirectory2SyncGetSystemUpdateID(iHandle, id);
+            }
         }
 
         /// <summary>
@@ -446,13 +449,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aId"></param>
         public unsafe void EndGetSystemUpdateID(uint aAsyncHandle, out uint aId)
         {
-			fixed (uint* id = &aId)
-			{
-				if (0 != CpProxyUpnpOrgContentDirectory2EndGetSystemUpdateID(iHandle, aAsyncHandle, id))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* id = &aId)
+            {
+                if (0 != CpProxyUpnpOrgContentDirectory2EndGetSystemUpdateID(iHandle, aAsyncHandle, id))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -472,21 +475,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aUpdateID"></param>
         public unsafe void SyncBrowse(string aObjectID, string aBrowseFlag, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
-			char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
-			char* browseFlag = (char*)Marshal.StringToHGlobalAnsi(aBrowseFlag);
-			char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
-			char* sortCriteria = (char*)Marshal.StringToHGlobalAnsi(aSortCriteria);
-			char* result;
-			fixed (uint* numberReturned = &aNumberReturned)
-			fixed (uint* totalMatches = &aTotalMatches)
-			fixed (uint* updateID = &aUpdateID)
-			{
-				CpProxyUpnpOrgContentDirectory2SyncBrowse(iHandle, objectID, browseFlag, filter, aStartingIndex, aRequestedCount, sortCriteria, &result, numberReturned, totalMatches, updateID);
-			}
-			Marshal.FreeHGlobal((IntPtr)objectID);
-			Marshal.FreeHGlobal((IntPtr)browseFlag);
-			Marshal.FreeHGlobal((IntPtr)filter);
-			Marshal.FreeHGlobal((IntPtr)sortCriteria);
+            char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
+            char* browseFlag = (char*)Marshal.StringToHGlobalAnsi(aBrowseFlag);
+            char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
+            char* sortCriteria = (char*)Marshal.StringToHGlobalAnsi(aSortCriteria);
+            char* result;
+            fixed (uint* numberReturned = &aNumberReturned)
+            fixed (uint* totalMatches = &aTotalMatches)
+            fixed (uint* updateID = &aUpdateID)
+            {
+                CpProxyUpnpOrgContentDirectory2SyncBrowse(iHandle, objectID, browseFlag, filter, aStartingIndex, aRequestedCount, sortCriteria, &result, numberReturned, totalMatches, updateID);
+            }
+            Marshal.FreeHGlobal((IntPtr)objectID);
+            Marshal.FreeHGlobal((IntPtr)browseFlag);
+            Marshal.FreeHGlobal((IntPtr)filter);
+            Marshal.FreeHGlobal((IntPtr)sortCriteria);
             aResult = Marshal.PtrToStringAnsi((IntPtr)result);
             ZappFree(result);
         }
@@ -507,17 +510,17 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginBrowse(string aObjectID, string aBrowseFlag, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, CallbackAsyncComplete aCallback)
         {
-			char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
-			char* browseFlag = (char*)Marshal.StringToHGlobalAnsi(aBrowseFlag);
-			char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
-			char* sortCriteria = (char*)Marshal.StringToHGlobalAnsi(aSortCriteria);
+            char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
+            char* browseFlag = (char*)Marshal.StringToHGlobalAnsi(aBrowseFlag);
+            char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
+            char* sortCriteria = (char*)Marshal.StringToHGlobalAnsi(aSortCriteria);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgContentDirectory2BeginBrowse(iHandle, objectID, browseFlag, filter, aStartingIndex, aRequestedCount, sortCriteria, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)objectID);
-			Marshal.FreeHGlobal((IntPtr)browseFlag);
-			Marshal.FreeHGlobal((IntPtr)filter);
-			Marshal.FreeHGlobal((IntPtr)sortCriteria);
+            Marshal.FreeHGlobal((IntPtr)objectID);
+            Marshal.FreeHGlobal((IntPtr)browseFlag);
+            Marshal.FreeHGlobal((IntPtr)filter);
+            Marshal.FreeHGlobal((IntPtr)sortCriteria);
         }
 
         /// <summary>
@@ -531,16 +534,16 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aUpdateID"></param>
         public unsafe void EndBrowse(uint aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
-			char* result;
-			fixed (uint* numberReturned = &aNumberReturned)
-			fixed (uint* totalMatches = &aTotalMatches)
-			fixed (uint* updateID = &aUpdateID)
-			{
-				if (0 != CpProxyUpnpOrgContentDirectory2EndBrowse(iHandle, aAsyncHandle, &result, numberReturned, totalMatches, updateID))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* result;
+            fixed (uint* numberReturned = &aNumberReturned)
+            fixed (uint* totalMatches = &aTotalMatches)
+            fixed (uint* updateID = &aUpdateID)
+            {
+                if (0 != CpProxyUpnpOrgContentDirectory2EndBrowse(iHandle, aAsyncHandle, &result, numberReturned, totalMatches, updateID))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aResult = Marshal.PtrToStringAnsi((IntPtr)result);
             ZappFree(result);
         }
@@ -562,21 +565,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aUpdateID"></param>
         public unsafe void SyncSearch(string aContainerID, string aSearchCriteria, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
-			char* containerID = (char*)Marshal.StringToHGlobalAnsi(aContainerID);
-			char* searchCriteria = (char*)Marshal.StringToHGlobalAnsi(aSearchCriteria);
-			char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
-			char* sortCriteria = (char*)Marshal.StringToHGlobalAnsi(aSortCriteria);
-			char* result;
-			fixed (uint* numberReturned = &aNumberReturned)
-			fixed (uint* totalMatches = &aTotalMatches)
-			fixed (uint* updateID = &aUpdateID)
-			{
-				CpProxyUpnpOrgContentDirectory2SyncSearch(iHandle, containerID, searchCriteria, filter, aStartingIndex, aRequestedCount, sortCriteria, &result, numberReturned, totalMatches, updateID);
-			}
-			Marshal.FreeHGlobal((IntPtr)containerID);
-			Marshal.FreeHGlobal((IntPtr)searchCriteria);
-			Marshal.FreeHGlobal((IntPtr)filter);
-			Marshal.FreeHGlobal((IntPtr)sortCriteria);
+            char* containerID = (char*)Marshal.StringToHGlobalAnsi(aContainerID);
+            char* searchCriteria = (char*)Marshal.StringToHGlobalAnsi(aSearchCriteria);
+            char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
+            char* sortCriteria = (char*)Marshal.StringToHGlobalAnsi(aSortCriteria);
+            char* result;
+            fixed (uint* numberReturned = &aNumberReturned)
+            fixed (uint* totalMatches = &aTotalMatches)
+            fixed (uint* updateID = &aUpdateID)
+            {
+                CpProxyUpnpOrgContentDirectory2SyncSearch(iHandle, containerID, searchCriteria, filter, aStartingIndex, aRequestedCount, sortCriteria, &result, numberReturned, totalMatches, updateID);
+            }
+            Marshal.FreeHGlobal((IntPtr)containerID);
+            Marshal.FreeHGlobal((IntPtr)searchCriteria);
+            Marshal.FreeHGlobal((IntPtr)filter);
+            Marshal.FreeHGlobal((IntPtr)sortCriteria);
             aResult = Marshal.PtrToStringAnsi((IntPtr)result);
             ZappFree(result);
         }
@@ -597,17 +600,17 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSearch(string aContainerID, string aSearchCriteria, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, CallbackAsyncComplete aCallback)
         {
-			char* containerID = (char*)Marshal.StringToHGlobalAnsi(aContainerID);
-			char* searchCriteria = (char*)Marshal.StringToHGlobalAnsi(aSearchCriteria);
-			char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
-			char* sortCriteria = (char*)Marshal.StringToHGlobalAnsi(aSortCriteria);
+            char* containerID = (char*)Marshal.StringToHGlobalAnsi(aContainerID);
+            char* searchCriteria = (char*)Marshal.StringToHGlobalAnsi(aSearchCriteria);
+            char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
+            char* sortCriteria = (char*)Marshal.StringToHGlobalAnsi(aSortCriteria);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgContentDirectory2BeginSearch(iHandle, containerID, searchCriteria, filter, aStartingIndex, aRequestedCount, sortCriteria, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)containerID);
-			Marshal.FreeHGlobal((IntPtr)searchCriteria);
-			Marshal.FreeHGlobal((IntPtr)filter);
-			Marshal.FreeHGlobal((IntPtr)sortCriteria);
+            Marshal.FreeHGlobal((IntPtr)containerID);
+            Marshal.FreeHGlobal((IntPtr)searchCriteria);
+            Marshal.FreeHGlobal((IntPtr)filter);
+            Marshal.FreeHGlobal((IntPtr)sortCriteria);
         }
 
         /// <summary>
@@ -621,16 +624,16 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aUpdateID"></param>
         public unsafe void EndSearch(uint aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
-			char* result;
-			fixed (uint* numberReturned = &aNumberReturned)
-			fixed (uint* totalMatches = &aTotalMatches)
-			fixed (uint* updateID = &aUpdateID)
-			{
-				if (0 != CpProxyUpnpOrgContentDirectory2EndSearch(iHandle, aAsyncHandle, &result, numberReturned, totalMatches, updateID))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* result;
+            fixed (uint* numberReturned = &aNumberReturned)
+            fixed (uint* totalMatches = &aTotalMatches)
+            fixed (uint* updateID = &aUpdateID)
+            {
+                if (0 != CpProxyUpnpOrgContentDirectory2EndSearch(iHandle, aAsyncHandle, &result, numberReturned, totalMatches, updateID))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aResult = Marshal.PtrToStringAnsi((IntPtr)result);
             ZappFree(result);
         }
@@ -646,15 +649,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aResult"></param>
         public unsafe void SyncCreateObject(string aContainerID, string aElements, out string aObjectID, out string aResult)
         {
-			char* containerID = (char*)Marshal.StringToHGlobalAnsi(aContainerID);
-			char* elements = (char*)Marshal.StringToHGlobalAnsi(aElements);
-			char* objectID;
-			char* result;
-			{
-				CpProxyUpnpOrgContentDirectory2SyncCreateObject(iHandle, containerID, elements, &objectID, &result);
-			}
-			Marshal.FreeHGlobal((IntPtr)containerID);
-			Marshal.FreeHGlobal((IntPtr)elements);
+            char* containerID = (char*)Marshal.StringToHGlobalAnsi(aContainerID);
+            char* elements = (char*)Marshal.StringToHGlobalAnsi(aElements);
+            char* objectID;
+            char* result;
+            {
+                CpProxyUpnpOrgContentDirectory2SyncCreateObject(iHandle, containerID, elements, &objectID, &result);
+            }
+            Marshal.FreeHGlobal((IntPtr)containerID);
+            Marshal.FreeHGlobal((IntPtr)elements);
             aObjectID = Marshal.PtrToStringAnsi((IntPtr)objectID);
             ZappFree(objectID);
             aResult = Marshal.PtrToStringAnsi((IntPtr)result);
@@ -673,13 +676,13 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginCreateObject(string aContainerID, string aElements, CallbackAsyncComplete aCallback)
         {
-			char* containerID = (char*)Marshal.StringToHGlobalAnsi(aContainerID);
-			char* elements = (char*)Marshal.StringToHGlobalAnsi(aElements);
+            char* containerID = (char*)Marshal.StringToHGlobalAnsi(aContainerID);
+            char* elements = (char*)Marshal.StringToHGlobalAnsi(aElements);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgContentDirectory2BeginCreateObject(iHandle, containerID, elements, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)containerID);
-			Marshal.FreeHGlobal((IntPtr)elements);
+            Marshal.FreeHGlobal((IntPtr)containerID);
+            Marshal.FreeHGlobal((IntPtr)elements);
         }
 
         /// <summary>
@@ -691,14 +694,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aResult"></param>
         public unsafe void EndCreateObject(uint aAsyncHandle, out string aObjectID, out string aResult)
         {
-			char* objectID;
-			char* result;
-			{
-				if (0 != CpProxyUpnpOrgContentDirectory2EndCreateObject(iHandle, aAsyncHandle, &objectID, &result))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* objectID;
+            char* result;
+            {
+                if (0 != CpProxyUpnpOrgContentDirectory2EndCreateObject(iHandle, aAsyncHandle, &objectID, &result))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aObjectID = Marshal.PtrToStringAnsi((IntPtr)objectID);
             ZappFree(objectID);
             aResult = Marshal.PtrToStringAnsi((IntPtr)result);
@@ -713,11 +716,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aObjectID"></param>
         public unsafe void SyncDestroyObject(string aObjectID)
         {
-			char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
-			{
-				CpProxyUpnpOrgContentDirectory2SyncDestroyObject(iHandle, objectID);
-			}
-			Marshal.FreeHGlobal((IntPtr)objectID);
+            char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
+            {
+                CpProxyUpnpOrgContentDirectory2SyncDestroyObject(iHandle, objectID);
+            }
+            Marshal.FreeHGlobal((IntPtr)objectID);
         }
 
         /// <summary>
@@ -731,11 +734,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDestroyObject(string aObjectID, CallbackAsyncComplete aCallback)
         {
-			char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
+            char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgContentDirectory2BeginDestroyObject(iHandle, objectID, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)objectID);
+            Marshal.FreeHGlobal((IntPtr)objectID);
         }
 
         /// <summary>
@@ -745,12 +748,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndDestroyObject(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgContentDirectory2EndDestroyObject(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgContentDirectory2EndDestroyObject(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -763,15 +766,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aNewTagValue"></param>
         public unsafe void SyncUpdateObject(string aObjectID, string aCurrentTagValue, string aNewTagValue)
         {
-			char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
-			char* currentTagValue = (char*)Marshal.StringToHGlobalAnsi(aCurrentTagValue);
-			char* newTagValue = (char*)Marshal.StringToHGlobalAnsi(aNewTagValue);
-			{
-				CpProxyUpnpOrgContentDirectory2SyncUpdateObject(iHandle, objectID, currentTagValue, newTagValue);
-			}
-			Marshal.FreeHGlobal((IntPtr)objectID);
-			Marshal.FreeHGlobal((IntPtr)currentTagValue);
-			Marshal.FreeHGlobal((IntPtr)newTagValue);
+            char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
+            char* currentTagValue = (char*)Marshal.StringToHGlobalAnsi(aCurrentTagValue);
+            char* newTagValue = (char*)Marshal.StringToHGlobalAnsi(aNewTagValue);
+            {
+                CpProxyUpnpOrgContentDirectory2SyncUpdateObject(iHandle, objectID, currentTagValue, newTagValue);
+            }
+            Marshal.FreeHGlobal((IntPtr)objectID);
+            Marshal.FreeHGlobal((IntPtr)currentTagValue);
+            Marshal.FreeHGlobal((IntPtr)newTagValue);
         }
 
         /// <summary>
@@ -787,15 +790,15 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginUpdateObject(string aObjectID, string aCurrentTagValue, string aNewTagValue, CallbackAsyncComplete aCallback)
         {
-			char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
-			char* currentTagValue = (char*)Marshal.StringToHGlobalAnsi(aCurrentTagValue);
-			char* newTagValue = (char*)Marshal.StringToHGlobalAnsi(aNewTagValue);
+            char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
+            char* currentTagValue = (char*)Marshal.StringToHGlobalAnsi(aCurrentTagValue);
+            char* newTagValue = (char*)Marshal.StringToHGlobalAnsi(aNewTagValue);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgContentDirectory2BeginUpdateObject(iHandle, objectID, currentTagValue, newTagValue, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)objectID);
-			Marshal.FreeHGlobal((IntPtr)currentTagValue);
-			Marshal.FreeHGlobal((IntPtr)newTagValue);
+            Marshal.FreeHGlobal((IntPtr)objectID);
+            Marshal.FreeHGlobal((IntPtr)currentTagValue);
+            Marshal.FreeHGlobal((IntPtr)newTagValue);
         }
 
         /// <summary>
@@ -805,12 +808,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndUpdateObject(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgContentDirectory2EndUpdateObject(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgContentDirectory2EndUpdateObject(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -823,14 +826,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aNewObjectID"></param>
         public unsafe void SyncMoveObject(string aObjectID, string aNewParentID, out string aNewObjectID)
         {
-			char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
-			char* newParentID = (char*)Marshal.StringToHGlobalAnsi(aNewParentID);
-			char* newObjectID;
-			{
-				CpProxyUpnpOrgContentDirectory2SyncMoveObject(iHandle, objectID, newParentID, &newObjectID);
-			}
-			Marshal.FreeHGlobal((IntPtr)objectID);
-			Marshal.FreeHGlobal((IntPtr)newParentID);
+            char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
+            char* newParentID = (char*)Marshal.StringToHGlobalAnsi(aNewParentID);
+            char* newObjectID;
+            {
+                CpProxyUpnpOrgContentDirectory2SyncMoveObject(iHandle, objectID, newParentID, &newObjectID);
+            }
+            Marshal.FreeHGlobal((IntPtr)objectID);
+            Marshal.FreeHGlobal((IntPtr)newParentID);
             aNewObjectID = Marshal.PtrToStringAnsi((IntPtr)newObjectID);
             ZappFree(newObjectID);
         }
@@ -847,13 +850,13 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginMoveObject(string aObjectID, string aNewParentID, CallbackAsyncComplete aCallback)
         {
-			char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
-			char* newParentID = (char*)Marshal.StringToHGlobalAnsi(aNewParentID);
+            char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
+            char* newParentID = (char*)Marshal.StringToHGlobalAnsi(aNewParentID);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgContentDirectory2BeginMoveObject(iHandle, objectID, newParentID, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)objectID);
-			Marshal.FreeHGlobal((IntPtr)newParentID);
+            Marshal.FreeHGlobal((IntPtr)objectID);
+            Marshal.FreeHGlobal((IntPtr)newParentID);
         }
 
         /// <summary>
@@ -864,13 +867,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aNewObjectID"></param>
         public unsafe void EndMoveObject(uint aAsyncHandle, out string aNewObjectID)
         {
-			char* newObjectID;
-			{
-				if (0 != CpProxyUpnpOrgContentDirectory2EndMoveObject(iHandle, aAsyncHandle, &newObjectID))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* newObjectID;
+            {
+                if (0 != CpProxyUpnpOrgContentDirectory2EndMoveObject(iHandle, aAsyncHandle, &newObjectID))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aNewObjectID = Marshal.PtrToStringAnsi((IntPtr)newObjectID);
             ZappFree(newObjectID);
         }
@@ -885,14 +888,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTransferID"></param>
         public unsafe void SyncImportResource(string aSourceURI, string aDestinationURI, out uint aTransferID)
         {
-			char* sourceURI = (char*)Marshal.StringToHGlobalAnsi(aSourceURI);
-			char* destinationURI = (char*)Marshal.StringToHGlobalAnsi(aDestinationURI);
-			fixed (uint* transferID = &aTransferID)
-			{
-				CpProxyUpnpOrgContentDirectory2SyncImportResource(iHandle, sourceURI, destinationURI, transferID);
-			}
-			Marshal.FreeHGlobal((IntPtr)sourceURI);
-			Marshal.FreeHGlobal((IntPtr)destinationURI);
+            char* sourceURI = (char*)Marshal.StringToHGlobalAnsi(aSourceURI);
+            char* destinationURI = (char*)Marshal.StringToHGlobalAnsi(aDestinationURI);
+            fixed (uint* transferID = &aTransferID)
+            {
+                CpProxyUpnpOrgContentDirectory2SyncImportResource(iHandle, sourceURI, destinationURI, transferID);
+            }
+            Marshal.FreeHGlobal((IntPtr)sourceURI);
+            Marshal.FreeHGlobal((IntPtr)destinationURI);
         }
 
         /// <summary>
@@ -907,13 +910,13 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginImportResource(string aSourceURI, string aDestinationURI, CallbackAsyncComplete aCallback)
         {
-			char* sourceURI = (char*)Marshal.StringToHGlobalAnsi(aSourceURI);
-			char* destinationURI = (char*)Marshal.StringToHGlobalAnsi(aDestinationURI);
+            char* sourceURI = (char*)Marshal.StringToHGlobalAnsi(aSourceURI);
+            char* destinationURI = (char*)Marshal.StringToHGlobalAnsi(aDestinationURI);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgContentDirectory2BeginImportResource(iHandle, sourceURI, destinationURI, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)sourceURI);
-			Marshal.FreeHGlobal((IntPtr)destinationURI);
+            Marshal.FreeHGlobal((IntPtr)sourceURI);
+            Marshal.FreeHGlobal((IntPtr)destinationURI);
         }
 
         /// <summary>
@@ -924,13 +927,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTransferID"></param>
         public unsafe void EndImportResource(uint aAsyncHandle, out uint aTransferID)
         {
-			fixed (uint* transferID = &aTransferID)
-			{
-				if (0 != CpProxyUpnpOrgContentDirectory2EndImportResource(iHandle, aAsyncHandle, transferID))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* transferID = &aTransferID)
+            {
+                if (0 != CpProxyUpnpOrgContentDirectory2EndImportResource(iHandle, aAsyncHandle, transferID))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -943,14 +946,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTransferID"></param>
         public unsafe void SyncExportResource(string aSourceURI, string aDestinationURI, out uint aTransferID)
         {
-			char* sourceURI = (char*)Marshal.StringToHGlobalAnsi(aSourceURI);
-			char* destinationURI = (char*)Marshal.StringToHGlobalAnsi(aDestinationURI);
-			fixed (uint* transferID = &aTransferID)
-			{
-				CpProxyUpnpOrgContentDirectory2SyncExportResource(iHandle, sourceURI, destinationURI, transferID);
-			}
-			Marshal.FreeHGlobal((IntPtr)sourceURI);
-			Marshal.FreeHGlobal((IntPtr)destinationURI);
+            char* sourceURI = (char*)Marshal.StringToHGlobalAnsi(aSourceURI);
+            char* destinationURI = (char*)Marshal.StringToHGlobalAnsi(aDestinationURI);
+            fixed (uint* transferID = &aTransferID)
+            {
+                CpProxyUpnpOrgContentDirectory2SyncExportResource(iHandle, sourceURI, destinationURI, transferID);
+            }
+            Marshal.FreeHGlobal((IntPtr)sourceURI);
+            Marshal.FreeHGlobal((IntPtr)destinationURI);
         }
 
         /// <summary>
@@ -965,13 +968,13 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginExportResource(string aSourceURI, string aDestinationURI, CallbackAsyncComplete aCallback)
         {
-			char* sourceURI = (char*)Marshal.StringToHGlobalAnsi(aSourceURI);
-			char* destinationURI = (char*)Marshal.StringToHGlobalAnsi(aDestinationURI);
+            char* sourceURI = (char*)Marshal.StringToHGlobalAnsi(aSourceURI);
+            char* destinationURI = (char*)Marshal.StringToHGlobalAnsi(aDestinationURI);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgContentDirectory2BeginExportResource(iHandle, sourceURI, destinationURI, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)sourceURI);
-			Marshal.FreeHGlobal((IntPtr)destinationURI);
+            Marshal.FreeHGlobal((IntPtr)sourceURI);
+            Marshal.FreeHGlobal((IntPtr)destinationURI);
         }
 
         /// <summary>
@@ -982,13 +985,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTransferID"></param>
         public unsafe void EndExportResource(uint aAsyncHandle, out uint aTransferID)
         {
-			fixed (uint* transferID = &aTransferID)
-			{
-				if (0 != CpProxyUpnpOrgContentDirectory2EndExportResource(iHandle, aAsyncHandle, transferID))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* transferID = &aTransferID)
+            {
+                if (0 != CpProxyUpnpOrgContentDirectory2EndExportResource(iHandle, aAsyncHandle, transferID))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -999,11 +1002,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aResourceURI"></param>
         public unsafe void SyncDeleteResource(string aResourceURI)
         {
-			char* resourceURI = (char*)Marshal.StringToHGlobalAnsi(aResourceURI);
-			{
-				CpProxyUpnpOrgContentDirectory2SyncDeleteResource(iHandle, resourceURI);
-			}
-			Marshal.FreeHGlobal((IntPtr)resourceURI);
+            char* resourceURI = (char*)Marshal.StringToHGlobalAnsi(aResourceURI);
+            {
+                CpProxyUpnpOrgContentDirectory2SyncDeleteResource(iHandle, resourceURI);
+            }
+            Marshal.FreeHGlobal((IntPtr)resourceURI);
         }
 
         /// <summary>
@@ -1017,11 +1020,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDeleteResource(string aResourceURI, CallbackAsyncComplete aCallback)
         {
-			char* resourceURI = (char*)Marshal.StringToHGlobalAnsi(aResourceURI);
+            char* resourceURI = (char*)Marshal.StringToHGlobalAnsi(aResourceURI);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgContentDirectory2BeginDeleteResource(iHandle, resourceURI, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)resourceURI);
+            Marshal.FreeHGlobal((IntPtr)resourceURI);
         }
 
         /// <summary>
@@ -1031,12 +1034,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndDeleteResource(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgContentDirectory2EndDeleteResource(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgContentDirectory2EndDeleteResource(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -1047,9 +1050,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTransferID"></param>
         public unsafe void SyncStopTransferResource(uint aTransferID)
         {
-			{
-				CpProxyUpnpOrgContentDirectory2SyncStopTransferResource(iHandle, aTransferID);
-			}
+            {
+                CpProxyUpnpOrgContentDirectory2SyncStopTransferResource(iHandle, aTransferID);
+            }
         }
 
         /// <summary>
@@ -1075,12 +1078,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndStopTransferResource(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgContentDirectory2EndStopTransferResource(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgContentDirectory2EndStopTransferResource(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -1094,12 +1097,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTransferTotal"></param>
         public unsafe void SyncGetTransferProgress(uint aTransferID, out string aTransferStatus, out string aTransferLength, out string aTransferTotal)
         {
-			char* transferStatus;
-			char* transferLength;
-			char* transferTotal;
-			{
-				CpProxyUpnpOrgContentDirectory2SyncGetTransferProgress(iHandle, aTransferID, &transferStatus, &transferLength, &transferTotal);
-			}
+            char* transferStatus;
+            char* transferLength;
+            char* transferTotal;
+            {
+                CpProxyUpnpOrgContentDirectory2SyncGetTransferProgress(iHandle, aTransferID, &transferStatus, &transferLength, &transferTotal);
+            }
             aTransferStatus = Marshal.PtrToStringAnsi((IntPtr)transferStatus);
             ZappFree(transferStatus);
             aTransferLength = Marshal.PtrToStringAnsi((IntPtr)transferLength);
@@ -1134,15 +1137,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTransferTotal"></param>
         public unsafe void EndGetTransferProgress(uint aAsyncHandle, out string aTransferStatus, out string aTransferLength, out string aTransferTotal)
         {
-			char* transferStatus;
-			char* transferLength;
-			char* transferTotal;
-			{
-				if (0 != CpProxyUpnpOrgContentDirectory2EndGetTransferProgress(iHandle, aAsyncHandle, &transferStatus, &transferLength, &transferTotal))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* transferStatus;
+            char* transferLength;
+            char* transferTotal;
+            {
+                if (0 != CpProxyUpnpOrgContentDirectory2EndGetTransferProgress(iHandle, aAsyncHandle, &transferStatus, &transferLength, &transferTotal))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aTransferStatus = Marshal.PtrToStringAnsi((IntPtr)transferStatus);
             ZappFree(transferStatus);
             aTransferLength = Marshal.PtrToStringAnsi((IntPtr)transferLength);
@@ -1161,14 +1164,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aNewID"></param>
         public unsafe void SyncCreateReference(string aContainerID, string aObjectID, out string aNewID)
         {
-			char* containerID = (char*)Marshal.StringToHGlobalAnsi(aContainerID);
-			char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
-			char* newID;
-			{
-				CpProxyUpnpOrgContentDirectory2SyncCreateReference(iHandle, containerID, objectID, &newID);
-			}
-			Marshal.FreeHGlobal((IntPtr)containerID);
-			Marshal.FreeHGlobal((IntPtr)objectID);
+            char* containerID = (char*)Marshal.StringToHGlobalAnsi(aContainerID);
+            char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
+            char* newID;
+            {
+                CpProxyUpnpOrgContentDirectory2SyncCreateReference(iHandle, containerID, objectID, &newID);
+            }
+            Marshal.FreeHGlobal((IntPtr)containerID);
+            Marshal.FreeHGlobal((IntPtr)objectID);
             aNewID = Marshal.PtrToStringAnsi((IntPtr)newID);
             ZappFree(newID);
         }
@@ -1185,13 +1188,13 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginCreateReference(string aContainerID, string aObjectID, CallbackAsyncComplete aCallback)
         {
-			char* containerID = (char*)Marshal.StringToHGlobalAnsi(aContainerID);
-			char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
+            char* containerID = (char*)Marshal.StringToHGlobalAnsi(aContainerID);
+            char* objectID = (char*)Marshal.StringToHGlobalAnsi(aObjectID);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgContentDirectory2BeginCreateReference(iHandle, containerID, objectID, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)containerID);
-			Marshal.FreeHGlobal((IntPtr)objectID);
+            Marshal.FreeHGlobal((IntPtr)containerID);
+            Marshal.FreeHGlobal((IntPtr)objectID);
         }
 
         /// <summary>
@@ -1202,13 +1205,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aNewID"></param>
         public unsafe void EndCreateReference(uint aAsyncHandle, out string aNewID)
         {
-			char* newID;
-			{
-				if (0 != CpProxyUpnpOrgContentDirectory2EndCreateReference(iHandle, aAsyncHandle, &newID))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* newID;
+            {
+                if (0 != CpProxyUpnpOrgContentDirectory2EndCreateReference(iHandle, aAsyncHandle, &newID))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aNewID = Marshal.PtrToStringAnsi((IntPtr)newID);
             ZappFree(newID);
         }
@@ -1281,14 +1284,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aSystemUpdateID">Will be set to the value of the property</param>
         public unsafe void PropertySystemUpdateID(out uint aSystemUpdateID)
         {
-			fixed (uint* systemUpdateID = &aSystemUpdateID)
-			{
-	            CpProxyUpnpOrgContentDirectory2PropertySystemUpdateID(iHandle, systemUpdateID);
-			}
+            fixed (uint* systemUpdateID = &aSystemUpdateID)
+            {
+                CpProxyUpnpOrgContentDirectory2PropertySystemUpdateID(iHandle, systemUpdateID);
+            }
         }
 
         /// <summary>
@@ -1296,11 +1299,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aContainerUpdateIDs">Will be set to the value of the property</param>
         public unsafe void PropertyContainerUpdateIDs(out string aContainerUpdateIDs)
         {
-			char* ptr;
+            char* ptr;
             CpProxyUpnpOrgContentDirectory2PropertyContainerUpdateIDs(iHandle, &ptr);
             aContainerUpdateIDs = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
@@ -1311,11 +1314,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aTransferIDs">Will be set to the value of the property</param>
         public unsafe void PropertyTransferIDs(out string aTransferIDs)
         {
-			char* ptr;
+            char* ptr;
             CpProxyUpnpOrgContentDirectory2PropertyTransferIDs(iHandle, &ptr);
             aTransferIDs = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);

@@ -203,7 +203,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyProductSourceIndex(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkProduct2GetPropertyProductSourceIndex(iHandle, value);
             }
         }

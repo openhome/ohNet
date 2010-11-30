@@ -11,12 +11,12 @@
 
     try
     {
-	   version = Convert.ToUInt32(TemplateArgument("version"));
-	}
-	catch (FormatException)
-	{
+       version = Convert.ToUInt32(TemplateArgument("version"));
+    }
+    catch (FormatException)
+    {
         throw (new ArgumentException("Invalid version number specified"));
-	}
+    }
     catch (OverflowException)
     {
         throw (new ArgumentException("Invalid version number specified"));
@@ -47,7 +47,7 @@
 
     Initialise();
 
-	Document u = new Document(TemplateArgument("xml"));
+    Document u = new Document(TemplateArgument("xml"));
 #>
 using System;
 using System.Runtime.InteropServices;
@@ -152,14 +152,14 @@ namespace Zapp.ControlPoint.Proxies
 <#      { #>
 <#          if (i.variable.type == "boolean") #>
 <#          { #>
-			uint <#=ArgNameLocal(i.name)#> = (a<#=i.name#>? 1u : 0u);
+            uint <#=ArgNameLocal(i.name)#> = (a<#=i.name#>? 1u : 0u);
 <#          } #>
 <#          else if (i.variable.type == "string" || i.variable.type == "bin.base64" || i.variable.type == "uri") #>
 <#          { #>
-			char* <#=ArgNameLocal(i.name)#> = (char*)Marshal.StringToHGlobalAnsi(a<#=i.name#>);
+            char* <#=ArgNameLocal(i.name)#> = (char*)Marshal.StringToHGlobalAnsi(a<#=i.name#>);
 <#              if (i.variable.type == "bin.base64") #>
 <#              { #>
-			uint <#=ArgNameLocal(i.name)#>Len = (uint)a<#=i.name#>.Length;
+            uint <#=ArgNameLocal(i.name)#>Len = (uint)a<#=i.name#>.Length;
 <#              } #>
 <#          } #>
 <#      } #>
@@ -167,14 +167,14 @@ namespace Zapp.ControlPoint.Proxies
 <#      { #>
 <#          if (o.variable.type == "boolean") #>
 <#          { #>
-			uint <#=ArgNameLocal(o.name)#>;
+            uint <#=ArgNameLocal(o.name)#>;
 <#          } #>
 <#          else if (o.variable.type == "string" || o.variable.type == "bin.base64" || o.variable.type == "uri") #>
 <#          { #>
-			char* <#=ArgNameLocal(o.name)#>;
+            char* <#=ArgNameLocal(o.name)#>;
 <#              if (o.variable.type == "bin.base64") #>
 <#              { #>
-			uint <#=ArgNameLocal(o.name)#>Len;
+            uint <#=ArgNameLocal(o.name)#>Len;
 <#              } #>
 <#          } #>
 <#      } #>
@@ -182,24 +182,24 @@ namespace Zapp.ControlPoint.Proxies
 <#      { #>
 <#          if (o.variable.type != "string" && o.variable.type != "bin.base64" && o.variable.type != "uri" && o.variable.type != "boolean") #>
 <#          { #>
-			fixed (<#=outargctype[o.variable.type]#> <#=ArgNameLocal(o.name)#> = &a<#=o.name#>)
+            fixed (<#=outargctype[o.variable.type]#> <#=ArgNameLocal(o.name)#> = &a<#=o.name#>)
 <#          } #>
 <#      } #>
-			{
-				<#=className#>Sync<#=a.name#>(iHandle<#=ArgsNames(a)#>);
-			}
+            {
+                <#=className#>Sync<#=a.name#>(iHandle<#=ArgsNames(a)#>);
+            }
 <#      foreach (Argument i in a.inargs) #>
 <#      { #>
 <#          if (i.variable.type == "string" || i.variable.type == "bin.base64" || i.variable.type == "uri") #>
 <#          { #>
-			Marshal.FreeHGlobal((IntPtr)<#=ArgNameLocal(i.name)#>);
+            Marshal.FreeHGlobal((IntPtr)<#=ArgNameLocal(i.name)#>);
 <#          } #>
 <#      } #>
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
 <#          if (o.variable.type == "boolean") #>
 <#          { #>
-			a<#=o.name#> = (<#=ArgNameLocal(o.name)#> != 0);
+            a<#=o.name#> = (<#=ArgNameLocal(o.name)#> != 0);
 <#          } #>
 <#          else if (o.variable.type == "string" || o.variable.type == "uri") #>
 <#          { #>
@@ -232,14 +232,14 @@ namespace Zapp.ControlPoint.Proxies
 <#      { #>
 <#          if (i.variable.type == "boolean") #>
 <#          { #>
-			uint <#=ArgNameLocal(i.name)#> = (a<#=i.name#>? 1u : 0u);
+            uint <#=ArgNameLocal(i.name)#> = (a<#=i.name#>? 1u : 0u);
 <#          } #>
 <#          else if (i.variable.type == "string" || i.variable.type == "bin.base64" || i.variable.type == "uri") #>
 <#          { #>
-			char* <#=ArgNameLocal(i.name)#> = (char*)Marshal.StringToHGlobalAnsi(a<#=i.name#>);
+            char* <#=ArgNameLocal(i.name)#> = (char*)Marshal.StringToHGlobalAnsi(a<#=i.name#>);
 <#              if (i.variable.type == "bin.base64") #>
 <#              { #>
-			uint <#=ArgNameLocal(i.name)#>Len = (uint)a<#=i.name#>.Length;
+            uint <#=ArgNameLocal(i.name)#>Len = (uint)a<#=i.name#>.Length;
 <#              } #>
 <#          } #>
 <#      } #>
@@ -250,7 +250,7 @@ namespace Zapp.ControlPoint.Proxies
 <#      { #>
 <#          if (i.variable.type == "string" || i.variable.type == "bin.base64" || i.variable.type == "uri") #>
 <#          { #>
-			Marshal.FreeHGlobal((IntPtr)<#=ArgNameLocal(i.name)#>);
+            Marshal.FreeHGlobal((IntPtr)<#=ArgNameLocal(i.name)#>);
 <#          } #>
 <#      } #>
         }
@@ -270,14 +270,14 @@ namespace Zapp.ControlPoint.Proxies
 <#      { #>
 <#          if (o.variable.type == "boolean") #>
 <#          { #>
-			uint <#=ArgNameLocal(o.name)#>;
+            uint <#=ArgNameLocal(o.name)#>;
 <#          } #>
 <#          else if (o.variable.type == "string" || o.variable.type == "bin.base64" || o.variable.type == "uri") #>
 <#          { #>
-			char* <#=ArgNameLocal(o.name)#>;
+            char* <#=ArgNameLocal(o.name)#>;
 <#              if (o.variable.type == "bin.base64") #>
 <#              { #>
-			uint <#=ArgNameLocal(o.name)#>Len;
+            uint <#=ArgNameLocal(o.name)#>Len;
 <#              } #>
 <#          } #>
 <#      } #>
@@ -285,20 +285,20 @@ namespace Zapp.ControlPoint.Proxies
 <#      { #>
 <#          if (o.variable.type != "string" && o.variable.type != "bin.base64" && o.variable.type != "uri" && o.variable.type != "boolean") #>
 <#          { #>
-			fixed (<#=outargctype[o.variable.type]#> <#=ArgNameLocal(o.name)#> = &a<#=o.name#>)
+            fixed (<#=outargctype[o.variable.type]#> <#=ArgNameLocal(o.name)#> = &a<#=o.name#>)
 <#          } #>
 <#      } #>
-			{
-				if (0 != <#=className#>End<#=a.name#>(iHandle, aAsyncHandle<#=OutArgsNames(a, true)#>))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != <#=className#>End<#=a.name#>(iHandle, aAsyncHandle<#=OutArgsNames(a, true)#>))
+                {
+                    throw(new ProxyError());
+                }
+            }
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
 <#          if (o.variable.type == "boolean") #>
 <#          { #>
-			a<#=o.name#> = (<#=ArgNameLocal(o.name)#> != 0);
+            a<#=o.name#> = (<#=ArgNameLocal(o.name)#> != 0);
 <#          } #>
 <#          else if (o.variable.type == "string" || o.variable.type == "uri") #>
 <#          { #>
@@ -345,37 +345,37 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="a<#=s.name#>">Will be set to the value of the property</param>
         public unsafe void Property<#=s.name#>(out <#=argtype[s.type]#> a<#=s.name#>)
         {
 <#      if (s.type == "boolean") #>
 <#      { #>
-			uint <#=ArgNameLocal(s.name)#>;
-	        <#=className#>Property<#=s.name#>(iHandle, &<#=ArgNameLocal(s.name)#>);
-			a<#=s.name#> = (<#=ArgNameLocal(s.name)#> != 0);
+            uint <#=ArgNameLocal(s.name)#>;
+            <#=className#>Property<#=s.name#>(iHandle, &<#=ArgNameLocal(s.name)#>);
+            a<#=s.name#> = (<#=ArgNameLocal(s.name)#> != 0);
 <#      } #>
 <#      else if (s.type == "string" || s.type == "uri") #>
 <#      { #>
-			char* ptr;
+            char* ptr;
             <#=className#>Property<#=s.name#>(iHandle, &ptr);
             a<#=s.name#> = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
 <#      } #>
 <#      else if (s.type == "bin.base64") #>
 <#      { #>
-			char* ptr;
-			uint len;
-	        <#=className#>Property<#=s.name#>(iHandle, &ptr, &len);
+            char* ptr;
+            uint len;
+            <#=className#>Property<#=s.name#>(iHandle, &ptr, &len);
             a<#=s.name#> = Marshal.PtrToStringAnsi((IntPtr)ptr, (int)len);
             ZappFree(ptr);
 <#      } #>
 <#      else #>
 <#      { #>
-			fixed (<#=outargctype[s.type]#> <#=ArgNameLocal(s.name)#> = &a<#=s.name#>)
-			{
-	            <#=className#>Property<#=s.name#>(iHandle, <#=ArgNameLocal(s.name)#>);
-			}
+            fixed (<#=outargctype[s.type]#> <#=ArgNameLocal(s.name)#> = &a<#=s.name#>)
+            {
+                <#=className#>Property<#=s.name#>(iHandle, <#=ArgNameLocal(s.name)#>);
+            }
 <#      } #>
         }
 
@@ -472,15 +472,15 @@ string InArgsCFull(Method a, bool aTrailingComma)
         result += inargctype[i.variable.type];
         result += " ";
         result += "a" + i.name;
-		if (i.variable.type == "bin.base64")
-		{
-			result += ", uint a" + i.name + "Len";
-		}
+        if (i.variable.type == "bin.base64")
+        {
+            result += ", uint a" + i.name + "Len";
+        }
     }
-	if (aTrailingComma && result.Length > 0)
-	{
-		result += ", ";
-	}
+    if (aTrailingComma && result.Length > 0)
+    {
+        result += ", ";
+    }
     
     return result;
 }
@@ -499,36 +499,36 @@ string OutArgsCFull(Method a, bool aLeadingComma)
         result += outargctype[o.variable.type];
         result += " ";
         result += "a" + o.name;
-		if (o.variable.type == "bin.base64")
-		{
-			result += ", uint* a" + o.name + "Len";
-		}
+        if (o.variable.type == "bin.base64")
+        {
+            result += ", uint* a" + o.name + "Len";
+        }
     }
-	if (aLeadingComma && result.Length > 0)
-	{
-		result = ", " + result;
-	}
+    if (aLeadingComma && result.Length > 0)
+    {
+        result = ", " + result;
+    }
     
     return result;
 }
 
 string ArgsCFull(Method a)
 {
-	string result = InArgsCFull(a, false);
-	string outArgs = OutArgsCFull(a, false);
-	if (outArgs.Length > 0)
-	{
-		if (result.Length > 0)
-		{
-			result += ", ";
-		}
-		result += outArgs;
-	}
-	if (result.Length > 0)
-	{
-		result = ", " + result;
-	}
-	return result;
+    string result = InArgsCFull(a, false);
+    string outArgs = OutArgsCFull(a, false);
+    if (outArgs.Length > 0)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += outArgs;
+    }
+    if (result.Length > 0)
+    {
+        result = ", " + result;
+    }
+    return result;
 }
 
 string InArgsFull(Method a, bool aTrailingComma)
@@ -546,10 +546,10 @@ string InArgsFull(Method a, bool aTrailingComma)
         result += " ";
         result += "a" + i.name;
     }
-	if (aTrailingComma && result.Length > 0)
-	{
-		result += ", ";
-	}
+    if (aTrailingComma && result.Length > 0)
+    {
+        result += ", ";
+    }
     
     return result;
 } 
@@ -570,37 +570,37 @@ string OutArgsFull(Method a, bool aLeadingComma)
         result += " ";
         result += "a" + o.name;
     }
-	if (aLeadingComma && result.Length > 0)
-	{
-		result = ", " + result;
-	}
+    if (aLeadingComma && result.Length > 0)
+    {
+        result = ", " + result;
+    }
     
     return result;
 }
 
 string ArgsFull(Method a)
 {
-	string result = InArgsFull(a, false);
-	string outArgs = OutArgsFull(a, false);
-	if (outArgs.Length > 0)
-	{
-		if (result.Length > 0)
-		{
-			result += ", ";
-		}
-		result += outArgs;
-	}
-	return result;
+    string result = InArgsFull(a, false);
+    string outArgs = OutArgsFull(a, false);
+    if (outArgs.Length > 0)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += outArgs;
+    }
+    return result;
 }
 
 string ArgNameLocal(string aName)
 {
-	string name = aName.Substring(0, 1).ToLower();
-	if (aName.Length > 1)
-	{
-		name += aName.Substring(1, aName.Length-1);
-	}
-	return name;
+    string name = aName.Substring(0, 1).ToLower();
+    if (aName.Length > 1)
+    {
+        name += aName.Substring(1, aName.Length-1);
+    }
+    return name;
 }
 
 string InArgsNames(Method a, bool aTrailingComma)
@@ -612,24 +612,24 @@ string InArgsNames(Method a, bool aTrailingComma)
         {
             result += ", ";
         }
-		if (i.variable.type == "boolean" || i.variable.type == "string" || i.variable.type == "bin.base64" || i.variable.type == "uri")
-		{
-			result += ArgNameLocal(i.name);
-			if (i.variable.type == "bin.base64")
-			{
-				result += ", " + ArgNameLocal(i.name) + "Len";
-			}
-		}
-		else
-		{
-	        result += "a" + i.name;
-		}
+        if (i.variable.type == "boolean" || i.variable.type == "string" || i.variable.type == "bin.base64" || i.variable.type == "uri")
+        {
+            result += ArgNameLocal(i.name);
+            if (i.variable.type == "bin.base64")
+            {
+                result += ", " + ArgNameLocal(i.name) + "Len";
+            }
+        }
+        else
+        {
+            result += "a" + i.name;
+        }
     }
-	if (aTrailingComma && result.Length > 0)
-	{
-		result += ", ";
-	}
-	return result;
+    if (aTrailingComma && result.Length > 0)
+    {
+        result += ", ";
+    }
+    return result;
 }
 
 string OutArgsNames(Method a, bool aLeadingComma)
@@ -641,69 +641,69 @@ string OutArgsNames(Method a, bool aLeadingComma)
         {
             result += ", ";
         }
-		if (o.variable.type == "string" || o.variable.type == "bin.base64" || o.variable.type == "uri" || o.variable.type == "boolean")
-		{
-			result += "&";
-		}
-		result += ArgNameLocal(o.name);
-		if (o.variable.type == "bin.base64")
-		{
-			result += ", &" + ArgNameLocal(o.name) + "Len";
-		}
+        if (o.variable.type == "string" || o.variable.type == "bin.base64" || o.variable.type == "uri" || o.variable.type == "boolean")
+        {
+            result += "&";
+        }
+        result += ArgNameLocal(o.name);
+        if (o.variable.type == "bin.base64")
+        {
+            result += ", &" + ArgNameLocal(o.name) + "Len";
+        }
     }
-	if (aLeadingComma && result.Length > 0)
-	{
-		result = ", " + result;
-	}
-	return result;
+    if (aLeadingComma && result.Length > 0)
+    {
+        result = ", " + result;
+    }
+    return result;
 }
 
 string ArgsNames(Method a)
 {
-	string inStr = InArgsNames(a, false);
-	string outStr = OutArgsNames(a, false);
-	if (outStr.Length > 0)
-	{
-		outStr = ", " + outStr;
-	}
-	if (inStr.Length > 0)
-	{
-		inStr = ", " + inStr;
-	}
-	string result = inStr + outStr;
-	return result;
+    string inStr = InArgsNames(a, false);
+    string outStr = OutArgsNames(a, false);
+    if (outStr.Length > 0)
+    {
+        outStr = ", " + outStr;
+    }
+    if (inStr.Length > 0)
+    {
+        inStr = ", " + inStr;
+    }
+    string result = inStr + outStr;
+    return result;
 }
 
 string TemplateArgument(string aName)
 {
-	string[] args =  System.Environment.GetCommandLineArgs();
-		
-	bool isarg = false;
-	
-	foreach (string arg in args)
-	{
-		if (isarg)
-		{
-			string[] parts = arg.Split(new char[] {':'});
-			
-			if (parts.Length == 2)
-			{
-				if (parts[0] == aName)
-				{
-					return (parts[1]);
-				}
-			}
-			
-			isarg = false;
-			continue;
-		}
-		
-		if (arg == "-a")
-		{
-			isarg = true;
-		}
-	}
-	
-	throw (new ArgumentException(aName + " not specified"));
+    string[] args =  System.Environment.GetCommandLineArgs();
+        
+    bool isarg = false;
+    
+    foreach (string arg in args)
+    {
+        if (isarg)
+        {
+            string[] parts = arg.Split(new char[] {':'});
+            
+            if (parts.Length == 2)
+            {
+                if (parts[0] == aName)
+                {
+                    return (parts[1]);
+                }
+            }
+            
+            isarg = false;
+            continue;
+        }
+        
+        if (arg == "-a")
+        {
+            isarg = true;
+        }
+    }
+    
+    throw (new ArgumentException(aName + " not specified"));
 }
 #>

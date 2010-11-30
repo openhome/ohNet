@@ -46,6 +46,9 @@ namespace Zapp.ControlPoint.Proxies
         void PropertyMetatext(out string aMetatext);
     }
 
+    /// <summary>
+    /// Proxy for the linn.co.uk:Info:1 UPnP service
+    /// </summary>
     public class CpProxyLinnCoUkInfo1 : CpProxy, IDisposable, ICpProxyLinnCoUkInfo1
     {
         [DllImport("CpLinnCoUkInfo1")]
@@ -174,12 +177,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetatextCount"></param>
         public unsafe void SyncCounters(out uint aaTrackCount, out uint aaDetailsCount, out uint aaMetatextCount)
         {
-			fixed (uint* aTrackCount = &aaTrackCount)
-			fixed (uint* aDetailsCount = &aaDetailsCount)
-			fixed (uint* aMetatextCount = &aaMetatextCount)
-			{
-				CpProxyLinnCoUkInfo1SyncCounters(iHandle, aTrackCount, aDetailsCount, aMetatextCount);
-			}
+            fixed (uint* aTrackCount = &aaTrackCount)
+            fixed (uint* aDetailsCount = &aaDetailsCount)
+            fixed (uint* aMetatextCount = &aaMetatextCount)
+            {
+                CpProxyLinnCoUkInfo1SyncCounters(iHandle, aTrackCount, aDetailsCount, aMetatextCount);
+            }
         }
 
         /// <summary>
@@ -207,15 +210,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetatextCount"></param>
         public unsafe void EndCounters(uint aAsyncHandle, out uint aaTrackCount, out uint aaDetailsCount, out uint aaMetatextCount)
         {
-			fixed (uint* aTrackCount = &aaTrackCount)
-			fixed (uint* aDetailsCount = &aaDetailsCount)
-			fixed (uint* aMetatextCount = &aaMetatextCount)
-			{
-				if (0 != CpProxyLinnCoUkInfo1EndCounters(iHandle, aAsyncHandle, aTrackCount, aDetailsCount, aMetatextCount))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* aTrackCount = &aaTrackCount)
+            fixed (uint* aDetailsCount = &aaDetailsCount)
+            fixed (uint* aMetatextCount = &aaMetatextCount)
+            {
+                if (0 != CpProxyLinnCoUkInfo1EndCounters(iHandle, aAsyncHandle, aTrackCount, aDetailsCount, aMetatextCount))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -227,11 +230,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetadata"></param>
         public unsafe void SyncTrack(out string aaUri, out string aaMetadata)
         {
-			char* aUri;
-			char* aMetadata;
-			{
-				CpProxyLinnCoUkInfo1SyncTrack(iHandle, &aUri, &aMetadata);
-			}
+            char* aUri;
+            char* aMetadata;
+            {
+                CpProxyLinnCoUkInfo1SyncTrack(iHandle, &aUri, &aMetadata);
+            }
             aaUri = Marshal.PtrToStringAnsi((IntPtr)aUri);
             ZappFree(aUri);
             aaMetadata = Marshal.PtrToStringAnsi((IntPtr)aMetadata);
@@ -262,14 +265,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetadata"></param>
         public unsafe void EndTrack(uint aAsyncHandle, out string aaUri, out string aaMetadata)
         {
-			char* aUri;
-			char* aMetadata;
-			{
-				if (0 != CpProxyLinnCoUkInfo1EndTrack(iHandle, aAsyncHandle, &aUri, &aMetadata))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aUri;
+            char* aMetadata;
+            {
+                if (0 != CpProxyLinnCoUkInfo1EndTrack(iHandle, aAsyncHandle, &aUri, &aMetadata))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaUri = Marshal.PtrToStringAnsi((IntPtr)aUri);
             ZappFree(aUri);
             aaMetadata = Marshal.PtrToStringAnsi((IntPtr)aMetadata);
@@ -289,16 +292,16 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaCodecName"></param>
         public unsafe void SyncDetails(out uint aaDuration, out uint aaBitRate, out uint aaBitDepth, out uint aaSampleRate, out bool aaLossless, out string aaCodecName)
         {
-			uint aLossless;
-			char* aCodecName;
-			fixed (uint* aDuration = &aaDuration)
-			fixed (uint* aBitRate = &aaBitRate)
-			fixed (uint* aBitDepth = &aaBitDepth)
-			fixed (uint* aSampleRate = &aaSampleRate)
-			{
-				CpProxyLinnCoUkInfo1SyncDetails(iHandle, aDuration, aBitRate, aBitDepth, aSampleRate, &aLossless, &aCodecName);
-			}
-			aaLossless = (aLossless != 0);
+            uint aLossless;
+            char* aCodecName;
+            fixed (uint* aDuration = &aaDuration)
+            fixed (uint* aBitRate = &aaBitRate)
+            fixed (uint* aBitDepth = &aaBitDepth)
+            fixed (uint* aSampleRate = &aaSampleRate)
+            {
+                CpProxyLinnCoUkInfo1SyncDetails(iHandle, aDuration, aBitRate, aBitDepth, aSampleRate, &aLossless, &aCodecName);
+            }
+            aaLossless = (aLossless != 0);
             aaCodecName = Marshal.PtrToStringAnsi((IntPtr)aCodecName);
             ZappFree(aCodecName);
         }
@@ -331,19 +334,19 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaCodecName"></param>
         public unsafe void EndDetails(uint aAsyncHandle, out uint aaDuration, out uint aaBitRate, out uint aaBitDepth, out uint aaSampleRate, out bool aaLossless, out string aaCodecName)
         {
-			uint aLossless;
-			char* aCodecName;
-			fixed (uint* aDuration = &aaDuration)
-			fixed (uint* aBitRate = &aaBitRate)
-			fixed (uint* aBitDepth = &aaBitDepth)
-			fixed (uint* aSampleRate = &aaSampleRate)
-			{
-				if (0 != CpProxyLinnCoUkInfo1EndDetails(iHandle, aAsyncHandle, aDuration, aBitRate, aBitDepth, aSampleRate, &aLossless, &aCodecName))
-				{
-					throw(new ProxyError());
-				}
-			}
-			aaLossless = (aLossless != 0);
+            uint aLossless;
+            char* aCodecName;
+            fixed (uint* aDuration = &aaDuration)
+            fixed (uint* aBitRate = &aaBitRate)
+            fixed (uint* aBitDepth = &aaBitDepth)
+            fixed (uint* aSampleRate = &aaSampleRate)
+            {
+                if (0 != CpProxyLinnCoUkInfo1EndDetails(iHandle, aAsyncHandle, aDuration, aBitRate, aBitDepth, aSampleRate, &aLossless, &aCodecName))
+                {
+                    throw(new ProxyError());
+                }
+            }
+            aaLossless = (aLossless != 0);
             aaCodecName = Marshal.PtrToStringAnsi((IntPtr)aCodecName);
             ZappFree(aCodecName);
         }
@@ -356,10 +359,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetatext"></param>
         public unsafe void SyncMetatext(out string aaMetatext)
         {
-			char* aMetatext;
-			{
-				CpProxyLinnCoUkInfo1SyncMetatext(iHandle, &aMetatext);
-			}
+            char* aMetatext;
+            {
+                CpProxyLinnCoUkInfo1SyncMetatext(iHandle, &aMetatext);
+            }
             aaMetatext = Marshal.PtrToStringAnsi((IntPtr)aMetatext);
             ZappFree(aMetatext);
         }
@@ -387,13 +390,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetatext"></param>
         public unsafe void EndMetatext(uint aAsyncHandle, out string aaMetatext)
         {
-			char* aMetatext;
-			{
-				if (0 != CpProxyLinnCoUkInfo1EndMetatext(iHandle, aAsyncHandle, &aMetatext))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aMetatext;
+            {
+                if (0 != CpProxyLinnCoUkInfo1EndMetatext(iHandle, aAsyncHandle, &aMetatext))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaMetatext = Marshal.PtrToStringAnsi((IntPtr)aMetatext);
             ZappFree(aMetatext);
         }
@@ -655,14 +658,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aTrackCount">Will be set to the value of the property</param>
         public unsafe void PropertyTrackCount(out uint aTrackCount)
         {
-			fixed (uint* trackCount = &aTrackCount)
-			{
-	            CpProxyLinnCoUkInfo1PropertyTrackCount(iHandle, trackCount);
-			}
+            fixed (uint* trackCount = &aTrackCount)
+            {
+                CpProxyLinnCoUkInfo1PropertyTrackCount(iHandle, trackCount);
+            }
         }
 
         /// <summary>
@@ -670,14 +673,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aDetailsCount">Will be set to the value of the property</param>
         public unsafe void PropertyDetailsCount(out uint aDetailsCount)
         {
-			fixed (uint* detailsCount = &aDetailsCount)
-			{
-	            CpProxyLinnCoUkInfo1PropertyDetailsCount(iHandle, detailsCount);
-			}
+            fixed (uint* detailsCount = &aDetailsCount)
+            {
+                CpProxyLinnCoUkInfo1PropertyDetailsCount(iHandle, detailsCount);
+            }
         }
 
         /// <summary>
@@ -685,14 +688,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aMetatextCount">Will be set to the value of the property</param>
         public unsafe void PropertyMetatextCount(out uint aMetatextCount)
         {
-			fixed (uint* metatextCount = &aMetatextCount)
-			{
-	            CpProxyLinnCoUkInfo1PropertyMetatextCount(iHandle, metatextCount);
-			}
+            fixed (uint* metatextCount = &aMetatextCount)
+            {
+                CpProxyLinnCoUkInfo1PropertyMetatextCount(iHandle, metatextCount);
+            }
         }
 
         /// <summary>
@@ -700,11 +703,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aUri">Will be set to the value of the property</param>
         public unsafe void PropertyUri(out string aUri)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkInfo1PropertyUri(iHandle, &ptr);
             aUri = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
@@ -715,11 +718,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aMetadata">Will be set to the value of the property</param>
         public unsafe void PropertyMetadata(out string aMetadata)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkInfo1PropertyMetadata(iHandle, &ptr);
             aMetadata = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
@@ -730,14 +733,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aDuration">Will be set to the value of the property</param>
         public unsafe void PropertyDuration(out uint aDuration)
         {
-			fixed (uint* duration = &aDuration)
-			{
-	            CpProxyLinnCoUkInfo1PropertyDuration(iHandle, duration);
-			}
+            fixed (uint* duration = &aDuration)
+            {
+                CpProxyLinnCoUkInfo1PropertyDuration(iHandle, duration);
+            }
         }
 
         /// <summary>
@@ -745,14 +748,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aBitRate">Will be set to the value of the property</param>
         public unsafe void PropertyBitRate(out uint aBitRate)
         {
-			fixed (uint* bitRate = &aBitRate)
-			{
-	            CpProxyLinnCoUkInfo1PropertyBitRate(iHandle, bitRate);
-			}
+            fixed (uint* bitRate = &aBitRate)
+            {
+                CpProxyLinnCoUkInfo1PropertyBitRate(iHandle, bitRate);
+            }
         }
 
         /// <summary>
@@ -760,14 +763,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aBitDepth">Will be set to the value of the property</param>
         public unsafe void PropertyBitDepth(out uint aBitDepth)
         {
-			fixed (uint* bitDepth = &aBitDepth)
-			{
-	            CpProxyLinnCoUkInfo1PropertyBitDepth(iHandle, bitDepth);
-			}
+            fixed (uint* bitDepth = &aBitDepth)
+            {
+                CpProxyLinnCoUkInfo1PropertyBitDepth(iHandle, bitDepth);
+            }
         }
 
         /// <summary>
@@ -775,14 +778,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aSampleRate">Will be set to the value of the property</param>
         public unsafe void PropertySampleRate(out uint aSampleRate)
         {
-			fixed (uint* sampleRate = &aSampleRate)
-			{
-	            CpProxyLinnCoUkInfo1PropertySampleRate(iHandle, sampleRate);
-			}
+            fixed (uint* sampleRate = &aSampleRate)
+            {
+                CpProxyLinnCoUkInfo1PropertySampleRate(iHandle, sampleRate);
+            }
         }
 
         /// <summary>
@@ -790,13 +793,13 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aLossless">Will be set to the value of the property</param>
         public unsafe void PropertyLossless(out bool aLossless)
         {
-			uint lossless;
-	        CpProxyLinnCoUkInfo1PropertyLossless(iHandle, &lossless);
-			aLossless = (lossless != 0);
+            uint lossless;
+            CpProxyLinnCoUkInfo1PropertyLossless(iHandle, &lossless);
+            aLossless = (lossless != 0);
         }
 
         /// <summary>
@@ -804,11 +807,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aCodecName">Will be set to the value of the property</param>
         public unsafe void PropertyCodecName(out string aCodecName)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkInfo1PropertyCodecName(iHandle, &ptr);
             aCodecName = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
@@ -819,11 +822,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aMetatext">Will be set to the value of the property</param>
         public unsafe void PropertyMetatext(out string aMetatext)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkInfo1PropertyMetatext(iHandle, &ptr);
             aMetatext = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);

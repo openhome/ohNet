@@ -126,7 +126,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyPresetIndex(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkDelay1GetPropertyPresetIndex(iHandle, value);
             }
         }

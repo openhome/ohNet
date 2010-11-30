@@ -138,7 +138,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyKontrolProductComPort(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkProxyManager1GetPropertyKontrolProductComPort(iHandle, value);
             }
         }
@@ -195,7 +195,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyDiscPlayerComPort(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkProxyManager1GetPropertyDiscPlayerComPort(iHandle, value);
             }
         }

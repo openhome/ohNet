@@ -148,7 +148,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyVarUint(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderZappOrgTestBasic1GetPropertyVarUint(iHandle, value);
             }
         }
@@ -175,7 +175,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyVarInt(out int aValue)
         {
             fixed (int* value = &aValue)
-			{
+            {
                 DvProviderZappOrgTestBasic1GetPropertyVarInt(iHandle, value);
             }
         }

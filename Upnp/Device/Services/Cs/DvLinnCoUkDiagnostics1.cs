@@ -108,7 +108,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyaStateVariable(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkDiagnostics1GetPropertyaStateVariable(iHandle, value);
             }
         }

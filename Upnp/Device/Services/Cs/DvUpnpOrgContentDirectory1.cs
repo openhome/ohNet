@@ -150,7 +150,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertySystemUpdateID(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderUpnpOrgContentDirectory1GetPropertySystemUpdateID(iHandle, value);
             }
         }

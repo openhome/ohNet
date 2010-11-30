@@ -15,6 +15,9 @@ namespace Zapp.ControlPoint.Proxies
         void PropertySeconds(out uint aSeconds);
     }
 
+    /// <summary>
+    /// Proxy for the linn.co.uk:MediaTime:1 UPnP service
+    /// </summary>
     public class CpProxyLinnCoUkMediaTime1 : CpProxy, IDisposable, ICpProxyLinnCoUkMediaTime1
     {
         [DllImport("CpLinnCoUkMediaTime1")]
@@ -57,10 +60,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSeconds"></param>
         public unsafe void SyncSeconds(out uint aaSeconds)
         {
-			fixed (uint* aSeconds = &aaSeconds)
-			{
-				CpProxyLinnCoUkMediaTime1SyncSeconds(iHandle, aSeconds);
-			}
+            fixed (uint* aSeconds = &aaSeconds)
+            {
+                CpProxyLinnCoUkMediaTime1SyncSeconds(iHandle, aSeconds);
+            }
         }
 
         /// <summary>
@@ -86,13 +89,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSeconds"></param>
         public unsafe void EndSeconds(uint aAsyncHandle, out uint aaSeconds)
         {
-			fixed (uint* aSeconds = &aaSeconds)
-			{
-				if (0 != CpProxyLinnCoUkMediaTime1EndSeconds(iHandle, aAsyncHandle, aSeconds))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* aSeconds = &aaSeconds)
+            {
+                if (0 != CpProxyLinnCoUkMediaTime1EndSeconds(iHandle, aAsyncHandle, aSeconds))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -121,14 +124,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aSeconds">Will be set to the value of the property</param>
         public unsafe void PropertySeconds(out uint aSeconds)
         {
-			fixed (uint* seconds = &aSeconds)
-			{
-	            CpProxyLinnCoUkMediaTime1PropertySeconds(iHandle, seconds);
-			}
+            fixed (uint* seconds = &aSeconds)
+            {
+                CpProxyLinnCoUkMediaTime1PropertySeconds(iHandle, seconds);
+            }
         }
 
         /// <summary>

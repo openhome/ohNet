@@ -58,6 +58,9 @@ namespace Zapp.ControlPoint.Proxies
         void PropertyTransportState(out string aTransportState);
     }
 
+    /// <summary>
+    /// Proxy for the linn.co.uk:Ds:1 UPnP service
+    /// </summary>
     public class CpProxyLinnCoUkDs1 : CpProxy, IDisposable, ICpProxyLinnCoUkDs1
     {
         [DllImport("CpLinnCoUkDs1")]
@@ -201,9 +204,9 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         public unsafe void SyncPlay()
         {
-			{
-				CpProxyLinnCoUkDs1SyncPlay(iHandle);
-			}
+            {
+                CpProxyLinnCoUkDs1SyncPlay(iHandle);
+            }
         }
 
         /// <summary>
@@ -228,12 +231,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndPlay(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDs1EndPlay(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDs1EndPlay(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -243,9 +246,9 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         public unsafe void SyncPause()
         {
-			{
-				CpProxyLinnCoUkDs1SyncPause(iHandle);
-			}
+            {
+                CpProxyLinnCoUkDs1SyncPause(iHandle);
+            }
         }
 
         /// <summary>
@@ -270,12 +273,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndPause(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDs1EndPause(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDs1EndPause(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -285,9 +288,9 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         public unsafe void SyncStop()
         {
-			{
-				CpProxyLinnCoUkDs1SyncStop(iHandle);
-			}
+            {
+                CpProxyLinnCoUkDs1SyncStop(iHandle);
+            }
         }
 
         /// <summary>
@@ -312,12 +315,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndStop(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDs1EndStop(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDs1EndStop(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -328,9 +331,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSecond"></param>
         public unsafe void SyncSeekSecondAbsolute(uint aaSecond)
         {
-			{
-				CpProxyLinnCoUkDs1SyncSeekSecondAbsolute(iHandle, aaSecond);
-			}
+            {
+                CpProxyLinnCoUkDs1SyncSeekSecondAbsolute(iHandle, aaSecond);
+            }
         }
 
         /// <summary>
@@ -356,12 +359,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSeekSecondAbsolute(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDs1EndSeekSecondAbsolute(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDs1EndSeekSecondAbsolute(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -372,9 +375,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSecond"></param>
         public unsafe void SyncSeekSecondRelative(int aaSecond)
         {
-			{
-				CpProxyLinnCoUkDs1SyncSeekSecondRelative(iHandle, aaSecond);
-			}
+            {
+                CpProxyLinnCoUkDs1SyncSeekSecondRelative(iHandle, aaSecond);
+            }
         }
 
         /// <summary>
@@ -400,12 +403,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSeekSecondRelative(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDs1EndSeekSecondRelative(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDs1EndSeekSecondRelative(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -416,9 +419,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrackId"></param>
         public unsafe void SyncSeekTrackId(uint aaTrackId)
         {
-			{
-				CpProxyLinnCoUkDs1SyncSeekTrackId(iHandle, aaTrackId);
-			}
+            {
+                CpProxyLinnCoUkDs1SyncSeekTrackId(iHandle, aaTrackId);
+            }
         }
 
         /// <summary>
@@ -444,12 +447,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSeekTrackId(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDs1EndSeekTrackId(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDs1EndSeekTrackId(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -460,9 +463,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrack"></param>
         public unsafe void SyncSeekTrackAbsolute(uint aaTrack)
         {
-			{
-				CpProxyLinnCoUkDs1SyncSeekTrackAbsolute(iHandle, aaTrack);
-			}
+            {
+                CpProxyLinnCoUkDs1SyncSeekTrackAbsolute(iHandle, aaTrack);
+            }
         }
 
         /// <summary>
@@ -488,12 +491,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSeekTrackAbsolute(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDs1EndSeekTrackAbsolute(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDs1EndSeekTrackAbsolute(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -504,9 +507,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrack"></param>
         public unsafe void SyncSeekTrackRelative(int aaTrack)
         {
-			{
-				CpProxyLinnCoUkDs1SyncSeekTrackRelative(iHandle, aaTrack);
-			}
+            {
+                CpProxyLinnCoUkDs1SyncSeekTrackRelative(iHandle, aaTrack);
+            }
         }
 
         /// <summary>
@@ -532,12 +535,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSeekTrackRelative(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDs1EndSeekTrackRelative(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDs1EndSeekTrackRelative(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -555,20 +558,20 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrackId"></param>
         public unsafe void SyncState(out string aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out string aaTrackCodecName, out uint aaTrackId)
         {
-			char* aTransportState;
-			uint aTrackLossless;
-			char* aTrackCodecName;
-			fixed (uint* aTrackDuration = &aaTrackDuration)
-			fixed (uint* aTrackBitRate = &aaTrackBitRate)
-			fixed (uint* aTrackBitDepth = &aaTrackBitDepth)
-			fixed (uint* aTrackSampleRate = &aaTrackSampleRate)
-			fixed (uint* aTrackId = &aaTrackId)
-			{
-				CpProxyLinnCoUkDs1SyncState(iHandle, &aTransportState, aTrackDuration, aTrackBitRate, &aTrackLossless, aTrackBitDepth, aTrackSampleRate, &aTrackCodecName, aTrackId);
-			}
+            char* aTransportState;
+            uint aTrackLossless;
+            char* aTrackCodecName;
+            fixed (uint* aTrackDuration = &aaTrackDuration)
+            fixed (uint* aTrackBitRate = &aaTrackBitRate)
+            fixed (uint* aTrackBitDepth = &aaTrackBitDepth)
+            fixed (uint* aTrackSampleRate = &aaTrackSampleRate)
+            fixed (uint* aTrackId = &aaTrackId)
+            {
+                CpProxyLinnCoUkDs1SyncState(iHandle, &aTransportState, aTrackDuration, aTrackBitRate, &aTrackLossless, aTrackBitDepth, aTrackSampleRate, &aTrackCodecName, aTrackId);
+            }
             aaTransportState = Marshal.PtrToStringAnsi((IntPtr)aTransportState);
             ZappFree(aTransportState);
-			aaTrackLossless = (aTrackLossless != 0);
+            aaTrackLossless = (aTrackLossless != 0);
             aaTrackCodecName = Marshal.PtrToStringAnsi((IntPtr)aTrackCodecName);
             ZappFree(aTrackCodecName);
         }
@@ -603,23 +606,23 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrackId"></param>
         public unsafe void EndState(uint aAsyncHandle, out string aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out string aaTrackCodecName, out uint aaTrackId)
         {
-			char* aTransportState;
-			uint aTrackLossless;
-			char* aTrackCodecName;
-			fixed (uint* aTrackDuration = &aaTrackDuration)
-			fixed (uint* aTrackBitRate = &aaTrackBitRate)
-			fixed (uint* aTrackBitDepth = &aaTrackBitDepth)
-			fixed (uint* aTrackSampleRate = &aaTrackSampleRate)
-			fixed (uint* aTrackId = &aaTrackId)
-			{
-				if (0 != CpProxyLinnCoUkDs1EndState(iHandle, aAsyncHandle, &aTransportState, aTrackDuration, aTrackBitRate, &aTrackLossless, aTrackBitDepth, aTrackSampleRate, &aTrackCodecName, aTrackId))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aTransportState;
+            uint aTrackLossless;
+            char* aTrackCodecName;
+            fixed (uint* aTrackDuration = &aaTrackDuration)
+            fixed (uint* aTrackBitRate = &aaTrackBitRate)
+            fixed (uint* aTrackBitDepth = &aaTrackBitDepth)
+            fixed (uint* aTrackSampleRate = &aaTrackSampleRate)
+            fixed (uint* aTrackId = &aaTrackId)
+            {
+                if (0 != CpProxyLinnCoUkDs1EndState(iHandle, aAsyncHandle, &aTransportState, aTrackDuration, aTrackBitRate, &aTrackLossless, aTrackBitDepth, aTrackSampleRate, &aTrackCodecName, aTrackId))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaTransportState = Marshal.PtrToStringAnsi((IntPtr)aTransportState);
             ZappFree(aTransportState);
-			aaTrackLossless = (aTrackLossless != 0);
+            aaTrackLossless = (aTrackLossless != 0);
             aaTrackCodecName = Marshal.PtrToStringAnsi((IntPtr)aTrackCodecName);
             ZappFree(aTrackCodecName);
         }
@@ -632,10 +635,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSupportedProtocols"></param>
         public unsafe void SyncProtocolInfo(out string aaSupportedProtocols)
         {
-			char* aSupportedProtocols;
-			{
-				CpProxyLinnCoUkDs1SyncProtocolInfo(iHandle, &aSupportedProtocols);
-			}
+            char* aSupportedProtocols;
+            {
+                CpProxyLinnCoUkDs1SyncProtocolInfo(iHandle, &aSupportedProtocols);
+            }
             aaSupportedProtocols = Marshal.PtrToStringAnsi((IntPtr)aSupportedProtocols);
             ZappFree(aSupportedProtocols);
         }
@@ -663,13 +666,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSupportedProtocols"></param>
         public unsafe void EndProtocolInfo(uint aAsyncHandle, out string aaSupportedProtocols)
         {
-			char* aSupportedProtocols;
-			{
-				if (0 != CpProxyLinnCoUkDs1EndProtocolInfo(iHandle, aAsyncHandle, &aSupportedProtocols))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aSupportedProtocols;
+            {
+                if (0 != CpProxyLinnCoUkDs1EndProtocolInfo(iHandle, aAsyncHandle, &aSupportedProtocols))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaSupportedProtocols = Marshal.PtrToStringAnsi((IntPtr)aSupportedProtocols);
             ZappFree(aSupportedProtocols);
         }
@@ -868,11 +871,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aSupportedProtocols">Will be set to the value of the property</param>
         public unsafe void PropertySupportedProtocols(out string aSupportedProtocols)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkDs1PropertySupportedProtocols(iHandle, &ptr);
             aSupportedProtocols = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
@@ -883,14 +886,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aTrackDuration">Will be set to the value of the property</param>
         public unsafe void PropertyTrackDuration(out uint aTrackDuration)
         {
-			fixed (uint* trackDuration = &aTrackDuration)
-			{
-	            CpProxyLinnCoUkDs1PropertyTrackDuration(iHandle, trackDuration);
-			}
+            fixed (uint* trackDuration = &aTrackDuration)
+            {
+                CpProxyLinnCoUkDs1PropertyTrackDuration(iHandle, trackDuration);
+            }
         }
 
         /// <summary>
@@ -898,14 +901,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aTrackBitRate">Will be set to the value of the property</param>
         public unsafe void PropertyTrackBitRate(out uint aTrackBitRate)
         {
-			fixed (uint* trackBitRate = &aTrackBitRate)
-			{
-	            CpProxyLinnCoUkDs1PropertyTrackBitRate(iHandle, trackBitRate);
-			}
+            fixed (uint* trackBitRate = &aTrackBitRate)
+            {
+                CpProxyLinnCoUkDs1PropertyTrackBitRate(iHandle, trackBitRate);
+            }
         }
 
         /// <summary>
@@ -913,13 +916,13 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aTrackLossless">Will be set to the value of the property</param>
         public unsafe void PropertyTrackLossless(out bool aTrackLossless)
         {
-			uint trackLossless;
-	        CpProxyLinnCoUkDs1PropertyTrackLossless(iHandle, &trackLossless);
-			aTrackLossless = (trackLossless != 0);
+            uint trackLossless;
+            CpProxyLinnCoUkDs1PropertyTrackLossless(iHandle, &trackLossless);
+            aTrackLossless = (trackLossless != 0);
         }
 
         /// <summary>
@@ -927,14 +930,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aTrackBitDepth">Will be set to the value of the property</param>
         public unsafe void PropertyTrackBitDepth(out uint aTrackBitDepth)
         {
-			fixed (uint* trackBitDepth = &aTrackBitDepth)
-			{
-	            CpProxyLinnCoUkDs1PropertyTrackBitDepth(iHandle, trackBitDepth);
-			}
+            fixed (uint* trackBitDepth = &aTrackBitDepth)
+            {
+                CpProxyLinnCoUkDs1PropertyTrackBitDepth(iHandle, trackBitDepth);
+            }
         }
 
         /// <summary>
@@ -942,14 +945,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aTrackSampleRate">Will be set to the value of the property</param>
         public unsafe void PropertyTrackSampleRate(out uint aTrackSampleRate)
         {
-			fixed (uint* trackSampleRate = &aTrackSampleRate)
-			{
-	            CpProxyLinnCoUkDs1PropertyTrackSampleRate(iHandle, trackSampleRate);
-			}
+            fixed (uint* trackSampleRate = &aTrackSampleRate)
+            {
+                CpProxyLinnCoUkDs1PropertyTrackSampleRate(iHandle, trackSampleRate);
+            }
         }
 
         /// <summary>
@@ -957,11 +960,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aTrackCodecName">Will be set to the value of the property</param>
         public unsafe void PropertyTrackCodecName(out string aTrackCodecName)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkDs1PropertyTrackCodecName(iHandle, &ptr);
             aTrackCodecName = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
@@ -972,14 +975,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aTrackId">Will be set to the value of the property</param>
         public unsafe void PropertyTrackId(out uint aTrackId)
         {
-			fixed (uint* trackId = &aTrackId)
-			{
-	            CpProxyLinnCoUkDs1PropertyTrackId(iHandle, trackId);
-			}
+            fixed (uint* trackId = &aTrackId)
+            {
+                CpProxyLinnCoUkDs1PropertyTrackId(iHandle, trackId);
+            }
         }
 
         /// <summary>
@@ -987,11 +990,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aTransportState">Will be set to the value of the property</param>
         public unsafe void PropertyTransportState(out string aTransportState)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkDs1PropertyTransportState(iHandle, &ptr);
             aTransportState = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);

@@ -116,7 +116,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyTrackCount(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkInfo1GetPropertyTrackCount(iHandle, value);
             }
         }
@@ -143,7 +143,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyDetailsCount(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkInfo1GetPropertyDetailsCount(iHandle, value);
             }
         }
@@ -170,7 +170,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyMetatextCount(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkInfo1GetPropertyMetatextCount(iHandle, value);
             }
         }
@@ -257,7 +257,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyDuration(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkInfo1GetPropertyDuration(iHandle, value);
             }
         }
@@ -284,7 +284,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyBitRate(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkInfo1GetPropertyBitRate(iHandle, value);
             }
         }
@@ -311,7 +311,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyBitDepth(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkInfo1GetPropertyBitDepth(iHandle, value);
             }
         }
@@ -338,7 +338,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertySampleRate(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkInfo1GetPropertySampleRate(iHandle, value);
             }
         }

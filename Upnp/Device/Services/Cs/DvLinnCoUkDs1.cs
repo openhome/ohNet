@@ -158,7 +158,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyTrackDuration(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkDs1GetPropertyTrackDuration(iHandle, value);
             }
         }
@@ -185,7 +185,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyTrackBitRate(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkDs1GetPropertyTrackBitRate(iHandle, value);
             }
         }
@@ -239,7 +239,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyTrackBitDepth(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkDs1GetPropertyTrackBitDepth(iHandle, value);
             }
         }
@@ -266,7 +266,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyTrackSampleRate(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkDs1GetPropertyTrackSampleRate(iHandle, value);
             }
         }
@@ -323,7 +323,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyTrackId(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkDs1GetPropertyTrackId(iHandle, value);
             }
         }

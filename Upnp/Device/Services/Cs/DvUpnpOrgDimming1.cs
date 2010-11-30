@@ -156,7 +156,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyLoadLevelStatus(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderUpnpOrgDimming1GetPropertyLoadLevelStatus(iHandle, value);
             }
         }
@@ -183,7 +183,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyStepDelta(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderUpnpOrgDimming1GetPropertyStepDelta(iHandle, value);
             }
         }
@@ -210,7 +210,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyRampRate(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderUpnpOrgDimming1GetPropertyRampRate(iHandle, value);
             }
         }

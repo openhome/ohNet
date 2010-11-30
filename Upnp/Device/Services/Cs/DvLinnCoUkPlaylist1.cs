@@ -202,7 +202,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyTracksMax(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkPlaylist1GetPropertyTracksMax(iHandle, value);
             }
         }

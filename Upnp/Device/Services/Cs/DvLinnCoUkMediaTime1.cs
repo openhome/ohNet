@@ -60,7 +60,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertySeconds(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkMediaTime1GetPropertySeconds(iHandle, value);
             }
         }

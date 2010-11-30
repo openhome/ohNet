@@ -68,7 +68,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyTrackCount(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkTime1GetPropertyTrackCount(iHandle, value);
             }
         }
@@ -95,7 +95,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyDuration(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkTime1GetPropertyDuration(iHandle, value);
             }
         }
@@ -122,7 +122,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertySeconds(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkTime1GetPropertySeconds(iHandle, value);
             }
         }

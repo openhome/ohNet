@@ -54,6 +54,9 @@ namespace Zapp.ControlPoint.Proxies
         void PropertyTracksMax(out uint aTracksMax);
     }
 
+    /// <summary>
+    /// Proxy for the linn.co.uk:Playlist:1 UPnP service
+    /// </summary>
     public class CpProxyLinnCoUkPlaylist1 : CpProxy, IDisposable, ICpProxyLinnCoUkPlaylist1
     {
         [DllImport("CpLinnCoUkPlaylist1")]
@@ -182,11 +185,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetaData"></param>
         public unsafe void SyncRead(uint aaId, out string aaUri, out string aaMetaData)
         {
-			char* aUri;
-			char* aMetaData;
-			{
-				CpProxyLinnCoUkPlaylist1SyncRead(iHandle, aaId, &aUri, &aMetaData);
-			}
+            char* aUri;
+            char* aMetaData;
+            {
+                CpProxyLinnCoUkPlaylist1SyncRead(iHandle, aaId, &aUri, &aMetaData);
+            }
             aaUri = Marshal.PtrToStringAnsi((IntPtr)aUri);
             ZappFree(aUri);
             aaMetaData = Marshal.PtrToStringAnsi((IntPtr)aMetaData);
@@ -218,14 +221,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetaData"></param>
         public unsafe void EndRead(uint aAsyncHandle, out string aaUri, out string aaMetaData)
         {
-			char* aUri;
-			char* aMetaData;
-			{
-				if (0 != CpProxyLinnCoUkPlaylist1EndRead(iHandle, aAsyncHandle, &aUri, &aMetaData))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aUri;
+            char* aMetaData;
+            {
+                if (0 != CpProxyLinnCoUkPlaylist1EndRead(iHandle, aAsyncHandle, &aUri, &aMetaData))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaUri = Marshal.PtrToStringAnsi((IntPtr)aUri);
             ZappFree(aUri);
             aaMetaData = Marshal.PtrToStringAnsi((IntPtr)aMetaData);
@@ -241,12 +244,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetaDataList"></param>
         public unsafe void SyncReadList(string aaIdList, out string aaMetaDataList)
         {
-			char* aIdList = (char*)Marshal.StringToHGlobalAnsi(aaIdList);
-			char* aMetaDataList;
-			{
-				CpProxyLinnCoUkPlaylist1SyncReadList(iHandle, aIdList, &aMetaDataList);
-			}
-			Marshal.FreeHGlobal((IntPtr)aIdList);
+            char* aIdList = (char*)Marshal.StringToHGlobalAnsi(aaIdList);
+            char* aMetaDataList;
+            {
+                CpProxyLinnCoUkPlaylist1SyncReadList(iHandle, aIdList, &aMetaDataList);
+            }
+            Marshal.FreeHGlobal((IntPtr)aIdList);
             aaMetaDataList = Marshal.PtrToStringAnsi((IntPtr)aMetaDataList);
             ZappFree(aMetaDataList);
         }
@@ -262,11 +265,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginReadList(string aaIdList, CallbackAsyncComplete aCallback)
         {
-			char* aIdList = (char*)Marshal.StringToHGlobalAnsi(aaIdList);
+            char* aIdList = (char*)Marshal.StringToHGlobalAnsi(aaIdList);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkPlaylist1BeginReadList(iHandle, aIdList, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)aIdList);
+            Marshal.FreeHGlobal((IntPtr)aIdList);
         }
 
         /// <summary>
@@ -277,13 +280,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetaDataList"></param>
         public unsafe void EndReadList(uint aAsyncHandle, out string aaMetaDataList)
         {
-			char* aMetaDataList;
-			{
-				if (0 != CpProxyLinnCoUkPlaylist1EndReadList(iHandle, aAsyncHandle, &aMetaDataList))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aMetaDataList;
+            {
+                if (0 != CpProxyLinnCoUkPlaylist1EndReadList(iHandle, aAsyncHandle, &aMetaDataList))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaMetaDataList = Marshal.PtrToStringAnsi((IntPtr)aMetaDataList);
             ZappFree(aMetaDataList);
         }
@@ -299,14 +302,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaNewId"></param>
         public unsafe void SyncInsert(uint aaAfterId, string aaUri, string aaMetaData, out uint aaNewId)
         {
-			char* aUri = (char*)Marshal.StringToHGlobalAnsi(aaUri);
-			char* aMetaData = (char*)Marshal.StringToHGlobalAnsi(aaMetaData);
-			fixed (uint* aNewId = &aaNewId)
-			{
-				CpProxyLinnCoUkPlaylist1SyncInsert(iHandle, aaAfterId, aUri, aMetaData, aNewId);
-			}
-			Marshal.FreeHGlobal((IntPtr)aUri);
-			Marshal.FreeHGlobal((IntPtr)aMetaData);
+            char* aUri = (char*)Marshal.StringToHGlobalAnsi(aaUri);
+            char* aMetaData = (char*)Marshal.StringToHGlobalAnsi(aaMetaData);
+            fixed (uint* aNewId = &aaNewId)
+            {
+                CpProxyLinnCoUkPlaylist1SyncInsert(iHandle, aaAfterId, aUri, aMetaData, aNewId);
+            }
+            Marshal.FreeHGlobal((IntPtr)aUri);
+            Marshal.FreeHGlobal((IntPtr)aMetaData);
         }
 
         /// <summary>
@@ -322,13 +325,13 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginInsert(uint aaAfterId, string aaUri, string aaMetaData, CallbackAsyncComplete aCallback)
         {
-			char* aUri = (char*)Marshal.StringToHGlobalAnsi(aaUri);
-			char* aMetaData = (char*)Marshal.StringToHGlobalAnsi(aaMetaData);
+            char* aUri = (char*)Marshal.StringToHGlobalAnsi(aaUri);
+            char* aMetaData = (char*)Marshal.StringToHGlobalAnsi(aaMetaData);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkPlaylist1BeginInsert(iHandle, aaAfterId, aUri, aMetaData, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)aUri);
-			Marshal.FreeHGlobal((IntPtr)aMetaData);
+            Marshal.FreeHGlobal((IntPtr)aUri);
+            Marshal.FreeHGlobal((IntPtr)aMetaData);
         }
 
         /// <summary>
@@ -339,13 +342,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaNewId"></param>
         public unsafe void EndInsert(uint aAsyncHandle, out uint aaNewId)
         {
-			fixed (uint* aNewId = &aaNewId)
-			{
-				if (0 != CpProxyLinnCoUkPlaylist1EndInsert(iHandle, aAsyncHandle, aNewId))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* aNewId = &aaNewId)
+            {
+                if (0 != CpProxyLinnCoUkPlaylist1EndInsert(iHandle, aAsyncHandle, aNewId))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -356,9 +359,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaId"></param>
         public unsafe void SyncDelete(uint aaId)
         {
-			{
-				CpProxyLinnCoUkPlaylist1SyncDelete(iHandle, aaId);
-			}
+            {
+                CpProxyLinnCoUkPlaylist1SyncDelete(iHandle, aaId);
+            }
         }
 
         /// <summary>
@@ -384,12 +387,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndDelete(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkPlaylist1EndDelete(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkPlaylist1EndDelete(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -399,9 +402,9 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         public unsafe void SyncDeleteAll()
         {
-			{
-				CpProxyLinnCoUkPlaylist1SyncDeleteAll(iHandle);
-			}
+            {
+                CpProxyLinnCoUkPlaylist1SyncDeleteAll(iHandle);
+            }
         }
 
         /// <summary>
@@ -426,12 +429,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndDeleteAll(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkPlaylist1EndDeleteAll(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkPlaylist1EndDeleteAll(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -442,10 +445,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaRepeat"></param>
         public unsafe void SyncSetRepeat(bool aaRepeat)
         {
-			uint aRepeat = (aaRepeat? 1u : 0u);
-			{
-				CpProxyLinnCoUkPlaylist1SyncSetRepeat(iHandle, aRepeat);
-			}
+            uint aRepeat = (aaRepeat? 1u : 0u);
+            {
+                CpProxyLinnCoUkPlaylist1SyncSetRepeat(iHandle, aRepeat);
+            }
         }
 
         /// <summary>
@@ -459,7 +462,7 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetRepeat(bool aaRepeat, CallbackAsyncComplete aCallback)
         {
-			uint aRepeat = (aaRepeat? 1u : 0u);
+            uint aRepeat = (aaRepeat? 1u : 0u);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkPlaylist1BeginSetRepeat(iHandle, aRepeat, iActionComplete, ptr);
@@ -472,12 +475,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetRepeat(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkPlaylist1EndSetRepeat(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkPlaylist1EndSetRepeat(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -488,11 +491,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaRepeat"></param>
         public unsafe void SyncRepeat(out bool aaRepeat)
         {
-			uint aRepeat;
-			{
-				CpProxyLinnCoUkPlaylist1SyncRepeat(iHandle, &aRepeat);
-			}
-			aaRepeat = (aRepeat != 0);
+            uint aRepeat;
+            {
+                CpProxyLinnCoUkPlaylist1SyncRepeat(iHandle, &aRepeat);
+            }
+            aaRepeat = (aRepeat != 0);
         }
 
         /// <summary>
@@ -518,14 +521,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaRepeat"></param>
         public unsafe void EndRepeat(uint aAsyncHandle, out bool aaRepeat)
         {
-			uint aRepeat;
-			{
-				if (0 != CpProxyLinnCoUkPlaylist1EndRepeat(iHandle, aAsyncHandle, &aRepeat))
-				{
-					throw(new ProxyError());
-				}
-			}
-			aaRepeat = (aRepeat != 0);
+            uint aRepeat;
+            {
+                if (0 != CpProxyLinnCoUkPlaylist1EndRepeat(iHandle, aAsyncHandle, &aRepeat))
+                {
+                    throw(new ProxyError());
+                }
+            }
+            aaRepeat = (aRepeat != 0);
         }
 
         /// <summary>
@@ -536,10 +539,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaShuffle"></param>
         public unsafe void SyncSetShuffle(bool aaShuffle)
         {
-			uint aShuffle = (aaShuffle? 1u : 0u);
-			{
-				CpProxyLinnCoUkPlaylist1SyncSetShuffle(iHandle, aShuffle);
-			}
+            uint aShuffle = (aaShuffle? 1u : 0u);
+            {
+                CpProxyLinnCoUkPlaylist1SyncSetShuffle(iHandle, aShuffle);
+            }
         }
 
         /// <summary>
@@ -553,7 +556,7 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetShuffle(bool aaShuffle, CallbackAsyncComplete aCallback)
         {
-			uint aShuffle = (aaShuffle? 1u : 0u);
+            uint aShuffle = (aaShuffle? 1u : 0u);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkPlaylist1BeginSetShuffle(iHandle, aShuffle, iActionComplete, ptr);
@@ -566,12 +569,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetShuffle(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkPlaylist1EndSetShuffle(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkPlaylist1EndSetShuffle(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -582,11 +585,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaShuffle"></param>
         public unsafe void SyncShuffle(out bool aaShuffle)
         {
-			uint aShuffle;
-			{
-				CpProxyLinnCoUkPlaylist1SyncShuffle(iHandle, &aShuffle);
-			}
-			aaShuffle = (aShuffle != 0);
+            uint aShuffle;
+            {
+                CpProxyLinnCoUkPlaylist1SyncShuffle(iHandle, &aShuffle);
+            }
+            aaShuffle = (aShuffle != 0);
         }
 
         /// <summary>
@@ -612,14 +615,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaShuffle"></param>
         public unsafe void EndShuffle(uint aAsyncHandle, out bool aaShuffle)
         {
-			uint aShuffle;
-			{
-				if (0 != CpProxyLinnCoUkPlaylist1EndShuffle(iHandle, aAsyncHandle, &aShuffle))
-				{
-					throw(new ProxyError());
-				}
-			}
-			aaShuffle = (aShuffle != 0);
+            uint aShuffle;
+            {
+                if (0 != CpProxyLinnCoUkPlaylist1EndShuffle(iHandle, aAsyncHandle, &aShuffle))
+                {
+                    throw(new ProxyError());
+                }
+            }
+            aaShuffle = (aShuffle != 0);
         }
 
         /// <summary>
@@ -630,10 +633,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTracksMax"></param>
         public unsafe void SyncTracksMax(out uint aaTracksMax)
         {
-			fixed (uint* aTracksMax = &aaTracksMax)
-			{
-				CpProxyLinnCoUkPlaylist1SyncTracksMax(iHandle, aTracksMax);
-			}
+            fixed (uint* aTracksMax = &aaTracksMax)
+            {
+                CpProxyLinnCoUkPlaylist1SyncTracksMax(iHandle, aTracksMax);
+            }
         }
 
         /// <summary>
@@ -659,13 +662,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTracksMax"></param>
         public unsafe void EndTracksMax(uint aAsyncHandle, out uint aaTracksMax)
         {
-			fixed (uint* aTracksMax = &aaTracksMax)
-			{
-				if (0 != CpProxyLinnCoUkPlaylist1EndTracksMax(iHandle, aAsyncHandle, aTracksMax))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* aTracksMax = &aaTracksMax)
+            {
+                if (0 != CpProxyLinnCoUkPlaylist1EndTracksMax(iHandle, aAsyncHandle, aTracksMax))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -677,12 +680,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaIdArray"></param>
         public unsafe void SyncIdArray(out uint aaIdArrayToken, out string aaIdArray)
         {
-			char* aIdArray;
-			uint aIdArrayLen;
-			fixed (uint* aIdArrayToken = &aaIdArrayToken)
-			{
-				CpProxyLinnCoUkPlaylist1SyncIdArray(iHandle, aIdArrayToken, &aIdArray, &aIdArrayLen);
-			}
+            char* aIdArray;
+            uint aIdArrayLen;
+            fixed (uint* aIdArrayToken = &aaIdArrayToken)
+            {
+                CpProxyLinnCoUkPlaylist1SyncIdArray(iHandle, aIdArrayToken, &aIdArray, &aIdArrayLen);
+            }
             aaIdArray = Marshal.PtrToStringAnsi((IntPtr)aIdArray, (int)aIdArrayLen);
             ZappFree(aIdArray);
         }
@@ -711,15 +714,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaIdArray"></param>
         public unsafe void EndIdArray(uint aAsyncHandle, out uint aaIdArrayToken, out string aaIdArray)
         {
-			char* aIdArray;
-			uint aIdArrayLen;
-			fixed (uint* aIdArrayToken = &aaIdArrayToken)
-			{
-				if (0 != CpProxyLinnCoUkPlaylist1EndIdArray(iHandle, aAsyncHandle, aIdArrayToken, &aIdArray, &aIdArrayLen))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aIdArray;
+            uint aIdArrayLen;
+            fixed (uint* aIdArrayToken = &aaIdArrayToken)
+            {
+                if (0 != CpProxyLinnCoUkPlaylist1EndIdArray(iHandle, aAsyncHandle, aIdArrayToken, &aIdArray, &aIdArrayLen))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaIdArray = Marshal.PtrToStringAnsi((IntPtr)aIdArray, (int)aIdArrayLen);
             ZappFree(aIdArray);
         }
@@ -733,11 +736,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaIdArrayChanged"></param>
         public unsafe void SyncIdArrayChanged(uint aaIdArrayToken, out bool aaIdArrayChanged)
         {
-			uint aIdArrayChanged;
-			{
-				CpProxyLinnCoUkPlaylist1SyncIdArrayChanged(iHandle, aaIdArrayToken, &aIdArrayChanged);
-			}
-			aaIdArrayChanged = (aIdArrayChanged != 0);
+            uint aIdArrayChanged;
+            {
+                CpProxyLinnCoUkPlaylist1SyncIdArrayChanged(iHandle, aaIdArrayToken, &aIdArrayChanged);
+            }
+            aaIdArrayChanged = (aIdArrayChanged != 0);
         }
 
         /// <summary>
@@ -764,14 +767,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaIdArrayChanged"></param>
         public unsafe void EndIdArrayChanged(uint aAsyncHandle, out bool aaIdArrayChanged)
         {
-			uint aIdArrayChanged;
-			{
-				if (0 != CpProxyLinnCoUkPlaylist1EndIdArrayChanged(iHandle, aAsyncHandle, &aIdArrayChanged))
-				{
-					throw(new ProxyError());
-				}
-			}
-			aaIdArrayChanged = (aIdArrayChanged != 0);
+            uint aIdArrayChanged;
+            {
+                if (0 != CpProxyLinnCoUkPlaylist1EndIdArrayChanged(iHandle, aAsyncHandle, &aIdArrayChanged))
+                {
+                    throw(new ProxyError());
+                }
+            }
+            aaIdArrayChanged = (aIdArrayChanged != 0);
         }
 
         /// <summary>
@@ -863,13 +866,13 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aIdArray">Will be set to the value of the property</param>
         public unsafe void PropertyIdArray(out string aIdArray)
         {
-			char* ptr;
-			uint len;
-	        CpProxyLinnCoUkPlaylist1PropertyIdArray(iHandle, &ptr, &len);
+            char* ptr;
+            uint len;
+            CpProxyLinnCoUkPlaylist1PropertyIdArray(iHandle, &ptr, &len);
             aIdArray = Marshal.PtrToStringAnsi((IntPtr)ptr, (int)len);
             ZappFree(ptr);
         }
@@ -879,13 +882,13 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aRepeat">Will be set to the value of the property</param>
         public unsafe void PropertyRepeat(out bool aRepeat)
         {
-			uint repeat;
-	        CpProxyLinnCoUkPlaylist1PropertyRepeat(iHandle, &repeat);
-			aRepeat = (repeat != 0);
+            uint repeat;
+            CpProxyLinnCoUkPlaylist1PropertyRepeat(iHandle, &repeat);
+            aRepeat = (repeat != 0);
         }
 
         /// <summary>
@@ -893,13 +896,13 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aShuffle">Will be set to the value of the property</param>
         public unsafe void PropertyShuffle(out bool aShuffle)
         {
-			uint shuffle;
-	        CpProxyLinnCoUkPlaylist1PropertyShuffle(iHandle, &shuffle);
-			aShuffle = (shuffle != 0);
+            uint shuffle;
+            CpProxyLinnCoUkPlaylist1PropertyShuffle(iHandle, &shuffle);
+            aShuffle = (shuffle != 0);
         }
 
         /// <summary>
@@ -907,14 +910,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aTracksMax">Will be set to the value of the property</param>
         public unsafe void PropertyTracksMax(out uint aTracksMax)
         {
-			fixed (uint* tracksMax = &aTracksMax)
-			{
-	            CpProxyLinnCoUkPlaylist1PropertyTracksMax(iHandle, tracksMax);
-			}
+            fixed (uint* tracksMax = &aTracksMax)
+            {
+                CpProxyLinnCoUkPlaylist1PropertyTracksMax(iHandle, tracksMax);
+            }
         }
 
         /// <summary>

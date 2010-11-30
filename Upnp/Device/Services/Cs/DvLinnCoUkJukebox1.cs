@@ -96,7 +96,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyCurrentPreset(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkJukebox1GetPropertyCurrentPreset(iHandle, value);
             }
         }

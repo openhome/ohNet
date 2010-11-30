@@ -32,6 +32,9 @@ namespace Zapp.ControlPoint.Proxies
         void PropertyReadOnlyRegister7(out uint aReadOnlyRegister7);
     }
 
+    /// <summary>
+    /// Proxy for the zapp.org:TestWidget:1 UPnP service
+    /// </summary>
     public class CpProxyZappOrgTestWidget1 : CpProxy, IDisposable, ICpProxyZappOrgTestWidget1
     {
         [DllImport("CpZappOrgTestWidget1")]
@@ -123,9 +126,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRegisterValue"></param>
         public unsafe void SyncSetReadWriteRegister(uint aRegisterIndex, uint aRegisterValue)
         {
-			{
-				CpProxyZappOrgTestWidget1SyncSetReadWriteRegister(iHandle, aRegisterIndex, aRegisterValue);
-			}
+            {
+                CpProxyZappOrgTestWidget1SyncSetReadWriteRegister(iHandle, aRegisterIndex, aRegisterValue);
+            }
         }
 
         /// <summary>
@@ -152,12 +155,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetReadWriteRegister(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyZappOrgTestWidget1EndSetReadWriteRegister(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyZappOrgTestWidget1EndSetReadWriteRegister(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -168,10 +171,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aWidgetClass"></param>
         public unsafe void SyncGetWidgetClass(out uint aWidgetClass)
         {
-			fixed (uint* widgetClass = &aWidgetClass)
-			{
-				CpProxyZappOrgTestWidget1SyncGetWidgetClass(iHandle, widgetClass);
-			}
+            fixed (uint* widgetClass = &aWidgetClass)
+            {
+                CpProxyZappOrgTestWidget1SyncGetWidgetClass(iHandle, widgetClass);
+            }
         }
 
         /// <summary>
@@ -197,13 +200,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aWidgetClass"></param>
         public unsafe void EndGetWidgetClass(uint aAsyncHandle, out uint aWidgetClass)
         {
-			fixed (uint* widgetClass = &aWidgetClass)
-			{
-				if (0 != CpProxyZappOrgTestWidget1EndGetWidgetClass(iHandle, aAsyncHandle, widgetClass))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* widgetClass = &aWidgetClass)
+            {
+                if (0 != CpProxyZappOrgTestWidget1EndGetWidgetClass(iHandle, aAsyncHandle, widgetClass))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -379,14 +382,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aReadWriteRegister0">Will be set to the value of the property</param>
         public unsafe void PropertyReadWriteRegister0(out uint aReadWriteRegister0)
         {
-			fixed (uint* readWriteRegister0 = &aReadWriteRegister0)
-			{
-	            CpProxyZappOrgTestWidget1PropertyReadWriteRegister0(iHandle, readWriteRegister0);
-			}
+            fixed (uint* readWriteRegister0 = &aReadWriteRegister0)
+            {
+                CpProxyZappOrgTestWidget1PropertyReadWriteRegister0(iHandle, readWriteRegister0);
+            }
         }
 
         /// <summary>
@@ -394,14 +397,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aReadWriteRegister1">Will be set to the value of the property</param>
         public unsafe void PropertyReadWriteRegister1(out uint aReadWriteRegister1)
         {
-			fixed (uint* readWriteRegister1 = &aReadWriteRegister1)
-			{
-	            CpProxyZappOrgTestWidget1PropertyReadWriteRegister1(iHandle, readWriteRegister1);
-			}
+            fixed (uint* readWriteRegister1 = &aReadWriteRegister1)
+            {
+                CpProxyZappOrgTestWidget1PropertyReadWriteRegister1(iHandle, readWriteRegister1);
+            }
         }
 
         /// <summary>
@@ -409,14 +412,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aReadWriteRegister2">Will be set to the value of the property</param>
         public unsafe void PropertyReadWriteRegister2(out uint aReadWriteRegister2)
         {
-			fixed (uint* readWriteRegister2 = &aReadWriteRegister2)
-			{
-	            CpProxyZappOrgTestWidget1PropertyReadWriteRegister2(iHandle, readWriteRegister2);
-			}
+            fixed (uint* readWriteRegister2 = &aReadWriteRegister2)
+            {
+                CpProxyZappOrgTestWidget1PropertyReadWriteRegister2(iHandle, readWriteRegister2);
+            }
         }
 
         /// <summary>
@@ -424,14 +427,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aReadWriteRegister3">Will be set to the value of the property</param>
         public unsafe void PropertyReadWriteRegister3(out uint aReadWriteRegister3)
         {
-			fixed (uint* readWriteRegister3 = &aReadWriteRegister3)
-			{
-	            CpProxyZappOrgTestWidget1PropertyReadWriteRegister3(iHandle, readWriteRegister3);
-			}
+            fixed (uint* readWriteRegister3 = &aReadWriteRegister3)
+            {
+                CpProxyZappOrgTestWidget1PropertyReadWriteRegister3(iHandle, readWriteRegister3);
+            }
         }
 
         /// <summary>
@@ -439,14 +442,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aReadOnlyRegister4">Will be set to the value of the property</param>
         public unsafe void PropertyReadOnlyRegister4(out uint aReadOnlyRegister4)
         {
-			fixed (uint* readOnlyRegister4 = &aReadOnlyRegister4)
-			{
-	            CpProxyZappOrgTestWidget1PropertyReadOnlyRegister4(iHandle, readOnlyRegister4);
-			}
+            fixed (uint* readOnlyRegister4 = &aReadOnlyRegister4)
+            {
+                CpProxyZappOrgTestWidget1PropertyReadOnlyRegister4(iHandle, readOnlyRegister4);
+            }
         }
 
         /// <summary>
@@ -454,14 +457,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aReadOnlyRegister5">Will be set to the value of the property</param>
         public unsafe void PropertyReadOnlyRegister5(out uint aReadOnlyRegister5)
         {
-			fixed (uint* readOnlyRegister5 = &aReadOnlyRegister5)
-			{
-	            CpProxyZappOrgTestWidget1PropertyReadOnlyRegister5(iHandle, readOnlyRegister5);
-			}
+            fixed (uint* readOnlyRegister5 = &aReadOnlyRegister5)
+            {
+                CpProxyZappOrgTestWidget1PropertyReadOnlyRegister5(iHandle, readOnlyRegister5);
+            }
         }
 
         /// <summary>
@@ -469,14 +472,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aReadOnlyRegister6">Will be set to the value of the property</param>
         public unsafe void PropertyReadOnlyRegister6(out uint aReadOnlyRegister6)
         {
-			fixed (uint* readOnlyRegister6 = &aReadOnlyRegister6)
-			{
-	            CpProxyZappOrgTestWidget1PropertyReadOnlyRegister6(iHandle, readOnlyRegister6);
-			}
+            fixed (uint* readOnlyRegister6 = &aReadOnlyRegister6)
+            {
+                CpProxyZappOrgTestWidget1PropertyReadOnlyRegister6(iHandle, readOnlyRegister6);
+            }
         }
 
         /// <summary>
@@ -484,14 +487,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aReadOnlyRegister7">Will be set to the value of the property</param>
         public unsafe void PropertyReadOnlyRegister7(out uint aReadOnlyRegister7)
         {
-			fixed (uint* readOnlyRegister7 = &aReadOnlyRegister7)
-			{
-	            CpProxyZappOrgTestWidget1PropertyReadOnlyRegister7(iHandle, readOnlyRegister7);
-			}
+            fixed (uint* readOnlyRegister7 = &aReadOnlyRegister7)
+            {
+                CpProxyZappOrgTestWidget1PropertyReadOnlyRegister7(iHandle, readOnlyRegister7);
+            }
         }
 
         /// <summary>

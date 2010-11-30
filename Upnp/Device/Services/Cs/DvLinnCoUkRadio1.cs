@@ -264,7 +264,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyId(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkRadio1GetPropertyId(iHandle, value);
             }
         }
@@ -323,7 +323,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyIdsMax(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkRadio1GetPropertyIdsMax(iHandle, value);
             }
         }

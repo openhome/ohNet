@@ -192,7 +192,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyDisplayBrightness(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkUi2GetPropertyDisplayBrightness(iHandle, value);
             }
         }
@@ -414,7 +414,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyTerminalInputCode(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkUi2GetPropertyTerminalInputCode(iHandle, value);
             }
         }
