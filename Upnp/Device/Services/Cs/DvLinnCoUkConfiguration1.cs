@@ -5,6 +5,36 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderLinnCoUkConfiguration1 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the ConfigurationXml property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyConfigurationXml(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ConfigurationXml property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyConfigurationXml(out string aValue);
+
+        /// <summary>
+        /// Set the value of the ParameterXml property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyParameterXml(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ParameterXml property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyParameterXml(out string aValue);
+        
+    }
     /// <summary>
     /// Provider for the linn.co.uk:Configuration:1 UPnP service
     /// </summary>

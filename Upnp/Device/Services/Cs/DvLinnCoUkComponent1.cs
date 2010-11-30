@@ -5,6 +5,62 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderLinnCoUkComponent1 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the AmplifierEnabled property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyAmplifierEnabled(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the AmplifierEnabled property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyAmplifierEnabled(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the AmplifierAttenuation property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyAmplifierAttenuation(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the AmplifierAttenuation property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyAmplifierAttenuation(out string aValue);
+
+        /// <summary>
+        /// Set the value of the VolumeControlEnabled property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyVolumeControlEnabled(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the VolumeControlEnabled property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyVolumeControlEnabled(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the DigitalAudioOutputRaw property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyDigitalAudioOutputRaw(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the DigitalAudioOutputRaw property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyDigitalAudioOutputRaw(out bool aValue);
+        
+    }
     /// <summary>
     /// Provider for the linn.co.uk:Component:1 UPnP service
     /// </summary>

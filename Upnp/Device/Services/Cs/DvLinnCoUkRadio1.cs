@@ -5,6 +5,101 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderLinnCoUkRadio1 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the ChannelUri property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyChannelUri(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ChannelUri property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyChannelUri(out string aValue);
+
+        /// <summary>
+        /// Set the value of the ChannelMetadata property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyChannelMetadata(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ChannelMetadata property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyChannelMetadata(out string aValue);
+
+        /// <summary>
+        /// Set the value of the TransportState property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyTransportState(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the TransportState property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyTransportState(out string aValue);
+
+        /// <summary>
+        /// Set the value of the ProtocolInfo property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProtocolInfo(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProtocolInfo property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProtocolInfo(out string aValue);
+
+        /// <summary>
+        /// Set the value of the Id property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyId(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the Id property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyId(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the IdArray property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyIdArray(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the IdArray property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyIdArray(out string aValue);
+
+        /// <summary>
+        /// Set the value of the IdsMax property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyIdsMax(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the IdsMax property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyIdsMax(out uint aValue);
+        
+    }
     /// <summary>
     /// Provider for the linn.co.uk:Radio:1 UPnP service
     /// </summary>

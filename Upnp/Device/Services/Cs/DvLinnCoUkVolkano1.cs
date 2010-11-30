@@ -5,6 +5,10 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderLinnCoUkVolkano1 : IDisposable
+    {
+        
+    }
     /// <summary>
     /// Provider for the linn.co.uk:Volkano:1 UPnP service
     /// </summary>

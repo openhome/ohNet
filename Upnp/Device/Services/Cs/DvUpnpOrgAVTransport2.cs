@@ -5,6 +5,36 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderUpnpOrgAVTransport2 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyLastChange(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyLastChange(out string aValue);
+
+        /// <summary>
+        /// Set the value of the DRMState property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyDRMState(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the DRMState property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyDRMState(out string aValue);
+        
+    }
     /// <summary>
     /// Provider for the upnp.org:AVTransport:2 UPnP service
     /// </summary>

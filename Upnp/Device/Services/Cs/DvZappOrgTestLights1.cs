@@ -5,6 +5,10 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderZappOrgTestLights1 : IDisposable
+    {
+        
+    }
     /// <summary>
     /// Provider for the zapp.org:TestLights:1 UPnP service
     /// </summary>

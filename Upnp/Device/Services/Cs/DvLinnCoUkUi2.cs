@@ -5,6 +5,153 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderLinnCoUkUi2 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the DisplayBrightness property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyDisplayBrightness(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the DisplayBrightness property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyDisplayBrightness(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the DisplayBrightnessAuto property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyDisplayBrightnessAuto(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the DisplayBrightnessAuto property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyDisplayBrightnessAuto(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the InfraredCommands property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyInfraredCommands(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the InfraredCommands property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyInfraredCommands(out string aValue);
+
+        /// <summary>
+        /// Set the value of the InfraredTerminalCommands property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyInfraredTerminalCommands(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the InfraredTerminalCommands property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyInfraredTerminalCommands(out string aValue);
+
+        /// <summary>
+        /// Set the value of the DisplayUpsideDown property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyDisplayUpsideDown(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the DisplayUpsideDown property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyDisplayUpsideDown(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the DisplayScrollText property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyDisplayScrollText(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the DisplayScrollText property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyDisplayScrollText(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the DisplaySleep property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyDisplaySleep(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the DisplaySleep property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyDisplaySleep(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the DisplayLedOff property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyDisplayLedOff(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the DisplayLedOff property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyDisplayLedOff(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the TerminalInputCode property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyTerminalInputCode(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the TerminalInputCode property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyTerminalInputCode(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the TerminalInputName property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyTerminalInputName(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the TerminalInputName property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyTerminalInputName(out string aValue);
+
+        /// <summary>
+        /// Set the value of the DisplayPixels property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyDisplayPixels(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the DisplayPixels property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyDisplayPixels(out string aValue);
+        
+    }
     /// <summary>
     /// Provider for the linn.co.uk:Ui:2 UPnP service
     /// </summary>

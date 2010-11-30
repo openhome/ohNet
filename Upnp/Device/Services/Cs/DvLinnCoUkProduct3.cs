@@ -5,6 +5,179 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderLinnCoUkProduct3 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the ProductType property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductType(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductType property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductType(out string aValue);
+
+        /// <summary>
+        /// Set the value of the ProductModel property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductModel(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductModel property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductModel(out string aValue);
+
+        /// <summary>
+        /// Set the value of the ProductName property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductName(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductName property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductName(out string aValue);
+
+        /// <summary>
+        /// Set the value of the ProductRoom property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductRoom(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductRoom property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductRoom(out string aValue);
+
+        /// <summary>
+        /// Set the value of the ProductStandby property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductStandby(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductStandby property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductStandby(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the ProductSourceIndex property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductSourceIndex(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductSourceIndex property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductSourceIndex(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the ProductSourceCount property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductSourceCount(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductSourceCount property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductSourceCount(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the ProductSourceXml property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductSourceXml(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductSourceXml property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductSourceXml(out string aValue);
+
+        /// <summary>
+        /// Set the value of the StartupSourceIndex property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyStartupSourceIndex(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the StartupSourceIndex property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyStartupSourceIndex(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the StartupSourceEnabled property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyStartupSourceEnabled(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the StartupSourceEnabled property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyStartupSourceEnabled(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the ProductAnySourceName property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductAnySourceName(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductAnySourceName property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductAnySourceName(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the ProductAnySourceVisible property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductAnySourceVisible(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductAnySourceVisible property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductAnySourceVisible(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the ProductAnySourceType property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductAnySourceType(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductAnySourceType property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductAnySourceType(out uint aValue);
+        
+    }
     /// <summary>
     /// Provider for the linn.co.uk:Product:3 UPnP service
     /// </summary>

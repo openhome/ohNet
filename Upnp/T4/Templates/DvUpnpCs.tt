@@ -11,7 +11,7 @@
 
     try
     {
-       version = Convert.ToUInt32(TemplateArgument("version"));
+        version = Convert.ToUInt32(TemplateArgument("version"));
     }
     catch (FormatException)
     {
@@ -56,6 +56,25 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface I<#=className#> : IDisposable
+    {
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+        /// <summary>
+        /// Set the value of the <#=s.name#> property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetProperty<#=s.name#>(<#=argtype[s.type]#> aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the <#=s.name#> property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetProperty<#=s.name#>(out <#=argtype[s.type]#> aValue);
+<#  } #>        
+    }
     /// <summary>
     /// Provider for the <#=domain#>:<#=type#>:<#=version#> UPnP service
     /// </summary>

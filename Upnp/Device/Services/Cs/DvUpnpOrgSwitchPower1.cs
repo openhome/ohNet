@@ -5,6 +5,23 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderUpnpOrgSwitchPower1 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the Status property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyStatus(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the Status property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyStatus(out bool aValue);
+        
+    }
     /// <summary>
     /// Provider for the upnp.org:SwitchPower:1 UPnP service
     /// </summary>
