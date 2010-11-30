@@ -3,6 +3,7 @@ import sys
 import subprocess
 import time
 import shutil
+import signal
 
 def build(aTarget):
     buildCmd = 'make -s '
