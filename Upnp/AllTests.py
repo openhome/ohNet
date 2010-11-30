@@ -193,7 +193,7 @@ def JsOnly():
 		devfinder_out = devfinder.communicate() 
 
 
-		#subprocess.call([Chrome, devfinder_out])
+		subprocess.call([Chrome, devfinder_out])
 
 		os.kill(testbasic.pid, signal.SIGTERM)
 
