@@ -113,6 +113,7 @@ Build(Environment['tool'],Module['cmd'],Arguments['args'])
 DummyXML()
 
 vgpath = "Upnp/vgout"
+xout = "Upnp/xout"
 
 def StripChars(charname):
 
@@ -127,7 +128,7 @@ def ParseValgrind(filename):
         doc = ET.parse(fullpath)
         errors = doc.findall('//error')
 
-        out = open(vgpath + '/' + "xunit-" + filename,"w")
+        out = open(xout + '/' + "vg-" + filename,"w")
         out.write('<?xml version="1.0" encoding="UTF-8"?>\n')
         out.write('<testsuite name="memcheck" tests="1" errors="0" failures="'+str(len(errors))+'" skip="0">\n')
         out.write('    <testcase classname="ValgrindMemoryCheck " \n')
@@ -199,11 +200,6 @@ valgrind_nightly = Environment['nightly_run']
 
 if valgrind_run != "0" and valgrind_nightly == "1":
         ParseDir()
-else:
-	os.mkdir(vgpath)
-	dummy = open("Upnp/vgout/xunit-dummy.xml", "w")
-	dummy.writelines('<?xml version="1.0" encoding="UTF-8"?><testsuite errors="0" failures="0" name="no-valgrind" tests="0"><testcase classname="no-valgrind" name="valgrind-off" time="0"></testcase></testsuite>')
-	dummy.close()
 
 def ArmTests(module, arch, nightly):
 
