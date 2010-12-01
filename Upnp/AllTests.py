@@ -161,6 +161,8 @@ gAllTests = [ TestCase('TestBuffer', [], True)
              ,TestCase('TestCpDeviceDvStd', [], True)
              ,TestCase('TestCpDeviceDvC', [], True)
              ,TestCase('TestProxyCs', [], False, False)
+             ,TestCase('TestDvDeviceCs', [], False, False)
+             ,TestCase('TestCpDeviceDvCs', [], False, False)
             ]
 
 def JsOnly():
