@@ -598,7 +598,7 @@ private:
     class Register
     {
     public:
-        Register(TChar* aName, TInt aValue) : iName(aName), iValue(aValue) {}
+        Register(const TChar* aName, TInt aValue) : iName(aName), iValue(aValue) {}
         const Brx& Name() const { return iName; }
         TInt Value() const { return iValue; }
     private:
