@@ -297,8 +297,9 @@ void OhmSender::SendAudio(const TByte* aData, TUint aBytes)
     
     TUint samples = aBytes * 8 / iChannels / iBitDepth;
     
-    OhmHeaderAudio headerAudio(false, 
+    OhmHeaderAudio headerAudio(false,  // halt
                                iLossless,
+                               false, // sync
                                samples,
                                iFrame,
                                iTimestamp,
@@ -313,7 +314,7 @@ void OhmSender::SendAudio(const TByte* aData, TUint aBytes)
                                iCodecName);
     
     OhmHeader header(OhmHeader::kMsgTypeAudio, headerAudio.MsgBytes());
-    
+
     WriterBuffer writer(iTxBuffer);
     
     writer.Flush();
@@ -327,6 +328,7 @@ void OhmSender::SendAudio(const TByte* aData, TUint aBytes)
         iSocket.WriteFlush();
     }
     catch (WriterError&) {
+	  	printf("Writer Error\n");
     }
     
     iSampleStart += samples;
@@ -578,7 +580,7 @@ void OhmSender::UpdateChannel()
     iEndpoint.SetAddress(Arch::BigEndian4(address));
     iEndpoint.SetPort(Ohm::kPort);
 
-    iUri.Replace("mpus://");
+    iUri.Replace("ohm://");
     Ascii::AppendDec(iUri, (address >> 24 & 0xff));
     iUri.Append('.');
     Ascii::AppendDec(iUri, (address >> 16 & 0xff));
@@ -599,7 +601,7 @@ void OhmSender::UpdateMetadata()
     iMetadata.Append("<dc:title>");
     iMetadata.Append(iName);
     iMetadata.Append("</dc:title>");
-    iMetadata.Append("<res protocolInfo=\"mpus:*:*:*\">");
+    iMetadata.Append("<res protocolInfo=\"ohm:*:*:*\">");
     iMetadata.Append(iUri);
     iMetadata.Append("</res>");
     iMetadata.Append("<upnp:class>object.item.audioItem</upnp:class>");

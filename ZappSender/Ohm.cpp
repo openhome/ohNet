@@ -319,6 +319,7 @@ OhmHeaderAudio::OhmHeaderAudio()
 
 OhmHeaderAudio::OhmHeaderAudio(TBool aHalt, 
                                TBool aLossless,
+                               TBool aSync,
                                TUint aSamples,
                                TUint aFrame,
                                TUint aTxTimestampPrev,
@@ -333,6 +334,7 @@ OhmHeaderAudio::OhmHeaderAudio(TBool aHalt,
                                const Brx& aCodecName)
     : iHalt(aHalt)
     , iLossless(aLossless)
+    , iSync(aSync)
     , iSamples(aSamples)
     , iFrame(aFrame)
     , iTxTimestampPrev(aTxTimestampPrev)
