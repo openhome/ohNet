@@ -38,7 +38,7 @@ class WavSender
 {
 public:
 	static const TUint kPeriodMs = 5;
-	static const TUint kSpeedNormal = 106;
+	static const TUint kSpeedNormal = 100;
     static const TUint kSpeedMin = 75;
 	static const TUint kSpeedMax = 150;
 	static const TUint kMaxPacketBytes = 4096;
