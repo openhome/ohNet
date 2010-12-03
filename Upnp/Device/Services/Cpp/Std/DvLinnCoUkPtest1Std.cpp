@@ -9,7 +9,7 @@ using namespace Zapp;
 DvProviderLinnCoUkPtest1Cpp::DvProviderLinnCoUkPtest1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Ptest", 1)
 {
-    Functor empty;
+    
 }
 
 void DvProviderLinnCoUkPtest1Cpp::EnableActionTestComPort()

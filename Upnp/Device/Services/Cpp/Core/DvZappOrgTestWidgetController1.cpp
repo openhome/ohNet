@@ -9,7 +9,7 @@ using namespace Zapp;
 DvProviderZappOrgTestWidgetController1::DvProviderZappOrgTestWidgetController1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "zapp.org", "TestWidgetController", 1)
 {
-    Functor empty;
+    
 }
 
 void DvProviderZappOrgTestWidgetController1::EnableActionCreateWidget()

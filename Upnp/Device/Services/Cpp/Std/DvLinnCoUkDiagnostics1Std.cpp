@@ -19,8 +19,8 @@ void DvProviderLinnCoUkDiagnostics1Cpp::GetPropertyaStateVariable(uint32_t& aVal
 DvProviderLinnCoUkDiagnostics1Cpp::DvProviderLinnCoUkDiagnostics1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Diagnostics", 1)
 {
-    Functor empty;
-    iPropertyaStateVariable = new PropertyUint(new ParameterUint("aStateVariable"), empty);
+    
+    iPropertyaStateVariable = new PropertyUint(new ParameterUint("aStateVariable"));
     iService->AddProperty(iPropertyaStateVariable); // passes ownership
 }
 

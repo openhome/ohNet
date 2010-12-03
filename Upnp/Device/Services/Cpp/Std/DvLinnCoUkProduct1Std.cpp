@@ -31,10 +31,10 @@ void DvProviderLinnCoUkProduct1Cpp::GetPropertyStandby(bool& aValue)
 DvProviderLinnCoUkProduct1Cpp::DvProviderLinnCoUkProduct1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Product", 1)
 {
-    Functor empty;
-    iPropertyRoom = new PropertyString(new ParameterString("Room"), empty);
+    
+    iPropertyRoom = new PropertyString(new ParameterString("Room"));
     iService->AddProperty(iPropertyRoom); // passes ownership
-    iPropertyStandby = new PropertyBool(new ParameterBool("Standby"), empty);
+    iPropertyStandby = new PropertyBool(new ParameterBool("Standby"));
     iService->AddProperty(iPropertyStandby); // passes ownership
 }
 

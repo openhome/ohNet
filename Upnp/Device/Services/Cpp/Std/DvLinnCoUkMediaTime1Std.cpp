@@ -19,8 +19,8 @@ void DvProviderLinnCoUkMediaTime1Cpp::GetPropertySeconds(uint32_t& aValue)
 DvProviderLinnCoUkMediaTime1Cpp::DvProviderLinnCoUkMediaTime1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "MediaTime", 1)
 {
-    Functor empty;
-    iPropertySeconds = new PropertyUint(new ParameterUint("Seconds"), empty);
+    
+    iPropertySeconds = new PropertyUint(new ParameterUint("Seconds"));
     iService->AddProperty(iPropertySeconds); // passes ownership
 }
 

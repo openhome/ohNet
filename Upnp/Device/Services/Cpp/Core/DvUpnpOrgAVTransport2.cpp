@@ -29,15 +29,15 @@ void DvProviderUpnpOrgAVTransport2::GetPropertyDRMState(Brhz& aValue)
 DvProviderUpnpOrgAVTransport2::DvProviderUpnpOrgAVTransport2(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "AVTransport", 2)
 {
-    Functor empty;
+    
     TChar** allowedValues;
     TUint index;
-    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"), empty);
+    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
     index = 0;
     allowedValues = new TChar*[1];
     allowedValues[index++] = (TChar*)"OK";
-    iPropertyDRMState = new PropertyString(new ParameterString("DRMState", allowedValues, 1), empty);
+    iPropertyDRMState = new PropertyString(new ParameterString("DRMState", allowedValues, 1));
     delete[] allowedValues;
     iService->AddProperty(iPropertyDRMState); // passes ownership
 }

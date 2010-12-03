@@ -261,6 +261,24 @@ Property::Property(Zapp::Parameter* aParameter, Functor& aFunctor)
     ASSERT(iParameter->Type() != Zapp::Parameter::eTypeRelated);
 }
 
+Property::Property(Zapp::Parameter* aParameter)
+    : iParameter(aParameter)
+	, iChanged(true)
+	, iSequenceNumber(0)
+{
+    ASSERT(iParameter != NULL);
+    ASSERT(iParameter->Type() != Zapp::Parameter::eTypeRelated);
+}
+
+void Property::Construct(Zapp::Parameter* aParameter)
+{
+    iParameter = aParameter;
+	iChanged = true;
+	iSequenceNumber = 0;
+    ASSERT(iParameter != NULL);
+    ASSERT(iParameter->Type() != Zapp::Parameter::eTypeRelated);
+}
+
 Property::~Property()
 {
     delete iParameter;
@@ -274,8 +292,8 @@ PropertyString::PropertyString(const TChar* aName, Functor& aFunctor)
 {
 }
 
-PropertyString::PropertyString(Zapp::Parameter* aParameter, Functor& aFunctor)
-    : Property(aParameter, aFunctor)
+PropertyString::PropertyString(Zapp::Parameter* aParameter)
+    : Property(aParameter)
 {
 }
 
@@ -324,8 +342,8 @@ PropertyInt::PropertyInt(const TChar* aName, Functor& aFunctor)
 {
 }
 
-PropertyInt::PropertyInt(Zapp::Parameter* aParameter, Functor& aFunctor)
-    : Property(aParameter, aFunctor)
+PropertyInt::PropertyInt(Zapp::Parameter* aParameter)
+    : Property(aParameter)
 {
 }
 
@@ -376,8 +394,8 @@ PropertyUint::PropertyUint(const TChar* aName, Functor& aFunctor)
 {
 }
 
-PropertyUint::PropertyUint(Zapp::Parameter* aParameter, Functor& aFunctor)
-    : Property(aParameter, aFunctor)
+PropertyUint::PropertyUint(Zapp::Parameter* aParameter)
+    : Property(aParameter)
 {
 }
 
@@ -428,8 +446,8 @@ PropertyBool::PropertyBool(const TChar* aName, Functor& aFunctor)
 {
 }
 
-PropertyBool::PropertyBool(Zapp::Parameter* aParameter, Functor& aFunctor)
-    : Property(aParameter, aFunctor)
+PropertyBool::PropertyBool(Zapp::Parameter* aParameter)
+    : Property(aParameter)
 {
 }
 
@@ -480,8 +498,8 @@ PropertyBinary::PropertyBinary(const TChar* aName, Functor& aFunctor)
 {
 }
 
-PropertyBinary::PropertyBinary(Zapp::Parameter* aParameter, Functor& aFunctor)
-    : Property(aParameter, aFunctor)
+PropertyBinary::PropertyBinary(Zapp::Parameter* aParameter)
+    : Property(aParameter)
 {
 }
 

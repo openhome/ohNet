@@ -9,7 +9,7 @@ using namespace Zapp;
 DvProviderLinnCoUkDebug2::DvProviderLinnCoUkDebug2(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Debug", 2)
 {
-    Functor empty;
+    
 }
 
 void DvProviderLinnCoUkDebug2::EnableActionSetDebugLevel()
