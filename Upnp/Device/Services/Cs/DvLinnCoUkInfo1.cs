@@ -5,10 +5,170 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderLinnCoUkInfo1 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the TrackCount property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyTrackCount(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the TrackCount property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyTrackCount(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the DetailsCount property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyDetailsCount(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the DetailsCount property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyDetailsCount(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the MetatextCount property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyMetatextCount(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the MetatextCount property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyMetatextCount(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the Uri property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyUri(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the Uri property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyUri(out string aValue);
+
+        /// <summary>
+        /// Set the value of the Metadata property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyMetadata(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the Metadata property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyMetadata(out string aValue);
+
+        /// <summary>
+        /// Set the value of the Duration property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyDuration(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the Duration property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyDuration(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the BitRate property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyBitRate(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the BitRate property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyBitRate(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the BitDepth property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyBitDepth(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the BitDepth property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyBitDepth(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the SampleRate property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertySampleRate(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the SampleRate property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertySampleRate(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the Lossless property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyLossless(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the Lossless property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyLossless(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the CodecName property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyCodecName(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the CodecName property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyCodecName(out string aValue);
+
+        /// <summary>
+        /// Set the value of the Metatext property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyMetatext(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the Metatext property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyMetatext(out string aValue);
+        
+    }
     /// <summary>
     /// Provider for the linn.co.uk:Info:1 UPnP service
     /// </summary>
-    public class DvProviderLinnCoUkInfo1 : DvProvider, IDisposable
+    public class DvProviderLinnCoUkInfo1 : DvProvider, IDisposable, IDvProviderLinnCoUkInfo1
     {
         [DllImport("DvLinnCoUkInfo1")]
         static extern uint DvProviderLinnCoUkInfo1Create(uint aDeviceHandle);
@@ -116,7 +276,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyTrackCount(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkInfo1GetPropertyTrackCount(iHandle, value);
             }
         }
@@ -143,7 +303,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyDetailsCount(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkInfo1GetPropertyDetailsCount(iHandle, value);
             }
         }
@@ -170,7 +330,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyMetatextCount(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkInfo1GetPropertyMetatextCount(iHandle, value);
             }
         }
@@ -257,7 +417,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyDuration(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkInfo1GetPropertyDuration(iHandle, value);
             }
         }
@@ -284,7 +444,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyBitRate(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkInfo1GetPropertyBitRate(iHandle, value);
             }
         }
@@ -311,7 +471,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyBitDepth(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkInfo1GetPropertyBitDepth(iHandle, value);
             }
         }
@@ -338,7 +498,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertySampleRate(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkInfo1GetPropertySampleRate(iHandle, value);
             }
         }

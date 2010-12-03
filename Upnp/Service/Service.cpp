@@ -289,13 +289,6 @@ const Brx& PropertyString::Value() const
     return iValue;
 }
 
-void PropertyString::TransferTo(Brh& aBrh)
-{
-    Stack::Mutex().Wait();
-    iValue.TransferTo(aBrh);
-    Stack::Mutex().Signal();
-}
-
 void PropertyString::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)
 {
     AutoMutex a(Stack::Mutex());
@@ -500,13 +493,6 @@ const Brx& PropertyBinary::Value() const
 {
     AutoMutex a(Stack::Mutex());
     return iValue;
-}
-
-void PropertyBinary::TransferTo(Brh& aBrh)
-{
-    Stack::Mutex().Wait();
-    iValue.TransferTo(aBrh);
-    Stack::Mutex().Signal();
 }
 
 void PropertyBinary::Process(IOutputProcessor& aProcessor, const Brx& aBuffer)

@@ -5,10 +5,131 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderLinnCoUkDs1 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the SupportedProtocols property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertySupportedProtocols(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the SupportedProtocols property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertySupportedProtocols(out string aValue);
+
+        /// <summary>
+        /// Set the value of the TrackDuration property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyTrackDuration(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the TrackDuration property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyTrackDuration(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the TrackBitRate property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyTrackBitRate(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the TrackBitRate property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyTrackBitRate(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the TrackLossless property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyTrackLossless(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the TrackLossless property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyTrackLossless(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the TrackBitDepth property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyTrackBitDepth(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the TrackBitDepth property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyTrackBitDepth(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the TrackSampleRate property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyTrackSampleRate(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the TrackSampleRate property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyTrackSampleRate(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the TrackCodecName property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyTrackCodecName(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the TrackCodecName property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyTrackCodecName(out string aValue);
+
+        /// <summary>
+        /// Set the value of the TrackId property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyTrackId(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the TrackId property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyTrackId(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the TransportState property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyTransportState(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the TransportState property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyTransportState(out string aValue);
+        
+    }
     /// <summary>
     /// Provider for the linn.co.uk:Ds:1 UPnP service
     /// </summary>
-    public class DvProviderLinnCoUkDs1 : DvProvider, IDisposable
+    public class DvProviderLinnCoUkDs1 : DvProvider, IDisposable, IDvProviderLinnCoUkDs1
     {
         [DllImport("DvLinnCoUkDs1")]
         static extern uint DvProviderLinnCoUkDs1Create(uint aDeviceHandle);
@@ -158,7 +279,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyTrackDuration(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkDs1GetPropertyTrackDuration(iHandle, value);
             }
         }
@@ -185,7 +306,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyTrackBitRate(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkDs1GetPropertyTrackBitRate(iHandle, value);
             }
         }
@@ -239,7 +360,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyTrackBitDepth(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkDs1GetPropertyTrackBitDepth(iHandle, value);
             }
         }
@@ -266,7 +387,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyTrackSampleRate(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkDs1GetPropertyTrackSampleRate(iHandle, value);
             }
         }
@@ -323,7 +444,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyTrackId(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkDs1GetPropertyTrackId(iHandle, value);
             }
         }

@@ -5,10 +5,14 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderLinnCoUkVolkano1 : IDisposable
+    {
+        
+    }
     /// <summary>
     /// Provider for the linn.co.uk:Volkano:1 UPnP service
     /// </summary>
-    public class DvProviderLinnCoUkVolkano1 : DvProvider, IDisposable
+    public class DvProviderLinnCoUkVolkano1 : DvProvider, IDisposable, IDvProviderLinnCoUkVolkano1
     {
         [DllImport("DvLinnCoUkVolkano1")]
         static extern uint DvProviderLinnCoUkVolkano1Create(uint aDeviceHandle);

@@ -5,10 +5,79 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderUpnpOrgDimming1 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the LoadLevelStatus property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyLoadLevelStatus(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the LoadLevelStatus property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyLoadLevelStatus(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the StepDelta property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyStepDelta(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the StepDelta property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyStepDelta(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the RampRate property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyRampRate(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the RampRate property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyRampRate(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the IsRamping property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyIsRamping(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the IsRamping property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyIsRamping(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the RampPaused property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyRampPaused(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the RampPaused property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyRampPaused(out bool aValue);
+        
+    }
     /// <summary>
     /// Provider for the upnp.org:Dimming:1 UPnP service
     /// </summary>
-    public class DvProviderUpnpOrgDimming1 : DvProvider, IDisposable
+    public class DvProviderUpnpOrgDimming1 : DvProvider, IDisposable, IDvProviderUpnpOrgDimming1
     {
         [DllImport("DvUpnpOrgDimming1")]
         static extern uint DvProviderUpnpOrgDimming1Create(uint aDeviceHandle);
@@ -156,7 +225,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyLoadLevelStatus(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderUpnpOrgDimming1GetPropertyLoadLevelStatus(iHandle, value);
             }
         }
@@ -183,7 +252,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyStepDelta(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderUpnpOrgDimming1GetPropertyStepDelta(iHandle, value);
             }
         }
@@ -210,7 +279,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyRampRate(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderUpnpOrgDimming1GetPropertyRampRate(iHandle, value);
             }
         }

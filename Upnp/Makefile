@@ -117,3 +117,16 @@ uninstall-libs :
 uninstall-includes :
 	rm -rf $(installincludedir)
 
+docs:
+	rm -rf Build/Docs
+	mkdir -p Build/Docs
+	mkdir -p Build/Docs/C
+	doxygen DoxyfileC
+	mkdir -p Build/Docs/CppCore
+	doxygen DoxyfileCppCore
+	mkdir -p Build/Docs/CppStd
+	doxygen DoxyfileCppStd
+	mkdir -p Build/Docs/Cs
+	doxygen DoxyfileCs
+	mkdir -p Build/Docs/Js
+	perl ./JsDoc/jsdoc.pl -d Build/Docs/Js ControlPoint/Services/Js

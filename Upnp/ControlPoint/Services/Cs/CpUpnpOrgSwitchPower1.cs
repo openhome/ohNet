@@ -21,6 +21,9 @@ namespace Zapp.ControlPoint.Proxies
         void PropertyStatus(out bool aStatus);
     }
 
+    /// <summary>
+    /// Proxy for the upnp.org:SwitchPower:1 UPnP service
+    /// </summary>
     public class CpProxyUpnpOrgSwitchPower1 : CpProxy, IDisposable, ICpProxyUpnpOrgSwitchPower1
     {
         [DllImport("CpUpnpOrgSwitchPower1")]
@@ -75,10 +78,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="anewTargetValue"></param>
         public unsafe void SyncSetTarget(bool anewTargetValue)
         {
-			uint newTargetValue = (anewTargetValue? 1u : 0u);
-			{
-				CpProxyUpnpOrgSwitchPower1SyncSetTarget(iHandle, newTargetValue);
-			}
+            uint newTargetValue = (anewTargetValue? 1u : 0u);
+            {
+                CpProxyUpnpOrgSwitchPower1SyncSetTarget(iHandle, newTargetValue);
+            }
         }
 
         /// <summary>
@@ -92,7 +95,7 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetTarget(bool anewTargetValue, CallbackAsyncComplete aCallback)
         {
-			uint newTargetValue = (anewTargetValue? 1u : 0u);
+            uint newTargetValue = (anewTargetValue? 1u : 0u);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgSwitchPower1BeginSetTarget(iHandle, newTargetValue, iActionComplete, ptr);
@@ -105,12 +108,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetTarget(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgSwitchPower1EndSetTarget(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgSwitchPower1EndSetTarget(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -121,11 +124,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRetTargetValue"></param>
         public unsafe void SyncGetTarget(out bool aRetTargetValue)
         {
-			uint retTargetValue;
-			{
-				CpProxyUpnpOrgSwitchPower1SyncGetTarget(iHandle, &retTargetValue);
-			}
-			aRetTargetValue = (retTargetValue != 0);
+            uint retTargetValue;
+            {
+                CpProxyUpnpOrgSwitchPower1SyncGetTarget(iHandle, &retTargetValue);
+            }
+            aRetTargetValue = (retTargetValue != 0);
         }
 
         /// <summary>
@@ -151,14 +154,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRetTargetValue"></param>
         public unsafe void EndGetTarget(uint aAsyncHandle, out bool aRetTargetValue)
         {
-			uint retTargetValue;
-			{
-				if (0 != CpProxyUpnpOrgSwitchPower1EndGetTarget(iHandle, aAsyncHandle, &retTargetValue))
-				{
-					throw(new ProxyError());
-				}
-			}
-			aRetTargetValue = (retTargetValue != 0);
+            uint retTargetValue;
+            {
+                if (0 != CpProxyUpnpOrgSwitchPower1EndGetTarget(iHandle, aAsyncHandle, &retTargetValue))
+                {
+                    throw(new ProxyError());
+                }
+            }
+            aRetTargetValue = (retTargetValue != 0);
         }
 
         /// <summary>
@@ -169,11 +172,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aResultStatus"></param>
         public unsafe void SyncGetStatus(out bool aResultStatus)
         {
-			uint resultStatus;
-			{
-				CpProxyUpnpOrgSwitchPower1SyncGetStatus(iHandle, &resultStatus);
-			}
-			aResultStatus = (resultStatus != 0);
+            uint resultStatus;
+            {
+                CpProxyUpnpOrgSwitchPower1SyncGetStatus(iHandle, &resultStatus);
+            }
+            aResultStatus = (resultStatus != 0);
         }
 
         /// <summary>
@@ -199,14 +202,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aResultStatus"></param>
         public unsafe void EndGetStatus(uint aAsyncHandle, out bool aResultStatus)
         {
-			uint resultStatus;
-			{
-				if (0 != CpProxyUpnpOrgSwitchPower1EndGetStatus(iHandle, aAsyncHandle, &resultStatus))
-				{
-					throw(new ProxyError());
-				}
-			}
-			aResultStatus = (resultStatus != 0);
+            uint resultStatus;
+            {
+                if (0 != CpProxyUpnpOrgSwitchPower1EndGetStatus(iHandle, aAsyncHandle, &resultStatus))
+                {
+                    throw(new ProxyError());
+                }
+            }
+            aResultStatus = (resultStatus != 0);
         }
 
         /// <summary>
@@ -235,13 +238,13 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aStatus">Will be set to the value of the property</param>
         public unsafe void PropertyStatus(out bool aStatus)
         {
-			uint status;
-	        CpProxyUpnpOrgSwitchPower1PropertyStatus(iHandle, &status);
-			aStatus = (status != 0);
+            uint status;
+            CpProxyUpnpOrgSwitchPower1PropertyStatus(iHandle, &status);
+            aStatus = (status != 0);
         }
 
         /// <summary>

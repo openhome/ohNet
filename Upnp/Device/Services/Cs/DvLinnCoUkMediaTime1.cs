@@ -5,10 +5,27 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderLinnCoUkMediaTime1 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the Seconds property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertySeconds(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the Seconds property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertySeconds(out uint aValue);
+        
+    }
     /// <summary>
     /// Provider for the linn.co.uk:MediaTime:1 UPnP service
     /// </summary>
-    public class DvProviderLinnCoUkMediaTime1 : DvProvider, IDisposable
+    public class DvProviderLinnCoUkMediaTime1 : DvProvider, IDisposable, IDvProviderLinnCoUkMediaTime1
     {
         [DllImport("DvLinnCoUkMediaTime1")]
         static extern uint DvProviderLinnCoUkMediaTime1Create(uint aDeviceHandle);
@@ -60,7 +77,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertySeconds(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkMediaTime1GetPropertySeconds(iHandle, value);
             }
         }

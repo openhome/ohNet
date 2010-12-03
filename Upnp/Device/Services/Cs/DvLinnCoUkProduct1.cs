@@ -5,10 +5,40 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderLinnCoUkProduct1 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the Room property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyRoom(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the Room property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyRoom(out string aValue);
+
+        /// <summary>
+        /// Set the value of the Standby property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyStandby(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the Standby property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyStandby(out bool aValue);
+        
+    }
     /// <summary>
     /// Provider for the linn.co.uk:Product:1 UPnP service
     /// </summary>
-    public class DvProviderLinnCoUkProduct1 : DvProvider, IDisposable
+    public class DvProviderLinnCoUkProduct1 : DvProvider, IDisposable, IDvProviderLinnCoUkProduct1
     {
         [DllImport("DvLinnCoUkProduct1")]
         static extern uint DvProviderLinnCoUkProduct1Create(uint aDeviceHandle);

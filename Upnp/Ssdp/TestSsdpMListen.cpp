@@ -228,11 +228,13 @@ void SuiteListen::Test()
     SsdpNotifyLogger notifyLogger;
     MSearchLogger msearchLogger;
     SsdpListenerMulticast mListener(NetworkIf(iInterfaceIndex));
-    (void)mListener.AddNotifyHandler(&notifyLogger);
-    (void)mListener.AddMsearchHandler(&msearchLogger);
+    TInt notifyId = mListener.AddNotifyHandler(&notifyLogger);
+    TInt msearchId = mListener.AddMsearchHandler(&msearchLogger);
     mListener.Start();
     iTimer->FireIn(iDuration);
     iSem.Wait();
+    mListener.RemoveNotifyHandler(notifyId);
+    mListener.RemoveMsearchHandler(msearchId);
 }
 
 void SuiteListen::TimerExpired()

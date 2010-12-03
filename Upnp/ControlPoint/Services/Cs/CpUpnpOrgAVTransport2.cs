@@ -77,6 +77,9 @@ namespace Zapp.ControlPoint.Proxies
         void PropertyDRMState(out string aDRMState);
     }
 
+    /// <summary>
+    /// Proxy for the upnp.org:AVTransport:2 UPnP service
+    /// </summary>
     public class CpProxyUpnpOrgAVTransport2 : CpProxy, IDisposable, ICpProxyUpnpOrgAVTransport2
     {
         [DllImport("CpUpnpOrgAVTransport2")]
@@ -247,13 +250,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aCurrentURIMetaData"></param>
         public unsafe void SyncSetAVTransportURI(uint aInstanceID, string aCurrentURI, string aCurrentURIMetaData)
         {
-			char* currentURI = (char*)Marshal.StringToHGlobalAnsi(aCurrentURI);
-			char* currentURIMetaData = (char*)Marshal.StringToHGlobalAnsi(aCurrentURIMetaData);
-			{
-				CpProxyUpnpOrgAVTransport2SyncSetAVTransportURI(iHandle, aInstanceID, currentURI, currentURIMetaData);
-			}
-			Marshal.FreeHGlobal((IntPtr)currentURI);
-			Marshal.FreeHGlobal((IntPtr)currentURIMetaData);
+            char* currentURI = (char*)Marshal.StringToHGlobalAnsi(aCurrentURI);
+            char* currentURIMetaData = (char*)Marshal.StringToHGlobalAnsi(aCurrentURIMetaData);
+            {
+                CpProxyUpnpOrgAVTransport2SyncSetAVTransportURI(iHandle, aInstanceID, currentURI, currentURIMetaData);
+            }
+            Marshal.FreeHGlobal((IntPtr)currentURI);
+            Marshal.FreeHGlobal((IntPtr)currentURIMetaData);
         }
 
         /// <summary>
@@ -269,13 +272,13 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetAVTransportURI(uint aInstanceID, string aCurrentURI, string aCurrentURIMetaData, CallbackAsyncComplete aCallback)
         {
-			char* currentURI = (char*)Marshal.StringToHGlobalAnsi(aCurrentURI);
-			char* currentURIMetaData = (char*)Marshal.StringToHGlobalAnsi(aCurrentURIMetaData);
+            char* currentURI = (char*)Marshal.StringToHGlobalAnsi(aCurrentURI);
+            char* currentURIMetaData = (char*)Marshal.StringToHGlobalAnsi(aCurrentURIMetaData);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgAVTransport2BeginSetAVTransportURI(iHandle, aInstanceID, currentURI, currentURIMetaData, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)currentURI);
-			Marshal.FreeHGlobal((IntPtr)currentURIMetaData);
+            Marshal.FreeHGlobal((IntPtr)currentURI);
+            Marshal.FreeHGlobal((IntPtr)currentURIMetaData);
         }
 
         /// <summary>
@@ -285,12 +288,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetAVTransportURI(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgAVTransport2EndSetAVTransportURI(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgAVTransport2EndSetAVTransportURI(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -303,13 +306,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aNextURIMetaData"></param>
         public unsafe void SyncSetNextAVTransportURI(uint aInstanceID, string aNextURI, string aNextURIMetaData)
         {
-			char* nextURI = (char*)Marshal.StringToHGlobalAnsi(aNextURI);
-			char* nextURIMetaData = (char*)Marshal.StringToHGlobalAnsi(aNextURIMetaData);
-			{
-				CpProxyUpnpOrgAVTransport2SyncSetNextAVTransportURI(iHandle, aInstanceID, nextURI, nextURIMetaData);
-			}
-			Marshal.FreeHGlobal((IntPtr)nextURI);
-			Marshal.FreeHGlobal((IntPtr)nextURIMetaData);
+            char* nextURI = (char*)Marshal.StringToHGlobalAnsi(aNextURI);
+            char* nextURIMetaData = (char*)Marshal.StringToHGlobalAnsi(aNextURIMetaData);
+            {
+                CpProxyUpnpOrgAVTransport2SyncSetNextAVTransportURI(iHandle, aInstanceID, nextURI, nextURIMetaData);
+            }
+            Marshal.FreeHGlobal((IntPtr)nextURI);
+            Marshal.FreeHGlobal((IntPtr)nextURIMetaData);
         }
 
         /// <summary>
@@ -325,13 +328,13 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetNextAVTransportURI(uint aInstanceID, string aNextURI, string aNextURIMetaData, CallbackAsyncComplete aCallback)
         {
-			char* nextURI = (char*)Marshal.StringToHGlobalAnsi(aNextURI);
-			char* nextURIMetaData = (char*)Marshal.StringToHGlobalAnsi(aNextURIMetaData);
+            char* nextURI = (char*)Marshal.StringToHGlobalAnsi(aNextURI);
+            char* nextURIMetaData = (char*)Marshal.StringToHGlobalAnsi(aNextURIMetaData);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgAVTransport2BeginSetNextAVTransportURI(iHandle, aInstanceID, nextURI, nextURIMetaData, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)nextURI);
-			Marshal.FreeHGlobal((IntPtr)nextURIMetaData);
+            Marshal.FreeHGlobal((IntPtr)nextURI);
+            Marshal.FreeHGlobal((IntPtr)nextURIMetaData);
         }
 
         /// <summary>
@@ -341,12 +344,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetNextAVTransportURI(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgAVTransport2EndSetNextAVTransportURI(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgAVTransport2EndSetNextAVTransportURI(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -366,18 +369,18 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aWriteStatus"></param>
         public unsafe void SyncGetMediaInfo(uint aInstanceID, out uint aNrTracks, out string aMediaDuration, out string aCurrentURI, out string aCurrentURIMetaData, out string aNextURI, out string aNextURIMetaData, out string aPlayMedium, out string aRecordMedium, out string aWriteStatus)
         {
-			char* mediaDuration;
-			char* currentURI;
-			char* currentURIMetaData;
-			char* nextURI;
-			char* nextURIMetaData;
-			char* playMedium;
-			char* recordMedium;
-			char* writeStatus;
-			fixed (uint* nrTracks = &aNrTracks)
-			{
-				CpProxyUpnpOrgAVTransport2SyncGetMediaInfo(iHandle, aInstanceID, nrTracks, &mediaDuration, &currentURI, &currentURIMetaData, &nextURI, &nextURIMetaData, &playMedium, &recordMedium, &writeStatus);
-			}
+            char* mediaDuration;
+            char* currentURI;
+            char* currentURIMetaData;
+            char* nextURI;
+            char* nextURIMetaData;
+            char* playMedium;
+            char* recordMedium;
+            char* writeStatus;
+            fixed (uint* nrTracks = &aNrTracks)
+            {
+                CpProxyUpnpOrgAVTransport2SyncGetMediaInfo(iHandle, aInstanceID, nrTracks, &mediaDuration, &currentURI, &currentURIMetaData, &nextURI, &nextURIMetaData, &playMedium, &recordMedium, &writeStatus);
+            }
             aMediaDuration = Marshal.PtrToStringAnsi((IntPtr)mediaDuration);
             ZappFree(mediaDuration);
             aCurrentURI = Marshal.PtrToStringAnsi((IntPtr)currentURI);
@@ -428,21 +431,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aWriteStatus"></param>
         public unsafe void EndGetMediaInfo(uint aAsyncHandle, out uint aNrTracks, out string aMediaDuration, out string aCurrentURI, out string aCurrentURIMetaData, out string aNextURI, out string aNextURIMetaData, out string aPlayMedium, out string aRecordMedium, out string aWriteStatus)
         {
-			char* mediaDuration;
-			char* currentURI;
-			char* currentURIMetaData;
-			char* nextURI;
-			char* nextURIMetaData;
-			char* playMedium;
-			char* recordMedium;
-			char* writeStatus;
-			fixed (uint* nrTracks = &aNrTracks)
-			{
-				if (0 != CpProxyUpnpOrgAVTransport2EndGetMediaInfo(iHandle, aAsyncHandle, nrTracks, &mediaDuration, &currentURI, &currentURIMetaData, &nextURI, &nextURIMetaData, &playMedium, &recordMedium, &writeStatus))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* mediaDuration;
+            char* currentURI;
+            char* currentURIMetaData;
+            char* nextURI;
+            char* nextURIMetaData;
+            char* playMedium;
+            char* recordMedium;
+            char* writeStatus;
+            fixed (uint* nrTracks = &aNrTracks)
+            {
+                if (0 != CpProxyUpnpOrgAVTransport2EndGetMediaInfo(iHandle, aAsyncHandle, nrTracks, &mediaDuration, &currentURI, &currentURIMetaData, &nextURI, &nextURIMetaData, &playMedium, &recordMedium, &writeStatus))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aMediaDuration = Marshal.PtrToStringAnsi((IntPtr)mediaDuration);
             ZappFree(mediaDuration);
             aCurrentURI = Marshal.PtrToStringAnsi((IntPtr)currentURI);
@@ -479,19 +482,19 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aWriteStatus"></param>
         public unsafe void SyncGetMediaInfo_Ext(uint aInstanceID, out string aCurrentType, out uint aNrTracks, out string aMediaDuration, out string aCurrentURI, out string aCurrentURIMetaData, out string aNextURI, out string aNextURIMetaData, out string aPlayMedium, out string aRecordMedium, out string aWriteStatus)
         {
-			char* currentType;
-			char* mediaDuration;
-			char* currentURI;
-			char* currentURIMetaData;
-			char* nextURI;
-			char* nextURIMetaData;
-			char* playMedium;
-			char* recordMedium;
-			char* writeStatus;
-			fixed (uint* nrTracks = &aNrTracks)
-			{
-				CpProxyUpnpOrgAVTransport2SyncGetMediaInfo_Ext(iHandle, aInstanceID, &currentType, nrTracks, &mediaDuration, &currentURI, &currentURIMetaData, &nextURI, &nextURIMetaData, &playMedium, &recordMedium, &writeStatus);
-			}
+            char* currentType;
+            char* mediaDuration;
+            char* currentURI;
+            char* currentURIMetaData;
+            char* nextURI;
+            char* nextURIMetaData;
+            char* playMedium;
+            char* recordMedium;
+            char* writeStatus;
+            fixed (uint* nrTracks = &aNrTracks)
+            {
+                CpProxyUpnpOrgAVTransport2SyncGetMediaInfo_Ext(iHandle, aInstanceID, &currentType, nrTracks, &mediaDuration, &currentURI, &currentURIMetaData, &nextURI, &nextURIMetaData, &playMedium, &recordMedium, &writeStatus);
+            }
             aCurrentType = Marshal.PtrToStringAnsi((IntPtr)currentType);
             ZappFree(currentType);
             aMediaDuration = Marshal.PtrToStringAnsi((IntPtr)mediaDuration);
@@ -545,22 +548,22 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aWriteStatus"></param>
         public unsafe void EndGetMediaInfo_Ext(uint aAsyncHandle, out string aCurrentType, out uint aNrTracks, out string aMediaDuration, out string aCurrentURI, out string aCurrentURIMetaData, out string aNextURI, out string aNextURIMetaData, out string aPlayMedium, out string aRecordMedium, out string aWriteStatus)
         {
-			char* currentType;
-			char* mediaDuration;
-			char* currentURI;
-			char* currentURIMetaData;
-			char* nextURI;
-			char* nextURIMetaData;
-			char* playMedium;
-			char* recordMedium;
-			char* writeStatus;
-			fixed (uint* nrTracks = &aNrTracks)
-			{
-				if (0 != CpProxyUpnpOrgAVTransport2EndGetMediaInfo_Ext(iHandle, aAsyncHandle, &currentType, nrTracks, &mediaDuration, &currentURI, &currentURIMetaData, &nextURI, &nextURIMetaData, &playMedium, &recordMedium, &writeStatus))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* currentType;
+            char* mediaDuration;
+            char* currentURI;
+            char* currentURIMetaData;
+            char* nextURI;
+            char* nextURIMetaData;
+            char* playMedium;
+            char* recordMedium;
+            char* writeStatus;
+            fixed (uint* nrTracks = &aNrTracks)
+            {
+                if (0 != CpProxyUpnpOrgAVTransport2EndGetMediaInfo_Ext(iHandle, aAsyncHandle, &currentType, nrTracks, &mediaDuration, &currentURI, &currentURIMetaData, &nextURI, &nextURIMetaData, &playMedium, &recordMedium, &writeStatus))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aCurrentType = Marshal.PtrToStringAnsi((IntPtr)currentType);
             ZappFree(currentType);
             aMediaDuration = Marshal.PtrToStringAnsi((IntPtr)mediaDuration);
@@ -592,12 +595,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aCurrentSpeed"></param>
         public unsafe void SyncGetTransportInfo(uint aInstanceID, out string aCurrentTransportState, out string aCurrentTransportStatus, out string aCurrentSpeed)
         {
-			char* currentTransportState;
-			char* currentTransportStatus;
-			char* currentSpeed;
-			{
-				CpProxyUpnpOrgAVTransport2SyncGetTransportInfo(iHandle, aInstanceID, &currentTransportState, &currentTransportStatus, &currentSpeed);
-			}
+            char* currentTransportState;
+            char* currentTransportStatus;
+            char* currentSpeed;
+            {
+                CpProxyUpnpOrgAVTransport2SyncGetTransportInfo(iHandle, aInstanceID, &currentTransportState, &currentTransportStatus, &currentSpeed);
+            }
             aCurrentTransportState = Marshal.PtrToStringAnsi((IntPtr)currentTransportState);
             ZappFree(currentTransportState);
             aCurrentTransportStatus = Marshal.PtrToStringAnsi((IntPtr)currentTransportStatus);
@@ -632,15 +635,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aCurrentSpeed"></param>
         public unsafe void EndGetTransportInfo(uint aAsyncHandle, out string aCurrentTransportState, out string aCurrentTransportStatus, out string aCurrentSpeed)
         {
-			char* currentTransportState;
-			char* currentTransportStatus;
-			char* currentSpeed;
-			{
-				if (0 != CpProxyUpnpOrgAVTransport2EndGetTransportInfo(iHandle, aAsyncHandle, &currentTransportState, &currentTransportStatus, &currentSpeed))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* currentTransportState;
+            char* currentTransportStatus;
+            char* currentSpeed;
+            {
+                if (0 != CpProxyUpnpOrgAVTransport2EndGetTransportInfo(iHandle, aAsyncHandle, &currentTransportState, &currentTransportStatus, &currentSpeed))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aCurrentTransportState = Marshal.PtrToStringAnsi((IntPtr)currentTransportState);
             ZappFree(currentTransportState);
             aCurrentTransportStatus = Marshal.PtrToStringAnsi((IntPtr)currentTransportStatus);
@@ -665,17 +668,17 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAbsCount"></param>
         public unsafe void SyncGetPositionInfo(uint aInstanceID, out uint aTrack, out string aTrackDuration, out string aTrackMetaData, out string aTrackURI, out string aRelTime, out string aAbsTime, out int aRelCount, out int aAbsCount)
         {
-			char* trackDuration;
-			char* trackMetaData;
-			char* trackURI;
-			char* relTime;
-			char* absTime;
-			fixed (uint* track = &aTrack)
-			fixed (int* relCount = &aRelCount)
-			fixed (int* absCount = &aAbsCount)
-			{
-				CpProxyUpnpOrgAVTransport2SyncGetPositionInfo(iHandle, aInstanceID, track, &trackDuration, &trackMetaData, &trackURI, &relTime, &absTime, relCount, absCount);
-			}
+            char* trackDuration;
+            char* trackMetaData;
+            char* trackURI;
+            char* relTime;
+            char* absTime;
+            fixed (uint* track = &aTrack)
+            fixed (int* relCount = &aRelCount)
+            fixed (int* absCount = &aAbsCount)
+            {
+                CpProxyUpnpOrgAVTransport2SyncGetPositionInfo(iHandle, aInstanceID, track, &trackDuration, &trackMetaData, &trackURI, &relTime, &absTime, relCount, absCount);
+            }
             aTrackDuration = Marshal.PtrToStringAnsi((IntPtr)trackDuration);
             ZappFree(trackDuration);
             aTrackMetaData = Marshal.PtrToStringAnsi((IntPtr)trackMetaData);
@@ -719,20 +722,20 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAbsCount"></param>
         public unsafe void EndGetPositionInfo(uint aAsyncHandle, out uint aTrack, out string aTrackDuration, out string aTrackMetaData, out string aTrackURI, out string aRelTime, out string aAbsTime, out int aRelCount, out int aAbsCount)
         {
-			char* trackDuration;
-			char* trackMetaData;
-			char* trackURI;
-			char* relTime;
-			char* absTime;
-			fixed (uint* track = &aTrack)
-			fixed (int* relCount = &aRelCount)
-			fixed (int* absCount = &aAbsCount)
-			{
-				if (0 != CpProxyUpnpOrgAVTransport2EndGetPositionInfo(iHandle, aAsyncHandle, track, &trackDuration, &trackMetaData, &trackURI, &relTime, &absTime, relCount, absCount))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* trackDuration;
+            char* trackMetaData;
+            char* trackURI;
+            char* relTime;
+            char* absTime;
+            fixed (uint* track = &aTrack)
+            fixed (int* relCount = &aRelCount)
+            fixed (int* absCount = &aAbsCount)
+            {
+                if (0 != CpProxyUpnpOrgAVTransport2EndGetPositionInfo(iHandle, aAsyncHandle, track, &trackDuration, &trackMetaData, &trackURI, &relTime, &absTime, relCount, absCount))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aTrackDuration = Marshal.PtrToStringAnsi((IntPtr)trackDuration);
             ZappFree(trackDuration);
             aTrackMetaData = Marshal.PtrToStringAnsi((IntPtr)trackMetaData);
@@ -756,12 +759,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRecQualityModes"></param>
         public unsafe void SyncGetDeviceCapabilities(uint aInstanceID, out string aPlayMedia, out string aRecMedia, out string aRecQualityModes)
         {
-			char* playMedia;
-			char* recMedia;
-			char* recQualityModes;
-			{
-				CpProxyUpnpOrgAVTransport2SyncGetDeviceCapabilities(iHandle, aInstanceID, &playMedia, &recMedia, &recQualityModes);
-			}
+            char* playMedia;
+            char* recMedia;
+            char* recQualityModes;
+            {
+                CpProxyUpnpOrgAVTransport2SyncGetDeviceCapabilities(iHandle, aInstanceID, &playMedia, &recMedia, &recQualityModes);
+            }
             aPlayMedia = Marshal.PtrToStringAnsi((IntPtr)playMedia);
             ZappFree(playMedia);
             aRecMedia = Marshal.PtrToStringAnsi((IntPtr)recMedia);
@@ -796,15 +799,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRecQualityModes"></param>
         public unsafe void EndGetDeviceCapabilities(uint aAsyncHandle, out string aPlayMedia, out string aRecMedia, out string aRecQualityModes)
         {
-			char* playMedia;
-			char* recMedia;
-			char* recQualityModes;
-			{
-				if (0 != CpProxyUpnpOrgAVTransport2EndGetDeviceCapabilities(iHandle, aAsyncHandle, &playMedia, &recMedia, &recQualityModes))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* playMedia;
+            char* recMedia;
+            char* recQualityModes;
+            {
+                if (0 != CpProxyUpnpOrgAVTransport2EndGetDeviceCapabilities(iHandle, aAsyncHandle, &playMedia, &recMedia, &recQualityModes))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aPlayMedia = Marshal.PtrToStringAnsi((IntPtr)playMedia);
             ZappFree(playMedia);
             aRecMedia = Marshal.PtrToStringAnsi((IntPtr)recMedia);
@@ -823,11 +826,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRecQualityMode"></param>
         public unsafe void SyncGetTransportSettings(uint aInstanceID, out string aPlayMode, out string aRecQualityMode)
         {
-			char* playMode;
-			char* recQualityMode;
-			{
-				CpProxyUpnpOrgAVTransport2SyncGetTransportSettings(iHandle, aInstanceID, &playMode, &recQualityMode);
-			}
+            char* playMode;
+            char* recQualityMode;
+            {
+                CpProxyUpnpOrgAVTransport2SyncGetTransportSettings(iHandle, aInstanceID, &playMode, &recQualityMode);
+            }
             aPlayMode = Marshal.PtrToStringAnsi((IntPtr)playMode);
             ZappFree(playMode);
             aRecQualityMode = Marshal.PtrToStringAnsi((IntPtr)recQualityMode);
@@ -859,14 +862,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRecQualityMode"></param>
         public unsafe void EndGetTransportSettings(uint aAsyncHandle, out string aPlayMode, out string aRecQualityMode)
         {
-			char* playMode;
-			char* recQualityMode;
-			{
-				if (0 != CpProxyUpnpOrgAVTransport2EndGetTransportSettings(iHandle, aAsyncHandle, &playMode, &recQualityMode))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* playMode;
+            char* recQualityMode;
+            {
+                if (0 != CpProxyUpnpOrgAVTransport2EndGetTransportSettings(iHandle, aAsyncHandle, &playMode, &recQualityMode))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aPlayMode = Marshal.PtrToStringAnsi((IntPtr)playMode);
             ZappFree(playMode);
             aRecQualityMode = Marshal.PtrToStringAnsi((IntPtr)recQualityMode);
@@ -881,9 +884,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         public unsafe void SyncStop(uint aInstanceID)
         {
-			{
-				CpProxyUpnpOrgAVTransport2SyncStop(iHandle, aInstanceID);
-			}
+            {
+                CpProxyUpnpOrgAVTransport2SyncStop(iHandle, aInstanceID);
+            }
         }
 
         /// <summary>
@@ -909,12 +912,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndStop(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgAVTransport2EndStop(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgAVTransport2EndStop(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -926,11 +929,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSpeed"></param>
         public unsafe void SyncPlay(uint aInstanceID, string aSpeed)
         {
-			char* speed = (char*)Marshal.StringToHGlobalAnsi(aSpeed);
-			{
-				CpProxyUpnpOrgAVTransport2SyncPlay(iHandle, aInstanceID, speed);
-			}
-			Marshal.FreeHGlobal((IntPtr)speed);
+            char* speed = (char*)Marshal.StringToHGlobalAnsi(aSpeed);
+            {
+                CpProxyUpnpOrgAVTransport2SyncPlay(iHandle, aInstanceID, speed);
+            }
+            Marshal.FreeHGlobal((IntPtr)speed);
         }
 
         /// <summary>
@@ -945,11 +948,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginPlay(uint aInstanceID, string aSpeed, CallbackAsyncComplete aCallback)
         {
-			char* speed = (char*)Marshal.StringToHGlobalAnsi(aSpeed);
+            char* speed = (char*)Marshal.StringToHGlobalAnsi(aSpeed);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgAVTransport2BeginPlay(iHandle, aInstanceID, speed, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)speed);
+            Marshal.FreeHGlobal((IntPtr)speed);
         }
 
         /// <summary>
@@ -959,12 +962,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndPlay(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgAVTransport2EndPlay(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgAVTransport2EndPlay(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -975,9 +978,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         public unsafe void SyncPause(uint aInstanceID)
         {
-			{
-				CpProxyUpnpOrgAVTransport2SyncPause(iHandle, aInstanceID);
-			}
+            {
+                CpProxyUpnpOrgAVTransport2SyncPause(iHandle, aInstanceID);
+            }
         }
 
         /// <summary>
@@ -1003,12 +1006,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndPause(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgAVTransport2EndPause(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgAVTransport2EndPause(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -1019,9 +1022,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         public unsafe void SyncRecord(uint aInstanceID)
         {
-			{
-				CpProxyUpnpOrgAVTransport2SyncRecord(iHandle, aInstanceID);
-			}
+            {
+                CpProxyUpnpOrgAVTransport2SyncRecord(iHandle, aInstanceID);
+            }
         }
 
         /// <summary>
@@ -1047,12 +1050,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndRecord(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgAVTransport2EndRecord(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgAVTransport2EndRecord(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -1065,13 +1068,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTarget"></param>
         public unsafe void SyncSeek(uint aInstanceID, string aUnit, string aTarget)
         {
-			char* unit = (char*)Marshal.StringToHGlobalAnsi(aUnit);
-			char* target = (char*)Marshal.StringToHGlobalAnsi(aTarget);
-			{
-				CpProxyUpnpOrgAVTransport2SyncSeek(iHandle, aInstanceID, unit, target);
-			}
-			Marshal.FreeHGlobal((IntPtr)unit);
-			Marshal.FreeHGlobal((IntPtr)target);
+            char* unit = (char*)Marshal.StringToHGlobalAnsi(aUnit);
+            char* target = (char*)Marshal.StringToHGlobalAnsi(aTarget);
+            {
+                CpProxyUpnpOrgAVTransport2SyncSeek(iHandle, aInstanceID, unit, target);
+            }
+            Marshal.FreeHGlobal((IntPtr)unit);
+            Marshal.FreeHGlobal((IntPtr)target);
         }
 
         /// <summary>
@@ -1087,13 +1090,13 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSeek(uint aInstanceID, string aUnit, string aTarget, CallbackAsyncComplete aCallback)
         {
-			char* unit = (char*)Marshal.StringToHGlobalAnsi(aUnit);
-			char* target = (char*)Marshal.StringToHGlobalAnsi(aTarget);
+            char* unit = (char*)Marshal.StringToHGlobalAnsi(aUnit);
+            char* target = (char*)Marshal.StringToHGlobalAnsi(aTarget);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgAVTransport2BeginSeek(iHandle, aInstanceID, unit, target, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)unit);
-			Marshal.FreeHGlobal((IntPtr)target);
+            Marshal.FreeHGlobal((IntPtr)unit);
+            Marshal.FreeHGlobal((IntPtr)target);
         }
 
         /// <summary>
@@ -1103,12 +1106,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSeek(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgAVTransport2EndSeek(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgAVTransport2EndSeek(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -1119,9 +1122,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         public unsafe void SyncNext(uint aInstanceID)
         {
-			{
-				CpProxyUpnpOrgAVTransport2SyncNext(iHandle, aInstanceID);
-			}
+            {
+                CpProxyUpnpOrgAVTransport2SyncNext(iHandle, aInstanceID);
+            }
         }
 
         /// <summary>
@@ -1147,12 +1150,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndNext(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgAVTransport2EndNext(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgAVTransport2EndNext(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -1163,9 +1166,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         public unsafe void SyncPrevious(uint aInstanceID)
         {
-			{
-				CpProxyUpnpOrgAVTransport2SyncPrevious(iHandle, aInstanceID);
-			}
+            {
+                CpProxyUpnpOrgAVTransport2SyncPrevious(iHandle, aInstanceID);
+            }
         }
 
         /// <summary>
@@ -1191,12 +1194,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndPrevious(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgAVTransport2EndPrevious(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgAVTransport2EndPrevious(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -1208,11 +1211,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aNewPlayMode"></param>
         public unsafe void SyncSetPlayMode(uint aInstanceID, string aNewPlayMode)
         {
-			char* newPlayMode = (char*)Marshal.StringToHGlobalAnsi(aNewPlayMode);
-			{
-				CpProxyUpnpOrgAVTransport2SyncSetPlayMode(iHandle, aInstanceID, newPlayMode);
-			}
-			Marshal.FreeHGlobal((IntPtr)newPlayMode);
+            char* newPlayMode = (char*)Marshal.StringToHGlobalAnsi(aNewPlayMode);
+            {
+                CpProxyUpnpOrgAVTransport2SyncSetPlayMode(iHandle, aInstanceID, newPlayMode);
+            }
+            Marshal.FreeHGlobal((IntPtr)newPlayMode);
         }
 
         /// <summary>
@@ -1227,11 +1230,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetPlayMode(uint aInstanceID, string aNewPlayMode, CallbackAsyncComplete aCallback)
         {
-			char* newPlayMode = (char*)Marshal.StringToHGlobalAnsi(aNewPlayMode);
+            char* newPlayMode = (char*)Marshal.StringToHGlobalAnsi(aNewPlayMode);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgAVTransport2BeginSetPlayMode(iHandle, aInstanceID, newPlayMode, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)newPlayMode);
+            Marshal.FreeHGlobal((IntPtr)newPlayMode);
         }
 
         /// <summary>
@@ -1241,12 +1244,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetPlayMode(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgAVTransport2EndSetPlayMode(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgAVTransport2EndSetPlayMode(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -1258,11 +1261,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aNewRecordQualityMode"></param>
         public unsafe void SyncSetRecordQualityMode(uint aInstanceID, string aNewRecordQualityMode)
         {
-			char* newRecordQualityMode = (char*)Marshal.StringToHGlobalAnsi(aNewRecordQualityMode);
-			{
-				CpProxyUpnpOrgAVTransport2SyncSetRecordQualityMode(iHandle, aInstanceID, newRecordQualityMode);
-			}
-			Marshal.FreeHGlobal((IntPtr)newRecordQualityMode);
+            char* newRecordQualityMode = (char*)Marshal.StringToHGlobalAnsi(aNewRecordQualityMode);
+            {
+                CpProxyUpnpOrgAVTransport2SyncSetRecordQualityMode(iHandle, aInstanceID, newRecordQualityMode);
+            }
+            Marshal.FreeHGlobal((IntPtr)newRecordQualityMode);
         }
 
         /// <summary>
@@ -1277,11 +1280,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetRecordQualityMode(uint aInstanceID, string aNewRecordQualityMode, CallbackAsyncComplete aCallback)
         {
-			char* newRecordQualityMode = (char*)Marshal.StringToHGlobalAnsi(aNewRecordQualityMode);
+            char* newRecordQualityMode = (char*)Marshal.StringToHGlobalAnsi(aNewRecordQualityMode);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgAVTransport2BeginSetRecordQualityMode(iHandle, aInstanceID, newRecordQualityMode, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)newRecordQualityMode);
+            Marshal.FreeHGlobal((IntPtr)newRecordQualityMode);
         }
 
         /// <summary>
@@ -1291,12 +1294,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetRecordQualityMode(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgAVTransport2EndSetRecordQualityMode(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgAVTransport2EndSetRecordQualityMode(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -1308,10 +1311,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aActions"></param>
         public unsafe void SyncGetCurrentTransportActions(uint aInstanceID, out string aActions)
         {
-			char* actions;
-			{
-				CpProxyUpnpOrgAVTransport2SyncGetCurrentTransportActions(iHandle, aInstanceID, &actions);
-			}
+            char* actions;
+            {
+                CpProxyUpnpOrgAVTransport2SyncGetCurrentTransportActions(iHandle, aInstanceID, &actions);
+            }
             aActions = Marshal.PtrToStringAnsi((IntPtr)actions);
             ZappFree(actions);
         }
@@ -1340,13 +1343,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aActions"></param>
         public unsafe void EndGetCurrentTransportActions(uint aAsyncHandle, out string aActions)
         {
-			char* actions;
-			{
-				if (0 != CpProxyUpnpOrgAVTransport2EndGetCurrentTransportActions(iHandle, aAsyncHandle, &actions))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* actions;
+            {
+                if (0 != CpProxyUpnpOrgAVTransport2EndGetCurrentTransportActions(iHandle, aAsyncHandle, &actions))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aActions = Marshal.PtrToStringAnsi((IntPtr)actions);
             ZappFree(actions);
         }
@@ -1360,10 +1363,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aCurrentDRMState"></param>
         public unsafe void SyncGetDRMState(uint aInstanceID, out string aCurrentDRMState)
         {
-			char* currentDRMState;
-			{
-				CpProxyUpnpOrgAVTransport2SyncGetDRMState(iHandle, aInstanceID, &currentDRMState);
-			}
+            char* currentDRMState;
+            {
+                CpProxyUpnpOrgAVTransport2SyncGetDRMState(iHandle, aInstanceID, &currentDRMState);
+            }
             aCurrentDRMState = Marshal.PtrToStringAnsi((IntPtr)currentDRMState);
             ZappFree(currentDRMState);
         }
@@ -1392,13 +1395,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aCurrentDRMState"></param>
         public unsafe void EndGetDRMState(uint aAsyncHandle, out string aCurrentDRMState)
         {
-			char* currentDRMState;
-			{
-				if (0 != CpProxyUpnpOrgAVTransport2EndGetDRMState(iHandle, aAsyncHandle, &currentDRMState))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* currentDRMState;
+            {
+                if (0 != CpProxyUpnpOrgAVTransport2EndGetDRMState(iHandle, aAsyncHandle, &currentDRMState))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aCurrentDRMState = Marshal.PtrToStringAnsi((IntPtr)currentDRMState);
             ZappFree(currentDRMState);
         }
@@ -1413,12 +1416,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStateVariableValuePairs"></param>
         public unsafe void SyncGetStateVariables(uint aInstanceID, string aStateVariableList, out string aStateVariableValuePairs)
         {
-			char* stateVariableList = (char*)Marshal.StringToHGlobalAnsi(aStateVariableList);
-			char* stateVariableValuePairs;
-			{
-				CpProxyUpnpOrgAVTransport2SyncGetStateVariables(iHandle, aInstanceID, stateVariableList, &stateVariableValuePairs);
-			}
-			Marshal.FreeHGlobal((IntPtr)stateVariableList);
+            char* stateVariableList = (char*)Marshal.StringToHGlobalAnsi(aStateVariableList);
+            char* stateVariableValuePairs;
+            {
+                CpProxyUpnpOrgAVTransport2SyncGetStateVariables(iHandle, aInstanceID, stateVariableList, &stateVariableValuePairs);
+            }
+            Marshal.FreeHGlobal((IntPtr)stateVariableList);
             aStateVariableValuePairs = Marshal.PtrToStringAnsi((IntPtr)stateVariableValuePairs);
             ZappFree(stateVariableValuePairs);
         }
@@ -1435,11 +1438,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetStateVariables(uint aInstanceID, string aStateVariableList, CallbackAsyncComplete aCallback)
         {
-			char* stateVariableList = (char*)Marshal.StringToHGlobalAnsi(aStateVariableList);
+            char* stateVariableList = (char*)Marshal.StringToHGlobalAnsi(aStateVariableList);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgAVTransport2BeginGetStateVariables(iHandle, aInstanceID, stateVariableList, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)stateVariableList);
+            Marshal.FreeHGlobal((IntPtr)stateVariableList);
         }
 
         /// <summary>
@@ -1450,13 +1453,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStateVariableValuePairs"></param>
         public unsafe void EndGetStateVariables(uint aAsyncHandle, out string aStateVariableValuePairs)
         {
-			char* stateVariableValuePairs;
-			{
-				if (0 != CpProxyUpnpOrgAVTransport2EndGetStateVariables(iHandle, aAsyncHandle, &stateVariableValuePairs))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* stateVariableValuePairs;
+            {
+                if (0 != CpProxyUpnpOrgAVTransport2EndGetStateVariables(iHandle, aAsyncHandle, &stateVariableValuePairs))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aStateVariableValuePairs = Marshal.PtrToStringAnsi((IntPtr)stateVariableValuePairs);
             ZappFree(stateVariableValuePairs);
         }
@@ -1474,18 +1477,18 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStateVariableList"></param>
         public unsafe void SyncSetStateVariables(uint aInstanceID, string aAVTransportUDN, string aServiceType, string aServiceId, string aStateVariableValuePairs, out string aStateVariableList)
         {
-			char* aVTransportUDN = (char*)Marshal.StringToHGlobalAnsi(aAVTransportUDN);
-			char* serviceType = (char*)Marshal.StringToHGlobalAnsi(aServiceType);
-			char* serviceId = (char*)Marshal.StringToHGlobalAnsi(aServiceId);
-			char* stateVariableValuePairs = (char*)Marshal.StringToHGlobalAnsi(aStateVariableValuePairs);
-			char* stateVariableList;
-			{
-				CpProxyUpnpOrgAVTransport2SyncSetStateVariables(iHandle, aInstanceID, aVTransportUDN, serviceType, serviceId, stateVariableValuePairs, &stateVariableList);
-			}
-			Marshal.FreeHGlobal((IntPtr)aVTransportUDN);
-			Marshal.FreeHGlobal((IntPtr)serviceType);
-			Marshal.FreeHGlobal((IntPtr)serviceId);
-			Marshal.FreeHGlobal((IntPtr)stateVariableValuePairs);
+            char* aVTransportUDN = (char*)Marshal.StringToHGlobalAnsi(aAVTransportUDN);
+            char* serviceType = (char*)Marshal.StringToHGlobalAnsi(aServiceType);
+            char* serviceId = (char*)Marshal.StringToHGlobalAnsi(aServiceId);
+            char* stateVariableValuePairs = (char*)Marshal.StringToHGlobalAnsi(aStateVariableValuePairs);
+            char* stateVariableList;
+            {
+                CpProxyUpnpOrgAVTransport2SyncSetStateVariables(iHandle, aInstanceID, aVTransportUDN, serviceType, serviceId, stateVariableValuePairs, &stateVariableList);
+            }
+            Marshal.FreeHGlobal((IntPtr)aVTransportUDN);
+            Marshal.FreeHGlobal((IntPtr)serviceType);
+            Marshal.FreeHGlobal((IntPtr)serviceId);
+            Marshal.FreeHGlobal((IntPtr)stateVariableValuePairs);
             aStateVariableList = Marshal.PtrToStringAnsi((IntPtr)stateVariableList);
             ZappFree(stateVariableList);
         }
@@ -1505,17 +1508,17 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetStateVariables(uint aInstanceID, string aAVTransportUDN, string aServiceType, string aServiceId, string aStateVariableValuePairs, CallbackAsyncComplete aCallback)
         {
-			char* aVTransportUDN = (char*)Marshal.StringToHGlobalAnsi(aAVTransportUDN);
-			char* serviceType = (char*)Marshal.StringToHGlobalAnsi(aServiceType);
-			char* serviceId = (char*)Marshal.StringToHGlobalAnsi(aServiceId);
-			char* stateVariableValuePairs = (char*)Marshal.StringToHGlobalAnsi(aStateVariableValuePairs);
+            char* aVTransportUDN = (char*)Marshal.StringToHGlobalAnsi(aAVTransportUDN);
+            char* serviceType = (char*)Marshal.StringToHGlobalAnsi(aServiceType);
+            char* serviceId = (char*)Marshal.StringToHGlobalAnsi(aServiceId);
+            char* stateVariableValuePairs = (char*)Marshal.StringToHGlobalAnsi(aStateVariableValuePairs);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgAVTransport2BeginSetStateVariables(iHandle, aInstanceID, aVTransportUDN, serviceType, serviceId, stateVariableValuePairs, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)aVTransportUDN);
-			Marshal.FreeHGlobal((IntPtr)serviceType);
-			Marshal.FreeHGlobal((IntPtr)serviceId);
-			Marshal.FreeHGlobal((IntPtr)stateVariableValuePairs);
+            Marshal.FreeHGlobal((IntPtr)aVTransportUDN);
+            Marshal.FreeHGlobal((IntPtr)serviceType);
+            Marshal.FreeHGlobal((IntPtr)serviceId);
+            Marshal.FreeHGlobal((IntPtr)stateVariableValuePairs);
         }
 
         /// <summary>
@@ -1526,13 +1529,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStateVariableList"></param>
         public unsafe void EndSetStateVariables(uint aAsyncHandle, out string aStateVariableList)
         {
-			char* stateVariableList;
-			{
-				if (0 != CpProxyUpnpOrgAVTransport2EndSetStateVariables(iHandle, aAsyncHandle, &stateVariableList))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* stateVariableList;
+            {
+                if (0 != CpProxyUpnpOrgAVTransport2EndSetStateVariables(iHandle, aAsyncHandle, &stateVariableList))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aStateVariableList = Marshal.PtrToStringAnsi((IntPtr)stateVariableList);
             ZappFree(stateVariableList);
         }
@@ -1584,11 +1587,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aLastChange">Will be set to the value of the property</param>
         public unsafe void PropertyLastChange(out string aLastChange)
         {
-			char* ptr;
+            char* ptr;
             CpProxyUpnpOrgAVTransport2PropertyLastChange(iHandle, &ptr);
             aLastChange = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
@@ -1599,11 +1602,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aDRMState">Will be set to the value of the property</param>
         public unsafe void PropertyDRMState(out string aDRMState)
         {
-			char* ptr;
+            char* ptr;
             CpProxyUpnpOrgAVTransport2PropertyDRMState(iHandle, &ptr);
             aDRMState = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);

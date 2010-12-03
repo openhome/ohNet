@@ -5,10 +5,66 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderLinnCoUkPlaylist1 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the IdArray property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyIdArray(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the IdArray property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyIdArray(out string aValue);
+
+        /// <summary>
+        /// Set the value of the Repeat property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyRepeat(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the Repeat property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyRepeat(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the Shuffle property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyShuffle(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the Shuffle property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyShuffle(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the TracksMax property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyTracksMax(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the TracksMax property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyTracksMax(out uint aValue);
+        
+    }
     /// <summary>
     /// Provider for the linn.co.uk:Playlist:1 UPnP service
     /// </summary>
-    public class DvProviderLinnCoUkPlaylist1 : DvProvider, IDisposable
+    public class DvProviderLinnCoUkPlaylist1 : DvProvider, IDisposable, IDvProviderLinnCoUkPlaylist1
     {
         [DllImport("DvLinnCoUkPlaylist1")]
         static extern uint DvProviderLinnCoUkPlaylist1Create(uint aDeviceHandle);
@@ -202,7 +258,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyTracksMax(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkPlaylist1GetPropertyTracksMax(iHandle, value);
             }
         }

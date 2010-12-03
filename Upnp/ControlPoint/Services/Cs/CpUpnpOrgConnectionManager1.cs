@@ -113,11 +113,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSink"></param>
         public unsafe void SyncGetProtocolInfo(out string aSource, out string aSink)
         {
-			char* source;
-			char* sink;
-			{
-				CpProxyUpnpOrgConnectionManager1SyncGetProtocolInfo(iHandle, &source, &sink);
-			}
+            char* source;
+            char* sink;
+            {
+                CpProxyUpnpOrgConnectionManager1SyncGetProtocolInfo(iHandle, &source, &sink);
+            }
             aSource = Marshal.PtrToStringAnsi((IntPtr)source);
             ZappFree(source);
             aSink = Marshal.PtrToStringAnsi((IntPtr)sink);
@@ -148,14 +148,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSink"></param>
         public unsafe void EndGetProtocolInfo(uint aAsyncHandle, out string aSource, out string aSink)
         {
-			char* source;
-			char* sink;
-			{
-				if (0 != CpProxyUpnpOrgConnectionManager1EndGetProtocolInfo(iHandle, aAsyncHandle, &source, &sink))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* source;
+            char* sink;
+            {
+                if (0 != CpProxyUpnpOrgConnectionManager1EndGetProtocolInfo(iHandle, aAsyncHandle, &source, &sink))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aSource = Marshal.PtrToStringAnsi((IntPtr)source);
             ZappFree(source);
             aSink = Marshal.PtrToStringAnsi((IntPtr)sink);
@@ -176,18 +176,18 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRcsID"></param>
         public unsafe void SyncPrepareForConnection(string aRemoteProtocolInfo, string aPeerConnectionManager, int aPeerConnectionID, string aDirection, out int aConnectionID, out int aAVTransportID, out int aRcsID)
         {
-			char* remoteProtocolInfo = (char*)Marshal.StringToHGlobalAnsi(aRemoteProtocolInfo);
-			char* peerConnectionManager = (char*)Marshal.StringToHGlobalAnsi(aPeerConnectionManager);
-			char* direction = (char*)Marshal.StringToHGlobalAnsi(aDirection);
-			fixed (int* connectionID = &aConnectionID)
-			fixed (int* aVTransportID = &aAVTransportID)
-			fixed (int* rcsID = &aRcsID)
-			{
-				CpProxyUpnpOrgConnectionManager1SyncPrepareForConnection(iHandle, remoteProtocolInfo, peerConnectionManager, aPeerConnectionID, direction, connectionID, aVTransportID, rcsID);
-			}
-			Marshal.FreeHGlobal((IntPtr)remoteProtocolInfo);
-			Marshal.FreeHGlobal((IntPtr)peerConnectionManager);
-			Marshal.FreeHGlobal((IntPtr)direction);
+            char* remoteProtocolInfo = (char*)Marshal.StringToHGlobalAnsi(aRemoteProtocolInfo);
+            char* peerConnectionManager = (char*)Marshal.StringToHGlobalAnsi(aPeerConnectionManager);
+            char* direction = (char*)Marshal.StringToHGlobalAnsi(aDirection);
+            fixed (int* connectionID = &aConnectionID)
+            fixed (int* aVTransportID = &aAVTransportID)
+            fixed (int* rcsID = &aRcsID)
+            {
+                CpProxyUpnpOrgConnectionManager1SyncPrepareForConnection(iHandle, remoteProtocolInfo, peerConnectionManager, aPeerConnectionID, direction, connectionID, aVTransportID, rcsID);
+            }
+            Marshal.FreeHGlobal((IntPtr)remoteProtocolInfo);
+            Marshal.FreeHGlobal((IntPtr)peerConnectionManager);
+            Marshal.FreeHGlobal((IntPtr)direction);
         }
 
         /// <summary>
@@ -204,15 +204,15 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginPrepareForConnection(string aRemoteProtocolInfo, string aPeerConnectionManager, int aPeerConnectionID, string aDirection, CallbackAsyncComplete aCallback)
         {
-			char* remoteProtocolInfo = (char*)Marshal.StringToHGlobalAnsi(aRemoteProtocolInfo);
-			char* peerConnectionManager = (char*)Marshal.StringToHGlobalAnsi(aPeerConnectionManager);
-			char* direction = (char*)Marshal.StringToHGlobalAnsi(aDirection);
+            char* remoteProtocolInfo = (char*)Marshal.StringToHGlobalAnsi(aRemoteProtocolInfo);
+            char* peerConnectionManager = (char*)Marshal.StringToHGlobalAnsi(aPeerConnectionManager);
+            char* direction = (char*)Marshal.StringToHGlobalAnsi(aDirection);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgConnectionManager1BeginPrepareForConnection(iHandle, remoteProtocolInfo, peerConnectionManager, aPeerConnectionID, direction, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)remoteProtocolInfo);
-			Marshal.FreeHGlobal((IntPtr)peerConnectionManager);
-			Marshal.FreeHGlobal((IntPtr)direction);
+            Marshal.FreeHGlobal((IntPtr)remoteProtocolInfo);
+            Marshal.FreeHGlobal((IntPtr)peerConnectionManager);
+            Marshal.FreeHGlobal((IntPtr)direction);
         }
 
         /// <summary>
@@ -225,15 +225,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRcsID"></param>
         public unsafe void EndPrepareForConnection(uint aAsyncHandle, out int aConnectionID, out int aAVTransportID, out int aRcsID)
         {
-			fixed (int* connectionID = &aConnectionID)
-			fixed (int* aVTransportID = &aAVTransportID)
-			fixed (int* rcsID = &aRcsID)
-			{
-				if (0 != CpProxyUpnpOrgConnectionManager1EndPrepareForConnection(iHandle, aAsyncHandle, connectionID, aVTransportID, rcsID))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (int* connectionID = &aConnectionID)
+            fixed (int* aVTransportID = &aAVTransportID)
+            fixed (int* rcsID = &aRcsID)
+            {
+                if (0 != CpProxyUpnpOrgConnectionManager1EndPrepareForConnection(iHandle, aAsyncHandle, connectionID, aVTransportID, rcsID))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -244,9 +244,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aConnectionID"></param>
         public unsafe void SyncConnectionComplete(int aConnectionID)
         {
-			{
-				CpProxyUpnpOrgConnectionManager1SyncConnectionComplete(iHandle, aConnectionID);
-			}
+            {
+                CpProxyUpnpOrgConnectionManager1SyncConnectionComplete(iHandle, aConnectionID);
+            }
         }
 
         /// <summary>
@@ -272,12 +272,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndConnectionComplete(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgConnectionManager1EndConnectionComplete(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgConnectionManager1EndConnectionComplete(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -288,10 +288,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aConnectionIDs"></param>
         public unsafe void SyncGetCurrentConnectionIDs(out string aConnectionIDs)
         {
-			char* connectionIDs;
-			{
-				CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionIDs(iHandle, &connectionIDs);
-			}
+            char* connectionIDs;
+            {
+                CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionIDs(iHandle, &connectionIDs);
+            }
             aConnectionIDs = Marshal.PtrToStringAnsi((IntPtr)connectionIDs);
             ZappFree(connectionIDs);
         }
@@ -319,13 +319,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aConnectionIDs"></param>
         public unsafe void EndGetCurrentConnectionIDs(uint aAsyncHandle, out string aConnectionIDs)
         {
-			char* connectionIDs;
-			{
-				if (0 != CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionIDs(iHandle, aAsyncHandle, &connectionIDs))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* connectionIDs;
+            {
+                if (0 != CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionIDs(iHandle, aAsyncHandle, &connectionIDs))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aConnectionIDs = Marshal.PtrToStringAnsi((IntPtr)connectionIDs);
             ZappFree(connectionIDs);
         }
@@ -345,16 +345,16 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStatus"></param>
         public unsafe void SyncGetCurrentConnectionInfo(int aConnectionID, out int aRcsID, out int aAVTransportID, out string aProtocolInfo, out string aPeerConnectionManager, out int aPeerConnectionID, out string aDirection, out string aStatus)
         {
-			char* protocolInfo;
-			char* peerConnectionManager;
-			char* direction;
-			char* status;
-			fixed (int* rcsID = &aRcsID)
-			fixed (int* aVTransportID = &aAVTransportID)
-			fixed (int* peerConnectionID = &aPeerConnectionID)
-			{
-				CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionInfo(iHandle, aConnectionID, rcsID, aVTransportID, &protocolInfo, &peerConnectionManager, peerConnectionID, &direction, &status);
-			}
+            char* protocolInfo;
+            char* peerConnectionManager;
+            char* direction;
+            char* status;
+            fixed (int* rcsID = &aRcsID)
+            fixed (int* aVTransportID = &aAVTransportID)
+            fixed (int* peerConnectionID = &aPeerConnectionID)
+            {
+                CpProxyUpnpOrgConnectionManager1SyncGetCurrentConnectionInfo(iHandle, aConnectionID, rcsID, aVTransportID, &protocolInfo, &peerConnectionManager, peerConnectionID, &direction, &status);
+            }
             aProtocolInfo = Marshal.PtrToStringAnsi((IntPtr)protocolInfo);
             ZappFree(protocolInfo);
             aPeerConnectionManager = Marshal.PtrToStringAnsi((IntPtr)peerConnectionManager);
@@ -395,19 +395,19 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStatus"></param>
         public unsafe void EndGetCurrentConnectionInfo(uint aAsyncHandle, out int aRcsID, out int aAVTransportID, out string aProtocolInfo, out string aPeerConnectionManager, out int aPeerConnectionID, out string aDirection, out string aStatus)
         {
-			char* protocolInfo;
-			char* peerConnectionManager;
-			char* direction;
-			char* status;
-			fixed (int* rcsID = &aRcsID)
-			fixed (int* aVTransportID = &aAVTransportID)
-			fixed (int* peerConnectionID = &aPeerConnectionID)
-			{
-				if (0 != CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionInfo(iHandle, aAsyncHandle, rcsID, aVTransportID, &protocolInfo, &peerConnectionManager, peerConnectionID, &direction, &status))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* protocolInfo;
+            char* peerConnectionManager;
+            char* direction;
+            char* status;
+            fixed (int* rcsID = &aRcsID)
+            fixed (int* aVTransportID = &aAVTransportID)
+            fixed (int* peerConnectionID = &aPeerConnectionID)
+            {
+                if (0 != CpProxyUpnpOrgConnectionManager1EndGetCurrentConnectionInfo(iHandle, aAsyncHandle, rcsID, aVTransportID, &protocolInfo, &peerConnectionManager, peerConnectionID, &direction, &status))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aProtocolInfo = Marshal.PtrToStringAnsi((IntPtr)protocolInfo);
             ZappFree(protocolInfo);
             aPeerConnectionManager = Marshal.PtrToStringAnsi((IntPtr)peerConnectionManager);
@@ -486,11 +486,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aSourceProtocolInfo">Will be set to the value of the property</param>
         public unsafe void PropertySourceProtocolInfo(out string aSourceProtocolInfo)
         {
-			char* ptr;
+            char* ptr;
             CpProxyUpnpOrgConnectionManager1PropertySourceProtocolInfo(iHandle, &ptr);
             aSourceProtocolInfo = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
@@ -501,11 +501,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aSinkProtocolInfo">Will be set to the value of the property</param>
         public unsafe void PropertySinkProtocolInfo(out string aSinkProtocolInfo)
         {
-			char* ptr;
+            char* ptr;
             CpProxyUpnpOrgConnectionManager1PropertySinkProtocolInfo(iHandle, &ptr);
             aSinkProtocolInfo = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
@@ -516,11 +516,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aCurrentConnectionIDs">Will be set to the value of the property</param>
         public unsafe void PropertyCurrentConnectionIDs(out string aCurrentConnectionIDs)
         {
-			char* ptr;
+            char* ptr;
             CpProxyUpnpOrgConnectionManager1PropertyCurrentConnectionIDs(iHandle, &ptr);
             aCurrentConnectionIDs = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);

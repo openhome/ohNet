@@ -5,10 +5,53 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderUpnpOrgConnectionManager1 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the SourceProtocolInfo property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertySourceProtocolInfo(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the SourceProtocolInfo property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertySourceProtocolInfo(out string aValue);
+
+        /// <summary>
+        /// Set the value of the SinkProtocolInfo property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertySinkProtocolInfo(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the SinkProtocolInfo property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertySinkProtocolInfo(out string aValue);
+
+        /// <summary>
+        /// Set the value of the CurrentConnectionIDs property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyCurrentConnectionIDs(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the CurrentConnectionIDs property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyCurrentConnectionIDs(out string aValue);
+        
+    }
     /// <summary>
     /// Provider for the upnp.org:ConnectionManager:1 UPnP service
     /// </summary>
-    public class DvProviderUpnpOrgConnectionManager1 : DvProvider, IDisposable
+    public class DvProviderUpnpOrgConnectionManager1 : DvProvider, IDisposable, IDvProviderUpnpOrgConnectionManager1
     {
         [DllImport("DvUpnpOrgConnectionManager1")]
         static extern uint DvProviderUpnpOrgConnectionManager1Create(uint aDeviceHandle);

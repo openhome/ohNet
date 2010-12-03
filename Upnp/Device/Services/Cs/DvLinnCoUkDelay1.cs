@@ -5,10 +5,40 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderLinnCoUkDelay1 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the PresetXml property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyPresetXml(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the PresetXml property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyPresetXml(out string aValue);
+
+        /// <summary>
+        /// Set the value of the PresetIndex property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyPresetIndex(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the PresetIndex property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyPresetIndex(out uint aValue);
+        
+    }
     /// <summary>
     /// Provider for the linn.co.uk:Delay:1 UPnP service
     /// </summary>
-    public class DvProviderLinnCoUkDelay1 : DvProvider, IDisposable
+    public class DvProviderLinnCoUkDelay1 : DvProvider, IDisposable, IDvProviderLinnCoUkDelay1
     {
         [DllImport("DvLinnCoUkDelay1")]
         static extern uint DvProviderLinnCoUkDelay1Create(uint aDeviceHandle);
@@ -126,7 +156,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyPresetIndex(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkDelay1GetPropertyPresetIndex(iHandle, value);
             }
         }

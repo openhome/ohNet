@@ -5,10 +5,118 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderZappOrgTestWidget1 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the ReadWriteRegister0 property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyReadWriteRegister0(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ReadWriteRegister0 property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyReadWriteRegister0(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the ReadWriteRegister1 property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyReadWriteRegister1(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ReadWriteRegister1 property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyReadWriteRegister1(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the ReadWriteRegister2 property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyReadWriteRegister2(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ReadWriteRegister2 property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyReadWriteRegister2(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the ReadWriteRegister3 property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyReadWriteRegister3(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ReadWriteRegister3 property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyReadWriteRegister3(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the ReadOnlyRegister4 property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyReadOnlyRegister4(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ReadOnlyRegister4 property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyReadOnlyRegister4(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the ReadOnlyRegister5 property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyReadOnlyRegister5(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ReadOnlyRegister5 property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyReadOnlyRegister5(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the ReadOnlyRegister6 property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyReadOnlyRegister6(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ReadOnlyRegister6 property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyReadOnlyRegister6(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the ReadOnlyRegister7 property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyReadOnlyRegister7(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ReadOnlyRegister7 property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyReadOnlyRegister7(out uint aValue);
+        
+    }
     /// <summary>
     /// Provider for the zapp.org:TestWidget:1 UPnP service
     /// </summary>
-    public class DvProviderZappOrgTestWidget1 : DvProvider, IDisposable
+    public class DvProviderZappOrgTestWidget1 : DvProvider, IDisposable, IDvProviderZappOrgTestWidget1
     {
         [DllImport("DvZappOrgTestWidget1")]
         static extern uint DvProviderZappOrgTestWidget1Create(uint aDeviceHandle);
@@ -92,7 +200,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyReadWriteRegister0(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderZappOrgTestWidget1GetPropertyReadWriteRegister0(iHandle, value);
             }
         }
@@ -119,7 +227,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyReadWriteRegister1(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderZappOrgTestWidget1GetPropertyReadWriteRegister1(iHandle, value);
             }
         }
@@ -146,7 +254,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyReadWriteRegister2(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderZappOrgTestWidget1GetPropertyReadWriteRegister2(iHandle, value);
             }
         }
@@ -173,7 +281,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyReadWriteRegister3(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderZappOrgTestWidget1GetPropertyReadWriteRegister3(iHandle, value);
             }
         }
@@ -200,7 +308,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyReadOnlyRegister4(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderZappOrgTestWidget1GetPropertyReadOnlyRegister4(iHandle, value);
             }
         }
@@ -227,7 +335,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyReadOnlyRegister5(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderZappOrgTestWidget1GetPropertyReadOnlyRegister5(iHandle, value);
             }
         }
@@ -254,7 +362,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyReadOnlyRegister6(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderZappOrgTestWidget1GetPropertyReadOnlyRegister6(iHandle, value);
             }
         }
@@ -281,7 +389,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyReadOnlyRegister7(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderZappOrgTestWidget1GetPropertyReadOnlyRegister7(iHandle, value);
             }
         }

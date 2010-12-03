@@ -43,6 +43,9 @@ namespace Zapp.ControlPoint.Proxies
 
     }
 
+    /// <summary>
+    /// Proxy for the linn.co.uk:Volkano:1 UPnP service
+    /// </summary>
     public class CpProxyLinnCoUkVolkano1 : CpProxy, IDisposable, ICpProxyLinnCoUkVolkano1
     {
         [DllImport("CpLinnCoUkVolkano1")]
@@ -138,9 +141,9 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         public unsafe void SyncReboot()
         {
-			{
-				CpProxyLinnCoUkVolkano1SyncReboot(iHandle);
-			}
+            {
+                CpProxyLinnCoUkVolkano1SyncReboot(iHandle);
+            }
         }
 
         /// <summary>
@@ -165,12 +168,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndReboot(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkVolkano1EndReboot(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkVolkano1EndReboot(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -181,10 +184,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMode"></param>
         public unsafe void SyncBootMode(out string aaMode)
         {
-			char* aMode;
-			{
-				CpProxyLinnCoUkVolkano1SyncBootMode(iHandle, &aMode);
-			}
+            char* aMode;
+            {
+                CpProxyLinnCoUkVolkano1SyncBootMode(iHandle, &aMode);
+            }
             aaMode = Marshal.PtrToStringAnsi((IntPtr)aMode);
             ZappFree(aMode);
         }
@@ -212,13 +215,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMode"></param>
         public unsafe void EndBootMode(uint aAsyncHandle, out string aaMode)
         {
-			char* aMode;
-			{
-				if (0 != CpProxyLinnCoUkVolkano1EndBootMode(iHandle, aAsyncHandle, &aMode))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aMode;
+            {
+                if (0 != CpProxyLinnCoUkVolkano1EndBootMode(iHandle, aAsyncHandle, &aMode))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaMode = Marshal.PtrToStringAnsi((IntPtr)aMode);
             ZappFree(aMode);
         }
@@ -231,11 +234,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMode"></param>
         public unsafe void SyncSetBootMode(string aaMode)
         {
-			char* aMode = (char*)Marshal.StringToHGlobalAnsi(aaMode);
-			{
-				CpProxyLinnCoUkVolkano1SyncSetBootMode(iHandle, aMode);
-			}
-			Marshal.FreeHGlobal((IntPtr)aMode);
+            char* aMode = (char*)Marshal.StringToHGlobalAnsi(aaMode);
+            {
+                CpProxyLinnCoUkVolkano1SyncSetBootMode(iHandle, aMode);
+            }
+            Marshal.FreeHGlobal((IntPtr)aMode);
         }
 
         /// <summary>
@@ -249,11 +252,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetBootMode(string aaMode, CallbackAsyncComplete aCallback)
         {
-			char* aMode = (char*)Marshal.StringToHGlobalAnsi(aaMode);
+            char* aMode = (char*)Marshal.StringToHGlobalAnsi(aaMode);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkVolkano1BeginSetBootMode(iHandle, aMode, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)aMode);
+            Marshal.FreeHGlobal((IntPtr)aMode);
         }
 
         /// <summary>
@@ -263,12 +266,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetBootMode(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkVolkano1EndSetBootMode(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkVolkano1EndSetBootMode(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -279,10 +282,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaBspType"></param>
         public unsafe void SyncBspType(out string aaBspType)
         {
-			char* aBspType;
-			{
-				CpProxyLinnCoUkVolkano1SyncBspType(iHandle, &aBspType);
-			}
+            char* aBspType;
+            {
+                CpProxyLinnCoUkVolkano1SyncBspType(iHandle, &aBspType);
+            }
             aaBspType = Marshal.PtrToStringAnsi((IntPtr)aBspType);
             ZappFree(aBspType);
         }
@@ -310,13 +313,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaBspType"></param>
         public unsafe void EndBspType(uint aAsyncHandle, out string aaBspType)
         {
-			char* aBspType;
-			{
-				if (0 != CpProxyLinnCoUkVolkano1EndBspType(iHandle, aAsyncHandle, &aBspType))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aBspType;
+            {
+                if (0 != CpProxyLinnCoUkVolkano1EndBspType(iHandle, aAsyncHandle, &aBspType))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaBspType = Marshal.PtrToStringAnsi((IntPtr)aBspType);
             ZappFree(aBspType);
         }
@@ -329,10 +332,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaUglyName"></param>
         public unsafe void SyncUglyName(out string aaUglyName)
         {
-			char* aUglyName;
-			{
-				CpProxyLinnCoUkVolkano1SyncUglyName(iHandle, &aUglyName);
-			}
+            char* aUglyName;
+            {
+                CpProxyLinnCoUkVolkano1SyncUglyName(iHandle, &aUglyName);
+            }
             aaUglyName = Marshal.PtrToStringAnsi((IntPtr)aUglyName);
             ZappFree(aUglyName);
         }
@@ -360,13 +363,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaUglyName"></param>
         public unsafe void EndUglyName(uint aAsyncHandle, out string aaUglyName)
         {
-			char* aUglyName;
-			{
-				if (0 != CpProxyLinnCoUkVolkano1EndUglyName(iHandle, aAsyncHandle, &aUglyName))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aUglyName;
+            {
+                if (0 != CpProxyLinnCoUkVolkano1EndUglyName(iHandle, aAsyncHandle, &aUglyName))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaUglyName = Marshal.PtrToStringAnsi((IntPtr)aUglyName);
             ZappFree(aUglyName);
         }
@@ -379,10 +382,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMacAddress"></param>
         public unsafe void SyncMacAddress(out string aaMacAddress)
         {
-			char* aMacAddress;
-			{
-				CpProxyLinnCoUkVolkano1SyncMacAddress(iHandle, &aMacAddress);
-			}
+            char* aMacAddress;
+            {
+                CpProxyLinnCoUkVolkano1SyncMacAddress(iHandle, &aMacAddress);
+            }
             aaMacAddress = Marshal.PtrToStringAnsi((IntPtr)aMacAddress);
             ZappFree(aMacAddress);
         }
@@ -410,13 +413,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMacAddress"></param>
         public unsafe void EndMacAddress(uint aAsyncHandle, out string aaMacAddress)
         {
-			char* aMacAddress;
-			{
-				if (0 != CpProxyLinnCoUkVolkano1EndMacAddress(iHandle, aAsyncHandle, &aMacAddress))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aMacAddress;
+            {
+                if (0 != CpProxyLinnCoUkVolkano1EndMacAddress(iHandle, aAsyncHandle, &aMacAddress))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaMacAddress = Marshal.PtrToStringAnsi((IntPtr)aMacAddress);
             ZappFree(aMacAddress);
         }
@@ -429,10 +432,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaProductNumber"></param>
         public unsafe void SyncProductId(out string aaProductNumber)
         {
-			char* aProductNumber;
-			{
-				CpProxyLinnCoUkVolkano1SyncProductId(iHandle, &aProductNumber);
-			}
+            char* aProductNumber;
+            {
+                CpProxyLinnCoUkVolkano1SyncProductId(iHandle, &aProductNumber);
+            }
             aaProductNumber = Marshal.PtrToStringAnsi((IntPtr)aProductNumber);
             ZappFree(aProductNumber);
         }
@@ -460,13 +463,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaProductNumber"></param>
         public unsafe void EndProductId(uint aAsyncHandle, out string aaProductNumber)
         {
-			char* aProductNumber;
-			{
-				if (0 != CpProxyLinnCoUkVolkano1EndProductId(iHandle, aAsyncHandle, &aProductNumber))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aProductNumber;
+            {
+                if (0 != CpProxyLinnCoUkVolkano1EndProductId(iHandle, aAsyncHandle, &aProductNumber))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaProductNumber = Marshal.PtrToStringAnsi((IntPtr)aProductNumber);
             ZappFree(aProductNumber);
         }
@@ -480,10 +483,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaBoardNumber"></param>
         public unsafe void SyncBoardId(uint aaIndex, out string aaBoardNumber)
         {
-			char* aBoardNumber;
-			{
-				CpProxyLinnCoUkVolkano1SyncBoardId(iHandle, aaIndex, &aBoardNumber);
-			}
+            char* aBoardNumber;
+            {
+                CpProxyLinnCoUkVolkano1SyncBoardId(iHandle, aaIndex, &aBoardNumber);
+            }
             aaBoardNumber = Marshal.PtrToStringAnsi((IntPtr)aBoardNumber);
             ZappFree(aBoardNumber);
         }
@@ -512,13 +515,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaBoardNumber"></param>
         public unsafe void EndBoardId(uint aAsyncHandle, out string aaBoardNumber)
         {
-			char* aBoardNumber;
-			{
-				if (0 != CpProxyLinnCoUkVolkano1EndBoardId(iHandle, aAsyncHandle, &aBoardNumber))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aBoardNumber;
+            {
+                if (0 != CpProxyLinnCoUkVolkano1EndBoardId(iHandle, aAsyncHandle, &aBoardNumber))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaBoardNumber = Marshal.PtrToStringAnsi((IntPtr)aBoardNumber);
             ZappFree(aBoardNumber);
         }
@@ -532,10 +535,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaBoardNumber"></param>
         public unsafe void SyncBoardType(uint aaIndex, out string aaBoardNumber)
         {
-			char* aBoardNumber;
-			{
-				CpProxyLinnCoUkVolkano1SyncBoardType(iHandle, aaIndex, &aBoardNumber);
-			}
+            char* aBoardNumber;
+            {
+                CpProxyLinnCoUkVolkano1SyncBoardType(iHandle, aaIndex, &aBoardNumber);
+            }
             aaBoardNumber = Marshal.PtrToStringAnsi((IntPtr)aBoardNumber);
             ZappFree(aBoardNumber);
         }
@@ -564,13 +567,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaBoardNumber"></param>
         public unsafe void EndBoardType(uint aAsyncHandle, out string aaBoardNumber)
         {
-			char* aBoardNumber;
-			{
-				if (0 != CpProxyLinnCoUkVolkano1EndBoardType(iHandle, aAsyncHandle, &aBoardNumber))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aBoardNumber;
+            {
+                if (0 != CpProxyLinnCoUkVolkano1EndBoardType(iHandle, aAsyncHandle, &aBoardNumber))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaBoardNumber = Marshal.PtrToStringAnsi((IntPtr)aBoardNumber);
             ZappFree(aBoardNumber);
         }
@@ -583,10 +586,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMaxBoards"></param>
         public unsafe void SyncMaxBoards(out uint aaMaxBoards)
         {
-			fixed (uint* aMaxBoards = &aaMaxBoards)
-			{
-				CpProxyLinnCoUkVolkano1SyncMaxBoards(iHandle, aMaxBoards);
-			}
+            fixed (uint* aMaxBoards = &aaMaxBoards)
+            {
+                CpProxyLinnCoUkVolkano1SyncMaxBoards(iHandle, aMaxBoards);
+            }
         }
 
         /// <summary>
@@ -612,13 +615,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMaxBoards"></param>
         public unsafe void EndMaxBoards(uint aAsyncHandle, out uint aaMaxBoards)
         {
-			fixed (uint* aMaxBoards = &aaMaxBoards)
-			{
-				if (0 != CpProxyLinnCoUkVolkano1EndMaxBoards(iHandle, aAsyncHandle, aMaxBoards))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* aMaxBoards = &aaMaxBoards)
+            {
+                if (0 != CpProxyLinnCoUkVolkano1EndMaxBoards(iHandle, aAsyncHandle, aMaxBoards))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -629,10 +632,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSoftwareVersion"></param>
         public unsafe void SyncSoftwareVersion(out string aaSoftwareVersion)
         {
-			char* aSoftwareVersion;
-			{
-				CpProxyLinnCoUkVolkano1SyncSoftwareVersion(iHandle, &aSoftwareVersion);
-			}
+            char* aSoftwareVersion;
+            {
+                CpProxyLinnCoUkVolkano1SyncSoftwareVersion(iHandle, &aSoftwareVersion);
+            }
             aaSoftwareVersion = Marshal.PtrToStringAnsi((IntPtr)aSoftwareVersion);
             ZappFree(aSoftwareVersion);
         }
@@ -660,13 +663,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSoftwareVersion"></param>
         public unsafe void EndSoftwareVersion(uint aAsyncHandle, out string aaSoftwareVersion)
         {
-			char* aSoftwareVersion;
-			{
-				if (0 != CpProxyLinnCoUkVolkano1EndSoftwareVersion(iHandle, aAsyncHandle, &aSoftwareVersion))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aSoftwareVersion;
+            {
+                if (0 != CpProxyLinnCoUkVolkano1EndSoftwareVersion(iHandle, aAsyncHandle, &aSoftwareVersion))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaSoftwareVersion = Marshal.PtrToStringAnsi((IntPtr)aSoftwareVersion);
             ZappFree(aSoftwareVersion);
         }

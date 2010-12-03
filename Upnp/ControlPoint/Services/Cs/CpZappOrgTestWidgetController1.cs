@@ -22,6 +22,9 @@ namespace Zapp.ControlPoint.Proxies
 
     }
 
+    /// <summary>
+    /// Proxy for the zapp.org:TestWidgetController:1 UPnP service
+    /// </summary>
     public class CpProxyZappOrgTestWidgetController1 : CpProxy, IDisposable, ICpProxyZappOrgTestWidgetController1
     {
         [DllImport("CpZappOrgTestWidgetController1")]
@@ -77,11 +80,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aWidgetClass"></param>
         public unsafe void SyncCreateWidget(string aWidgetUdn, uint aWidgetClass)
         {
-			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
-			{
-				CpProxyZappOrgTestWidgetController1SyncCreateWidget(iHandle, widgetUdn, aWidgetClass);
-			}
-			Marshal.FreeHGlobal((IntPtr)widgetUdn);
+            char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
+            {
+                CpProxyZappOrgTestWidgetController1SyncCreateWidget(iHandle, widgetUdn, aWidgetClass);
+            }
+            Marshal.FreeHGlobal((IntPtr)widgetUdn);
         }
 
         /// <summary>
@@ -96,11 +99,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginCreateWidget(string aWidgetUdn, uint aWidgetClass, CallbackAsyncComplete aCallback)
         {
-			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
+            char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyZappOrgTestWidgetController1BeginCreateWidget(iHandle, widgetUdn, aWidgetClass, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)widgetUdn);
+            Marshal.FreeHGlobal((IntPtr)widgetUdn);
         }
 
         /// <summary>
@@ -110,12 +113,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndCreateWidget(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyZappOrgTestWidgetController1EndCreateWidget(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyZappOrgTestWidgetController1EndCreateWidget(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -126,11 +129,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aWidgetUdn"></param>
         public unsafe void SyncRemoveWidget(string aWidgetUdn)
         {
-			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
-			{
-				CpProxyZappOrgTestWidgetController1SyncRemoveWidget(iHandle, widgetUdn);
-			}
-			Marshal.FreeHGlobal((IntPtr)widgetUdn);
+            char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
+            {
+                CpProxyZappOrgTestWidgetController1SyncRemoveWidget(iHandle, widgetUdn);
+            }
+            Marshal.FreeHGlobal((IntPtr)widgetUdn);
         }
 
         /// <summary>
@@ -144,11 +147,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginRemoveWidget(string aWidgetUdn, CallbackAsyncComplete aCallback)
         {
-			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
+            char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyZappOrgTestWidgetController1BeginRemoveWidget(iHandle, widgetUdn, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)widgetUdn);
+            Marshal.FreeHGlobal((IntPtr)widgetUdn);
         }
 
         /// <summary>
@@ -158,12 +161,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndRemoveWidget(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyZappOrgTestWidgetController1EndRemoveWidget(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyZappOrgTestWidgetController1EndRemoveWidget(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -176,11 +179,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRegisterValue"></param>
         public unsafe void SyncSetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, uint aRegisterValue)
         {
-			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
-			{
-				CpProxyZappOrgTestWidgetController1SyncSetWidgetRegister(iHandle, widgetUdn, aRegisterIndex, aRegisterValue);
-			}
-			Marshal.FreeHGlobal((IntPtr)widgetUdn);
+            char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
+            {
+                CpProxyZappOrgTestWidgetController1SyncSetWidgetRegister(iHandle, widgetUdn, aRegisterIndex, aRegisterValue);
+            }
+            Marshal.FreeHGlobal((IntPtr)widgetUdn);
         }
 
         /// <summary>
@@ -196,11 +199,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, uint aRegisterValue, CallbackAsyncComplete aCallback)
         {
-			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
+            char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyZappOrgTestWidgetController1BeginSetWidgetRegister(iHandle, widgetUdn, aRegisterIndex, aRegisterValue, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)widgetUdn);
+            Marshal.FreeHGlobal((IntPtr)widgetUdn);
         }
 
         /// <summary>
@@ -210,12 +213,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetWidgetRegister(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyZappOrgTestWidgetController1EndSetWidgetRegister(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyZappOrgTestWidgetController1EndSetWidgetRegister(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -228,12 +231,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRegisterValue"></param>
         public unsafe void SyncGetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, out uint aRegisterValue)
         {
-			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
-			fixed (uint* registerValue = &aRegisterValue)
-			{
-				CpProxyZappOrgTestWidgetController1SyncGetWidgetRegister(iHandle, widgetUdn, aRegisterIndex, registerValue);
-			}
-			Marshal.FreeHGlobal((IntPtr)widgetUdn);
+            char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
+            fixed (uint* registerValue = &aRegisterValue)
+            {
+                CpProxyZappOrgTestWidgetController1SyncGetWidgetRegister(iHandle, widgetUdn, aRegisterIndex, registerValue);
+            }
+            Marshal.FreeHGlobal((IntPtr)widgetUdn);
         }
 
         /// <summary>
@@ -248,11 +251,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetWidgetRegister(string aWidgetUdn, uint aRegisterIndex, CallbackAsyncComplete aCallback)
         {
-			char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
+            char* widgetUdn = (char*)Marshal.StringToHGlobalAnsi(aWidgetUdn);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyZappOrgTestWidgetController1BeginGetWidgetRegister(iHandle, widgetUdn, aRegisterIndex, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)widgetUdn);
+            Marshal.FreeHGlobal((IntPtr)widgetUdn);
         }
 
         /// <summary>
@@ -263,13 +266,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRegisterValue"></param>
         public unsafe void EndGetWidgetRegister(uint aAsyncHandle, out uint aRegisterValue)
         {
-			fixed (uint* registerValue = &aRegisterValue)
-			{
-				if (0 != CpProxyZappOrgTestWidgetController1EndGetWidgetRegister(iHandle, aAsyncHandle, registerValue))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* registerValue = &aRegisterValue)
+            {
+                if (0 != CpProxyZappOrgTestWidgetController1EndGetWidgetRegister(iHandle, aAsyncHandle, registerValue))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>

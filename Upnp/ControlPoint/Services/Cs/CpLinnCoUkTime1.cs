@@ -19,6 +19,9 @@ namespace Zapp.ControlPoint.Proxies
         void PropertySeconds(out uint aSeconds);
     }
 
+    /// <summary>
+    /// Proxy for the linn.co.uk:Time:1 UPnP service
+    /// </summary>
     public class CpProxyLinnCoUkTime1 : CpProxy, IDisposable, ICpProxyLinnCoUkTime1
     {
         [DllImport("CpLinnCoUkTime1")]
@@ -75,12 +78,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSeconds"></param>
         public unsafe void SyncTime(out uint aaTrackCount, out uint aaDuration, out uint aaSeconds)
         {
-			fixed (uint* aTrackCount = &aaTrackCount)
-			fixed (uint* aDuration = &aaDuration)
-			fixed (uint* aSeconds = &aaSeconds)
-			{
-				CpProxyLinnCoUkTime1SyncTime(iHandle, aTrackCount, aDuration, aSeconds);
-			}
+            fixed (uint* aTrackCount = &aaTrackCount)
+            fixed (uint* aDuration = &aaDuration)
+            fixed (uint* aSeconds = &aaSeconds)
+            {
+                CpProxyLinnCoUkTime1SyncTime(iHandle, aTrackCount, aDuration, aSeconds);
+            }
         }
 
         /// <summary>
@@ -108,15 +111,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSeconds"></param>
         public unsafe void EndTime(uint aAsyncHandle, out uint aaTrackCount, out uint aaDuration, out uint aaSeconds)
         {
-			fixed (uint* aTrackCount = &aaTrackCount)
-			fixed (uint* aDuration = &aaDuration)
-			fixed (uint* aSeconds = &aaSeconds)
-			{
-				if (0 != CpProxyLinnCoUkTime1EndTime(iHandle, aAsyncHandle, aTrackCount, aDuration, aSeconds))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* aTrackCount = &aaTrackCount)
+            fixed (uint* aDuration = &aaDuration)
+            fixed (uint* aSeconds = &aaSeconds)
+            {
+                if (0 != CpProxyLinnCoUkTime1EndTime(iHandle, aAsyncHandle, aTrackCount, aDuration, aSeconds))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -187,14 +190,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aTrackCount">Will be set to the value of the property</param>
         public unsafe void PropertyTrackCount(out uint aTrackCount)
         {
-			fixed (uint* trackCount = &aTrackCount)
-			{
-	            CpProxyLinnCoUkTime1PropertyTrackCount(iHandle, trackCount);
-			}
+            fixed (uint* trackCount = &aTrackCount)
+            {
+                CpProxyLinnCoUkTime1PropertyTrackCount(iHandle, trackCount);
+            }
         }
 
         /// <summary>
@@ -202,14 +205,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aDuration">Will be set to the value of the property</param>
         public unsafe void PropertyDuration(out uint aDuration)
         {
-			fixed (uint* duration = &aDuration)
-			{
-	            CpProxyLinnCoUkTime1PropertyDuration(iHandle, duration);
-			}
+            fixed (uint* duration = &aDuration)
+            {
+                CpProxyLinnCoUkTime1PropertyDuration(iHandle, duration);
+            }
         }
 
         /// <summary>
@@ -217,14 +220,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aSeconds">Will be set to the value of the property</param>
         public unsafe void PropertySeconds(out uint aSeconds)
         {
-			fixed (uint* seconds = &aSeconds)
-			{
-	            CpProxyLinnCoUkTime1PropertySeconds(iHandle, seconds);
-			}
+            fixed (uint* seconds = &aSeconds)
+            {
+                CpProxyLinnCoUkTime1PropertySeconds(iHandle, seconds);
+            }
         }
 
         /// <summary>

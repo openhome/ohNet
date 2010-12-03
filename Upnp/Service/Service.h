@@ -213,7 +213,6 @@ public:
     DllExport PropertyString(Zapp::Parameter* aParameter, Functor& aFunctor);
     DllExport ~PropertyString();
     DllExport const Brx& Value() const;
-    DllExport void TransferTo(Brh& aBrh);
     void Process(IOutputProcessor& aProcessor, const Brx& aBuffer);
     TBool SetValue(const Brx& aValue);
     void Write(IPropertyWriter& aWriter);
@@ -282,7 +281,6 @@ public:
     DllExport PropertyBinary(Zapp::Parameter* aParameter, Functor& aFunctor);
     DllExport ~PropertyBinary();
     DllExport const Brx& Value() const;
-    DllExport void TransferTo(Brh& aBrh);
     void Process(IOutputProcessor& aProcessor, const Brx& aBuffer);
     TBool SetValue(const Brx& aValue);
     void Write(IPropertyWriter& aWriter);

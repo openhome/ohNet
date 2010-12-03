@@ -19,6 +19,9 @@ namespace Zapp.ControlPoint.Proxies
 
     }
 
+    /// <summary>
+    /// Proxy for the linn.co.uk:Debug:2 UPnP service
+    /// </summary>
     public class CpProxyLinnCoUkDebug2 : CpProxy, IDisposable, ICpProxyLinnCoUkDebug2
     {
         [DllImport("CpLinnCoUkDebug2")]
@@ -67,9 +70,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaDebugLevel"></param>
         public unsafe void SyncSetDebugLevel(uint aaDebugLevel)
         {
-			{
-				CpProxyLinnCoUkDebug2SyncSetDebugLevel(iHandle, aaDebugLevel);
-			}
+            {
+                CpProxyLinnCoUkDebug2SyncSetDebugLevel(iHandle, aaDebugLevel);
+            }
         }
 
         /// <summary>
@@ -95,12 +98,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetDebugLevel(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDebug2EndSetDebugLevel(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDebug2EndSetDebugLevel(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -111,10 +114,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaDebugLevel"></param>
         public unsafe void SyncDebugLevel(out uint aaDebugLevel)
         {
-			fixed (uint* aDebugLevel = &aaDebugLevel)
-			{
-				CpProxyLinnCoUkDebug2SyncDebugLevel(iHandle, aDebugLevel);
-			}
+            fixed (uint* aDebugLevel = &aaDebugLevel)
+            {
+                CpProxyLinnCoUkDebug2SyncDebugLevel(iHandle, aDebugLevel);
+            }
         }
 
         /// <summary>
@@ -140,13 +143,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaDebugLevel"></param>
         public unsafe void EndDebugLevel(uint aAsyncHandle, out uint aaDebugLevel)
         {
-			fixed (uint* aDebugLevel = &aaDebugLevel)
-			{
-				if (0 != CpProxyLinnCoUkDebug2EndDebugLevel(iHandle, aAsyncHandle, aDebugLevel))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* aDebugLevel = &aaDebugLevel)
+            {
+                if (0 != CpProxyLinnCoUkDebug2EndDebugLevel(iHandle, aAsyncHandle, aDebugLevel))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -158,12 +161,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMemData"></param>
         public unsafe void SyncMemWrite(uint aaMemAddress, string aaMemData)
         {
-			char* aMemData = (char*)Marshal.StringToHGlobalAnsi(aaMemData);
-			uint aMemDataLen = (uint)aaMemData.Length;
-			{
-				CpProxyLinnCoUkDebug2SyncMemWrite(iHandle, aaMemAddress, aMemData, aMemDataLen);
-			}
-			Marshal.FreeHGlobal((IntPtr)aMemData);
+            char* aMemData = (char*)Marshal.StringToHGlobalAnsi(aaMemData);
+            uint aMemDataLen = (uint)aaMemData.Length;
+            {
+                CpProxyLinnCoUkDebug2SyncMemWrite(iHandle, aaMemAddress, aMemData, aMemDataLen);
+            }
+            Marshal.FreeHGlobal((IntPtr)aMemData);
         }
 
         /// <summary>
@@ -178,12 +181,12 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginMemWrite(uint aaMemAddress, string aaMemData, CallbackAsyncComplete aCallback)
         {
-			char* aMemData = (char*)Marshal.StringToHGlobalAnsi(aaMemData);
-			uint aMemDataLen = (uint)aaMemData.Length;
+            char* aMemData = (char*)Marshal.StringToHGlobalAnsi(aaMemData);
+            uint aMemDataLen = (uint)aaMemData.Length;
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkDebug2BeginMemWrite(iHandle, aaMemAddress, aMemData, aMemDataLen, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)aMemData);
+            Marshal.FreeHGlobal((IntPtr)aMemData);
         }
 
         /// <summary>
@@ -193,12 +196,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndMemWrite(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDebug2EndMemWrite(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDebug2EndMemWrite(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>

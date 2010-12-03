@@ -5,10 +5,66 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderUpnpOrgContentDirectory3 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the SystemUpdateID property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertySystemUpdateID(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the SystemUpdateID property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertySystemUpdateID(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the ContainerUpdateIDs property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyContainerUpdateIDs(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ContainerUpdateIDs property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyContainerUpdateIDs(out string aValue);
+
+        /// <summary>
+        /// Set the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyLastChange(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyLastChange(out string aValue);
+
+        /// <summary>
+        /// Set the value of the TransferIDs property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyTransferIDs(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the TransferIDs property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyTransferIDs(out string aValue);
+        
+    }
     /// <summary>
     /// Provider for the upnp.org:ContentDirectory:3 UPnP service
     /// </summary>
-    public class DvProviderUpnpOrgContentDirectory3 : DvProvider, IDisposable
+    public class DvProviderUpnpOrgContentDirectory3 : DvProvider, IDisposable, IDvProviderUpnpOrgContentDirectory3
     {
         [DllImport("DvUpnpOrgContentDirectory3")]
         static extern uint DvProviderUpnpOrgContentDirectory3Create(uint aDeviceHandle);
@@ -148,7 +204,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertySystemUpdateID(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderUpnpOrgContentDirectory3GetPropertySystemUpdateID(iHandle, value);
             }
         }

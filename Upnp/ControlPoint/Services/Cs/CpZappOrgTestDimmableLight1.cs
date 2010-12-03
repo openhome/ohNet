@@ -18,6 +18,9 @@ namespace Zapp.ControlPoint.Proxies
         void PropertyA_ARG_Level(out uint aA_ARG_Level);
     }
 
+    /// <summary>
+    /// Proxy for the zapp.org:TestDimmableLight:1 UPnP service
+    /// </summary>
     public class CpProxyZappOrgTestDimmableLight1 : CpProxy, IDisposable, ICpProxyZappOrgTestDimmableLight1
     {
         [DllImport("CpZappOrgTestDimmableLight1")]
@@ -66,10 +69,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aLevel"></param>
         public unsafe void SyncGetLevel(out uint aLevel)
         {
-			fixed (uint* level = &aLevel)
-			{
-				CpProxyZappOrgTestDimmableLight1SyncGetLevel(iHandle, level);
-			}
+            fixed (uint* level = &aLevel)
+            {
+                CpProxyZappOrgTestDimmableLight1SyncGetLevel(iHandle, level);
+            }
         }
 
         /// <summary>
@@ -95,13 +98,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aLevel"></param>
         public unsafe void EndGetLevel(uint aAsyncHandle, out uint aLevel)
         {
-			fixed (uint* level = &aLevel)
-			{
-				if (0 != CpProxyZappOrgTestDimmableLight1EndGetLevel(iHandle, aAsyncHandle, level))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* level = &aLevel)
+            {
+                if (0 != CpProxyZappOrgTestDimmableLight1EndGetLevel(iHandle, aAsyncHandle, level))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -112,9 +115,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aLevel"></param>
         public unsafe void SyncSetLevel(uint aLevel)
         {
-			{
-				CpProxyZappOrgTestDimmableLight1SyncSetLevel(iHandle, aLevel);
-			}
+            {
+                CpProxyZappOrgTestDimmableLight1SyncSetLevel(iHandle, aLevel);
+            }
         }
 
         /// <summary>
@@ -140,12 +143,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetLevel(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyZappOrgTestDimmableLight1EndSetLevel(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyZappOrgTestDimmableLight1EndSetLevel(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -174,14 +177,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aA_ARG_Level">Will be set to the value of the property</param>
         public unsafe void PropertyA_ARG_Level(out uint aA_ARG_Level)
         {
-			fixed (uint* a_ARG_Level = &aA_ARG_Level)
-			{
-	            CpProxyZappOrgTestDimmableLight1PropertyA_ARG_Level(iHandle, a_ARG_Level);
-			}
+            fixed (uint* a_ARG_Level = &aA_ARG_Level)
+            {
+                CpProxyZappOrgTestDimmableLight1PropertyA_ARG_Level(iHandle, a_ARG_Level);
+            }
         }
 
         /// <summary>

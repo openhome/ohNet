@@ -5,10 +5,92 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderLinnCoUkPreamp4 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the Volume property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyVolume(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the Volume property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyVolume(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the Mute property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyMute(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the Mute property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyMute(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the Balance property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyBalance(int aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the Balance property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyBalance(out int aValue);
+
+        /// <summary>
+        /// Set the value of the VolumeLimit property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyVolumeLimit(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the VolumeLimit property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyVolumeLimit(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the StartupVolume property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyStartupVolume(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the StartupVolume property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyStartupVolume(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the StartupVolumeEnabled property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyStartupVolumeEnabled(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the StartupVolumeEnabled property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyStartupVolumeEnabled(out bool aValue);
+        
+    }
     /// <summary>
     /// Provider for the linn.co.uk:Preamp:4 UPnP service
     /// </summary>
-    public class DvProviderLinnCoUkPreamp4 : DvProvider, IDisposable
+    public class DvProviderLinnCoUkPreamp4 : DvProvider, IDisposable, IDvProviderLinnCoUkPreamp4
     {
         [DllImport("DvLinnCoUkPreamp4")]
         static extern uint DvProviderLinnCoUkPreamp4Create(uint aDeviceHandle);
@@ -132,7 +214,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyVolume(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkPreamp4GetPropertyVolume(iHandle, value);
             }
         }
@@ -186,7 +268,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyBalance(out int aValue)
         {
             fixed (int* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkPreamp4GetPropertyBalance(iHandle, value);
             }
         }
@@ -213,7 +295,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyVolumeLimit(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkPreamp4GetPropertyVolumeLimit(iHandle, value);
             }
         }
@@ -240,7 +322,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyStartupVolume(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderLinnCoUkPreamp4GetPropertyStartupVolume(iHandle, value);
             }
         }

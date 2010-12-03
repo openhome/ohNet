@@ -23,6 +23,9 @@ namespace Zapp.ControlPoint.Proxies
         void PropertyParameterXml(out string aParameterXml);
     }
 
+    /// <summary>
+    /// Proxy for the linn.co.uk:Configuration:1 UPnP service
+    /// </summary>
     public class CpProxyLinnCoUkConfiguration1 : CpProxy, IDisposable, ICpProxyLinnCoUkConfiguration1
     {
         [DllImport("CpLinnCoUkConfiguration1")]
@@ -83,10 +86,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaConfigurationXml"></param>
         public unsafe void SyncConfigurationXml(out string aaConfigurationXml)
         {
-			char* aConfigurationXml;
-			{
-				CpProxyLinnCoUkConfiguration1SyncConfigurationXml(iHandle, &aConfigurationXml);
-			}
+            char* aConfigurationXml;
+            {
+                CpProxyLinnCoUkConfiguration1SyncConfigurationXml(iHandle, &aConfigurationXml);
+            }
             aaConfigurationXml = Marshal.PtrToStringAnsi((IntPtr)aConfigurationXml);
             ZappFree(aConfigurationXml);
         }
@@ -114,13 +117,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaConfigurationXml"></param>
         public unsafe void EndConfigurationXml(uint aAsyncHandle, out string aaConfigurationXml)
         {
-			char* aConfigurationXml;
-			{
-				if (0 != CpProxyLinnCoUkConfiguration1EndConfigurationXml(iHandle, aAsyncHandle, &aConfigurationXml))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aConfigurationXml;
+            {
+                if (0 != CpProxyLinnCoUkConfiguration1EndConfigurationXml(iHandle, aAsyncHandle, &aConfigurationXml))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaConfigurationXml = Marshal.PtrToStringAnsi((IntPtr)aConfigurationXml);
             ZappFree(aConfigurationXml);
         }
@@ -133,10 +136,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaParameterXml"></param>
         public unsafe void SyncParameterXml(out string aaParameterXml)
         {
-			char* aParameterXml;
-			{
-				CpProxyLinnCoUkConfiguration1SyncParameterXml(iHandle, &aParameterXml);
-			}
+            char* aParameterXml;
+            {
+                CpProxyLinnCoUkConfiguration1SyncParameterXml(iHandle, &aParameterXml);
+            }
             aaParameterXml = Marshal.PtrToStringAnsi((IntPtr)aParameterXml);
             ZappFree(aParameterXml);
         }
@@ -164,13 +167,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaParameterXml"></param>
         public unsafe void EndParameterXml(uint aAsyncHandle, out string aaParameterXml)
         {
-			char* aParameterXml;
-			{
-				if (0 != CpProxyLinnCoUkConfiguration1EndParameterXml(iHandle, aAsyncHandle, &aParameterXml))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aParameterXml;
+            {
+                if (0 != CpProxyLinnCoUkConfiguration1EndParameterXml(iHandle, aAsyncHandle, &aParameterXml))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaParameterXml = Marshal.PtrToStringAnsi((IntPtr)aParameterXml);
             ZappFree(aParameterXml);
         }
@@ -185,15 +188,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaValue"></param>
         public unsafe void SyncSetParameter(string aaTarget, string aaName, string aaValue)
         {
-			char* aTarget = (char*)Marshal.StringToHGlobalAnsi(aaTarget);
-			char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
-			char* aValue = (char*)Marshal.StringToHGlobalAnsi(aaValue);
-			{
-				CpProxyLinnCoUkConfiguration1SyncSetParameter(iHandle, aTarget, aName, aValue);
-			}
-			Marshal.FreeHGlobal((IntPtr)aTarget);
-			Marshal.FreeHGlobal((IntPtr)aName);
-			Marshal.FreeHGlobal((IntPtr)aValue);
+            char* aTarget = (char*)Marshal.StringToHGlobalAnsi(aaTarget);
+            char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
+            char* aValue = (char*)Marshal.StringToHGlobalAnsi(aaValue);
+            {
+                CpProxyLinnCoUkConfiguration1SyncSetParameter(iHandle, aTarget, aName, aValue);
+            }
+            Marshal.FreeHGlobal((IntPtr)aTarget);
+            Marshal.FreeHGlobal((IntPtr)aName);
+            Marshal.FreeHGlobal((IntPtr)aValue);
         }
 
         /// <summary>
@@ -209,15 +212,15 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetParameter(string aaTarget, string aaName, string aaValue, CallbackAsyncComplete aCallback)
         {
-			char* aTarget = (char*)Marshal.StringToHGlobalAnsi(aaTarget);
-			char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
-			char* aValue = (char*)Marshal.StringToHGlobalAnsi(aaValue);
+            char* aTarget = (char*)Marshal.StringToHGlobalAnsi(aaTarget);
+            char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
+            char* aValue = (char*)Marshal.StringToHGlobalAnsi(aaValue);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkConfiguration1BeginSetParameter(iHandle, aTarget, aName, aValue, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)aTarget);
-			Marshal.FreeHGlobal((IntPtr)aName);
-			Marshal.FreeHGlobal((IntPtr)aValue);
+            Marshal.FreeHGlobal((IntPtr)aTarget);
+            Marshal.FreeHGlobal((IntPtr)aName);
+            Marshal.FreeHGlobal((IntPtr)aValue);
         }
 
         /// <summary>
@@ -227,12 +230,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetParameter(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkConfiguration1EndSetParameter(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkConfiguration1EndSetParameter(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -282,11 +285,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aConfigurationXml">Will be set to the value of the property</param>
         public unsafe void PropertyConfigurationXml(out string aConfigurationXml)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkConfiguration1PropertyConfigurationXml(iHandle, &ptr);
             aConfigurationXml = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
@@ -297,11 +300,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aParameterXml">Will be set to the value of the property</param>
         public unsafe void PropertyParameterXml(out string aParameterXml)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkConfiguration1PropertyParameterXml(iHandle, &ptr);
             aParameterXml = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);

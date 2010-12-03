@@ -5,10 +5,27 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderUpnpOrgScheduledRecording1 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyLastChange(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyLastChange(out string aValue);
+        
+    }
     /// <summary>
     /// Provider for the upnp.org:ScheduledRecording:1 UPnP service
     /// </summary>
-    public class DvProviderUpnpOrgScheduledRecording1 : DvProvider, IDisposable
+    public class DvProviderUpnpOrgScheduledRecording1 : DvProvider, IDisposable, IDvProviderUpnpOrgScheduledRecording1
     {
         [DllImport("DvUpnpOrgScheduledRecording1")]
         static extern uint DvProviderUpnpOrgScheduledRecording1Create(uint aDeviceHandle);

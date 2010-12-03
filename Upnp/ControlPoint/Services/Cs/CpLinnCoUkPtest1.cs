@@ -19,6 +19,9 @@ namespace Zapp.ControlPoint.Proxies
 
     }
 
+    /// <summary>
+    /// Proxy for the linn.co.uk:Ptest:1 UPnP service
+    /// </summary>
     public class CpProxyLinnCoUkPtest1 : CpProxy, IDisposable, ICpProxyLinnCoUkPtest1
     {
         [DllImport("CpLinnCoUkPtest1")]
@@ -68,11 +71,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaResult"></param>
         public unsafe void SyncTestComPort(uint aaPort, out bool aaResult)
         {
-			uint aResult;
-			{
-				CpProxyLinnCoUkPtest1SyncTestComPort(iHandle, aaPort, &aResult);
-			}
-			aaResult = (aResult != 0);
+            uint aResult;
+            {
+                CpProxyLinnCoUkPtest1SyncTestComPort(iHandle, aaPort, &aResult);
+            }
+            aaResult = (aResult != 0);
         }
 
         /// <summary>
@@ -99,14 +102,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaResult"></param>
         public unsafe void EndTestComPort(uint aAsyncHandle, out bool aaResult)
         {
-			uint aResult;
-			{
-				if (0 != CpProxyLinnCoUkPtest1EndTestComPort(iHandle, aAsyncHandle, &aResult))
-				{
-					throw(new ProxyError());
-				}
-			}
-			aaResult = (aResult != 0);
+            uint aResult;
+            {
+                if (0 != CpProxyLinnCoUkPtest1EndTestComPort(iHandle, aAsyncHandle, &aResult))
+                {
+                    throw(new ProxyError());
+                }
+            }
+            aaResult = (aResult != 0);
         }
 
         /// <summary>
@@ -116,9 +119,9 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         public unsafe void SyncLedsOn()
         {
-			{
-				CpProxyLinnCoUkPtest1SyncLedsOn(iHandle);
-			}
+            {
+                CpProxyLinnCoUkPtest1SyncLedsOn(iHandle);
+            }
         }
 
         /// <summary>
@@ -143,12 +146,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndLedsOn(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkPtest1EndLedsOn(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkPtest1EndLedsOn(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -158,9 +161,9 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         public unsafe void SyncLedsOff()
         {
-			{
-				CpProxyLinnCoUkPtest1SyncLedsOff(iHandle);
-			}
+            {
+                CpProxyLinnCoUkPtest1SyncLedsOff(iHandle);
+            }
         }
 
         /// <summary>
@@ -185,12 +188,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndLedsOff(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkPtest1EndLedsOff(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkPtest1EndLedsOff(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>

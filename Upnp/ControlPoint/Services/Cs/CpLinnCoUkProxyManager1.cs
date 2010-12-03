@@ -48,6 +48,9 @@ namespace Zapp.ControlPoint.Proxies
         void PropertyDiscPlayerComPort(out uint aDiscPlayerComPort);
     }
 
+    /// <summary>
+    /// Proxy for the linn.co.uk:ProxyManager:1 UPnP service
+    /// </summary>
     public class CpProxyLinnCoUkProxyManager1 : CpProxy, IDisposable, ICpProxyLinnCoUkProxyManager1
     {
         [DllImport("CpLinnCoUkProxyManager1")]
@@ -162,10 +165,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaConnected"></param>
         public unsafe void SyncKontrolProductConnected(out string aaConnected)
         {
-			char* aConnected;
-			{
-				CpProxyLinnCoUkProxyManager1SyncKontrolProductConnected(iHandle, &aConnected);
-			}
+            char* aConnected;
+            {
+                CpProxyLinnCoUkProxyManager1SyncKontrolProductConnected(iHandle, &aConnected);
+            }
             aaConnected = Marshal.PtrToStringAnsi((IntPtr)aConnected);
             ZappFree(aConnected);
         }
@@ -193,13 +196,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaConnected"></param>
         public unsafe void EndKontrolProductConnected(uint aAsyncHandle, out string aaConnected)
         {
-			char* aConnected;
-			{
-				if (0 != CpProxyLinnCoUkProxyManager1EndKontrolProductConnected(iHandle, aAsyncHandle, &aConnected))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aConnected;
+            {
+                if (0 != CpProxyLinnCoUkProxyManager1EndKontrolProductConnected(iHandle, aAsyncHandle, &aConnected))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaConnected = Marshal.PtrToStringAnsi((IntPtr)aConnected);
             ZappFree(aConnected);
         }
@@ -212,11 +215,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaConnected"></param>
         public unsafe void SyncSetKontrolProductConnected(string aaConnected)
         {
-			char* aConnected = (char*)Marshal.StringToHGlobalAnsi(aaConnected);
-			{
-				CpProxyLinnCoUkProxyManager1SyncSetKontrolProductConnected(iHandle, aConnected);
-			}
-			Marshal.FreeHGlobal((IntPtr)aConnected);
+            char* aConnected = (char*)Marshal.StringToHGlobalAnsi(aaConnected);
+            {
+                CpProxyLinnCoUkProxyManager1SyncSetKontrolProductConnected(iHandle, aConnected);
+            }
+            Marshal.FreeHGlobal((IntPtr)aConnected);
         }
 
         /// <summary>
@@ -230,11 +233,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetKontrolProductConnected(string aaConnected, CallbackAsyncComplete aCallback)
         {
-			char* aConnected = (char*)Marshal.StringToHGlobalAnsi(aaConnected);
+            char* aConnected = (char*)Marshal.StringToHGlobalAnsi(aaConnected);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkProxyManager1BeginSetKontrolProductConnected(iHandle, aConnected, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)aConnected);
+            Marshal.FreeHGlobal((IntPtr)aConnected);
         }
 
         /// <summary>
@@ -244,12 +247,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetKontrolProductConnected(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkProxyManager1EndSetKontrolProductConnected(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkProxyManager1EndSetKontrolProductConnected(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -260,10 +263,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaPort"></param>
         public unsafe void SyncKontrolProductComPort(out uint aaPort)
         {
-			fixed (uint* aPort = &aaPort)
-			{
-				CpProxyLinnCoUkProxyManager1SyncKontrolProductComPort(iHandle, aPort);
-			}
+            fixed (uint* aPort = &aaPort)
+            {
+                CpProxyLinnCoUkProxyManager1SyncKontrolProductComPort(iHandle, aPort);
+            }
         }
 
         /// <summary>
@@ -289,13 +292,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaPort"></param>
         public unsafe void EndKontrolProductComPort(uint aAsyncHandle, out uint aaPort)
         {
-			fixed (uint* aPort = &aaPort)
-			{
-				if (0 != CpProxyLinnCoUkProxyManager1EndKontrolProductComPort(iHandle, aAsyncHandle, aPort))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* aPort = &aaPort)
+            {
+                if (0 != CpProxyLinnCoUkProxyManager1EndKontrolProductComPort(iHandle, aAsyncHandle, aPort))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -306,9 +309,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaConnected"></param>
         public unsafe void SyncSetKontrolProductComPort(uint aaConnected)
         {
-			{
-				CpProxyLinnCoUkProxyManager1SyncSetKontrolProductComPort(iHandle, aaConnected);
-			}
+            {
+                CpProxyLinnCoUkProxyManager1SyncSetKontrolProductComPort(iHandle, aaConnected);
+            }
         }
 
         /// <summary>
@@ -334,12 +337,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetKontrolProductComPort(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkProxyManager1EndSetKontrolProductComPort(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkProxyManager1EndSetKontrolProductComPort(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -350,10 +353,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaConnected"></param>
         public unsafe void SyncDiscPlayerConnected(out string aaConnected)
         {
-			char* aConnected;
-			{
-				CpProxyLinnCoUkProxyManager1SyncDiscPlayerConnected(iHandle, &aConnected);
-			}
+            char* aConnected;
+            {
+                CpProxyLinnCoUkProxyManager1SyncDiscPlayerConnected(iHandle, &aConnected);
+            }
             aaConnected = Marshal.PtrToStringAnsi((IntPtr)aConnected);
             ZappFree(aConnected);
         }
@@ -381,13 +384,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaConnected"></param>
         public unsafe void EndDiscPlayerConnected(uint aAsyncHandle, out string aaConnected)
         {
-			char* aConnected;
-			{
-				if (0 != CpProxyLinnCoUkProxyManager1EndDiscPlayerConnected(iHandle, aAsyncHandle, &aConnected))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aConnected;
+            {
+                if (0 != CpProxyLinnCoUkProxyManager1EndDiscPlayerConnected(iHandle, aAsyncHandle, &aConnected))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaConnected = Marshal.PtrToStringAnsi((IntPtr)aConnected);
             ZappFree(aConnected);
         }
@@ -400,11 +403,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaConnected"></param>
         public unsafe void SyncSetDiscPlayerConnected(string aaConnected)
         {
-			char* aConnected = (char*)Marshal.StringToHGlobalAnsi(aaConnected);
-			{
-				CpProxyLinnCoUkProxyManager1SyncSetDiscPlayerConnected(iHandle, aConnected);
-			}
-			Marshal.FreeHGlobal((IntPtr)aConnected);
+            char* aConnected = (char*)Marshal.StringToHGlobalAnsi(aaConnected);
+            {
+                CpProxyLinnCoUkProxyManager1SyncSetDiscPlayerConnected(iHandle, aConnected);
+            }
+            Marshal.FreeHGlobal((IntPtr)aConnected);
         }
 
         /// <summary>
@@ -418,11 +421,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetDiscPlayerConnected(string aaConnected, CallbackAsyncComplete aCallback)
         {
-			char* aConnected = (char*)Marshal.StringToHGlobalAnsi(aaConnected);
+            char* aConnected = (char*)Marshal.StringToHGlobalAnsi(aaConnected);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkProxyManager1BeginSetDiscPlayerConnected(iHandle, aConnected, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)aConnected);
+            Marshal.FreeHGlobal((IntPtr)aConnected);
         }
 
         /// <summary>
@@ -432,12 +435,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetDiscPlayerConnected(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkProxyManager1EndSetDiscPlayerConnected(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkProxyManager1EndSetDiscPlayerConnected(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -448,10 +451,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaPort"></param>
         public unsafe void SyncDiscPlayerComPort(out uint aaPort)
         {
-			fixed (uint* aPort = &aaPort)
-			{
-				CpProxyLinnCoUkProxyManager1SyncDiscPlayerComPort(iHandle, aPort);
-			}
+            fixed (uint* aPort = &aaPort)
+            {
+                CpProxyLinnCoUkProxyManager1SyncDiscPlayerComPort(iHandle, aPort);
+            }
         }
 
         /// <summary>
@@ -477,13 +480,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaPort"></param>
         public unsafe void EndDiscPlayerComPort(uint aAsyncHandle, out uint aaPort)
         {
-			fixed (uint* aPort = &aaPort)
-			{
-				if (0 != CpProxyLinnCoUkProxyManager1EndDiscPlayerComPort(iHandle, aAsyncHandle, aPort))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* aPort = &aaPort)
+            {
+                if (0 != CpProxyLinnCoUkProxyManager1EndDiscPlayerComPort(iHandle, aAsyncHandle, aPort))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -494,9 +497,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaConnected"></param>
         public unsafe void SyncSetDiscPlayerComPort(uint aaConnected)
         {
-			{
-				CpProxyLinnCoUkProxyManager1SyncSetDiscPlayerComPort(iHandle, aaConnected);
-			}
+            {
+                CpProxyLinnCoUkProxyManager1SyncSetDiscPlayerComPort(iHandle, aaConnected);
+            }
         }
 
         /// <summary>
@@ -522,12 +525,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetDiscPlayerComPort(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkProxyManager1EndSetDiscPlayerComPort(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkProxyManager1EndSetDiscPlayerComPort(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -538,11 +541,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaResult"></param>
         public unsafe void SyncTestKontrolProductConnection(out bool aaResult)
         {
-			uint aResult;
-			{
-				CpProxyLinnCoUkProxyManager1SyncTestKontrolProductConnection(iHandle, &aResult);
-			}
-			aaResult = (aResult != 0);
+            uint aResult;
+            {
+                CpProxyLinnCoUkProxyManager1SyncTestKontrolProductConnection(iHandle, &aResult);
+            }
+            aaResult = (aResult != 0);
         }
 
         /// <summary>
@@ -568,14 +571,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaResult"></param>
         public unsafe void EndTestKontrolProductConnection(uint aAsyncHandle, out bool aaResult)
         {
-			uint aResult;
-			{
-				if (0 != CpProxyLinnCoUkProxyManager1EndTestKontrolProductConnection(iHandle, aAsyncHandle, &aResult))
-				{
-					throw(new ProxyError());
-				}
-			}
-			aaResult = (aResult != 0);
+            uint aResult;
+            {
+                if (0 != CpProxyLinnCoUkProxyManager1EndTestKontrolProductConnection(iHandle, aAsyncHandle, &aResult))
+                {
+                    throw(new ProxyError());
+                }
+            }
+            aaResult = (aResult != 0);
         }
 
         /// <summary>
@@ -586,11 +589,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaResult"></param>
         public unsafe void SyncTestDiscPlayerConnection(out bool aaResult)
         {
-			uint aResult;
-			{
-				CpProxyLinnCoUkProxyManager1SyncTestDiscPlayerConnection(iHandle, &aResult);
-			}
-			aaResult = (aResult != 0);
+            uint aResult;
+            {
+                CpProxyLinnCoUkProxyManager1SyncTestDiscPlayerConnection(iHandle, &aResult);
+            }
+            aaResult = (aResult != 0);
         }
 
         /// <summary>
@@ -616,14 +619,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaResult"></param>
         public unsafe void EndTestDiscPlayerConnection(uint aAsyncHandle, out bool aaResult)
         {
-			uint aResult;
-			{
-				if (0 != CpProxyLinnCoUkProxyManager1EndTestDiscPlayerConnection(iHandle, aAsyncHandle, &aResult))
-				{
-					throw(new ProxyError());
-				}
-			}
-			aaResult = (aResult != 0);
+            uint aResult;
+            {
+                if (0 != CpProxyLinnCoUkProxyManager1EndTestDiscPlayerConnection(iHandle, aAsyncHandle, &aResult))
+                {
+                    throw(new ProxyError());
+                }
+            }
+            aaResult = (aResult != 0);
         }
 
         /// <summary>
@@ -715,11 +718,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aKontrolProductConnected">Will be set to the value of the property</param>
         public unsafe void PropertyKontrolProductConnected(out string aKontrolProductConnected)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkProxyManager1PropertyKontrolProductConnected(iHandle, &ptr);
             aKontrolProductConnected = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
@@ -730,14 +733,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aKontrolProductComPort">Will be set to the value of the property</param>
         public unsafe void PropertyKontrolProductComPort(out uint aKontrolProductComPort)
         {
-			fixed (uint* kontrolProductComPort = &aKontrolProductComPort)
-			{
-	            CpProxyLinnCoUkProxyManager1PropertyKontrolProductComPort(iHandle, kontrolProductComPort);
-			}
+            fixed (uint* kontrolProductComPort = &aKontrolProductComPort)
+            {
+                CpProxyLinnCoUkProxyManager1PropertyKontrolProductComPort(iHandle, kontrolProductComPort);
+            }
         }
 
         /// <summary>
@@ -745,11 +748,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aDiscPlayerConnected">Will be set to the value of the property</param>
         public unsafe void PropertyDiscPlayerConnected(out string aDiscPlayerConnected)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkProxyManager1PropertyDiscPlayerConnected(iHandle, &ptr);
             aDiscPlayerConnected = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
@@ -760,14 +763,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aDiscPlayerComPort">Will be set to the value of the property</param>
         public unsafe void PropertyDiscPlayerComPort(out uint aDiscPlayerComPort)
         {
-			fixed (uint* discPlayerComPort = &aDiscPlayerComPort)
-			{
-	            CpProxyLinnCoUkProxyManager1PropertyDiscPlayerComPort(iHandle, discPlayerComPort);
-			}
+            fixed (uint* discPlayerComPort = &aDiscPlayerComPort)
+            {
+                CpProxyLinnCoUkProxyManager1PropertyDiscPlayerComPort(iHandle, discPlayerComPort);
+            }
         }
 
         /// <summary>

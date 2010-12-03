@@ -108,6 +108,9 @@ namespace Zapp.ControlPoint.Proxies
         void PropertyProductAnySourceType(out uint aProductAnySourceType);
     }
 
+    /// <summary>
+    /// Proxy for the linn.co.uk:Product:3 UPnP service
+    /// </summary>
     public class CpProxyLinnCoUkProduct3 : CpProxy, IDisposable, ICpProxyLinnCoUkProduct3
     {
         [DllImport("CpLinnCoUkProduct3")]
@@ -360,10 +363,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaType"></param>
         public unsafe void SyncType(out string aaType)
         {
-			char* aType;
-			{
-				CpProxyLinnCoUkProduct3SyncType(iHandle, &aType);
-			}
+            char* aType;
+            {
+                CpProxyLinnCoUkProduct3SyncType(iHandle, &aType);
+            }
             aaType = Marshal.PtrToStringAnsi((IntPtr)aType);
             ZappFree(aType);
         }
@@ -391,13 +394,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaType"></param>
         public unsafe void EndType(uint aAsyncHandle, out string aaType)
         {
-			char* aType;
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndType(iHandle, aAsyncHandle, &aType))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aType;
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndType(iHandle, aAsyncHandle, &aType))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaType = Marshal.PtrToStringAnsi((IntPtr)aType);
             ZappFree(aType);
         }
@@ -410,10 +413,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaModel"></param>
         public unsafe void SyncModel(out string aaModel)
         {
-			char* aModel;
-			{
-				CpProxyLinnCoUkProduct3SyncModel(iHandle, &aModel);
-			}
+            char* aModel;
+            {
+                CpProxyLinnCoUkProduct3SyncModel(iHandle, &aModel);
+            }
             aaModel = Marshal.PtrToStringAnsi((IntPtr)aModel);
             ZappFree(aModel);
         }
@@ -441,13 +444,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaModel"></param>
         public unsafe void EndModel(uint aAsyncHandle, out string aaModel)
         {
-			char* aModel;
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndModel(iHandle, aAsyncHandle, &aModel))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aModel;
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndModel(iHandle, aAsyncHandle, &aModel))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaModel = Marshal.PtrToStringAnsi((IntPtr)aModel);
             ZappFree(aModel);
         }
@@ -460,10 +463,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaName"></param>
         public unsafe void SyncName(out string aaName)
         {
-			char* aName;
-			{
-				CpProxyLinnCoUkProduct3SyncName(iHandle, &aName);
-			}
+            char* aName;
+            {
+                CpProxyLinnCoUkProduct3SyncName(iHandle, &aName);
+            }
             aaName = Marshal.PtrToStringAnsi((IntPtr)aName);
             ZappFree(aName);
         }
@@ -491,13 +494,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaName"></param>
         public unsafe void EndName(uint aAsyncHandle, out string aaName)
         {
-			char* aName;
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndName(iHandle, aAsyncHandle, &aName))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aName;
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndName(iHandle, aAsyncHandle, &aName))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaName = Marshal.PtrToStringAnsi((IntPtr)aName);
             ZappFree(aName);
         }
@@ -510,11 +513,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaName"></param>
         public unsafe void SyncSetName(string aaName)
         {
-			char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
-			{
-				CpProxyLinnCoUkProduct3SyncSetName(iHandle, aName);
-			}
-			Marshal.FreeHGlobal((IntPtr)aName);
+            char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
+            {
+                CpProxyLinnCoUkProduct3SyncSetName(iHandle, aName);
+            }
+            Marshal.FreeHGlobal((IntPtr)aName);
         }
 
         /// <summary>
@@ -528,11 +531,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetName(string aaName, CallbackAsyncComplete aCallback)
         {
-			char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
+            char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkProduct3BeginSetName(iHandle, aName, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)aName);
+            Marshal.FreeHGlobal((IntPtr)aName);
         }
 
         /// <summary>
@@ -542,12 +545,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetName(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndSetName(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndSetName(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -558,10 +561,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaRoom"></param>
         public unsafe void SyncRoom(out string aaRoom)
         {
-			char* aRoom;
-			{
-				CpProxyLinnCoUkProduct3SyncRoom(iHandle, &aRoom);
-			}
+            char* aRoom;
+            {
+                CpProxyLinnCoUkProduct3SyncRoom(iHandle, &aRoom);
+            }
             aaRoom = Marshal.PtrToStringAnsi((IntPtr)aRoom);
             ZappFree(aRoom);
         }
@@ -589,13 +592,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaRoom"></param>
         public unsafe void EndRoom(uint aAsyncHandle, out string aaRoom)
         {
-			char* aRoom;
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndRoom(iHandle, aAsyncHandle, &aRoom))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aRoom;
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndRoom(iHandle, aAsyncHandle, &aRoom))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaRoom = Marshal.PtrToStringAnsi((IntPtr)aRoom);
             ZappFree(aRoom);
         }
@@ -608,11 +611,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaRoom"></param>
         public unsafe void SyncSetRoom(string aaRoom)
         {
-			char* aRoom = (char*)Marshal.StringToHGlobalAnsi(aaRoom);
-			{
-				CpProxyLinnCoUkProduct3SyncSetRoom(iHandle, aRoom);
-			}
-			Marshal.FreeHGlobal((IntPtr)aRoom);
+            char* aRoom = (char*)Marshal.StringToHGlobalAnsi(aaRoom);
+            {
+                CpProxyLinnCoUkProduct3SyncSetRoom(iHandle, aRoom);
+            }
+            Marshal.FreeHGlobal((IntPtr)aRoom);
         }
 
         /// <summary>
@@ -626,11 +629,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetRoom(string aaRoom, CallbackAsyncComplete aCallback)
         {
-			char* aRoom = (char*)Marshal.StringToHGlobalAnsi(aaRoom);
+            char* aRoom = (char*)Marshal.StringToHGlobalAnsi(aaRoom);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkProduct3BeginSetRoom(iHandle, aRoom, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)aRoom);
+            Marshal.FreeHGlobal((IntPtr)aRoom);
         }
 
         /// <summary>
@@ -640,12 +643,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetRoom(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndSetRoom(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndSetRoom(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -656,11 +659,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaStandby"></param>
         public unsafe void SyncStandby(out bool aaStandby)
         {
-			uint aStandby;
-			{
-				CpProxyLinnCoUkProduct3SyncStandby(iHandle, &aStandby);
-			}
-			aaStandby = (aStandby != 0);
+            uint aStandby;
+            {
+                CpProxyLinnCoUkProduct3SyncStandby(iHandle, &aStandby);
+            }
+            aaStandby = (aStandby != 0);
         }
 
         /// <summary>
@@ -686,14 +689,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaStandby"></param>
         public unsafe void EndStandby(uint aAsyncHandle, out bool aaStandby)
         {
-			uint aStandby;
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndStandby(iHandle, aAsyncHandle, &aStandby))
-				{
-					throw(new ProxyError());
-				}
-			}
-			aaStandby = (aStandby != 0);
+            uint aStandby;
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndStandby(iHandle, aAsyncHandle, &aStandby))
+                {
+                    throw(new ProxyError());
+                }
+            }
+            aaStandby = (aStandby != 0);
         }
 
         /// <summary>
@@ -704,10 +707,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaStandby"></param>
         public unsafe void SyncSetStandby(bool aaStandby)
         {
-			uint aStandby = (aaStandby? 1u : 0u);
-			{
-				CpProxyLinnCoUkProduct3SyncSetStandby(iHandle, aStandby);
-			}
+            uint aStandby = (aaStandby? 1u : 0u);
+            {
+                CpProxyLinnCoUkProduct3SyncSetStandby(iHandle, aStandby);
+            }
         }
 
         /// <summary>
@@ -721,7 +724,7 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetStandby(bool aaStandby, CallbackAsyncComplete aCallback)
         {
-			uint aStandby = (aaStandby? 1u : 0u);
+            uint aStandby = (aaStandby? 1u : 0u);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkProduct3BeginSetStandby(iHandle, aStandby, iActionComplete, ptr);
@@ -734,12 +737,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetStandby(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndSetStandby(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndSetStandby(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -750,10 +753,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceCount"></param>
         public unsafe void SyncSourceCount(out uint aaSourceCount)
         {
-			fixed (uint* aSourceCount = &aaSourceCount)
-			{
-				CpProxyLinnCoUkProduct3SyncSourceCount(iHandle, aSourceCount);
-			}
+            fixed (uint* aSourceCount = &aaSourceCount)
+            {
+                CpProxyLinnCoUkProduct3SyncSourceCount(iHandle, aSourceCount);
+            }
         }
 
         /// <summary>
@@ -779,13 +782,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceCount"></param>
         public unsafe void EndSourceCount(uint aAsyncHandle, out uint aaSourceCount)
         {
-			fixed (uint* aSourceCount = &aaSourceCount)
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndSourceCount(iHandle, aAsyncHandle, aSourceCount))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* aSourceCount = &aaSourceCount)
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndSourceCount(iHandle, aAsyncHandle, aSourceCount))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -796,10 +799,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceXml"></param>
         public unsafe void SyncSourceXml(out string aaSourceXml)
         {
-			char* aSourceXml;
-			{
-				CpProxyLinnCoUkProduct3SyncSourceXml(iHandle, &aSourceXml);
-			}
+            char* aSourceXml;
+            {
+                CpProxyLinnCoUkProduct3SyncSourceXml(iHandle, &aSourceXml);
+            }
             aaSourceXml = Marshal.PtrToStringAnsi((IntPtr)aSourceXml);
             ZappFree(aSourceXml);
         }
@@ -827,13 +830,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceXml"></param>
         public unsafe void EndSourceXml(uint aAsyncHandle, out string aaSourceXml)
         {
-			char* aSourceXml;
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndSourceXml(iHandle, aAsyncHandle, &aSourceXml))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aSourceXml;
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndSourceXml(iHandle, aAsyncHandle, &aSourceXml))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaSourceXml = Marshal.PtrToStringAnsi((IntPtr)aSourceXml);
             ZappFree(aSourceXml);
         }
@@ -846,10 +849,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceIndex"></param>
         public unsafe void SyncSourceIndex(out uint aaSourceIndex)
         {
-			fixed (uint* aSourceIndex = &aaSourceIndex)
-			{
-				CpProxyLinnCoUkProduct3SyncSourceIndex(iHandle, aSourceIndex);
-			}
+            fixed (uint* aSourceIndex = &aaSourceIndex)
+            {
+                CpProxyLinnCoUkProduct3SyncSourceIndex(iHandle, aSourceIndex);
+            }
         }
 
         /// <summary>
@@ -875,13 +878,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceIndex"></param>
         public unsafe void EndSourceIndex(uint aAsyncHandle, out uint aaSourceIndex)
         {
-			fixed (uint* aSourceIndex = &aaSourceIndex)
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndSourceIndex(iHandle, aAsyncHandle, aSourceIndex))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* aSourceIndex = &aaSourceIndex)
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndSourceIndex(iHandle, aAsyncHandle, aSourceIndex))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -892,9 +895,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceIndex"></param>
         public unsafe void SyncSetSourceIndex(uint aaSourceIndex)
         {
-			{
-				CpProxyLinnCoUkProduct3SyncSetSourceIndex(iHandle, aaSourceIndex);
-			}
+            {
+                CpProxyLinnCoUkProduct3SyncSetSourceIndex(iHandle, aaSourceIndex);
+            }
         }
 
         /// <summary>
@@ -920,12 +923,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetSourceIndex(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndSetSourceIndex(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndSetSourceIndex(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -936,11 +939,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceName"></param>
         public unsafe void SyncSetSourceIndexByName(string aaSourceName)
         {
-			char* aSourceName = (char*)Marshal.StringToHGlobalAnsi(aaSourceName);
-			{
-				CpProxyLinnCoUkProduct3SyncSetSourceIndexByName(iHandle, aSourceName);
-			}
-			Marshal.FreeHGlobal((IntPtr)aSourceName);
+            char* aSourceName = (char*)Marshal.StringToHGlobalAnsi(aaSourceName);
+            {
+                CpProxyLinnCoUkProduct3SyncSetSourceIndexByName(iHandle, aSourceName);
+            }
+            Marshal.FreeHGlobal((IntPtr)aSourceName);
         }
 
         /// <summary>
@@ -954,11 +957,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetSourceIndexByName(string aaSourceName, CallbackAsyncComplete aCallback)
         {
-			char* aSourceName = (char*)Marshal.StringToHGlobalAnsi(aaSourceName);
+            char* aSourceName = (char*)Marshal.StringToHGlobalAnsi(aaSourceName);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkProduct3BeginSetSourceIndexByName(iHandle, aSourceName, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)aSourceName);
+            Marshal.FreeHGlobal((IntPtr)aSourceName);
         }
 
         /// <summary>
@@ -968,12 +971,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetSourceIndexByName(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndSetSourceIndexByName(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndSetSourceIndexByName(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -984,11 +987,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceName"></param>
         public unsafe void SyncSetStartupSourceIndexByName(string aaSourceName)
         {
-			char* aSourceName = (char*)Marshal.StringToHGlobalAnsi(aaSourceName);
-			{
-				CpProxyLinnCoUkProduct3SyncSetStartupSourceIndexByName(iHandle, aSourceName);
-			}
-			Marshal.FreeHGlobal((IntPtr)aSourceName);
+            char* aSourceName = (char*)Marshal.StringToHGlobalAnsi(aaSourceName);
+            {
+                CpProxyLinnCoUkProduct3SyncSetStartupSourceIndexByName(iHandle, aSourceName);
+            }
+            Marshal.FreeHGlobal((IntPtr)aSourceName);
         }
 
         /// <summary>
@@ -1002,11 +1005,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetStartupSourceIndexByName(string aaSourceName, CallbackAsyncComplete aCallback)
         {
-			char* aSourceName = (char*)Marshal.StringToHGlobalAnsi(aaSourceName);
+            char* aSourceName = (char*)Marshal.StringToHGlobalAnsi(aaSourceName);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkProduct3BeginSetStartupSourceIndexByName(iHandle, aSourceName, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)aSourceName);
+            Marshal.FreeHGlobal((IntPtr)aSourceName);
         }
 
         /// <summary>
@@ -1016,12 +1019,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetStartupSourceIndexByName(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndSetStartupSourceIndexByName(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndSetStartupSourceIndexByName(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -1032,10 +1035,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceIndex"></param>
         public unsafe void SyncStartupSourceIndex(out uint aaSourceIndex)
         {
-			fixed (uint* aSourceIndex = &aaSourceIndex)
-			{
-				CpProxyLinnCoUkProduct3SyncStartupSourceIndex(iHandle, aSourceIndex);
-			}
+            fixed (uint* aSourceIndex = &aaSourceIndex)
+            {
+                CpProxyLinnCoUkProduct3SyncStartupSourceIndex(iHandle, aSourceIndex);
+            }
         }
 
         /// <summary>
@@ -1061,13 +1064,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceIndex"></param>
         public unsafe void EndStartupSourceIndex(uint aAsyncHandle, out uint aaSourceIndex)
         {
-			fixed (uint* aSourceIndex = &aaSourceIndex)
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndStartupSourceIndex(iHandle, aAsyncHandle, aSourceIndex))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* aSourceIndex = &aaSourceIndex)
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndStartupSourceIndex(iHandle, aAsyncHandle, aSourceIndex))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -1078,9 +1081,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceIndex"></param>
         public unsafe void SyncSetStartupSourceIndex(uint aaSourceIndex)
         {
-			{
-				CpProxyLinnCoUkProduct3SyncSetStartupSourceIndex(iHandle, aaSourceIndex);
-			}
+            {
+                CpProxyLinnCoUkProduct3SyncSetStartupSourceIndex(iHandle, aaSourceIndex);
+            }
         }
 
         /// <summary>
@@ -1106,12 +1109,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetStartupSourceIndex(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndSetStartupSourceIndex(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndSetStartupSourceIndex(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -1122,11 +1125,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaStartupSourceEnabled"></param>
         public unsafe void SyncStartupSourceEnabled(out bool aaStartupSourceEnabled)
         {
-			uint aStartupSourceEnabled;
-			{
-				CpProxyLinnCoUkProduct3SyncStartupSourceEnabled(iHandle, &aStartupSourceEnabled);
-			}
-			aaStartupSourceEnabled = (aStartupSourceEnabled != 0);
+            uint aStartupSourceEnabled;
+            {
+                CpProxyLinnCoUkProduct3SyncStartupSourceEnabled(iHandle, &aStartupSourceEnabled);
+            }
+            aaStartupSourceEnabled = (aStartupSourceEnabled != 0);
         }
 
         /// <summary>
@@ -1152,14 +1155,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaStartupSourceEnabled"></param>
         public unsafe void EndStartupSourceEnabled(uint aAsyncHandle, out bool aaStartupSourceEnabled)
         {
-			uint aStartupSourceEnabled;
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndStartupSourceEnabled(iHandle, aAsyncHandle, &aStartupSourceEnabled))
-				{
-					throw(new ProxyError());
-				}
-			}
-			aaStartupSourceEnabled = (aStartupSourceEnabled != 0);
+            uint aStartupSourceEnabled;
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndStartupSourceEnabled(iHandle, aAsyncHandle, &aStartupSourceEnabled))
+                {
+                    throw(new ProxyError());
+                }
+            }
+            aaStartupSourceEnabled = (aStartupSourceEnabled != 0);
         }
 
         /// <summary>
@@ -1170,10 +1173,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaStartupSourceEnabled"></param>
         public unsafe void SyncSetStartupSourceEnabled(bool aaStartupSourceEnabled)
         {
-			uint aStartupSourceEnabled = (aaStartupSourceEnabled? 1u : 0u);
-			{
-				CpProxyLinnCoUkProduct3SyncSetStartupSourceEnabled(iHandle, aStartupSourceEnabled);
-			}
+            uint aStartupSourceEnabled = (aaStartupSourceEnabled? 1u : 0u);
+            {
+                CpProxyLinnCoUkProduct3SyncSetStartupSourceEnabled(iHandle, aStartupSourceEnabled);
+            }
         }
 
         /// <summary>
@@ -1187,7 +1190,7 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetStartupSourceEnabled(bool aaStartupSourceEnabled, CallbackAsyncComplete aCallback)
         {
-			uint aStartupSourceEnabled = (aaStartupSourceEnabled? 1u : 0u);
+            uint aStartupSourceEnabled = (aaStartupSourceEnabled? 1u : 0u);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkProduct3BeginSetStartupSourceEnabled(iHandle, aStartupSourceEnabled, iActionComplete, ptr);
@@ -1200,12 +1203,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetStartupSourceEnabled(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndSetStartupSourceEnabled(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndSetStartupSourceEnabled(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -1217,10 +1220,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceName"></param>
         public unsafe void SyncSourceSystemName(uint aaSourceIndex, out string aaSourceName)
         {
-			char* aSourceName;
-			{
-				CpProxyLinnCoUkProduct3SyncSourceSystemName(iHandle, aaSourceIndex, &aSourceName);
-			}
+            char* aSourceName;
+            {
+                CpProxyLinnCoUkProduct3SyncSourceSystemName(iHandle, aaSourceIndex, &aSourceName);
+            }
             aaSourceName = Marshal.PtrToStringAnsi((IntPtr)aSourceName);
             ZappFree(aSourceName);
         }
@@ -1249,13 +1252,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceName"></param>
         public unsafe void EndSourceSystemName(uint aAsyncHandle, out string aaSourceName)
         {
-			char* aSourceName;
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndSourceSystemName(iHandle, aAsyncHandle, &aSourceName))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aSourceName;
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndSourceSystemName(iHandle, aAsyncHandle, &aSourceName))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaSourceName = Marshal.PtrToStringAnsi((IntPtr)aSourceName);
             ZappFree(aSourceName);
         }
@@ -1269,10 +1272,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceName"></param>
         public unsafe void SyncSourceName(uint aaSourceIndex, out string aaSourceName)
         {
-			char* aSourceName;
-			{
-				CpProxyLinnCoUkProduct3SyncSourceName(iHandle, aaSourceIndex, &aSourceName);
-			}
+            char* aSourceName;
+            {
+                CpProxyLinnCoUkProduct3SyncSourceName(iHandle, aaSourceIndex, &aSourceName);
+            }
             aaSourceName = Marshal.PtrToStringAnsi((IntPtr)aSourceName);
             ZappFree(aSourceName);
         }
@@ -1301,13 +1304,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceName"></param>
         public unsafe void EndSourceName(uint aAsyncHandle, out string aaSourceName)
         {
-			char* aSourceName;
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndSourceName(iHandle, aAsyncHandle, &aSourceName))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aSourceName;
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndSourceName(iHandle, aAsyncHandle, &aSourceName))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaSourceName = Marshal.PtrToStringAnsi((IntPtr)aSourceName);
             ZappFree(aSourceName);
         }
@@ -1321,11 +1324,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceName"></param>
         public unsafe void SyncSetSourceName(uint aaSourceIndex, string aaSourceName)
         {
-			char* aSourceName = (char*)Marshal.StringToHGlobalAnsi(aaSourceName);
-			{
-				CpProxyLinnCoUkProduct3SyncSetSourceName(iHandle, aaSourceIndex, aSourceName);
-			}
-			Marshal.FreeHGlobal((IntPtr)aSourceName);
+            char* aSourceName = (char*)Marshal.StringToHGlobalAnsi(aaSourceName);
+            {
+                CpProxyLinnCoUkProduct3SyncSetSourceName(iHandle, aaSourceIndex, aSourceName);
+            }
+            Marshal.FreeHGlobal((IntPtr)aSourceName);
         }
 
         /// <summary>
@@ -1340,11 +1343,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetSourceName(uint aaSourceIndex, string aaSourceName, CallbackAsyncComplete aCallback)
         {
-			char* aSourceName = (char*)Marshal.StringToHGlobalAnsi(aaSourceName);
+            char* aSourceName = (char*)Marshal.StringToHGlobalAnsi(aaSourceName);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkProduct3BeginSetSourceName(iHandle, aaSourceIndex, aSourceName, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)aSourceName);
+            Marshal.FreeHGlobal((IntPtr)aSourceName);
         }
 
         /// <summary>
@@ -1354,12 +1357,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetSourceName(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndSetSourceName(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndSetSourceName(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -1371,10 +1374,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceType"></param>
         public unsafe void SyncSourceType(uint aaSourceIndex, out string aaSourceType)
         {
-			char* aSourceType;
-			{
-				CpProxyLinnCoUkProduct3SyncSourceType(iHandle, aaSourceIndex, &aSourceType);
-			}
+            char* aSourceType;
+            {
+                CpProxyLinnCoUkProduct3SyncSourceType(iHandle, aaSourceIndex, &aSourceType);
+            }
             aaSourceType = Marshal.PtrToStringAnsi((IntPtr)aSourceType);
             ZappFree(aSourceType);
         }
@@ -1403,13 +1406,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceType"></param>
         public unsafe void EndSourceType(uint aAsyncHandle, out string aaSourceType)
         {
-			char* aSourceType;
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndSourceType(iHandle, aAsyncHandle, &aSourceType))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aSourceType;
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndSourceType(iHandle, aAsyncHandle, &aSourceType))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaSourceType = Marshal.PtrToStringAnsi((IntPtr)aSourceType);
             ZappFree(aSourceType);
         }
@@ -1423,11 +1426,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceVisible"></param>
         public unsafe void SyncSourceVisible(uint aaSourceIndex, out bool aaSourceVisible)
         {
-			uint aSourceVisible;
-			{
-				CpProxyLinnCoUkProduct3SyncSourceVisible(iHandle, aaSourceIndex, &aSourceVisible);
-			}
-			aaSourceVisible = (aSourceVisible != 0);
+            uint aSourceVisible;
+            {
+                CpProxyLinnCoUkProduct3SyncSourceVisible(iHandle, aaSourceIndex, &aSourceVisible);
+            }
+            aaSourceVisible = (aSourceVisible != 0);
         }
 
         /// <summary>
@@ -1454,14 +1457,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceVisible"></param>
         public unsafe void EndSourceVisible(uint aAsyncHandle, out bool aaSourceVisible)
         {
-			uint aSourceVisible;
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndSourceVisible(iHandle, aAsyncHandle, &aSourceVisible))
-				{
-					throw(new ProxyError());
-				}
-			}
-			aaSourceVisible = (aSourceVisible != 0);
+            uint aSourceVisible;
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndSourceVisible(iHandle, aAsyncHandle, &aSourceVisible))
+                {
+                    throw(new ProxyError());
+                }
+            }
+            aaSourceVisible = (aSourceVisible != 0);
         }
 
         /// <summary>
@@ -1473,10 +1476,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceVisible"></param>
         public unsafe void SyncSetSourceVisible(uint aaSourceIndex, bool aaSourceVisible)
         {
-			uint aSourceVisible = (aaSourceVisible? 1u : 0u);
-			{
-				CpProxyLinnCoUkProduct3SyncSetSourceVisible(iHandle, aaSourceIndex, aSourceVisible);
-			}
+            uint aSourceVisible = (aaSourceVisible? 1u : 0u);
+            {
+                CpProxyLinnCoUkProduct3SyncSetSourceVisible(iHandle, aaSourceIndex, aSourceVisible);
+            }
         }
 
         /// <summary>
@@ -1491,7 +1494,7 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetSourceVisible(uint aaSourceIndex, bool aaSourceVisible, CallbackAsyncComplete aCallback)
         {
-			uint aSourceVisible = (aaSourceVisible? 1u : 0u);
+            uint aSourceVisible = (aaSourceVisible? 1u : 0u);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkProduct3BeginSetSourceVisible(iHandle, aaSourceIndex, aSourceVisible, iActionComplete, ptr);
@@ -1504,12 +1507,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetSourceVisible(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkProduct3EndSetSourceVisible(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkProduct3EndSetSourceVisible(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -1790,11 +1793,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aProductType">Will be set to the value of the property</param>
         public unsafe void PropertyProductType(out string aProductType)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkProduct3PropertyProductType(iHandle, &ptr);
             aProductType = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
@@ -1805,11 +1808,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aProductModel">Will be set to the value of the property</param>
         public unsafe void PropertyProductModel(out string aProductModel)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkProduct3PropertyProductModel(iHandle, &ptr);
             aProductModel = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
@@ -1820,11 +1823,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aProductName">Will be set to the value of the property</param>
         public unsafe void PropertyProductName(out string aProductName)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkProduct3PropertyProductName(iHandle, &ptr);
             aProductName = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
@@ -1835,11 +1838,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aProductRoom">Will be set to the value of the property</param>
         public unsafe void PropertyProductRoom(out string aProductRoom)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkProduct3PropertyProductRoom(iHandle, &ptr);
             aProductRoom = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
@@ -1850,13 +1853,13 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aProductStandby">Will be set to the value of the property</param>
         public unsafe void PropertyProductStandby(out bool aProductStandby)
         {
-			uint productStandby;
-	        CpProxyLinnCoUkProduct3PropertyProductStandby(iHandle, &productStandby);
-			aProductStandby = (productStandby != 0);
+            uint productStandby;
+            CpProxyLinnCoUkProduct3PropertyProductStandby(iHandle, &productStandby);
+            aProductStandby = (productStandby != 0);
         }
 
         /// <summary>
@@ -1864,14 +1867,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aProductSourceIndex">Will be set to the value of the property</param>
         public unsafe void PropertyProductSourceIndex(out uint aProductSourceIndex)
         {
-			fixed (uint* productSourceIndex = &aProductSourceIndex)
-			{
-	            CpProxyLinnCoUkProduct3PropertyProductSourceIndex(iHandle, productSourceIndex);
-			}
+            fixed (uint* productSourceIndex = &aProductSourceIndex)
+            {
+                CpProxyLinnCoUkProduct3PropertyProductSourceIndex(iHandle, productSourceIndex);
+            }
         }
 
         /// <summary>
@@ -1879,14 +1882,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aProductSourceCount">Will be set to the value of the property</param>
         public unsafe void PropertyProductSourceCount(out uint aProductSourceCount)
         {
-			fixed (uint* productSourceCount = &aProductSourceCount)
-			{
-	            CpProxyLinnCoUkProduct3PropertyProductSourceCount(iHandle, productSourceCount);
-			}
+            fixed (uint* productSourceCount = &aProductSourceCount)
+            {
+                CpProxyLinnCoUkProduct3PropertyProductSourceCount(iHandle, productSourceCount);
+            }
         }
 
         /// <summary>
@@ -1894,11 +1897,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aProductSourceXml">Will be set to the value of the property</param>
         public unsafe void PropertyProductSourceXml(out string aProductSourceXml)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkProduct3PropertyProductSourceXml(iHandle, &ptr);
             aProductSourceXml = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
@@ -1909,14 +1912,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aStartupSourceIndex">Will be set to the value of the property</param>
         public unsafe void PropertyStartupSourceIndex(out uint aStartupSourceIndex)
         {
-			fixed (uint* startupSourceIndex = &aStartupSourceIndex)
-			{
-	            CpProxyLinnCoUkProduct3PropertyStartupSourceIndex(iHandle, startupSourceIndex);
-			}
+            fixed (uint* startupSourceIndex = &aStartupSourceIndex)
+            {
+                CpProxyLinnCoUkProduct3PropertyStartupSourceIndex(iHandle, startupSourceIndex);
+            }
         }
 
         /// <summary>
@@ -1924,13 +1927,13 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aStartupSourceEnabled">Will be set to the value of the property</param>
         public unsafe void PropertyStartupSourceEnabled(out bool aStartupSourceEnabled)
         {
-			uint startupSourceEnabled;
-	        CpProxyLinnCoUkProduct3PropertyStartupSourceEnabled(iHandle, &startupSourceEnabled);
-			aStartupSourceEnabled = (startupSourceEnabled != 0);
+            uint startupSourceEnabled;
+            CpProxyLinnCoUkProduct3PropertyStartupSourceEnabled(iHandle, &startupSourceEnabled);
+            aStartupSourceEnabled = (startupSourceEnabled != 0);
         }
 
         /// <summary>
@@ -1938,14 +1941,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aProductAnySourceName">Will be set to the value of the property</param>
         public unsafe void PropertyProductAnySourceName(out uint aProductAnySourceName)
         {
-			fixed (uint* productAnySourceName = &aProductAnySourceName)
-			{
-	            CpProxyLinnCoUkProduct3PropertyProductAnySourceName(iHandle, productAnySourceName);
-			}
+            fixed (uint* productAnySourceName = &aProductAnySourceName)
+            {
+                CpProxyLinnCoUkProduct3PropertyProductAnySourceName(iHandle, productAnySourceName);
+            }
         }
 
         /// <summary>
@@ -1953,14 +1956,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aProductAnySourceVisible">Will be set to the value of the property</param>
         public unsafe void PropertyProductAnySourceVisible(out uint aProductAnySourceVisible)
         {
-			fixed (uint* productAnySourceVisible = &aProductAnySourceVisible)
-			{
-	            CpProxyLinnCoUkProduct3PropertyProductAnySourceVisible(iHandle, productAnySourceVisible);
-			}
+            fixed (uint* productAnySourceVisible = &aProductAnySourceVisible)
+            {
+                CpProxyLinnCoUkProduct3PropertyProductAnySourceVisible(iHandle, productAnySourceVisible);
+            }
         }
 
         /// <summary>
@@ -1968,14 +1971,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aProductAnySourceType">Will be set to the value of the property</param>
         public unsafe void PropertyProductAnySourceType(out uint aProductAnySourceType)
         {
-			fixed (uint* productAnySourceType = &aProductAnySourceType)
-			{
-	            CpProxyLinnCoUkProduct3PropertyProductAnySourceType(iHandle, productAnySourceType);
-			}
+            fixed (uint* productAnySourceType = &aProductAnySourceType)
+            {
+                CpProxyLinnCoUkProduct3PropertyProductAnySourceType(iHandle, productAnySourceType);
+            }
         }
 
         /// <summary>

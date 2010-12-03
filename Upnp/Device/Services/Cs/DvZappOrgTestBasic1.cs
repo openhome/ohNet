@@ -5,10 +5,79 @@ using Zapp;
 
 namespace Zapp.Device.Providers
 {
+    public interface IDvProviderZappOrgTestBasic1 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the VarUint property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyVarUint(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the VarUint property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyVarUint(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the VarInt property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyVarInt(int aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the VarInt property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyVarInt(out int aValue);
+
+        /// <summary>
+        /// Set the value of the VarBool property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyVarBool(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the VarBool property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyVarBool(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the VarStr property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyVarStr(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the VarStr property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyVarStr(out string aValue);
+
+        /// <summary>
+        /// Set the value of the VarBin property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyVarBin(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the VarBin property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyVarBin(out string aValue);
+        
+    }
     /// <summary>
     /// Provider for the zapp.org:TestBasic:1 UPnP service
     /// </summary>
-    public class DvProviderZappOrgTestBasic1 : DvProvider, IDisposable
+    public class DvProviderZappOrgTestBasic1 : DvProvider, IDisposable, IDvProviderZappOrgTestBasic1
     {
         [DllImport("DvZappOrgTestBasic1")]
         static extern uint DvProviderZappOrgTestBasic1Create(uint aDeviceHandle);
@@ -148,7 +217,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyVarUint(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
+            {
                 DvProviderZappOrgTestBasic1GetPropertyVarUint(iHandle, value);
             }
         }
@@ -175,7 +244,7 @@ namespace Zapp.Device.Providers
         public unsafe void GetPropertyVarInt(out int aValue)
         {
             fixed (int* value = &aValue)
-			{
+            {
                 DvProviderZappOrgTestBasic1GetPropertyVarInt(iHandle, value);
             }
         }

@@ -538,7 +538,7 @@ $(objdir)TestCpDeviceDvC.$(exeext) :  upnp_core $(objdir)TestCpDeviceDvC.$(objex
 $(objdir)TestCpDeviceDvC.$(objext) : Public/C/TestCpDeviceDvC.cpp $(headers)
 	$(compiler)TestCpDeviceDvC.$(objext) -c $(cflags) $(includes) Public/C/TestCpDeviceDvC.cpp
 
-Tests: TestBuffer TestThread TestFifo TestQueue TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestProxyCs
+Tests: TestBuffer TestThread TestFifo TestQueue TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestProxyCs TestDvDeviceCs TestDvLightsCs TestCpDeviceDvCs
 
 Zapp.net.dll : $(objdir)Zapp.net.dll
 
@@ -549,7 +549,8 @@ $(objdir)Zapp.net.dll: \
 	$(publiccsdir)DvDevice.cs \
 	$(publiccsdir)DvProvider.cs \
 	$(publiccsdir)DvProviderErrors.cs \
-	$(publiccsdir)Zapp.cs
+	$(publiccsdir)Zapp.cs \
+	$(publiccsdir)CpDeviceDv.cs
 	$(csharp) /unsafe /t:library /debug+\
 		/out:$(objdir)Zapp.net.dll \
 		$(publiccsdir)CpDevice.cs \
@@ -558,7 +559,8 @@ $(objdir)Zapp.net.dll: \
 		$(publiccsdir)DvDevice.cs \
 		$(publiccsdir)DvProvider.cs \
 		$(publiccsdir)DvProviderErrors.cs \
-		$(publiccsdir)Zapp.cs
+		$(publiccsdir)Zapp.cs \
+		$(publiccsdir)CpDeviceDv.cs
 
 TestProxyCs: $(objdir)TestProxyCs.exe
 
@@ -575,23 +577,64 @@ $(objdir)TestProxyCs.exe: \
 		/reference:$(objdir)CpUpnpOrgConnectionManager1.net.dll \
 		$(publiccsdir)TestProxy.cs \
 
-TestDeviceCs: $(objdir)TestDeviceCs.exe
+TestDvDeviceCs: $(objdir)TestDvDeviceCs.exe
 
-$(objdir)TestDeviceCs.exe: \
+$(objdir)TestDvDeviceCs.exe: \
 	ZappUpnpDll \
 	CpUpnpOrgConnectionManager1Dll \
 	$(objdir)Zapp.net.dll \
-	$(publiccsdir)TestDvDevice.cs \
 	$(objdir)DvZappOrgTestBasic1.net.dll \
-	$(objdir)CpZappOrgTestBasic1.net.dll
-	$(csharp) /unsafe /t:exe /debug+ \
-		/out:$(objdir)TestDeviceCs.exe \
+	$(objdir)CpZappOrgTestBasic1.net.dll \
+	$(publiccsdir)TestBasicDv.cs \
+	$(publiccsdir)TestBasicCp.cs \
+	$(publiccsdir)TestDvDevice.cs
+	$(csharp) \
+		/d:DEBUG /debug /unsafe /platform:x86 /t:exe \
+		/out:$(objdir)TestDvDeviceCs.exe \
 		/reference:$(objdir)Zapp.net.dll \
 		/reference:$(objdir)DvZappOrgTestBasic1.net.dll \
 		/reference:$(objdir)CpZappOrgTestBasic1.net.dll \
+		$(publiccsdir)TestBasicDv.cs \
+		$(publiccsdir)TestBasicCp.cs \
 		$(publiccsdir)TestDvDevice.cs
-
 		
+TestDvLightsCs: $(objdir)TestDvLightsCs.exe
+
+$(objdir)TestDvLightsCs.exe: \
+	ZappUpnpDll \
+	CpUpnpOrgConnectionManager1Dll \
+	$(objdir)Zapp.net.dll \
+	$(objdir)DvZappOrgTestLights1.net.dll \
+	$(objdir)CpZappOrgTestLights1.net.dll \
+	$(publiccsdir)TestDvLights.cs
+	$(csharp) \
+		/d:DEBUG /debug /unsafe /platform:x86 /t:exe \
+		/out:$(objdir)TestDvLightsCs.exe \
+		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)DvZappOrgTestLights1.net.dll \
+		/reference:$(objdir)CpZappOrgTestLights1.net.dll \
+		$(publiccsdir)TestDvLights.cs
+
+TestCpDeviceDvCs: $(objdir)TestCpDeviceDvCs.exe
+
+$(objdir)TestCpDeviceDvCs.exe: \
+	ZappUpnpDll \
+	CpUpnpOrgConnectionManager1Dll \
+	$(objdir)Zapp.net.dll \
+	$(objdir)DvZappOrgTestBasic1.net.dll \
+	$(objdir)CpZappOrgTestBasic1.net.dll \
+	$(publiccsdir)TestBasicDv.cs \
+	$(publiccsdir)TestBasicCp.cs \
+	$(publiccsdir)TestDvDevice.cs
+	$(csharp) \
+		/d:DEBUG /debug /unsafe /platform:x86 /t:exe \
+		/out:$(objdir)TestCpDeviceDvCs.exe \
+		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)DvZappOrgTestBasic1.net.dll \
+		/reference:$(objdir)CpZappOrgTestBasic1.net.dll \
+		$(publiccsdir)TestBasicDv.cs \
+		$(publiccsdir)TestBasicCp.cs \
+		$(publiccsdir)TestCpDeviceDv.cs
 
 
 Generated$(dirsep)GenerateSourceFiles.mak : $(tt) Service$(dirsep)Services.xml T4/Templates/UpnpMakeT4.tt

@@ -51,6 +51,9 @@ namespace Zapp.ControlPoint.Proxies
         void PropertyDigitalAudioOutputRaw(out bool aDigitalAudioOutputRaw);
     }
 
+    /// <summary>
+    /// Proxy for the linn.co.uk:Component:1 UPnP service
+    /// </summary>
     public class CpProxyLinnCoUkComponent1 : CpProxy, IDisposable, ICpProxyLinnCoUkComponent1
     {
         [DllImport("CpLinnCoUkComponent1")]
@@ -171,11 +174,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaEnabled"></param>
         public unsafe void SyncAmplifierEnabled(out bool aaEnabled)
         {
-			uint aEnabled;
-			{
-				CpProxyLinnCoUkComponent1SyncAmplifierEnabled(iHandle, &aEnabled);
-			}
-			aaEnabled = (aEnabled != 0);
+            uint aEnabled;
+            {
+                CpProxyLinnCoUkComponent1SyncAmplifierEnabled(iHandle, &aEnabled);
+            }
+            aaEnabled = (aEnabled != 0);
         }
 
         /// <summary>
@@ -201,14 +204,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaEnabled"></param>
         public unsafe void EndAmplifierEnabled(uint aAsyncHandle, out bool aaEnabled)
         {
-			uint aEnabled;
-			{
-				if (0 != CpProxyLinnCoUkComponent1EndAmplifierEnabled(iHandle, aAsyncHandle, &aEnabled))
-				{
-					throw(new ProxyError());
-				}
-			}
-			aaEnabled = (aEnabled != 0);
+            uint aEnabled;
+            {
+                if (0 != CpProxyLinnCoUkComponent1EndAmplifierEnabled(iHandle, aAsyncHandle, &aEnabled))
+                {
+                    throw(new ProxyError());
+                }
+            }
+            aaEnabled = (aEnabled != 0);
         }
 
         /// <summary>
@@ -219,10 +222,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaEnabled"></param>
         public unsafe void SyncSetAmplifierEnabled(bool aaEnabled)
         {
-			uint aEnabled = (aaEnabled? 1u : 0u);
-			{
-				CpProxyLinnCoUkComponent1SyncSetAmplifierEnabled(iHandle, aEnabled);
-			}
+            uint aEnabled = (aaEnabled? 1u : 0u);
+            {
+                CpProxyLinnCoUkComponent1SyncSetAmplifierEnabled(iHandle, aEnabled);
+            }
         }
 
         /// <summary>
@@ -236,7 +239,7 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetAmplifierEnabled(bool aaEnabled, CallbackAsyncComplete aCallback)
         {
-			uint aEnabled = (aaEnabled? 1u : 0u);
+            uint aEnabled = (aaEnabled? 1u : 0u);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkComponent1BeginSetAmplifierEnabled(iHandle, aEnabled, iActionComplete, ptr);
@@ -249,12 +252,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetAmplifierEnabled(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkComponent1EndSetAmplifierEnabled(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkComponent1EndSetAmplifierEnabled(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -265,10 +268,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaAttenuation"></param>
         public unsafe void SyncAmplifierAttenuation(out string aaAttenuation)
         {
-			char* aAttenuation;
-			{
-				CpProxyLinnCoUkComponent1SyncAmplifierAttenuation(iHandle, &aAttenuation);
-			}
+            char* aAttenuation;
+            {
+                CpProxyLinnCoUkComponent1SyncAmplifierAttenuation(iHandle, &aAttenuation);
+            }
             aaAttenuation = Marshal.PtrToStringAnsi((IntPtr)aAttenuation);
             ZappFree(aAttenuation);
         }
@@ -296,13 +299,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaAttenuation"></param>
         public unsafe void EndAmplifierAttenuation(uint aAsyncHandle, out string aaAttenuation)
         {
-			char* aAttenuation;
-			{
-				if (0 != CpProxyLinnCoUkComponent1EndAmplifierAttenuation(iHandle, aAsyncHandle, &aAttenuation))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aAttenuation;
+            {
+                if (0 != CpProxyLinnCoUkComponent1EndAmplifierAttenuation(iHandle, aAsyncHandle, &aAttenuation))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaAttenuation = Marshal.PtrToStringAnsi((IntPtr)aAttenuation);
             ZappFree(aAttenuation);
         }
@@ -315,11 +318,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaAttenuation"></param>
         public unsafe void SyncSetAmplifierAttenuation(string aaAttenuation)
         {
-			char* aAttenuation = (char*)Marshal.StringToHGlobalAnsi(aaAttenuation);
-			{
-				CpProxyLinnCoUkComponent1SyncSetAmplifierAttenuation(iHandle, aAttenuation);
-			}
-			Marshal.FreeHGlobal((IntPtr)aAttenuation);
+            char* aAttenuation = (char*)Marshal.StringToHGlobalAnsi(aaAttenuation);
+            {
+                CpProxyLinnCoUkComponent1SyncSetAmplifierAttenuation(iHandle, aAttenuation);
+            }
+            Marshal.FreeHGlobal((IntPtr)aAttenuation);
         }
 
         /// <summary>
@@ -333,11 +336,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetAmplifierAttenuation(string aaAttenuation, CallbackAsyncComplete aCallback)
         {
-			char* aAttenuation = (char*)Marshal.StringToHGlobalAnsi(aaAttenuation);
+            char* aAttenuation = (char*)Marshal.StringToHGlobalAnsi(aaAttenuation);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkComponent1BeginSetAmplifierAttenuation(iHandle, aAttenuation, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)aAttenuation);
+            Marshal.FreeHGlobal((IntPtr)aAttenuation);
         }
 
         /// <summary>
@@ -347,12 +350,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetAmplifierAttenuation(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkComponent1EndSetAmplifierAttenuation(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkComponent1EndSetAmplifierAttenuation(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -363,10 +366,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaEnabled"></param>
         public unsafe void SyncSetVolumeControlEnabled(bool aaEnabled)
         {
-			uint aEnabled = (aaEnabled? 1u : 0u);
-			{
-				CpProxyLinnCoUkComponent1SyncSetVolumeControlEnabled(iHandle, aEnabled);
-			}
+            uint aEnabled = (aaEnabled? 1u : 0u);
+            {
+                CpProxyLinnCoUkComponent1SyncSetVolumeControlEnabled(iHandle, aEnabled);
+            }
         }
 
         /// <summary>
@@ -380,7 +383,7 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetVolumeControlEnabled(bool aaEnabled, CallbackAsyncComplete aCallback)
         {
-			uint aEnabled = (aaEnabled? 1u : 0u);
+            uint aEnabled = (aaEnabled? 1u : 0u);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkComponent1BeginSetVolumeControlEnabled(iHandle, aEnabled, iActionComplete, ptr);
@@ -393,12 +396,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetVolumeControlEnabled(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkComponent1EndSetVolumeControlEnabled(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkComponent1EndSetVolumeControlEnabled(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -409,11 +412,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaEnabled"></param>
         public unsafe void SyncVolumeControlEnabled(out bool aaEnabled)
         {
-			uint aEnabled;
-			{
-				CpProxyLinnCoUkComponent1SyncVolumeControlEnabled(iHandle, &aEnabled);
-			}
-			aaEnabled = (aEnabled != 0);
+            uint aEnabled;
+            {
+                CpProxyLinnCoUkComponent1SyncVolumeControlEnabled(iHandle, &aEnabled);
+            }
+            aaEnabled = (aEnabled != 0);
         }
 
         /// <summary>
@@ -439,14 +442,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaEnabled"></param>
         public unsafe void EndVolumeControlEnabled(uint aAsyncHandle, out bool aaEnabled)
         {
-			uint aEnabled;
-			{
-				if (0 != CpProxyLinnCoUkComponent1EndVolumeControlEnabled(iHandle, aAsyncHandle, &aEnabled))
-				{
-					throw(new ProxyError());
-				}
-			}
-			aaEnabled = (aEnabled != 0);
+            uint aEnabled;
+            {
+                if (0 != CpProxyLinnCoUkComponent1EndVolumeControlEnabled(iHandle, aAsyncHandle, &aEnabled))
+                {
+                    throw(new ProxyError());
+                }
+            }
+            aaEnabled = (aEnabled != 0);
         }
 
         /// <summary>
@@ -457,10 +460,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaRaw"></param>
         public unsafe void SyncSetDigitalAudioOutputRaw(bool aaRaw)
         {
-			uint aRaw = (aaRaw? 1u : 0u);
-			{
-				CpProxyLinnCoUkComponent1SyncSetDigitalAudioOutputRaw(iHandle, aRaw);
-			}
+            uint aRaw = (aaRaw? 1u : 0u);
+            {
+                CpProxyLinnCoUkComponent1SyncSetDigitalAudioOutputRaw(iHandle, aRaw);
+            }
         }
 
         /// <summary>
@@ -474,7 +477,7 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetDigitalAudioOutputRaw(bool aaRaw, CallbackAsyncComplete aCallback)
         {
-			uint aRaw = (aaRaw? 1u : 0u);
+            uint aRaw = (aaRaw? 1u : 0u);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkComponent1BeginSetDigitalAudioOutputRaw(iHandle, aRaw, iActionComplete, ptr);
@@ -487,12 +490,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetDigitalAudioOutputRaw(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkComponent1EndSetDigitalAudioOutputRaw(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkComponent1EndSetDigitalAudioOutputRaw(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -503,11 +506,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaRaw"></param>
         public unsafe void SyncDigitalAudioOutputRaw(out bool aaRaw)
         {
-			uint aRaw;
-			{
-				CpProxyLinnCoUkComponent1SyncDigitalAudioOutputRaw(iHandle, &aRaw);
-			}
-			aaRaw = (aRaw != 0);
+            uint aRaw;
+            {
+                CpProxyLinnCoUkComponent1SyncDigitalAudioOutputRaw(iHandle, &aRaw);
+            }
+            aaRaw = (aRaw != 0);
         }
 
         /// <summary>
@@ -533,14 +536,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaRaw"></param>
         public unsafe void EndDigitalAudioOutputRaw(uint aAsyncHandle, out bool aaRaw)
         {
-			uint aRaw;
-			{
-				if (0 != CpProxyLinnCoUkComponent1EndDigitalAudioOutputRaw(iHandle, aAsyncHandle, &aRaw))
-				{
-					throw(new ProxyError());
-				}
-			}
-			aaRaw = (aRaw != 0);
+            uint aRaw;
+            {
+                if (0 != CpProxyLinnCoUkComponent1EndDigitalAudioOutputRaw(iHandle, aAsyncHandle, &aRaw))
+                {
+                    throw(new ProxyError());
+                }
+            }
+            aaRaw = (aRaw != 0);
         }
 
         /// <summary>
@@ -551,11 +554,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaOverTemperature"></param>
         public unsafe void SyncAmplifierOverTemperature(out bool aaOverTemperature)
         {
-			uint aOverTemperature;
-			{
-				CpProxyLinnCoUkComponent1SyncAmplifierOverTemperature(iHandle, &aOverTemperature);
-			}
-			aaOverTemperature = (aOverTemperature != 0);
+            uint aOverTemperature;
+            {
+                CpProxyLinnCoUkComponent1SyncAmplifierOverTemperature(iHandle, &aOverTemperature);
+            }
+            aaOverTemperature = (aOverTemperature != 0);
         }
 
         /// <summary>
@@ -581,14 +584,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaOverTemperature"></param>
         public unsafe void EndAmplifierOverTemperature(uint aAsyncHandle, out bool aaOverTemperature)
         {
-			uint aOverTemperature;
-			{
-				if (0 != CpProxyLinnCoUkComponent1EndAmplifierOverTemperature(iHandle, aAsyncHandle, &aOverTemperature))
-				{
-					throw(new ProxyError());
-				}
-			}
-			aaOverTemperature = (aOverTemperature != 0);
+            uint aOverTemperature;
+            {
+                if (0 != CpProxyLinnCoUkComponent1EndAmplifierOverTemperature(iHandle, aAsyncHandle, &aOverTemperature))
+                {
+                    throw(new ProxyError());
+                }
+            }
+            aaOverTemperature = (aOverTemperature != 0);
         }
 
         /// <summary>
@@ -599,11 +602,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaLinkConnected"></param>
         public unsafe void SyncEthernetLinkConnected(out bool aaLinkConnected)
         {
-			uint aLinkConnected;
-			{
-				CpProxyLinnCoUkComponent1SyncEthernetLinkConnected(iHandle, &aLinkConnected);
-			}
-			aaLinkConnected = (aLinkConnected != 0);
+            uint aLinkConnected;
+            {
+                CpProxyLinnCoUkComponent1SyncEthernetLinkConnected(iHandle, &aLinkConnected);
+            }
+            aaLinkConnected = (aLinkConnected != 0);
         }
 
         /// <summary>
@@ -629,14 +632,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaLinkConnected"></param>
         public unsafe void EndEthernetLinkConnected(uint aAsyncHandle, out bool aaLinkConnected)
         {
-			uint aLinkConnected;
-			{
-				if (0 != CpProxyLinnCoUkComponent1EndEthernetLinkConnected(iHandle, aAsyncHandle, &aLinkConnected))
-				{
-					throw(new ProxyError());
-				}
-			}
-			aaLinkConnected = (aLinkConnected != 0);
+            uint aLinkConnected;
+            {
+                if (0 != CpProxyLinnCoUkComponent1EndEthernetLinkConnected(iHandle, aAsyncHandle, &aLinkConnected))
+                {
+                    throw(new ProxyError());
+                }
+            }
+            aaLinkConnected = (aLinkConnected != 0);
         }
 
         /// <summary>
@@ -646,9 +649,9 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         public unsafe void SyncLocate()
         {
-			{
-				CpProxyLinnCoUkComponent1SyncLocate(iHandle);
-			}
+            {
+                CpProxyLinnCoUkComponent1SyncLocate(iHandle);
+            }
         }
 
         /// <summary>
@@ -673,12 +676,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndLocate(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkComponent1EndLocate(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkComponent1EndLocate(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -770,13 +773,13 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aAmplifierEnabled">Will be set to the value of the property</param>
         public unsafe void PropertyAmplifierEnabled(out bool aAmplifierEnabled)
         {
-			uint amplifierEnabled;
-	        CpProxyLinnCoUkComponent1PropertyAmplifierEnabled(iHandle, &amplifierEnabled);
-			aAmplifierEnabled = (amplifierEnabled != 0);
+            uint amplifierEnabled;
+            CpProxyLinnCoUkComponent1PropertyAmplifierEnabled(iHandle, &amplifierEnabled);
+            aAmplifierEnabled = (amplifierEnabled != 0);
         }
 
         /// <summary>
@@ -784,11 +787,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aAmplifierAttenuation">Will be set to the value of the property</param>
         public unsafe void PropertyAmplifierAttenuation(out string aAmplifierAttenuation)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkComponent1PropertyAmplifierAttenuation(iHandle, &ptr);
             aAmplifierAttenuation = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
@@ -799,13 +802,13 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aVolumeControlEnabled">Will be set to the value of the property</param>
         public unsafe void PropertyVolumeControlEnabled(out bool aVolumeControlEnabled)
         {
-			uint volumeControlEnabled;
-	        CpProxyLinnCoUkComponent1PropertyVolumeControlEnabled(iHandle, &volumeControlEnabled);
-			aVolumeControlEnabled = (volumeControlEnabled != 0);
+            uint volumeControlEnabled;
+            CpProxyLinnCoUkComponent1PropertyVolumeControlEnabled(iHandle, &volumeControlEnabled);
+            aVolumeControlEnabled = (volumeControlEnabled != 0);
         }
 
         /// <summary>
@@ -813,13 +816,13 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aDigitalAudioOutputRaw">Will be set to the value of the property</param>
         public unsafe void PropertyDigitalAudioOutputRaw(out bool aDigitalAudioOutputRaw)
         {
-			uint digitalAudioOutputRaw;
-	        CpProxyLinnCoUkComponent1PropertyDigitalAudioOutputRaw(iHandle, &digitalAudioOutputRaw);
-			aDigitalAudioOutputRaw = (digitalAudioOutputRaw != 0);
+            uint digitalAudioOutputRaw;
+            CpProxyLinnCoUkComponent1PropertyDigitalAudioOutputRaw(iHandle, &digitalAudioOutputRaw);
+            aDigitalAudioOutputRaw = (digitalAudioOutputRaw != 0);
         }
 
         /// <summary>

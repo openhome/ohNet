@@ -40,6 +40,9 @@ namespace Zapp.ControlPoint.Proxies
         void PropertyAlbumArtFileName(out string aAlbumArtFileName);
     }
 
+    /// <summary>
+    /// Proxy for the linn.co.uk:Jukebox:1 UPnP service
+    /// </summary>
     public class CpProxyLinnCoUkJukebox1 : CpProxy, IDisposable, ICpProxyLinnCoUkJukebox1
     {
         [DllImport("CpLinnCoUkJukebox1")]
@@ -136,11 +139,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaUri"></param>
         public unsafe void SyncSetPresetPrefix(string aaUri)
         {
-			char* aUri = (char*)Marshal.StringToHGlobalAnsi(aaUri);
-			{
-				CpProxyLinnCoUkJukebox1SyncSetPresetPrefix(iHandle, aUri);
-			}
-			Marshal.FreeHGlobal((IntPtr)aUri);
+            char* aUri = (char*)Marshal.StringToHGlobalAnsi(aaUri);
+            {
+                CpProxyLinnCoUkJukebox1SyncSetPresetPrefix(iHandle, aUri);
+            }
+            Marshal.FreeHGlobal((IntPtr)aUri);
         }
 
         /// <summary>
@@ -154,11 +157,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetPresetPrefix(string aaUri, CallbackAsyncComplete aCallback)
         {
-			char* aUri = (char*)Marshal.StringToHGlobalAnsi(aaUri);
+            char* aUri = (char*)Marshal.StringToHGlobalAnsi(aaUri);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkJukebox1BeginSetPresetPrefix(iHandle, aUri, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)aUri);
+            Marshal.FreeHGlobal((IntPtr)aUri);
         }
 
         /// <summary>
@@ -168,12 +171,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetPresetPrefix(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkJukebox1EndSetPresetPrefix(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkJukebox1EndSetPresetPrefix(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -184,10 +187,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaUri"></param>
         public unsafe void SyncPresetPrefix(out string aaUri)
         {
-			char* aUri;
-			{
-				CpProxyLinnCoUkJukebox1SyncPresetPrefix(iHandle, &aUri);
-			}
+            char* aUri;
+            {
+                CpProxyLinnCoUkJukebox1SyncPresetPrefix(iHandle, &aUri);
+            }
             aaUri = Marshal.PtrToStringAnsi((IntPtr)aUri);
             ZappFree(aUri);
         }
@@ -215,13 +218,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaUri"></param>
         public unsafe void EndPresetPrefix(uint aAsyncHandle, out string aaUri)
         {
-			char* aUri;
-			{
-				if (0 != CpProxyLinnCoUkJukebox1EndPresetPrefix(iHandle, aAsyncHandle, &aUri))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aUri;
+            {
+                if (0 != CpProxyLinnCoUkJukebox1EndPresetPrefix(iHandle, aAsyncHandle, &aUri))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaUri = Marshal.PtrToStringAnsi((IntPtr)aUri);
             ZappFree(aUri);
         }
@@ -234,11 +237,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaName"></param>
         public unsafe void SyncSetAlbumArtFileName(string aaName)
         {
-			char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
-			{
-				CpProxyLinnCoUkJukebox1SyncSetAlbumArtFileName(iHandle, aName);
-			}
-			Marshal.FreeHGlobal((IntPtr)aName);
+            char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
+            {
+                CpProxyLinnCoUkJukebox1SyncSetAlbumArtFileName(iHandle, aName);
+            }
+            Marshal.FreeHGlobal((IntPtr)aName);
         }
 
         /// <summary>
@@ -252,11 +255,11 @@ namespace Zapp.ControlPoint.Proxies
         /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetAlbumArtFileName(string aaName, CallbackAsyncComplete aCallback)
         {
-			char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
+            char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkJukebox1BeginSetAlbumArtFileName(iHandle, aName, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)aName);
+            Marshal.FreeHGlobal((IntPtr)aName);
         }
 
         /// <summary>
@@ -266,12 +269,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetAlbumArtFileName(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkJukebox1EndSetAlbumArtFileName(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkJukebox1EndSetAlbumArtFileName(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -282,10 +285,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaName"></param>
         public unsafe void SyncAlbumArtFileName(out string aaName)
         {
-			char* aName;
-			{
-				CpProxyLinnCoUkJukebox1SyncAlbumArtFileName(iHandle, &aName);
-			}
+            char* aName;
+            {
+                CpProxyLinnCoUkJukebox1SyncAlbumArtFileName(iHandle, &aName);
+            }
             aaName = Marshal.PtrToStringAnsi((IntPtr)aName);
             ZappFree(aName);
         }
@@ -313,13 +316,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaName"></param>
         public unsafe void EndAlbumArtFileName(uint aAsyncHandle, out string aaName)
         {
-			char* aName;
-			{
-				if (0 != CpProxyLinnCoUkJukebox1EndAlbumArtFileName(iHandle, aAsyncHandle, &aName))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aName;
+            {
+                if (0 != CpProxyLinnCoUkJukebox1EndAlbumArtFileName(iHandle, aAsyncHandle, &aName))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaName = Marshal.PtrToStringAnsi((IntPtr)aName);
             ZappFree(aName);
         }
@@ -332,9 +335,9 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaPreset"></param>
         public unsafe void SyncSetCurrentPreset(uint aaPreset)
         {
-			{
-				CpProxyLinnCoUkJukebox1SyncSetCurrentPreset(iHandle, aaPreset);
-			}
+            {
+                CpProxyLinnCoUkJukebox1SyncSetCurrentPreset(iHandle, aaPreset);
+            }
         }
 
         /// <summary>
@@ -360,12 +363,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetCurrentPreset(uint aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkJukebox1EndSetCurrentPreset(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkJukebox1EndSetCurrentPreset(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -376,10 +379,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaPreset"></param>
         public unsafe void SyncCurrentPreset(out uint aaPreset)
         {
-			fixed (uint* aPreset = &aaPreset)
-			{
-				CpProxyLinnCoUkJukebox1SyncCurrentPreset(iHandle, aPreset);
-			}
+            fixed (uint* aPreset = &aaPreset)
+            {
+                CpProxyLinnCoUkJukebox1SyncCurrentPreset(iHandle, aPreset);
+            }
         }
 
         /// <summary>
@@ -405,13 +408,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaPreset"></param>
         public unsafe void EndCurrentPreset(uint aAsyncHandle, out uint aaPreset)
         {
-			fixed (uint* aPreset = &aaPreset)
-			{
-				if (0 != CpProxyLinnCoUkJukebox1EndCurrentPreset(iHandle, aAsyncHandle, aPreset))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* aPreset = &aaPreset)
+            {
+                if (0 != CpProxyLinnCoUkJukebox1EndCurrentPreset(iHandle, aAsyncHandle, aPreset))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -423,10 +426,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetaData"></param>
         public unsafe void SyncPresetMetaData(uint aaPreset, out string aaMetaData)
         {
-			char* aMetaData;
-			{
-				CpProxyLinnCoUkJukebox1SyncPresetMetaData(iHandle, aaPreset, &aMetaData);
-			}
+            char* aMetaData;
+            {
+                CpProxyLinnCoUkJukebox1SyncPresetMetaData(iHandle, aaPreset, &aMetaData);
+            }
             aaMetaData = Marshal.PtrToStringAnsi((IntPtr)aMetaData);
             ZappFree(aMetaData);
         }
@@ -455,13 +458,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetaData"></param>
         public unsafe void EndPresetMetaData(uint aAsyncHandle, out string aaMetaData)
         {
-			char* aMetaData;
-			{
-				if (0 != CpProxyLinnCoUkJukebox1EndPresetMetaData(iHandle, aAsyncHandle, &aMetaData))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aMetaData;
+            {
+                if (0 != CpProxyLinnCoUkJukebox1EndPresetMetaData(iHandle, aAsyncHandle, &aMetaData))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaMetaData = Marshal.PtrToStringAnsi((IntPtr)aMetaData);
             ZappFree(aMetaData);
         }
@@ -474,10 +477,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTotalPresets"></param>
         public unsafe void SyncLoadManifest(out uint aaTotalPresets)
         {
-			fixed (uint* aTotalPresets = &aaTotalPresets)
-			{
-				CpProxyLinnCoUkJukebox1SyncLoadManifest(iHandle, aTotalPresets);
-			}
+            fixed (uint* aTotalPresets = &aaTotalPresets)
+            {
+                CpProxyLinnCoUkJukebox1SyncLoadManifest(iHandle, aTotalPresets);
+            }
         }
 
         /// <summary>
@@ -503,13 +506,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTotalPresets"></param>
         public unsafe void EndLoadManifest(uint aAsyncHandle, out uint aaTotalPresets)
         {
-			fixed (uint* aTotalPresets = &aaTotalPresets)
-			{
-				if (0 != CpProxyLinnCoUkJukebox1EndLoadManifest(iHandle, aAsyncHandle, aTotalPresets))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* aTotalPresets = &aaTotalPresets)
+            {
+                if (0 != CpProxyLinnCoUkJukebox1EndLoadManifest(iHandle, aAsyncHandle, aTotalPresets))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
         /// <summary>
@@ -580,14 +583,14 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aCurrentPreset">Will be set to the value of the property</param>
         public unsafe void PropertyCurrentPreset(out uint aCurrentPreset)
         {
-			fixed (uint* currentPreset = &aCurrentPreset)
-			{
-	            CpProxyLinnCoUkJukebox1PropertyCurrentPreset(iHandle, currentPreset);
-			}
+            fixed (uint* currentPreset = &aCurrentPreset)
+            {
+                CpProxyLinnCoUkJukebox1PropertyCurrentPreset(iHandle, currentPreset);
+            }
         }
 
         /// <summary>
@@ -595,11 +598,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aPresetPrefix">Will be set to the value of the property</param>
         public unsafe void PropertyPresetPrefix(out string aPresetPrefix)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkJukebox1PropertyPresetPrefix(iHandle, &ptr);
             aPresetPrefix = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
@@ -610,11 +613,11 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
         /// called and a first eventing callback received more recently than any call
-	    /// to Unsubscribe().</remarks>
+        /// to Unsubscribe().</remarks>
         /// <param name="aAlbumArtFileName">Will be set to the value of the property</param>
         public unsafe void PropertyAlbumArtFileName(out string aAlbumArtFileName)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkJukebox1PropertyAlbumArtFileName(iHandle, &ptr);
             aAlbumArtFileName = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
