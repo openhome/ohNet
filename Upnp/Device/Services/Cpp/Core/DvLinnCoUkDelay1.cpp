@@ -29,10 +29,10 @@ void DvProviderLinnCoUkDelay1::GetPropertyPresetIndex(TUint& aValue)
 DvProviderLinnCoUkDelay1::DvProviderLinnCoUkDelay1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Delay", 1)
 {
-    Functor empty;
-    iPropertyPresetXml = new PropertyString(new ParameterString("PresetXml"), empty);
+    
+    iPropertyPresetXml = new PropertyString(new ParameterString("PresetXml"));
     iService->AddProperty(iPropertyPresetXml); // passes ownership
-    iPropertyPresetIndex = new PropertyUint(new ParameterUint("PresetIndex"), empty);
+    iPropertyPresetIndex = new PropertyUint(new ParameterUint("PresetIndex"));
     iService->AddProperty(iPropertyPresetIndex); // passes ownership
 }
 

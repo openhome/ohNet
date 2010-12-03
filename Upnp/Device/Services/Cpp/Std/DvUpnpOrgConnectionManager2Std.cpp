@@ -45,12 +45,12 @@ void DvProviderUpnpOrgConnectionManager2Cpp::GetPropertyCurrentConnectionIDs(std
 DvProviderUpnpOrgConnectionManager2Cpp::DvProviderUpnpOrgConnectionManager2Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "ConnectionManager", 2)
 {
-    Functor empty;
-    iPropertySourceProtocolInfo = new PropertyString(new ParameterString("SourceProtocolInfo"), empty);
+    
+    iPropertySourceProtocolInfo = new PropertyString(new ParameterString("SourceProtocolInfo"));
     iService->AddProperty(iPropertySourceProtocolInfo); // passes ownership
-    iPropertySinkProtocolInfo = new PropertyString(new ParameterString("SinkProtocolInfo"), empty);
+    iPropertySinkProtocolInfo = new PropertyString(new ParameterString("SinkProtocolInfo"));
     iService->AddProperty(iPropertySinkProtocolInfo); // passes ownership
-    iPropertyCurrentConnectionIDs = new PropertyString(new ParameterString("CurrentConnectionIDs"), empty);
+    iPropertyCurrentConnectionIDs = new PropertyString(new ParameterString("CurrentConnectionIDs"));
     iService->AddProperty(iPropertyCurrentConnectionIDs); // passes ownership
 }
 

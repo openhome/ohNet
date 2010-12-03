@@ -9,7 +9,7 @@ using namespace Zapp;
 DvProviderZappOrgTestLights1Cpp::DvProviderZappOrgTestLights1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "zapp.org", "TestLights", 1)
 {
-    Functor empty;
+    
 }
 
 void DvProviderZappOrgTestLights1Cpp::EnableActionGetCount()

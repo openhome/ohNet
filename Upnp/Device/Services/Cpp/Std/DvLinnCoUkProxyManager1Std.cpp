@@ -53,7 +53,7 @@ void DvProviderLinnCoUkProxyManager1Cpp::GetPropertyDiscPlayerComPort(uint32_t& 
 DvProviderLinnCoUkProxyManager1Cpp::DvProviderLinnCoUkProxyManager1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "ProxyManager", 1)
 {
-    Functor empty;
+    
     TChar** allowedValues;
     TUint index;
     index = 0;
@@ -69,10 +69,10 @@ DvProviderLinnCoUkProxyManager1Cpp::DvProviderLinnCoUkProxyManager1Cpp(DvDeviceS
     allowedValues[index++] = (TChar*)"Classik Movie";
     allowedValues[index++] = (TChar*)"Classik Music";
     allowedValues[index++] = (TChar*)"Roomamp 2";
-    iPropertyKontrolProductConnected = new PropertyString(new ParameterString("KontrolProductConnected", allowedValues, 11), empty);
+    iPropertyKontrolProductConnected = new PropertyString(new ParameterString("KontrolProductConnected", allowedValues, 11));
     delete[] allowedValues;
     iService->AddProperty(iPropertyKontrolProductConnected); // passes ownership
-    iPropertyKontrolProductComPort = new PropertyUint(new ParameterUint("KontrolProductComPort"), empty);
+    iPropertyKontrolProductComPort = new PropertyUint(new ParameterUint("KontrolProductComPort"));
     iService->AddProperty(iPropertyKontrolProductComPort); // passes ownership
     index = 0;
     allowedValues = new TChar*[9];
@@ -85,10 +85,10 @@ DvProviderLinnCoUkProxyManager1Cpp::DvProviderLinnCoUkProxyManager1Cpp(DvDeviceS
     allowedValues[index++] = (TChar*)"Unidisk SC";
     allowedValues[index++] = (TChar*)"Classik Movie";
     allowedValues[index++] = (TChar*)"Classik Music";
-    iPropertyDiscPlayerConnected = new PropertyString(new ParameterString("DiscPlayerConnected", allowedValues, 9), empty);
+    iPropertyDiscPlayerConnected = new PropertyString(new ParameterString("DiscPlayerConnected", allowedValues, 9));
     delete[] allowedValues;
     iService->AddProperty(iPropertyDiscPlayerConnected); // passes ownership
-    iPropertyDiscPlayerComPort = new PropertyUint(new ParameterUint("DiscPlayerComPort"), empty);
+    iPropertyDiscPlayerComPort = new PropertyUint(new ParameterUint("DiscPlayerComPort"));
     iService->AddProperty(iPropertyDiscPlayerComPort); // passes ownership
 }
 

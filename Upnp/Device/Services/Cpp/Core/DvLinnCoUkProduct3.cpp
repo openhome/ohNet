@@ -139,32 +139,32 @@ void DvProviderLinnCoUkProduct3::GetPropertyProductAnySourceType(TUint& aValue)
 DvProviderLinnCoUkProduct3::DvProviderLinnCoUkProduct3(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Product", 3)
 {
-    Functor empty;
-    iPropertyProductType = new PropertyString(new ParameterString("ProductType"), empty);
+    
+    iPropertyProductType = new PropertyString(new ParameterString("ProductType"));
     iService->AddProperty(iPropertyProductType); // passes ownership
-    iPropertyProductModel = new PropertyString(new ParameterString("ProductModel"), empty);
+    iPropertyProductModel = new PropertyString(new ParameterString("ProductModel"));
     iService->AddProperty(iPropertyProductModel); // passes ownership
-    iPropertyProductName = new PropertyString(new ParameterString("ProductName"), empty);
+    iPropertyProductName = new PropertyString(new ParameterString("ProductName"));
     iService->AddProperty(iPropertyProductName); // passes ownership
-    iPropertyProductRoom = new PropertyString(new ParameterString("ProductRoom"), empty);
+    iPropertyProductRoom = new PropertyString(new ParameterString("ProductRoom"));
     iService->AddProperty(iPropertyProductRoom); // passes ownership
-    iPropertyProductStandby = new PropertyBool(new ParameterBool("ProductStandby"), empty);
+    iPropertyProductStandby = new PropertyBool(new ParameterBool("ProductStandby"));
     iService->AddProperty(iPropertyProductStandby); // passes ownership
-    iPropertyProductSourceIndex = new PropertyUint(new ParameterUint("ProductSourceIndex"), empty);
+    iPropertyProductSourceIndex = new PropertyUint(new ParameterUint("ProductSourceIndex"));
     iService->AddProperty(iPropertyProductSourceIndex); // passes ownership
-    iPropertyProductSourceCount = new PropertyUint(new ParameterUint("ProductSourceCount"), empty);
+    iPropertyProductSourceCount = new PropertyUint(new ParameterUint("ProductSourceCount"));
     iService->AddProperty(iPropertyProductSourceCount); // passes ownership
-    iPropertyProductSourceXml = new PropertyString(new ParameterString("ProductSourceXml"), empty);
+    iPropertyProductSourceXml = new PropertyString(new ParameterString("ProductSourceXml"));
     iService->AddProperty(iPropertyProductSourceXml); // passes ownership
-    iPropertyStartupSourceIndex = new PropertyUint(new ParameterUint("StartupSourceIndex"), empty);
+    iPropertyStartupSourceIndex = new PropertyUint(new ParameterUint("StartupSourceIndex"));
     iService->AddProperty(iPropertyStartupSourceIndex); // passes ownership
-    iPropertyStartupSourceEnabled = new PropertyBool(new ParameterBool("StartupSourceEnabled"), empty);
+    iPropertyStartupSourceEnabled = new PropertyBool(new ParameterBool("StartupSourceEnabled"));
     iService->AddProperty(iPropertyStartupSourceEnabled); // passes ownership
-    iPropertyProductAnySourceName = new PropertyUint(new ParameterUint("ProductAnySourceName"), empty);
+    iPropertyProductAnySourceName = new PropertyUint(new ParameterUint("ProductAnySourceName"));
     iService->AddProperty(iPropertyProductAnySourceName); // passes ownership
-    iPropertyProductAnySourceVisible = new PropertyUint(new ParameterUint("ProductAnySourceVisible"), empty);
+    iPropertyProductAnySourceVisible = new PropertyUint(new ParameterUint("ProductAnySourceVisible"));
     iService->AddProperty(iPropertyProductAnySourceVisible); // passes ownership
-    iPropertyProductAnySourceType = new PropertyUint(new ParameterUint("ProductAnySourceType"), empty);
+    iPropertyProductAnySourceType = new PropertyUint(new ParameterUint("ProductAnySourceType"));
     iService->AddProperty(iPropertyProductAnySourceType); // passes ownership
 }
 

@@ -72,7 +72,7 @@ void <#=className#>::GetProperty<#=s.name#>(<#=inArgType[s.type]#>& aValue)
 <#=className#>::<#=className#>(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "<#=domain#>", "<#=type#>", <#=version#>)
 {
-    Functor empty;<#=DeclareAllowedValuesForProperties(u)#>
+    <#=DeclareAllowedValuesForProperties(u)#>
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
 <#      if (s.values.Count > 0) #>
@@ -84,7 +84,7 @@ void <#=className#>::GetProperty<#=s.name#>(<#=inArgType[s.type]#>& aValue)
     allowedValues[index++] = (TChar*)"<#=val#>";
 <#          } #>
 <#      } #>
-    iProperty<#=s.name#> = new <#=propertyType[s.type]#>(new <#=paramType[s.type]#>("<#=s.name#>"<#=ParameterAllowedValues(s)#>), empty);
+    iProperty<#=s.name#> = new <#=propertyType[s.type]#>(new <#=paramType[s.type]#>("<#=s.name#>"<#=ParameterAllowedValues(s)#>));
 <#      if (s.values.Count > 0) #>
 <#      { #>
     delete[] allowedValues;

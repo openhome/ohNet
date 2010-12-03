@@ -19,8 +19,8 @@ void DvProviderZappOrgTestDimmableLight1::GetPropertyA_ARG_Level(TUint& aValue)
 DvProviderZappOrgTestDimmableLight1::DvProviderZappOrgTestDimmableLight1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "zapp.org", "TestDimmableLight", 1)
 {
-    Functor empty;
-    iPropertyA_ARG_Level = new PropertyUint(new ParameterUint("A_ARG_Level"), empty);
+    
+    iPropertyA_ARG_Level = new PropertyUint(new ParameterUint("A_ARG_Level"));
     iService->AddProperty(iPropertyA_ARG_Level); // passes ownership
 }
 

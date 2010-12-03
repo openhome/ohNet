@@ -19,8 +19,8 @@ void DvProviderUpnpOrgSwitchPower1::GetPropertyStatus(TBool& aValue)
 DvProviderUpnpOrgSwitchPower1::DvProviderUpnpOrgSwitchPower1(DvDevice& aDevice)
     : DvProvider(aDevice.Device(), "upnp.org", "SwitchPower", 1)
 {
-    Functor empty;
-    iPropertyStatus = new PropertyBool(new ParameterBool("Status"), empty);
+    
+    iPropertyStatus = new PropertyBool(new ParameterBool("Status"));
     iService->AddProperty(iPropertyStatus); // passes ownership
 }
 

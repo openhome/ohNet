@@ -63,16 +63,16 @@ void DvProviderZappOrgTestBasic1Cpp::GetPropertyVarBin(std::string& aValue)
 DvProviderZappOrgTestBasic1Cpp::DvProviderZappOrgTestBasic1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "zapp.org", "TestBasic", 1)
 {
-    Functor empty;
-    iPropertyVarUint = new PropertyUint(new ParameterUint("VarUint"), empty);
+    
+    iPropertyVarUint = new PropertyUint(new ParameterUint("VarUint"));
     iService->AddProperty(iPropertyVarUint); // passes ownership
-    iPropertyVarInt = new PropertyInt(new ParameterInt("VarInt"), empty);
+    iPropertyVarInt = new PropertyInt(new ParameterInt("VarInt"));
     iService->AddProperty(iPropertyVarInt); // passes ownership
-    iPropertyVarBool = new PropertyBool(new ParameterBool("VarBool"), empty);
+    iPropertyVarBool = new PropertyBool(new ParameterBool("VarBool"));
     iService->AddProperty(iPropertyVarBool); // passes ownership
-    iPropertyVarStr = new PropertyString(new ParameterString("VarStr"), empty);
+    iPropertyVarStr = new PropertyString(new ParameterString("VarStr"));
     iService->AddProperty(iPropertyVarStr); // passes ownership
-    iPropertyVarBin = new PropertyBinary(new ParameterBinary("VarBin"), empty);
+    iPropertyVarBin = new PropertyBinary(new ParameterBinary("VarBin"));
     iService->AddProperty(iPropertyVarBin); // passes ownership
 }
 

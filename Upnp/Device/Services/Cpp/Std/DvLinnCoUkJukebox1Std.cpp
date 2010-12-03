@@ -43,12 +43,12 @@ void DvProviderLinnCoUkJukebox1Cpp::GetPropertyAlbumArtFileName(std::string& aVa
 DvProviderLinnCoUkJukebox1Cpp::DvProviderLinnCoUkJukebox1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Jukebox", 1)
 {
-    Functor empty;
-    iPropertyCurrentPreset = new PropertyUint(new ParameterUint("CurrentPreset"), empty);
+    
+    iPropertyCurrentPreset = new PropertyUint(new ParameterUint("CurrentPreset"));
     iService->AddProperty(iPropertyCurrentPreset); // passes ownership
-    iPropertyPresetPrefix = new PropertyString(new ParameterString("PresetPrefix"), empty);
+    iPropertyPresetPrefix = new PropertyString(new ParameterString("PresetPrefix"));
     iService->AddProperty(iPropertyPresetPrefix); // passes ownership
-    iPropertyAlbumArtFileName = new PropertyString(new ParameterString("AlbumArtFileName"), empty);
+    iPropertyAlbumArtFileName = new PropertyString(new ParameterString("AlbumArtFileName"));
     iService->AddProperty(iPropertyAlbumArtFileName); // passes ownership
 }
 

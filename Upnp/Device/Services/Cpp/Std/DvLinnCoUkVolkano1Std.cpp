@@ -9,7 +9,7 @@ using namespace Zapp;
 DvProviderLinnCoUkVolkano1Cpp::DvProviderLinnCoUkVolkano1Cpp(DvDeviceStd& aDevice)
     : DvProvider(aDevice.Device(), "linn.co.uk", "Volkano", 1)
 {
-    Functor empty;
+    
 }
 
 void DvProviderLinnCoUkVolkano1Cpp::EnableActionReboot()
