@@ -104,7 +104,7 @@ void CpProxy::EventUpdateEnd()
     TBool changed = false;
     PropertyMap::iterator it = iProperties.begin();
     while (it != iProperties.end()) {
-        changed = changed || it->second->ReportChanged();
+        changed = changed | it->second->ReportChanged();
 		it++;
     }
     if (changed) {
