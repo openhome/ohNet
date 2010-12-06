@@ -201,6 +201,25 @@ valgrind_nightly = Environment['nightly_run']
 if valgrind_run != "0" and valgrind_nightly == "1":
         ParseDir()
 
+def GenDocs(module, os, nightly):
+
+	if module == "upnp" and os == "Linux":
+
+	        host = "zapp.linn.co.uk"
+		rootpath = "/var/www/zapp/htdocs/docs/upnp"
+	        username = "hudson-zapp"
+
+
+		docgen_cmd = "cd Upnp && make docs"
+		Build(Environment['tool'],docgen_cmd,'')
+
+                import paramiko
+		rsyncCmd = "rsync -avz --exclude='*.o' --exclude='*.a' --exclude='Include' Upnp/Build/Docs/ "+username+"@"+host+":~/"
+                ret = subprocess.call(rsyncCmd, shell=True)
+                if ret != 0:
+                          print ret
+                          sys.exit(10)
+		
 def ArmTests(module, arch, nightly):
 
         host = "sheeva002.linn.co.uk"
@@ -254,3 +273,5 @@ def ArmTests(module, arch, nightly):
 
 
 ArmTests(Module['module'],Environment['arch'],Environment['nightly_run'])
+GenDocs(Module['module'],Environment['ostype'],Environment['nightly_run'])
+
