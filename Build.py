@@ -201,7 +201,7 @@ valgrind_nightly = Environment['nightly_run']
 if valgrind_run != "0" and valgrind_nightly == "1":
         ParseDir()
 
-def GenDocs(module, os, nightly):
+def GenDocs(module, os, nightly, arch):
 
 	if module == "upnp" and os == "Linux" and arch == "x86" and nightly == "1":
 
@@ -273,5 +273,5 @@ def ArmTests(module, arch, nightly):
 
 
 ArmTests(Module['module'],Environment['arch'],Environment['nightly_run'])
-GenDocs(Module['module'],Environment['ostype'],Environment['nightly_run'])
+GenDocs(Module['module'],Environment['ostype'],Environment['nightly_run'],Environment['arch'])
 
