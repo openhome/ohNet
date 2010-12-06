@@ -203,7 +203,7 @@ if valgrind_run != "0" and valgrind_nightly == "1":
 
 def GenDocs(module, os, nightly):
 
-	if module == "upnp" and os == "Linux":
+	if module == "upnp" and os == "Linux" and arch == "x86" and nightly = "1":
 
 	        host = "zapp.linn.co.uk"
 		rootpath = "/var/www/zapp/htdocs/docs/upnp"
