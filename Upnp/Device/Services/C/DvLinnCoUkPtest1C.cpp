@@ -7,10 +7,10 @@
 
 using namespace Zapp;
 
-class DvServiceLinnCoUkPtest1C : public DvServiceLinnCoUkPtest1
+class DvProviderLinnCoUkPtest1C : public DvProviderLinnCoUkPtest1
 {
 public:
-    DvServiceLinnCoUkPtest1C(DvDevice& aDevice);
+    DvProviderLinnCoUkPtest1C(DvDevice& aDevice);
     void EnableActionTestComPort(CallbackPtest1TestComPort aCallback, void* aPtr);
     void EnableActionLedsOn(CallbackPtest1LedsOn aCallback, void* aPtr);
     void EnableActionLedsOff(CallbackPtest1LedsOff aCallback, void* aPtr);
@@ -27,33 +27,33 @@ private:
     void* iPtrLedsOff;
 };
 
-DvServiceLinnCoUkPtest1C::DvServiceLinnCoUkPtest1C(DvDevice& aDevice)
-    : DvServiceLinnCoUkPtest1(aDevice)
+DvProviderLinnCoUkPtest1C::DvProviderLinnCoUkPtest1C(DvDevice& aDevice)
+    : DvProviderLinnCoUkPtest1(aDevice)
 {
 }
 
-void DvServiceLinnCoUkPtest1C::EnableActionTestComPort(CallbackPtest1TestComPort aCallback, void* aPtr)
+void DvProviderLinnCoUkPtest1C::EnableActionTestComPort(CallbackPtest1TestComPort aCallback, void* aPtr)
 {
     iCallbackTestComPort = aCallback;
     iPtrTestComPort = aPtr;
-    DvServiceLinnCoUkPtest1::EnableActionTestComPort();
+    DvProviderLinnCoUkPtest1::EnableActionTestComPort();
 }
 
-void DvServiceLinnCoUkPtest1C::EnableActionLedsOn(CallbackPtest1LedsOn aCallback, void* aPtr)
+void DvProviderLinnCoUkPtest1C::EnableActionLedsOn(CallbackPtest1LedsOn aCallback, void* aPtr)
 {
     iCallbackLedsOn = aCallback;
     iPtrLedsOn = aPtr;
-    DvServiceLinnCoUkPtest1::EnableActionLedsOn();
+    DvProviderLinnCoUkPtest1::EnableActionLedsOn();
 }
 
-void DvServiceLinnCoUkPtest1C::EnableActionLedsOff(CallbackPtest1LedsOff aCallback, void* aPtr)
+void DvProviderLinnCoUkPtest1C::EnableActionLedsOff(CallbackPtest1LedsOff aCallback, void* aPtr)
 {
     iCallbackLedsOff = aCallback;
     iPtrLedsOff = aPtr;
-    DvServiceLinnCoUkPtest1::EnableActionLedsOff();
+    DvProviderLinnCoUkPtest1::EnableActionLedsOff();
 }
 
-void DvServiceLinnCoUkPtest1C::TestComPort(IInvocationResponse& aResponse, TUint aVersion, TUint aaPort, IInvocationResponseBool& aaResult)
+void DvProviderLinnCoUkPtest1C::TestComPort(IInvocationResponse& aResponse, TUint aVersion, TUint aaPort, IInvocationResponseBool& aaResult)
 {
     uint32_t aResult;
     ASSERT(iCallbackTestComPort != NULL);
@@ -66,7 +66,7 @@ void DvServiceLinnCoUkPtest1C::TestComPort(IInvocationResponse& aResponse, TUint
     aResponse.End();
 }
 
-void DvServiceLinnCoUkPtest1C::LedsOn(IInvocationResponse& aResponse, TUint aVersion)
+void DvProviderLinnCoUkPtest1C::LedsOn(IInvocationResponse& aResponse, TUint aVersion)
 {
     ASSERT(iCallbackLedsOn != NULL);
     if (0 != iCallbackLedsOn(iPtrLedsOn, aVersion)) {
@@ -77,7 +77,7 @@ void DvServiceLinnCoUkPtest1C::LedsOn(IInvocationResponse& aResponse, TUint aVer
     aResponse.End();
 }
 
-void DvServiceLinnCoUkPtest1C::LedsOff(IInvocationResponse& aResponse, TUint aVersion)
+void DvProviderLinnCoUkPtest1C::LedsOff(IInvocationResponse& aResponse, TUint aVersion)
 {
     ASSERT(iCallbackLedsOff != NULL);
     if (0 != iCallbackLedsOff(iPtrLedsOff, aVersion)) {
@@ -90,28 +90,28 @@ void DvServiceLinnCoUkPtest1C::LedsOff(IInvocationResponse& aResponse, TUint aVe
 
 
 
-THandle DvServiceLinnCoUkPtest1Create(DvDeviceC aDevice)
+THandle DvProviderLinnCoUkPtest1Create(DvDeviceC aDevice)
 {
-	return new DvServiceLinnCoUkPtest1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderLinnCoUkPtest1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvServiceLinnCoUkPtest1Destroy(THandle aService)
+void DvProviderLinnCoUkPtest1Destroy(THandle aProvider)
 {
-    delete reinterpret_cast<DvServiceLinnCoUkPtest1C*>(aService);
+    delete reinterpret_cast<DvProviderLinnCoUkPtest1C*>(aProvider);
 }
 
-void DvServiceLinnCoUkPtest1EnableActionTestComPort(THandle aService, CallbackPtest1TestComPort aCallback, void* aPtr)
+void DvProviderLinnCoUkPtest1EnableActionTestComPort(THandle aProvider, CallbackPtest1TestComPort aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkPtest1C*>(aService)->EnableActionTestComPort(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPtest1C*>(aProvider)->EnableActionTestComPort(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkPtest1EnableActionLedsOn(THandle aService, CallbackPtest1LedsOn aCallback, void* aPtr)
+void DvProviderLinnCoUkPtest1EnableActionLedsOn(THandle aProvider, CallbackPtest1LedsOn aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkPtest1C*>(aService)->EnableActionLedsOn(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPtest1C*>(aProvider)->EnableActionLedsOn(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkPtest1EnableActionLedsOff(THandle aService, CallbackPtest1LedsOff aCallback, void* aPtr)
+void DvProviderLinnCoUkPtest1EnableActionLedsOff(THandle aProvider, CallbackPtest1LedsOff aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkPtest1C*>(aService)->EnableActionLedsOff(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkPtest1C*>(aProvider)->EnableActionLedsOff(aCallback, aPtr);
 }
 

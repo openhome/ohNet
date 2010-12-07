@@ -3,42 +3,88 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Zapp;
 
-namespace Zapp
+namespace Zapp.Device.Providers
 {
-    public class DvServiceLinnCoUkJukebox1 : IDisposable
+    public interface IDvProviderLinnCoUkJukebox1 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the CurrentPreset property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyCurrentPreset(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the CurrentPreset property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyCurrentPreset(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the PresetPrefix property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyPresetPrefix(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the PresetPrefix property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyPresetPrefix(out string aValue);
+
+        /// <summary>
+        /// Set the value of the AlbumArtFileName property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyAlbumArtFileName(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the AlbumArtFileName property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyAlbumArtFileName(out string aValue);
+        
+    }
+    /// <summary>
+    /// Provider for the linn.co.uk:Jukebox:1 UPnP service
+    /// </summary>
+    public class DvProviderLinnCoUkJukebox1 : DvProvider, IDisposable, IDvProviderLinnCoUkJukebox1
     {
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern IntPtr DvServiceLinnCoUkJukebox1Create(IntPtr aDeviceHandle);
+        static extern IntPtr DvProviderLinnCoUkJukebox1Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern void DvServiceLinnCoUkJukebox1Destroy(IntPtr aHandle);
+        static extern void DvProviderLinnCoUkJukebox1Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern unsafe int DvServiceLinnCoUkJukebox1SetPropertyCurrentPreset(IntPtr aHandle, uint aValue);
+        static extern unsafe int DvProviderLinnCoUkJukebox1SetPropertyCurrentPreset(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern unsafe void DvServiceLinnCoUkJukebox1GetPropertyCurrentPreset(IntPtr aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkJukebox1GetPropertyCurrentPreset(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern unsafe int DvServiceLinnCoUkJukebox1SetPropertyPresetPrefix(IntPtr aHandle, char* aValue);
+        static extern unsafe int DvProviderLinnCoUkJukebox1SetPropertyPresetPrefix(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern unsafe void DvServiceLinnCoUkJukebox1GetPropertyPresetPrefix(IntPtr aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkJukebox1GetPropertyPresetPrefix(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern unsafe int DvServiceLinnCoUkJukebox1SetPropertyAlbumArtFileName(IntPtr aHandle, char* aValue);
+        static extern unsafe int DvProviderLinnCoUkJukebox1SetPropertyAlbumArtFileName(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern unsafe void DvServiceLinnCoUkJukebox1GetPropertyAlbumArtFileName(IntPtr aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkJukebox1GetPropertyAlbumArtFileName(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern void DvServiceLinnCoUkJukebox1EnableActionSetPresetPrefix(IntPtr aHandle, CallbackSetPresetPrefix aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkJukebox1EnableActionSetPresetPrefix(IntPtr aHandle, CallbackSetPresetPrefix aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern void DvServiceLinnCoUkJukebox1EnableActionPresetPrefix(IntPtr aHandle, CallbackPresetPrefix aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkJukebox1EnableActionPresetPrefix(IntPtr aHandle, CallbackPresetPrefix aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern void DvServiceLinnCoUkJukebox1EnableActionSetAlbumArtFileName(IntPtr aHandle, CallbackSetAlbumArtFileName aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkJukebox1EnableActionSetAlbumArtFileName(IntPtr aHandle, CallbackSetAlbumArtFileName aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern void DvServiceLinnCoUkJukebox1EnableActionAlbumArtFileName(IntPtr aHandle, CallbackAlbumArtFileName aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkJukebox1EnableActionAlbumArtFileName(IntPtr aHandle, CallbackAlbumArtFileName aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern void DvServiceLinnCoUkJukebox1EnableActionSetCurrentPreset(IntPtr aHandle, CallbackSetCurrentPreset aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkJukebox1EnableActionSetCurrentPreset(IntPtr aHandle, CallbackSetCurrentPreset aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern void DvServiceLinnCoUkJukebox1EnableActionCurrentPreset(IntPtr aHandle, CallbackCurrentPreset aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkJukebox1EnableActionCurrentPreset(IntPtr aHandle, CallbackCurrentPreset aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern void DvServiceLinnCoUkJukebox1EnableActionPresetMetaData(IntPtr aHandle, CallbackPresetMetaData aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkJukebox1EnableActionPresetMetaData(IntPtr aHandle, CallbackPresetMetaData aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern void DvServiceLinnCoUkJukebox1EnableActionLoadManifest(IntPtr aHandle, CallbackLoadManifest aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkJukebox1EnableActionLoadManifest(IntPtr aHandle, CallbackLoadManifest aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -51,7 +97,6 @@ namespace Zapp
         private unsafe delegate int CallbackPresetMetaData(IntPtr aPtr, uint aVersion, uint aaPreset, char** aaMetaData);
         private unsafe delegate int CallbackLoadManifest(IntPtr aPtr, uint aVersion, uint* aaTotalPresets);
 
-        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackSetPresetPrefix iCallbackSetPresetPrefix;
         private CallbackPresetPrefix iCallbackPresetPrefix;
@@ -62,157 +107,307 @@ namespace Zapp
         private CallbackPresetMetaData iCallbackPresetMetaData;
         private CallbackLoadManifest iCallbackLoadManifest;
 
-        public DvServiceLinnCoUkJukebox1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderLinnCoUkJukebox1(DvDevice aDevice)
         {
-            iHandle = DvServiceLinnCoUkJukebox1Create(aDevice.Handle()); 
+            iHandle = DvProviderLinnCoUkJukebox1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyCurrentPreset(uint aValue)
+        /// <summary>
+        /// Set the value of the CurrentPreset property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyCurrentPreset(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkJukebox1SetPropertyCurrentPreset(iHandle, aValue))
+            uint changed;
+            if (0 != DvProviderLinnCoUkJukebox1SetPropertyCurrentPreset(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the CurrentPreset property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyCurrentPreset(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
-                DvServiceLinnCoUkJukebox1GetPropertyCurrentPreset(iHandle, value);
+            {
+                DvProviderLinnCoUkJukebox1GetPropertyCurrentPreset(iHandle, value);
             }
         }
 
-        public unsafe void SetPropertyPresetPrefix(string aValue)
+        /// <summary>
+        /// Set the value of the PresetPrefix property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyPresetPrefix(string aValue)
         {
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkJukebox1SetPropertyPresetPrefix(iHandle, value);
+            int err = DvProviderLinnCoUkJukebox1SetPropertyPresetPrefix(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the PresetPrefix property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyPresetPrefix(out string aValue)
         {
             char* value;
-            DvServiceLinnCoUkJukebox1GetPropertyPresetPrefix(iHandle, &value);
+            DvProviderLinnCoUkJukebox1GetPropertyPresetPrefix(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyAlbumArtFileName(string aValue)
+        /// <summary>
+        /// Set the value of the AlbumArtFileName property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyAlbumArtFileName(string aValue)
         {
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkJukebox1SetPropertyAlbumArtFileName(iHandle, value);
+            int err = DvProviderLinnCoUkJukebox1SetPropertyAlbumArtFileName(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the AlbumArtFileName property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyAlbumArtFileName(out string aValue)
         {
             char* value;
-            DvServiceLinnCoUkJukebox1GetPropertyAlbumArtFileName(iHandle, &value);
+            DvProviderLinnCoUkJukebox1GetPropertyAlbumArtFileName(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Signal that the action SetPresetPrefix is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetPresetPrefix must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetPresetPrefix()
         {
             iCallbackSetPresetPrefix = new CallbackSetPresetPrefix(DoSetPresetPrefix);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkJukebox1EnableActionSetPresetPrefix(iHandle, iCallbackSetPresetPrefix, ptr);
+            DvProviderLinnCoUkJukebox1EnableActionSetPresetPrefix(iHandle, iCallbackSetPresetPrefix, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action PresetPrefix is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoPresetPrefix must be overridden if this is called.</remarks>
         protected unsafe void EnableActionPresetPrefix()
         {
             iCallbackPresetPrefix = new CallbackPresetPrefix(DoPresetPrefix);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkJukebox1EnableActionPresetPrefix(iHandle, iCallbackPresetPrefix, ptr);
+            DvProviderLinnCoUkJukebox1EnableActionPresetPrefix(iHandle, iCallbackPresetPrefix, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetAlbumArtFileName is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetAlbumArtFileName must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetAlbumArtFileName()
         {
             iCallbackSetAlbumArtFileName = new CallbackSetAlbumArtFileName(DoSetAlbumArtFileName);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkJukebox1EnableActionSetAlbumArtFileName(iHandle, iCallbackSetAlbumArtFileName, ptr);
+            DvProviderLinnCoUkJukebox1EnableActionSetAlbumArtFileName(iHandle, iCallbackSetAlbumArtFileName, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action AlbumArtFileName is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoAlbumArtFileName must be overridden if this is called.</remarks>
         protected unsafe void EnableActionAlbumArtFileName()
         {
             iCallbackAlbumArtFileName = new CallbackAlbumArtFileName(DoAlbumArtFileName);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkJukebox1EnableActionAlbumArtFileName(iHandle, iCallbackAlbumArtFileName, ptr);
+            DvProviderLinnCoUkJukebox1EnableActionAlbumArtFileName(iHandle, iCallbackAlbumArtFileName, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetCurrentPreset is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetCurrentPreset must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetCurrentPreset()
         {
             iCallbackSetCurrentPreset = new CallbackSetCurrentPreset(DoSetCurrentPreset);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkJukebox1EnableActionSetCurrentPreset(iHandle, iCallbackSetCurrentPreset, ptr);
+            DvProviderLinnCoUkJukebox1EnableActionSetCurrentPreset(iHandle, iCallbackSetCurrentPreset, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action CurrentPreset is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoCurrentPreset must be overridden if this is called.</remarks>
         protected unsafe void EnableActionCurrentPreset()
         {
             iCallbackCurrentPreset = new CallbackCurrentPreset(DoCurrentPreset);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkJukebox1EnableActionCurrentPreset(iHandle, iCallbackCurrentPreset, ptr);
+            DvProviderLinnCoUkJukebox1EnableActionCurrentPreset(iHandle, iCallbackCurrentPreset, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action PresetMetaData is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoPresetMetaData must be overridden if this is called.</remarks>
         protected unsafe void EnableActionPresetMetaData()
         {
             iCallbackPresetMetaData = new CallbackPresetMetaData(DoPresetMetaData);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkJukebox1EnableActionPresetMetaData(iHandle, iCallbackPresetMetaData, ptr);
+            DvProviderLinnCoUkJukebox1EnableActionPresetMetaData(iHandle, iCallbackPresetMetaData, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action LoadManifest is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoLoadManifest must be overridden if this is called.</remarks>
         protected unsafe void EnableActionLoadManifest()
         {
             iCallbackLoadManifest = new CallbackLoadManifest(DoLoadManifest);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkJukebox1EnableActionLoadManifest(iHandle, iCallbackLoadManifest, ptr);
+            DvProviderLinnCoUkJukebox1EnableActionLoadManifest(iHandle, iCallbackLoadManifest, ptr);
         }
 
+        /// <summary>
+        /// SetPresetPrefix action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetPresetPrefix action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetPresetPrefix was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaUri"></param>
         protected virtual void SetPresetPrefix(uint aVersion, string aaUri)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// PresetPrefix action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// PresetPrefix action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionPresetPrefix was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaUri"></param>
         protected virtual void PresetPrefix(uint aVersion, out string aaUri)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetAlbumArtFileName action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetAlbumArtFileName action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetAlbumArtFileName was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaName"></param>
         protected virtual void SetAlbumArtFileName(uint aVersion, string aaName)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// AlbumArtFileName action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// AlbumArtFileName action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionAlbumArtFileName was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaName"></param>
         protected virtual void AlbumArtFileName(uint aVersion, out string aaName)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetCurrentPreset action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetCurrentPreset action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetCurrentPreset was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaPreset"></param>
         protected virtual void SetCurrentPreset(uint aVersion, uint aaPreset)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// CurrentPreset action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// CurrentPreset action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionCurrentPreset was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaPreset"></param>
         protected virtual void CurrentPreset(uint aVersion, out uint aaPreset)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// PresetMetaData action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// PresetMetaData action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionPresetMetaData was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaPreset"></param>
+        /// <param name="aaMetaData"></param>
         protected virtual void PresetMetaData(uint aVersion, uint aaPreset, out string aaMetaData)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// LoadManifest action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// LoadManifest action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionLoadManifest was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaTotalPresets"></param>
         protected virtual void LoadManifest(uint aVersion, out uint aaTotalPresets)
         {
             throw (new ActionDisabledError());
@@ -221,7 +416,7 @@ namespace Zapp
         private static unsafe int DoSetPresetPrefix(IntPtr aPtr, uint aVersion, char* aaUri)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkJukebox1 self = (DvServiceLinnCoUkJukebox1)gch.Target;
+            DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
             string aUri = Marshal.PtrToStringAnsi((IntPtr)aaUri);
             self.SetPresetPrefix(aVersion, aUri);
             return 0;
@@ -230,7 +425,7 @@ namespace Zapp
         private static unsafe int DoPresetPrefix(IntPtr aPtr, uint aVersion, char** aaUri)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkJukebox1 self = (DvServiceLinnCoUkJukebox1)gch.Target;
+            DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
             string aUri;
             self.PresetPrefix(aVersion, out aUri);
             *aaUri = (char*)Marshal.StringToHGlobalAnsi(aUri).ToPointer();
@@ -240,7 +435,7 @@ namespace Zapp
         private static unsafe int DoSetAlbumArtFileName(IntPtr aPtr, uint aVersion, char* aaName)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkJukebox1 self = (DvServiceLinnCoUkJukebox1)gch.Target;
+            DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
             string aName = Marshal.PtrToStringAnsi((IntPtr)aaName);
             self.SetAlbumArtFileName(aVersion, aName);
             return 0;
@@ -249,7 +444,7 @@ namespace Zapp
         private static unsafe int DoAlbumArtFileName(IntPtr aPtr, uint aVersion, char** aaName)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkJukebox1 self = (DvServiceLinnCoUkJukebox1)gch.Target;
+            DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
             string aName;
             self.AlbumArtFileName(aVersion, out aName);
             *aaName = (char*)Marshal.StringToHGlobalAnsi(aName).ToPointer();
@@ -259,7 +454,7 @@ namespace Zapp
         private static unsafe int DoSetCurrentPreset(IntPtr aPtr, uint aVersion, uint aaPreset)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkJukebox1 self = (DvServiceLinnCoUkJukebox1)gch.Target;
+            DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
             self.SetCurrentPreset(aVersion, aaPreset);
             return 0;
         }
@@ -267,7 +462,7 @@ namespace Zapp
         private static unsafe int DoCurrentPreset(IntPtr aPtr, uint aVersion, uint* aaPreset)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkJukebox1 self = (DvServiceLinnCoUkJukebox1)gch.Target;
+            DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
             uint aPreset;
             self.CurrentPreset(aVersion, out aPreset);
             *aaPreset = aPreset;
@@ -277,7 +472,7 @@ namespace Zapp
         private static unsafe int DoPresetMetaData(IntPtr aPtr, uint aVersion, uint aaPreset, char** aaMetaData)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkJukebox1 self = (DvServiceLinnCoUkJukebox1)gch.Target;
+            DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
             string aMetaData;
             self.PresetMetaData(aVersion, aaPreset, out aMetaData);
             *aaMetaData = (char*)Marshal.StringToHGlobalAnsi(aMetaData).ToPointer();
@@ -287,21 +482,23 @@ namespace Zapp
         private static unsafe int DoLoadManifest(IntPtr aPtr, uint aVersion, uint* aaTotalPresets)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkJukebox1 self = (DvServiceLinnCoUkJukebox1)gch.Target;
+            DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
             uint aTotalPresets;
             self.LoadManifest(aVersion, out aTotalPresets);
             *aaTotalPresets = aTotalPresets;
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceLinnCoUkJukebox1()
+        ~DvProviderLinnCoUkJukebox1()
         {
             DoDispose();
         }
@@ -318,7 +515,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = IntPtr.Zero;
             }
-            DvServiceLinnCoUkJukebox1Destroy(handle);
+            DvProviderLinnCoUkJukebox1Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

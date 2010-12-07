@@ -1,7 +1,7 @@
-<#@ assembly name="Build/Tools/UpnpServiceXml.dll" #>
+<#@ assembly name="UpnpServiceXml.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="Linn.Xml.UpnpServiceXml" #>
+<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
     string domain = TemplateArgument("domain");
@@ -61,6 +61,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**
+ * @addtogroup <#=className#>
+ * @ingroup Proxies
+ * @{
+ */
 
 /**
  * Constructor.
@@ -185,6 +191,8 @@ DllExport void <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[
 DllExport void <#=className#>Property<#=s.name#>(THandle aHandle, <#=outargtype[s.type]#> a<#=s.name#>);
 <#      } #>
 <#  } #>
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

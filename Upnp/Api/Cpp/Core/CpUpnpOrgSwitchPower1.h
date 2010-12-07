@@ -20,6 +20,7 @@ class PropertyUint;
 
 /**
  * Proxy for upnp.org:SwitchPower:1
+ * @ingroup Proxies
  */
 class CpProxyUpnpOrgSwitchPower1 : public CpProxy
 {

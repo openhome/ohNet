@@ -227,24 +227,6 @@ private:
     virtual void Process(const Brx& aValue);
 };
 
-class SsdpSocketStream : public SocketUdpClient, public IWriter, public IReaderSource
-{
-public:
-    SsdpSocketStream(const Endpoint& aMulticast, TUint aTtl, TIpAddress aInterface);
-    ~SsdpSocketStream();
-    // IWriter
-    virtual void Write(TByte aValue);
-    virtual void Write(const Brx& aBuffer);
-    virtual void WriteFlush();
-    // IReaderSource
-    virtual void Read(Bwx& aBuffer);
-    virtual void ReadFlush();
-    virtual void ReadInterrupt();
-private:
-    UdpControllerReader* iReader;
-    UdpControllerWriter* iWriter;
-};
-
 class SsdpWriterMsearchRequest
 {
 public:
@@ -285,7 +267,8 @@ private:
     static const TUint kMaxBufferBytes = 1024;
     static const TUint kTimeToLive = 4;
 private:
-    SsdpSocketStream iSocket;
+    SocketUdpClient iSocket;
+    UdpControllerWriter iSocketWriter;
     Sws<kMaxBufferBytes> iBuffer;
     WriterHttpRequest iWriter;
     TIpAddress iInterface;

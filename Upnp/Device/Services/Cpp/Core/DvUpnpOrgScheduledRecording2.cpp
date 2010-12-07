@@ -2,38 +2,38 @@
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
-void DvServiceUpnpOrgScheduledRecording2::SetPropertyLastChange(const Brx& aValue)
+TBool DvProviderUpnpOrgScheduledRecording2::SetPropertyLastChange(const Brx& aValue)
 {
-    SetPropertyString(*iPropertyLastChange, aValue);
+    return SetPropertyString(*iPropertyLastChange, aValue);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::GetPropertyLastChange(Brhz& aValue)
+void DvProviderUpnpOrgScheduledRecording2::GetPropertyLastChange(Brhz& aValue)
 {
     aValue.Set(iPropertyLastChange->Value());
 }
 
-DvServiceUpnpOrgScheduledRecording2::DvServiceUpnpOrgScheduledRecording2(DvDevice& aDevice)
-    : DvService(aDevice.Device(), "upnp.org", "ScheduledRecording", 2)
+DvProviderUpnpOrgScheduledRecording2::DvProviderUpnpOrgScheduledRecording2(DvDevice& aDevice)
+    : DvProvider(aDevice.Device(), "upnp.org", "ScheduledRecording", 2)
 {
-    Functor empty;
-    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"), empty);
+    
+    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
 }
 
-void DvServiceUpnpOrgScheduledRecording2::EnableActionGetSortCapabilities()
+void DvProviderUpnpOrgScheduledRecording2::EnableActionGetSortCapabilities()
 {
     Zapp::Action* action = new Zapp::Action("GetSortCapabilities");
     action->AddOutputParameter(new ParameterString("SortCaps"));
     action->AddOutputParameter(new ParameterUint("SortLevelCap"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgScheduledRecording2::DoGetSortCapabilities);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoGetSortCapabilities);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::EnableActionGetPropertyList()
+void DvProviderUpnpOrgScheduledRecording2::EnableActionGetPropertyList()
 {
     Zapp::Action* action = new Zapp::Action("GetPropertyList");
     TChar** allowedValues;
@@ -46,11 +46,11 @@ void DvServiceUpnpOrgScheduledRecording2::EnableActionGetPropertyList()
     action->AddInputParameter(new ParameterString("DataTypeID", allowedValues, 3));
     delete[] allowedValues;
     action->AddOutputParameter(new ParameterString("PropertyList"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgScheduledRecording2::DoGetPropertyList);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoGetPropertyList);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::EnableActionGetAllowedValues()
+void DvProviderUpnpOrgScheduledRecording2::EnableActionGetAllowedValues()
 {
     Zapp::Action* action = new Zapp::Action("GetAllowedValues");
     TChar** allowedValues;
@@ -64,19 +64,19 @@ void DvServiceUpnpOrgScheduledRecording2::EnableActionGetAllowedValues()
     delete[] allowedValues;
     action->AddInputParameter(new ParameterString("Filter"));
     action->AddOutputParameter(new ParameterString("PropertyInfo"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgScheduledRecording2::DoGetAllowedValues);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoGetAllowedValues);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::EnableActionGetStateUpdateID()
+void DvProviderUpnpOrgScheduledRecording2::EnableActionGetStateUpdateID()
 {
     Zapp::Action* action = new Zapp::Action("GetStateUpdateID");
     action->AddOutputParameter(new ParameterUint("Id"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgScheduledRecording2::DoGetStateUpdateID);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoGetStateUpdateID);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::EnableActionBrowseRecordSchedules()
+void DvProviderUpnpOrgScheduledRecording2::EnableActionBrowseRecordSchedules()
 {
     Zapp::Action* action = new Zapp::Action("BrowseRecordSchedules");
     action->AddInputParameter(new ParameterString("Filter"));
@@ -87,11 +87,11 @@ void DvServiceUpnpOrgScheduledRecording2::EnableActionBrowseRecordSchedules()
     action->AddOutputParameter(new ParameterUint("NumberReturned"));
     action->AddOutputParameter(new ParameterUint("TotalMatches"));
     action->AddOutputParameter(new ParameterUint("UpdateID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgScheduledRecording2::DoBrowseRecordSchedules);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoBrowseRecordSchedules);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::EnableActionBrowseRecordTasks()
+void DvProviderUpnpOrgScheduledRecording2::EnableActionBrowseRecordTasks()
 {
     Zapp::Action* action = new Zapp::Action("BrowseRecordTasks");
     action->AddInputParameter(new ParameterString("RecordScheduleID"));
@@ -103,120 +103,120 @@ void DvServiceUpnpOrgScheduledRecording2::EnableActionBrowseRecordTasks()
     action->AddOutputParameter(new ParameterUint("NumberReturned"));
     action->AddOutputParameter(new ParameterUint("TotalMatches"));
     action->AddOutputParameter(new ParameterUint("UpdateID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgScheduledRecording2::DoBrowseRecordTasks);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoBrowseRecordTasks);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::EnableActionCreateRecordSchedule()
+void DvProviderUpnpOrgScheduledRecording2::EnableActionCreateRecordSchedule()
 {
     Zapp::Action* action = new Zapp::Action("CreateRecordSchedule");
     action->AddInputParameter(new ParameterString("Elements"));
     action->AddOutputParameter(new ParameterString("RecordScheduleID"));
     action->AddOutputParameter(new ParameterString("Result"));
     action->AddOutputParameter(new ParameterUint("UpdateID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgScheduledRecording2::DoCreateRecordSchedule);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoCreateRecordSchedule);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::EnableActionDeleteRecordSchedule()
+void DvProviderUpnpOrgScheduledRecording2::EnableActionDeleteRecordSchedule()
 {
     Zapp::Action* action = new Zapp::Action("DeleteRecordSchedule");
     action->AddInputParameter(new ParameterString("RecordScheduleID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgScheduledRecording2::DoDeleteRecordSchedule);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoDeleteRecordSchedule);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::EnableActionGetRecordSchedule()
+void DvProviderUpnpOrgScheduledRecording2::EnableActionGetRecordSchedule()
 {
     Zapp::Action* action = new Zapp::Action("GetRecordSchedule");
     action->AddInputParameter(new ParameterString("RecordScheduleID"));
     action->AddInputParameter(new ParameterString("Filter"));
     action->AddOutputParameter(new ParameterString("Result"));
     action->AddOutputParameter(new ParameterUint("UpdateID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgScheduledRecording2::DoGetRecordSchedule);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoGetRecordSchedule);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::EnableActionEnableRecordSchedule()
+void DvProviderUpnpOrgScheduledRecording2::EnableActionEnableRecordSchedule()
 {
     Zapp::Action* action = new Zapp::Action("EnableRecordSchedule");
     action->AddInputParameter(new ParameterString("RecordScheduleID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgScheduledRecording2::DoEnableRecordSchedule);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoEnableRecordSchedule);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::EnableActionDisableRecordSchedule()
+void DvProviderUpnpOrgScheduledRecording2::EnableActionDisableRecordSchedule()
 {
     Zapp::Action* action = new Zapp::Action("DisableRecordSchedule");
     action->AddInputParameter(new ParameterString("RecordScheduleID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgScheduledRecording2::DoDisableRecordSchedule);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoDisableRecordSchedule);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::EnableActionDeleteRecordTask()
+void DvProviderUpnpOrgScheduledRecording2::EnableActionDeleteRecordTask()
 {
     Zapp::Action* action = new Zapp::Action("DeleteRecordTask");
     action->AddInputParameter(new ParameterString("RecordTaskID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgScheduledRecording2::DoDeleteRecordTask);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoDeleteRecordTask);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::EnableActionGetRecordTask()
+void DvProviderUpnpOrgScheduledRecording2::EnableActionGetRecordTask()
 {
     Zapp::Action* action = new Zapp::Action("GetRecordTask");
     action->AddInputParameter(new ParameterString("RecordTaskID"));
     action->AddInputParameter(new ParameterString("Filter"));
     action->AddOutputParameter(new ParameterString("Result"));
     action->AddOutputParameter(new ParameterUint("UpdateID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgScheduledRecording2::DoGetRecordTask);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoGetRecordTask);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::EnableActionEnableRecordTask()
+void DvProviderUpnpOrgScheduledRecording2::EnableActionEnableRecordTask()
 {
     Zapp::Action* action = new Zapp::Action("EnableRecordTask");
     action->AddInputParameter(new ParameterString("RecordTaskID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgScheduledRecording2::DoEnableRecordTask);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoEnableRecordTask);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::EnableActionDisableRecordTask()
+void DvProviderUpnpOrgScheduledRecording2::EnableActionDisableRecordTask()
 {
     Zapp::Action* action = new Zapp::Action("DisableRecordTask");
     action->AddInputParameter(new ParameterString("RecordTaskID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgScheduledRecording2::DoDisableRecordTask);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoDisableRecordTask);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::EnableActionResetRecordTask()
+void DvProviderUpnpOrgScheduledRecording2::EnableActionResetRecordTask()
 {
     Zapp::Action* action = new Zapp::Action("ResetRecordTask");
     action->AddInputParameter(new ParameterString("RecordTaskID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgScheduledRecording2::DoResetRecordTask);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoResetRecordTask);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::EnableActionGetRecordScheduleConflicts()
+void DvProviderUpnpOrgScheduledRecording2::EnableActionGetRecordScheduleConflicts()
 {
     Zapp::Action* action = new Zapp::Action("GetRecordScheduleConflicts");
     action->AddInputParameter(new ParameterString("RecordScheduleID"));
     action->AddOutputParameter(new ParameterString("RecordScheduleConflictIDList"));
     action->AddOutputParameter(new ParameterUint("UpdateID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgScheduledRecording2::DoGetRecordScheduleConflicts);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoGetRecordScheduleConflicts);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::EnableActionGetRecordTaskConflicts()
+void DvProviderUpnpOrgScheduledRecording2::EnableActionGetRecordTaskConflicts()
 {
     Zapp::Action* action = new Zapp::Action("GetRecordTaskConflicts");
     action->AddInputParameter(new ParameterString("RecordTaskID"));
     action->AddOutputParameter(new ParameterString("RecordTaskConflictIDList"));
     action->AddOutputParameter(new ParameterUint("UpdateID"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgScheduledRecording2::DoGetRecordTaskConflicts);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgScheduledRecording2::DoGetRecordTaskConflicts);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DoGetSortCapabilities(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording2::DoGetSortCapabilities(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -226,7 +226,7 @@ void DvServiceUpnpOrgScheduledRecording2::DoGetSortCapabilities(IDvInvocation& a
     GetSortCapabilities(resp, aVersion, respSortCaps, respSortLevelCap);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DoGetPropertyList(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording2::DoGetPropertyList(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz DataTypeID;
@@ -237,7 +237,7 @@ void DvServiceUpnpOrgScheduledRecording2::DoGetPropertyList(IDvInvocation& aInvo
     GetPropertyList(resp, aVersion, DataTypeID, respPropertyList);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DoGetAllowedValues(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording2::DoGetAllowedValues(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz DataTypeID;
@@ -250,7 +250,7 @@ void DvServiceUpnpOrgScheduledRecording2::DoGetAllowedValues(IDvInvocation& aInv
     GetAllowedValues(resp, aVersion, DataTypeID, Filter, respPropertyInfo);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DoGetStateUpdateID(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording2::DoGetStateUpdateID(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -259,7 +259,7 @@ void DvServiceUpnpOrgScheduledRecording2::DoGetStateUpdateID(IDvInvocation& aInv
     GetStateUpdateID(resp, aVersion, respId);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DoBrowseRecordSchedules(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording2::DoBrowseRecordSchedules(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz Filter;
@@ -277,7 +277,7 @@ void DvServiceUpnpOrgScheduledRecording2::DoBrowseRecordSchedules(IDvInvocation&
     BrowseRecordSchedules(resp, aVersion, Filter, StartingIndex, RequestedCount, SortCriteria, respResult, respNumberReturned, respTotalMatches, respUpdateID);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DoBrowseRecordTasks(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording2::DoBrowseRecordTasks(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordScheduleID;
@@ -297,7 +297,7 @@ void DvServiceUpnpOrgScheduledRecording2::DoBrowseRecordTasks(IDvInvocation& aIn
     BrowseRecordTasks(resp, aVersion, RecordScheduleID, Filter, StartingIndex, RequestedCount, SortCriteria, respResult, respNumberReturned, respTotalMatches, respUpdateID);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DoCreateRecordSchedule(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording2::DoCreateRecordSchedule(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz Elements;
@@ -310,7 +310,7 @@ void DvServiceUpnpOrgScheduledRecording2::DoCreateRecordSchedule(IDvInvocation& 
     CreateRecordSchedule(resp, aVersion, Elements, respRecordScheduleID, respResult, respUpdateID);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DoDeleteRecordSchedule(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording2::DoDeleteRecordSchedule(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordScheduleID;
@@ -320,7 +320,7 @@ void DvServiceUpnpOrgScheduledRecording2::DoDeleteRecordSchedule(IDvInvocation& 
     DeleteRecordSchedule(resp, aVersion, RecordScheduleID);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DoGetRecordSchedule(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording2::DoGetRecordSchedule(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordScheduleID;
@@ -334,7 +334,7 @@ void DvServiceUpnpOrgScheduledRecording2::DoGetRecordSchedule(IDvInvocation& aIn
     GetRecordSchedule(resp, aVersion, RecordScheduleID, Filter, respResult, respUpdateID);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DoEnableRecordSchedule(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording2::DoEnableRecordSchedule(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordScheduleID;
@@ -344,7 +344,7 @@ void DvServiceUpnpOrgScheduledRecording2::DoEnableRecordSchedule(IDvInvocation& 
     EnableRecordSchedule(resp, aVersion, RecordScheduleID);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DoDisableRecordSchedule(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording2::DoDisableRecordSchedule(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordScheduleID;
@@ -354,7 +354,7 @@ void DvServiceUpnpOrgScheduledRecording2::DoDisableRecordSchedule(IDvInvocation&
     DisableRecordSchedule(resp, aVersion, RecordScheduleID);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DoDeleteRecordTask(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording2::DoDeleteRecordTask(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordTaskID;
@@ -364,7 +364,7 @@ void DvServiceUpnpOrgScheduledRecording2::DoDeleteRecordTask(IDvInvocation& aInv
     DeleteRecordTask(resp, aVersion, RecordTaskID);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DoGetRecordTask(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording2::DoGetRecordTask(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordTaskID;
@@ -378,7 +378,7 @@ void DvServiceUpnpOrgScheduledRecording2::DoGetRecordTask(IDvInvocation& aInvoca
     GetRecordTask(resp, aVersion, RecordTaskID, Filter, respResult, respUpdateID);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DoEnableRecordTask(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording2::DoEnableRecordTask(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordTaskID;
@@ -388,7 +388,7 @@ void DvServiceUpnpOrgScheduledRecording2::DoEnableRecordTask(IDvInvocation& aInv
     EnableRecordTask(resp, aVersion, RecordTaskID);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DoDisableRecordTask(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording2::DoDisableRecordTask(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordTaskID;
@@ -398,7 +398,7 @@ void DvServiceUpnpOrgScheduledRecording2::DoDisableRecordTask(IDvInvocation& aIn
     DisableRecordTask(resp, aVersion, RecordTaskID);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DoResetRecordTask(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording2::DoResetRecordTask(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordTaskID;
@@ -408,7 +408,7 @@ void DvServiceUpnpOrgScheduledRecording2::DoResetRecordTask(IDvInvocation& aInvo
     ResetRecordTask(resp, aVersion, RecordTaskID);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DoGetRecordScheduleConflicts(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording2::DoGetRecordScheduleConflicts(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordScheduleID;
@@ -420,7 +420,7 @@ void DvServiceUpnpOrgScheduledRecording2::DoGetRecordScheduleConflicts(IDvInvoca
     GetRecordScheduleConflicts(resp, aVersion, RecordScheduleID, respRecordScheduleConflictIDList, respUpdateID);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DoGetRecordTaskConflicts(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgScheduledRecording2::DoGetRecordTaskConflicts(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz RecordTaskID;
@@ -432,92 +432,92 @@ void DvServiceUpnpOrgScheduledRecording2::DoGetRecordTaskConflicts(IDvInvocation
     GetRecordTaskConflicts(resp, aVersion, RecordTaskID, respRecordTaskConflictIDList, respUpdateID);
 }
 
-void DvServiceUpnpOrgScheduledRecording2::GetSortCapabilities(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aSortCaps*/, IInvocationResponseUint& /*aSortLevelCap*/)
+void DvProviderUpnpOrgScheduledRecording2::GetSortCapabilities(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseString& /*aSortCaps*/, IInvocationResponseUint& /*aSortLevelCap*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgScheduledRecording2::GetPropertyList(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aDataTypeID*/, IInvocationResponseString& /*aPropertyList*/)
+void DvProviderUpnpOrgScheduledRecording2::GetPropertyList(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aDataTypeID*/, IInvocationResponseString& /*aPropertyList*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgScheduledRecording2::GetAllowedValues(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aDataTypeID*/, const Brx& /*aFilter*/, IInvocationResponseString& /*aPropertyInfo*/)
+void DvProviderUpnpOrgScheduledRecording2::GetAllowedValues(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aDataTypeID*/, const Brx& /*aFilter*/, IInvocationResponseString& /*aPropertyInfo*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgScheduledRecording2::GetStateUpdateID(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aId*/)
+void DvProviderUpnpOrgScheduledRecording2::GetStateUpdateID(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aId*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgScheduledRecording2::BrowseRecordSchedules(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aFilter*/, TUint /*aStartingIndex*/, TUint /*aRequestedCount*/, const Brx& /*aSortCriteria*/, IInvocationResponseString& /*aResult*/, IInvocationResponseUint& /*aNumberReturned*/, IInvocationResponseUint& /*aTotalMatches*/, IInvocationResponseUint& /*aUpdateID*/)
+void DvProviderUpnpOrgScheduledRecording2::BrowseRecordSchedules(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aFilter*/, TUint /*aStartingIndex*/, TUint /*aRequestedCount*/, const Brx& /*aSortCriteria*/, IInvocationResponseString& /*aResult*/, IInvocationResponseUint& /*aNumberReturned*/, IInvocationResponseUint& /*aTotalMatches*/, IInvocationResponseUint& /*aUpdateID*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgScheduledRecording2::BrowseRecordTasks(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordScheduleID*/, const Brx& /*aFilter*/, TUint /*aStartingIndex*/, TUint /*aRequestedCount*/, const Brx& /*aSortCriteria*/, IInvocationResponseString& /*aResult*/, IInvocationResponseUint& /*aNumberReturned*/, IInvocationResponseUint& /*aTotalMatches*/, IInvocationResponseUint& /*aUpdateID*/)
+void DvProviderUpnpOrgScheduledRecording2::BrowseRecordTasks(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordScheduleID*/, const Brx& /*aFilter*/, TUint /*aStartingIndex*/, TUint /*aRequestedCount*/, const Brx& /*aSortCriteria*/, IInvocationResponseString& /*aResult*/, IInvocationResponseUint& /*aNumberReturned*/, IInvocationResponseUint& /*aTotalMatches*/, IInvocationResponseUint& /*aUpdateID*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgScheduledRecording2::CreateRecordSchedule(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aElements*/, IInvocationResponseString& /*aRecordScheduleID*/, IInvocationResponseString& /*aResult*/, IInvocationResponseUint& /*aUpdateID*/)
+void DvProviderUpnpOrgScheduledRecording2::CreateRecordSchedule(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aElements*/, IInvocationResponseString& /*aRecordScheduleID*/, IInvocationResponseString& /*aResult*/, IInvocationResponseUint& /*aUpdateID*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DeleteRecordSchedule(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordScheduleID*/)
+void DvProviderUpnpOrgScheduledRecording2::DeleteRecordSchedule(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordScheduleID*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgScheduledRecording2::GetRecordSchedule(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordScheduleID*/, const Brx& /*aFilter*/, IInvocationResponseString& /*aResult*/, IInvocationResponseUint& /*aUpdateID*/)
+void DvProviderUpnpOrgScheduledRecording2::GetRecordSchedule(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordScheduleID*/, const Brx& /*aFilter*/, IInvocationResponseString& /*aResult*/, IInvocationResponseUint& /*aUpdateID*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgScheduledRecording2::EnableRecordSchedule(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordScheduleID*/)
+void DvProviderUpnpOrgScheduledRecording2::EnableRecordSchedule(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordScheduleID*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DisableRecordSchedule(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordScheduleID*/)
+void DvProviderUpnpOrgScheduledRecording2::DisableRecordSchedule(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordScheduleID*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DeleteRecordTask(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordTaskID*/)
+void DvProviderUpnpOrgScheduledRecording2::DeleteRecordTask(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordTaskID*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgScheduledRecording2::GetRecordTask(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordTaskID*/, const Brx& /*aFilter*/, IInvocationResponseString& /*aResult*/, IInvocationResponseUint& /*aUpdateID*/)
+void DvProviderUpnpOrgScheduledRecording2::GetRecordTask(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordTaskID*/, const Brx& /*aFilter*/, IInvocationResponseString& /*aResult*/, IInvocationResponseUint& /*aUpdateID*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgScheduledRecording2::EnableRecordTask(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordTaskID*/)
+void DvProviderUpnpOrgScheduledRecording2::EnableRecordTask(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordTaskID*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgScheduledRecording2::DisableRecordTask(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordTaskID*/)
+void DvProviderUpnpOrgScheduledRecording2::DisableRecordTask(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordTaskID*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgScheduledRecording2::ResetRecordTask(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordTaskID*/)
+void DvProviderUpnpOrgScheduledRecording2::ResetRecordTask(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordTaskID*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgScheduledRecording2::GetRecordScheduleConflicts(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordScheduleID*/, IInvocationResponseString& /*aRecordScheduleConflictIDList*/, IInvocationResponseUint& /*aUpdateID*/)
+void DvProviderUpnpOrgScheduledRecording2::GetRecordScheduleConflicts(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordScheduleID*/, IInvocationResponseString& /*aRecordScheduleConflictIDList*/, IInvocationResponseUint& /*aUpdateID*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgScheduledRecording2::GetRecordTaskConflicts(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordTaskID*/, IInvocationResponseString& /*aRecordTaskConflictIDList*/, IInvocationResponseUint& /*aUpdateID*/)
+void DvProviderUpnpOrgScheduledRecording2::GetRecordTaskConflicts(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, const Brx& /*aRecordTaskID*/, IInvocationResponseString& /*aRecordTaskConflictIDList*/, IInvocationResponseUint& /*aUpdateID*/)
 {
     ASSERTS();
 }

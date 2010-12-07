@@ -11,15 +11,15 @@ using namespace Zapp;
 class SyncListPresetsUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncListPresetsUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, Brh& aCurrentPresetNameList);
+    SyncListPresetsUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, Brh& aCurrentPresetNameList);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
     Brh& iCurrentPresetNameList;
 };
 
-SyncListPresetsUpnpOrgRenderingControl1::SyncListPresetsUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, Brh& aCurrentPresetNameList)
-    : iService(aService)
+SyncListPresetsUpnpOrgRenderingControl1::SyncListPresetsUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, Brh& aCurrentPresetNameList)
+    : iService(aProxy)
     , iCurrentPresetNameList(aCurrentPresetNameList)
 {
 }
@@ -33,14 +33,14 @@ void SyncListPresetsUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsync)
 class SyncSelectPresetUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncSelectPresetUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService);
+    SyncSelectPresetUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
 };
 
-SyncSelectPresetUpnpOrgRenderingControl1::SyncSelectPresetUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService)
-    : iService(aService)
+SyncSelectPresetUpnpOrgRenderingControl1::SyncSelectPresetUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -53,15 +53,15 @@ void SyncSelectPresetUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsync)
 class SyncGetBrightnessUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncGetBrightnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentBrightness);
+    SyncGetBrightnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentBrightness);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
     TUint& iCurrentBrightness;
 };
 
-SyncGetBrightnessUpnpOrgRenderingControl1::SyncGetBrightnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentBrightness)
-    : iService(aService)
+SyncGetBrightnessUpnpOrgRenderingControl1::SyncGetBrightnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentBrightness)
+    : iService(aProxy)
     , iCurrentBrightness(aCurrentBrightness)
 {
 }
@@ -75,14 +75,14 @@ void SyncGetBrightnessUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsync)
 class SyncSetBrightnessUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncSetBrightnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService);
+    SyncSetBrightnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
 };
 
-SyncSetBrightnessUpnpOrgRenderingControl1::SyncSetBrightnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService)
-    : iService(aService)
+SyncSetBrightnessUpnpOrgRenderingControl1::SyncSetBrightnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -95,15 +95,15 @@ void SyncSetBrightnessUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsync)
 class SyncGetContrastUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncGetContrastUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentContrast);
+    SyncGetContrastUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentContrast);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
     TUint& iCurrentContrast;
 };
 
-SyncGetContrastUpnpOrgRenderingControl1::SyncGetContrastUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentContrast)
-    : iService(aService)
+SyncGetContrastUpnpOrgRenderingControl1::SyncGetContrastUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentContrast)
+    : iService(aProxy)
     , iCurrentContrast(aCurrentContrast)
 {
 }
@@ -117,14 +117,14 @@ void SyncGetContrastUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsync)
 class SyncSetContrastUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncSetContrastUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService);
+    SyncSetContrastUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
 };
 
-SyncSetContrastUpnpOrgRenderingControl1::SyncSetContrastUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService)
-    : iService(aService)
+SyncSetContrastUpnpOrgRenderingControl1::SyncSetContrastUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -137,15 +137,15 @@ void SyncSetContrastUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsync)
 class SyncGetSharpnessUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncGetSharpnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentSharpness);
+    SyncGetSharpnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentSharpness);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
     TUint& iCurrentSharpness;
 };
 
-SyncGetSharpnessUpnpOrgRenderingControl1::SyncGetSharpnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentSharpness)
-    : iService(aService)
+SyncGetSharpnessUpnpOrgRenderingControl1::SyncGetSharpnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentSharpness)
+    : iService(aProxy)
     , iCurrentSharpness(aCurrentSharpness)
 {
 }
@@ -159,14 +159,14 @@ void SyncGetSharpnessUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsync)
 class SyncSetSharpnessUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncSetSharpnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService);
+    SyncSetSharpnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
 };
 
-SyncSetSharpnessUpnpOrgRenderingControl1::SyncSetSharpnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService)
-    : iService(aService)
+SyncSetSharpnessUpnpOrgRenderingControl1::SyncSetSharpnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -179,15 +179,15 @@ void SyncSetSharpnessUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsync)
 class SyncGetRedVideoGainUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncGetRedVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentRedVideoGain);
+    SyncGetRedVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentRedVideoGain);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
     TUint& iCurrentRedVideoGain;
 };
 
-SyncGetRedVideoGainUpnpOrgRenderingControl1::SyncGetRedVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentRedVideoGain)
-    : iService(aService)
+SyncGetRedVideoGainUpnpOrgRenderingControl1::SyncGetRedVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentRedVideoGain)
+    : iService(aProxy)
     , iCurrentRedVideoGain(aCurrentRedVideoGain)
 {
 }
@@ -201,14 +201,14 @@ void SyncGetRedVideoGainUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsync
 class SyncSetRedVideoGainUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncSetRedVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService);
+    SyncSetRedVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
 };
 
-SyncSetRedVideoGainUpnpOrgRenderingControl1::SyncSetRedVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService)
-    : iService(aService)
+SyncSetRedVideoGainUpnpOrgRenderingControl1::SyncSetRedVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -221,15 +221,15 @@ void SyncSetRedVideoGainUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsync
 class SyncGetGreenVideoGainUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncGetGreenVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentGreenVideoGain);
+    SyncGetGreenVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentGreenVideoGain);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
     TUint& iCurrentGreenVideoGain;
 };
 
-SyncGetGreenVideoGainUpnpOrgRenderingControl1::SyncGetGreenVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentGreenVideoGain)
-    : iService(aService)
+SyncGetGreenVideoGainUpnpOrgRenderingControl1::SyncGetGreenVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentGreenVideoGain)
+    : iService(aProxy)
     , iCurrentGreenVideoGain(aCurrentGreenVideoGain)
 {
 }
@@ -243,14 +243,14 @@ void SyncGetGreenVideoGainUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsy
 class SyncSetGreenVideoGainUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncSetGreenVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService);
+    SyncSetGreenVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
 };
 
-SyncSetGreenVideoGainUpnpOrgRenderingControl1::SyncSetGreenVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService)
-    : iService(aService)
+SyncSetGreenVideoGainUpnpOrgRenderingControl1::SyncSetGreenVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -263,15 +263,15 @@ void SyncSetGreenVideoGainUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsy
 class SyncGetBlueVideoGainUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncGetBlueVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentBlueVideoGain);
+    SyncGetBlueVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentBlueVideoGain);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
     TUint& iCurrentBlueVideoGain;
 };
 
-SyncGetBlueVideoGainUpnpOrgRenderingControl1::SyncGetBlueVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentBlueVideoGain)
-    : iService(aService)
+SyncGetBlueVideoGainUpnpOrgRenderingControl1::SyncGetBlueVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentBlueVideoGain)
+    : iService(aProxy)
     , iCurrentBlueVideoGain(aCurrentBlueVideoGain)
 {
 }
@@ -285,14 +285,14 @@ void SyncGetBlueVideoGainUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsyn
 class SyncSetBlueVideoGainUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncSetBlueVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService);
+    SyncSetBlueVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
 };
 
-SyncSetBlueVideoGainUpnpOrgRenderingControl1::SyncSetBlueVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService)
-    : iService(aService)
+SyncSetBlueVideoGainUpnpOrgRenderingControl1::SyncSetBlueVideoGainUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -305,15 +305,15 @@ void SyncSetBlueVideoGainUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsyn
 class SyncGetRedVideoBlackLevelUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncGetRedVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentRedVideoBlackLevel);
+    SyncGetRedVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentRedVideoBlackLevel);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
     TUint& iCurrentRedVideoBlackLevel;
 };
 
-SyncGetRedVideoBlackLevelUpnpOrgRenderingControl1::SyncGetRedVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentRedVideoBlackLevel)
-    : iService(aService)
+SyncGetRedVideoBlackLevelUpnpOrgRenderingControl1::SyncGetRedVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentRedVideoBlackLevel)
+    : iService(aProxy)
     , iCurrentRedVideoBlackLevel(aCurrentRedVideoBlackLevel)
 {
 }
@@ -327,14 +327,14 @@ void SyncGetRedVideoBlackLevelUpnpOrgRenderingControl1::CompleteRequest(IAsync& 
 class SyncSetRedVideoBlackLevelUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncSetRedVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService);
+    SyncSetRedVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
 };
 
-SyncSetRedVideoBlackLevelUpnpOrgRenderingControl1::SyncSetRedVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService)
-    : iService(aService)
+SyncSetRedVideoBlackLevelUpnpOrgRenderingControl1::SyncSetRedVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -347,15 +347,15 @@ void SyncSetRedVideoBlackLevelUpnpOrgRenderingControl1::CompleteRequest(IAsync& 
 class SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentGreenVideoBlackLevel);
+    SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentGreenVideoBlackLevel);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
     TUint& iCurrentGreenVideoBlackLevel;
 };
 
-SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl1::SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentGreenVideoBlackLevel)
-    : iService(aService)
+SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl1::SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentGreenVideoBlackLevel)
+    : iService(aProxy)
     , iCurrentGreenVideoBlackLevel(aCurrentGreenVideoBlackLevel)
 {
 }
@@ -369,14 +369,14 @@ void SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl1::CompleteRequest(IAsync
 class SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService);
+    SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
 };
 
-SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl1::SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService)
-    : iService(aService)
+SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl1::SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -389,15 +389,15 @@ void SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl1::CompleteRequest(IAsync
 class SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentBlueVideoBlackLevel);
+    SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentBlueVideoBlackLevel);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
     TUint& iCurrentBlueVideoBlackLevel;
 };
 
-SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl1::SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentBlueVideoBlackLevel)
-    : iService(aService)
+SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl1::SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentBlueVideoBlackLevel)
+    : iService(aProxy)
     , iCurrentBlueVideoBlackLevel(aCurrentBlueVideoBlackLevel)
 {
 }
@@ -411,14 +411,14 @@ void SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl1::CompleteRequest(IAsync&
 class SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService);
+    SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
 };
 
-SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl1::SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService)
-    : iService(aService)
+SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl1::SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -431,15 +431,15 @@ void SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl1::CompleteRequest(IAsync&
 class SyncGetColorTemperatureUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncGetColorTemperatureUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentColorTemperature);
+    SyncGetColorTemperatureUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentColorTemperature);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
     TUint& iCurrentColorTemperature;
 };
 
-SyncGetColorTemperatureUpnpOrgRenderingControl1::SyncGetColorTemperatureUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentColorTemperature)
-    : iService(aService)
+SyncGetColorTemperatureUpnpOrgRenderingControl1::SyncGetColorTemperatureUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentColorTemperature)
+    : iService(aProxy)
     , iCurrentColorTemperature(aCurrentColorTemperature)
 {
 }
@@ -453,14 +453,14 @@ void SyncGetColorTemperatureUpnpOrgRenderingControl1::CompleteRequest(IAsync& aA
 class SyncSetColorTemperatureUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncSetColorTemperatureUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService);
+    SyncSetColorTemperatureUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
 };
 
-SyncSetColorTemperatureUpnpOrgRenderingControl1::SyncSetColorTemperatureUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService)
-    : iService(aService)
+SyncSetColorTemperatureUpnpOrgRenderingControl1::SyncSetColorTemperatureUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -473,15 +473,15 @@ void SyncSetColorTemperatureUpnpOrgRenderingControl1::CompleteRequest(IAsync& aA
 class SyncGetHorizontalKeystoneUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncGetHorizontalKeystoneUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TInt& aCurrentHorizontalKeystone);
+    SyncGetHorizontalKeystoneUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TInt& aCurrentHorizontalKeystone);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
     TInt& iCurrentHorizontalKeystone;
 };
 
-SyncGetHorizontalKeystoneUpnpOrgRenderingControl1::SyncGetHorizontalKeystoneUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TInt& aCurrentHorizontalKeystone)
-    : iService(aService)
+SyncGetHorizontalKeystoneUpnpOrgRenderingControl1::SyncGetHorizontalKeystoneUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TInt& aCurrentHorizontalKeystone)
+    : iService(aProxy)
     , iCurrentHorizontalKeystone(aCurrentHorizontalKeystone)
 {
 }
@@ -495,14 +495,14 @@ void SyncGetHorizontalKeystoneUpnpOrgRenderingControl1::CompleteRequest(IAsync& 
 class SyncSetHorizontalKeystoneUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncSetHorizontalKeystoneUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService);
+    SyncSetHorizontalKeystoneUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
 };
 
-SyncSetHorizontalKeystoneUpnpOrgRenderingControl1::SyncSetHorizontalKeystoneUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService)
-    : iService(aService)
+SyncSetHorizontalKeystoneUpnpOrgRenderingControl1::SyncSetHorizontalKeystoneUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -515,15 +515,15 @@ void SyncSetHorizontalKeystoneUpnpOrgRenderingControl1::CompleteRequest(IAsync& 
 class SyncGetVerticalKeystoneUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncGetVerticalKeystoneUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TInt& aCurrentVerticalKeystone);
+    SyncGetVerticalKeystoneUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TInt& aCurrentVerticalKeystone);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
     TInt& iCurrentVerticalKeystone;
 };
 
-SyncGetVerticalKeystoneUpnpOrgRenderingControl1::SyncGetVerticalKeystoneUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TInt& aCurrentVerticalKeystone)
-    : iService(aService)
+SyncGetVerticalKeystoneUpnpOrgRenderingControl1::SyncGetVerticalKeystoneUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TInt& aCurrentVerticalKeystone)
+    : iService(aProxy)
     , iCurrentVerticalKeystone(aCurrentVerticalKeystone)
 {
 }
@@ -537,14 +537,14 @@ void SyncGetVerticalKeystoneUpnpOrgRenderingControl1::CompleteRequest(IAsync& aA
 class SyncSetVerticalKeystoneUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncSetVerticalKeystoneUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService);
+    SyncSetVerticalKeystoneUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
 };
 
-SyncSetVerticalKeystoneUpnpOrgRenderingControl1::SyncSetVerticalKeystoneUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService)
-    : iService(aService)
+SyncSetVerticalKeystoneUpnpOrgRenderingControl1::SyncSetVerticalKeystoneUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -557,15 +557,15 @@ void SyncSetVerticalKeystoneUpnpOrgRenderingControl1::CompleteRequest(IAsync& aA
 class SyncGetMuteUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncGetMuteUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TBool& aCurrentMute);
+    SyncGetMuteUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TBool& aCurrentMute);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
     TBool& iCurrentMute;
 };
 
-SyncGetMuteUpnpOrgRenderingControl1::SyncGetMuteUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TBool& aCurrentMute)
-    : iService(aService)
+SyncGetMuteUpnpOrgRenderingControl1::SyncGetMuteUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TBool& aCurrentMute)
+    : iService(aProxy)
     , iCurrentMute(aCurrentMute)
 {
 }
@@ -579,14 +579,14 @@ void SyncGetMuteUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsync)
 class SyncSetMuteUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncSetMuteUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService);
+    SyncSetMuteUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
 };
 
-SyncSetMuteUpnpOrgRenderingControl1::SyncSetMuteUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService)
-    : iService(aService)
+SyncSetMuteUpnpOrgRenderingControl1::SyncSetMuteUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -599,15 +599,15 @@ void SyncSetMuteUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsync)
 class SyncGetVolumeUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncGetVolumeUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentVolume);
+    SyncGetVolumeUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentVolume);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
     TUint& iCurrentVolume;
 };
 
-SyncGetVolumeUpnpOrgRenderingControl1::SyncGetVolumeUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TUint& aCurrentVolume)
-    : iService(aService)
+SyncGetVolumeUpnpOrgRenderingControl1::SyncGetVolumeUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TUint& aCurrentVolume)
+    : iService(aProxy)
     , iCurrentVolume(aCurrentVolume)
 {
 }
@@ -621,14 +621,14 @@ void SyncGetVolumeUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsync)
 class SyncSetVolumeUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncSetVolumeUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService);
+    SyncSetVolumeUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
 };
 
-SyncSetVolumeUpnpOrgRenderingControl1::SyncSetVolumeUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService)
-    : iService(aService)
+SyncSetVolumeUpnpOrgRenderingControl1::SyncSetVolumeUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -641,15 +641,15 @@ void SyncSetVolumeUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsync)
 class SyncGetVolumeDBUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncGetVolumeDBUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TInt& aCurrentVolume);
+    SyncGetVolumeDBUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TInt& aCurrentVolume);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
     TInt& iCurrentVolume;
 };
 
-SyncGetVolumeDBUpnpOrgRenderingControl1::SyncGetVolumeDBUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TInt& aCurrentVolume)
-    : iService(aService)
+SyncGetVolumeDBUpnpOrgRenderingControl1::SyncGetVolumeDBUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TInt& aCurrentVolume)
+    : iService(aProxy)
     , iCurrentVolume(aCurrentVolume)
 {
 }
@@ -663,14 +663,14 @@ void SyncGetVolumeDBUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsync)
 class SyncSetVolumeDBUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncSetVolumeDBUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService);
+    SyncSetVolumeDBUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
 };
 
-SyncSetVolumeDBUpnpOrgRenderingControl1::SyncSetVolumeDBUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService)
-    : iService(aService)
+SyncSetVolumeDBUpnpOrgRenderingControl1::SyncSetVolumeDBUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -683,7 +683,7 @@ void SyncSetVolumeDBUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsync)
 class SyncGetVolumeDBRangeUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncGetVolumeDBRangeUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TInt& aMinValue, TInt& aMaxValue);
+    SyncGetVolumeDBRangeUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TInt& aMinValue, TInt& aMaxValue);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
@@ -691,8 +691,8 @@ private:
     TInt& iMaxValue;
 };
 
-SyncGetVolumeDBRangeUpnpOrgRenderingControl1::SyncGetVolumeDBRangeUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TInt& aMinValue, TInt& aMaxValue)
-    : iService(aService)
+SyncGetVolumeDBRangeUpnpOrgRenderingControl1::SyncGetVolumeDBRangeUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TInt& aMinValue, TInt& aMaxValue)
+    : iService(aProxy)
     , iMinValue(aMinValue)
     , iMaxValue(aMaxValue)
 {
@@ -707,15 +707,15 @@ void SyncGetVolumeDBRangeUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsyn
 class SyncGetLoudnessUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncGetLoudnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TBool& aCurrentLoudness);
+    SyncGetLoudnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TBool& aCurrentLoudness);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
     TBool& iCurrentLoudness;
 };
 
-SyncGetLoudnessUpnpOrgRenderingControl1::SyncGetLoudnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService, TBool& aCurrentLoudness)
-    : iService(aService)
+SyncGetLoudnessUpnpOrgRenderingControl1::SyncGetLoudnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy, TBool& aCurrentLoudness)
+    : iService(aProxy)
     , iCurrentLoudness(aCurrentLoudness)
 {
 }
@@ -729,14 +729,14 @@ void SyncGetLoudnessUpnpOrgRenderingControl1::CompleteRequest(IAsync& aAsync)
 class SyncSetLoudnessUpnpOrgRenderingControl1 : public SyncProxyAction
 {
 public:
-    SyncSetLoudnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService);
+    SyncSetLoudnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgRenderingControl1& iService;
 };
 
-SyncSetLoudnessUpnpOrgRenderingControl1::SyncSetLoudnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aService)
-    : iService(aService)
+SyncSetLoudnessUpnpOrgRenderingControl1::SyncSetLoudnessUpnpOrgRenderingControl1(CpProxyUpnpOrgRenderingControl1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -1026,7 +1026,7 @@ CpProxyUpnpOrgRenderingControl1::CpProxyUpnpOrgRenderingControl1(CpDevice& aDevi
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgRenderingControl1::LastChangePropertyChanged);
     iLastChange = new PropertyString("LastChange", functor);
-    iService->AddProperty(iLastChange);
+    AddProperty(iLastChange);
 }
 
 CpProxyUpnpOrgRenderingControl1::~CpProxyUpnpOrgRenderingControl1()
@@ -1085,7 +1085,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginListPresets(TUint aInstanceID, Functo
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionListPresets->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndListPresets(IAsync& aAsync, Brh& aCurrentPresetNameList)
@@ -1115,7 +1115,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSelectPreset(TUint aInstanceID, const
     const Action::VectorParameters& inParams = iActionSelectPreset->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aPresetName));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSelectPreset(IAsync& aAsync)
@@ -1145,7 +1145,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetBrightness(TUint aInstanceID, Func
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetBrightness->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetBrightness(IAsync& aAsync, TUint& aCurrentBrightness)
@@ -1175,7 +1175,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetBrightness(TUint aInstanceID, TUin
     const Action::VectorParameters& inParams = iActionSetBrightness->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredBrightness));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetBrightness(IAsync& aAsync)
@@ -1205,7 +1205,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetContrast(TUint aInstanceID, Functo
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetContrast->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetContrast(IAsync& aAsync, TUint& aCurrentContrast)
@@ -1235,7 +1235,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetContrast(TUint aInstanceID, TUint 
     const Action::VectorParameters& inParams = iActionSetContrast->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredContrast));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetContrast(IAsync& aAsync)
@@ -1265,7 +1265,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetSharpness(TUint aInstanceID, Funct
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetSharpness->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetSharpness(IAsync& aAsync, TUint& aCurrentSharpness)
@@ -1295,7 +1295,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetSharpness(TUint aInstanceID, TUint
     const Action::VectorParameters& inParams = iActionSetSharpness->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredSharpness));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetSharpness(IAsync& aAsync)
@@ -1325,7 +1325,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetRedVideoGain(TUint aInstanceID, Fu
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetRedVideoGain->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetRedVideoGain(IAsync& aAsync, TUint& aCurrentRedVideoGain)
@@ -1355,7 +1355,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetRedVideoGain(TUint aInstanceID, TU
     const Action::VectorParameters& inParams = iActionSetRedVideoGain->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredRedVideoGain));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetRedVideoGain(IAsync& aAsync)
@@ -1385,7 +1385,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetGreenVideoGain(TUint aInstanceID, 
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetGreenVideoGain->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetGreenVideoGain(IAsync& aAsync, TUint& aCurrentGreenVideoGain)
@@ -1415,7 +1415,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetGreenVideoGain(TUint aInstanceID, 
     const Action::VectorParameters& inParams = iActionSetGreenVideoGain->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredGreenVideoGain));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetGreenVideoGain(IAsync& aAsync)
@@ -1445,7 +1445,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetBlueVideoGain(TUint aInstanceID, F
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetBlueVideoGain->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetBlueVideoGain(IAsync& aAsync, TUint& aCurrentBlueVideoGain)
@@ -1475,7 +1475,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetBlueVideoGain(TUint aInstanceID, T
     const Action::VectorParameters& inParams = iActionSetBlueVideoGain->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredBlueVideoGain));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetBlueVideoGain(IAsync& aAsync)
@@ -1505,7 +1505,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetRedVideoBlackLevel(TUint aInstance
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetRedVideoBlackLevel->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetRedVideoBlackLevel(IAsync& aAsync, TUint& aCurrentRedVideoBlackLevel)
@@ -1535,7 +1535,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetRedVideoBlackLevel(TUint aInstance
     const Action::VectorParameters& inParams = iActionSetRedVideoBlackLevel->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredRedVideoBlackLevel));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetRedVideoBlackLevel(IAsync& aAsync)
@@ -1565,7 +1565,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetGreenVideoBlackLevel(TUint aInstan
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetGreenVideoBlackLevel->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetGreenVideoBlackLevel(IAsync& aAsync, TUint& aCurrentGreenVideoBlackLevel)
@@ -1595,7 +1595,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetGreenVideoBlackLevel(TUint aInstan
     const Action::VectorParameters& inParams = iActionSetGreenVideoBlackLevel->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredGreenVideoBlackLevel));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetGreenVideoBlackLevel(IAsync& aAsync)
@@ -1625,7 +1625,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetBlueVideoBlackLevel(TUint aInstanc
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetBlueVideoBlackLevel->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetBlueVideoBlackLevel(IAsync& aAsync, TUint& aCurrentBlueVideoBlackLevel)
@@ -1655,7 +1655,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetBlueVideoBlackLevel(TUint aInstanc
     const Action::VectorParameters& inParams = iActionSetBlueVideoBlackLevel->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredBlueVideoBlackLevel));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetBlueVideoBlackLevel(IAsync& aAsync)
@@ -1685,7 +1685,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetColorTemperature(TUint aInstanceID
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetColorTemperature->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetColorTemperature(IAsync& aAsync, TUint& aCurrentColorTemperature)
@@ -1715,7 +1715,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetColorTemperature(TUint aInstanceID
     const Action::VectorParameters& inParams = iActionSetColorTemperature->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredColorTemperature));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetColorTemperature(IAsync& aAsync)
@@ -1745,7 +1745,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetHorizontalKeystone(TUint aInstance
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetHorizontalKeystone->OutputParameters();
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetHorizontalKeystone(IAsync& aAsync, TInt& aCurrentHorizontalKeystone)
@@ -1775,7 +1775,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetHorizontalKeystone(TUint aInstance
     const Action::VectorParameters& inParams = iActionSetHorizontalKeystone->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentInt(*inParams[inIndex++], aDesiredHorizontalKeystone));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetHorizontalKeystone(IAsync& aAsync)
@@ -1805,7 +1805,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetVerticalKeystone(TUint aInstanceID
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetVerticalKeystone->OutputParameters();
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetVerticalKeystone(IAsync& aAsync, TInt& aCurrentVerticalKeystone)
@@ -1835,7 +1835,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetVerticalKeystone(TUint aInstanceID
     const Action::VectorParameters& inParams = iActionSetVerticalKeystone->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentInt(*inParams[inIndex++], aDesiredVerticalKeystone));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetVerticalKeystone(IAsync& aAsync)
@@ -1866,7 +1866,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetMute(TUint aInstanceID, const Brx&
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetMute->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetMute(IAsync& aAsync, TBool& aCurrentMute)
@@ -1897,7 +1897,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetMute(TUint aInstanceID, const Brx&
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aChannel));
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aDesiredMute));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetMute(IAsync& aAsync)
@@ -1928,7 +1928,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetVolume(TUint aInstanceID, const Br
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetVolume->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetVolume(IAsync& aAsync, TUint& aCurrentVolume)
@@ -1959,7 +1959,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetVolume(TUint aInstanceID, const Br
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aChannel));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aDesiredVolume));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetVolume(IAsync& aAsync)
@@ -1990,7 +1990,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetVolumeDB(TUint aInstanceID, const 
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetVolumeDB->OutputParameters();
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetVolumeDB(IAsync& aAsync, TInt& aCurrentVolume)
@@ -2021,7 +2021,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetVolumeDB(TUint aInstanceID, const 
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aChannel));
     invocation->AddInput(new ArgumentInt(*inParams[inIndex++], aDesiredVolume));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetVolumeDB(IAsync& aAsync)
@@ -2053,7 +2053,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetVolumeDBRange(TUint aInstanceID, c
     const Action::VectorParameters& outParams = iActionGetVolumeDBRange->OutputParameters();
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetVolumeDBRange(IAsync& aAsync, TInt& aMinValue, TInt& aMaxValue)
@@ -2087,7 +2087,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginGetLoudness(TUint aInstanceID, const 
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetLoudness->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndGetLoudness(IAsync& aAsync, TBool& aCurrentLoudness)
@@ -2118,7 +2118,7 @@ void CpProxyUpnpOrgRenderingControl1::BeginSetLoudness(TUint aInstanceID, const 
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aChannel));
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aDesiredLoudness));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgRenderingControl1::EndSetLoudness(IAsync& aAsync)
@@ -2141,8 +2141,10 @@ void CpProxyUpnpOrgRenderingControl1::SetPropertyLastChangeChanged(Functor& aFun
 
 void CpProxyUpnpOrgRenderingControl1::PropertyLastChange(Brhz& aLastChange) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aLastChange.Set(iLastChange->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyUpnpOrgRenderingControl1::LastChangePropertyChanged()

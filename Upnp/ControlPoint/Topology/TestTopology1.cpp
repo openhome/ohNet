@@ -8,7 +8,7 @@
 #include <Discovery.h>
 #include <Thread.h>
 #include <Timer.h>
-#include <Os.h>
+#include <OsWrapper.h>
 #include "CpTopology1.h"
 
 using namespace Zapp;

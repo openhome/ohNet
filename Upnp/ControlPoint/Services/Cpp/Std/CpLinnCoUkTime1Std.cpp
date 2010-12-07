@@ -14,7 +14,7 @@ using namespace Zapp;
 class SyncTimeLinnCoUkTime1Cpp : public SyncProxyAction
 {
 public:
-    SyncTimeLinnCoUkTime1Cpp(CpProxyLinnCoUkTime1Cpp& aService, uint32_t& aaTrackCount, uint32_t& aaDuration, uint32_t& aaSeconds);
+    SyncTimeLinnCoUkTime1Cpp(CpProxyLinnCoUkTime1Cpp& aProxy, uint32_t& aaTrackCount, uint32_t& aaDuration, uint32_t& aaSeconds);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkTime1Cpp& iService;
@@ -23,8 +23,8 @@ private:
     uint32_t& iaSeconds;
 };
 
-SyncTimeLinnCoUkTime1Cpp::SyncTimeLinnCoUkTime1Cpp(CpProxyLinnCoUkTime1Cpp& aService, uint32_t& aaTrackCount, uint32_t& aaDuration, uint32_t& aaSeconds)
-    : iService(aService)
+SyncTimeLinnCoUkTime1Cpp::SyncTimeLinnCoUkTime1Cpp(CpProxyLinnCoUkTime1Cpp& aProxy, uint32_t& aaTrackCount, uint32_t& aaDuration, uint32_t& aaSeconds)
+    : iService(aProxy)
     , iaTrackCount(aaTrackCount)
     , iaDuration(aaDuration)
     , iaSeconds(aaSeconds)
@@ -53,13 +53,13 @@ CpProxyLinnCoUkTime1Cpp::CpProxyLinnCoUkTime1Cpp(CpDeviceCpp& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyLinnCoUkTime1Cpp::TrackCountPropertyChanged);
     iTrackCount = new PropertyUint("TrackCount", functor);
-    iService->AddProperty(iTrackCount);
+    AddProperty(iTrackCount);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkTime1Cpp::DurationPropertyChanged);
     iDuration = new PropertyUint("Duration", functor);
-    iService->AddProperty(iDuration);
+    AddProperty(iDuration);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkTime1Cpp::SecondsPropertyChanged);
     iSeconds = new PropertyUint("Seconds", functor);
-    iService->AddProperty(iSeconds);
+    AddProperty(iSeconds);
 }
 
 CpProxyLinnCoUkTime1Cpp::~CpProxyLinnCoUkTime1Cpp()
@@ -83,7 +83,7 @@ void CpProxyLinnCoUkTime1Cpp::BeginTime(FunctorAsync& aFunctor)
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkTime1Cpp::EndTime(IAsync& aAsync, uint32_t& aaTrackCount, uint32_t& aaDuration, uint32_t& aaSeconds)
@@ -124,20 +124,26 @@ void CpProxyLinnCoUkTime1Cpp::SetPropertySecondsChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkTime1Cpp::PropertyTrackCount(uint32_t& aTrackCount) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTrackCount = iTrackCount->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkTime1Cpp::PropertyDuration(uint32_t& aDuration) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDuration = iDuration->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkTime1Cpp::PropertySeconds(uint32_t& aSeconds) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSeconds = iSeconds->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkTime1Cpp::TrackCountPropertyChanged()

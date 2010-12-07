@@ -2,170 +2,170 @@
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkPlaylist1Cpp::SetPropertyIdArray(const std::string& aValue)
+bool DvProviderLinnCoUkPlaylist1Cpp::SetPropertyIdArray(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyBinary(*iPropertyIdArray, buf);
+    return SetPropertyBinary(*iPropertyIdArray, buf);
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::GetPropertyIdArray(std::string& aValue)
+void DvProviderLinnCoUkPlaylist1Cpp::GetPropertyIdArray(std::string& aValue)
 {
     const Brx& val = iPropertyIdArray->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::SetPropertyRepeat(bool aValue)
+bool DvProviderLinnCoUkPlaylist1Cpp::SetPropertyRepeat(bool aValue)
 {
-    SetPropertyBool(*iPropertyRepeat, aValue);
+    return SetPropertyBool(*iPropertyRepeat, aValue);
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::GetPropertyRepeat(bool& aValue)
+void DvProviderLinnCoUkPlaylist1Cpp::GetPropertyRepeat(bool& aValue)
 {
     aValue = iPropertyRepeat->Value();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::SetPropertyShuffle(bool aValue)
+bool DvProviderLinnCoUkPlaylist1Cpp::SetPropertyShuffle(bool aValue)
 {
-    SetPropertyBool(*iPropertyShuffle, aValue);
+    return SetPropertyBool(*iPropertyShuffle, aValue);
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::GetPropertyShuffle(bool& aValue)
+void DvProviderLinnCoUkPlaylist1Cpp::GetPropertyShuffle(bool& aValue)
 {
     aValue = iPropertyShuffle->Value();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::SetPropertyTracksMax(uint32_t aValue)
+bool DvProviderLinnCoUkPlaylist1Cpp::SetPropertyTracksMax(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyTracksMax, aValue);
+    return SetPropertyUint(*iPropertyTracksMax, aValue);
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::GetPropertyTracksMax(uint32_t& aValue)
+void DvProviderLinnCoUkPlaylist1Cpp::GetPropertyTracksMax(uint32_t& aValue)
 {
     aValue = iPropertyTracksMax->Value();
 }
 
-DvServiceLinnCoUkPlaylist1Cpp::DvServiceLinnCoUkPlaylist1Cpp(DvDeviceStd& aDevice)
-    : DvService(aDevice.Device(), "linn.co.uk", "Playlist", 1)
+DvProviderLinnCoUkPlaylist1Cpp::DvProviderLinnCoUkPlaylist1Cpp(DvDeviceStd& aDevice)
+    : DvProvider(aDevice.Device(), "linn.co.uk", "Playlist", 1)
 {
-    Functor empty;
-    iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"), empty);
+    
+    iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"));
     iService->AddProperty(iPropertyIdArray); // passes ownership
-    iPropertyRepeat = new PropertyBool(new ParameterBool("Repeat"), empty);
+    iPropertyRepeat = new PropertyBool(new ParameterBool("Repeat"));
     iService->AddProperty(iPropertyRepeat); // passes ownership
-    iPropertyShuffle = new PropertyBool(new ParameterBool("Shuffle"), empty);
+    iPropertyShuffle = new PropertyBool(new ParameterBool("Shuffle"));
     iService->AddProperty(iPropertyShuffle); // passes ownership
-    iPropertyTracksMax = new PropertyUint(new ParameterUint("TracksMax"), empty);
+    iPropertyTracksMax = new PropertyUint(new ParameterUint("TracksMax"));
     iService->AddProperty(iPropertyTracksMax); // passes ownership
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::EnableActionRead()
+void DvProviderLinnCoUkPlaylist1Cpp::EnableActionRead()
 {
     Zapp::Action* action = new Zapp::Action("Read");
     action->AddInputParameter(new ParameterUint("aId"));
     action->AddOutputParameter(new ParameterString("aUri"));
     action->AddOutputParameter(new ParameterString("aMetaData"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkPlaylist1Cpp::DoRead);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1Cpp::DoRead);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::EnableActionReadList()
+void DvProviderLinnCoUkPlaylist1Cpp::EnableActionReadList()
 {
     Zapp::Action* action = new Zapp::Action("ReadList");
     action->AddInputParameter(new ParameterString("aIdList"));
     action->AddOutputParameter(new ParameterString("aMetaDataList"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkPlaylist1Cpp::DoReadList);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1Cpp::DoReadList);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::EnableActionInsert()
+void DvProviderLinnCoUkPlaylist1Cpp::EnableActionInsert()
 {
     Zapp::Action* action = new Zapp::Action("Insert");
     action->AddInputParameter(new ParameterUint("aAfterId"));
     action->AddInputParameter(new ParameterString("aUri"));
     action->AddInputParameter(new ParameterString("aMetaData"));
     action->AddOutputParameter(new ParameterUint("aNewId"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkPlaylist1Cpp::DoInsert);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1Cpp::DoInsert);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::EnableActionDelete()
+void DvProviderLinnCoUkPlaylist1Cpp::EnableActionDelete()
 {
     Zapp::Action* action = new Zapp::Action("Delete");
     action->AddInputParameter(new ParameterUint("aId"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkPlaylist1Cpp::DoDelete);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1Cpp::DoDelete);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::EnableActionDeleteAll()
+void DvProviderLinnCoUkPlaylist1Cpp::EnableActionDeleteAll()
 {
     Zapp::Action* action = new Zapp::Action("DeleteAll");
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkPlaylist1Cpp::DoDeleteAll);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1Cpp::DoDeleteAll);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::EnableActionSetRepeat()
+void DvProviderLinnCoUkPlaylist1Cpp::EnableActionSetRepeat()
 {
     Zapp::Action* action = new Zapp::Action("SetRepeat");
     action->AddInputParameter(new ParameterRelated("aRepeat", *iPropertyRepeat));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkPlaylist1Cpp::DoSetRepeat);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1Cpp::DoSetRepeat);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::EnableActionRepeat()
+void DvProviderLinnCoUkPlaylist1Cpp::EnableActionRepeat()
 {
     Zapp::Action* action = new Zapp::Action("Repeat");
     action->AddOutputParameter(new ParameterRelated("aRepeat", *iPropertyRepeat));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkPlaylist1Cpp::DoRepeat);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1Cpp::DoRepeat);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::EnableActionSetShuffle()
+void DvProviderLinnCoUkPlaylist1Cpp::EnableActionSetShuffle()
 {
     Zapp::Action* action = new Zapp::Action("SetShuffle");
     action->AddInputParameter(new ParameterRelated("aShuffle", *iPropertyShuffle));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkPlaylist1Cpp::DoSetShuffle);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1Cpp::DoSetShuffle);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::EnableActionShuffle()
+void DvProviderLinnCoUkPlaylist1Cpp::EnableActionShuffle()
 {
     Zapp::Action* action = new Zapp::Action("Shuffle");
     action->AddOutputParameter(new ParameterRelated("aShuffle", *iPropertyShuffle));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkPlaylist1Cpp::DoShuffle);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1Cpp::DoShuffle);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::EnableActionTracksMax()
+void DvProviderLinnCoUkPlaylist1Cpp::EnableActionTracksMax()
 {
     Zapp::Action* action = new Zapp::Action("TracksMax");
     action->AddOutputParameter(new ParameterRelated("aTracksMax", *iPropertyTracksMax));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkPlaylist1Cpp::DoTracksMax);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1Cpp::DoTracksMax);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::EnableActionIdArray()
+void DvProviderLinnCoUkPlaylist1Cpp::EnableActionIdArray()
 {
     Zapp::Action* action = new Zapp::Action("IdArray");
     action->AddOutputParameter(new ParameterUint("aIdArrayToken"));
     action->AddOutputParameter(new ParameterRelated("aIdArray", *iPropertyIdArray));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkPlaylist1Cpp::DoIdArray);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1Cpp::DoIdArray);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::EnableActionIdArrayChanged()
+void DvProviderLinnCoUkPlaylist1Cpp::EnableActionIdArrayChanged()
 {
     Zapp::Action* action = new Zapp::Action("IdArrayChanged");
     action->AddInputParameter(new ParameterUint("aIdArrayToken"));
     action->AddOutputParameter(new ParameterBool("aIdArrayChanged"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkPlaylist1Cpp::DoIdArrayChanged);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPlaylist1Cpp::DoIdArrayChanged);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::DoRead(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1Cpp::DoRead(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aId = aInvocation.InvocationReadUint("aId");
@@ -185,7 +185,7 @@ void DvServiceLinnCoUkPlaylist1Cpp::DoRead(IDvInvocation& aInvocation, TUint aVe
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::DoReadList(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1Cpp::DoReadList(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_aIdList;
@@ -202,7 +202,7 @@ void DvServiceLinnCoUkPlaylist1Cpp::DoReadList(IDvInvocation& aInvocation, TUint
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::DoInsert(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1Cpp::DoInsert(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aAfterId = aInvocation.InvocationReadUint("aAfterId");
@@ -221,7 +221,7 @@ void DvServiceLinnCoUkPlaylist1Cpp::DoInsert(IDvInvocation& aInvocation, TUint a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::DoDelete(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1Cpp::DoDelete(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aId = aInvocation.InvocationReadUint("aId");
@@ -231,7 +231,7 @@ void DvServiceLinnCoUkPlaylist1Cpp::DoDelete(IDvInvocation& aInvocation, TUint a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::DoDeleteAll(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1Cpp::DoDeleteAll(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -240,7 +240,7 @@ void DvServiceLinnCoUkPlaylist1Cpp::DoDeleteAll(IDvInvocation& aInvocation, TUin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::DoSetRepeat(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1Cpp::DoSetRepeat(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     bool aRepeat = aInvocation.InvocationReadBool("aRepeat");
@@ -250,7 +250,7 @@ void DvServiceLinnCoUkPlaylist1Cpp::DoSetRepeat(IDvInvocation& aInvocation, TUin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::DoRepeat(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1Cpp::DoRepeat(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -262,7 +262,7 @@ void DvServiceLinnCoUkPlaylist1Cpp::DoRepeat(IDvInvocation& aInvocation, TUint a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::DoSetShuffle(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1Cpp::DoSetShuffle(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     bool aShuffle = aInvocation.InvocationReadBool("aShuffle");
@@ -272,7 +272,7 @@ void DvServiceLinnCoUkPlaylist1Cpp::DoSetShuffle(IDvInvocation& aInvocation, TUi
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::DoShuffle(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1Cpp::DoShuffle(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -284,7 +284,7 @@ void DvServiceLinnCoUkPlaylist1Cpp::DoShuffle(IDvInvocation& aInvocation, TUint 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::DoTracksMax(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1Cpp::DoTracksMax(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -296,7 +296,7 @@ void DvServiceLinnCoUkPlaylist1Cpp::DoTracksMax(IDvInvocation& aInvocation, TUin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::DoIdArray(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1Cpp::DoIdArray(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -313,7 +313,7 @@ void DvServiceLinnCoUkPlaylist1Cpp::DoIdArray(IDvInvocation& aInvocation, TUint 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::DoIdArrayChanged(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPlaylist1Cpp::DoIdArrayChanged(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aIdArrayToken = aInvocation.InvocationReadUint("aIdArrayToken");
@@ -326,62 +326,62 @@ void DvServiceLinnCoUkPlaylist1Cpp::DoIdArrayChanged(IDvInvocation& aInvocation,
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::Read(uint32_t /*aVersion*/, uint32_t /*aaId*/, std::string& /*aaUri*/, std::string& /*aaMetaData*/)
+void DvProviderLinnCoUkPlaylist1Cpp::Read(uint32_t /*aVersion*/, uint32_t /*aaId*/, std::string& /*aaUri*/, std::string& /*aaMetaData*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::ReadList(uint32_t /*aVersion*/, const std::string& /*aaIdList*/, std::string& /*aaMetaDataList*/)
+void DvProviderLinnCoUkPlaylist1Cpp::ReadList(uint32_t /*aVersion*/, const std::string& /*aaIdList*/, std::string& /*aaMetaDataList*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::Insert(uint32_t /*aVersion*/, uint32_t /*aaAfterId*/, const std::string& /*aaUri*/, const std::string& /*aaMetaData*/, uint32_t& /*aaNewId*/)
+void DvProviderLinnCoUkPlaylist1Cpp::Insert(uint32_t /*aVersion*/, uint32_t /*aaAfterId*/, const std::string& /*aaUri*/, const std::string& /*aaMetaData*/, uint32_t& /*aaNewId*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::Delete(uint32_t /*aVersion*/, uint32_t /*aaId*/)
+void DvProviderLinnCoUkPlaylist1Cpp::Delete(uint32_t /*aVersion*/, uint32_t /*aaId*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::DeleteAll(uint32_t /*aVersion*/)
+void DvProviderLinnCoUkPlaylist1Cpp::DeleteAll(uint32_t /*aVersion*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::SetRepeat(uint32_t /*aVersion*/, bool /*aaRepeat*/)
+void DvProviderLinnCoUkPlaylist1Cpp::SetRepeat(uint32_t /*aVersion*/, bool /*aaRepeat*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::Repeat(uint32_t /*aVersion*/, bool& /*aaRepeat*/)
+void DvProviderLinnCoUkPlaylist1Cpp::Repeat(uint32_t /*aVersion*/, bool& /*aaRepeat*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::SetShuffle(uint32_t /*aVersion*/, bool /*aaShuffle*/)
+void DvProviderLinnCoUkPlaylist1Cpp::SetShuffle(uint32_t /*aVersion*/, bool /*aaShuffle*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::Shuffle(uint32_t /*aVersion*/, bool& /*aaShuffle*/)
+void DvProviderLinnCoUkPlaylist1Cpp::Shuffle(uint32_t /*aVersion*/, bool& /*aaShuffle*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::TracksMax(uint32_t /*aVersion*/, uint32_t& /*aaTracksMax*/)
+void DvProviderLinnCoUkPlaylist1Cpp::TracksMax(uint32_t /*aVersion*/, uint32_t& /*aaTracksMax*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::IdArray(uint32_t /*aVersion*/, uint32_t& /*aaIdArrayToken*/, std::string& /*aaIdArray*/)
+void DvProviderLinnCoUkPlaylist1Cpp::IdArray(uint32_t /*aVersion*/, uint32_t& /*aaIdArrayToken*/, std::string& /*aaIdArray*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkPlaylist1Cpp::IdArrayChanged(uint32_t /*aVersion*/, uint32_t /*aaIdArrayToken*/, bool& /*aaIdArrayChanged*/)
+void DvProviderLinnCoUkPlaylist1Cpp::IdArrayChanged(uint32_t /*aVersion*/, uint32_t /*aaIdArrayToken*/, bool& /*aaIdArrayChanged*/)
 {
     ASSERTS();
 }

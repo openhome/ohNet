@@ -3,36 +3,82 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Zapp;
 
-namespace Zapp
+namespace Zapp.Device.Providers
 {
-    public class DvServiceUpnpOrgConnectionManager2 : IDisposable
+    public interface IDvProviderUpnpOrgConnectionManager2 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the SourceProtocolInfo property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertySourceProtocolInfo(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the SourceProtocolInfo property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertySourceProtocolInfo(out string aValue);
+
+        /// <summary>
+        /// Set the value of the SinkProtocolInfo property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertySinkProtocolInfo(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the SinkProtocolInfo property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertySinkProtocolInfo(out string aValue);
+
+        /// <summary>
+        /// Set the value of the CurrentConnectionIDs property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyCurrentConnectionIDs(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the CurrentConnectionIDs property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyCurrentConnectionIDs(out string aValue);
+        
+    }
+    /// <summary>
+    /// Provider for the upnp.org:ConnectionManager:2 UPnP service
+    /// </summary>
+    public class DvProviderUpnpOrgConnectionManager2 : DvProvider, IDisposable, IDvProviderUpnpOrgConnectionManager2
     {
         [DllImport("DvUpnpOrgConnectionManager2")]
-        static extern IntPtr DvServiceUpnpOrgConnectionManager2Create(IntPtr aDeviceHandle);
+        static extern IntPtr DvProviderUpnpOrgConnectionManager2Create(IntPtr aDeviceHandle);
         [DllImport("DvUpnpOrgConnectionManager2")]
-        static extern void DvServiceUpnpOrgConnectionManager2Destroy(IntPtr aHandle);
+        static extern void DvProviderUpnpOrgConnectionManager2Destroy(IntPtr aHandle);
         [DllImport("DvUpnpOrgConnectionManager2")]
-        static extern unsafe int DvServiceUpnpOrgConnectionManager2SetPropertySourceProtocolInfo(IntPtr aHandle, char* aValue);
+        static extern unsafe int DvProviderUpnpOrgConnectionManager2SetPropertySourceProtocolInfo(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgConnectionManager2")]
-        static extern unsafe void DvServiceUpnpOrgConnectionManager2GetPropertySourceProtocolInfo(IntPtr aHandle, char** aValue);
+        static extern unsafe void DvProviderUpnpOrgConnectionManager2GetPropertySourceProtocolInfo(IntPtr aHandle, char** aValue);
         [DllImport("DvUpnpOrgConnectionManager2")]
-        static extern unsafe int DvServiceUpnpOrgConnectionManager2SetPropertySinkProtocolInfo(IntPtr aHandle, char* aValue);
+        static extern unsafe int DvProviderUpnpOrgConnectionManager2SetPropertySinkProtocolInfo(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgConnectionManager2")]
-        static extern unsafe void DvServiceUpnpOrgConnectionManager2GetPropertySinkProtocolInfo(IntPtr aHandle, char** aValue);
+        static extern unsafe void DvProviderUpnpOrgConnectionManager2GetPropertySinkProtocolInfo(IntPtr aHandle, char** aValue);
         [DllImport("DvUpnpOrgConnectionManager2")]
-        static extern unsafe int DvServiceUpnpOrgConnectionManager2SetPropertyCurrentConnectionIDs(IntPtr aHandle, char* aValue);
+        static extern unsafe int DvProviderUpnpOrgConnectionManager2SetPropertyCurrentConnectionIDs(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgConnectionManager2")]
-        static extern unsafe void DvServiceUpnpOrgConnectionManager2GetPropertyCurrentConnectionIDs(IntPtr aHandle, char** aValue);
+        static extern unsafe void DvProviderUpnpOrgConnectionManager2GetPropertyCurrentConnectionIDs(IntPtr aHandle, char** aValue);
         [DllImport("DvUpnpOrgConnectionManager2")]
-        static extern void DvServiceUpnpOrgConnectionManager2EnableActionGetProtocolInfo(IntPtr aHandle, CallbackGetProtocolInfo aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgConnectionManager2EnableActionGetProtocolInfo(IntPtr aHandle, CallbackGetProtocolInfo aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgConnectionManager2")]
-        static extern void DvServiceUpnpOrgConnectionManager2EnableActionPrepareForConnection(IntPtr aHandle, CallbackPrepareForConnection aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgConnectionManager2EnableActionPrepareForConnection(IntPtr aHandle, CallbackPrepareForConnection aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgConnectionManager2")]
-        static extern void DvServiceUpnpOrgConnectionManager2EnableActionConnectionComplete(IntPtr aHandle, CallbackConnectionComplete aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgConnectionManager2EnableActionConnectionComplete(IntPtr aHandle, CallbackConnectionComplete aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgConnectionManager2")]
-        static extern void DvServiceUpnpOrgConnectionManager2EnableActionGetCurrentConnectionIDs(IntPtr aHandle, CallbackGetCurrentConnectionIDs aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgConnectionManager2EnableActionGetCurrentConnectionIDs(IntPtr aHandle, CallbackGetCurrentConnectionIDs aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgConnectionManager2")]
-        static extern void DvServiceUpnpOrgConnectionManager2EnableActionGetCurrentConnectionInfo(IntPtr aHandle, CallbackGetCurrentConnectionInfo aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgConnectionManager2EnableActionGetCurrentConnectionInfo(IntPtr aHandle, CallbackGetCurrentConnectionInfo aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -42,7 +88,6 @@ namespace Zapp
         private unsafe delegate int CallbackGetCurrentConnectionIDs(IntPtr aPtr, uint aVersion, char** aConnectionIDs);
         private unsafe delegate int CallbackGetCurrentConnectionInfo(IntPtr aPtr, uint aVersion, int aConnectionID, int* aRcsID, int* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int* aPeerConnectionID, char** aDirection, char** aStatus);
 
-        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackGetProtocolInfo iCallbackGetProtocolInfo;
         private CallbackPrepareForConnection iCallbackPrepareForConnection;
@@ -50,124 +95,245 @@ namespace Zapp
         private CallbackGetCurrentConnectionIDs iCallbackGetCurrentConnectionIDs;
         private CallbackGetCurrentConnectionInfo iCallbackGetCurrentConnectionInfo;
 
-        public DvServiceUpnpOrgConnectionManager2(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderUpnpOrgConnectionManager2(DvDevice aDevice)
         {
-            iHandle = DvServiceUpnpOrgConnectionManager2Create(aDevice.Handle()); 
+            iHandle = DvProviderUpnpOrgConnectionManager2Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertySourceProtocolInfo(string aValue)
+        /// <summary>
+        /// Set the value of the SourceProtocolInfo property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertySourceProtocolInfo(string aValue)
         {
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgConnectionManager2SetPropertySourceProtocolInfo(iHandle, value);
+            int err = DvProviderUpnpOrgConnectionManager2SetPropertySourceProtocolInfo(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the SourceProtocolInfo property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertySourceProtocolInfo(out string aValue)
         {
             char* value;
-            DvServiceUpnpOrgConnectionManager2GetPropertySourceProtocolInfo(iHandle, &value);
+            DvProviderUpnpOrgConnectionManager2GetPropertySourceProtocolInfo(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
 
-        public unsafe void SetPropertySinkProtocolInfo(string aValue)
+        /// <summary>
+        /// Set the value of the SinkProtocolInfo property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertySinkProtocolInfo(string aValue)
         {
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgConnectionManager2SetPropertySinkProtocolInfo(iHandle, value);
+            int err = DvProviderUpnpOrgConnectionManager2SetPropertySinkProtocolInfo(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the SinkProtocolInfo property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertySinkProtocolInfo(out string aValue)
         {
             char* value;
-            DvServiceUpnpOrgConnectionManager2GetPropertySinkProtocolInfo(iHandle, &value);
+            DvProviderUpnpOrgConnectionManager2GetPropertySinkProtocolInfo(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyCurrentConnectionIDs(string aValue)
+        /// <summary>
+        /// Set the value of the CurrentConnectionIDs property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyCurrentConnectionIDs(string aValue)
         {
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgConnectionManager2SetPropertyCurrentConnectionIDs(iHandle, value);
+            int err = DvProviderUpnpOrgConnectionManager2SetPropertyCurrentConnectionIDs(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the CurrentConnectionIDs property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyCurrentConnectionIDs(out string aValue)
         {
             char* value;
-            DvServiceUpnpOrgConnectionManager2GetPropertyCurrentConnectionIDs(iHandle, &value);
+            DvProviderUpnpOrgConnectionManager2GetPropertyCurrentConnectionIDs(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Signal that the action GetProtocolInfo is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetProtocolInfo must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetProtocolInfo()
         {
             iCallbackGetProtocolInfo = new CallbackGetProtocolInfo(DoGetProtocolInfo);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgConnectionManager2EnableActionGetProtocolInfo(iHandle, iCallbackGetProtocolInfo, ptr);
+            DvProviderUpnpOrgConnectionManager2EnableActionGetProtocolInfo(iHandle, iCallbackGetProtocolInfo, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action PrepareForConnection is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoPrepareForConnection must be overridden if this is called.</remarks>
         protected unsafe void EnableActionPrepareForConnection()
         {
             iCallbackPrepareForConnection = new CallbackPrepareForConnection(DoPrepareForConnection);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgConnectionManager2EnableActionPrepareForConnection(iHandle, iCallbackPrepareForConnection, ptr);
+            DvProviderUpnpOrgConnectionManager2EnableActionPrepareForConnection(iHandle, iCallbackPrepareForConnection, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action ConnectionComplete is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoConnectionComplete must be overridden if this is called.</remarks>
         protected unsafe void EnableActionConnectionComplete()
         {
             iCallbackConnectionComplete = new CallbackConnectionComplete(DoConnectionComplete);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgConnectionManager2EnableActionConnectionComplete(iHandle, iCallbackConnectionComplete, ptr);
+            DvProviderUpnpOrgConnectionManager2EnableActionConnectionComplete(iHandle, iCallbackConnectionComplete, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetCurrentConnectionIDs is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetCurrentConnectionIDs must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetCurrentConnectionIDs()
         {
             iCallbackGetCurrentConnectionIDs = new CallbackGetCurrentConnectionIDs(DoGetCurrentConnectionIDs);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgConnectionManager2EnableActionGetCurrentConnectionIDs(iHandle, iCallbackGetCurrentConnectionIDs, ptr);
+            DvProviderUpnpOrgConnectionManager2EnableActionGetCurrentConnectionIDs(iHandle, iCallbackGetCurrentConnectionIDs, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetCurrentConnectionInfo is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetCurrentConnectionInfo must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetCurrentConnectionInfo()
         {
             iCallbackGetCurrentConnectionInfo = new CallbackGetCurrentConnectionInfo(DoGetCurrentConnectionInfo);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgConnectionManager2EnableActionGetCurrentConnectionInfo(iHandle, iCallbackGetCurrentConnectionInfo, ptr);
+            DvProviderUpnpOrgConnectionManager2EnableActionGetCurrentConnectionInfo(iHandle, iCallbackGetCurrentConnectionInfo, ptr);
         }
 
+        /// <summary>
+        /// GetProtocolInfo action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetProtocolInfo action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetProtocolInfo was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aSource"></param>
+        /// <param name="aSink"></param>
         protected virtual void GetProtocolInfo(uint aVersion, out string aSource, out string aSink)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// PrepareForConnection action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// PrepareForConnection action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionPrepareForConnection was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aRemoteProtocolInfo"></param>
+        /// <param name="aPeerConnectionManager"></param>
+        /// <param name="aPeerConnectionID"></param>
+        /// <param name="aDirection"></param>
+        /// <param name="aConnectionID"></param>
+        /// <param name="aAVTransportID"></param>
+        /// <param name="aRcsID"></param>
         protected virtual void PrepareForConnection(uint aVersion, string aRemoteProtocolInfo, string aPeerConnectionManager, int aPeerConnectionID, string aDirection, out int aConnectionID, out int aAVTransportID, out int aRcsID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// ConnectionComplete action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// ConnectionComplete action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionConnectionComplete was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aConnectionID"></param>
         protected virtual void ConnectionComplete(uint aVersion, int aConnectionID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetCurrentConnectionIDs action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetCurrentConnectionIDs action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetCurrentConnectionIDs was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aConnectionIDs"></param>
         protected virtual void GetCurrentConnectionIDs(uint aVersion, out string aConnectionIDs)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetCurrentConnectionInfo action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetCurrentConnectionInfo action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetCurrentConnectionInfo was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aConnectionID"></param>
+        /// <param name="aRcsID"></param>
+        /// <param name="aAVTransportID"></param>
+        /// <param name="aProtocolInfo"></param>
+        /// <param name="aPeerConnectionManager"></param>
+        /// <param name="aPeerConnectionID"></param>
+        /// <param name="aDirection"></param>
+        /// <param name="aStatus"></param>
         protected virtual void GetCurrentConnectionInfo(uint aVersion, int aConnectionID, out int aRcsID, out int aAVTransportID, out string aProtocolInfo, out string aPeerConnectionManager, out int aPeerConnectionID, out string aDirection, out string aStatus)
         {
             throw (new ActionDisabledError());
@@ -176,7 +342,7 @@ namespace Zapp
         private static unsafe int DoGetProtocolInfo(IntPtr aPtr, uint aVersion, char** aSource, char** aSink)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgConnectionManager2 self = (DvServiceUpnpOrgConnectionManager2)gch.Target;
+            DvProviderUpnpOrgConnectionManager2 self = (DvProviderUpnpOrgConnectionManager2)gch.Target;
             string source;
             string sink;
             self.GetProtocolInfo(aVersion, out source, out sink);
@@ -188,7 +354,7 @@ namespace Zapp
         private static unsafe int DoPrepareForConnection(IntPtr aPtr, uint aVersion, char* aRemoteProtocolInfo, char* aPeerConnectionManager, int aPeerConnectionID, char* aDirection, int* aConnectionID, int* aAVTransportID, int* aRcsID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgConnectionManager2 self = (DvServiceUpnpOrgConnectionManager2)gch.Target;
+            DvProviderUpnpOrgConnectionManager2 self = (DvProviderUpnpOrgConnectionManager2)gch.Target;
             string remoteProtocolInfo = Marshal.PtrToStringAnsi((IntPtr)aRemoteProtocolInfo);
             string peerConnectionManager = Marshal.PtrToStringAnsi((IntPtr)aPeerConnectionManager);
             string direction = Marshal.PtrToStringAnsi((IntPtr)aDirection);
@@ -205,7 +371,7 @@ namespace Zapp
         private static unsafe int DoConnectionComplete(IntPtr aPtr, uint aVersion, int aConnectionID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgConnectionManager2 self = (DvServiceUpnpOrgConnectionManager2)gch.Target;
+            DvProviderUpnpOrgConnectionManager2 self = (DvProviderUpnpOrgConnectionManager2)gch.Target;
             self.ConnectionComplete(aVersion, aConnectionID);
             return 0;
         }
@@ -213,7 +379,7 @@ namespace Zapp
         private static unsafe int DoGetCurrentConnectionIDs(IntPtr aPtr, uint aVersion, char** aConnectionIDs)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgConnectionManager2 self = (DvServiceUpnpOrgConnectionManager2)gch.Target;
+            DvProviderUpnpOrgConnectionManager2 self = (DvProviderUpnpOrgConnectionManager2)gch.Target;
             string connectionIDs;
             self.GetCurrentConnectionIDs(aVersion, out connectionIDs);
             *aConnectionIDs = (char*)Marshal.StringToHGlobalAnsi(connectionIDs).ToPointer();
@@ -223,7 +389,7 @@ namespace Zapp
         private static unsafe int DoGetCurrentConnectionInfo(IntPtr aPtr, uint aVersion, int aConnectionID, int* aRcsID, int* aAVTransportID, char** aProtocolInfo, char** aPeerConnectionManager, int* aPeerConnectionID, char** aDirection, char** aStatus)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgConnectionManager2 self = (DvServiceUpnpOrgConnectionManager2)gch.Target;
+            DvProviderUpnpOrgConnectionManager2 self = (DvProviderUpnpOrgConnectionManager2)gch.Target;
             int rcsID;
             int aVTransportID;
             string protocolInfo;
@@ -242,14 +408,16 @@ namespace Zapp
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceUpnpOrgConnectionManager2()
+        ~DvProviderUpnpOrgConnectionManager2()
         {
             DoDispose();
         }
@@ -266,7 +434,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = IntPtr.Zero;
             }
-            DvServiceUpnpOrgConnectionManager2Destroy(handle);
+            DvProviderUpnpOrgConnectionManager2Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

@@ -87,10 +87,6 @@
       <sendEventsAttribute>no</sendEventsAttribute> 
       <dataType>ui4</dataType>
       <defaultValue>0</defaultValue>
-      <allowedValueRange>
-        <minimum>0</minimum>
-        <maximum>4294967295</maximum>
-      </allowedValueRange>
     </stateVariable>
     <stateVariable>
       <Optional />

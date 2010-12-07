@@ -8,6 +8,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpDevice
+ * @ingroup ControlPoint
+ * @{
+ */
+
+/**
  * Opaque handle to a device
  */
 typedef THandle CpDeviceC;
@@ -40,8 +46,7 @@ DllExport void CpDeviceCAddRef(CpDeviceC aDevice);
  * Release a reference to a device.
  *
  * The device will be destroyed when the last reference is released.
- * Clients would normally release their reference to a device inside the 'removed'
- * version of DeviceListChanged
+ * Each call to CpDeviceCAddRef() must be matched by exactly one call to CpDeviceCRemoveRef()
  *
  * @param[in]  aDevice       Device.  Probably passed to the 'removed' version of DeviceListChanged
  */
@@ -70,6 +75,13 @@ DllExport int32_t CpDeviceCGetAttribute(CpDeviceC aDevice, const char* aKey, cha
  */
 typedef void (*ZappCallbackDevice)(void* aPtr, CpDeviceC aDevice);
 
+/* @} */
+/**
+ * @addtogroup CpDeviceList
+ * @ingroup ControlPoint
+ * @{
+ */
+
 /**
  * Destroy a device list.
  * 'Removed' callbacks will not be run for the list's contents.
@@ -85,6 +97,8 @@ DllExport void CpDeviceListDestroy(HandleCpDeviceList aListHandle);
  * @param[in]  aListHandle   List handle returned earlier from a protocol-specific constructor
  */
 DllExport void CpDeviceListRefresh(HandleCpDeviceList aListHandle);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

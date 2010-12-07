@@ -12,6 +12,8 @@
 #include <DviServerUpnp.h>
 #include <DviDevice.h>
 #include <DviSubscription.h>
+#include <DviServerWebSocket.h>
+#include <DviService.h>
 
 #include <vector>
 
@@ -27,6 +29,7 @@ public:
     static DviServerUpnp& ServerUpnp();
     static DviDeviceMap& DeviceMap();
     static DviSubscriptionManager& SubscriptionManager();
+    static DviInvocationManager& InvocationManager();
 private:
     ~DviStack();
     static DviStack* Self();
@@ -36,6 +39,8 @@ private:
     DviServerUpnp* iDviServerUpnp;
     DviDeviceMap* iDviDeviceMap;
     DviSubscriptionManager* iSubscriptionManager;
+    DviServerWebSocket* iDviServerWebSocket;
+    DviInvocationManager* iInvocationManager;
 };
 
 } // namespace Zapp

@@ -28,6 +28,11 @@ enum ESocketType
 class Endpoint
 {
 public:
+    static const TUint kMaxAddressBytes = 16;
+    static const TUint kMaxEndpointBytes = 22;
+    typedef Bws<kMaxAddressBytes> AddressBuf;
+    typedef Bws<kMaxEndpointBytes> EndpointBuf;
+public:
     Endpoint();
     Endpoint(TUint aPort, const Brx& aAddress);          // specify port, specify ip address from string e.g. "192.168.0.1"
     Endpoint(TUint aPort, TIpAddress aAddress);          // specify port, specify ip address from uint
@@ -40,6 +45,8 @@ public:
     TBool Equals(const Endpoint& aEndpoint) const;       // test if this endpoint is equal to the specified endpoint
     TIpAddress Address() const;
     TUint16 Port() const;                                // return port as a network order uint16
+    void GetAddress(Bwx& aAddress) const;
+    void GetEndpoint(Bwx& aEndpoint) const;
 private:
     TIpAddress iAddress;
     TUint16 iPort;
@@ -51,13 +58,31 @@ public:
     void Close();
     void Interrupt(TBool aInterrupt);
     void SetSendBufBytes(TUint aBytes);
+    void SetRecvBufBytes(TUint aBytes);
     void SetRecvTimeout(TUint aMs);
+    void LogVerbose(TBool aLog, TBool aHex = false);
 protected:
     Socket();
     virtual ~Socket() {}
     TBool TryClose();
+    void Send(const Brx& aBuffer);
+    void SendTo(const Brx& aBuffer, const Endpoint& aEndpoint);
+    void Receive(Bwx& aBuffer);
+    void Receive(Bwx& aBuffer, TUint aBytes);
+    void ReceiveFrom(Bwx& aBuffer, Endpoint& aEndpoint);
+    void Bind(const Endpoint& aEndpoint);
+    void GetPort(TUint& aPort);
+    void Listen(TUint aSlots);
+    THandle Accept();
+private:
+    void Log(const char* aPrefix, const Brx& aBuffer);
 protected:
     THandle iHandle;
+private:
+    static const uint32_t kLogNone      = 0;
+    static const uint32_t kLogPlainText = 1;
+    static const uint32_t kLogHex       = 2;
+    uint32_t iLog;
 };
 
 /**
@@ -176,22 +201,20 @@ public:
     SocketUdpClient(const Endpoint& aEndpoint, TUint aTtl); // deprecated
     SocketUdpClient(const Endpoint& aEndpoint, TUint aTtl, TIpAddress aInterface); // assumes aEndpoint is multicast
     ~SocketUdpClient();
+    TUint Port() const;
     void Send(const Brx& aBuffer);
     Endpoint Receive(Bwx& aBuffer);
 protected:
-    Endpoint iEndpoint; // multicast address/port
+    Endpoint iEndpoint; // endpoint to send to
+    TUint iPort;
 };
 
 // multicast receiver
 class SocketUdpMulticast : public SocketUdpClient
 {
 public:
-    SocketUdpMulticast(const Endpoint& aEndpoint);
-    SocketUdpMulticast(const Endpoint& aEndpoint, TUint aTtl); // deprecated
     SocketUdpMulticast(const Endpoint& aEndpoint, TUint aTtl, TIpAddress aInterface);
     ~SocketUdpMulticast();
-private:
-    void Construct();
 private:
     TIpAddress iInterface;
 };

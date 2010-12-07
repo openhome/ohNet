@@ -79,7 +79,7 @@ const TByte* Brn::Ptr() const
 
 Brv::~Brv()
 {
-    delete[] iPtr;
+    free((void*)iPtr);
 }
 
 const TByte* Brv::Ptr() const
@@ -101,7 +101,7 @@ Brh::Brh(const TChar* aPtr)
 
 void Brh::Set(const TByte* aPtr, TUint aBytes)
 {
-    delete[] iPtr;
+    free((void*)iPtr);
     iPtr = (TByte*)malloc(aBytes);
     memcpy((void*)iPtr, aPtr, aBytes);
     iBytes = aBytes;
@@ -114,7 +114,7 @@ void Brh::Set(const TChar* aPtr)
 
 void Brh::TransferTo(Brh& aBrh)
 {
-    delete[] aBrh.iPtr;
+    free((void*)aBrh.iPtr);
     aBrh.iPtr = iPtr;
     aBrh.iBytes = iBytes;
     iPtr = NULL;
@@ -144,7 +144,7 @@ Brhz::Brhz(const TChar* aPtr)
 void Brhz::Set(const TByte* aPtr, TUint aBytes)
 {
 	const TByte kZero = 0;
-    delete[] iPtr;
+    free((void*)iPtr);
     iPtr = (TByte*)malloc(aBytes + 1);
     memcpy((void*)iPtr, aPtr, aBytes);
     memcpy((void*)(iPtr + aBytes), &kZero, 1);
@@ -166,7 +166,7 @@ void Brhz::Shrink(TUint aBytes)
 
 void Brhz::TransferTo(Brh& aBrh)
 {
-    delete[] aBrh.iPtr;
+    free((void*)aBrh.iPtr);
     aBrh.iPtr = iPtr;
     aBrh.iBytes = iBytes;
     iPtr = NULL;
@@ -175,7 +175,7 @@ void Brhz::TransferTo(Brh& aBrh)
 
 void Brhz::TransferTo(Brhz& aBrhz)
 {
-    delete[] aBrhz.iPtr;
+    free((void*)aBrhz.iPtr);
     aBrhz.iPtr = iPtr;
     aBrhz.iBytes = iBytes;
     iPtr = NULL;
@@ -252,64 +252,6 @@ void Bwx::Append(const TByte* aPtr, TUint aBytes)
     iBytes = Bytes() + aBytes;
 }
 
-void Bwx::AppendUint8(TUint8 aNum)
-{
-    Append(&aNum, 1);
-}
-
-void Bwx::AppendInt8(TInt8 aNum)
-{
-    Append((TByte*)&aNum, 1);
-}
-
-void Bwx::AppendUint16(TUint16 aNum)
-{
-    ASSERT(Bytes() + sizeof(TUint16) <= MaxBytes());
-    TUint16 num = Arch::BigEndian2(aNum);
-    memcpy(const_cast<TByte*>(Ptr()+Bytes()), &num, sizeof(TUint16));
-    iBytes = Bytes() + sizeof(TUint16);
-}
-
-void Bwx::AppendInt16(TInt16 aNum)
-{
-    ASSERT(Bytes() + sizeof(TInt16) <= MaxBytes());
-    TInt16 num = Arch::BigEndian2(aNum);
-    memcpy(const_cast<TByte*>(Ptr()+Bytes()), &num, sizeof(TInt16));
-    iBytes = Bytes() + sizeof(TInt16);
-}
-
-void Bwx::AppendUint32(TUint32 aNum)
-{
-    ASSERT(Bytes() + sizeof(TUint32) <= MaxBytes());
-    TUint32 num = Arch::BigEndian4(aNum);
-    memcpy(const_cast<TByte*>(Ptr()+Bytes()), &num, sizeof(TUint32));
-    iBytes = Bytes() + sizeof(TUint32);
-}
-
-void Bwx::AppendInt32(TInt32 aNum)
-{
-    ASSERT(Bytes() + sizeof(TInt32) <= MaxBytes());
-    TInt32 num = Arch::BigEndian4(aNum);
-    memcpy(const_cast<TByte*>(Ptr()+Bytes()), &num, sizeof(TInt32));
-    iBytes = Bytes() + sizeof(TInt32);
-}
-
-void Bwx::AppendUint64(TUint64 aNum)
-{
-    ASSERT(Bytes() + sizeof(TUint64) <= MaxBytes());
-    TUint64 num = Arch::BigEndian8(aNum);
-    memcpy(const_cast<TByte*>(Ptr()+Bytes()), &num, sizeof(TUint64));
-    iBytes = Bytes() + sizeof(TUint64);
-}
-
-void Bwx::AppendInt64(TInt64 aNum)
-{
-    ASSERT(Bytes() + sizeof(TInt64) <= MaxBytes());
-    TInt64 num = Arch::BigEndian8(aNum);
-    memcpy(const_cast<TByte*>(Ptr()+Bytes()), &num, sizeof(TInt64));
-    iBytes = Bytes() + sizeof(TInt64);
-}
-
 void Bwx::AppendPrintf(const TChar* aFormatString, ...)
 {
     va_list args;
@@ -356,12 +298,6 @@ TByte& Bwx::At(TUint aByteIndex)
 {
     ASSERT(aByteIndex < Bytes());
     return(const_cast<TByte&>(Ptr()[aByteIndex]));
-}
-
-TUint32& Bwx::Uint32At(TUint aByteIndex)
-{
-    ASSERT((aByteIndex + sizeof(TUint32)) <= Bytes());
-    return((TUint32&)(Ptr()[aByteIndex]));
 }
 
 // Bwn
@@ -429,17 +365,17 @@ Bwh::Bwh() : Bwx(0,0), iPtr(0)
 
 Bwh::Bwh(TUint aMaxBytes) : Bwx(0, aMaxBytes)
 {
-    iPtr = new TByte[aMaxBytes];
+    iPtr = (TByte*)malloc(aMaxBytes);
 }
 
 Bwh::Bwh(TUint aBytes, TUint aMaxBytes) : Bwx(aBytes, aMaxBytes)
 {
-    iPtr = new TByte[aMaxBytes];
+    iPtr = (TByte*)malloc(aMaxBytes);
 }
 
 Bwh::~Bwh()
 {
-    delete[] iPtr;
+    free((void*)iPtr);
 }
 
 const TByte* Bwh::Ptr() const
@@ -450,25 +386,25 @@ const TByte* Bwh::Ptr() const
 
 Bwh::Bwh(const TChar* aStr) : Bwx(0, ZappStrlen(aStr))
 {
-    iPtr = new TByte[ZappStrlen(aStr)];
+    iPtr = (TByte*)malloc(ZappStrlen(aStr));
     Replace(aStr);
 }
 
 Bwh::Bwh(const TByte* aPtr, TUint aBytes) : Bwx(aBytes, aBytes)
 {
-    iPtr = new TByte[aBytes];
+    iPtr = (TByte*)malloc(aBytes);
     Replace(aPtr, aBytes);
 }
 
 Bwh::Bwh(const Brx& aBrx) : Bwx(aBrx.Bytes(), aBrx.Bytes())
 {
-    iPtr = new TByte[aBrx.Bytes()];
+    iPtr = (TByte*)malloc(aBrx.Bytes());
     Replace(aBrx);
 }
 
 Bwh::Bwh(const Bwh& aBuf) : Bwx(aBuf.Bytes(), aBuf.Bytes())
 {
-    iPtr = new TByte[aBuf.Bytes()];
+    iPtr = (TByte*)malloc(aBuf.Bytes());
     Replace(aBuf);
 }
 
@@ -480,21 +416,21 @@ void Bwh::Grow(TUint aMaxBytes)
     if(iPtr) {
         if(aMaxBytes > iMaxBytes) {
             const TByte* oldPtr = iPtr;
-            iPtr = new TByte[aMaxBytes];
+            iPtr = (TByte*)malloc(aMaxBytes);
             Replace(oldPtr, Bytes());
-            delete[] oldPtr;
+            free((void*)oldPtr);
             iMaxBytes = aMaxBytes;
         }
     }
     else {
-        iPtr = new TByte[aMaxBytes];
+        iPtr = (TByte*)malloc(aMaxBytes);
         iMaxBytes = aMaxBytes;
     }
 }
 
 void Bwh::TransferTo(Brh& aBrh)
 {
-    delete[] aBrh.iPtr;
+    free((void*)aBrh.iPtr);
     aBrh.iPtr = iPtr;
     aBrh.iBytes = iBytes;
     iPtr = NULL;
@@ -503,7 +439,7 @@ void Bwh::TransferTo(Brh& aBrh)
 
 void Bwh::TransferTo(Brhz& aBrhz)
 {
-    delete[] aBrhz.iPtr;
+    free((void*)aBrhz.iPtr);
     aBrhz.iPtr = iPtr;
     aBrhz.iBytes = iBytes;
     iPtr = NULL;
@@ -512,7 +448,7 @@ void Bwh::TransferTo(Brhz& aBrhz)
 
 void Bwh::TransferTo(Bwh& aBwh)
 {
-    delete[] aBwh.iPtr;
+    free((void*)aBwh.iPtr);
     aBwh.iPtr = iPtr;
     aBwh.iBytes = iBytes;
     iPtr = NULL;

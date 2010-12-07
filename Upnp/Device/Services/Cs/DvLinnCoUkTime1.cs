@@ -3,98 +3,196 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Zapp;
 
-namespace Zapp
+namespace Zapp.Device.Providers
 {
-    public class DvServiceLinnCoUkTime1 : IDisposable
+    public interface IDvProviderLinnCoUkTime1 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the TrackCount property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyTrackCount(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the TrackCount property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyTrackCount(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the Duration property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyDuration(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the Duration property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyDuration(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the Seconds property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertySeconds(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the Seconds property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertySeconds(out uint aValue);
+        
+    }
+    /// <summary>
+    /// Provider for the linn.co.uk:Time:1 UPnP service
+    /// </summary>
+    public class DvProviderLinnCoUkTime1 : DvProvider, IDisposable, IDvProviderLinnCoUkTime1
     {
         [DllImport("DvLinnCoUkTime1")]
-        static extern IntPtr DvServiceLinnCoUkTime1Create(IntPtr aDeviceHandle);
+        static extern IntPtr DvProviderLinnCoUkTime1Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkTime1")]
-        static extern void DvServiceLinnCoUkTime1Destroy(IntPtr aHandle);
+        static extern void DvProviderLinnCoUkTime1Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe int DvServiceLinnCoUkTime1SetPropertyTrackCount(IntPtr aHandle, uint aValue);
+        static extern unsafe int DvProviderLinnCoUkTime1SetPropertyTrackCount(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe void DvServiceLinnCoUkTime1GetPropertyTrackCount(IntPtr aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkTime1GetPropertyTrackCount(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe int DvServiceLinnCoUkTime1SetPropertyDuration(IntPtr aHandle, uint aValue);
+        static extern unsafe int DvProviderLinnCoUkTime1SetPropertyDuration(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe void DvServiceLinnCoUkTime1GetPropertyDuration(IntPtr aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkTime1GetPropertyDuration(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe int DvServiceLinnCoUkTime1SetPropertySeconds(IntPtr aHandle, uint aValue);
+        static extern unsafe int DvProviderLinnCoUkTime1SetPropertySeconds(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe void DvServiceLinnCoUkTime1GetPropertySeconds(IntPtr aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkTime1GetPropertySeconds(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkTime1")]
-        static extern void DvServiceLinnCoUkTime1EnableActionTime(IntPtr aHandle, CallbackTime aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkTime1EnableActionTime(IntPtr aHandle, CallbackTime aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
         private unsafe delegate int CallbackTime(IntPtr aPtr, uint aVersion, uint* aaTrackCount, uint* aaDuration, uint* aaSeconds);
 
-        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackTime iCallbackTime;
 
-        public DvServiceLinnCoUkTime1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderLinnCoUkTime1(DvDevice aDevice)
         {
-            iHandle = DvServiceLinnCoUkTime1Create(aDevice.Handle()); 
+            iHandle = DvProviderLinnCoUkTime1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyTrackCount(uint aValue)
+        /// <summary>
+        /// Set the value of the TrackCount property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyTrackCount(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkTime1SetPropertyTrackCount(iHandle, aValue))
+            uint changed;
+            if (0 != DvProviderLinnCoUkTime1SetPropertyTrackCount(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the TrackCount property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyTrackCount(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
-                DvServiceLinnCoUkTime1GetPropertyTrackCount(iHandle, value);
+            {
+                DvProviderLinnCoUkTime1GetPropertyTrackCount(iHandle, value);
             }
         }
 
-        public unsafe void SetPropertyDuration(uint aValue)
+        /// <summary>
+        /// Set the value of the Duration property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyDuration(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkTime1SetPropertyDuration(iHandle, aValue))
+            uint changed;
+            if (0 != DvProviderLinnCoUkTime1SetPropertyDuration(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the Duration property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyDuration(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
-                DvServiceLinnCoUkTime1GetPropertyDuration(iHandle, value);
+            {
+                DvProviderLinnCoUkTime1GetPropertyDuration(iHandle, value);
             }
         }
 
-        public unsafe void SetPropertySeconds(uint aValue)
+        /// <summary>
+        /// Set the value of the Seconds property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertySeconds(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkTime1SetPropertySeconds(iHandle, aValue))
+            uint changed;
+            if (0 != DvProviderLinnCoUkTime1SetPropertySeconds(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the Seconds property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertySeconds(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
-                DvServiceLinnCoUkTime1GetPropertySeconds(iHandle, value);
+            {
+                DvProviderLinnCoUkTime1GetPropertySeconds(iHandle, value);
             }
         }
 
+        /// <summary>
+        /// Signal that the action Time is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoTime must be overridden if this is called.</remarks>
         protected unsafe void EnableActionTime()
         {
             iCallbackTime = new CallbackTime(DoTime);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkTime1EnableActionTime(iHandle, iCallbackTime, ptr);
+            DvProviderLinnCoUkTime1EnableActionTime(iHandle, iCallbackTime, ptr);
         }
 
+        /// <summary>
+        /// Time action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Time action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionTime was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaTrackCount"></param>
+        /// <param name="aaDuration"></param>
+        /// <param name="aaSeconds"></param>
         protected virtual void Time(uint aVersion, out uint aaTrackCount, out uint aaDuration, out uint aaSeconds)
         {
             throw (new ActionDisabledError());
@@ -103,7 +201,7 @@ namespace Zapp
         private static unsafe int DoTime(IntPtr aPtr, uint aVersion, uint* aaTrackCount, uint* aaDuration, uint* aaSeconds)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkTime1 self = (DvServiceLinnCoUkTime1)gch.Target;
+            DvProviderLinnCoUkTime1 self = (DvProviderLinnCoUkTime1)gch.Target;
             uint aTrackCount;
             uint aDuration;
             uint aSeconds;
@@ -114,14 +212,16 @@ namespace Zapp
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceLinnCoUkTime1()
+        ~DvProviderLinnCoUkTime1()
         {
             DoDispose();
         }
@@ -138,7 +238,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = IntPtr.Zero;
             }
-            DvServiceLinnCoUkTime1Destroy(handle);
+            DvProviderLinnCoUkTime1Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

@@ -75,6 +75,11 @@
             <sendEventsAttribute>yes</sendEventsAttribute>
             <dataType>bin.base64</dataType>
         </stateVariable>
+        <stateVariable>
+            <name>A_ARG_WriteData</name>
+            <sendEventsAttribute>no</sendEventsAttribute>
+            <dataType>string</dataType>
+        </stateVariable>
     </serviceStateTable>
     <actionList>
         <action>
@@ -271,6 +276,30 @@
                     <relatedStateVariable>VarBin</relatedStateVariable>
                 </argument>
             </argumentList>
+        </action>
+        <action>
+            <name>ToggleBool</name>
+            <Optional/>
+        </action>
+        <action>
+            <name>WriteFile</name>
+            <argumentList>
+                <argument>
+                    <name>Data</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_WriteData</relatedStateVariable>
+                </argument>
+                <argument>
+                    <name>FileFullName</name>
+                    <direction>in</direction>
+                    <relatedStateVariable>A_ARG_WriteData</relatedStateVariable>
+                </argument>
+            </argumentList>
+            <Optional/>
+        </action>
+        <action>
+            <name>Shutdown</name>
+            <Optional/>
         </action>
     </actionList>
 </scpd>

@@ -129,8 +129,9 @@ void SsdpNotifyLogger::SsdpNotifyServiceTypeByeBye(const Brx& aUuid, const Brx& 
 
 static void PrintEndpoint(const Endpoint& aEndpoint)
 {
-    TUint addr = aEndpoint.Address();
-    Print("%u.%u.%u.%u:%u", (addr>>24), ((addr>>16)&0xff), ((addr>>8)&0xff), addr&0xff, aEndpoint.Port());
+    Endpoint::EndpointBuf buf;
+    aEndpoint.GetEndpoint(buf);
+    Print("%s", buf.Ptr());
 }
 
 void MSearchLogger::SsdpSearchAll(const Endpoint& aEndpoint, TUint aMx)
@@ -214,7 +215,10 @@ TIpAddress SuiteListen::NetworkIf(TUint aIndex)
     const std::vector<NetworkInterface*>& ifs = Stack::NetworkInterfaceList().List();
     ASSERT(ifs.size() > 0 && aIndex < ifs.size());
     TIpAddress addr = ifs[aIndex]->Address();
-    Print("Using network interface %d.%d.%d.%d\n", addr&0xff, (addr>>8)&0xff, (addr>>16)&0xff, (addr>>24)&0xff);
+    Endpoint endpt(0, addr);
+    Endpoint::AddressBuf buf;
+    endpt.GetAddress(buf);
+    Print("Using network interface %s\n\n", buf.Ptr());
     return ifs[aIndex]->Address();
 }
 
@@ -224,11 +228,13 @@ void SuiteListen::Test()
     SsdpNotifyLogger notifyLogger;
     MSearchLogger msearchLogger;
     SsdpListenerMulticast mListener(NetworkIf(iInterfaceIndex));
-    (void)mListener.AddNotifyHandler(&notifyLogger);
-    (void)mListener.AddMsearchHandler(&msearchLogger);
+    TInt notifyId = mListener.AddNotifyHandler(&notifyLogger);
+    TInt msearchId = mListener.AddMsearchHandler(&msearchLogger);
     mListener.Start();
     iTimer->FireIn(iDuration);
     iSem.Wait();
+    mListener.RemoveNotifyHandler(notifyId);
+    mListener.RemoveMsearchHandler(msearchId);
 }
 
 void SuiteListen::TimerExpired()

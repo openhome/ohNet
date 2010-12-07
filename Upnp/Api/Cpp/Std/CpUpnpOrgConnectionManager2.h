@@ -21,6 +21,7 @@ class PropertyUint;
 
 /**
  * Proxy for upnp.org:ConnectionManager:2
+ * @ingroup Proxies
  */
 class CpProxyUpnpOrgConnectionManager2Cpp : public CpProxy
 {

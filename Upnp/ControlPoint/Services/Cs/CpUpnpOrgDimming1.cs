@@ -3,9 +3,90 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Zapp;
 
-namespace Zapp
+namespace Zapp.ControlPoint.Proxies
 {
-    public class CpProxyUpnpOrgDimming1 : CpProxy, IDisposable
+    public interface ICpProxyUpnpOrgDimming1 : ICpProxy, IDisposable
+    {
+        void SyncSetLoadLevelTarget(uint anewLoadlevelTarget);
+        void BeginSetLoadLevelTarget(uint anewLoadlevelTarget, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetLoadLevelTarget(IntPtr aAsyncHandle);
+        void SyncGetLoadLevelTarget(out uint aGetLoadlevelTarget);
+        void BeginGetLoadLevelTarget(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetLoadLevelTarget(IntPtr aAsyncHandle, out uint aGetLoadlevelTarget);
+        void SyncGetLoadLevelStatus(out uint aretLoadlevelStatus);
+        void BeginGetLoadLevelStatus(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetLoadLevelStatus(IntPtr aAsyncHandle, out uint aretLoadlevelStatus);
+        void SyncSetOnEffectLevel(uint anewOnEffectLevel);
+        void BeginSetOnEffectLevel(uint anewOnEffectLevel, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetOnEffectLevel(IntPtr aAsyncHandle);
+        void SyncSetOnEffect(string anewOnEffect);
+        void BeginSetOnEffect(string anewOnEffect, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetOnEffect(IntPtr aAsyncHandle);
+        void SyncGetOnEffectParameters(out string aretOnEffect, out uint aretOnEffectLevel);
+        void BeginGetOnEffectParameters(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetOnEffectParameters(IntPtr aAsyncHandle, out string aretOnEffect, out uint aretOnEffectLevel);
+        void SyncStepUp();
+        void BeginStepUp(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStepUp(IntPtr aAsyncHandle);
+        void SyncStepDown();
+        void BeginStepDown(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStepDown(IntPtr aAsyncHandle);
+        void SyncStartRampUp();
+        void BeginStartRampUp(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStartRampUp(IntPtr aAsyncHandle);
+        void SyncStartRampDown();
+        void BeginStartRampDown(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStartRampDown(IntPtr aAsyncHandle);
+        void SyncStopRamp();
+        void BeginStopRamp(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStopRamp(IntPtr aAsyncHandle);
+        void SyncStartRampToLevel(uint anewLoadLevelTarget, uint anewRampTime);
+        void BeginStartRampToLevel(uint anewLoadLevelTarget, uint anewRampTime, CpProxy.CallbackAsyncComplete aCallback);
+        void EndStartRampToLevel(IntPtr aAsyncHandle);
+        void SyncSetStepDelta(uint anewStepDelta);
+        void BeginSetStepDelta(uint anewStepDelta, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetStepDelta(IntPtr aAsyncHandle);
+        void SyncGetStepDelta(out uint aretStepDelta);
+        void BeginGetStepDelta(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetStepDelta(IntPtr aAsyncHandle, out uint aretStepDelta);
+        void SyncSetRampRate(uint anewRampRate);
+        void BeginSetRampRate(uint anewRampRate, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetRampRate(IntPtr aAsyncHandle);
+        void SyncGetRampRate(out uint aretRampRate);
+        void BeginGetRampRate(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetRampRate(IntPtr aAsyncHandle, out uint aretRampRate);
+        void SyncPauseRamp();
+        void BeginPauseRamp(CpProxy.CallbackAsyncComplete aCallback);
+        void EndPauseRamp(IntPtr aAsyncHandle);
+        void SyncResumeRamp();
+        void BeginResumeRamp(CpProxy.CallbackAsyncComplete aCallback);
+        void EndResumeRamp(IntPtr aAsyncHandle);
+        void SyncGetIsRamping(out bool aretIsRamping);
+        void BeginGetIsRamping(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetIsRamping(IntPtr aAsyncHandle, out bool aretIsRamping);
+        void SyncGetRampPaused(out bool aretRampPaused);
+        void BeginGetRampPaused(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetRampPaused(IntPtr aAsyncHandle, out bool aretRampPaused);
+        void SyncGetRampTime(out uint aretRampTime);
+        void BeginGetRampTime(CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetRampTime(IntPtr aAsyncHandle, out uint aretRampTime);
+
+        void SetPropertyLoadLevelStatusChanged(CpProxy.CallbackPropertyChanged aLoadLevelStatusChanged);
+        void PropertyLoadLevelStatus(out uint aLoadLevelStatus);
+        void SetPropertyStepDeltaChanged(CpProxy.CallbackPropertyChanged aStepDeltaChanged);
+        void PropertyStepDelta(out uint aStepDelta);
+        void SetPropertyRampRateChanged(CpProxy.CallbackPropertyChanged aRampRateChanged);
+        void PropertyRampRate(out uint aRampRate);
+        void SetPropertyIsRampingChanged(CpProxy.CallbackPropertyChanged aIsRampingChanged);
+        void PropertyIsRamping(out bool aIsRamping);
+        void SetPropertyRampPausedChanged(CpProxy.CallbackPropertyChanged aRampPausedChanged);
+        void PropertyRampPaused(out bool aRampPaused);
+    }
+
+    /// <summary>
+    /// Proxy for the upnp.org:Dimming:1 UPnP service
+    /// </summary>
+    public class CpProxyUpnpOrgDimming1 : CpProxy, IDisposable, ICpProxyUpnpOrgDimming1
     {
         [DllImport("CpUpnpOrgDimming1")]
         static extern IntPtr CpProxyUpnpOrgDimming1Create(IntPtr aDeviceHandle);
@@ -172,19 +253,39 @@ namespace Zapp
         private Callback iCallbackIsRampingChanged;
         private Callback iCallbackRampPausedChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyUpnpOrgDimming1(CpDevice aDevice)
         {
             iHandle = CpProxyUpnpOrgDimming1Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="anewLoadlevelTarget"></param>
         public unsafe void SyncSetLoadLevelTarget(uint anewLoadlevelTarget)
         {
-			{
-				CpProxyUpnpOrgDimming1SyncSetLoadLevelTarget(iHandle, anewLoadlevelTarget);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncSetLoadLevelTarget(iHandle, anewLoadlevelTarget);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetLoadLevelTarget().</remarks>
+        /// <param name="anewLoadlevelTarget"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetLoadLevelTarget(uint anewLoadlevelTarget, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -192,24 +293,43 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginSetLoadLevelTarget(iHandle, anewLoadlevelTarget, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetLoadLevelTarget(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndSetLoadLevelTarget(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndSetLoadLevelTarget(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aGetLoadlevelTarget"></param>
         public unsafe void SyncGetLoadLevelTarget(out uint aGetLoadlevelTarget)
         {
-			fixed (uint* getLoadlevelTarget = &aGetLoadlevelTarget)
-			{
-				CpProxyUpnpOrgDimming1SyncGetLoadLevelTarget(iHandle, getLoadlevelTarget);
-			}
+            fixed (uint* getLoadlevelTarget = &aGetLoadlevelTarget)
+            {
+                CpProxyUpnpOrgDimming1SyncGetLoadLevelTarget(iHandle, getLoadlevelTarget);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetLoadLevelTarget().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetLoadLevelTarget(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -217,25 +337,45 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginGetLoadLevelTarget(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aGetLoadlevelTarget"></param>
         public unsafe void EndGetLoadLevelTarget(IntPtr aAsyncHandle, out uint aGetLoadlevelTarget)
         {
-			fixed (uint* getLoadlevelTarget = &aGetLoadlevelTarget)
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndGetLoadLevelTarget(iHandle, aAsyncHandle, getLoadlevelTarget))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* getLoadlevelTarget = &aGetLoadlevelTarget)
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndGetLoadLevelTarget(iHandle, aAsyncHandle, getLoadlevelTarget))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aretLoadlevelStatus"></param>
         public unsafe void SyncGetLoadLevelStatus(out uint aretLoadlevelStatus)
         {
-			fixed (uint* retLoadlevelStatus = &aretLoadlevelStatus)
-			{
-				CpProxyUpnpOrgDimming1SyncGetLoadLevelStatus(iHandle, retLoadlevelStatus);
-			}
+            fixed (uint* retLoadlevelStatus = &aretLoadlevelStatus)
+            {
+                CpProxyUpnpOrgDimming1SyncGetLoadLevelStatus(iHandle, retLoadlevelStatus);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetLoadLevelStatus().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetLoadLevelStatus(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -243,24 +383,45 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginGetLoadLevelStatus(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aretLoadlevelStatus"></param>
         public unsafe void EndGetLoadLevelStatus(IntPtr aAsyncHandle, out uint aretLoadlevelStatus)
         {
-			fixed (uint* retLoadlevelStatus = &aretLoadlevelStatus)
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndGetLoadLevelStatus(iHandle, aAsyncHandle, retLoadlevelStatus))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* retLoadlevelStatus = &aretLoadlevelStatus)
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndGetLoadLevelStatus(iHandle, aAsyncHandle, retLoadlevelStatus))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="anewOnEffectLevel"></param>
         public unsafe void SyncSetOnEffectLevel(uint anewOnEffectLevel)
         {
-			{
-				CpProxyUpnpOrgDimming1SyncSetOnEffectLevel(iHandle, anewOnEffectLevel);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncSetOnEffectLevel(iHandle, anewOnEffectLevel);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetOnEffectLevel().</remarks>
+        /// <param name="anewOnEffectLevel"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetOnEffectLevel(uint anewOnEffectLevel, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -268,55 +429,95 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginSetOnEffectLevel(iHandle, anewOnEffectLevel, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetOnEffectLevel(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndSetOnEffectLevel(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndSetOnEffectLevel(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="anewOnEffect"></param>
         public unsafe void SyncSetOnEffect(string anewOnEffect)
         {
-			char* newOnEffect = (char*)Marshal.StringToHGlobalAnsi(anewOnEffect);
-			{
-				CpProxyUpnpOrgDimming1SyncSetOnEffect(iHandle, newOnEffect);
-			}
-			Marshal.FreeHGlobal((IntPtr)newOnEffect);
+            char* newOnEffect = (char*)Marshal.StringToHGlobalAnsi(anewOnEffect);
+            {
+                CpProxyUpnpOrgDimming1SyncSetOnEffect(iHandle, newOnEffect);
+            }
+            Marshal.FreeHGlobal((IntPtr)newOnEffect);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetOnEffect().</remarks>
+        /// <param name="anewOnEffect"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetOnEffect(string anewOnEffect, CallbackAsyncComplete aCallback)
         {
-			char* newOnEffect = (char*)Marshal.StringToHGlobalAnsi(anewOnEffect);
+            char* newOnEffect = (char*)Marshal.StringToHGlobalAnsi(anewOnEffect);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyUpnpOrgDimming1BeginSetOnEffect(iHandle, newOnEffect, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)newOnEffect);
+            Marshal.FreeHGlobal((IntPtr)newOnEffect);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetOnEffect(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndSetOnEffect(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndSetOnEffect(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aretOnEffect"></param>
+        /// <param name="aretOnEffectLevel"></param>
         public unsafe void SyncGetOnEffectParameters(out string aretOnEffect, out uint aretOnEffectLevel)
         {
-			char* retOnEffect;
-			fixed (uint* retOnEffectLevel = &aretOnEffectLevel)
-			{
-				CpProxyUpnpOrgDimming1SyncGetOnEffectParameters(iHandle, &retOnEffect, retOnEffectLevel);
-			}
+            char* retOnEffect;
+            fixed (uint* retOnEffectLevel = &aretOnEffectLevel)
+            {
+                CpProxyUpnpOrgDimming1SyncGetOnEffectParameters(iHandle, &retOnEffect, retOnEffectLevel);
+            }
             aretOnEffect = Marshal.PtrToStringAnsi((IntPtr)retOnEffect);
             ZappFree(retOnEffect);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetOnEffectParameters().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetOnEffectParameters(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -324,27 +525,47 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginGetOnEffectParameters(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aretOnEffect"></param>
+        /// <param name="aretOnEffectLevel"></param>
         public unsafe void EndGetOnEffectParameters(IntPtr aAsyncHandle, out string aretOnEffect, out uint aretOnEffectLevel)
         {
-			char* retOnEffect;
-			fixed (uint* retOnEffectLevel = &aretOnEffectLevel)
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndGetOnEffectParameters(iHandle, aAsyncHandle, &retOnEffect, retOnEffectLevel))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* retOnEffect;
+            fixed (uint* retOnEffectLevel = &aretOnEffectLevel)
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndGetOnEffectParameters(iHandle, aAsyncHandle, &retOnEffect, retOnEffectLevel))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aretOnEffect = Marshal.PtrToStringAnsi((IntPtr)retOnEffect);
             ZappFree(retOnEffect);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
         public unsafe void SyncStepUp()
         {
-			{
-				CpProxyUpnpOrgDimming1SyncStepUp(iHandle);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncStepUp(iHandle);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndStepUp().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginStepUp(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -352,23 +573,41 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginStepUp(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndStepUp(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndStepUp(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndStepUp(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
         public unsafe void SyncStepDown()
         {
-			{
-				CpProxyUpnpOrgDimming1SyncStepDown(iHandle);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncStepDown(iHandle);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndStepDown().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginStepDown(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -376,23 +615,41 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginStepDown(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndStepDown(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndStepDown(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndStepDown(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
         public unsafe void SyncStartRampUp()
         {
-			{
-				CpProxyUpnpOrgDimming1SyncStartRampUp(iHandle);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncStartRampUp(iHandle);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndStartRampUp().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginStartRampUp(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -400,23 +657,41 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginStartRampUp(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndStartRampUp(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndStartRampUp(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndStartRampUp(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
         public unsafe void SyncStartRampDown()
         {
-			{
-				CpProxyUpnpOrgDimming1SyncStartRampDown(iHandle);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncStartRampDown(iHandle);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndStartRampDown().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginStartRampDown(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -424,23 +699,41 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginStartRampDown(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndStartRampDown(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndStartRampDown(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndStartRampDown(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
         public unsafe void SyncStopRamp()
         {
-			{
-				CpProxyUpnpOrgDimming1SyncStopRamp(iHandle);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncStopRamp(iHandle);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndStopRamp().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginStopRamp(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -448,23 +741,45 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginStopRamp(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndStopRamp(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndStopRamp(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndStopRamp(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="anewLoadLevelTarget"></param>
+        /// <param name="anewRampTime"></param>
         public unsafe void SyncStartRampToLevel(uint anewLoadLevelTarget, uint anewRampTime)
         {
-			{
-				CpProxyUpnpOrgDimming1SyncStartRampToLevel(iHandle, anewLoadLevelTarget, anewRampTime);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncStartRampToLevel(iHandle, anewLoadLevelTarget, anewRampTime);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndStartRampToLevel().</remarks>
+        /// <param name="anewLoadLevelTarget"></param>
+        /// <param name="anewRampTime"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginStartRampToLevel(uint anewLoadLevelTarget, uint anewRampTime, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -472,23 +787,43 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginStartRampToLevel(iHandle, anewLoadLevelTarget, anewRampTime, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndStartRampToLevel(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndStartRampToLevel(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndStartRampToLevel(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="anewStepDelta"></param>
         public unsafe void SyncSetStepDelta(uint anewStepDelta)
         {
-			{
-				CpProxyUpnpOrgDimming1SyncSetStepDelta(iHandle, anewStepDelta);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncSetStepDelta(iHandle, anewStepDelta);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetStepDelta().</remarks>
+        /// <param name="anewStepDelta"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetStepDelta(uint anewStepDelta, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -496,24 +831,43 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginSetStepDelta(iHandle, anewStepDelta, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetStepDelta(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndSetStepDelta(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndSetStepDelta(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aretStepDelta"></param>
         public unsafe void SyncGetStepDelta(out uint aretStepDelta)
         {
-			fixed (uint* retStepDelta = &aretStepDelta)
-			{
-				CpProxyUpnpOrgDimming1SyncGetStepDelta(iHandle, retStepDelta);
-			}
+            fixed (uint* retStepDelta = &aretStepDelta)
+            {
+                CpProxyUpnpOrgDimming1SyncGetStepDelta(iHandle, retStepDelta);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetStepDelta().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetStepDelta(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -521,24 +875,45 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginGetStepDelta(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aretStepDelta"></param>
         public unsafe void EndGetStepDelta(IntPtr aAsyncHandle, out uint aretStepDelta)
         {
-			fixed (uint* retStepDelta = &aretStepDelta)
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndGetStepDelta(iHandle, aAsyncHandle, retStepDelta))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* retStepDelta = &aretStepDelta)
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndGetStepDelta(iHandle, aAsyncHandle, retStepDelta))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="anewRampRate"></param>
         public unsafe void SyncSetRampRate(uint anewRampRate)
         {
-			{
-				CpProxyUpnpOrgDimming1SyncSetRampRate(iHandle, anewRampRate);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncSetRampRate(iHandle, anewRampRate);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetRampRate().</remarks>
+        /// <param name="anewRampRate"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetRampRate(uint anewRampRate, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -546,24 +921,43 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginSetRampRate(iHandle, anewRampRate, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetRampRate(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndSetRampRate(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndSetRampRate(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aretRampRate"></param>
         public unsafe void SyncGetRampRate(out uint aretRampRate)
         {
-			fixed (uint* retRampRate = &aretRampRate)
-			{
-				CpProxyUpnpOrgDimming1SyncGetRampRate(iHandle, retRampRate);
-			}
+            fixed (uint* retRampRate = &aretRampRate)
+            {
+                CpProxyUpnpOrgDimming1SyncGetRampRate(iHandle, retRampRate);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetRampRate().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetRampRate(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -571,24 +965,43 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginGetRampRate(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aretRampRate"></param>
         public unsafe void EndGetRampRate(IntPtr aAsyncHandle, out uint aretRampRate)
         {
-			fixed (uint* retRampRate = &aretRampRate)
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndGetRampRate(iHandle, aAsyncHandle, retRampRate))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* retRampRate = &aretRampRate)
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndGetRampRate(iHandle, aAsyncHandle, retRampRate))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
         public unsafe void SyncPauseRamp()
         {
-			{
-				CpProxyUpnpOrgDimming1SyncPauseRamp(iHandle);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncPauseRamp(iHandle);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndPauseRamp().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginPauseRamp(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -596,23 +1009,41 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginPauseRamp(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndPauseRamp(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndPauseRamp(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndPauseRamp(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
         public unsafe void SyncResumeRamp()
         {
-			{
-				CpProxyUpnpOrgDimming1SyncResumeRamp(iHandle);
-			}
+            {
+                CpProxyUpnpOrgDimming1SyncResumeRamp(iHandle);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndResumeRamp().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginResumeRamp(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -620,25 +1051,44 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginResumeRamp(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndResumeRamp(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndResumeRamp(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndResumeRamp(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aretIsRamping"></param>
         public unsafe void SyncGetIsRamping(out bool aretIsRamping)
         {
-			uint retIsRamping;
-			{
-				CpProxyUpnpOrgDimming1SyncGetIsRamping(iHandle, &retIsRamping);
-			}
-			aretIsRamping = (retIsRamping != 0);
+            uint retIsRamping;
+            {
+                CpProxyUpnpOrgDimming1SyncGetIsRamping(iHandle, &retIsRamping);
+            }
+            aretIsRamping = (retIsRamping != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetIsRamping().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetIsRamping(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -646,27 +1096,47 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginGetIsRamping(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aretIsRamping"></param>
         public unsafe void EndGetIsRamping(IntPtr aAsyncHandle, out bool aretIsRamping)
         {
-			uint retIsRamping;
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndGetIsRamping(iHandle, aAsyncHandle, &retIsRamping))
-				{
-					throw(new ProxyError());
-				}
-			}
-			aretIsRamping = (retIsRamping != 0);
+            uint retIsRamping;
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndGetIsRamping(iHandle, aAsyncHandle, &retIsRamping))
+                {
+                    throw(new ProxyError());
+                }
+            }
+            aretIsRamping = (retIsRamping != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aretRampPaused"></param>
         public unsafe void SyncGetRampPaused(out bool aretRampPaused)
         {
-			uint retRampPaused;
-			{
-				CpProxyUpnpOrgDimming1SyncGetRampPaused(iHandle, &retRampPaused);
-			}
-			aretRampPaused = (retRampPaused != 0);
+            uint retRampPaused;
+            {
+                CpProxyUpnpOrgDimming1SyncGetRampPaused(iHandle, &retRampPaused);
+            }
+            aretRampPaused = (retRampPaused != 0);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetRampPaused().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetRampPaused(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -674,26 +1144,46 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginGetRampPaused(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aretRampPaused"></param>
         public unsafe void EndGetRampPaused(IntPtr aAsyncHandle, out bool aretRampPaused)
         {
-			uint retRampPaused;
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndGetRampPaused(iHandle, aAsyncHandle, &retRampPaused))
-				{
-					throw(new ProxyError());
-				}
-			}
-			aretRampPaused = (retRampPaused != 0);
+            uint retRampPaused;
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndGetRampPaused(iHandle, aAsyncHandle, &retRampPaused))
+                {
+                    throw(new ProxyError());
+                }
+            }
+            aretRampPaused = (retRampPaused != 0);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aretRampTime"></param>
         public unsafe void SyncGetRampTime(out uint aretRampTime)
         {
-			fixed (uint* retRampTime = &aretRampTime)
-			{
-				CpProxyUpnpOrgDimming1SyncGetRampTime(iHandle, retRampTime);
-			}
+            fixed (uint* retRampTime = &aretRampTime)
+            {
+                CpProxyUpnpOrgDimming1SyncGetRampTime(iHandle, retRampTime);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndGetRampTime().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginGetRampTime(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -701,17 +1191,29 @@ namespace Zapp
             CpProxyUpnpOrgDimming1BeginGetRampTime(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aretRampTime"></param>
         public unsafe void EndGetRampTime(IntPtr aAsyncHandle, out uint aretRampTime)
         {
-			fixed (uint* retRampTime = &aretRampTime)
-			{
-				if (0 != CpProxyUpnpOrgDimming1EndGetRampTime(iHandle, aAsyncHandle, retRampTime))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* retRampTime = &aretRampTime)
+            {
+                if (0 != CpProxyUpnpOrgDimming1EndGetRampTime(iHandle, aAsyncHandle, retRampTime))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the LoadLevelStatus state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyUpnpOrgDimming1 instance will not overlap.</remarks>
+        /// <param name="aLoadLevelStatusChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyLoadLevelStatusChanged(CallbackPropertyChanged aLoadLevelStatusChanged)
         {
             iLoadLevelStatusChanged = aLoadLevelStatusChanged;
@@ -727,6 +1229,12 @@ namespace Zapp
             self.iLoadLevelStatusChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the StepDelta state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyUpnpOrgDimming1 instance will not overlap.</remarks>
+        /// <param name="aStepDeltaChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyStepDeltaChanged(CallbackPropertyChanged aStepDeltaChanged)
         {
             iStepDeltaChanged = aStepDeltaChanged;
@@ -742,6 +1250,12 @@ namespace Zapp
             self.iStepDeltaChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the RampRate state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyUpnpOrgDimming1 instance will not overlap.</remarks>
+        /// <param name="aRampRateChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyRampRateChanged(CallbackPropertyChanged aRampRateChanged)
         {
             iRampRateChanged = aRampRateChanged;
@@ -757,6 +1271,12 @@ namespace Zapp
             self.iRampRateChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the IsRamping state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyUpnpOrgDimming1 instance will not overlap.</remarks>
+        /// <param name="aIsRampingChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyIsRampingChanged(CallbackPropertyChanged aIsRampingChanged)
         {
             iIsRampingChanged = aIsRampingChanged;
@@ -772,6 +1292,12 @@ namespace Zapp
             self.iIsRampingChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the RampPaused state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyUpnpOrgDimming1 instance will not overlap.</remarks>
+        /// <param name="aRampPausedChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyRampPausedChanged(CallbackPropertyChanged aRampPausedChanged)
         {
             iRampPausedChanged = aRampPausedChanged;
@@ -787,44 +1313,82 @@ namespace Zapp
             self.iRampPausedChanged();
         }
 
+        /// <summary>
+        /// Query the value of the LoadLevelStatus property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <param name="aLoadLevelStatus">Will be set to the value of the property</param>
         public unsafe void PropertyLoadLevelStatus(out uint aLoadLevelStatus)
         {
-			fixed (uint* loadLevelStatus = &aLoadLevelStatus)
-			{
-	            CpProxyUpnpOrgDimming1PropertyLoadLevelStatus(iHandle, loadLevelStatus);
-			}
+            fixed (uint* loadLevelStatus = &aLoadLevelStatus)
+            {
+                CpProxyUpnpOrgDimming1PropertyLoadLevelStatus(iHandle, loadLevelStatus);
+            }
         }
 
+        /// <summary>
+        /// Query the value of the StepDelta property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <param name="aStepDelta">Will be set to the value of the property</param>
         public unsafe void PropertyStepDelta(out uint aStepDelta)
         {
-			fixed (uint* stepDelta = &aStepDelta)
-			{
-	            CpProxyUpnpOrgDimming1PropertyStepDelta(iHandle, stepDelta);
-			}
+            fixed (uint* stepDelta = &aStepDelta)
+            {
+                CpProxyUpnpOrgDimming1PropertyStepDelta(iHandle, stepDelta);
+            }
         }
 
+        /// <summary>
+        /// Query the value of the RampRate property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <param name="aRampRate">Will be set to the value of the property</param>
         public unsafe void PropertyRampRate(out uint aRampRate)
         {
-			fixed (uint* rampRate = &aRampRate)
-			{
-	            CpProxyUpnpOrgDimming1PropertyRampRate(iHandle, rampRate);
-			}
+            fixed (uint* rampRate = &aRampRate)
+            {
+                CpProxyUpnpOrgDimming1PropertyRampRate(iHandle, rampRate);
+            }
         }
 
+        /// <summary>
+        /// Query the value of the IsRamping property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <param name="aIsRamping">Will be set to the value of the property</param>
         public unsafe void PropertyIsRamping(out bool aIsRamping)
         {
-			uint isRamping;
-	        CpProxyUpnpOrgDimming1PropertyIsRamping(iHandle, &isRamping);
-			aIsRamping = (isRamping != 0);
+            uint isRamping;
+            CpProxyUpnpOrgDimming1PropertyIsRamping(iHandle, &isRamping);
+            aIsRamping = (isRamping != 0);
         }
 
+        /// <summary>
+        /// Query the value of the RampPaused property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <param name="aRampPaused">Will be set to the value of the property</param>
         public unsafe void PropertyRampPaused(out bool aRampPaused)
         {
-			uint rampPaused;
-	        CpProxyUpnpOrgDimming1PropertyRampPaused(iHandle, &rampPaused);
-			aRampPaused = (rampPaused != 0);
+            uint rampPaused;
+            CpProxyUpnpOrgDimming1PropertyRampPaused(iHandle, &rampPaused);
+            aRampPaused = (rampPaused != 0);
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);
@@ -837,17 +1401,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            IntPtr handle;
             lock (this)
             {
                 if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyUpnpOrgDimming1Destroy(iHandle);
                 iHandle = IntPtr.Zero;
             }
-            CpProxyUpnpOrgDimming1Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

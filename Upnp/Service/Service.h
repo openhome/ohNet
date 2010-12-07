@@ -171,7 +171,6 @@ public:
 class IPropertyWriter
 {
 public:
-//    virtual void PropertyWriteBegin(const Endpoint& aSubscriber, const Brx& aSid, TUint aSequenceNumber) = 0;
     virtual void PropertyWriteString(const Brx& aName, const Brx& aValue) = 0;
     virtual void PropertyWriteInt(const Brx& aName, TInt aValue) = 0;
     virtual void PropertyWriteUint(const Brx& aName, TUint aValue) = 0;
@@ -179,13 +178,6 @@ public:
     virtual void PropertyWriteBinary(const Brx& aName, const Brx& aValue) = 0;
     virtual void PropertyWriteEnd() = 0;
     virtual ~IPropertyWriter() {}
-};
-
-class IPropertyWriterFactory
-{
-public:
-    virtual IPropertyWriter* CreateWriter(const Endpoint& aSubscriber, const Brx& aSubscriberPath,
-                                          const Brx& aSid, TUint aSequenceNumber) = 0;
 };
 
 /**
@@ -199,11 +191,14 @@ public:
     virtual ~Property();
     const Zapp::Parameter& Parameter() const;
     TUint SequenceNumber() const;
-    void ReportChanged();
+    TBool ReportChanged();
     virtual void Process(IOutputProcessor& aProcessor, const Brx& aBuffer) = 0;
     virtual void Write(IPropertyWriter& aWriter) = 0;
 protected:
     Property(Zapp::Parameter* aParameter, Functor& aFunctor);
+    Property(Zapp::Parameter* aParameter);
+private:
+    void Construct(Zapp::Parameter* aParameter);
 protected:
     Zapp::Parameter* iParameter;
     Functor iFunctor;
@@ -218,10 +213,9 @@ class PropertyString : public Property
 {
 public:
     DllExport PropertyString(const TChar* aName, Functor& aFunctor);
-    DllExport PropertyString(Zapp::Parameter* aParameter, Functor& aFunctor);
+    DllExport PropertyString(Zapp::Parameter* aParameter);
     DllExport ~PropertyString();
     DllExport const Brx& Value() const;
-    DllExport void TransferTo(Brh& aBrh);
     void Process(IOutputProcessor& aProcessor, const Brx& aBuffer);
     TBool SetValue(const Brx& aValue);
     void Write(IPropertyWriter& aWriter);
@@ -236,7 +230,7 @@ class PropertyInt : public Property
 {
 public:
     DllExport PropertyInt(const TChar* aName, Functor& aFunctor);
-    DllExport PropertyInt(Zapp::Parameter* aParameter, Functor& aFunctor);
+    DllExport PropertyInt(Zapp::Parameter* aParameter);
     DllExport ~PropertyInt();
     DllExport TInt Value() const;
     void Process(IOutputProcessor& aProcessor, const Brx& aBuffer);
@@ -253,7 +247,7 @@ class PropertyUint : public Property
 {
 public:
     DllExport PropertyUint(const TChar* aName, Functor& aFunctor);
-    DllExport PropertyUint(Zapp::Parameter* aParameter, Functor& aFunctor);
+    DllExport PropertyUint(Zapp::Parameter* aParameter);
     DllExport ~PropertyUint();
     DllExport TUint Value() const;
     void Process(IOutputProcessor& aProcessor, const Brx& aBuffer);
@@ -270,7 +264,7 @@ class PropertyBool : public Property
 {
 public:
     DllExport PropertyBool(const TChar* aName, Functor& aFunctor);
-    DllExport PropertyBool(Zapp::Parameter* aParameter, Functor& aFunctor);
+    DllExport PropertyBool(Zapp::Parameter* aParameter);
     DllExport ~PropertyBool();
     DllExport TBool Value() const;
     void Process(IOutputProcessor& aProcessor, const Brx& aBuffer);
@@ -287,10 +281,9 @@ class PropertyBinary : public Property
 {
 public:
     DllExport PropertyBinary(const TChar* aName, Functor& aFunctor);
-    DllExport PropertyBinary(Zapp::Parameter* aParameter, Functor& aFunctor);
+    DllExport PropertyBinary(Zapp::Parameter* aParameter);
     DllExport ~PropertyBinary();
     DllExport const Brx& Value() const;
-    DllExport void TransferTo(Brh& aBrh);
     void Process(IOutputProcessor& aProcessor, const Brx& aBuffer);
     TBool SetValue(const Brx& aValue);
     void Write(IPropertyWriter& aWriter);

@@ -19,6 +19,12 @@ extern "C" {
  */
 
 /**
+ * @addtogroup CpDeviceList
+ * @ingroup ControlPoint
+ * @{
+ */
+
+/**
  * Create a list of all UPnP devices on the current subnet
  *
  * @param[in] aAdded       Function pointer which is called when a device is added to the list
@@ -92,6 +98,8 @@ DllExport HandleCpDeviceList CpDeviceListCreateUpnpDeviceType(const char* aDomai
 DllExport HandleCpDeviceList CpDeviceListCreateUpnpServiceType(const char* aDomainName, const char* aServiceType, uint32_t aVersion,
                                                                ZappCallbackDevice aAdded, void* aPtrAdded,
                                                                ZappCallbackDevice aRemoved, void* aPtrRemoved);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

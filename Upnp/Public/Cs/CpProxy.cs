@@ -3,13 +3,46 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Zapp;
 
-namespace Zapp
+namespace Zapp.ControlPoint
 {
     public class ProxyError : Exception
     {
     }
+    
+    /// <summary>
+    /// Base interface for all proxies
+    /// </summary>
+    public interface ICpProxy
+    {
+        /// <summary>
+        /// Subscribe to notification of changes in state variables.
+        /// </summary>
+        /// <remarks>Use SetProperty[stateVarName]Changed() to register a callback on change
+        /// in a given variable or SetPropertyChangesComplete() to register a callback
+        /// which runs after each group of 1..n changes is processed.</remarks>
+        void Subscribe();
+        /// <summary>
+        /// Unsubscribe to notification of changes in state variables.
+        /// </summary>
+        /// <remarks>No further notifications will be published until Subscribe() is called again.</remarks>
+        void Unsubscribe();
+        /// <summary>
+        /// Register a delegate which will run after each group of 1..n changes to state variable is processed.
+        /// </summary>
+        /// <param name="aPropertyChanged">The delegate to be run</param>
+        void SetPropertyChanged(CpProxy.CallbackPropertyChanged aPropertyChanged);
+        /// <summary>
+        /// Register a delegate which will run when the state of all properties becomes available.
+        /// </summary>
+        /// <remarks>This is often the first point at which UI elements can be fully initialised.</remarks>
+        /// <param name="aInitialEvent">The delegate to be run</param>
+        void SetPropertyInitialEvent(CpProxy.CallbackPropertyChanged aInitialEvent);
+    }
 
-    public class CpProxy
+    /// <summary>
+    /// Base class for all proxies
+    /// </summary>
+    public class CpProxy : ICpProxy
     {
         [DllImport("ZappUpnp")]
         static extern void CpProxyCSubscribe(IntPtr aHandle);

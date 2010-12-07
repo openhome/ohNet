@@ -1,4 +1,5 @@
 #include <TestFramework.h>
+#include <OptionParser.h>
 #include <ZappTypes.h>
 #include <Core/DvDevice.h>
 #include <Core/DvZappOrgTestBasic1.h>
@@ -15,10 +16,10 @@
 using namespace Zapp;
 using namespace Zapp::TestFramework;
 
-class ServiceTestBasic : public DvServiceZappOrgTestBasic1
+class ProviderTestBasic : public DvProviderZappOrgTestBasic1
 {
 public:
-    ServiceTestBasic(DvDevice& aDevice);
+    ProviderTestBasic(DvDevice& aDevice);
 private:
     void SetUint(IInvocationResponse& aResponse, TUint aVersion, TUint aValueUint);
     void GetUint(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aValueUint);
@@ -40,12 +41,12 @@ public:
     ~DeviceBasic();
 private:
     DvDevice* iDevice;
-    ServiceTestBasic* iTestBasic;
+    ProviderTestBasic* iTestBasic;
 };
 
 
-ServiceTestBasic::ServiceTestBasic(DvDevice& aDevice)
-    : DvServiceZappOrgTestBasic1(aDevice)
+ProviderTestBasic::ProviderTestBasic(DvDevice& aDevice)
+    : DvProviderZappOrgTestBasic1(aDevice)
 {
     SetPropertyVarUint(0);
     SetPropertyVarInt(0);
@@ -66,14 +67,14 @@ ServiceTestBasic::ServiceTestBasic(DvDevice& aDevice)
     EnableActionGetBinary();
 }
 
-void ServiceTestBasic::SetUint(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aValueUint)
+void ProviderTestBasic::SetUint(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aValueUint)
 {
     SetPropertyVarUint(aValueUint);
     aResponse.Start();
     aResponse.End();
 }
 
-void ServiceTestBasic::GetUint(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseUint& aValueUint)
+void ProviderTestBasic::GetUint(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseUint& aValueUint)
 {
     aResponse.Start();
     TUint val;
@@ -82,14 +83,14 @@ void ServiceTestBasic::GetUint(IInvocationResponse& aResponse, TUint /*aVersion*
     aResponse.End();
 }
 
-void ServiceTestBasic::SetInt(IInvocationResponse& aResponse, TUint /*aVersion*/, TInt aValueInt)
+void ProviderTestBasic::SetInt(IInvocationResponse& aResponse, TUint /*aVersion*/, TInt aValueInt)
 {
     SetPropertyVarInt(aValueInt);
     aResponse.Start();
     aResponse.End();
 }
 
-void ServiceTestBasic::GetInt(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseInt& aValueInt)
+void ProviderTestBasic::GetInt(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseInt& aValueInt)
 {
     aResponse.Start();
     TInt val;
@@ -98,14 +99,14 @@ void ServiceTestBasic::GetInt(IInvocationResponse& aResponse, TUint /*aVersion*/
     aResponse.End();
 }
 
-void ServiceTestBasic::SetBool(IInvocationResponse& aResponse, TUint /*aVersion*/, TBool aValueBool)
+void ProviderTestBasic::SetBool(IInvocationResponse& aResponse, TUint /*aVersion*/, TBool aValueBool)
 {
     SetPropertyVarBool(aValueBool);
     aResponse.Start();
     aResponse.End();
 }
 
-void ServiceTestBasic::GetBool(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseBool& aValueBool)
+void ProviderTestBasic::GetBool(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseBool& aValueBool)
 {
     aResponse.Start();
     TBool val;
@@ -114,23 +115,25 @@ void ServiceTestBasic::GetBool(IInvocationResponse& aResponse, TUint /*aVersion*
     aResponse.End();
 }
 
-void ServiceTestBasic::SetMultiple(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aValueUint, TInt aValueInt, TBool aValueBool)
+void ProviderTestBasic::SetMultiple(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aValueUint, TInt aValueInt, TBool aValueBool)
 {
+    PropertiesLock();
     SetPropertyVarUint(aValueUint);
     SetPropertyVarInt(aValueInt);
     SetPropertyVarBool(aValueBool);
+    PropertiesUnlock();
     aResponse.Start();
     aResponse.End();
 }
 
-void ServiceTestBasic::SetString(IInvocationResponse& aResponse, TUint /*aVersion*/, const Brx& aValueStr)
+void ProviderTestBasic::SetString(IInvocationResponse& aResponse, TUint /*aVersion*/, const Brx& aValueStr)
 {
     SetPropertyVarStr(aValueStr);
     aResponse.Start();
     aResponse.End();
 }
 
-void ServiceTestBasic::GetString(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseString& aValueStr)
+void ProviderTestBasic::GetString(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseString& aValueStr)
 {
     aResponse.Start();
     Brhz val;
@@ -140,14 +143,14 @@ void ServiceTestBasic::GetString(IInvocationResponse& aResponse, TUint /*aVersio
     aResponse.End();
 }
 
-void ServiceTestBasic::SetBinary(IInvocationResponse& aResponse, TUint /*aVersion*/, const Brx& aValueBin)
+void ProviderTestBasic::SetBinary(IInvocationResponse& aResponse, TUint /*aVersion*/, const Brx& aValueBin)
 {
     SetPropertyVarBin(aValueBin);
     aResponse.Start();
     aResponse.End();
 }
 
-void ServiceTestBasic::GetBinary(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseBinary& aValueBin)
+void ProviderTestBasic::GetBinary(IInvocationResponse& aResponse, TUint /*aVersion*/, IInvocationResponseBinary& aValueBin)
 {
     aResponse.Start();
     Brh val;
@@ -189,7 +192,7 @@ DeviceBasic::DeviceBasic()
     iDevice->SetAttribute("Upnp.ModelUrl", "http://www.linn.co.uk");
     iDevice->SetAttribute("Upnp.SerialNumber", "123456");
     iDevice->SetAttribute("Upnp.Upc", "123456654321");
-    iTestBasic = new ServiceTestBasic(*iDevice);
+    iTestBasic = new ProviderTestBasic(*iDevice);
     iDevice->SetEnabled();
 }
 
@@ -212,18 +215,15 @@ public:
     void Added(CpDevice& aDevice);
     void Removed(CpDevice& aDevice);
 private:
-    void SingleChanged();
     void UpdatesComplete();
 private:
     Mutex iLock;
     std::vector<CpDevice*> iList;
-    Semaphore iSingleChanged;
     Semaphore iUpdatesComplete;
 };
 
 CpDevices::CpDevices()
     : iLock("DLMX")
-    , iSingleChanged("DSB1", 0)
     , iUpdatesComplete("DSB2", 0)
 {
 }
@@ -246,15 +246,6 @@ void CpDevices::Test()
     proxy->Subscribe();
     iUpdatesComplete.Wait(); // wait for initial event
 
-    // set callbacks for individual property changes now to avoid all being run by initial event
-    functor = MakeFunctor(*this, &CpDevices::SingleChanged);
-    proxy->SetPropertyVarUintChanged(functor);
-    proxy->SetPropertyVarIntChanged(functor);
-    proxy->SetPropertyVarBoolChanged(functor);
-    proxy->SetPropertyVarStrChanged(functor);
-    proxy->SetPropertyVarBinChanged(functor);
-
-
     /* For each property,
          call the setter action it
          wait on a property being updated
@@ -264,7 +255,7 @@ void CpDevices::Test()
 
     Print("Uint...\n");
     proxy->SyncSetUint(1);
-    iSingleChanged.Wait();
+    iUpdatesComplete.Wait();
     TUint propUint;
     proxy->PropertyVarUint(propUint);
     ASSERT(propUint == 1);
@@ -274,7 +265,7 @@ void CpDevices::Test()
 
     Print("Int...\n");
     proxy->SyncSetInt(-99);
-    iSingleChanged.Wait();
+    iUpdatesComplete.Wait();
     TInt propInt;
     proxy->PropertyVarInt(propInt);
     ASSERT(propInt == -99);
@@ -284,7 +275,7 @@ void CpDevices::Test()
 
     Print("Bool...\n");
     proxy->SyncSetBool(true);
-    iSingleChanged.Wait();
+    iUpdatesComplete.Wait();
     TBool propBool;
     proxy->PropertyVarBool(propBool);
     ASSERT(propBool);
@@ -299,7 +290,7 @@ void CpDevices::Test()
             "voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat "
             "non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
     proxy->SyncSetString(str);
-    iSingleChanged.Wait();
+    iUpdatesComplete.Wait();
     Brhz propStr;
     proxy->PropertyVarStr(propStr);
     ASSERT(propStr == str);
@@ -317,7 +308,7 @@ void CpDevices::Test()
     }
     Brn bufBin((const TByte*)&bin[0], 256);
     proxy->SyncSetBinary(bufBin);
-    iSingleChanged.Wait();
+    iUpdatesComplete.Wait();
     Brh propBin;
     proxy->PropertyVarBin(propBin);
     ASSERT(propBin == bufBin);
@@ -329,7 +320,6 @@ void CpDevices::Test()
     ASSERT(propBin == valBin);
 
     Print("Multiple...\n");
-    (void)iUpdatesComplete.Clear();
     proxy->SyncSetMultiple(15, 658, false);
     iUpdatesComplete.Wait();
     proxy->PropertyVarUint(propUint);
@@ -362,21 +352,23 @@ void CpDevices::Removed(CpDevice& /*aDevice*/)
 {
 }
 
-void CpDevices::SingleChanged()
-{
-    iSingleChanged.Signal();
-}
-
 void CpDevices::UpdatesComplete()
 {
     iUpdatesComplete.Signal();
 }
 
 
-
-
-void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
+    OptionParser parser;
+    OptionBool loopback("-l", "--loopback", "Use the loopback adapter only");
+    parser.AddOption(&loopback);
+    if (!parser.Parse(aArgc, aArgv) || parser.HelpDisplayed()) {
+        return;
+    }
+    if (loopback.IsSet()) {
+        aInitParams->SetUseLoopbackNetworkInterface();
+    }
     aInitParams->SetMsearchTime(1);
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartCombined();

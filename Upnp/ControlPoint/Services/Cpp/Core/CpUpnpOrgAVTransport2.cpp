@@ -11,14 +11,14 @@ using namespace Zapp;
 class SyncSetAVTransportURIUpnpOrgAVTransport2 : public SyncProxyAction
 {
 public:
-    SyncSetAVTransportURIUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService);
+    SyncSetAVTransportURIUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
 
-SyncSetAVTransportURIUpnpOrgAVTransport2::SyncSetAVTransportURIUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService)
-    : iService(aService)
+SyncSetAVTransportURIUpnpOrgAVTransport2::SyncSetAVTransportURIUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -31,14 +31,14 @@ void SyncSetAVTransportURIUpnpOrgAVTransport2::CompleteRequest(IAsync& aAsync)
 class SyncSetNextAVTransportURIUpnpOrgAVTransport2 : public SyncProxyAction
 {
 public:
-    SyncSetNextAVTransportURIUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService);
+    SyncSetNextAVTransportURIUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
 
-SyncSetNextAVTransportURIUpnpOrgAVTransport2::SyncSetNextAVTransportURIUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService)
-    : iService(aService)
+SyncSetNextAVTransportURIUpnpOrgAVTransport2::SyncSetNextAVTransportURIUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -51,7 +51,7 @@ void SyncSetNextAVTransportURIUpnpOrgAVTransport2::CompleteRequest(IAsync& aAsyn
 class SyncGetMediaInfoUpnpOrgAVTransport2 : public SyncProxyAction
 {
 public:
-    SyncGetMediaInfoUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService, TUint& aNrTracks, Brh& aMediaDuration, Brh& aCurrentURI, Brh& aCurrentURIMetaData, Brh& aNextURI, Brh& aNextURIMetaData, Brh& aPlayMedium, Brh& aRecordMedium, Brh& aWriteStatus);
+    SyncGetMediaInfoUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, TUint& aNrTracks, Brh& aMediaDuration, Brh& aCurrentURI, Brh& aCurrentURIMetaData, Brh& aNextURI, Brh& aNextURIMetaData, Brh& aPlayMedium, Brh& aRecordMedium, Brh& aWriteStatus);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport2& iService;
@@ -66,8 +66,8 @@ private:
     Brh& iWriteStatus;
 };
 
-SyncGetMediaInfoUpnpOrgAVTransport2::SyncGetMediaInfoUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService, TUint& aNrTracks, Brh& aMediaDuration, Brh& aCurrentURI, Brh& aCurrentURIMetaData, Brh& aNextURI, Brh& aNextURIMetaData, Brh& aPlayMedium, Brh& aRecordMedium, Brh& aWriteStatus)
-    : iService(aService)
+SyncGetMediaInfoUpnpOrgAVTransport2::SyncGetMediaInfoUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, TUint& aNrTracks, Brh& aMediaDuration, Brh& aCurrentURI, Brh& aCurrentURIMetaData, Brh& aNextURI, Brh& aNextURIMetaData, Brh& aPlayMedium, Brh& aRecordMedium, Brh& aWriteStatus)
+    : iService(aProxy)
     , iNrTracks(aNrTracks)
     , iMediaDuration(aMediaDuration)
     , iCurrentURI(aCurrentURI)
@@ -89,7 +89,7 @@ void SyncGetMediaInfoUpnpOrgAVTransport2::CompleteRequest(IAsync& aAsync)
 class SyncGetMediaInfo_ExtUpnpOrgAVTransport2 : public SyncProxyAction
 {
 public:
-    SyncGetMediaInfo_ExtUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService, Brh& aCurrentType, TUint& aNrTracks, Brh& aMediaDuration, Brh& aCurrentURI, Brh& aCurrentURIMetaData, Brh& aNextURI, Brh& aNextURIMetaData, Brh& aPlayMedium, Brh& aRecordMedium, Brh& aWriteStatus);
+    SyncGetMediaInfo_ExtUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aCurrentType, TUint& aNrTracks, Brh& aMediaDuration, Brh& aCurrentURI, Brh& aCurrentURIMetaData, Brh& aNextURI, Brh& aNextURIMetaData, Brh& aPlayMedium, Brh& aRecordMedium, Brh& aWriteStatus);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport2& iService;
@@ -105,8 +105,8 @@ private:
     Brh& iWriteStatus;
 };
 
-SyncGetMediaInfo_ExtUpnpOrgAVTransport2::SyncGetMediaInfo_ExtUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService, Brh& aCurrentType, TUint& aNrTracks, Brh& aMediaDuration, Brh& aCurrentURI, Brh& aCurrentURIMetaData, Brh& aNextURI, Brh& aNextURIMetaData, Brh& aPlayMedium, Brh& aRecordMedium, Brh& aWriteStatus)
-    : iService(aService)
+SyncGetMediaInfo_ExtUpnpOrgAVTransport2::SyncGetMediaInfo_ExtUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aCurrentType, TUint& aNrTracks, Brh& aMediaDuration, Brh& aCurrentURI, Brh& aCurrentURIMetaData, Brh& aNextURI, Brh& aNextURIMetaData, Brh& aPlayMedium, Brh& aRecordMedium, Brh& aWriteStatus)
+    : iService(aProxy)
     , iCurrentType(aCurrentType)
     , iNrTracks(aNrTracks)
     , iMediaDuration(aMediaDuration)
@@ -129,7 +129,7 @@ void SyncGetMediaInfo_ExtUpnpOrgAVTransport2::CompleteRequest(IAsync& aAsync)
 class SyncGetTransportInfoUpnpOrgAVTransport2 : public SyncProxyAction
 {
 public:
-    SyncGetTransportInfoUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService, Brh& aCurrentTransportState, Brh& aCurrentTransportStatus, Brh& aCurrentSpeed);
+    SyncGetTransportInfoUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aCurrentTransportState, Brh& aCurrentTransportStatus, Brh& aCurrentSpeed);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport2& iService;
@@ -138,8 +138,8 @@ private:
     Brh& iCurrentSpeed;
 };
 
-SyncGetTransportInfoUpnpOrgAVTransport2::SyncGetTransportInfoUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService, Brh& aCurrentTransportState, Brh& aCurrentTransportStatus, Brh& aCurrentSpeed)
-    : iService(aService)
+SyncGetTransportInfoUpnpOrgAVTransport2::SyncGetTransportInfoUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aCurrentTransportState, Brh& aCurrentTransportStatus, Brh& aCurrentSpeed)
+    : iService(aProxy)
     , iCurrentTransportState(aCurrentTransportState)
     , iCurrentTransportStatus(aCurrentTransportStatus)
     , iCurrentSpeed(aCurrentSpeed)
@@ -155,7 +155,7 @@ void SyncGetTransportInfoUpnpOrgAVTransport2::CompleteRequest(IAsync& aAsync)
 class SyncGetPositionInfoUpnpOrgAVTransport2 : public SyncProxyAction
 {
 public:
-    SyncGetPositionInfoUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService, TUint& aTrack, Brh& aTrackDuration, Brh& aTrackMetaData, Brh& aTrackURI, Brh& aRelTime, Brh& aAbsTime, TInt& aRelCount, TInt& aAbsCount);
+    SyncGetPositionInfoUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, TUint& aTrack, Brh& aTrackDuration, Brh& aTrackMetaData, Brh& aTrackURI, Brh& aRelTime, Brh& aAbsTime, TInt& aRelCount, TInt& aAbsCount);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport2& iService;
@@ -169,8 +169,8 @@ private:
     TInt& iAbsCount;
 };
 
-SyncGetPositionInfoUpnpOrgAVTransport2::SyncGetPositionInfoUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService, TUint& aTrack, Brh& aTrackDuration, Brh& aTrackMetaData, Brh& aTrackURI, Brh& aRelTime, Brh& aAbsTime, TInt& aRelCount, TInt& aAbsCount)
-    : iService(aService)
+SyncGetPositionInfoUpnpOrgAVTransport2::SyncGetPositionInfoUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, TUint& aTrack, Brh& aTrackDuration, Brh& aTrackMetaData, Brh& aTrackURI, Brh& aRelTime, Brh& aAbsTime, TInt& aRelCount, TInt& aAbsCount)
+    : iService(aProxy)
     , iTrack(aTrack)
     , iTrackDuration(aTrackDuration)
     , iTrackMetaData(aTrackMetaData)
@@ -191,7 +191,7 @@ void SyncGetPositionInfoUpnpOrgAVTransport2::CompleteRequest(IAsync& aAsync)
 class SyncGetDeviceCapabilitiesUpnpOrgAVTransport2 : public SyncProxyAction
 {
 public:
-    SyncGetDeviceCapabilitiesUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService, Brh& aPlayMedia, Brh& aRecMedia, Brh& aRecQualityModes);
+    SyncGetDeviceCapabilitiesUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aPlayMedia, Brh& aRecMedia, Brh& aRecQualityModes);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport2& iService;
@@ -200,8 +200,8 @@ private:
     Brh& iRecQualityModes;
 };
 
-SyncGetDeviceCapabilitiesUpnpOrgAVTransport2::SyncGetDeviceCapabilitiesUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService, Brh& aPlayMedia, Brh& aRecMedia, Brh& aRecQualityModes)
-    : iService(aService)
+SyncGetDeviceCapabilitiesUpnpOrgAVTransport2::SyncGetDeviceCapabilitiesUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aPlayMedia, Brh& aRecMedia, Brh& aRecQualityModes)
+    : iService(aProxy)
     , iPlayMedia(aPlayMedia)
     , iRecMedia(aRecMedia)
     , iRecQualityModes(aRecQualityModes)
@@ -217,7 +217,7 @@ void SyncGetDeviceCapabilitiesUpnpOrgAVTransport2::CompleteRequest(IAsync& aAsyn
 class SyncGetTransportSettingsUpnpOrgAVTransport2 : public SyncProxyAction
 {
 public:
-    SyncGetTransportSettingsUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService, Brh& aPlayMode, Brh& aRecQualityMode);
+    SyncGetTransportSettingsUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aPlayMode, Brh& aRecQualityMode);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport2& iService;
@@ -225,8 +225,8 @@ private:
     Brh& iRecQualityMode;
 };
 
-SyncGetTransportSettingsUpnpOrgAVTransport2::SyncGetTransportSettingsUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService, Brh& aPlayMode, Brh& aRecQualityMode)
-    : iService(aService)
+SyncGetTransportSettingsUpnpOrgAVTransport2::SyncGetTransportSettingsUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aPlayMode, Brh& aRecQualityMode)
+    : iService(aProxy)
     , iPlayMode(aPlayMode)
     , iRecQualityMode(aRecQualityMode)
 {
@@ -241,14 +241,14 @@ void SyncGetTransportSettingsUpnpOrgAVTransport2::CompleteRequest(IAsync& aAsync
 class SyncStopUpnpOrgAVTransport2 : public SyncProxyAction
 {
 public:
-    SyncStopUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService);
+    SyncStopUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
 
-SyncStopUpnpOrgAVTransport2::SyncStopUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService)
-    : iService(aService)
+SyncStopUpnpOrgAVTransport2::SyncStopUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -261,14 +261,14 @@ void SyncStopUpnpOrgAVTransport2::CompleteRequest(IAsync& aAsync)
 class SyncPlayUpnpOrgAVTransport2 : public SyncProxyAction
 {
 public:
-    SyncPlayUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService);
+    SyncPlayUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
 
-SyncPlayUpnpOrgAVTransport2::SyncPlayUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService)
-    : iService(aService)
+SyncPlayUpnpOrgAVTransport2::SyncPlayUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -281,14 +281,14 @@ void SyncPlayUpnpOrgAVTransport2::CompleteRequest(IAsync& aAsync)
 class SyncPauseUpnpOrgAVTransport2 : public SyncProxyAction
 {
 public:
-    SyncPauseUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService);
+    SyncPauseUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
 
-SyncPauseUpnpOrgAVTransport2::SyncPauseUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService)
-    : iService(aService)
+SyncPauseUpnpOrgAVTransport2::SyncPauseUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -301,14 +301,14 @@ void SyncPauseUpnpOrgAVTransport2::CompleteRequest(IAsync& aAsync)
 class SyncRecordUpnpOrgAVTransport2 : public SyncProxyAction
 {
 public:
-    SyncRecordUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService);
+    SyncRecordUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
 
-SyncRecordUpnpOrgAVTransport2::SyncRecordUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService)
-    : iService(aService)
+SyncRecordUpnpOrgAVTransport2::SyncRecordUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -321,14 +321,14 @@ void SyncRecordUpnpOrgAVTransport2::CompleteRequest(IAsync& aAsync)
 class SyncSeekUpnpOrgAVTransport2 : public SyncProxyAction
 {
 public:
-    SyncSeekUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService);
+    SyncSeekUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
 
-SyncSeekUpnpOrgAVTransport2::SyncSeekUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService)
-    : iService(aService)
+SyncSeekUpnpOrgAVTransport2::SyncSeekUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -341,14 +341,14 @@ void SyncSeekUpnpOrgAVTransport2::CompleteRequest(IAsync& aAsync)
 class SyncNextUpnpOrgAVTransport2 : public SyncProxyAction
 {
 public:
-    SyncNextUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService);
+    SyncNextUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
 
-SyncNextUpnpOrgAVTransport2::SyncNextUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService)
-    : iService(aService)
+SyncNextUpnpOrgAVTransport2::SyncNextUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -361,14 +361,14 @@ void SyncNextUpnpOrgAVTransport2::CompleteRequest(IAsync& aAsync)
 class SyncPreviousUpnpOrgAVTransport2 : public SyncProxyAction
 {
 public:
-    SyncPreviousUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService);
+    SyncPreviousUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
 
-SyncPreviousUpnpOrgAVTransport2::SyncPreviousUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService)
-    : iService(aService)
+SyncPreviousUpnpOrgAVTransport2::SyncPreviousUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -381,14 +381,14 @@ void SyncPreviousUpnpOrgAVTransport2::CompleteRequest(IAsync& aAsync)
 class SyncSetPlayModeUpnpOrgAVTransport2 : public SyncProxyAction
 {
 public:
-    SyncSetPlayModeUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService);
+    SyncSetPlayModeUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
 
-SyncSetPlayModeUpnpOrgAVTransport2::SyncSetPlayModeUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService)
-    : iService(aService)
+SyncSetPlayModeUpnpOrgAVTransport2::SyncSetPlayModeUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -401,14 +401,14 @@ void SyncSetPlayModeUpnpOrgAVTransport2::CompleteRequest(IAsync& aAsync)
 class SyncSetRecordQualityModeUpnpOrgAVTransport2 : public SyncProxyAction
 {
 public:
-    SyncSetRecordQualityModeUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService);
+    SyncSetRecordQualityModeUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport2& iService;
 };
 
-SyncSetRecordQualityModeUpnpOrgAVTransport2::SyncSetRecordQualityModeUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService)
-    : iService(aService)
+SyncSetRecordQualityModeUpnpOrgAVTransport2::SyncSetRecordQualityModeUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -421,15 +421,15 @@ void SyncSetRecordQualityModeUpnpOrgAVTransport2::CompleteRequest(IAsync& aAsync
 class SyncGetCurrentTransportActionsUpnpOrgAVTransport2 : public SyncProxyAction
 {
 public:
-    SyncGetCurrentTransportActionsUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService, Brh& aActions);
+    SyncGetCurrentTransportActionsUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aActions);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport2& iService;
     Brh& iActions;
 };
 
-SyncGetCurrentTransportActionsUpnpOrgAVTransport2::SyncGetCurrentTransportActionsUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService, Brh& aActions)
-    : iService(aService)
+SyncGetCurrentTransportActionsUpnpOrgAVTransport2::SyncGetCurrentTransportActionsUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aActions)
+    : iService(aProxy)
     , iActions(aActions)
 {
 }
@@ -443,15 +443,15 @@ void SyncGetCurrentTransportActionsUpnpOrgAVTransport2::CompleteRequest(IAsync& 
 class SyncGetDRMStateUpnpOrgAVTransport2 : public SyncProxyAction
 {
 public:
-    SyncGetDRMStateUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService, Brh& aCurrentDRMState);
+    SyncGetDRMStateUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aCurrentDRMState);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport2& iService;
     Brh& iCurrentDRMState;
 };
 
-SyncGetDRMStateUpnpOrgAVTransport2::SyncGetDRMStateUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService, Brh& aCurrentDRMState)
-    : iService(aService)
+SyncGetDRMStateUpnpOrgAVTransport2::SyncGetDRMStateUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aCurrentDRMState)
+    : iService(aProxy)
     , iCurrentDRMState(aCurrentDRMState)
 {
 }
@@ -465,15 +465,15 @@ void SyncGetDRMStateUpnpOrgAVTransport2::CompleteRequest(IAsync& aAsync)
 class SyncGetStateVariablesUpnpOrgAVTransport2 : public SyncProxyAction
 {
 public:
-    SyncGetStateVariablesUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService, Brh& aStateVariableValuePairs);
+    SyncGetStateVariablesUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aStateVariableValuePairs);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport2& iService;
     Brh& iStateVariableValuePairs;
 };
 
-SyncGetStateVariablesUpnpOrgAVTransport2::SyncGetStateVariablesUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService, Brh& aStateVariableValuePairs)
-    : iService(aService)
+SyncGetStateVariablesUpnpOrgAVTransport2::SyncGetStateVariablesUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aStateVariableValuePairs)
+    : iService(aProxy)
     , iStateVariableValuePairs(aStateVariableValuePairs)
 {
 }
@@ -487,15 +487,15 @@ void SyncGetStateVariablesUpnpOrgAVTransport2::CompleteRequest(IAsync& aAsync)
 class SyncSetStateVariablesUpnpOrgAVTransport2 : public SyncProxyAction
 {
 public:
-    SyncSetStateVariablesUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService, Brh& aStateVariableList);
+    SyncSetStateVariablesUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aStateVariableList);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgAVTransport2& iService;
     Brh& iStateVariableList;
 };
 
-SyncSetStateVariablesUpnpOrgAVTransport2::SyncSetStateVariablesUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aService, Brh& aStateVariableList)
-    : iService(aService)
+SyncSetStateVariablesUpnpOrgAVTransport2::SyncSetStateVariablesUpnpOrgAVTransport2(CpProxyUpnpOrgAVTransport2& aProxy, Brh& aStateVariableList)
+    : iService(aProxy)
     , iStateVariableList(aStateVariableList)
 {
 }
@@ -746,10 +746,10 @@ CpProxyUpnpOrgAVTransport2::CpProxyUpnpOrgAVTransport2(CpDevice& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgAVTransport2::LastChangePropertyChanged);
     iLastChange = new PropertyString("LastChange", functor);
-    iService->AddProperty(iLastChange);
+    AddProperty(iLastChange);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgAVTransport2::DRMStatePropertyChanged);
     iDRMState = new PropertyString("DRMState", functor);
-    iService->AddProperty(iDRMState);
+    AddProperty(iDRMState);
 }
 
 CpProxyUpnpOrgAVTransport2::~CpProxyUpnpOrgAVTransport2()
@@ -793,7 +793,7 @@ void CpProxyUpnpOrgAVTransport2::BeginSetAVTransportURI(TUint aInstanceID, const
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aCurrentURI));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aCurrentURIMetaData));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2::EndSetAVTransportURI(IAsync& aAsync)
@@ -822,7 +822,7 @@ void CpProxyUpnpOrgAVTransport2::BeginSetNextAVTransportURI(TUint aInstanceID, c
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aNextURI));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aNextURIMetaData));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2::EndSetNextAVTransportURI(IAsync& aAsync)
@@ -860,7 +860,7 @@ void CpProxyUpnpOrgAVTransport2::BeginGetMediaInfo(TUint aInstanceID, FunctorAsy
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2::EndGetMediaInfo(IAsync& aAsync, TUint& aNrTracks, Brh& aMediaDuration, Brh& aCurrentURI, Brh& aCurrentURIMetaData, Brh& aNextURI, Brh& aNextURIMetaData, Brh& aPlayMedium, Brh& aRecordMedium, Brh& aWriteStatus)
@@ -909,7 +909,7 @@ void CpProxyUpnpOrgAVTransport2::BeginGetMediaInfo_Ext(TUint aInstanceID, Functo
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2::EndGetMediaInfo_Ext(IAsync& aAsync, Brh& aCurrentType, TUint& aNrTracks, Brh& aMediaDuration, Brh& aCurrentURI, Brh& aCurrentURIMetaData, Brh& aNextURI, Brh& aNextURIMetaData, Brh& aPlayMedium, Brh& aRecordMedium, Brh& aWriteStatus)
@@ -952,7 +952,7 @@ void CpProxyUpnpOrgAVTransport2::BeginGetTransportInfo(TUint aInstanceID, Functo
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2::EndGetTransportInfo(IAsync& aAsync, Brh& aCurrentTransportState, Brh& aCurrentTransportStatus, Brh& aCurrentSpeed)
@@ -993,7 +993,7 @@ void CpProxyUpnpOrgAVTransport2::BeginGetPositionInfo(TUint aInstanceID, Functor
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2::EndGetPositionInfo(IAsync& aAsync, TUint& aTrack, Brh& aTrackDuration, Brh& aTrackMetaData, Brh& aTrackURI, Brh& aRelTime, Brh& aAbsTime, TInt& aRelCount, TInt& aAbsCount)
@@ -1034,7 +1034,7 @@ void CpProxyUpnpOrgAVTransport2::BeginGetDeviceCapabilities(TUint aInstanceID, F
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2::EndGetDeviceCapabilities(IAsync& aAsync, Brh& aPlayMedia, Brh& aRecMedia, Brh& aRecQualityModes)
@@ -1069,7 +1069,7 @@ void CpProxyUpnpOrgAVTransport2::BeginGetTransportSettings(TUint aInstanceID, Fu
     const Action::VectorParameters& outParams = iActionGetTransportSettings->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2::EndGetTransportSettings(IAsync& aAsync, Brh& aPlayMode, Brh& aRecQualityMode)
@@ -1099,7 +1099,7 @@ void CpProxyUpnpOrgAVTransport2::BeginStop(TUint aInstanceID, FunctorAsync& aFun
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionStop->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2::EndStop(IAsync& aAsync)
@@ -1127,7 +1127,7 @@ void CpProxyUpnpOrgAVTransport2::BeginPlay(TUint aInstanceID, const Brx& aSpeed,
     const Action::VectorParameters& inParams = iActionPlay->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aSpeed));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2::EndPlay(IAsync& aAsync)
@@ -1154,7 +1154,7 @@ void CpProxyUpnpOrgAVTransport2::BeginPause(TUint aInstanceID, FunctorAsync& aFu
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionPause->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2::EndPause(IAsync& aAsync)
@@ -1181,7 +1181,7 @@ void CpProxyUpnpOrgAVTransport2::BeginRecord(TUint aInstanceID, FunctorAsync& aF
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionRecord->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2::EndRecord(IAsync& aAsync)
@@ -1210,7 +1210,7 @@ void CpProxyUpnpOrgAVTransport2::BeginSeek(TUint aInstanceID, const Brx& aUnit, 
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aUnit));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aTarget));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2::EndSeek(IAsync& aAsync)
@@ -1237,7 +1237,7 @@ void CpProxyUpnpOrgAVTransport2::BeginNext(TUint aInstanceID, FunctorAsync& aFun
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionNext->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2::EndNext(IAsync& aAsync)
@@ -1264,7 +1264,7 @@ void CpProxyUpnpOrgAVTransport2::BeginPrevious(TUint aInstanceID, FunctorAsync& 
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionPrevious->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2::EndPrevious(IAsync& aAsync)
@@ -1292,7 +1292,7 @@ void CpProxyUpnpOrgAVTransport2::BeginSetPlayMode(TUint aInstanceID, const Brx& 
     const Action::VectorParameters& inParams = iActionSetPlayMode->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aNewPlayMode));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2::EndSetPlayMode(IAsync& aAsync)
@@ -1320,7 +1320,7 @@ void CpProxyUpnpOrgAVTransport2::BeginSetRecordQualityMode(TUint aInstanceID, co
     const Action::VectorParameters& inParams = iActionSetRecordQualityMode->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aInstanceID));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aNewRecordQualityMode));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2::EndSetRecordQualityMode(IAsync& aAsync)
@@ -1350,7 +1350,7 @@ void CpProxyUpnpOrgAVTransport2::BeginGetCurrentTransportActions(TUint aInstance
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetCurrentTransportActions->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2::EndGetCurrentTransportActions(IAsync& aAsync, Brh& aActions)
@@ -1382,7 +1382,7 @@ void CpProxyUpnpOrgAVTransport2::BeginGetDRMState(TUint aInstanceID, FunctorAsyn
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetDRMState->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2::EndGetDRMState(IAsync& aAsync, Brh& aCurrentDRMState)
@@ -1415,7 +1415,7 @@ void CpProxyUpnpOrgAVTransport2::BeginGetStateVariables(TUint aInstanceID, const
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetStateVariables->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2::EndGetStateVariables(IAsync& aAsync, Brh& aStateVariableValuePairs)
@@ -1451,7 +1451,7 @@ void CpProxyUpnpOrgAVTransport2::BeginSetStateVariables(TUint aInstanceID, const
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionSetStateVariables->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgAVTransport2::EndSetStateVariables(IAsync& aAsync, Brh& aStateVariableList)
@@ -1483,14 +1483,18 @@ void CpProxyUpnpOrgAVTransport2::SetPropertyDRMStateChanged(Functor& aFunctor)
 
 void CpProxyUpnpOrgAVTransport2::PropertyLastChange(Brhz& aLastChange) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aLastChange.Set(iLastChange->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyUpnpOrgAVTransport2::PropertyDRMState(Brhz& aDRMState) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDRMState.Set(iDRMState->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyUpnpOrgAVTransport2::LastChangePropertyChanged()

@@ -7,6 +7,18 @@ using namespace Zapp;
 
 // CpiDevice
 
+CpiDevice::CpiDevice(const Brx& aUdn, ICpiProtocol& aProtocol, ICpiDeviceObserver& aObserver, void* aOwnerData)
+    : iUdn(aUdn)
+    , iLock("CDVM")
+    , iProtocol(aProtocol)
+    , iObserver(aObserver)
+    , iOwnerData(aOwnerData)
+    , iRefCount(1)
+    , iReady(false)
+    , iExpired(false)
+{
+}
+
 const Brx& CpiDevice::Udn() const
 {
     return iUdn;
@@ -27,6 +39,11 @@ TBool CpiDevice::operator!=(const CpiDevice& aDevice) const
     return (&aDevice != this);
 }
 
+void* CpiDevice::OwnerData()
+{
+    return iOwnerData;
+}
+
 void CpiDevice::AddRef()
 {
     iLock.Wait();
@@ -41,8 +58,34 @@ void CpiDevice::RemoveRef()
     dead = (--iRefCount <= 0);
     iLock.Signal();
     if (dead) {
+        iObserver.Release();
         delete this;
     }
+}
+
+TBool CpiDevice::GetAttribute(const char* aKey, Brh& aValue) const
+{
+    return iProtocol.GetAttribute(aKey, aValue);
+}
+
+void CpiDevice::InvokeAction(Invocation& aInvocation)
+{
+    iProtocol.InvokeAction(aInvocation);
+}
+
+TUint CpiDevice::Subscribe(CpiSubscription& aSubscription, const Uri& aSubscriber)
+{
+    return iProtocol.Subscribe(aSubscription, aSubscriber);
+}
+
+TUint CpiDevice::Renew(CpiSubscription& aSubscription)
+{
+    return iProtocol.Renew(aSubscription);
+}
+
+void CpiDevice::Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid)
+{
+    iProtocol.Unsubscribe(aSubscription, aSid);
 }
 
 void CpiDevice::SetReady()
@@ -63,15 +106,6 @@ void CpiDevice::SetExpired(TBool aExpired)
 TBool CpiDevice::HasExpired() const
 {
     return iExpired;
-}
-
-CpiDevice::CpiDevice(const Brx& aUdn)
-    : iUdn(aUdn)
-    , iLock("CDVM")
-    , iRefCount(1)
-    , iReady(false)
-    , iExpired(false)
-{
 }
 
 CpiDevice::~CpiDevice()

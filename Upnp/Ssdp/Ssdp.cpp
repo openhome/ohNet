@@ -783,51 +783,6 @@ void SsdpHeaderExt::Process(const Brx& aValue)
     SetReceived();
 }
 
-// SsdpSocketStream
-
-SsdpSocketStream::SsdpSocketStream(const Endpoint& aMulticast, TUint aTtl, TIpAddress aInterface)
-    : SocketUdpClient(aMulticast, aTtl, aInterface)
-{
-    iReader = new UdpControllerReader(*this);
-    iWriter = new UdpControllerWriter(*this);
-}
-
-SsdpSocketStream::~SsdpSocketStream()
-{
-    delete iReader;
-    delete iWriter;
-}
-
-void SsdpSocketStream::Write(TByte aValue)
-{
-    iWriter->Write(aValue);
-}
-
-void SsdpSocketStream::Write(const Brx& aBuffer)
-{
-    iWriter->Write(aBuffer);
-}
-
-void SsdpSocketStream::WriteFlush()
-{
-    iWriter->WriteFlush();
-}
-
-void SsdpSocketStream::Read(Bwx& aBuffer)
-{
-    iReader->Read(aBuffer);
-}
-
-void SsdpSocketStream::ReadFlush()
-{
-    iReader->ReadFlush();
-}
-
-void SsdpSocketStream::ReadInterrupt()
-{
-    iReader->ReadInterrupt();
-}
-
 // SsdpWriterMsearchRequest
 
 SsdpWriterMsearchRequest::SsdpWriterMsearchRequest(IWriter& aWriter)

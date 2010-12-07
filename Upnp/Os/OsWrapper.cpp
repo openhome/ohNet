@@ -1,7 +1,7 @@
 #include <ZappTypes.h>
 #include <Exception.h>
+#include <OsWrapper.h>
 #include <Os.h>
-#include <C/Os.h>
 #include <Network.h>
 #include <Debug.h>
 
@@ -24,14 +24,20 @@ THandle Os::NetworkCreate(ESocketType aSocketType)
     return handle;
 }
 
-TInt Os::NetworkBind(THandle aHandle, Endpoint& aEndpoint)
+TInt Os::NetworkBind(THandle aHandle, const Endpoint& aEndpoint)
 {
-    TUint16 port = aEndpoint.Port();
-	TInt ret = OsNetworkBind(aHandle, aEndpoint.Address(), &port);
-	if (ret == 0) {
-	    aEndpoint.SetPort(port);
-	}
+	TInt ret = OsNetworkBind(aHandle, aEndpoint.Address(), aEndpoint.Port());
 	return ret;
+}
+
+TInt Os::NetworkPort(THandle aHandle, TUint& aPort)
+{
+    TUint port;
+    TInt ret = OsNetworkPort(aHandle, &port);
+    if (ret == 0) {
+        aPort = port;
+    }
+    return ret;
 }
 
 TUint32 Zapp::Os::NetworkGetHostByName(const Brx& aAddress)
@@ -79,6 +85,15 @@ void Zapp::Os::NetworkSocketSetSendBufBytes(THandle aHandle, TUint aBytes)
     }
 }
 
+void Zapp::Os::NetworkSocketSetRecvBufBytes(THandle aHandle, TUint aBytes)
+{
+    int32_t err = OsNetworkSocketSetRecvBufBytes(aHandle, aBytes);
+    if(err != 0) {
+        LOG2F(kNetwork, kError, "Os::NetworkSocketSetRecvBufBytes H = %d, RETURN VALUE = %d\n", aHandle, err);
+        THROW(NetworkError);
+    }
+}
+
 void Zapp::Os::NetworkSocketSetReceiveTimeout(THandle aHandle, TUint aMilliSeconds)
 {
     int32_t err = OsNetworkSocketSetReceiveTimeout(aHandle, aMilliSeconds);
@@ -115,28 +130,28 @@ void Zapp::Os::NetworkSocketSetMulticastTtl(THandle aHandle, TUint8 aTtl)
     }
 }
 
-void Zapp::Os::NetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aAddress, TIpAddress aInterface)
+void Zapp::Os::NetworkSocketMulticastAddMembership(THandle aHandle, TIpAddress aInterface, Endpoint& aEndpoint)
 {
-    int32_t err = OsNetworkSocketMulticastAddMembership(aHandle, aAddress, aInterface);
+    int32_t err = OsNetworkSocketMulticastAddMembership(aHandle, aInterface, aEndpoint.Address());
     if(err != 0) {
         LOG2F(kNetwork, kError, "Os::OsNetworkSocketMulticastAddMembership H = %d, RETURN VALUE = %d\n", aHandle, err);
         THROW(NetworkError);
     }
 }
 
-void Zapp::Os::NetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aAddress, TIpAddress aInterface)
+void Zapp::Os::NetworkSocketMulticastDropMembership(THandle aHandle, TIpAddress aInterface, Endpoint& aEndpoint)
 {
-    int32_t err = OsNetworkSocketMulticastDropMembership(aHandle, aAddress, aInterface);
+    int32_t err = OsNetworkSocketMulticastDropMembership(aHandle, aInterface, aEndpoint.Address());
     if(err != 0) {
         LOG2F(kNetwork, kError, "Os::OsNetworkSocketMulticastDropMembership H = %d, RETURN VALUE = %d\n", aHandle, err);
         THROW(NetworkError);
     }
 }
 
-std::vector<NetworkInterface*>* Zapp::Os::NetworkListInterfaces()
+std::vector<NetworkInterface*>* Zapp::Os::NetworkListInterfaces(TBool aUseLoopback)
 {
     OsNetworkInterface* cIfs = NULL;
-    int32_t err = OsNetworkListInterfaces(&cIfs);
+    int32_t err = OsNetworkListInterfaces(&cIfs, (aUseLoopback? 1 : 0));
     if(err != 0) {
         LOG2F(kNetwork, kError, "Os::NetworkListInterfaces RETURN VALUE = %d\n", err);
         THROW(NetworkError);

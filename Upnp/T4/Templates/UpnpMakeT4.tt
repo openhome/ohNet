@@ -1,19 +1,19 @@
-<#@ assembly name="Build/Tools/UpnpServiceMake.dll" #>
+﻿<#@ assembly name="UpnpServiceMake.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="Linn.Xml.UpnpServiceXml" #>
+<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
 	Document u = new Document(TemplateArgument("xml"));
 #>
 # Auto-generated file.  DO NOT EDIT DIRECTLY
 # Update CpUpnpMakeT4.tt and run 
-#    [n]make -s -f T4[Linux|Windows].mak UpnpServiceMakeGen
+#    make generate-makefiles
 # to apply any updates
 
 GenAll: AllCp AllDv
 
-AllCp: CpApiCppCore CpSrcCppCore CpApiCppStd CpSrcCppStd CpApiC CpSrcC CpCs
+AllCp: CpApiCppCore CpSrcCppCore CpApiCppStd CpSrcCppStd CpApiC CpSrcC CpCs CpJs
 
 AllDv: DvApiCppCore DvSrcCppCore DvApiCppStd DvSrcCppStd DvApiC DvSrcC DvCs
 
@@ -72,6 +72,14 @@ CpCs:  <# foreach (Service s in u.iServices) { #> $(proxyCs)Cp<#=FilePrefix(s)#>
 <#  { #>
 $(proxyCs)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs : $(tt) T4/Templates/CpUpnpCs.tt <#=ServiceXmlPath(s)#>
 	$(t4) -o $(proxyCs)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cs T4/Templates/CpUpnpCs.tt -a "xml:<#=ServiceXmlPath(s)#>" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
+<#  } #>
+
+CpJs:  <# foreach (Service s in u.iServices) { #> $(proxyJs)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.js<# } #>
+
+<#  foreach (Service s in u.iServices) #>
+<#  { #>
+$(proxyJs)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.js : $(tt) T4/Templates/CpUpnpJs.tt <#=ServiceXmlPath(s)#>
+	$(t4) -o $(proxyJs)Cp<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.js T4/Templates/CpUpnpJs.tt -a "xml:<#=ServiceXmlPath(s)#>" -a domain:<#=s.iDomain#> -a type:<#=s.iType#> -a version:<#=s.iVersion#>
 <#  } #>
 
 DvApiCppCore :  <# foreach (Service s in u.iServices) { #> $(deviceApiCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h<# } #>

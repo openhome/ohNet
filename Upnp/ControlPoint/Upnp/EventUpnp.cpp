@@ -7,6 +7,9 @@
 #include <Stack.h>
 #include <Debug.h>
 #include <XmlParser.h>
+#include <CpProxy.h>
+#include <ProtocolUpnp.h>
+#include <Parser.h>
 
 using namespace Zapp;
 
@@ -58,7 +61,7 @@ void EventSessionUpnp::LogError(const TChar* /*aErr*/)
 
 void EventSessionUpnp::Run()
 {
-    Subscription* subscription = NULL;
+    CpiSubscription* subscription = NULL;
     iErrorStatus = &HttpStatus::kOk;
     iReaderRequest->Flush();
     iReaderRequest->Read();
@@ -77,14 +80,14 @@ void EventSessionUpnp::Run()
             Error(HttpStatus::kPreconditionFailed);
         }
 
-        subscription = SubscriptionManager::FindSubscription(iHeaderSid.Sid());
+        subscription = CpiSubscriptionManager::FindSubscription(iHeaderSid.Sid());
         if (subscription == NULL) {
             /* the UPnP spec contains a potential race condition where the first NOTIFY
                message can be processed ahead of the SUBSCRIBE reply which provides
                the sid.  Wait until any in-progress subscriptions complete and try
                again in case that's what has happened here */
-            SubscriptionManager::WaitForPendingAdds();
-            subscription = SubscriptionManager::FindSubscription(iHeaderSid.Sid());
+            CpiSubscriptionManager::WaitForPendingAdds();
+            subscription = CpiSubscriptionManager::FindSubscription(iHeaderSid.Sid());
             if (subscription == NULL) {
                 LOG2(kEvent, kError, "notification for unexpected device - ")
                 LOG2(kEvent, kError, iHeaderSid.Sid());
@@ -133,7 +136,7 @@ void EventSessionUpnp::Run()
             LOG(kEvent, "EventSessionUpnp::Run, sid - ");
             LOG(kEvent, iHeaderSid.Sid());
             LOG(kEvent, " seq - %u\n", iHeaderSeq.Seq());
-            subscription->ProcessNotification(entity);
+            ProcessNotification(*subscription, entity);
         }
     }
     catch(HttpError) {
@@ -161,6 +164,43 @@ void EventSessionUpnp::Run()
     }    
 }
 
+void EventSessionUpnp::ProcessNotification(IEventProcessor& aEventProcessor, const Brx& aEntity)
+{
+    aEventProcessor.EventUpdateStart();
+    OutputProcessorUpnp outputProcessor;
+    Brn propertySet = XmlParserBasic::Find("propertyset", aEntity);
+    Brn prop;
+    Brn remaining;
+    try {
+        for (;;) {
+            prop.Set(XmlParserBasic::Find("property", propertySet, remaining));
+            prop.Set(Ascii::Trim(prop));
+            if (prop.Bytes() < 8 || prop[0] != '<' || prop[1] == '/') {
+                THROW(XmlError);
+            }
+            Parser parser(prop);
+            (void)parser.Next('<');
+            Brn tagName = parser.Next('>');
+            Brn val = parser.Next('<');
+            Brn closingTag = parser.Next('/');
+            closingTag.Set(parser.Next('>'));
+            if (tagName != closingTag) {
+                THROW(XmlError);
+            }
+
+            try {
+                aEventProcessor.EventUpdate(tagName, val, outputProcessor);
+            }
+            catch(AsciiError&) {
+                THROW(XmlError);
+            }
+
+            propertySet.Set(remaining);
+        }
+    }
+    catch(XmlError&) {}
+    aEventProcessor.EventUpdateEnd();
+}
 
 // EventServerUpnp
 

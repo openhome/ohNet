@@ -2,58 +2,58 @@
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkProxyManager1Cpp::SetPropertyKontrolProductConnected(const std::string& aValue)
+bool DvProviderLinnCoUkProxyManager1Cpp::SetPropertyKontrolProductConnected(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyKontrolProductConnected, buf);
+    return SetPropertyString(*iPropertyKontrolProductConnected, buf);
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::GetPropertyKontrolProductConnected(std::string& aValue)
+void DvProviderLinnCoUkProxyManager1Cpp::GetPropertyKontrolProductConnected(std::string& aValue)
 {
     const Brx& val = iPropertyKontrolProductConnected->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::SetPropertyKontrolProductComPort(uint32_t aValue)
+bool DvProviderLinnCoUkProxyManager1Cpp::SetPropertyKontrolProductComPort(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyKontrolProductComPort, aValue);
+    return SetPropertyUint(*iPropertyKontrolProductComPort, aValue);
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::GetPropertyKontrolProductComPort(uint32_t& aValue)
+void DvProviderLinnCoUkProxyManager1Cpp::GetPropertyKontrolProductComPort(uint32_t& aValue)
 {
     aValue = iPropertyKontrolProductComPort->Value();
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::SetPropertyDiscPlayerConnected(const std::string& aValue)
+bool DvProviderLinnCoUkProxyManager1Cpp::SetPropertyDiscPlayerConnected(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyDiscPlayerConnected, buf);
+    return SetPropertyString(*iPropertyDiscPlayerConnected, buf);
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::GetPropertyDiscPlayerConnected(std::string& aValue)
+void DvProviderLinnCoUkProxyManager1Cpp::GetPropertyDiscPlayerConnected(std::string& aValue)
 {
     const Brx& val = iPropertyDiscPlayerConnected->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::SetPropertyDiscPlayerComPort(uint32_t aValue)
+bool DvProviderLinnCoUkProxyManager1Cpp::SetPropertyDiscPlayerComPort(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyDiscPlayerComPort, aValue);
+    return SetPropertyUint(*iPropertyDiscPlayerComPort, aValue);
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::GetPropertyDiscPlayerComPort(uint32_t& aValue)
+void DvProviderLinnCoUkProxyManager1Cpp::GetPropertyDiscPlayerComPort(uint32_t& aValue)
 {
     aValue = iPropertyDiscPlayerComPort->Value();
 }
 
-DvServiceLinnCoUkProxyManager1Cpp::DvServiceLinnCoUkProxyManager1Cpp(DvDeviceStd& aDevice)
-    : DvService(aDevice.Device(), "linn.co.uk", "ProxyManager", 1)
+DvProviderLinnCoUkProxyManager1Cpp::DvProviderLinnCoUkProxyManager1Cpp(DvDeviceStd& aDevice)
+    : DvProvider(aDevice.Device(), "linn.co.uk", "ProxyManager", 1)
 {
-    Functor empty;
+    
     TChar** allowedValues;
     TUint index;
     index = 0;
@@ -69,10 +69,10 @@ DvServiceLinnCoUkProxyManager1Cpp::DvServiceLinnCoUkProxyManager1Cpp(DvDeviceStd
     allowedValues[index++] = (TChar*)"Classik Movie";
     allowedValues[index++] = (TChar*)"Classik Music";
     allowedValues[index++] = (TChar*)"Roomamp 2";
-    iPropertyKontrolProductConnected = new PropertyString(new ParameterString("KontrolProductConnected", allowedValues, 11), empty);
+    iPropertyKontrolProductConnected = new PropertyString(new ParameterString("KontrolProductConnected", allowedValues, 11));
     delete[] allowedValues;
     iService->AddProperty(iPropertyKontrolProductConnected); // passes ownership
-    iPropertyKontrolProductComPort = new PropertyUint(new ParameterUint("KontrolProductComPort"), empty);
+    iPropertyKontrolProductComPort = new PropertyUint(new ParameterUint("KontrolProductComPort"));
     iService->AddProperty(iPropertyKontrolProductComPort); // passes ownership
     index = 0;
     allowedValues = new TChar*[9];
@@ -85,94 +85,94 @@ DvServiceLinnCoUkProxyManager1Cpp::DvServiceLinnCoUkProxyManager1Cpp(DvDeviceStd
     allowedValues[index++] = (TChar*)"Unidisk SC";
     allowedValues[index++] = (TChar*)"Classik Movie";
     allowedValues[index++] = (TChar*)"Classik Music";
-    iPropertyDiscPlayerConnected = new PropertyString(new ParameterString("DiscPlayerConnected", allowedValues, 9), empty);
+    iPropertyDiscPlayerConnected = new PropertyString(new ParameterString("DiscPlayerConnected", allowedValues, 9));
     delete[] allowedValues;
     iService->AddProperty(iPropertyDiscPlayerConnected); // passes ownership
-    iPropertyDiscPlayerComPort = new PropertyUint(new ParameterUint("DiscPlayerComPort"), empty);
+    iPropertyDiscPlayerComPort = new PropertyUint(new ParameterUint("DiscPlayerComPort"));
     iService->AddProperty(iPropertyDiscPlayerComPort); // passes ownership
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::EnableActionKontrolProductConnected()
+void DvProviderLinnCoUkProxyManager1Cpp::EnableActionKontrolProductConnected()
 {
     Zapp::Action* action = new Zapp::Action("KontrolProductConnected");
     action->AddOutputParameter(new ParameterRelated("aConnected", *iPropertyKontrolProductConnected));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProxyManager1Cpp::DoKontrolProductConnected);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProxyManager1Cpp::DoKontrolProductConnected);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::EnableActionSetKontrolProductConnected()
+void DvProviderLinnCoUkProxyManager1Cpp::EnableActionSetKontrolProductConnected()
 {
     Zapp::Action* action = new Zapp::Action("SetKontrolProductConnected");
     action->AddInputParameter(new ParameterRelated("aConnected", *iPropertyKontrolProductConnected));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProxyManager1Cpp::DoSetKontrolProductConnected);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProxyManager1Cpp::DoSetKontrolProductConnected);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::EnableActionKontrolProductComPort()
+void DvProviderLinnCoUkProxyManager1Cpp::EnableActionKontrolProductComPort()
 {
     Zapp::Action* action = new Zapp::Action("KontrolProductComPort");
     action->AddOutputParameter(new ParameterRelated("aPort", *iPropertyKontrolProductComPort));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProxyManager1Cpp::DoKontrolProductComPort);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProxyManager1Cpp::DoKontrolProductComPort);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::EnableActionSetKontrolProductComPort()
+void DvProviderLinnCoUkProxyManager1Cpp::EnableActionSetKontrolProductComPort()
 {
     Zapp::Action* action = new Zapp::Action("SetKontrolProductComPort");
     action->AddInputParameter(new ParameterRelated("aConnected", *iPropertyKontrolProductComPort));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProxyManager1Cpp::DoSetKontrolProductComPort);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProxyManager1Cpp::DoSetKontrolProductComPort);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::EnableActionDiscPlayerConnected()
+void DvProviderLinnCoUkProxyManager1Cpp::EnableActionDiscPlayerConnected()
 {
     Zapp::Action* action = new Zapp::Action("DiscPlayerConnected");
     action->AddOutputParameter(new ParameterRelated("aConnected", *iPropertyDiscPlayerConnected));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProxyManager1Cpp::DoDiscPlayerConnected);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProxyManager1Cpp::DoDiscPlayerConnected);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::EnableActionSetDiscPlayerConnected()
+void DvProviderLinnCoUkProxyManager1Cpp::EnableActionSetDiscPlayerConnected()
 {
     Zapp::Action* action = new Zapp::Action("SetDiscPlayerConnected");
     action->AddInputParameter(new ParameterRelated("aConnected", *iPropertyDiscPlayerConnected));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProxyManager1Cpp::DoSetDiscPlayerConnected);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProxyManager1Cpp::DoSetDiscPlayerConnected);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::EnableActionDiscPlayerComPort()
+void DvProviderLinnCoUkProxyManager1Cpp::EnableActionDiscPlayerComPort()
 {
     Zapp::Action* action = new Zapp::Action("DiscPlayerComPort");
     action->AddOutputParameter(new ParameterRelated("aPort", *iPropertyDiscPlayerComPort));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProxyManager1Cpp::DoDiscPlayerComPort);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProxyManager1Cpp::DoDiscPlayerComPort);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::EnableActionSetDiscPlayerComPort()
+void DvProviderLinnCoUkProxyManager1Cpp::EnableActionSetDiscPlayerComPort()
 {
     Zapp::Action* action = new Zapp::Action("SetDiscPlayerComPort");
     action->AddInputParameter(new ParameterRelated("aConnected", *iPropertyDiscPlayerComPort));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProxyManager1Cpp::DoSetDiscPlayerComPort);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProxyManager1Cpp::DoSetDiscPlayerComPort);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::EnableActionTestKontrolProductConnection()
+void DvProviderLinnCoUkProxyManager1Cpp::EnableActionTestKontrolProductConnection()
 {
     Zapp::Action* action = new Zapp::Action("TestKontrolProductConnection");
     action->AddOutputParameter(new ParameterBool("aResult"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProxyManager1Cpp::DoTestKontrolProductConnection);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProxyManager1Cpp::DoTestKontrolProductConnection);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::EnableActionTestDiscPlayerConnection()
+void DvProviderLinnCoUkProxyManager1Cpp::EnableActionTestDiscPlayerConnection()
 {
     Zapp::Action* action = new Zapp::Action("TestDiscPlayerConnection");
     action->AddOutputParameter(new ParameterBool("aResult"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProxyManager1Cpp::DoTestDiscPlayerConnection);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProxyManager1Cpp::DoTestDiscPlayerConnection);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::DoKontrolProductConnected(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProxyManager1Cpp::DoKontrolProductConnected(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -186,7 +186,7 @@ void DvServiceLinnCoUkProxyManager1Cpp::DoKontrolProductConnected(IDvInvocation&
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::DoSetKontrolProductConnected(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProxyManager1Cpp::DoSetKontrolProductConnected(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_aConnected;
@@ -198,7 +198,7 @@ void DvServiceLinnCoUkProxyManager1Cpp::DoSetKontrolProductConnected(IDvInvocati
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::DoKontrolProductComPort(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProxyManager1Cpp::DoKontrolProductComPort(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -210,7 +210,7 @@ void DvServiceLinnCoUkProxyManager1Cpp::DoKontrolProductComPort(IDvInvocation& a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::DoSetKontrolProductComPort(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProxyManager1Cpp::DoSetKontrolProductComPort(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aConnected = aInvocation.InvocationReadUint("aConnected");
@@ -220,7 +220,7 @@ void DvServiceLinnCoUkProxyManager1Cpp::DoSetKontrolProductComPort(IDvInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::DoDiscPlayerConnected(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProxyManager1Cpp::DoDiscPlayerConnected(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -234,7 +234,7 @@ void DvServiceLinnCoUkProxyManager1Cpp::DoDiscPlayerConnected(IDvInvocation& aIn
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::DoSetDiscPlayerConnected(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProxyManager1Cpp::DoSetDiscPlayerConnected(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_aConnected;
@@ -246,7 +246,7 @@ void DvServiceLinnCoUkProxyManager1Cpp::DoSetDiscPlayerConnected(IDvInvocation& 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::DoDiscPlayerComPort(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProxyManager1Cpp::DoDiscPlayerComPort(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -258,7 +258,7 @@ void DvServiceLinnCoUkProxyManager1Cpp::DoDiscPlayerComPort(IDvInvocation& aInvo
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::DoSetDiscPlayerComPort(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProxyManager1Cpp::DoSetDiscPlayerComPort(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t aConnected = aInvocation.InvocationReadUint("aConnected");
@@ -268,7 +268,7 @@ void DvServiceLinnCoUkProxyManager1Cpp::DoSetDiscPlayerComPort(IDvInvocation& aI
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::DoTestKontrolProductConnection(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProxyManager1Cpp::DoTestKontrolProductConnection(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -280,7 +280,7 @@ void DvServiceLinnCoUkProxyManager1Cpp::DoTestKontrolProductConnection(IDvInvoca
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::DoTestDiscPlayerConnection(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProxyManager1Cpp::DoTestDiscPlayerConnection(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -292,52 +292,52 @@ void DvServiceLinnCoUkProxyManager1Cpp::DoTestDiscPlayerConnection(IDvInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::KontrolProductConnected(uint32_t /*aVersion*/, std::string& /*aaConnected*/)
+void DvProviderLinnCoUkProxyManager1Cpp::KontrolProductConnected(uint32_t /*aVersion*/, std::string& /*aaConnected*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::SetKontrolProductConnected(uint32_t /*aVersion*/, const std::string& /*aaConnected*/)
+void DvProviderLinnCoUkProxyManager1Cpp::SetKontrolProductConnected(uint32_t /*aVersion*/, const std::string& /*aaConnected*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::KontrolProductComPort(uint32_t /*aVersion*/, uint32_t& /*aaPort*/)
+void DvProviderLinnCoUkProxyManager1Cpp::KontrolProductComPort(uint32_t /*aVersion*/, uint32_t& /*aaPort*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::SetKontrolProductComPort(uint32_t /*aVersion*/, uint32_t /*aaConnected*/)
+void DvProviderLinnCoUkProxyManager1Cpp::SetKontrolProductComPort(uint32_t /*aVersion*/, uint32_t /*aaConnected*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::DiscPlayerConnected(uint32_t /*aVersion*/, std::string& /*aaConnected*/)
+void DvProviderLinnCoUkProxyManager1Cpp::DiscPlayerConnected(uint32_t /*aVersion*/, std::string& /*aaConnected*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::SetDiscPlayerConnected(uint32_t /*aVersion*/, const std::string& /*aaConnected*/)
+void DvProviderLinnCoUkProxyManager1Cpp::SetDiscPlayerConnected(uint32_t /*aVersion*/, const std::string& /*aaConnected*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::DiscPlayerComPort(uint32_t /*aVersion*/, uint32_t& /*aaPort*/)
+void DvProviderLinnCoUkProxyManager1Cpp::DiscPlayerComPort(uint32_t /*aVersion*/, uint32_t& /*aaPort*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::SetDiscPlayerComPort(uint32_t /*aVersion*/, uint32_t /*aaConnected*/)
+void DvProviderLinnCoUkProxyManager1Cpp::SetDiscPlayerComPort(uint32_t /*aVersion*/, uint32_t /*aaConnected*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::TestKontrolProductConnection(uint32_t /*aVersion*/, bool& /*aaResult*/)
+void DvProviderLinnCoUkProxyManager1Cpp::TestKontrolProductConnection(uint32_t /*aVersion*/, bool& /*aaResult*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProxyManager1Cpp::TestDiscPlayerConnection(uint32_t /*aVersion*/, bool& /*aaResult*/)
+void DvProviderLinnCoUkProxyManager1Cpp::TestDiscPlayerConnection(uint32_t /*aVersion*/, bool& /*aaResult*/)
 {
     ASSERTS();
 }

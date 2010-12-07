@@ -182,6 +182,11 @@ void InitialisationParams::SetFreeExternalCallback(ZappCallbackFreeExternal aCal
     iFreeExternal = aCallback;
 }
 
+void InitialisationParams::SetUseLoopbackNetworkInterface()
+{
+    iUseLoopbackNetworkInterface = true;
+}
+
 void InitialisationParams::SetDvMaxUpdateTime(uint32_t aSecs)
 {
 	iDvMaxUpdateTimeSecs = aSecs;
@@ -192,6 +197,13 @@ void InitialisationParams::SetDvNumPublisherThreads(uint32_t aNumThreads)
     ASSERT(aNumThreads > 0 && aNumThreads < 100);
     iDvNumPublisherThreads = aNumThreads;
 }
+
+void InitialisationParams::SetDvNumWebSocketThreads(uint32_t aNumThreads)
+{
+    ASSERT(aNumThreads >= 0 && aNumThreads < 100);
+    iDvNumWebSocketThreads = aNumThreads;
+}
+
 FunctorMsg& InitialisationParams::LogOutput()
 {
     return iLogOutput;
@@ -277,6 +289,11 @@ ZappCallbackFreeExternal InitialisationParams::FreeExternal() const
     return iFreeExternal;
 }
 
+bool InitialisationParams::UseLoopbackNetworkInterface() const
+{
+    return iUseLoopbackNetworkInterface;
+}
+
 uint32_t InitialisationParams::DvMaxUpdateTimeSecs() const
 {
 	return iDvMaxUpdateTimeSecs;
@@ -285,6 +302,11 @@ uint32_t InitialisationParams::DvMaxUpdateTimeSecs() const
 uint32_t InitialisationParams::DvNumPublisherThreads() const
 {
 	return iDvNumPublisherThreads;
+}
+
+uint32_t InitialisationParams::DvNumWebSocketThreads() const
+{
+	return iDvNumWebSocketThreads;
 }
 
 InitialisationParams::InitialisationParams()
@@ -299,8 +321,10 @@ InitialisationParams::InitialisationParams()
     , iNumSubscriberThreads(4)
     , iPendingSubscriptionTimeoutMs(2000)
     , iFreeExternal(NULL)
+    , iUseLoopbackNetworkInterface(false)
 	, iDvMaxUpdateTimeSecs(1800)
 	, iDvNumPublisherThreads(4)
+    , iDvNumWebSocketThreads(0)
 {
     iDefaultLogger = new DefaultLogger;
     FunctorMsg functor = MakeFunctorMsg(*iDefaultLogger, &Zapp::DefaultLogger::Log);

@@ -3,58 +3,106 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Zapp;
 
-namespace Zapp
+namespace Zapp.Device.Providers
 {
-    public class DvServiceLinnCoUkMediaTime1 : IDisposable
+    public interface IDvProviderLinnCoUkMediaTime1 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the Seconds property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertySeconds(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the Seconds property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertySeconds(out uint aValue);
+        
+    }
+    /// <summary>
+    /// Provider for the linn.co.uk:MediaTime:1 UPnP service
+    /// </summary>
+    public class DvProviderLinnCoUkMediaTime1 : DvProvider, IDisposable, IDvProviderLinnCoUkMediaTime1
     {
         [DllImport("DvLinnCoUkMediaTime1")]
-        static extern IntPtr DvServiceLinnCoUkMediaTime1Create(IntPtr aDeviceHandle);
+        static extern IntPtr DvProviderLinnCoUkMediaTime1Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkMediaTime1")]
-        static extern void DvServiceLinnCoUkMediaTime1Destroy(IntPtr aHandle);
+        static extern void DvProviderLinnCoUkMediaTime1Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkMediaTime1")]
-        static extern unsafe int DvServiceLinnCoUkMediaTime1SetPropertySeconds(IntPtr aHandle, uint aValue);
+        static extern unsafe int DvProviderLinnCoUkMediaTime1SetPropertySeconds(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkMediaTime1")]
-        static extern unsafe void DvServiceLinnCoUkMediaTime1GetPropertySeconds(IntPtr aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkMediaTime1GetPropertySeconds(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkMediaTime1")]
-        static extern void DvServiceLinnCoUkMediaTime1EnableActionSeconds(IntPtr aHandle, CallbackSeconds aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkMediaTime1EnableActionSeconds(IntPtr aHandle, CallbackSeconds aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
         private unsafe delegate int CallbackSeconds(IntPtr aPtr, uint aVersion, uint* aaSeconds);
 
-        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackSeconds iCallbackSeconds;
 
-        public DvServiceLinnCoUkMediaTime1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderLinnCoUkMediaTime1(DvDevice aDevice)
         {
-            iHandle = DvServiceLinnCoUkMediaTime1Create(aDevice.Handle()); 
+            iHandle = DvProviderLinnCoUkMediaTime1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertySeconds(uint aValue)
+        /// <summary>
+        /// Set the value of the Seconds property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertySeconds(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkMediaTime1SetPropertySeconds(iHandle, aValue))
+            uint changed;
+            if (0 != DvProviderLinnCoUkMediaTime1SetPropertySeconds(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the Seconds property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertySeconds(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
-                DvServiceLinnCoUkMediaTime1GetPropertySeconds(iHandle, value);
+            {
+                DvProviderLinnCoUkMediaTime1GetPropertySeconds(iHandle, value);
             }
         }
 
+        /// <summary>
+        /// Signal that the action Seconds is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSeconds must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSeconds()
         {
             iCallbackSeconds = new CallbackSeconds(DoSeconds);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkMediaTime1EnableActionSeconds(iHandle, iCallbackSeconds, ptr);
+            DvProviderLinnCoUkMediaTime1EnableActionSeconds(iHandle, iCallbackSeconds, ptr);
         }
 
+        /// <summary>
+        /// Seconds action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Seconds action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSeconds was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSeconds"></param>
         protected virtual void Seconds(uint aVersion, out uint aaSeconds)
         {
             throw (new ActionDisabledError());
@@ -63,21 +111,23 @@ namespace Zapp
         private static unsafe int DoSeconds(IntPtr aPtr, uint aVersion, uint* aaSeconds)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkMediaTime1 self = (DvServiceLinnCoUkMediaTime1)gch.Target;
+            DvProviderLinnCoUkMediaTime1 self = (DvProviderLinnCoUkMediaTime1)gch.Target;
             uint aSeconds;
             self.Seconds(aVersion, out aSeconds);
             *aaSeconds = aSeconds;
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceLinnCoUkMediaTime1()
+        ~DvProviderLinnCoUkMediaTime1()
         {
             DoDispose();
         }
@@ -94,7 +144,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = IntPtr.Zero;
             }
-            DvServiceLinnCoUkMediaTime1Destroy(handle);
+            DvProviderLinnCoUkMediaTime1Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

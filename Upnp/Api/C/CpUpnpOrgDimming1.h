@@ -14,6 +14,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpProxyUpnpOrgDimming1
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of CpProxyUpnpOrgDimming1 without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -818,6 +824,8 @@ DllExport void CpProxyUpnpOrgDimming1PropertyIsRamping(THandle aHandle, uint32_t
  * @param[out] aRampPaused
  */
 DllExport void CpProxyUpnpOrgDimming1PropertyRampPaused(THandle aHandle, uint32_t* aRampPaused);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

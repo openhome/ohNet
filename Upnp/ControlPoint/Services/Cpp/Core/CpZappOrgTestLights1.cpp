@@ -11,15 +11,15 @@ using namespace Zapp;
 class SyncGetCountZappOrgTestLights1 : public SyncProxyAction
 {
 public:
-    SyncGetCountZappOrgTestLights1(CpProxyZappOrgTestLights1& aService, TUint& aCount);
+    SyncGetCountZappOrgTestLights1(CpProxyZappOrgTestLights1& aProxy, TUint& aCount);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestLights1& iService;
     TUint& iCount;
 };
 
-SyncGetCountZappOrgTestLights1::SyncGetCountZappOrgTestLights1(CpProxyZappOrgTestLights1& aService, TUint& aCount)
-    : iService(aService)
+SyncGetCountZappOrgTestLights1::SyncGetCountZappOrgTestLights1(CpProxyZappOrgTestLights1& aProxy, TUint& aCount)
+    : iService(aProxy)
     , iCount(aCount)
 {
 }
@@ -33,15 +33,15 @@ void SyncGetCountZappOrgTestLights1::CompleteRequest(IAsync& aAsync)
 class SyncGetRoomZappOrgTestLights1 : public SyncProxyAction
 {
 public:
-    SyncGetRoomZappOrgTestLights1(CpProxyZappOrgTestLights1& aService, Brh& aRoomName);
+    SyncGetRoomZappOrgTestLights1(CpProxyZappOrgTestLights1& aProxy, Brh& aRoomName);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestLights1& iService;
     Brh& iRoomName;
 };
 
-SyncGetRoomZappOrgTestLights1::SyncGetRoomZappOrgTestLights1(CpProxyZappOrgTestLights1& aService, Brh& aRoomName)
-    : iService(aService)
+SyncGetRoomZappOrgTestLights1::SyncGetRoomZappOrgTestLights1(CpProxyZappOrgTestLights1& aProxy, Brh& aRoomName)
+    : iService(aProxy)
     , iRoomName(aRoomName)
 {
 }
@@ -55,15 +55,15 @@ void SyncGetRoomZappOrgTestLights1::CompleteRequest(IAsync& aAsync)
 class SyncGetNameZappOrgTestLights1 : public SyncProxyAction
 {
 public:
-    SyncGetNameZappOrgTestLights1(CpProxyZappOrgTestLights1& aService, Brh& aFriendlyName);
+    SyncGetNameZappOrgTestLights1(CpProxyZappOrgTestLights1& aProxy, Brh& aFriendlyName);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestLights1& iService;
     Brh& iFriendlyName;
 };
 
-SyncGetNameZappOrgTestLights1::SyncGetNameZappOrgTestLights1(CpProxyZappOrgTestLights1& aService, Brh& aFriendlyName)
-    : iService(aService)
+SyncGetNameZappOrgTestLights1::SyncGetNameZappOrgTestLights1(CpProxyZappOrgTestLights1& aProxy, Brh& aFriendlyName)
+    : iService(aProxy)
     , iFriendlyName(aFriendlyName)
 {
 }
@@ -77,7 +77,7 @@ void SyncGetNameZappOrgTestLights1::CompleteRequest(IAsync& aAsync)
 class SyncGetPositionZappOrgTestLights1 : public SyncProxyAction
 {
 public:
-    SyncGetPositionZappOrgTestLights1(CpProxyZappOrgTestLights1& aService, TUint& aX, TUint& aY, TUint& aZ);
+    SyncGetPositionZappOrgTestLights1(CpProxyZappOrgTestLights1& aProxy, TUint& aX, TUint& aY, TUint& aZ);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestLights1& iService;
@@ -86,8 +86,8 @@ private:
     TUint& iZ;
 };
 
-SyncGetPositionZappOrgTestLights1::SyncGetPositionZappOrgTestLights1(CpProxyZappOrgTestLights1& aService, TUint& aX, TUint& aY, TUint& aZ)
-    : iService(aService)
+SyncGetPositionZappOrgTestLights1::SyncGetPositionZappOrgTestLights1(CpProxyZappOrgTestLights1& aProxy, TUint& aX, TUint& aY, TUint& aZ)
+    : iService(aProxy)
     , iX(aX)
     , iY(aY)
     , iZ(aZ)
@@ -103,14 +103,14 @@ void SyncGetPositionZappOrgTestLights1::CompleteRequest(IAsync& aAsync)
 class SyncSetColorZappOrgTestLights1 : public SyncProxyAction
 {
 public:
-    SyncSetColorZappOrgTestLights1(CpProxyZappOrgTestLights1& aService);
+    SyncSetColorZappOrgTestLights1(CpProxyZappOrgTestLights1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestLights1& iService;
 };
 
-SyncSetColorZappOrgTestLights1::SyncSetColorZappOrgTestLights1(CpProxyZappOrgTestLights1& aService)
-    : iService(aService)
+SyncSetColorZappOrgTestLights1::SyncSetColorZappOrgTestLights1(CpProxyZappOrgTestLights1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -123,15 +123,15 @@ void SyncSetColorZappOrgTestLights1::CompleteRequest(IAsync& aAsync)
 class SyncGetColorZappOrgTestLights1 : public SyncProxyAction
 {
 public:
-    SyncGetColorZappOrgTestLights1(CpProxyZappOrgTestLights1& aService, TUint& aColor);
+    SyncGetColorZappOrgTestLights1(CpProxyZappOrgTestLights1& aProxy, TUint& aColor);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestLights1& iService;
     TUint& iColor;
 };
 
-SyncGetColorZappOrgTestLights1::SyncGetColorZappOrgTestLights1(CpProxyZappOrgTestLights1& aService, TUint& aColor)
-    : iService(aService)
+SyncGetColorZappOrgTestLights1::SyncGetColorZappOrgTestLights1(CpProxyZappOrgTestLights1& aProxy, TUint& aColor)
+    : iService(aProxy)
     , iColor(aColor)
 {
 }
@@ -145,7 +145,7 @@ void SyncGetColorZappOrgTestLights1::CompleteRequest(IAsync& aAsync)
 class SyncGetColorComponentsZappOrgTestLights1 : public SyncProxyAction
 {
 public:
-    SyncGetColorComponentsZappOrgTestLights1(CpProxyZappOrgTestLights1& aService, TUint& aBrightness, TUint& aRed, TUint& aGreen, TUint& aBlue);
+    SyncGetColorComponentsZappOrgTestLights1(CpProxyZappOrgTestLights1& aProxy, TUint& aBrightness, TUint& aRed, TUint& aGreen, TUint& aBlue);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestLights1& iService;
@@ -155,8 +155,8 @@ private:
     TUint& iBlue;
 };
 
-SyncGetColorComponentsZappOrgTestLights1::SyncGetColorComponentsZappOrgTestLights1(CpProxyZappOrgTestLights1& aService, TUint& aBrightness, TUint& aRed, TUint& aGreen, TUint& aBlue)
-    : iService(aService)
+SyncGetColorComponentsZappOrgTestLights1::SyncGetColorComponentsZappOrgTestLights1(CpProxyZappOrgTestLights1& aProxy, TUint& aBrightness, TUint& aRed, TUint& aGreen, TUint& aBlue)
+    : iService(aProxy)
     , iBrightness(aBrightness)
     , iRed(aRed)
     , iGreen(aGreen)
@@ -251,7 +251,7 @@ void CpProxyZappOrgTestLights1::BeginGetCount(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetCount->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestLights1::EndGetCount(IAsync& aAsync, TUint& aCount)
@@ -283,7 +283,7 @@ void CpProxyZappOrgTestLights1::BeginGetRoom(TUint aIndex, FunctorAsync& aFuncto
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetRoom->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestLights1::EndGetRoom(IAsync& aAsync, Brh& aRoomName)
@@ -315,7 +315,7 @@ void CpProxyZappOrgTestLights1::BeginGetName(TUint aIndex, FunctorAsync& aFuncto
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetName->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestLights1::EndGetName(IAsync& aAsync, Brh& aFriendlyName)
@@ -349,7 +349,7 @@ void CpProxyZappOrgTestLights1::BeginGetPosition(TUint aIndex, FunctorAsync& aFu
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestLights1::EndGetPosition(IAsync& aAsync, TUint& aX, TUint& aY, TUint& aZ)
@@ -381,7 +381,7 @@ void CpProxyZappOrgTestLights1::BeginSetColor(TUint aIndex, TUint aColor, Functo
     const Action::VectorParameters& inParams = iActionSetColor->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aIndex));
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aColor));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestLights1::EndSetColor(IAsync& aAsync)
@@ -411,7 +411,7 @@ void CpProxyZappOrgTestLights1::BeginGetColor(TUint aIndex, FunctorAsync& aFunct
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetColor->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestLights1::EndGetColor(IAsync& aAsync, TUint& aColor)
@@ -446,7 +446,7 @@ void CpProxyZappOrgTestLights1::BeginGetColorComponents(TUint aColor, FunctorAsy
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestLights1::EndGetColorComponents(IAsync& aAsync, TUint& aBrightness, TUint& aRed, TUint& aGreen, TUint& aBlue)

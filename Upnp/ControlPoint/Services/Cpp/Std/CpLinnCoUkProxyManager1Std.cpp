@@ -14,15 +14,15 @@ using namespace Zapp;
 class SyncKontrolProductConnectedLinnCoUkProxyManager1Cpp : public SyncProxyAction
 {
 public:
-    SyncKontrolProductConnectedLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aService, std::string& aaConnected);
+    SyncKontrolProductConnectedLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aProxy, std::string& aaConnected);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProxyManager1Cpp& iService;
     std::string& iaConnected;
 };
 
-SyncKontrolProductConnectedLinnCoUkProxyManager1Cpp::SyncKontrolProductConnectedLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aService, std::string& aaConnected)
-    : iService(aService)
+SyncKontrolProductConnectedLinnCoUkProxyManager1Cpp::SyncKontrolProductConnectedLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aProxy, std::string& aaConnected)
+    : iService(aProxy)
     , iaConnected(aaConnected)
 {
 }
@@ -36,14 +36,14 @@ void SyncKontrolProductConnectedLinnCoUkProxyManager1Cpp::CompleteRequest(IAsync
 class SyncSetKontrolProductConnectedLinnCoUkProxyManager1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetKontrolProductConnectedLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aService);
+    SyncSetKontrolProductConnectedLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProxyManager1Cpp& iService;
 };
 
-SyncSetKontrolProductConnectedLinnCoUkProxyManager1Cpp::SyncSetKontrolProductConnectedLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aService)
-    : iService(aService)
+SyncSetKontrolProductConnectedLinnCoUkProxyManager1Cpp::SyncSetKontrolProductConnectedLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -56,15 +56,15 @@ void SyncSetKontrolProductConnectedLinnCoUkProxyManager1Cpp::CompleteRequest(IAs
 class SyncKontrolProductComPortLinnCoUkProxyManager1Cpp : public SyncProxyAction
 {
 public:
-    SyncKontrolProductComPortLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aService, uint32_t& aaPort);
+    SyncKontrolProductComPortLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aProxy, uint32_t& aaPort);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProxyManager1Cpp& iService;
     uint32_t& iaPort;
 };
 
-SyncKontrolProductComPortLinnCoUkProxyManager1Cpp::SyncKontrolProductComPortLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aService, uint32_t& aaPort)
-    : iService(aService)
+SyncKontrolProductComPortLinnCoUkProxyManager1Cpp::SyncKontrolProductComPortLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aProxy, uint32_t& aaPort)
+    : iService(aProxy)
     , iaPort(aaPort)
 {
 }
@@ -78,14 +78,14 @@ void SyncKontrolProductComPortLinnCoUkProxyManager1Cpp::CompleteRequest(IAsync& 
 class SyncSetKontrolProductComPortLinnCoUkProxyManager1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetKontrolProductComPortLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aService);
+    SyncSetKontrolProductComPortLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProxyManager1Cpp& iService;
 };
 
-SyncSetKontrolProductComPortLinnCoUkProxyManager1Cpp::SyncSetKontrolProductComPortLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aService)
-    : iService(aService)
+SyncSetKontrolProductComPortLinnCoUkProxyManager1Cpp::SyncSetKontrolProductComPortLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -98,15 +98,15 @@ void SyncSetKontrolProductComPortLinnCoUkProxyManager1Cpp::CompleteRequest(IAsyn
 class SyncDiscPlayerConnectedLinnCoUkProxyManager1Cpp : public SyncProxyAction
 {
 public:
-    SyncDiscPlayerConnectedLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aService, std::string& aaConnected);
+    SyncDiscPlayerConnectedLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aProxy, std::string& aaConnected);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProxyManager1Cpp& iService;
     std::string& iaConnected;
 };
 
-SyncDiscPlayerConnectedLinnCoUkProxyManager1Cpp::SyncDiscPlayerConnectedLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aService, std::string& aaConnected)
-    : iService(aService)
+SyncDiscPlayerConnectedLinnCoUkProxyManager1Cpp::SyncDiscPlayerConnectedLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aProxy, std::string& aaConnected)
+    : iService(aProxy)
     , iaConnected(aaConnected)
 {
 }
@@ -120,14 +120,14 @@ void SyncDiscPlayerConnectedLinnCoUkProxyManager1Cpp::CompleteRequest(IAsync& aA
 class SyncSetDiscPlayerConnectedLinnCoUkProxyManager1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetDiscPlayerConnectedLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aService);
+    SyncSetDiscPlayerConnectedLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProxyManager1Cpp& iService;
 };
 
-SyncSetDiscPlayerConnectedLinnCoUkProxyManager1Cpp::SyncSetDiscPlayerConnectedLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aService)
-    : iService(aService)
+SyncSetDiscPlayerConnectedLinnCoUkProxyManager1Cpp::SyncSetDiscPlayerConnectedLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -140,15 +140,15 @@ void SyncSetDiscPlayerConnectedLinnCoUkProxyManager1Cpp::CompleteRequest(IAsync&
 class SyncDiscPlayerComPortLinnCoUkProxyManager1Cpp : public SyncProxyAction
 {
 public:
-    SyncDiscPlayerComPortLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aService, uint32_t& aaPort);
+    SyncDiscPlayerComPortLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aProxy, uint32_t& aaPort);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProxyManager1Cpp& iService;
     uint32_t& iaPort;
 };
 
-SyncDiscPlayerComPortLinnCoUkProxyManager1Cpp::SyncDiscPlayerComPortLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aService, uint32_t& aaPort)
-    : iService(aService)
+SyncDiscPlayerComPortLinnCoUkProxyManager1Cpp::SyncDiscPlayerComPortLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aProxy, uint32_t& aaPort)
+    : iService(aProxy)
     , iaPort(aaPort)
 {
 }
@@ -162,14 +162,14 @@ void SyncDiscPlayerComPortLinnCoUkProxyManager1Cpp::CompleteRequest(IAsync& aAsy
 class SyncSetDiscPlayerComPortLinnCoUkProxyManager1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetDiscPlayerComPortLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aService);
+    SyncSetDiscPlayerComPortLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProxyManager1Cpp& iService;
 };
 
-SyncSetDiscPlayerComPortLinnCoUkProxyManager1Cpp::SyncSetDiscPlayerComPortLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aService)
-    : iService(aService)
+SyncSetDiscPlayerComPortLinnCoUkProxyManager1Cpp::SyncSetDiscPlayerComPortLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -182,15 +182,15 @@ void SyncSetDiscPlayerComPortLinnCoUkProxyManager1Cpp::CompleteRequest(IAsync& a
 class SyncTestKontrolProductConnectionLinnCoUkProxyManager1Cpp : public SyncProxyAction
 {
 public:
-    SyncTestKontrolProductConnectionLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aService, bool& aaResult);
+    SyncTestKontrolProductConnectionLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aProxy, bool& aaResult);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProxyManager1Cpp& iService;
     bool& iaResult;
 };
 
-SyncTestKontrolProductConnectionLinnCoUkProxyManager1Cpp::SyncTestKontrolProductConnectionLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aService, bool& aaResult)
-    : iService(aService)
+SyncTestKontrolProductConnectionLinnCoUkProxyManager1Cpp::SyncTestKontrolProductConnectionLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aProxy, bool& aaResult)
+    : iService(aProxy)
     , iaResult(aaResult)
 {
 }
@@ -204,15 +204,15 @@ void SyncTestKontrolProductConnectionLinnCoUkProxyManager1Cpp::CompleteRequest(I
 class SyncTestDiscPlayerConnectionLinnCoUkProxyManager1Cpp : public SyncProxyAction
 {
 public:
-    SyncTestDiscPlayerConnectionLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aService, bool& aaResult);
+    SyncTestDiscPlayerConnectionLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aProxy, bool& aaResult);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProxyManager1Cpp& iService;
     bool& iaResult;
 };
 
-SyncTestDiscPlayerConnectionLinnCoUkProxyManager1Cpp::SyncTestDiscPlayerConnectionLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aService, bool& aaResult)
-    : iService(aService)
+SyncTestDiscPlayerConnectionLinnCoUkProxyManager1Cpp::SyncTestDiscPlayerConnectionLinnCoUkProxyManager1Cpp(CpProxyLinnCoUkProxyManager1Cpp& aProxy, bool& aaResult)
+    : iService(aProxy)
     , iaResult(aaResult)
 {
 }
@@ -325,16 +325,16 @@ CpProxyLinnCoUkProxyManager1Cpp::CpProxyLinnCoUkProxyManager1Cpp(CpDeviceCpp& aD
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProxyManager1Cpp::KontrolProductConnectedPropertyChanged);
     iKontrolProductConnected = new PropertyString("KontrolProductConnected", functor);
-    iService->AddProperty(iKontrolProductConnected);
+    AddProperty(iKontrolProductConnected);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProxyManager1Cpp::KontrolProductComPortPropertyChanged);
     iKontrolProductComPort = new PropertyUint("KontrolProductComPort", functor);
-    iService->AddProperty(iKontrolProductComPort);
+    AddProperty(iKontrolProductComPort);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProxyManager1Cpp::DiscPlayerConnectedPropertyChanged);
     iDiscPlayerConnected = new PropertyString("DiscPlayerConnected", functor);
-    iService->AddProperty(iDiscPlayerConnected);
+    AddProperty(iDiscPlayerConnected);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProxyManager1Cpp::DiscPlayerComPortPropertyChanged);
     iDiscPlayerComPort = new PropertyUint("DiscPlayerComPort", functor);
-    iService->AddProperty(iDiscPlayerComPort);
+    AddProperty(iDiscPlayerComPort);
 }
 
 CpProxyLinnCoUkProxyManager1Cpp::~CpProxyLinnCoUkProxyManager1Cpp()
@@ -365,7 +365,7 @@ void CpProxyLinnCoUkProxyManager1Cpp::BeginKontrolProductConnected(FunctorAsync&
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionKontrolProductConnected->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProxyManager1Cpp::EndKontrolProductConnected(IAsync& aAsync, std::string& aaConnected)
@@ -400,7 +400,7 @@ void CpProxyLinnCoUkProxyManager1Cpp::BeginSetKontrolProductConnected(const std:
         Brn buf((const TByte*)aaConnected.c_str(), (TUint)aaConnected.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProxyManager1Cpp::EndSetKontrolProductConnected(IAsync& aAsync)
@@ -427,7 +427,7 @@ void CpProxyLinnCoUkProxyManager1Cpp::BeginKontrolProductComPort(FunctorAsync& a
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionKontrolProductComPort->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProxyManager1Cpp::EndKontrolProductComPort(IAsync& aAsync, uint32_t& aaPort)
@@ -456,7 +456,7 @@ void CpProxyLinnCoUkProxyManager1Cpp::BeginSetKontrolProductComPort(uint32_t aaC
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetKontrolProductComPort->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaConnected));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProxyManager1Cpp::EndSetKontrolProductComPort(IAsync& aAsync)
@@ -483,7 +483,7 @@ void CpProxyLinnCoUkProxyManager1Cpp::BeginDiscPlayerConnected(FunctorAsync& aFu
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionDiscPlayerConnected->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProxyManager1Cpp::EndDiscPlayerConnected(IAsync& aAsync, std::string& aaConnected)
@@ -518,7 +518,7 @@ void CpProxyLinnCoUkProxyManager1Cpp::BeginSetDiscPlayerConnected(const std::str
         Brn buf((const TByte*)aaConnected.c_str(), (TUint)aaConnected.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProxyManager1Cpp::EndSetDiscPlayerConnected(IAsync& aAsync)
@@ -545,7 +545,7 @@ void CpProxyLinnCoUkProxyManager1Cpp::BeginDiscPlayerComPort(FunctorAsync& aFunc
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionDiscPlayerComPort->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProxyManager1Cpp::EndDiscPlayerComPort(IAsync& aAsync, uint32_t& aaPort)
@@ -574,7 +574,7 @@ void CpProxyLinnCoUkProxyManager1Cpp::BeginSetDiscPlayerComPort(uint32_t aaConne
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetDiscPlayerComPort->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaConnected));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProxyManager1Cpp::EndSetDiscPlayerComPort(IAsync& aAsync)
@@ -601,7 +601,7 @@ void CpProxyLinnCoUkProxyManager1Cpp::BeginTestKontrolProductConnection(FunctorA
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionTestKontrolProductConnection->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProxyManager1Cpp::EndTestKontrolProductConnection(IAsync& aAsync, bool& aaResult)
@@ -630,7 +630,7 @@ void CpProxyLinnCoUkProxyManager1Cpp::BeginTestDiscPlayerConnection(FunctorAsync
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionTestDiscPlayerConnection->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProxyManager1Cpp::EndTestDiscPlayerConnection(IAsync& aAsync, bool& aaResult)
@@ -676,28 +676,36 @@ void CpProxyLinnCoUkProxyManager1Cpp::SetPropertyDiscPlayerComPortChanged(Functo
 
 void CpProxyLinnCoUkProxyManager1Cpp::PropertyKontrolProductConnected(std::string& aKontrolProductConnected) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iKontrolProductConnected->Value();
     aKontrolProductConnected.assign((const char*)val.Ptr(), val.Bytes());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProxyManager1Cpp::PropertyKontrolProductComPort(uint32_t& aKontrolProductComPort) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aKontrolProductComPort = iKontrolProductComPort->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProxyManager1Cpp::PropertyDiscPlayerConnected(std::string& aDiscPlayerConnected) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iDiscPlayerConnected->Value();
     aDiscPlayerConnected.assign((const char*)val.Ptr(), val.Bytes());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProxyManager1Cpp::PropertyDiscPlayerComPort(uint32_t& aDiscPlayerComPort) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDiscPlayerComPort = iDiscPlayerComPort->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProxyManager1Cpp::KontrolProductConnectedPropertyChanged()

@@ -14,6 +14,8 @@ namespace Zapp {
 class NetworkInterfaceList
 {
 public:
+    static const TUint kListenerIdNull = 0;
+public:
     NetworkInterfaceList(TIpAddress aDefaultSubnet=0);
     ~NetworkInterfaceList();
     NetworkInterface* CurrentInterface() const;

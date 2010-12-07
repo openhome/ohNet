@@ -11,14 +11,14 @@ using namespace Zapp;
 class SyncSetTargetUpnpOrgSwitchPower1 : public SyncProxyAction
 {
 public:
-    SyncSetTargetUpnpOrgSwitchPower1(CpProxyUpnpOrgSwitchPower1& aService);
+    SyncSetTargetUpnpOrgSwitchPower1(CpProxyUpnpOrgSwitchPower1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgSwitchPower1& iService;
 };
 
-SyncSetTargetUpnpOrgSwitchPower1::SyncSetTargetUpnpOrgSwitchPower1(CpProxyUpnpOrgSwitchPower1& aService)
-    : iService(aService)
+SyncSetTargetUpnpOrgSwitchPower1::SyncSetTargetUpnpOrgSwitchPower1(CpProxyUpnpOrgSwitchPower1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -31,15 +31,15 @@ void SyncSetTargetUpnpOrgSwitchPower1::CompleteRequest(IAsync& aAsync)
 class SyncGetTargetUpnpOrgSwitchPower1 : public SyncProxyAction
 {
 public:
-    SyncGetTargetUpnpOrgSwitchPower1(CpProxyUpnpOrgSwitchPower1& aService, TBool& aRetTargetValue);
+    SyncGetTargetUpnpOrgSwitchPower1(CpProxyUpnpOrgSwitchPower1& aProxy, TBool& aRetTargetValue);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgSwitchPower1& iService;
     TBool& iRetTargetValue;
 };
 
-SyncGetTargetUpnpOrgSwitchPower1::SyncGetTargetUpnpOrgSwitchPower1(CpProxyUpnpOrgSwitchPower1& aService, TBool& aRetTargetValue)
-    : iService(aService)
+SyncGetTargetUpnpOrgSwitchPower1::SyncGetTargetUpnpOrgSwitchPower1(CpProxyUpnpOrgSwitchPower1& aProxy, TBool& aRetTargetValue)
+    : iService(aProxy)
     , iRetTargetValue(aRetTargetValue)
 {
 }
@@ -53,15 +53,15 @@ void SyncGetTargetUpnpOrgSwitchPower1::CompleteRequest(IAsync& aAsync)
 class SyncGetStatusUpnpOrgSwitchPower1 : public SyncProxyAction
 {
 public:
-    SyncGetStatusUpnpOrgSwitchPower1(CpProxyUpnpOrgSwitchPower1& aService, TBool& aResultStatus);
+    SyncGetStatusUpnpOrgSwitchPower1(CpProxyUpnpOrgSwitchPower1& aProxy, TBool& aResultStatus);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgSwitchPower1& iService;
     TBool& iResultStatus;
 };
 
-SyncGetStatusUpnpOrgSwitchPower1::SyncGetStatusUpnpOrgSwitchPower1(CpProxyUpnpOrgSwitchPower1& aService, TBool& aResultStatus)
-    : iService(aService)
+SyncGetStatusUpnpOrgSwitchPower1::SyncGetStatusUpnpOrgSwitchPower1(CpProxyUpnpOrgSwitchPower1& aProxy, TBool& aResultStatus)
+    : iService(aProxy)
     , iResultStatus(aResultStatus)
 {
 }
@@ -92,7 +92,7 @@ CpProxyUpnpOrgSwitchPower1::CpProxyUpnpOrgSwitchPower1(CpDevice& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgSwitchPower1::StatusPropertyChanged);
     iStatus = new PropertyBool("Status", functor);
-    iService->AddProperty(iStatus);
+    AddProperty(iStatus);
 }
 
 CpProxyUpnpOrgSwitchPower1::~CpProxyUpnpOrgSwitchPower1()
@@ -116,7 +116,7 @@ void CpProxyUpnpOrgSwitchPower1::BeginSetTarget(TBool anewTargetValue, FunctorAs
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetTarget->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], anewTargetValue));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgSwitchPower1::EndSetTarget(IAsync& aAsync)
@@ -143,7 +143,7 @@ void CpProxyUpnpOrgSwitchPower1::BeginGetTarget(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetTarget->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgSwitchPower1::EndGetTarget(IAsync& aAsync, TBool& aRetTargetValue)
@@ -172,7 +172,7 @@ void CpProxyUpnpOrgSwitchPower1::BeginGetStatus(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetStatus->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgSwitchPower1::EndGetStatus(IAsync& aAsync, TBool& aResultStatus)
@@ -197,8 +197,10 @@ void CpProxyUpnpOrgSwitchPower1::SetPropertyStatusChanged(Functor& aFunctor)
 
 void CpProxyUpnpOrgSwitchPower1::PropertyStatus(TBool& aStatus) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aStatus = iStatus->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyUpnpOrgSwitchPower1::StatusPropertyChanged()

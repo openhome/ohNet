@@ -14,6 +14,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpProxyUpnpOrgConnectionManager2
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of CpProxyUpnpOrgConnectionManager2 without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -288,6 +294,8 @@ DllExport void CpProxyUpnpOrgConnectionManager2PropertySinkProtocolInfo(THandle 
  * @param[out] aCurrentConnectionIDs
  */
 DllExport void CpProxyUpnpOrgConnectionManager2PropertyCurrentConnectionIDs(THandle aHandle, char** aCurrentConnectionIDs);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

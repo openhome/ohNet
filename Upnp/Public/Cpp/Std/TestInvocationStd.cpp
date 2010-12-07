@@ -10,7 +10,7 @@
 #include <Std/CpDevice.h>
 #include <Std/CpDeviceUpnp.h>
 #include <Stack.h>
-#include <Os.h>
+#include <OsWrapper.h>
 #include <Std/FunctorCpDevice.h>
 #include <Std/CpUpnpOrgConnectionManager1.h>
 
@@ -81,16 +81,18 @@ void DeviceList::TestSync()
     }
     CpDeviceCpp* device = iList[0];
     Print("Sync call to device %s\n", device->Udn().c_str());
-    iConnMgr = new CpProxyUpnpOrgConnectionManager1Cpp(*device);
+    CpProxyUpnpOrgConnectionManager1Cpp* connMgr = new CpProxyUpnpOrgConnectionManager1Cpp(*device);
     std::string source;
     std::string sink;
     try {
-        iConnMgr->SyncGetProtocolInfo(source, sink);
+        connMgr->SyncGetProtocolInfo(source, sink);
     }
     catch(ProxyError) {}
 #if 1
     Print("source is %s\nsink is %s\n", source.c_str(), sink.c_str());
 #endif
+    delete connMgr;
+
 }
 
 void DeviceList::Poll()

@@ -3,7 +3,7 @@
 
 #include <ZappTypes.h>
 #include <ArchSpecific.h>
-#include <C/Os.h>
+#include <OsWrapper.h>
 
 namespace Zapp
 {

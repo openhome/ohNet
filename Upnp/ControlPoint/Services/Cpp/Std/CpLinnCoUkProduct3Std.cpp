@@ -14,15 +14,15 @@ using namespace Zapp;
 class SyncTypeLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncTypeLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, std::string& aaType);
+    SyncTypeLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, std::string& aaType);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
     std::string& iaType;
 };
 
-SyncTypeLinnCoUkProduct3Cpp::SyncTypeLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, std::string& aaType)
-    : iService(aService)
+SyncTypeLinnCoUkProduct3Cpp::SyncTypeLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, std::string& aaType)
+    : iService(aProxy)
     , iaType(aaType)
 {
 }
@@ -36,15 +36,15 @@ void SyncTypeLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAsync)
 class SyncModelLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncModelLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, std::string& aaModel);
+    SyncModelLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, std::string& aaModel);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
     std::string& iaModel;
 };
 
-SyncModelLinnCoUkProduct3Cpp::SyncModelLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, std::string& aaModel)
-    : iService(aService)
+SyncModelLinnCoUkProduct3Cpp::SyncModelLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, std::string& aaModel)
+    : iService(aProxy)
     , iaModel(aaModel)
 {
 }
@@ -58,15 +58,15 @@ void SyncModelLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAsync)
 class SyncNameLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, std::string& aaName);
+    SyncNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, std::string& aaName);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
     std::string& iaName;
 };
 
-SyncNameLinnCoUkProduct3Cpp::SyncNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, std::string& aaName)
-    : iService(aService)
+SyncNameLinnCoUkProduct3Cpp::SyncNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, std::string& aaName)
+    : iService(aProxy)
     , iaName(aaName)
 {
 }
@@ -80,14 +80,14 @@ void SyncNameLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetNameLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncSetNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService);
+    SyncSetNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
 };
 
-SyncSetNameLinnCoUkProduct3Cpp::SyncSetNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService)
-    : iService(aService)
+SyncSetNameLinnCoUkProduct3Cpp::SyncSetNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -100,15 +100,15 @@ void SyncSetNameLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAsync)
 class SyncRoomLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncRoomLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, std::string& aaRoom);
+    SyncRoomLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, std::string& aaRoom);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
     std::string& iaRoom;
 };
 
-SyncRoomLinnCoUkProduct3Cpp::SyncRoomLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, std::string& aaRoom)
-    : iService(aService)
+SyncRoomLinnCoUkProduct3Cpp::SyncRoomLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, std::string& aaRoom)
+    : iService(aProxy)
     , iaRoom(aaRoom)
 {
 }
@@ -122,14 +122,14 @@ void SyncRoomLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetRoomLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncSetRoomLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService);
+    SyncSetRoomLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
 };
 
-SyncSetRoomLinnCoUkProduct3Cpp::SyncSetRoomLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService)
-    : iService(aService)
+SyncSetRoomLinnCoUkProduct3Cpp::SyncSetRoomLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -142,15 +142,15 @@ void SyncSetRoomLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAsync)
 class SyncStandbyLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncStandbyLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, bool& aaStandby);
+    SyncStandbyLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, bool& aaStandby);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
     bool& iaStandby;
 };
 
-SyncStandbyLinnCoUkProduct3Cpp::SyncStandbyLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, bool& aaStandby)
-    : iService(aService)
+SyncStandbyLinnCoUkProduct3Cpp::SyncStandbyLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, bool& aaStandby)
+    : iService(aProxy)
     , iaStandby(aaStandby)
 {
 }
@@ -164,14 +164,14 @@ void SyncStandbyLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetStandbyLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncSetStandbyLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService);
+    SyncSetStandbyLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
 };
 
-SyncSetStandbyLinnCoUkProduct3Cpp::SyncSetStandbyLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService)
-    : iService(aService)
+SyncSetStandbyLinnCoUkProduct3Cpp::SyncSetStandbyLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -184,15 +184,15 @@ void SyncSetStandbyLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSourceCountLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncSourceCountLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, uint32_t& aaSourceCount);
+    SyncSourceCountLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, uint32_t& aaSourceCount);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
     uint32_t& iaSourceCount;
 };
 
-SyncSourceCountLinnCoUkProduct3Cpp::SyncSourceCountLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, uint32_t& aaSourceCount)
-    : iService(aService)
+SyncSourceCountLinnCoUkProduct3Cpp::SyncSourceCountLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, uint32_t& aaSourceCount)
+    : iService(aProxy)
     , iaSourceCount(aaSourceCount)
 {
 }
@@ -206,15 +206,15 @@ void SyncSourceCountLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSourceXmlLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncSourceXmlLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, std::string& aaSourceXml);
+    SyncSourceXmlLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, std::string& aaSourceXml);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
     std::string& iaSourceXml;
 };
 
-SyncSourceXmlLinnCoUkProduct3Cpp::SyncSourceXmlLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, std::string& aaSourceXml)
-    : iService(aService)
+SyncSourceXmlLinnCoUkProduct3Cpp::SyncSourceXmlLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, std::string& aaSourceXml)
+    : iService(aProxy)
     , iaSourceXml(aaSourceXml)
 {
 }
@@ -228,15 +228,15 @@ void SyncSourceXmlLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSourceIndexLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncSourceIndexLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, uint32_t& aaSourceIndex);
+    SyncSourceIndexLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, uint32_t& aaSourceIndex);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
     uint32_t& iaSourceIndex;
 };
 
-SyncSourceIndexLinnCoUkProduct3Cpp::SyncSourceIndexLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, uint32_t& aaSourceIndex)
-    : iService(aService)
+SyncSourceIndexLinnCoUkProduct3Cpp::SyncSourceIndexLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, uint32_t& aaSourceIndex)
+    : iService(aProxy)
     , iaSourceIndex(aaSourceIndex)
 {
 }
@@ -250,14 +250,14 @@ void SyncSourceIndexLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetSourceIndexLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncSetSourceIndexLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService);
+    SyncSetSourceIndexLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
 };
 
-SyncSetSourceIndexLinnCoUkProduct3Cpp::SyncSetSourceIndexLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService)
-    : iService(aService)
+SyncSetSourceIndexLinnCoUkProduct3Cpp::SyncSetSourceIndexLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -270,14 +270,14 @@ void SyncSetSourceIndexLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetSourceIndexByNameLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncSetSourceIndexByNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService);
+    SyncSetSourceIndexByNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
 };
 
-SyncSetSourceIndexByNameLinnCoUkProduct3Cpp::SyncSetSourceIndexByNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService)
-    : iService(aService)
+SyncSetSourceIndexByNameLinnCoUkProduct3Cpp::SyncSetSourceIndexByNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -290,14 +290,14 @@ void SyncSetSourceIndexByNameLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAsync
 class SyncSetStartupSourceIndexByNameLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncSetStartupSourceIndexByNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService);
+    SyncSetStartupSourceIndexByNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
 };
 
-SyncSetStartupSourceIndexByNameLinnCoUkProduct3Cpp::SyncSetStartupSourceIndexByNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService)
-    : iService(aService)
+SyncSetStartupSourceIndexByNameLinnCoUkProduct3Cpp::SyncSetStartupSourceIndexByNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -310,15 +310,15 @@ void SyncSetStartupSourceIndexByNameLinnCoUkProduct3Cpp::CompleteRequest(IAsync&
 class SyncStartupSourceIndexLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncStartupSourceIndexLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, uint32_t& aaSourceIndex);
+    SyncStartupSourceIndexLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, uint32_t& aaSourceIndex);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
     uint32_t& iaSourceIndex;
 };
 
-SyncStartupSourceIndexLinnCoUkProduct3Cpp::SyncStartupSourceIndexLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, uint32_t& aaSourceIndex)
-    : iService(aService)
+SyncStartupSourceIndexLinnCoUkProduct3Cpp::SyncStartupSourceIndexLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, uint32_t& aaSourceIndex)
+    : iService(aProxy)
     , iaSourceIndex(aaSourceIndex)
 {
 }
@@ -332,14 +332,14 @@ void SyncStartupSourceIndexLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetStartupSourceIndexLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncSetStartupSourceIndexLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService);
+    SyncSetStartupSourceIndexLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
 };
 
-SyncSetStartupSourceIndexLinnCoUkProduct3Cpp::SyncSetStartupSourceIndexLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService)
-    : iService(aService)
+SyncSetStartupSourceIndexLinnCoUkProduct3Cpp::SyncSetStartupSourceIndexLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -352,15 +352,15 @@ void SyncSetStartupSourceIndexLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAsyn
 class SyncStartupSourceEnabledLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncStartupSourceEnabledLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, bool& aaStartupSourceEnabled);
+    SyncStartupSourceEnabledLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, bool& aaStartupSourceEnabled);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
     bool& iaStartupSourceEnabled;
 };
 
-SyncStartupSourceEnabledLinnCoUkProduct3Cpp::SyncStartupSourceEnabledLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, bool& aaStartupSourceEnabled)
-    : iService(aService)
+SyncStartupSourceEnabledLinnCoUkProduct3Cpp::SyncStartupSourceEnabledLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, bool& aaStartupSourceEnabled)
+    : iService(aProxy)
     , iaStartupSourceEnabled(aaStartupSourceEnabled)
 {
 }
@@ -374,14 +374,14 @@ void SyncStartupSourceEnabledLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAsync
 class SyncSetStartupSourceEnabledLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncSetStartupSourceEnabledLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService);
+    SyncSetStartupSourceEnabledLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
 };
 
-SyncSetStartupSourceEnabledLinnCoUkProduct3Cpp::SyncSetStartupSourceEnabledLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService)
-    : iService(aService)
+SyncSetStartupSourceEnabledLinnCoUkProduct3Cpp::SyncSetStartupSourceEnabledLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -394,15 +394,15 @@ void SyncSetStartupSourceEnabledLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAs
 class SyncSourceSystemNameLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncSourceSystemNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, std::string& aaSourceName);
+    SyncSourceSystemNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, std::string& aaSourceName);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
     std::string& iaSourceName;
 };
 
-SyncSourceSystemNameLinnCoUkProduct3Cpp::SyncSourceSystemNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, std::string& aaSourceName)
-    : iService(aService)
+SyncSourceSystemNameLinnCoUkProduct3Cpp::SyncSourceSystemNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, std::string& aaSourceName)
+    : iService(aProxy)
     , iaSourceName(aaSourceName)
 {
 }
@@ -416,15 +416,15 @@ void SyncSourceSystemNameLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSourceNameLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncSourceNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, std::string& aaSourceName);
+    SyncSourceNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, std::string& aaSourceName);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
     std::string& iaSourceName;
 };
 
-SyncSourceNameLinnCoUkProduct3Cpp::SyncSourceNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, std::string& aaSourceName)
-    : iService(aService)
+SyncSourceNameLinnCoUkProduct3Cpp::SyncSourceNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, std::string& aaSourceName)
+    : iService(aProxy)
     , iaSourceName(aaSourceName)
 {
 }
@@ -438,14 +438,14 @@ void SyncSourceNameLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetSourceNameLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncSetSourceNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService);
+    SyncSetSourceNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
 };
 
-SyncSetSourceNameLinnCoUkProduct3Cpp::SyncSetSourceNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService)
-    : iService(aService)
+SyncSetSourceNameLinnCoUkProduct3Cpp::SyncSetSourceNameLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -458,15 +458,15 @@ void SyncSetSourceNameLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSourceTypeLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncSourceTypeLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, std::string& aaSourceType);
+    SyncSourceTypeLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, std::string& aaSourceType);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
     std::string& iaSourceType;
 };
 
-SyncSourceTypeLinnCoUkProduct3Cpp::SyncSourceTypeLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, std::string& aaSourceType)
-    : iService(aService)
+SyncSourceTypeLinnCoUkProduct3Cpp::SyncSourceTypeLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, std::string& aaSourceType)
+    : iService(aProxy)
     , iaSourceType(aaSourceType)
 {
 }
@@ -480,15 +480,15 @@ void SyncSourceTypeLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSourceVisibleLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncSourceVisibleLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, bool& aaSourceVisible);
+    SyncSourceVisibleLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, bool& aaSourceVisible);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
     bool& iaSourceVisible;
 };
 
-SyncSourceVisibleLinnCoUkProduct3Cpp::SyncSourceVisibleLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService, bool& aaSourceVisible)
-    : iService(aService)
+SyncSourceVisibleLinnCoUkProduct3Cpp::SyncSourceVisibleLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy, bool& aaSourceVisible)
+    : iService(aProxy)
     , iaSourceVisible(aaSourceVisible)
 {
 }
@@ -502,14 +502,14 @@ void SyncSourceVisibleLinnCoUkProduct3Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetSourceVisibleLinnCoUkProduct3Cpp : public SyncProxyAction
 {
 public:
-    SyncSetSourceVisibleLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService);
+    SyncSetSourceVisibleLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct3Cpp& iService;
 };
 
-SyncSetSourceVisibleLinnCoUkProduct3Cpp::SyncSetSourceVisibleLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aService)
-    : iService(aService)
+SyncSetSourceVisibleLinnCoUkProduct3Cpp::SyncSetSourceVisibleLinnCoUkProduct3Cpp(CpProxyLinnCoUkProduct3Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -635,43 +635,43 @@ CpProxyLinnCoUkProduct3Cpp::CpProxyLinnCoUkProduct3Cpp(CpDeviceCpp& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProduct3Cpp::ProductTypePropertyChanged);
     iProductType = new PropertyString("ProductType", functor);
-    iService->AddProperty(iProductType);
+    AddProperty(iProductType);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProduct3Cpp::ProductModelPropertyChanged);
     iProductModel = new PropertyString("ProductModel", functor);
-    iService->AddProperty(iProductModel);
+    AddProperty(iProductModel);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProduct3Cpp::ProductNamePropertyChanged);
     iProductName = new PropertyString("ProductName", functor);
-    iService->AddProperty(iProductName);
+    AddProperty(iProductName);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProduct3Cpp::ProductRoomPropertyChanged);
     iProductRoom = new PropertyString("ProductRoom", functor);
-    iService->AddProperty(iProductRoom);
+    AddProperty(iProductRoom);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProduct3Cpp::ProductStandbyPropertyChanged);
     iProductStandby = new PropertyBool("ProductStandby", functor);
-    iService->AddProperty(iProductStandby);
+    AddProperty(iProductStandby);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProduct3Cpp::ProductSourceIndexPropertyChanged);
     iProductSourceIndex = new PropertyUint("ProductSourceIndex", functor);
-    iService->AddProperty(iProductSourceIndex);
+    AddProperty(iProductSourceIndex);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProduct3Cpp::ProductSourceCountPropertyChanged);
     iProductSourceCount = new PropertyUint("ProductSourceCount", functor);
-    iService->AddProperty(iProductSourceCount);
+    AddProperty(iProductSourceCount);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProduct3Cpp::ProductSourceXmlPropertyChanged);
     iProductSourceXml = new PropertyString("ProductSourceXml", functor);
-    iService->AddProperty(iProductSourceXml);
+    AddProperty(iProductSourceXml);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProduct3Cpp::StartupSourceIndexPropertyChanged);
     iStartupSourceIndex = new PropertyUint("StartupSourceIndex", functor);
-    iService->AddProperty(iStartupSourceIndex);
+    AddProperty(iStartupSourceIndex);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProduct3Cpp::StartupSourceEnabledPropertyChanged);
     iStartupSourceEnabled = new PropertyBool("StartupSourceEnabled", functor);
-    iService->AddProperty(iStartupSourceEnabled);
+    AddProperty(iStartupSourceEnabled);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProduct3Cpp::ProductAnySourceNamePropertyChanged);
     iProductAnySourceName = new PropertyUint("ProductAnySourceName", functor);
-    iService->AddProperty(iProductAnySourceName);
+    AddProperty(iProductAnySourceName);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProduct3Cpp::ProductAnySourceVisiblePropertyChanged);
     iProductAnySourceVisible = new PropertyUint("ProductAnySourceVisible", functor);
-    iService->AddProperty(iProductAnySourceVisible);
+    AddProperty(iProductAnySourceVisible);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProduct3Cpp::ProductAnySourceTypePropertyChanged);
     iProductAnySourceType = new PropertyUint("ProductAnySourceType", functor);
-    iService->AddProperty(iProductAnySourceType);
+    AddProperty(iProductAnySourceType);
 }
 
 CpProxyLinnCoUkProduct3Cpp::~CpProxyLinnCoUkProduct3Cpp()
@@ -716,7 +716,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginType(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionType->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndType(IAsync& aAsync, std::string& aaType)
@@ -748,7 +748,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginModel(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionModel->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndModel(IAsync& aAsync, std::string& aaModel)
@@ -780,7 +780,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginName(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionName->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndName(IAsync& aAsync, std::string& aaName)
@@ -815,7 +815,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSetName(const std::string& aaName, Functor
         Brn buf((const TByte*)aaName.c_str(), (TUint)aaName.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndSetName(IAsync& aAsync)
@@ -842,7 +842,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginRoom(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionRoom->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndRoom(IAsync& aAsync, std::string& aaRoom)
@@ -877,7 +877,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSetRoom(const std::string& aaRoom, Functor
         Brn buf((const TByte*)aaRoom.c_str(), (TUint)aaRoom.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndSetRoom(IAsync& aAsync)
@@ -904,7 +904,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginStandby(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionStandby->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndStandby(IAsync& aAsync, bool& aaStandby)
@@ -933,7 +933,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSetStandby(bool aaStandby, FunctorAsync& a
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetStandby->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aaStandby));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndSetStandby(IAsync& aAsync)
@@ -960,7 +960,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSourceCount(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionSourceCount->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndSourceCount(IAsync& aAsync, uint32_t& aaSourceCount)
@@ -989,7 +989,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSourceXml(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionSourceXml->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndSourceXml(IAsync& aAsync, std::string& aaSourceXml)
@@ -1021,7 +1021,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSourceIndex(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionSourceIndex->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndSourceIndex(IAsync& aAsync, uint32_t& aaSourceIndex)
@@ -1050,7 +1050,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSetSourceIndex(uint32_t aaSourceIndex, Fun
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetSourceIndex->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaSourceIndex));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndSetSourceIndex(IAsync& aAsync)
@@ -1080,7 +1080,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSetSourceIndexByName(const std::string& aa
         Brn buf((const TByte*)aaSourceName.c_str(), (TUint)aaSourceName.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndSetSourceIndexByName(IAsync& aAsync)
@@ -1110,7 +1110,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSetStartupSourceIndexByName(const std::str
         Brn buf((const TByte*)aaSourceName.c_str(), (TUint)aaSourceName.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndSetStartupSourceIndexByName(IAsync& aAsync)
@@ -1137,7 +1137,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginStartupSourceIndex(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionStartupSourceIndex->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndStartupSourceIndex(IAsync& aAsync, uint32_t& aaSourceIndex)
@@ -1166,7 +1166,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSetStartupSourceIndex(uint32_t aaSourceInd
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetStartupSourceIndex->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaSourceIndex));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndSetStartupSourceIndex(IAsync& aAsync)
@@ -1193,7 +1193,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginStartupSourceEnabled(FunctorAsync& aFuncto
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionStartupSourceEnabled->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndStartupSourceEnabled(IAsync& aAsync, bool& aaStartupSourceEnabled)
@@ -1222,7 +1222,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSetStartupSourceEnabled(bool aaStartupSour
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetStartupSourceEnabled->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aaStartupSourceEnabled));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndSetStartupSourceEnabled(IAsync& aAsync)
@@ -1252,7 +1252,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSourceSystemName(uint32_t aaSourceIndex, F
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionSourceSystemName->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndSourceSystemName(IAsync& aAsync, std::string& aaSourceName)
@@ -1287,7 +1287,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSourceName(uint32_t aaSourceIndex, Functor
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionSourceName->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndSourceName(IAsync& aAsync, std::string& aaSourceName)
@@ -1323,7 +1323,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSetSourceName(uint32_t aaSourceIndex, cons
         Brn buf((const TByte*)aaSourceName.c_str(), (TUint)aaSourceName.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndSetSourceName(IAsync& aAsync)
@@ -1353,7 +1353,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSourceType(uint32_t aaSourceIndex, Functor
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionSourceType->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndSourceType(IAsync& aAsync, std::string& aaSourceType)
@@ -1388,7 +1388,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSourceVisible(uint32_t aaSourceIndex, Func
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionSourceVisible->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndSourceVisible(IAsync& aAsync, bool& aaSourceVisible)
@@ -1418,7 +1418,7 @@ void CpProxyLinnCoUkProduct3Cpp::BeginSetSourceVisible(uint32_t aaSourceIndex, b
     const Action::VectorParameters& inParams = iActionSetSourceVisible->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaSourceIndex));
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aaSourceVisible));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct3Cpp::EndSetSourceVisible(IAsync& aAsync)
@@ -1525,85 +1525,111 @@ void CpProxyLinnCoUkProduct3Cpp::SetPropertyProductAnySourceTypeChanged(Functor&
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductType(std::string& aProductType) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iProductType->Value();
     aProductType.assign((const char*)val.Ptr(), val.Bytes());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductModel(std::string& aProductModel) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iProductModel->Value();
     aProductModel.assign((const char*)val.Ptr(), val.Bytes());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductName(std::string& aProductName) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iProductName->Value();
     aProductName.assign((const char*)val.Ptr(), val.Bytes());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductRoom(std::string& aProductRoom) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iProductRoom->Value();
     aProductRoom.assign((const char*)val.Ptr(), val.Bytes());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductStandby(bool& aProductStandby) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProductStandby = iProductStandby->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductSourceIndex(uint32_t& aProductSourceIndex) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProductSourceIndex = iProductSourceIndex->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductSourceCount(uint32_t& aProductSourceCount) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProductSourceCount = iProductSourceCount->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductSourceXml(std::string& aProductSourceXml) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iProductSourceXml->Value();
     aProductSourceXml.assign((const char*)val.Ptr(), val.Bytes());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyStartupSourceIndex(uint32_t& aStartupSourceIndex) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aStartupSourceIndex = iStartupSourceIndex->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyStartupSourceEnabled(bool& aStartupSourceEnabled) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aStartupSourceEnabled = iStartupSourceEnabled->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductAnySourceName(uint32_t& aProductAnySourceName) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProductAnySourceName = iProductAnySourceName->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductAnySourceVisible(uint32_t& aProductAnySourceVisible) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProductAnySourceVisible = iProductAnySourceVisible->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::PropertyProductAnySourceType(uint32_t& aProductAnySourceType) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aProductAnySourceType = iProductAnySourceType->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProduct3Cpp::ProductTypePropertyChanged()

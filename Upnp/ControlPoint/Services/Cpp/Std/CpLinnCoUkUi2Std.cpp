@@ -14,14 +14,14 @@ using namespace Zapp;
 class SyncDisplayTestPatternLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncDisplayTestPatternLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService);
+    SyncDisplayTestPatternLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
 };
 
-SyncDisplayTestPatternLinnCoUkUi2Cpp::SyncDisplayTestPatternLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService)
-    : iService(aService)
+SyncDisplayTestPatternLinnCoUkUi2Cpp::SyncDisplayTestPatternLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -34,14 +34,14 @@ void SyncDisplayTestPatternLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncDisplayFillLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncDisplayFillLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService);
+    SyncDisplayFillLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
 };
 
-SyncDisplayFillLinnCoUkUi2Cpp::SyncDisplayFillLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService)
-    : iService(aService)
+SyncDisplayFillLinnCoUkUi2Cpp::SyncDisplayFillLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -54,14 +54,14 @@ void SyncDisplayFillLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncDisplayClearLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncDisplayClearLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService);
+    SyncDisplayClearLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
 };
 
-SyncDisplayClearLinnCoUkUi2Cpp::SyncDisplayClearLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService)
-    : iService(aService)
+SyncDisplayClearLinnCoUkUi2Cpp::SyncDisplayClearLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -74,14 +74,14 @@ void SyncDisplayClearLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetTestModeEnabledLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncSetTestModeEnabledLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService);
+    SyncSetTestModeEnabledLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
 };
 
-SyncSetTestModeEnabledLinnCoUkUi2Cpp::SyncSetTestModeEnabledLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService)
-    : iService(aService)
+SyncSetTestModeEnabledLinnCoUkUi2Cpp::SyncSetTestModeEnabledLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -94,14 +94,14 @@ void SyncSetTestModeEnabledLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSimulateInfraredInputLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncSimulateInfraredInputLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService);
+    SyncSimulateInfraredInputLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
 };
 
-SyncSimulateInfraredInputLinnCoUkUi2Cpp::SyncSimulateInfraredInputLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService)
-    : iService(aService)
+SyncSimulateInfraredInputLinnCoUkUi2Cpp::SyncSimulateInfraredInputLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -114,14 +114,14 @@ void SyncSimulateInfraredInputLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSimulateButtonInputLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncSimulateButtonInputLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService);
+    SyncSimulateButtonInputLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
 };
 
-SyncSimulateButtonInputLinnCoUkUi2Cpp::SyncSimulateButtonInputLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService)
-    : iService(aService)
+SyncSimulateButtonInputLinnCoUkUi2Cpp::SyncSimulateButtonInputLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -134,14 +134,14 @@ void SyncSimulateButtonInputLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSimulateLightSensorLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncSimulateLightSensorLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService);
+    SyncSimulateLightSensorLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
 };
 
-SyncSimulateLightSensorLinnCoUkUi2Cpp::SyncSimulateLightSensorLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService)
-    : iService(aService)
+SyncSimulateLightSensorLinnCoUkUi2Cpp::SyncSimulateLightSensorLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -154,15 +154,15 @@ void SyncSimulateLightSensorLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncGetLightSensorDataLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncGetLightSensorDataLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService, uint32_t& aaLightLevel);
+    SyncGetLightSensorDataLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy, uint32_t& aaLightLevel);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
     uint32_t& iaLightLevel;
 };
 
-SyncGetLightSensorDataLinnCoUkUi2Cpp::SyncGetLightSensorDataLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService, uint32_t& aaLightLevel)
-    : iService(aService)
+SyncGetLightSensorDataLinnCoUkUi2Cpp::SyncGetLightSensorDataLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy, uint32_t& aaLightLevel)
+    : iService(aProxy)
     , iaLightLevel(aaLightLevel)
 {
 }
@@ -176,14 +176,14 @@ void SyncGetLightSensorDataLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetDisplayBrightnessLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncSetDisplayBrightnessLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService);
+    SyncSetDisplayBrightnessLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
 };
 
-SyncSetDisplayBrightnessLinnCoUkUi2Cpp::SyncSetDisplayBrightnessLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService)
-    : iService(aService)
+SyncSetDisplayBrightnessLinnCoUkUi2Cpp::SyncSetDisplayBrightnessLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -196,14 +196,14 @@ void SyncSetDisplayBrightnessLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetDisplayBrightnessAutoLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncSetDisplayBrightnessAutoLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService);
+    SyncSetDisplayBrightnessAutoLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
 };
 
-SyncSetDisplayBrightnessAutoLinnCoUkUi2Cpp::SyncSetDisplayBrightnessAutoLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService)
-    : iService(aService)
+SyncSetDisplayBrightnessAutoLinnCoUkUi2Cpp::SyncSetDisplayBrightnessAutoLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -216,14 +216,14 @@ void SyncSetDisplayBrightnessAutoLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetInfraredCommandsLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncSetInfraredCommandsLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService);
+    SyncSetInfraredCommandsLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
 };
 
-SyncSetInfraredCommandsLinnCoUkUi2Cpp::SyncSetInfraredCommandsLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService)
-    : iService(aService)
+SyncSetInfraredCommandsLinnCoUkUi2Cpp::SyncSetInfraredCommandsLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -236,15 +236,15 @@ void SyncSetInfraredCommandsLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncInfraredCommandsLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncInfraredCommandsLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService, std::string& aaCommands);
+    SyncInfraredCommandsLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy, std::string& aaCommands);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
     std::string& iaCommands;
 };
 
-SyncInfraredCommandsLinnCoUkUi2Cpp::SyncInfraredCommandsLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService, std::string& aaCommands)
-    : iService(aService)
+SyncInfraredCommandsLinnCoUkUi2Cpp::SyncInfraredCommandsLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy, std::string& aaCommands)
+    : iService(aProxy)
     , iaCommands(aaCommands)
 {
 }
@@ -258,14 +258,14 @@ void SyncInfraredCommandsLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetInfraredTerminalCommandsLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncSetInfraredTerminalCommandsLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService);
+    SyncSetInfraredTerminalCommandsLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
 };
 
-SyncSetInfraredTerminalCommandsLinnCoUkUi2Cpp::SyncSetInfraredTerminalCommandsLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService)
-    : iService(aService)
+SyncSetInfraredTerminalCommandsLinnCoUkUi2Cpp::SyncSetInfraredTerminalCommandsLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -278,15 +278,15 @@ void SyncSetInfraredTerminalCommandsLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsy
 class SyncInfraredTerminalCommandsLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncInfraredTerminalCommandsLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService, std::string& aaCommands);
+    SyncInfraredTerminalCommandsLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy, std::string& aaCommands);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
     std::string& iaCommands;
 };
 
-SyncInfraredTerminalCommandsLinnCoUkUi2Cpp::SyncInfraredTerminalCommandsLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService, std::string& aaCommands)
-    : iService(aService)
+SyncInfraredTerminalCommandsLinnCoUkUi2Cpp::SyncInfraredTerminalCommandsLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy, std::string& aaCommands)
+    : iService(aProxy)
     , iaCommands(aaCommands)
 {
 }
@@ -300,15 +300,15 @@ void SyncInfraredTerminalCommandsLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncDisplayBrightnessLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncDisplayBrightnessLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService, uint32_t& aaBrightness);
+    SyncDisplayBrightnessLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy, uint32_t& aaBrightness);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
     uint32_t& iaBrightness;
 };
 
-SyncDisplayBrightnessLinnCoUkUi2Cpp::SyncDisplayBrightnessLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService, uint32_t& aaBrightness)
-    : iService(aService)
+SyncDisplayBrightnessLinnCoUkUi2Cpp::SyncDisplayBrightnessLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy, uint32_t& aaBrightness)
+    : iService(aProxy)
     , iaBrightness(aaBrightness)
 {
 }
@@ -322,15 +322,15 @@ void SyncDisplayBrightnessLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncDisplayBrightnessAutoLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncDisplayBrightnessAutoLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService, bool& aaBrightnessAuto);
+    SyncDisplayBrightnessAutoLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy, bool& aaBrightnessAuto);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
     bool& iaBrightnessAuto;
 };
 
-SyncDisplayBrightnessAutoLinnCoUkUi2Cpp::SyncDisplayBrightnessAutoLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService, bool& aaBrightnessAuto)
-    : iService(aService)
+SyncDisplayBrightnessAutoLinnCoUkUi2Cpp::SyncDisplayBrightnessAutoLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy, bool& aaBrightnessAuto)
+    : iService(aProxy)
     , iaBrightnessAuto(aaBrightnessAuto)
 {
 }
@@ -344,15 +344,15 @@ void SyncDisplayBrightnessAutoLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncDisplayUpsideDownLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncDisplayUpsideDownLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService, bool& aaUpsideDown);
+    SyncDisplayUpsideDownLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy, bool& aaUpsideDown);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
     bool& iaUpsideDown;
 };
 
-SyncDisplayUpsideDownLinnCoUkUi2Cpp::SyncDisplayUpsideDownLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService, bool& aaUpsideDown)
-    : iService(aService)
+SyncDisplayUpsideDownLinnCoUkUi2Cpp::SyncDisplayUpsideDownLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy, bool& aaUpsideDown)
+    : iService(aProxy)
     , iaUpsideDown(aaUpsideDown)
 {
 }
@@ -366,14 +366,14 @@ void SyncDisplayUpsideDownLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetDisplayUpsideDownLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncSetDisplayUpsideDownLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService);
+    SyncSetDisplayUpsideDownLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
 };
 
-SyncSetDisplayUpsideDownLinnCoUkUi2Cpp::SyncSetDisplayUpsideDownLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService)
-    : iService(aService)
+SyncSetDisplayUpsideDownLinnCoUkUi2Cpp::SyncSetDisplayUpsideDownLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -386,14 +386,14 @@ void SyncSetDisplayUpsideDownLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetDisplayScrollTextLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncSetDisplayScrollTextLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService);
+    SyncSetDisplayScrollTextLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
 };
 
-SyncSetDisplayScrollTextLinnCoUkUi2Cpp::SyncSetDisplayScrollTextLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService)
-    : iService(aService)
+SyncSetDisplayScrollTextLinnCoUkUi2Cpp::SyncSetDisplayScrollTextLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -406,15 +406,15 @@ void SyncSetDisplayScrollTextLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncDisplayScrollTextLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncDisplayScrollTextLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService, bool& aaDisplayScrollTextEnabled);
+    SyncDisplayScrollTextLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy, bool& aaDisplayScrollTextEnabled);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
     bool& iaDisplayScrollTextEnabled;
 };
 
-SyncDisplayScrollTextLinnCoUkUi2Cpp::SyncDisplayScrollTextLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService, bool& aaDisplayScrollTextEnabled)
-    : iService(aService)
+SyncDisplayScrollTextLinnCoUkUi2Cpp::SyncDisplayScrollTextLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy, bool& aaDisplayScrollTextEnabled)
+    : iService(aProxy)
     , iaDisplayScrollTextEnabled(aaDisplayScrollTextEnabled)
 {
 }
@@ -428,14 +428,14 @@ void SyncDisplayScrollTextLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetDisplaySleepLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncSetDisplaySleepLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService);
+    SyncSetDisplaySleepLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
 };
 
-SyncSetDisplaySleepLinnCoUkUi2Cpp::SyncSetDisplaySleepLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService)
-    : iService(aService)
+SyncSetDisplaySleepLinnCoUkUi2Cpp::SyncSetDisplaySleepLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -448,15 +448,15 @@ void SyncSetDisplaySleepLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncDisplaySleepLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncDisplaySleepLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService, bool& aaEnabled);
+    SyncDisplaySleepLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy, bool& aaEnabled);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
     bool& iaEnabled;
 };
 
-SyncDisplaySleepLinnCoUkUi2Cpp::SyncDisplaySleepLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService, bool& aaEnabled)
-    : iService(aService)
+SyncDisplaySleepLinnCoUkUi2Cpp::SyncDisplaySleepLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy, bool& aaEnabled)
+    : iService(aProxy)
     , iaEnabled(aaEnabled)
 {
 }
@@ -470,14 +470,14 @@ void SyncDisplaySleepLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetDisplayLedOffLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncSetDisplayLedOffLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService);
+    SyncSetDisplayLedOffLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
 };
 
-SyncSetDisplayLedOffLinnCoUkUi2Cpp::SyncSetDisplayLedOffLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService)
-    : iService(aService)
+SyncSetDisplayLedOffLinnCoUkUi2Cpp::SyncSetDisplayLedOffLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -490,15 +490,15 @@ void SyncSetDisplayLedOffLinnCoUkUi2Cpp::CompleteRequest(IAsync& aAsync)
 class SyncDisplayLedOffLinnCoUkUi2Cpp : public SyncProxyAction
 {
 public:
-    SyncDisplayLedOffLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService, bool& aaOff);
+    SyncDisplayLedOffLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy, bool& aaOff);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkUi2Cpp& iService;
     bool& iaOff;
 };
 
-SyncDisplayLedOffLinnCoUkUi2Cpp::SyncDisplayLedOffLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aService, bool& aaOff)
-    : iService(aService)
+SyncDisplayLedOffLinnCoUkUi2Cpp::SyncDisplayLedOffLinnCoUkUi2Cpp(CpProxyLinnCoUkUi2Cpp& aProxy, bool& aaOff)
+    : iService(aProxy)
     , iaOff(aaOff)
 {
 }
@@ -639,37 +639,37 @@ CpProxyLinnCoUkUi2Cpp::CpProxyLinnCoUkUi2Cpp(CpDeviceCpp& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyLinnCoUkUi2Cpp::DisplayBrightnessPropertyChanged);
     iDisplayBrightness = new PropertyUint("DisplayBrightness", functor);
-    iService->AddProperty(iDisplayBrightness);
+    AddProperty(iDisplayBrightness);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkUi2Cpp::DisplayBrightnessAutoPropertyChanged);
     iDisplayBrightnessAuto = new PropertyBool("DisplayBrightnessAuto", functor);
-    iService->AddProperty(iDisplayBrightnessAuto);
+    AddProperty(iDisplayBrightnessAuto);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkUi2Cpp::InfraredCommandsPropertyChanged);
     iInfraredCommands = new PropertyString("InfraredCommands", functor);
-    iService->AddProperty(iInfraredCommands);
+    AddProperty(iInfraredCommands);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkUi2Cpp::InfraredTerminalCommandsPropertyChanged);
     iInfraredTerminalCommands = new PropertyString("InfraredTerminalCommands", functor);
-    iService->AddProperty(iInfraredTerminalCommands);
+    AddProperty(iInfraredTerminalCommands);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkUi2Cpp::DisplayUpsideDownPropertyChanged);
     iDisplayUpsideDown = new PropertyBool("DisplayUpsideDown", functor);
-    iService->AddProperty(iDisplayUpsideDown);
+    AddProperty(iDisplayUpsideDown);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkUi2Cpp::DisplayScrollTextPropertyChanged);
     iDisplayScrollText = new PropertyBool("DisplayScrollText", functor);
-    iService->AddProperty(iDisplayScrollText);
+    AddProperty(iDisplayScrollText);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkUi2Cpp::DisplaySleepPropertyChanged);
     iDisplaySleep = new PropertyBool("DisplaySleep", functor);
-    iService->AddProperty(iDisplaySleep);
+    AddProperty(iDisplaySleep);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkUi2Cpp::DisplayLedOffPropertyChanged);
     iDisplayLedOff = new PropertyBool("DisplayLedOff", functor);
-    iService->AddProperty(iDisplayLedOff);
+    AddProperty(iDisplayLedOff);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkUi2Cpp::TerminalInputCodePropertyChanged);
     iTerminalInputCode = new PropertyUint("TerminalInputCode", functor);
-    iService->AddProperty(iTerminalInputCode);
+    AddProperty(iTerminalInputCode);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkUi2Cpp::TerminalInputNamePropertyChanged);
     iTerminalInputName = new PropertyString("TerminalInputName", functor);
-    iService->AddProperty(iTerminalInputName);
+    AddProperty(iTerminalInputName);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkUi2Cpp::DisplayPixelsPropertyChanged);
     iDisplayPixels = new PropertyBinary("DisplayPixels", functor);
-    iService->AddProperty(iDisplayPixels);
+    AddProperty(iDisplayPixels);
 }
 
 CpProxyLinnCoUkUi2Cpp::~CpProxyLinnCoUkUi2Cpp()
@@ -714,7 +714,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginDisplayTestPattern(int32_t aaTestPattern, Funct
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionDisplayTestPattern->InputParameters();
     invocation->AddInput(new ArgumentInt(*inParams[inIndex++], aaTestPattern));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndDisplayTestPattern(IAsync& aAsync)
@@ -738,7 +738,7 @@ void CpProxyLinnCoUkUi2Cpp::SyncDisplayFill()
 void CpProxyLinnCoUkUi2Cpp::BeginDisplayFill(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionDisplayFill, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndDisplayFill(IAsync& aAsync)
@@ -762,7 +762,7 @@ void CpProxyLinnCoUkUi2Cpp::SyncDisplayClear()
 void CpProxyLinnCoUkUi2Cpp::BeginDisplayClear(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionDisplayClear, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndDisplayClear(IAsync& aAsync)
@@ -789,7 +789,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginSetTestModeEnabled(bool aaEnabled, FunctorAsync
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetTestModeEnabled->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aaEnabled));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndSetTestModeEnabled(IAsync& aAsync)
@@ -816,7 +816,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginSimulateInfraredInput(uint32_t aaCode, FunctorA
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSimulateInfraredInput->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaCode));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndSimulateInfraredInput(IAsync& aAsync)
@@ -843,7 +843,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginSimulateButtonInput(uint32_t aaCode, FunctorAsy
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSimulateButtonInput->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaCode));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndSimulateButtonInput(IAsync& aAsync)
@@ -870,7 +870,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginSimulateLightSensor(uint32_t aaLightLevel, Func
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSimulateLightSensor->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaLightLevel));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndSimulateLightSensor(IAsync& aAsync)
@@ -897,7 +897,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginGetLightSensorData(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetLightSensorData->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndGetLightSensorData(IAsync& aAsync, uint32_t& aaLightLevel)
@@ -926,7 +926,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginSetDisplayBrightness(uint32_t aaBrightness, Fun
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetDisplayBrightness->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaBrightness));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndSetDisplayBrightness(IAsync& aAsync)
@@ -953,7 +953,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginSetDisplayBrightnessAuto(bool aaBrightnessAuto,
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetDisplayBrightnessAuto->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aaBrightnessAuto));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndSetDisplayBrightnessAuto(IAsync& aAsync)
@@ -983,7 +983,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginSetInfraredCommands(const std::string& aaComman
         Brn buf((const TByte*)aaCommands.c_str(), (TUint)aaCommands.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndSetInfraredCommands(IAsync& aAsync)
@@ -1010,7 +1010,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginInfraredCommands(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionInfraredCommands->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndInfraredCommands(IAsync& aAsync, std::string& aaCommands)
@@ -1045,7 +1045,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginSetInfraredTerminalCommands(const std::string& 
         Brn buf((const TByte*)aaCommands.c_str(), (TUint)aaCommands.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndSetInfraredTerminalCommands(IAsync& aAsync)
@@ -1072,7 +1072,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginInfraredTerminalCommands(FunctorAsync& aFunctor
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionInfraredTerminalCommands->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndInfraredTerminalCommands(IAsync& aAsync, std::string& aaCommands)
@@ -1104,7 +1104,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginDisplayBrightness(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionDisplayBrightness->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndDisplayBrightness(IAsync& aAsync, uint32_t& aaBrightness)
@@ -1133,7 +1133,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginDisplayBrightnessAuto(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionDisplayBrightnessAuto->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndDisplayBrightnessAuto(IAsync& aAsync, bool& aaBrightnessAuto)
@@ -1162,7 +1162,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginDisplayUpsideDown(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionDisplayUpsideDown->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndDisplayUpsideDown(IAsync& aAsync, bool& aaUpsideDown)
@@ -1191,7 +1191,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginSetDisplayUpsideDown(bool aaUpsideDown, Functor
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetDisplayUpsideDown->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aaUpsideDown));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndSetDisplayUpsideDown(IAsync& aAsync)
@@ -1218,7 +1218,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginSetDisplayScrollText(bool aaDisplayScrollText, 
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetDisplayScrollText->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aaDisplayScrollText));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndSetDisplayScrollText(IAsync& aAsync)
@@ -1245,7 +1245,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginDisplayScrollText(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionDisplayScrollText->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndDisplayScrollText(IAsync& aAsync, bool& aaDisplayScrollTextEnabled)
@@ -1274,7 +1274,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginSetDisplaySleep(bool aaEnabled, FunctorAsync& a
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetDisplaySleep->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aaEnabled));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndSetDisplaySleep(IAsync& aAsync)
@@ -1301,7 +1301,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginDisplaySleep(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionDisplaySleep->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndDisplaySleep(IAsync& aAsync, bool& aaEnabled)
@@ -1330,7 +1330,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginSetDisplayLedOff(bool aaOff, FunctorAsync& aFun
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetDisplayLedOff->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aaOff));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndSetDisplayLedOff(IAsync& aAsync)
@@ -1357,7 +1357,7 @@ void CpProxyLinnCoUkUi2Cpp::BeginDisplayLedOff(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionDisplayLedOff->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkUi2Cpp::EndDisplayLedOff(IAsync& aAsync, bool& aaOff)
@@ -1452,72 +1452,94 @@ void CpProxyLinnCoUkUi2Cpp::SetPropertyDisplayPixelsChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkUi2Cpp::PropertyDisplayBrightness(uint32_t& aDisplayBrightness) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDisplayBrightness = iDisplayBrightness->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkUi2Cpp::PropertyDisplayBrightnessAuto(bool& aDisplayBrightnessAuto) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDisplayBrightnessAuto = iDisplayBrightnessAuto->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkUi2Cpp::PropertyInfraredCommands(std::string& aInfraredCommands) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iInfraredCommands->Value();
     aInfraredCommands.assign((const char*)val.Ptr(), val.Bytes());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkUi2Cpp::PropertyInfraredTerminalCommands(std::string& aInfraredTerminalCommands) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iInfraredTerminalCommands->Value();
     aInfraredTerminalCommands.assign((const char*)val.Ptr(), val.Bytes());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkUi2Cpp::PropertyDisplayUpsideDown(bool& aDisplayUpsideDown) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDisplayUpsideDown = iDisplayUpsideDown->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkUi2Cpp::PropertyDisplayScrollText(bool& aDisplayScrollText) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDisplayScrollText = iDisplayScrollText->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkUi2Cpp::PropertyDisplaySleep(bool& aDisplaySleep) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDisplaySleep = iDisplaySleep->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkUi2Cpp::PropertyDisplayLedOff(bool& aDisplayLedOff) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDisplayLedOff = iDisplayLedOff->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkUi2Cpp::PropertyTerminalInputCode(uint32_t& aTerminalInputCode) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTerminalInputCode = iTerminalInputCode->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkUi2Cpp::PropertyTerminalInputName(std::string& aTerminalInputName) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iTerminalInputName->Value();
     aTerminalInputName.assign((const char*)val.Ptr(), val.Bytes());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkUi2Cpp::PropertyDisplayPixels(std::string& aDisplayPixels) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iDisplayPixels->Value();
     aDisplayPixels.assign((const char*)val.Ptr(), val.Bytes());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkUi2Cpp::DisplayBrightnessPropertyChanged()

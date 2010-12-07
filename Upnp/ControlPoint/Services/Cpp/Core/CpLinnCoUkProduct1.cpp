@@ -11,15 +11,15 @@ using namespace Zapp;
 class SyncRoomLinnCoUkProduct1 : public SyncProxyAction
 {
 public:
-    SyncRoomLinnCoUkProduct1(CpProxyLinnCoUkProduct1& aService, Brh& aaRoom);
+    SyncRoomLinnCoUkProduct1(CpProxyLinnCoUkProduct1& aProxy, Brh& aaRoom);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct1& iService;
     Brh& iaRoom;
 };
 
-SyncRoomLinnCoUkProduct1::SyncRoomLinnCoUkProduct1(CpProxyLinnCoUkProduct1& aService, Brh& aaRoom)
-    : iService(aService)
+SyncRoomLinnCoUkProduct1::SyncRoomLinnCoUkProduct1(CpProxyLinnCoUkProduct1& aProxy, Brh& aaRoom)
+    : iService(aProxy)
     , iaRoom(aaRoom)
 {
 }
@@ -33,14 +33,14 @@ void SyncRoomLinnCoUkProduct1::CompleteRequest(IAsync& aAsync)
 class SyncSetRoomLinnCoUkProduct1 : public SyncProxyAction
 {
 public:
-    SyncSetRoomLinnCoUkProduct1(CpProxyLinnCoUkProduct1& aService);
+    SyncSetRoomLinnCoUkProduct1(CpProxyLinnCoUkProduct1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct1& iService;
 };
 
-SyncSetRoomLinnCoUkProduct1::SyncSetRoomLinnCoUkProduct1(CpProxyLinnCoUkProduct1& aService)
-    : iService(aService)
+SyncSetRoomLinnCoUkProduct1::SyncSetRoomLinnCoUkProduct1(CpProxyLinnCoUkProduct1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -53,15 +53,15 @@ void SyncSetRoomLinnCoUkProduct1::CompleteRequest(IAsync& aAsync)
 class SyncStandbyLinnCoUkProduct1 : public SyncProxyAction
 {
 public:
-    SyncStandbyLinnCoUkProduct1(CpProxyLinnCoUkProduct1& aService, TBool& aaStandby);
+    SyncStandbyLinnCoUkProduct1(CpProxyLinnCoUkProduct1& aProxy, TBool& aaStandby);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct1& iService;
     TBool& iaStandby;
 };
 
-SyncStandbyLinnCoUkProduct1::SyncStandbyLinnCoUkProduct1(CpProxyLinnCoUkProduct1& aService, TBool& aaStandby)
-    : iService(aService)
+SyncStandbyLinnCoUkProduct1::SyncStandbyLinnCoUkProduct1(CpProxyLinnCoUkProduct1& aProxy, TBool& aaStandby)
+    : iService(aProxy)
     , iaStandby(aaStandby)
 {
 }
@@ -75,14 +75,14 @@ void SyncStandbyLinnCoUkProduct1::CompleteRequest(IAsync& aAsync)
 class SyncSetStandbyLinnCoUkProduct1 : public SyncProxyAction
 {
 public:
-    SyncSetStandbyLinnCoUkProduct1(CpProxyLinnCoUkProduct1& aService);
+    SyncSetStandbyLinnCoUkProduct1(CpProxyLinnCoUkProduct1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkProduct1& iService;
 };
 
-SyncSetStandbyLinnCoUkProduct1::SyncSetStandbyLinnCoUkProduct1(CpProxyLinnCoUkProduct1& aService)
-    : iService(aService)
+SyncSetStandbyLinnCoUkProduct1::SyncSetStandbyLinnCoUkProduct1(CpProxyLinnCoUkProduct1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -116,10 +116,10 @@ CpProxyLinnCoUkProduct1::CpProxyLinnCoUkProduct1(CpDevice& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProduct1::RoomPropertyChanged);
     iRoom = new PropertyString("Room", functor);
-    iService->AddProperty(iRoom);
+    AddProperty(iRoom);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkProduct1::StandbyPropertyChanged);
     iStandby = new PropertyBool("Standby", functor);
-    iService->AddProperty(iStandby);
+    AddProperty(iStandby);
 }
 
 CpProxyLinnCoUkProduct1::~CpProxyLinnCoUkProduct1()
@@ -144,7 +144,7 @@ void CpProxyLinnCoUkProduct1::BeginRoom(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionRoom->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct1::EndRoom(IAsync& aAsync, Brh& aaRoom)
@@ -173,7 +173,7 @@ void CpProxyLinnCoUkProduct1::BeginSetRoom(const Brx& aaRoom, FunctorAsync& aFun
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetRoom->InputParameters();
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aaRoom));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct1::EndSetRoom(IAsync& aAsync)
@@ -200,7 +200,7 @@ void CpProxyLinnCoUkProduct1::BeginStandby(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionStandby->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct1::EndStandby(IAsync& aAsync, TBool& aaStandby)
@@ -229,7 +229,7 @@ void CpProxyLinnCoUkProduct1::BeginSetStandby(TBool aaStandby, FunctorAsync& aFu
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetStandby->InputParameters();
     invocation->AddInput(new ArgumentBool(*inParams[inIndex++], aaStandby));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkProduct1::EndSetStandby(IAsync& aAsync)
@@ -259,14 +259,18 @@ void CpProxyLinnCoUkProduct1::SetPropertyStandbyChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkProduct1::PropertyRoom(Brhz& aRoom) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aRoom.Set(iRoom->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProduct1::PropertyStandby(TBool& aStandby) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aStandby = iStandby->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkProduct1::RoomPropertyChanged()

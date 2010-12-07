@@ -6,7 +6,7 @@
 #include <ZappTypes.h>
 #include <Discovery.h>
 #include <Thread.h>
-#include <Os.h>
+#include <OsWrapper.h>
 #include <C/CpDeviceUpnp.h>
 #include <C/Zapp.h>
 

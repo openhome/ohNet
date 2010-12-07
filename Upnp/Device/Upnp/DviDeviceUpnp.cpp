@@ -6,7 +6,7 @@
 #include <DviStack.h>
 #include <NetworkInterfaceList.h>
 #include <Discovery.h>
-#include <Os.h>
+#include <OsWrapper.h>
 #include <Maths.h>
 #include <Printer.h>
 #include <Ascii.h>
@@ -100,7 +100,7 @@ void DviDeviceUpnp::AddListener(const NetworkInterface& aNif)
 {
     TIpAddress addr = aNif.Address();
     Bwh uriBase;
-    TUint port = DviServerUpnp::Port(addr);
+    TUint port = DviStack::ServerUpnp().Port(addr);
     DviDevice* root = (iDevice.IsRoot()? &iDevice : iDevice.Root());
     root->GetUriBase(uriBase, addr, port, *this);
     DviDeviceUpnp::MulticastListener* listener = new DviDeviceUpnp::MulticastListener(*this, aNif, uriBase, port);
@@ -266,6 +266,12 @@ const Brx& DviDeviceUpnp::ProtocolName() const
 void DviDeviceUpnp::Enable()
 {
     iLock.Wait();
+    
+    // check we have at least the basic attributes requried for advertisement
+    ASSERT(Domain().Bytes() > 0);
+    ASSERT(Type().Bytes() > 0);
+    ASSERT(Version() > 0);
+    
     for (TUint i=0; i<iListeners.size(); i++) {
         DviDeviceUpnp::MulticastListener* listener = iListeners[i];
         Bwh uriBase;
@@ -680,13 +686,14 @@ DviDeviceUpnp::MulticastListener::MulticastListener(DviDeviceUpnp& aDevice, cons
     iListener = &Stack::MulticastListenerClaim(aNif.Address());
     iId = iListener->AddMsearchHandler(this);
     iSubnet = aNif.Subnet();
+    iInterface = aNif.Address();
     aUriBase.TransferTo(iUriBase);
 }
 
 DviDeviceUpnp::MulticastListener::~MulticastListener()
 {
     iListener->RemoveMsearchHandler(iId);
-    Stack::MulticastListenerRelease(Subnet());
+    Stack::MulticastListenerRelease(iInterface);
 }
 
 TIpAddress DviDeviceUpnp::MulticastListener::Interface() const

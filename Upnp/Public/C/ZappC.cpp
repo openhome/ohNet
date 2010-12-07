@@ -161,6 +161,12 @@ void ZappInitParamsSetFreeExternalCallback(ZappHandleInitParams aParams, ZappCal
     ip->SetFreeExternalCallback(aCallback);
 }
 
+void ZappInitParamsSetUseLoopbackNetworkInterface(ZappHandleInitParams aParams)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+    ip->SetUseLoopbackNetworkInterface();
+}
+
 void ZappInitParamsSetDvMaxUpdateTime(ZappHandleInitParams aParams, uint32_t aSecs)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
@@ -171,6 +177,12 @@ void ZappInitParamsSetDvNumPublisherThreads(ZappHandleInitParams aParams, uint32
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
 	ip->SetDvNumPublisherThreads(aNumThreads);
+}
+
+void ZappInitParamsSetDvNumWebSocketThreads(ZappHandleInitParams aParams, uint32_t aNumThreads)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+	ip->SetDvNumWebSocketThreads(aNumThreads);
 }
 
 uint32_t ZappInitParamsTcpConnectTimeoutMs(ZappHandleInitParams aParams)
@@ -237,6 +249,12 @@ uint32_t ZappInitParamsDvNumPublisherThreads(ZappHandleInitParams aParams)
 {
     InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
 	return ip->DvNumPublisherThreads();
+}
+
+uint32_t ZappInitParamsDvNumWebSocketThreads(ZappHandleInitParams aParams)
+{
+    InitialisationParams* ip = reinterpret_cast<InitialisationParams*>(aParams);
+	return ip->DvNumWebSocketThreads();
 }
 
 TIpAddress ZappNetworkInterfaceAddress(ZappHandleNetworkInterface aNif)

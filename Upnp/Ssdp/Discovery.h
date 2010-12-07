@@ -72,6 +72,41 @@ protected:
 class SsdpListenerMulticast : public SsdpListener
 {
     static const TUint kMaxBufferBytes = 1024;
+    static const TUint kRecvBufBytes = 32 * 1024;
+    class Handler
+    {
+    public:
+        TInt Id() const { return iId; }
+        Zapp::Mutex& Mutex() { return iLock; }
+        void Lock() { iLock.Wait(); }
+        void Unlock() { iLock.Signal(); }
+        void Disable() { iDead = true; }
+        TBool IsDisabled() const { return iDead; }
+    protected:
+        Handler(TInt aId) : iDead(false), iId(aId), iLock("SSDM") {}
+    private:
+        TBool iDead;
+        TInt iId;
+        Zapp::Mutex iLock;
+    };
+    class NotifyHandler : public Handler
+    {
+    public:
+        NotifyHandler(ISsdpNotifyHandler* aHandler, TInt aId) : SsdpListenerMulticast::Handler(aId), iHandler(aHandler) {}
+        ISsdpNotifyHandler* Handler() { return iHandler; }
+    private:
+        ISsdpNotifyHandler* iHandler;
+    };
+    class MsearchHandler : public Handler
+    {
+    public:
+        MsearchHandler(ISsdpMsearchHandler* aHandler, TInt aId) : SsdpListenerMulticast::Handler(aId), iHandler(aHandler) {}
+        ISsdpMsearchHandler* Handler() { return iHandler; }
+    private:
+        ISsdpMsearchHandler* iHandler;
+    };
+    typedef std::vector<NotifyHandler*> VectorNotifyHandler;
+    typedef std::vector<MsearchHandler*> VectorMsearchHandler;
 public:
     SsdpListenerMulticast(TIpAddress aInterface);
     virtual ~SsdpListenerMulticast();
@@ -83,28 +118,13 @@ public:
 private:
     void Run();
     void Terminated();
+    void Notify(NotifyHandler& aHandler);
     void Notify(ISsdpNotifyHandler& aNotifyHandler);
+    void Msearch(MsearchHandler& aHandler);
     void Msearch(ISsdpMsearchHandler& aMsearchHandler);
+    void EraseDisabled(VectorNotifyHandler& aVector);
+    void EraseDisabled(VectorMsearchHandler& aVector);
 private:
-    class NotifyHandler
-    {
-    public:
-        NotifyHandler(ISsdpNotifyHandler* aHandler, TInt aId) : iHandler(aHandler), iId(aId) {}
-    public:
-        ISsdpNotifyHandler* iHandler;
-        TInt iId;
-    };
-    class MsearchHandler
-    {
-    public:
-        MsearchHandler(ISsdpMsearchHandler* aHandler, TInt aId) : iHandler(aHandler), iId(aId) {}
-    public:
-        ISsdpMsearchHandler* iHandler;
-        TInt iId;
-    };
-private:
-    typedef std::vector<NotifyHandler> VectorNotifyHandler;
-    typedef std::vector<MsearchHandler> VectorMsearchHandler;
     VectorNotifyHandler iNotifyHandlers;
     VectorMsearchHandler iMsearchHandlers;
     Mutex iLock;
@@ -125,6 +145,7 @@ private:
 class SsdpListenerUnicast : public SsdpListener
 {
     static const TUint kMaxBufferBytes = 1024;
+    static const TUint kRecvBufBytes = 64 * 1024;
 public:
     SsdpListenerUnicast(ISsdpNotifyHandler& aNotifyHandler, TIpAddress aInterface);
     ~SsdpListenerUnicast();
@@ -138,7 +159,9 @@ private:
     void Run();
 private:
     ISsdpNotifyHandler& iNotifyHandler;
-    SsdpSocketStream iSocket;
+    SocketUdpClient iSocket;
+    UdpControllerWriter iSocketWriter;
+    UdpControllerReader iSocketReader;
     Sws<kMaxBufferBytes> iWriteBuffer;
     SsdpWriterMsearchRequest iWriter;
     Srs<kMaxBufferBytes> iReadBuffer;

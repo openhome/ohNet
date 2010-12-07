@@ -1,7 +1,7 @@
-<#@ assembly name="Build/Tools/UpnpServiceXml.dll" #>
+<#@ assembly name="UpnpServiceXml.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="Linn.Xml.UpnpServiceXml" #>
+<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
     string domain = TemplateArgument("domain");
@@ -35,7 +35,7 @@
     }
     fileName += type;
     fileName += version;
-    string className = "DvService" + fileName + "Cpp";
+    string className = "DvProvider" + fileName + "Cpp";
 
     Initialise();
 
@@ -45,22 +45,22 @@
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
 
-void <#=className#>::SetProperty<#=s.name#>(<#=inArgType[s.type]#> aValue)
+bool <#=className#>::SetProperty<#=s.name#>(<#=inArgType[s.type]#> aValue)
 {
 <#      if (IsStringType(s)) #>
 <#      { #>
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    <#=propertySetter[s.type]#>(*iProperty<#=s.name#>, buf);
+    return <#=propertySetter[s.type]#>(*iProperty<#=s.name#>, buf);
 <#      } #>
 <#      else #>
 <#      { #>
-    <#=propertySetter[s.type]#>(*iProperty<#=s.name#>, aValue);
+    return <#=propertySetter[s.type]#>(*iProperty<#=s.name#>, aValue);
 <#      } #>
 }
 
@@ -79,9 +79,9 @@ void <#=className#>::GetProperty<#=s.name#>(<#=outArgType[s.type]#> aValue)
 <#  } #>
 
 <#=className#>::<#=className#>(DvDeviceStd& aDevice)
-    : DvService(aDevice.Device(), "<#=domain#>", "<#=type#>", <#=version#>)
+    : DvProvider(aDevice.Device(), "<#=domain#>", "<#=type#>", <#=version#>)
 {
-    Functor empty;<#=DeclareAllowedValuesForProperties(u)#>
+    <#=DeclareAllowedValuesForProperties(u)#>
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
 <#      if (s.values.Count > 0) #>
@@ -93,7 +93,7 @@ void <#=className#>::GetProperty<#=s.name#>(<#=outArgType[s.type]#> aValue)
     allowedValues[index++] = (TChar*)"<#=val#>";
 <#          } #>
 <#      } #>
-    iProperty<#=s.name#> = new <#=propertyType[s.type]#>(new <#=paramType[s.type]#>("<#=s.name#>"<#=ParameterAllowedValues(s)#>), empty);
+    iProperty<#=s.name#> = new <#=propertyType[s.type]#>(new <#=paramType[s.type]#>("<#=s.name#>"<#=ParameterAllowedValues(s)#>));
 <#      if (s.values.Count > 0) #>
 <#      { #>
     delete[] allowedValues;
@@ -155,14 +155,14 @@ void <#=className#>::EnableAction<#=a.name#>()
 <#          } #>
 <#      } #>
 <#  } #>
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &<#=className#>::Do<#=a.name#>);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &<#=className#>::Do<#=a.name#>);
     iService->AddAction(action, functor);
 }
 <#  } #>
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-void <#=className#>::Do<#=a.name#>(IDvInvocation& aInvocation, TUint aVersion)
+void <#=className#>::Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
 <#      foreach (Argument i in a.inargs) #>

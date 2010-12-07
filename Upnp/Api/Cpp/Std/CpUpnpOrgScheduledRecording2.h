@@ -21,6 +21,7 @@ class PropertyUint;
 
 /**
  * Proxy for upnp.org:ScheduledRecording:2
+ * @ingroup Proxies
  */
 class CpProxyUpnpOrgScheduledRecording2Cpp : public CpProxy
 {

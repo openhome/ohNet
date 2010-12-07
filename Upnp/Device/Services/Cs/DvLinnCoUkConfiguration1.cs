@@ -3,28 +3,61 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Zapp;
 
-namespace Zapp
+namespace Zapp.Device.Providers
 {
-    public class DvServiceLinnCoUkConfiguration1 : IDisposable
+    public interface IDvProviderLinnCoUkConfiguration1 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the ConfigurationXml property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyConfigurationXml(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ConfigurationXml property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyConfigurationXml(out string aValue);
+
+        /// <summary>
+        /// Set the value of the ParameterXml property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyParameterXml(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ParameterXml property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyParameterXml(out string aValue);
+        
+    }
+    /// <summary>
+    /// Provider for the linn.co.uk:Configuration:1 UPnP service
+    /// </summary>
+    public class DvProviderLinnCoUkConfiguration1 : DvProvider, IDisposable, IDvProviderLinnCoUkConfiguration1
     {
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern IntPtr DvServiceLinnCoUkConfiguration1Create(IntPtr aDeviceHandle);
+        static extern IntPtr DvProviderLinnCoUkConfiguration1Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern void DvServiceLinnCoUkConfiguration1Destroy(IntPtr aHandle);
+        static extern void DvProviderLinnCoUkConfiguration1Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern unsafe int DvServiceLinnCoUkConfiguration1SetPropertyConfigurationXml(IntPtr aHandle, char* aValue);
+        static extern unsafe int DvProviderLinnCoUkConfiguration1SetPropertyConfigurationXml(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern unsafe void DvServiceLinnCoUkConfiguration1GetPropertyConfigurationXml(IntPtr aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkConfiguration1GetPropertyConfigurationXml(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern unsafe int DvServiceLinnCoUkConfiguration1SetPropertyParameterXml(IntPtr aHandle, char* aValue);
+        static extern unsafe int DvProviderLinnCoUkConfiguration1SetPropertyParameterXml(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern unsafe void DvServiceLinnCoUkConfiguration1GetPropertyParameterXml(IntPtr aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkConfiguration1GetPropertyParameterXml(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern void DvServiceLinnCoUkConfiguration1EnableActionConfigurationXml(IntPtr aHandle, CallbackConfigurationXml aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkConfiguration1EnableActionConfigurationXml(IntPtr aHandle, CallbackConfigurationXml aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern void DvServiceLinnCoUkConfiguration1EnableActionParameterXml(IntPtr aHandle, CallbackParameterXml aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkConfiguration1EnableActionParameterXml(IntPtr aHandle, CallbackParameterXml aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern void DvServiceLinnCoUkConfiguration1EnableActionSetParameter(IntPtr aHandle, CallbackSetParameter aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkConfiguration1EnableActionSetParameter(IntPtr aHandle, CallbackSetParameter aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -32,87 +65,156 @@ namespace Zapp
         private unsafe delegate int CallbackParameterXml(IntPtr aPtr, uint aVersion, char** aaParameterXml);
         private unsafe delegate int CallbackSetParameter(IntPtr aPtr, uint aVersion, char* aaTarget, char* aaName, char* aaValue);
 
-        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackConfigurationXml iCallbackConfigurationXml;
         private CallbackParameterXml iCallbackParameterXml;
         private CallbackSetParameter iCallbackSetParameter;
 
-        public DvServiceLinnCoUkConfiguration1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderLinnCoUkConfiguration1(DvDevice aDevice)
         {
-            iHandle = DvServiceLinnCoUkConfiguration1Create(aDevice.Handle()); 
+            iHandle = DvProviderLinnCoUkConfiguration1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyConfigurationXml(string aValue)
+        /// <summary>
+        /// Set the value of the ConfigurationXml property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyConfigurationXml(string aValue)
         {
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkConfiguration1SetPropertyConfigurationXml(iHandle, value);
+            int err = DvProviderLinnCoUkConfiguration1SetPropertyConfigurationXml(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the ConfigurationXml property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyConfigurationXml(out string aValue)
         {
             char* value;
-            DvServiceLinnCoUkConfiguration1GetPropertyConfigurationXml(iHandle, &value);
+            DvProviderLinnCoUkConfiguration1GetPropertyConfigurationXml(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyParameterXml(string aValue)
+        /// <summary>
+        /// Set the value of the ParameterXml property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyParameterXml(string aValue)
         {
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkConfiguration1SetPropertyParameterXml(iHandle, value);
+            int err = DvProviderLinnCoUkConfiguration1SetPropertyParameterXml(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the ParameterXml property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyParameterXml(out string aValue)
         {
             char* value;
-            DvServiceLinnCoUkConfiguration1GetPropertyParameterXml(iHandle, &value);
+            DvProviderLinnCoUkConfiguration1GetPropertyParameterXml(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Signal that the action ConfigurationXml is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoConfigurationXml must be overridden if this is called.</remarks>
         protected unsafe void EnableActionConfigurationXml()
         {
             iCallbackConfigurationXml = new CallbackConfigurationXml(DoConfigurationXml);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkConfiguration1EnableActionConfigurationXml(iHandle, iCallbackConfigurationXml, ptr);
+            DvProviderLinnCoUkConfiguration1EnableActionConfigurationXml(iHandle, iCallbackConfigurationXml, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action ParameterXml is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoParameterXml must be overridden if this is called.</remarks>
         protected unsafe void EnableActionParameterXml()
         {
             iCallbackParameterXml = new CallbackParameterXml(DoParameterXml);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkConfiguration1EnableActionParameterXml(iHandle, iCallbackParameterXml, ptr);
+            DvProviderLinnCoUkConfiguration1EnableActionParameterXml(iHandle, iCallbackParameterXml, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetParameter is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetParameter must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetParameter()
         {
             iCallbackSetParameter = new CallbackSetParameter(DoSetParameter);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkConfiguration1EnableActionSetParameter(iHandle, iCallbackSetParameter, ptr);
+            DvProviderLinnCoUkConfiguration1EnableActionSetParameter(iHandle, iCallbackSetParameter, ptr);
         }
 
+        /// <summary>
+        /// ConfigurationXml action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// ConfigurationXml action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionConfigurationXml was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaConfigurationXml"></param>
         protected virtual void ConfigurationXml(uint aVersion, out string aaConfigurationXml)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// ParameterXml action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// ParameterXml action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionParameterXml was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaParameterXml"></param>
         protected virtual void ParameterXml(uint aVersion, out string aaParameterXml)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetParameter action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetParameter action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetParameter was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaTarget"></param>
+        /// <param name="aaName"></param>
+        /// <param name="aaValue"></param>
         protected virtual void SetParameter(uint aVersion, string aaTarget, string aaName, string aaValue)
         {
             throw (new ActionDisabledError());
@@ -121,7 +223,7 @@ namespace Zapp
         private static unsafe int DoConfigurationXml(IntPtr aPtr, uint aVersion, char** aaConfigurationXml)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkConfiguration1 self = (DvServiceLinnCoUkConfiguration1)gch.Target;
+            DvProviderLinnCoUkConfiguration1 self = (DvProviderLinnCoUkConfiguration1)gch.Target;
             string aConfigurationXml;
             self.ConfigurationXml(aVersion, out aConfigurationXml);
             *aaConfigurationXml = (char*)Marshal.StringToHGlobalAnsi(aConfigurationXml).ToPointer();
@@ -131,7 +233,7 @@ namespace Zapp
         private static unsafe int DoParameterXml(IntPtr aPtr, uint aVersion, char** aaParameterXml)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkConfiguration1 self = (DvServiceLinnCoUkConfiguration1)gch.Target;
+            DvProviderLinnCoUkConfiguration1 self = (DvProviderLinnCoUkConfiguration1)gch.Target;
             string aParameterXml;
             self.ParameterXml(aVersion, out aParameterXml);
             *aaParameterXml = (char*)Marshal.StringToHGlobalAnsi(aParameterXml).ToPointer();
@@ -141,7 +243,7 @@ namespace Zapp
         private static unsafe int DoSetParameter(IntPtr aPtr, uint aVersion, char* aaTarget, char* aaName, char* aaValue)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkConfiguration1 self = (DvServiceLinnCoUkConfiguration1)gch.Target;
+            DvProviderLinnCoUkConfiguration1 self = (DvProviderLinnCoUkConfiguration1)gch.Target;
             string aTarget = Marshal.PtrToStringAnsi((IntPtr)aaTarget);
             string aName = Marshal.PtrToStringAnsi((IntPtr)aaName);
             string aValue = Marshal.PtrToStringAnsi((IntPtr)aaValue);
@@ -149,14 +251,16 @@ namespace Zapp
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceLinnCoUkConfiguration1()
+        ~DvProviderLinnCoUkConfiguration1()
         {
             DoDispose();
         }
@@ -173,7 +277,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = IntPtr.Zero;
             }
-            DvServiceLinnCoUkConfiguration1Destroy(handle);
+            DvProviderLinnCoUkConfiguration1Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

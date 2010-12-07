@@ -1,7 +1,7 @@
 #include <Zapp.h>
 #include <Stack.h>
 #include <Standard.h>
-#include <Os.h>
+#include <OsWrapper.h>
 #include <Discovery.h>
 #include <NetworkInterfaceList.h>
 #include <Printer.h>
@@ -60,6 +60,9 @@ Stack::~Stack()
 {
     ASSERT(gStackInitCount == 1);
     gStackInitCount = 0;
+    iLock.Wait();
+    ASSERT(iMulticastListeners.size() == 0);
+    iLock.Signal();
     iTimerManager.Stop();
     delete iCpStack;
     delete iDvStack;

@@ -14,6 +14,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpProxyLinnCoUkDelay1
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of CpProxyLinnCoUkDelay1 without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -378,6 +384,8 @@ DllExport void CpProxyLinnCoUkDelay1PropertyPresetXml(THandle aHandle, char** aP
  * @param[out] aPresetIndex
  */
 DllExport void CpProxyLinnCoUkDelay1PropertyPresetIndex(THandle aHandle, uint32_t* aPresetIndex);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

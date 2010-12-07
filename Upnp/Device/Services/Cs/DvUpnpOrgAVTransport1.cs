@@ -3,52 +3,72 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Zapp;
 
-namespace Zapp
+namespace Zapp.Device.Providers
 {
-    public class DvServiceUpnpOrgAVTransport1 : IDisposable
+    public interface IDvProviderUpnpOrgAVTransport1 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyLastChange(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyLastChange(out string aValue);
+        
+    }
+    /// <summary>
+    /// Provider for the upnp.org:AVTransport:1 UPnP service
+    /// </summary>
+    public class DvProviderUpnpOrgAVTransport1 : DvProvider, IDisposable, IDvProviderUpnpOrgAVTransport1
     {
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern IntPtr DvServiceUpnpOrgAVTransport1Create(IntPtr aDeviceHandle);
+        static extern IntPtr DvProviderUpnpOrgAVTransport1Create(IntPtr aDeviceHandle);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1Destroy(IntPtr aHandle);
+        static extern void DvProviderUpnpOrgAVTransport1Destroy(IntPtr aHandle);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern unsafe int DvServiceUpnpOrgAVTransport1SetPropertyLastChange(IntPtr aHandle, char* aValue);
+        static extern unsafe int DvProviderUpnpOrgAVTransport1SetPropertyLastChange(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern unsafe void DvServiceUpnpOrgAVTransport1GetPropertyLastChange(IntPtr aHandle, char** aValue);
+        static extern unsafe void DvProviderUpnpOrgAVTransport1GetPropertyLastChange(IntPtr aHandle, char** aValue);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionSetAVTransportURI(IntPtr aHandle, CallbackSetAVTransportURI aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionSetAVTransportURI(IntPtr aHandle, CallbackSetAVTransportURI aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionSetNextAVTransportURI(IntPtr aHandle, CallbackSetNextAVTransportURI aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionSetNextAVTransportURI(IntPtr aHandle, CallbackSetNextAVTransportURI aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionGetMediaInfo(IntPtr aHandle, CallbackGetMediaInfo aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionGetMediaInfo(IntPtr aHandle, CallbackGetMediaInfo aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionGetTransportInfo(IntPtr aHandle, CallbackGetTransportInfo aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionGetTransportInfo(IntPtr aHandle, CallbackGetTransportInfo aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionGetPositionInfo(IntPtr aHandle, CallbackGetPositionInfo aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionGetPositionInfo(IntPtr aHandle, CallbackGetPositionInfo aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionGetDeviceCapabilities(IntPtr aHandle, CallbackGetDeviceCapabilities aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionGetDeviceCapabilities(IntPtr aHandle, CallbackGetDeviceCapabilities aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionGetTransportSettings(IntPtr aHandle, CallbackGetTransportSettings aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionGetTransportSettings(IntPtr aHandle, CallbackGetTransportSettings aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionStop(IntPtr aHandle, CallbackStop aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionStop(IntPtr aHandle, CallbackStop aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionPlay(IntPtr aHandle, CallbackPlay aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionPlay(IntPtr aHandle, CallbackPlay aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionPause(IntPtr aHandle, CallbackPause aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionPause(IntPtr aHandle, CallbackPause aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionRecord(IntPtr aHandle, CallbackRecord aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionRecord(IntPtr aHandle, CallbackRecord aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionSeek(IntPtr aHandle, CallbackSeek aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionSeek(IntPtr aHandle, CallbackSeek aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionNext(IntPtr aHandle, CallbackNext aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionNext(IntPtr aHandle, CallbackNext aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionPrevious(IntPtr aHandle, CallbackPrevious aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionPrevious(IntPtr aHandle, CallbackPrevious aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionSetPlayMode(IntPtr aHandle, CallbackSetPlayMode aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionSetPlayMode(IntPtr aHandle, CallbackSetPlayMode aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionSetRecordQualityMode(IntPtr aHandle, CallbackSetRecordQualityMode aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionSetRecordQualityMode(IntPtr aHandle, CallbackSetRecordQualityMode aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgAVTransport1")]
-        static extern void DvServiceUpnpOrgAVTransport1EnableActionGetCurrentTransportActions(IntPtr aHandle, CallbackGetCurrentTransportActions aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgAVTransport1EnableActionGetCurrentTransportActions(IntPtr aHandle, CallbackGetCurrentTransportActions aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -70,7 +90,6 @@ namespace Zapp
         private unsafe delegate int CallbackSetRecordQualityMode(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aNewRecordQualityMode);
         private unsafe delegate int CallbackGetCurrentTransportActions(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aActions);
 
-        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackSetAVTransportURI iCallbackSetAVTransportURI;
         private CallbackSetNextAVTransportURI iCallbackSetNextAVTransportURI;
@@ -90,230 +109,518 @@ namespace Zapp
         private CallbackSetRecordQualityMode iCallbackSetRecordQualityMode;
         private CallbackGetCurrentTransportActions iCallbackGetCurrentTransportActions;
 
-        public DvServiceUpnpOrgAVTransport1(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderUpnpOrgAVTransport1(DvDevice aDevice)
         {
-            iHandle = DvServiceUpnpOrgAVTransport1Create(aDevice.Handle()); 
+            iHandle = DvProviderUpnpOrgAVTransport1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyLastChange(string aValue)
+        /// <summary>
+        /// Set the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyLastChange(string aValue)
         {
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgAVTransport1SetPropertyLastChange(iHandle, value);
+            int err = DvProviderUpnpOrgAVTransport1SetPropertyLastChange(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyLastChange(out string aValue)
         {
             char* value;
-            DvServiceUpnpOrgAVTransport1GetPropertyLastChange(iHandle, &value);
+            DvProviderUpnpOrgAVTransport1GetPropertyLastChange(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Signal that the action SetAVTransportURI is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetAVTransportURI must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetAVTransportURI()
         {
             iCallbackSetAVTransportURI = new CallbackSetAVTransportURI(DoSetAVTransportURI);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionSetAVTransportURI(iHandle, iCallbackSetAVTransportURI, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionSetAVTransportURI(iHandle, iCallbackSetAVTransportURI, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetNextAVTransportURI is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetNextAVTransportURI must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetNextAVTransportURI()
         {
             iCallbackSetNextAVTransportURI = new CallbackSetNextAVTransportURI(DoSetNextAVTransportURI);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionSetNextAVTransportURI(iHandle, iCallbackSetNextAVTransportURI, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionSetNextAVTransportURI(iHandle, iCallbackSetNextAVTransportURI, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetMediaInfo is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetMediaInfo must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetMediaInfo()
         {
             iCallbackGetMediaInfo = new CallbackGetMediaInfo(DoGetMediaInfo);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionGetMediaInfo(iHandle, iCallbackGetMediaInfo, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionGetMediaInfo(iHandle, iCallbackGetMediaInfo, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetTransportInfo is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetTransportInfo must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetTransportInfo()
         {
             iCallbackGetTransportInfo = new CallbackGetTransportInfo(DoGetTransportInfo);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionGetTransportInfo(iHandle, iCallbackGetTransportInfo, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionGetTransportInfo(iHandle, iCallbackGetTransportInfo, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetPositionInfo is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetPositionInfo must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetPositionInfo()
         {
             iCallbackGetPositionInfo = new CallbackGetPositionInfo(DoGetPositionInfo);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionGetPositionInfo(iHandle, iCallbackGetPositionInfo, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionGetPositionInfo(iHandle, iCallbackGetPositionInfo, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetDeviceCapabilities is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetDeviceCapabilities must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetDeviceCapabilities()
         {
             iCallbackGetDeviceCapabilities = new CallbackGetDeviceCapabilities(DoGetDeviceCapabilities);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionGetDeviceCapabilities(iHandle, iCallbackGetDeviceCapabilities, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionGetDeviceCapabilities(iHandle, iCallbackGetDeviceCapabilities, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetTransportSettings is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetTransportSettings must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetTransportSettings()
         {
             iCallbackGetTransportSettings = new CallbackGetTransportSettings(DoGetTransportSettings);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionGetTransportSettings(iHandle, iCallbackGetTransportSettings, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionGetTransportSettings(iHandle, iCallbackGetTransportSettings, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Stop is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoStop must be overridden if this is called.</remarks>
         protected unsafe void EnableActionStop()
         {
             iCallbackStop = new CallbackStop(DoStop);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionStop(iHandle, iCallbackStop, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionStop(iHandle, iCallbackStop, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Play is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoPlay must be overridden if this is called.</remarks>
         protected unsafe void EnableActionPlay()
         {
             iCallbackPlay = new CallbackPlay(DoPlay);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionPlay(iHandle, iCallbackPlay, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionPlay(iHandle, iCallbackPlay, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Pause is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoPause must be overridden if this is called.</remarks>
         protected unsafe void EnableActionPause()
         {
             iCallbackPause = new CallbackPause(DoPause);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionPause(iHandle, iCallbackPause, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionPause(iHandle, iCallbackPause, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Record is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoRecord must be overridden if this is called.</remarks>
         protected unsafe void EnableActionRecord()
         {
             iCallbackRecord = new CallbackRecord(DoRecord);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionRecord(iHandle, iCallbackRecord, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionRecord(iHandle, iCallbackRecord, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Seek is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSeek must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSeek()
         {
             iCallbackSeek = new CallbackSeek(DoSeek);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionSeek(iHandle, iCallbackSeek, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionSeek(iHandle, iCallbackSeek, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Next is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoNext must be overridden if this is called.</remarks>
         protected unsafe void EnableActionNext()
         {
             iCallbackNext = new CallbackNext(DoNext);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionNext(iHandle, iCallbackNext, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionNext(iHandle, iCallbackNext, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Previous is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoPrevious must be overridden if this is called.</remarks>
         protected unsafe void EnableActionPrevious()
         {
             iCallbackPrevious = new CallbackPrevious(DoPrevious);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionPrevious(iHandle, iCallbackPrevious, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionPrevious(iHandle, iCallbackPrevious, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetPlayMode is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetPlayMode must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetPlayMode()
         {
             iCallbackSetPlayMode = new CallbackSetPlayMode(DoSetPlayMode);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionSetPlayMode(iHandle, iCallbackSetPlayMode, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionSetPlayMode(iHandle, iCallbackSetPlayMode, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetRecordQualityMode is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetRecordQualityMode must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetRecordQualityMode()
         {
             iCallbackSetRecordQualityMode = new CallbackSetRecordQualityMode(DoSetRecordQualityMode);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionSetRecordQualityMode(iHandle, iCallbackSetRecordQualityMode, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionSetRecordQualityMode(iHandle, iCallbackSetRecordQualityMode, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetCurrentTransportActions is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetCurrentTransportActions must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetCurrentTransportActions()
         {
             iCallbackGetCurrentTransportActions = new CallbackGetCurrentTransportActions(DoGetCurrentTransportActions);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgAVTransport1EnableActionGetCurrentTransportActions(iHandle, iCallbackGetCurrentTransportActions, ptr);
+            DvProviderUpnpOrgAVTransport1EnableActionGetCurrentTransportActions(iHandle, iCallbackGetCurrentTransportActions, ptr);
         }
 
+        /// <summary>
+        /// SetAVTransportURI action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetAVTransportURI action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetAVTransportURI was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentURI"></param>
+        /// <param name="aCurrentURIMetaData"></param>
         protected virtual void SetAVTransportURI(uint aVersion, uint aInstanceID, string aCurrentURI, string aCurrentURIMetaData)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetNextAVTransportURI action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetNextAVTransportURI action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetNextAVTransportURI was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aNextURI"></param>
+        /// <param name="aNextURIMetaData"></param>
         protected virtual void SetNextAVTransportURI(uint aVersion, uint aInstanceID, string aNextURI, string aNextURIMetaData)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetMediaInfo action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetMediaInfo action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetMediaInfo was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aNrTracks"></param>
+        /// <param name="aMediaDuration"></param>
+        /// <param name="aCurrentURI"></param>
+        /// <param name="aCurrentURIMetaData"></param>
+        /// <param name="aNextURI"></param>
+        /// <param name="aNextURIMetaData"></param>
+        /// <param name="aPlayMedium"></param>
+        /// <param name="aRecordMedium"></param>
+        /// <param name="aWriteStatus"></param>
         protected virtual void GetMediaInfo(uint aVersion, uint aInstanceID, out uint aNrTracks, out string aMediaDuration, out string aCurrentURI, out string aCurrentURIMetaData, out string aNextURI, out string aNextURIMetaData, out string aPlayMedium, out string aRecordMedium, out string aWriteStatus)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetTransportInfo action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetTransportInfo action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetTransportInfo was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aCurrentTransportState"></param>
+        /// <param name="aCurrentTransportStatus"></param>
+        /// <param name="aCurrentSpeed"></param>
         protected virtual void GetTransportInfo(uint aVersion, uint aInstanceID, out string aCurrentTransportState, out string aCurrentTransportStatus, out string aCurrentSpeed)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetPositionInfo action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetPositionInfo action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetPositionInfo was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aTrack"></param>
+        /// <param name="aTrackDuration"></param>
+        /// <param name="aTrackMetaData"></param>
+        /// <param name="aTrackURI"></param>
+        /// <param name="aRelTime"></param>
+        /// <param name="aAbsTime"></param>
+        /// <param name="aRelCount"></param>
+        /// <param name="aAbsCount"></param>
         protected virtual void GetPositionInfo(uint aVersion, uint aInstanceID, out uint aTrack, out string aTrackDuration, out string aTrackMetaData, out string aTrackURI, out string aRelTime, out string aAbsTime, out int aRelCount, out int aAbsCount)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetDeviceCapabilities action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetDeviceCapabilities action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetDeviceCapabilities was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aPlayMedia"></param>
+        /// <param name="aRecMedia"></param>
+        /// <param name="aRecQualityModes"></param>
         protected virtual void GetDeviceCapabilities(uint aVersion, uint aInstanceID, out string aPlayMedia, out string aRecMedia, out string aRecQualityModes)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetTransportSettings action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetTransportSettings action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetTransportSettings was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aPlayMode"></param>
+        /// <param name="aRecQualityMode"></param>
         protected virtual void GetTransportSettings(uint aVersion, uint aInstanceID, out string aPlayMode, out string aRecQualityMode)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Stop action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Stop action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionStop was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
         protected virtual void Stop(uint aVersion, uint aInstanceID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Play action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Play action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionPlay was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aSpeed"></param>
         protected virtual void Play(uint aVersion, uint aInstanceID, string aSpeed)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Pause action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Pause action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionPause was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
         protected virtual void Pause(uint aVersion, uint aInstanceID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Record action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Record action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionRecord was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
         protected virtual void Record(uint aVersion, uint aInstanceID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Seek action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Seek action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSeek was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aUnit"></param>
+        /// <param name="aTarget"></param>
         protected virtual void Seek(uint aVersion, uint aInstanceID, string aUnit, string aTarget)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Next action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Next action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionNext was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
         protected virtual void Next(uint aVersion, uint aInstanceID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Previous action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Previous action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionPrevious was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
         protected virtual void Previous(uint aVersion, uint aInstanceID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetPlayMode action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetPlayMode action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetPlayMode was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aNewPlayMode"></param>
         protected virtual void SetPlayMode(uint aVersion, uint aInstanceID, string aNewPlayMode)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetRecordQualityMode action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetRecordQualityMode action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetRecordQualityMode was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aNewRecordQualityMode"></param>
         protected virtual void SetRecordQualityMode(uint aVersion, uint aInstanceID, string aNewRecordQualityMode)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetCurrentTransportActions action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetCurrentTransportActions action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetCurrentTransportActions was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aInstanceID"></param>
+        /// <param name="aActions"></param>
         protected virtual void GetCurrentTransportActions(uint aVersion, uint aInstanceID, out string aActions)
         {
             throw (new ActionDisabledError());
@@ -322,7 +629,7 @@ namespace Zapp
         private static unsafe int DoSetAVTransportURI(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aCurrentURI, char* aCurrentURIMetaData)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             string currentURI = Marshal.PtrToStringAnsi((IntPtr)aCurrentURI);
             string currentURIMetaData = Marshal.PtrToStringAnsi((IntPtr)aCurrentURIMetaData);
             self.SetAVTransportURI(aVersion, aInstanceID, currentURI, currentURIMetaData);
@@ -332,7 +639,7 @@ namespace Zapp
         private static unsafe int DoSetNextAVTransportURI(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aNextURI, char* aNextURIMetaData)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             string nextURI = Marshal.PtrToStringAnsi((IntPtr)aNextURI);
             string nextURIMetaData = Marshal.PtrToStringAnsi((IntPtr)aNextURIMetaData);
             self.SetNextAVTransportURI(aVersion, aInstanceID, nextURI, nextURIMetaData);
@@ -342,7 +649,7 @@ namespace Zapp
         private static unsafe int DoGetMediaInfo(IntPtr aPtr, uint aVersion, uint aInstanceID, uint* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             uint nrTracks;
             string mediaDuration;
             string currentURI;
@@ -368,7 +675,7 @@ namespace Zapp
         private static unsafe int DoGetTransportInfo(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             string currentTransportState;
             string currentTransportStatus;
             string currentSpeed;
@@ -382,7 +689,7 @@ namespace Zapp
         private static unsafe int DoGetPositionInfo(IntPtr aPtr, uint aVersion, uint aInstanceID, uint* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int* aRelCount, int* aAbsCount)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             uint track;
             string trackDuration;
             string trackMetaData;
@@ -406,7 +713,7 @@ namespace Zapp
         private static unsafe int DoGetDeviceCapabilities(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             string playMedia;
             string recMedia;
             string recQualityModes;
@@ -420,7 +727,7 @@ namespace Zapp
         private static unsafe int DoGetTransportSettings(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aPlayMode, char** aRecQualityMode)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             string playMode;
             string recQualityMode;
             self.GetTransportSettings(aVersion, aInstanceID, out playMode, out recQualityMode);
@@ -432,7 +739,7 @@ namespace Zapp
         private static unsafe int DoStop(IntPtr aPtr, uint aVersion, uint aInstanceID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             self.Stop(aVersion, aInstanceID);
             return 0;
         }
@@ -440,7 +747,7 @@ namespace Zapp
         private static unsafe int DoPlay(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aSpeed)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             string speed = Marshal.PtrToStringAnsi((IntPtr)aSpeed);
             self.Play(aVersion, aInstanceID, speed);
             return 0;
@@ -449,7 +756,7 @@ namespace Zapp
         private static unsafe int DoPause(IntPtr aPtr, uint aVersion, uint aInstanceID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             self.Pause(aVersion, aInstanceID);
             return 0;
         }
@@ -457,7 +764,7 @@ namespace Zapp
         private static unsafe int DoRecord(IntPtr aPtr, uint aVersion, uint aInstanceID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             self.Record(aVersion, aInstanceID);
             return 0;
         }
@@ -465,7 +772,7 @@ namespace Zapp
         private static unsafe int DoSeek(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aUnit, char* aTarget)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             string unit = Marshal.PtrToStringAnsi((IntPtr)aUnit);
             string target = Marshal.PtrToStringAnsi((IntPtr)aTarget);
             self.Seek(aVersion, aInstanceID, unit, target);
@@ -475,7 +782,7 @@ namespace Zapp
         private static unsafe int DoNext(IntPtr aPtr, uint aVersion, uint aInstanceID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             self.Next(aVersion, aInstanceID);
             return 0;
         }
@@ -483,7 +790,7 @@ namespace Zapp
         private static unsafe int DoPrevious(IntPtr aPtr, uint aVersion, uint aInstanceID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             self.Previous(aVersion, aInstanceID);
             return 0;
         }
@@ -491,7 +798,7 @@ namespace Zapp
         private static unsafe int DoSetPlayMode(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aNewPlayMode)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             string newPlayMode = Marshal.PtrToStringAnsi((IntPtr)aNewPlayMode);
             self.SetPlayMode(aVersion, aInstanceID, newPlayMode);
             return 0;
@@ -500,7 +807,7 @@ namespace Zapp
         private static unsafe int DoSetRecordQualityMode(IntPtr aPtr, uint aVersion, uint aInstanceID, char* aNewRecordQualityMode)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             string newRecordQualityMode = Marshal.PtrToStringAnsi((IntPtr)aNewRecordQualityMode);
             self.SetRecordQualityMode(aVersion, aInstanceID, newRecordQualityMode);
             return 0;
@@ -509,21 +816,23 @@ namespace Zapp
         private static unsafe int DoGetCurrentTransportActions(IntPtr aPtr, uint aVersion, uint aInstanceID, char** aActions)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgAVTransport1 self = (DvServiceUpnpOrgAVTransport1)gch.Target;
+            DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             string actions;
             self.GetCurrentTransportActions(aVersion, aInstanceID, out actions);
             *aActions = (char*)Marshal.StringToHGlobalAnsi(actions).ToPointer();
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceUpnpOrgAVTransport1()
+        ~DvProviderUpnpOrgAVTransport1()
         {
             DoDispose();
         }
@@ -540,7 +849,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = IntPtr.Zero;
             }
-            DvServiceUpnpOrgAVTransport1Destroy(handle);
+            DvProviderUpnpOrgAVTransport1Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

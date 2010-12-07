@@ -1,7 +1,7 @@
-<#@ assembly name="Build/Tools/UpnpServiceXml.dll" #>
+<#@ assembly name="UpnpServiceXml.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="Linn.Xml.UpnpServiceXml" #>
+<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
     string domain = TemplateArgument("domain");
@@ -89,6 +89,7 @@ class PropertyUint;
 
 /**
  * Proxy for <#=domain#>:<#=type#>:<#=version#>
+ * @ingroup Proxies
  */
 class <#=className#> : public CpProxy
 {

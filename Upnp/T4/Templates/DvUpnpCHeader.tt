@@ -1,7 +1,7 @@
-<#@ assembly name="Build/Tools/UpnpServiceXml.dll" #>
+<#@ assembly name="UpnpServiceXml.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="Linn.Xml.UpnpServiceXml" #>
+<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
     string domain = TemplateArgument("domain");
@@ -35,13 +35,16 @@
     }
     fileName += type;
     fileName += version;
-    string className = "DvService" + fileName;
+    string className = "DvProvider" + fileName;
     string callbackPrefix = "Callback" + type + version;
 
     Initialise();
 
 	Document u = new Document(TemplateArgument("xml"));
 #>
+/**
+ * Provider for the <#=domain#>:<#=type#>:<#=version#> UPnP service
+ */
 #ifndef HEADER_DV<#=fileName.ToUpper()#>_C
 #define HEADER_DV<#=fileName.ToUpper()#>_C
 
@@ -52,24 +55,117 @@
 extern "C" {
 #endif
 
+/**
+ * @addtogroup <#=className#>
+ * @ingroup Providers
+ * @{
+ */
+
 <#  foreach (Method a in u.methods) #>
 <#  { #>
+/**
+ * Callback which runs when the <#=a.name#> action is invoked
+ *
+ * @param[in]  aPtr      Opaque data passed to <#=className#>EnableAction<#=a.name#>
+ * @param[in]  aVersion  Version of the service being used.  Will be <= the version advertised by the provider
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+ * @param[in]  a<#=i.name#>
+<#          if (i.variable.type == "bin.base64") #>
+<#          { #>
+ * @param[in]  a<#=i.name#>Len
+<#          } #>
+<#      } #>
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+ * @param[out] a<#=o.name#>
+<#          if (o.variable.type == "bin.base64") #>
+<#          { #>
+ * @param[out] a<#=o.name#>Len
+<#          } #>
+<#      } #>
+ *
+ * @return  0 if the action succeeded; non-zero if the action failed
+ */
 typedef int32_t (*<#=callbackPrefix#><#=a.name#>)(void* aPtr, uint32_t aVersion<#=ActionArgs(a)#>);
 <#  } #>
 
+/**
+ * Provider constructor
+ *
+ * @param[in] aDevice  Handle returned by DvDeviceCreate[NoResources]
+ *
+ * @return  Handle to this provider
+ */
 DllExport THandle <#=className#>Create(DvDeviceC aDevice);
-DllExport void <#=className#>Destroy(THandle aService);
+
+/**
+ * Provider destructor
+ *
+ * @param[in] aProvider  Handle returned by <#=className#>Create
+ */
+DllExport void <#=className#>Destroy(THandle aProvider);
 
 <#  foreach (Method a in u.methods) #>
 <#  { #>
-DllExport void <#=className#>EnableAction<#=a.name#>(THandle aService, <#=callbackPrefix#><#=a.name#> aCallback, void* aPtr);
+/**
+ * Register a callback for the action <#=a.name#>
+ *
+ * If this is called, the action's availability will be published in the device's service.xml.
+ * If this is not called, any attempt to invoke the action on a control point will fail.
+ *
+ * @param[in] aProvider  Handle returned by <#=className#>Create
+ * @param[in] aCallback  Callback which will be run when the action is invoked
+ * @param[in] aPtr       Client-specified data which will be passed to the callback
+ */
+DllExport void <#=className#>EnableAction<#=a.name#>(THandle aProvider, <#=callbackPrefix#><#=a.name#> aCallback, void* aPtr);
 <#  } #>
 
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
-DllExport int32_t <#=className#>SetProperty<#=s.name#>(THandle aService, <#=PropertyInArgs(s)#>);
-DllExport void <#=className#>GetProperty<#=s.name#>(THandle aService, <#=PropertyOutArgs(s)#>);
+/**
+ * Set the value of the <#=s.name#> property
+ *
+ * @param[in]  aProvider  Handle returned by <#=className#>Create
+<#      if (s.type == "string" || s.type == "uri" || s.type == "bin.base64") #>
+<#      { #>
+ * @param[in]  aValue     New value for the property (will be copied)
+<#          if (s.type == "bin.base64") #>
+<#          { #>
+ * @param[in]  aValueLen  Size in bytes pointed to by aValue
+<#          } #>
+<#      } #>
+<#      else #>
+<#      { #>
+ * @param[in]  aValue     New value for the property
+<#      } #>
+ * @param[out] aChanged   1 if the value has been updated; 0 if it was the same as the previous value
+ *
+ * @return  0 if the property was successfully set; non-zero if there was an error (including
+ *          an attempt to set a property to a value not in its allowed range/set)
+ */
+DllExport int32_t <#=className#>SetProperty<#=s.name#>(THandle aProvider, <#=PropertyInArgs(s)#>, uint32_t* aChanged);
+/**
+ * Get a copy of the value of the <#=s.name#> property
+ *
+ * @param[in]  aProvider  Handle returned by <#=className#>Create
+<#      if (s.type == "string" || s.type == "uri" || s.type == "bin.base64") #>
+<#      { #>
+ * @param[out] aValue     Value for the property.  Caller is responsible for freeing this.
+<#          if (s.type == "bin.base64") #>
+<#          { #>
+ * @param[out] aValueLen  Size in bytes pointed to by aValue
+<#          } #>
+<#      } #>
+<#      else #>
+<#      { #>
+ * @param[out] aValue     Value for the property
+<#      } #>
+ */
+DllExport void <#=className#>GetProperty<#=s.name#>(THandle aProvider, <#=PropertyOutArgs(s)#>);
 <#  } #>
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

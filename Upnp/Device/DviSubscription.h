@@ -15,36 +15,67 @@
 
 namespace Zapp {
 
+class IDviSubscriptionUserData
+{
+public:
+    virtual const void* Data() const = 0;
+    virtual void Release() = 0;
+};
+    
+class IPropertyWriterFactory
+{
+public:
+    virtual IPropertyWriter* CreateWriter(const IDviSubscriptionUserData* aUserData, 
+                                          const Brx& aSid, TUint aSequenceNumber) = 0;
+};
+
 class DviDevice;
 class DviService;
 class DviSubscription
 {
 public:
     DviSubscription(DviDevice& aDevice, IPropertyWriterFactory& aWriterFactory,
-                    const Endpoint& aSubscriber, const Brx& aSubscriberPath,
-                    Brh& aSid, TUint& aDurationSecs);
+                    IDviSubscriptionUserData* aUserData, Brh& aSid, TUint& aDurationSecs);
     void Start(DviService& aService);
     void AddRef();
     void RemoveRef();
     void Renew(TUint& aSeconds);
     void WriteChanges();
-    const Endpoint& Subscriber() const;
     const Brx& Sid() const;
+    TBool PropertiesInitialised() const;
+    TBool HasExpired() const;
 private:
     ~DviSubscription();
     void Expired();
 private:
-    Mutex iLock;
+    mutable Mutex iLock;
     TUint iRefCount;
     DviDevice& iDevice;
     IPropertyWriterFactory& iWriterFactory;
-    Endpoint iSubscriber;
-    Brh iSubscriberPath;
+    IDviSubscriptionUserData* iUserData;
     Brh iSid;
     DviService* iService;
     std::vector<TUint> iPropertySequenceNumbers;
     TUint iSequenceNumber;
     Timer* iTimer;
+    TBool iExpired;
+};
+
+class PropertyWriter : public IPropertyWriter
+{
+protected:
+    PropertyWriter();
+    void SetWriter(IWriter& aWriter);
+private: // IPropertyWriter
+    void PropertyWriteString(const Brx& aName, const Brx& aValue);
+    void PropertyWriteInt(const Brx& aName, TInt aValue);
+    void PropertyWriteUint(const Brx& aName, TUint aValue);
+    void PropertyWriteBool(const Brx& aName, TBool aValue);
+    void PropertyWriteBinary(const Brx& aName, const Brx& aValue);
+private:
+    void WriteVariable(const Brx& aName, const Brx& aValue);
+private:
+    IWriter* iWriter;
 };
 
 class Publisher : public Thread

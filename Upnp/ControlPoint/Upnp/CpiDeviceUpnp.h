@@ -28,11 +28,13 @@ class CpiDeviceListUpnp;
  * notification.  Uses a timer to remove itself from ots owning list if no
  * subsequent alive message is received within a specified maxage.
  */
-class CpiDeviceUpnp : public CpiDevice
+class CpiDeviceUpnp : private ICpiProtocol, private ICpiDeviceObserver
 {
 public:
     CpiDeviceUpnp(const Brx& aUdn, const Brx& aLocation, TUint aMaxAgeSecs, IDeviceRemover& aDeviceList);
+    const Brx& Udn() const;
     const Brx& Location() const;
+    CpiDevice& Device();
 
     /**
      * Called to reset the maxage timeout each time an alive message is received.
@@ -45,13 +47,14 @@ public:
     void FetchXml(CpiDeviceListUpnp& aList);
 
     void InterruptXmlFetch();
-
+private: // ICpiProtocol
     TBool GetAttribute(const char* aKey, Brh& aValue) const;
-    void Invoke(Invocation& aInvocation);
-    TUint Subscribe(Subscription& aSubscription, const Uri& aSubscriber);
-    TUint Renew(Subscription& aSubscription);
-    void Unsubscribe(Subscription& aSubscription, const Brx& aSid);
-    void ProcessPropertyNotification(const Brx& aNotification, PropertyMap& aProperties);
+    void InvokeAction(Invocation& aInvocation);
+    TUint Subscribe(CpiSubscription& aSubscription, const Uri& aSubscriber);
+    TUint Renew(CpiSubscription& aSubscription);
+    void Unsubscribe(CpiSubscription& aSubscription, const Brx& aSid);
+private: // ICpiDeviceObserver
+    void Release();
 private:
     ~CpiDeviceUpnp();
     void TimerExpired();
@@ -60,6 +63,17 @@ private:
     void XmlFetchCompleted(IAsync& aAsync);
     static TBool UdnMatches(const Brx& aFound, const Brx& aTarget);
 private:
+    class Invocable : public IInvocable, private INonCopyable
+    {
+    public:
+        Invocable(CpiDeviceUpnp& aDevice);
+        virtual void InvokeAction(Invocation& aInvocation);
+    private:
+        CpiDeviceUpnp& iDevice;
+    };
+private:
+    CpiDevice* iDevice;
+    Mutex iLock;
     Brhz iLocation;
     XmlFetch* iXmlFetch;
     Brh iXml;
@@ -70,6 +84,8 @@ private:
     IDeviceRemover& iDeviceList;
     Brh iControlUrl;
     CpiDeviceListUpnp* iList;
+    Invocable* iInvocable;
+    friend class Invocable;
 };
 
 /**
@@ -80,7 +96,7 @@ private:
 class CpiDeviceListUpnp : public CpiDeviceList, public ISsdpNotifyHandler
 {
 public:
-    void XmlFetchCompleted(CpiDevice& aDevice, TBool aError);
+    void XmlFetchCompleted(CpiDeviceUpnp& aDevice, TBool aError);
 protected:
     CpiDeviceListUpnp(FunctorCpiDevice aAdded, FunctorCpiDevice aRemoved);
     ~CpiDeviceListUpnp();
@@ -126,6 +142,7 @@ private:
     TBool iStarted;
     Timer* iRefreshTimer;
     Semaphore iXmlFetchSem;
+    Mutex iXmlFetchLock;
 };
 
 /**

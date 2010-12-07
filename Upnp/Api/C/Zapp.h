@@ -14,6 +14,7 @@ typedef THandle ZappHandleInitParams;
 
 /**
  * Callback which runs when a library component has a message to deliver
+ * @ingroup Callbacks
  *
  * @param[in] aPtr   Client-specified data
  * @param[in] aMsg   Nul-terminated message
@@ -21,16 +22,24 @@ typedef THandle ZappHandleInitParams;
 typedef void (*ZappCallbackMsg)(void* aPtr, const char* aMsg);
 /**
  * Callback which runs to notify a listener of a change in a library component
+ * @ingroup Callbacks
  *
  * @param[in] aPtr   Client-specified data
  */
 typedef void (*ZappCallback)(void* aPtr);
 /**
  * Callback pointing to function which can be used to free memory allocated by a client
+ * @ingroup Callbacks
  *
  * @param[in] aPtr   Client-allocated memory to be freed
  */
 typedef void (*ZappCallbackFreeExternal)(void* aPtr);
+
+/**
+ * @addtogroup Library
+ * @ingroup Core
+ * @{
+ */
 
 /**
  * Initialise the UPnP library.
@@ -84,13 +93,12 @@ DllExport void ZappLibraryStartCombined();
  */
 DllExport void ZappLibraryClose();
 
+/* @} */
 /**
- * Free memory returned by the library.
- * Use of this function is optional.  Calling free() directly is acceptable.
- *
- * @param[in] ptr              Pointer to be freed
+ * @addtogroup InitParams
+ * @ingroup Core
+ * @{
  */
-DllExport void ZappFree(void* aPtr);
 
 /**
  * Create the initialisation parameters which must be passed to the library's initialiser
@@ -283,6 +291,12 @@ DllExport void ZappInitParamsSetPendingSubscriptionTimeout(ZappHandleInitParams 
 DllExport void ZappInitParamsSetFreeExternalCallback(ZappHandleInitParams aParams, ZappCallbackFreeExternal aCallback);
 
 /**
+ * Limit the library to using only the loopback network interface.
+ * Useful for testing but not expected to be used in production code
+ */
+DllExport void ZappInitParamsSetUseLoopbackNetworkInterface(ZappHandleInitParams aParams);
+
+/**
  * Set the maximum time between device announcements for the device stack
  */
 DllExport void ZappInitParamsSetDvMaxUpdateTime(ZappHandleInitParams aParams, uint32_t aSecs);
@@ -298,6 +312,18 @@ DllExport void ZappInitParamsSetDvMaxUpdateTime(ZappHandleInitParams aParams, ui
  * @param[in] aNumThreads      Number of threads.  Must be greater than zero.
  */
 DllExport void ZappInitParamsSetDvNumPublisherThreads(ZappHandleInitParams aParams, uint32_t aNumThreads);
+
+/**
+ * Set the number of threads which will be dedicated to published changes to state
+ * variables via WebSockets.
+ *
+ * One thread will be used per active (web browser) connection so a higher number of threads
+ * will allow more concurrent clients but will also require more system resources.
+ *
+ * @param[in] aParams          Initialisation params
+ * @param[in] aNumThreads      Number of threads.  Must be greater than zero.
+ */
+DllExport void ZappInitParamsSetDvNumWebSocketThreads(ZappHandleInitParams aParams, uint32_t aNumThreads);
 
 /**
  * Query the tcp connection timeout
@@ -400,6 +426,23 @@ DllExport uint32_t ZappInitParamsDvMaxUpdateTimeSecs(ZappHandleInitParams aParam
 DllExport uint32_t ZappInitParamsDvNumPublisherThreads(ZappHandleInitParams aParams);
 
 /**
+ * Query the number of device stack WebSocket threads
+ *
+ * @param[in] aParams          Initialisation params
+ *
+ * @return  number of threads
+ */
+DllExport uint32_t ZappInitParamsDvNumWebSocketThreads(ZappHandleInitParams aParams);
+
+/* @} */
+
+/**
+ * @addtogroup NetworkInterface
+ * @ingroup Core
+ * @{
+ */
+
+/**
  * Query the address of a network interface
  *
  * @param[in] aNif             Network interface handle
@@ -477,6 +520,23 @@ DllExport void ZappSetCurrentSubnet(ZappHandleNetworkInterface aSubnet);
  */
 DllExport void ZappSetDefaultSubnet();
 
+/* @} */
+
+/**
+ * @addtogroup Memory
+ * @ingroup Core
+ * @{
+ */
+
+/**
+ * Free memory returned by the library.
+ *
+ * Use of this function is optional.  Calling free() directly is acceptable.
+ *
+ * @param[in] ptr              Pointer to be freed
+ */
+DllExport void ZappFree(void* aPtr);
+
 /**
  * Free memory which was allocated by the client
  *
@@ -484,6 +544,7 @@ DllExport void ZappSetDefaultSubnet();
  */
 DllExport void ZappFreeExternal(void* aPtr);
 
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

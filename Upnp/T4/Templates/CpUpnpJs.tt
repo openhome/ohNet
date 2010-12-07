@@ -1,0 +1,374 @@
+<#@ template language="C#v3.5" debug="true" hostSpecific="true" #>
+<#@ output extension=".js" #>
+<#@ Assembly Name="System.Core.dll" #>
+<#@ Assembly Name="System.Windows.Forms.dll" #>
+<#@ Assembly Name="UpnpServiceXml.dll" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #> 
+<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
+
+<#
+// Initialise parameters
+	string xmlArg = TemplateArgument("xml");
+	string domainArg = TemplateArgument("domain");
+	string typeArg = TemplateArgument("type");
+	string versionArg = TemplateArgument("version");
+	
+	string xml = xmlArg;
+	string domain = domainArg;
+	string type = typeArg;
+	
+ 	if (String.IsNullOrEmpty(xml))
+    {
+        throw (new ArgumentException("Xml file not specified"));
+    }
+    
+    if (String.IsNullOrEmpty(domain))
+    {
+        throw (new ArgumentException("Service Domain not specified"));
+    }
+    
+    if (String.IsNullOrEmpty(type))
+    {
+        throw (new ArgumentException("Service Type not specified"));
+    }
+    
+    uint version;
+    
+	if (String.IsNullOrEmpty(versionArg))
+    {
+        throw (new ArgumentException("Service Version not specified"));
+    }
+	
+    try
+    {
+	   version = Convert.ToUInt32(versionArg);
+	}
+	catch (FormatException)
+	{
+        throw (new ArgumentException("Invalid version number specified"));
+	}
+    catch (OverflowException)
+    {
+        throw (new ArgumentException("Invalid version number specified"));
+    }
+
+    string upnpdomain = domain.Replace(".", "-");
+
+    if (upnpdomain.StartsWith("upnp-"))
+    {
+        upnpdomain = "schemas-" + upnpdomain;
+    }
+
+    Initialise();
+
+	Document u = new Document(xml);
+
+#>
+/**
+* Service Proxy for <#=domain#>:<#=type#>:<#=version#>
+* @module Zapp
+* @class <#=type#>
+*/
+
+var Service<#=type#> = function(udn){	
+
+	this.url = window.location.protocol + "//" + window.location.host + "/" + udn + "/<#=domain#>-<#=type#>-<#=version#>/control";  // upnp control url
+	this.domain = "<#=domain#>";
+	if (this.domain == "upnp.org") {
+		this.domain = "schemas.upnp.org";
+    }
+	this.domain = this.domain.replace(/\./,"-");
+	this.type = "<#=type#>";
+	this.version = "<#=version.ToString()#>";
+	this.serviceName = "<#=domain#>-<#=type#>-<#=version#>";
+	this.subscriptionId = "";  // Subscription identifier unique to each Subscription Manager 
+	this.udn = udn;   // device name
+	
+	// Collection of service properties
+	this.serviceProperties = {};
+<#  foreach (Variable s in u.variables) #>
+<#  { #>
+	this.serviceProperties["<#=s.prettyname#>"] = new Zapp.ServiceProperty("<#=s.prettyname#>");
+<#  } #>
+}
+
+<#  foreach (Variable s in u.variables) #>
+<#  { #>
+<#      foreach (string v in s.values) #>
+<#      { #>
+Service<#=type#>.k<#=s.prettyname#><#=FormatValue(v)#> = "<#=v#>";
+<#      } #>
+<#  } #>
+
+
+/**
+* Subscribes the service to the subscription manager to listen for property change events
+* @method Subscribe
+* @param {Function} serviceAddedFunction The function that executes once the subscription is successful
+*/
+Service<#=type#>.prototype.subscribe = function (serviceAddedFunction) {
+    Zapp.SubscriptionManager.addService(this,serviceAddedFunction);
+}
+
+
+/**
+* Unsubscribes the service from the subscription manager to stop listening for property change events
+* @method Unsubscribe
+*/
+Service<#=type#>.prototype.unsubscribe = function () {
+    Zapp.SubscriptionManager.removeService(this.subscriptionId);
+}
+
+
+<#  foreach (Variable s in u.variables) #>
+<#  { #>
+
+
+/**
+* Adds a listener to handle "<#=s.prettyname#>" property change events
+* @method <#=s.prettyname#>_Changed
+* @param {Function} stateChangedFunction The handler for state changes
+*/
+Service<#=type#>.prototype.<#=s.prettyname#>_Changed = function (stateChangedFunction) {
+    this.serviceProperties.<#=s.prettyname#>.addListener(function (state) 
+	{ 
+		stateChangedFunction(Zapp.SoapRequest.read<#=svtype[s.type]#>Parameter(state)); 
+	});
+}
+<#  } #>
+
+<#  foreach (Method a in u.methods) #>
+<#  { #>
+
+/**
+* A service action to <#=a.name#>
+* @method <#=a.name#>
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+* @param {<#=comtype[i.variable.type]#>} <#=i.name#> An action parameter
+<#      } #>
+* @param {Function} successFunction The function that is executed when the action has completed successfully
+* @param {Function} errorFunction The function that is executed when the action has cause an error
+*/
+Service<#=type#>.prototype.<#=a.name#> = function(<#=ArgString(a)#>){	
+	var request = new Zapp.SoapRequest("<#=a.name#>", this.url, this.domain, this.type, this.version);		
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+    request.write<#=svtype[i.variable.type]#>Parameter("<#=i.name#>", <#=i.name#>);
+<#      } #>
+    request.send(function(result){
+<#          foreach (Argument o in a.outargs) #>
+<#          { #>
+		result["<#=o.name#>"] = Zapp.SoapRequest.read<#=svtype[o.variable.type]#>Parameter(result["<#=o.name#>"]);	
+<#          } #>	
+		if (successFunction){
+			successFunction(result);
+		}
+	}, function(message, transport) {
+		if (errorFunction) {errorFunction(message, transport);}
+	});
+}
+
+<#  } #>
+
+
+<#+
+
+Dictionary<string,string> argtype = new Dictionary<string,string>();
+Dictionary<string,string> svtype = new Dictionary<string,string>();
+Dictionary<string,string> comtype = new Dictionary<string,string>();
+
+
+void Initialise()
+{    
+    argtype.Add("string", "String");
+    argtype.Add("ui1", "int");
+    argtype.Add("ui2", "int");
+    argtype.Add("ui4", "int");
+    argtype.Add("boolean", "boolean");
+    argtype.Add("i1", "int");
+    argtype.Add("i2", "int");
+    argtype.Add("i4", "int");
+    argtype.Add("bin.base64", "String");
+    argtype.Add("uri", "String");
+    
+    svtype.Add("string", "String");
+    svtype.Add("ui1", "Int");
+    svtype.Add("ui2", "Int");
+    svtype.Add("ui4", "Int");
+    svtype.Add("boolean", "Bool");
+    svtype.Add("i1", "Int");
+    svtype.Add("i2", "Int");
+    svtype.Add("i4", "Int");
+    svtype.Add("bin.base64", "Binary");
+    svtype.Add("uri", "String");
+	
+	comtype.Add("string", "String");
+	comtype.Add("ui1", "Int");
+    comtype.Add("ui2", "Int");
+    comtype.Add("ui4", "Int");
+    comtype.Add("boolean", "Boolean");
+    comtype.Add("i1", "Int");
+    comtype.Add("i2", "Int");
+    comtype.Add("i4", "Int");
+    comtype.Add("bin.base64", "String");
+    comtype.Add("uri", "String");
+}
+
+
+string FormatValue(string aValue)
+{
+    string result = "";
+    
+    bool uppercase = true;
+    bool uppertrigger = false;
+    
+    for (int i = 0; i < aValue.Length; i++)
+    {
+        char x = aValue[i];
+        
+        if (x >= 'A' && x <= 'Z')
+        {
+        	if (uppercase || uppertrigger)
+        	{
+            	result += x;
+            	uppercase = false;
+            	uppertrigger = false;
+            }
+            else
+            {
+            	result += Char.ToLower(x);
+            }
+            
+            continue;
+        }
+        
+        if (x >= 'a' && x <= 'z')
+        {
+        	if (uppercase)
+        	{
+            	result += Char.ToUpper(x);
+            	uppercase = false;
+            }
+            else
+            {
+            	result += x;
+            	
+	            uppertrigger = true;
+            }
+            
+            continue;
+        }
+        
+      	uppercase = true;
+      	
+        if (x >= '0' && x <= '9')
+        {
+            result += x;
+            continue;
+        }
+        
+        if (x == '+')
+        {
+        	result += "Plus";
+        	continue;
+        }
+        
+        if (x == '&')
+        {
+        	result += "And";
+        	continue;
+        }
+        
+        if (x == '#')
+        {
+        	result += "Hash";
+        	continue;
+        }
+        
+        if (x == '$')
+        {
+        	result += "Dollar";
+        	continue;
+        }
+        
+        if (x == '*')
+        {
+        	result += "Star";
+        	continue;
+        }
+    }
+    
+    return (result);
+}
+
+string InString(Method a)
+{
+    string result = "";
+    
+    foreach (Argument i in a.inargs)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        
+        result += i.name;
+    }
+    
+    return(result);
+}
+
+string ArgString(Method a)
+{
+    string result = InString(a);
+    
+    if (result.Length > 0)
+    {
+        result += ", ";
+    }
+    
+    result += "successFunction, errorFunction";
+    
+    return(result);
+}
+
+string TemplateArgument(string aName)
+{
+	string[] args =  System.Environment.GetCommandLineArgs();
+		
+	bool isarg = false;
+	
+	foreach (string arg in args)
+	{
+		if (isarg)
+		{
+			string[] parts = arg.Split(new char[] {':'});
+			
+			if (parts.Length == 2)
+			{
+				if (parts[0] == aName)
+				{
+					return (parts[1]);
+				}
+			}
+			
+			isarg = false;
+			continue;
+		}
+		
+		if (arg == "-a")
+		{
+			isarg = true;
+		}
+	}
+	
+	throw (new ArgumentException(aName + " not specified"));
+}
+
+#>

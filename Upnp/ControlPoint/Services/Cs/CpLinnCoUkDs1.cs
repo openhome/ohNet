@@ -3,9 +3,65 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Zapp;
 
-namespace Zapp
+namespace Zapp.ControlPoint.Proxies
 {
-    public class CpProxyLinnCoUkDs1 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkDs1 : ICpProxy, IDisposable
+    {
+        void SyncPlay();
+        void BeginPlay(CpProxy.CallbackAsyncComplete aCallback);
+        void EndPlay(IntPtr aAsyncHandle);
+        void SyncPause();
+        void BeginPause(CpProxy.CallbackAsyncComplete aCallback);
+        void EndPause(IntPtr aAsyncHandle);
+        void SyncStop();
+        void BeginStop(CpProxy.CallbackAsyncComplete aCallback);
+        void EndStop(IntPtr aAsyncHandle);
+        void SyncSeekSecondAbsolute(uint aaSecond);
+        void BeginSeekSecondAbsolute(uint aaSecond, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSeekSecondAbsolute(IntPtr aAsyncHandle);
+        void SyncSeekSecondRelative(int aaSecond);
+        void BeginSeekSecondRelative(int aaSecond, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSeekSecondRelative(IntPtr aAsyncHandle);
+        void SyncSeekTrackId(uint aaTrackId);
+        void BeginSeekTrackId(uint aaTrackId, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSeekTrackId(IntPtr aAsyncHandle);
+        void SyncSeekTrackAbsolute(uint aaTrack);
+        void BeginSeekTrackAbsolute(uint aaTrack, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSeekTrackAbsolute(IntPtr aAsyncHandle);
+        void SyncSeekTrackRelative(int aaTrack);
+        void BeginSeekTrackRelative(int aaTrack, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSeekTrackRelative(IntPtr aAsyncHandle);
+        void SyncState(out string aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out string aaTrackCodecName, out uint aaTrackId);
+        void BeginState(CpProxy.CallbackAsyncComplete aCallback);
+        void EndState(IntPtr aAsyncHandle, out string aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out string aaTrackCodecName, out uint aaTrackId);
+        void SyncProtocolInfo(out string aaSupportedProtocols);
+        void BeginProtocolInfo(CpProxy.CallbackAsyncComplete aCallback);
+        void EndProtocolInfo(IntPtr aAsyncHandle, out string aaSupportedProtocols);
+
+        void SetPropertySupportedProtocolsChanged(CpProxy.CallbackPropertyChanged aSupportedProtocolsChanged);
+        void PropertySupportedProtocols(out string aSupportedProtocols);
+        void SetPropertyTrackDurationChanged(CpProxy.CallbackPropertyChanged aTrackDurationChanged);
+        void PropertyTrackDuration(out uint aTrackDuration);
+        void SetPropertyTrackBitRateChanged(CpProxy.CallbackPropertyChanged aTrackBitRateChanged);
+        void PropertyTrackBitRate(out uint aTrackBitRate);
+        void SetPropertyTrackLosslessChanged(CpProxy.CallbackPropertyChanged aTrackLosslessChanged);
+        void PropertyTrackLossless(out bool aTrackLossless);
+        void SetPropertyTrackBitDepthChanged(CpProxy.CallbackPropertyChanged aTrackBitDepthChanged);
+        void PropertyTrackBitDepth(out uint aTrackBitDepth);
+        void SetPropertyTrackSampleRateChanged(CpProxy.CallbackPropertyChanged aTrackSampleRateChanged);
+        void PropertyTrackSampleRate(out uint aTrackSampleRate);
+        void SetPropertyTrackCodecNameChanged(CpProxy.CallbackPropertyChanged aTrackCodecNameChanged);
+        void PropertyTrackCodecName(out string aTrackCodecName);
+        void SetPropertyTrackIdChanged(CpProxy.CallbackPropertyChanged aTrackIdChanged);
+        void PropertyTrackId(out uint aTrackId);
+        void SetPropertyTransportStateChanged(CpProxy.CallbackPropertyChanged aTransportStateChanged);
+        void PropertyTransportState(out string aTransportState);
+    }
+
+    /// <summary>
+    /// Proxy for the linn.co.uk:Ds:1 UPnP service
+    /// </summary>
+    public class CpProxyLinnCoUkDs1 : CpProxy, IDisposable, ICpProxyLinnCoUkDs1
     {
         [DllImport("CpLinnCoUkDs1")]
         static extern IntPtr CpProxyLinnCoUkDs1Create(IntPtr aDeviceHandle);
@@ -130,19 +186,37 @@ namespace Zapp
         private Callback iCallbackTrackIdChanged;
         private Callback iCallbackTransportStateChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkDs1(CpDevice aDevice)
         {
             iHandle = CpProxyLinnCoUkDs1Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
         public unsafe void SyncPlay()
         {
-			{
-				CpProxyLinnCoUkDs1SyncPlay(iHandle);
-			}
+            {
+                CpProxyLinnCoUkDs1SyncPlay(iHandle);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndPlay().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginPlay(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -150,23 +224,41 @@ namespace Zapp
             CpProxyLinnCoUkDs1BeginPlay(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndPlay(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDs1EndPlay(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDs1EndPlay(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
         public unsafe void SyncPause()
         {
-			{
-				CpProxyLinnCoUkDs1SyncPause(iHandle);
-			}
+            {
+                CpProxyLinnCoUkDs1SyncPause(iHandle);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndPause().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginPause(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -174,23 +266,41 @@ namespace Zapp
             CpProxyLinnCoUkDs1BeginPause(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndPause(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDs1EndPause(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDs1EndPause(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
         public unsafe void SyncStop()
         {
-			{
-				CpProxyLinnCoUkDs1SyncStop(iHandle);
-			}
+            {
+                CpProxyLinnCoUkDs1SyncStop(iHandle);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndStop().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginStop(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -198,23 +308,43 @@ namespace Zapp
             CpProxyLinnCoUkDs1BeginStop(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndStop(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDs1EndStop(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDs1EndStop(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaSecond"></param>
         public unsafe void SyncSeekSecondAbsolute(uint aaSecond)
         {
-			{
-				CpProxyLinnCoUkDs1SyncSeekSecondAbsolute(iHandle, aaSecond);
-			}
+            {
+                CpProxyLinnCoUkDs1SyncSeekSecondAbsolute(iHandle, aaSecond);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSeekSecondAbsolute().</remarks>
+        /// <param name="aaSecond"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSeekSecondAbsolute(uint aaSecond, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -222,23 +352,43 @@ namespace Zapp
             CpProxyLinnCoUkDs1BeginSeekSecondAbsolute(iHandle, aaSecond, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSeekSecondAbsolute(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDs1EndSeekSecondAbsolute(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDs1EndSeekSecondAbsolute(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaSecond"></param>
         public unsafe void SyncSeekSecondRelative(int aaSecond)
         {
-			{
-				CpProxyLinnCoUkDs1SyncSeekSecondRelative(iHandle, aaSecond);
-			}
+            {
+                CpProxyLinnCoUkDs1SyncSeekSecondRelative(iHandle, aaSecond);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSeekSecondRelative().</remarks>
+        /// <param name="aaSecond"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSeekSecondRelative(int aaSecond, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -246,23 +396,43 @@ namespace Zapp
             CpProxyLinnCoUkDs1BeginSeekSecondRelative(iHandle, aaSecond, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSeekSecondRelative(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDs1EndSeekSecondRelative(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDs1EndSeekSecondRelative(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaTrackId"></param>
         public unsafe void SyncSeekTrackId(uint aaTrackId)
         {
-			{
-				CpProxyLinnCoUkDs1SyncSeekTrackId(iHandle, aaTrackId);
-			}
+            {
+                CpProxyLinnCoUkDs1SyncSeekTrackId(iHandle, aaTrackId);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSeekTrackId().</remarks>
+        /// <param name="aaTrackId"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSeekTrackId(uint aaTrackId, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -270,23 +440,43 @@ namespace Zapp
             CpProxyLinnCoUkDs1BeginSeekTrackId(iHandle, aaTrackId, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSeekTrackId(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDs1EndSeekTrackId(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDs1EndSeekTrackId(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaTrack"></param>
         public unsafe void SyncSeekTrackAbsolute(uint aaTrack)
         {
-			{
-				CpProxyLinnCoUkDs1SyncSeekTrackAbsolute(iHandle, aaTrack);
-			}
+            {
+                CpProxyLinnCoUkDs1SyncSeekTrackAbsolute(iHandle, aaTrack);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSeekTrackAbsolute().</remarks>
+        /// <param name="aaTrack"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSeekTrackAbsolute(uint aaTrack, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -294,23 +484,43 @@ namespace Zapp
             CpProxyLinnCoUkDs1BeginSeekTrackAbsolute(iHandle, aaTrack, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSeekTrackAbsolute(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDs1EndSeekTrackAbsolute(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDs1EndSeekTrackAbsolute(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaTrack"></param>
         public unsafe void SyncSeekTrackRelative(int aaTrack)
         {
-			{
-				CpProxyLinnCoUkDs1SyncSeekTrackRelative(iHandle, aaTrack);
-			}
+            {
+                CpProxyLinnCoUkDs1SyncSeekTrackRelative(iHandle, aaTrack);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSeekTrackRelative().</remarks>
+        /// <param name="aaTrack"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSeekTrackRelative(int aaTrack, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -318,36 +528,62 @@ namespace Zapp
             CpProxyLinnCoUkDs1BeginSeekTrackRelative(iHandle, aaTrack, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSeekTrackRelative(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDs1EndSeekTrackRelative(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDs1EndSeekTrackRelative(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaTransportState"></param>
+        /// <param name="aaTrackDuration"></param>
+        /// <param name="aaTrackBitRate"></param>
+        /// <param name="aaTrackLossless"></param>
+        /// <param name="aaTrackBitDepth"></param>
+        /// <param name="aaTrackSampleRate"></param>
+        /// <param name="aaTrackCodecName"></param>
+        /// <param name="aaTrackId"></param>
         public unsafe void SyncState(out string aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out string aaTrackCodecName, out uint aaTrackId)
         {
-			char* aTransportState;
-			uint aTrackLossless;
-			char* aTrackCodecName;
-			fixed (uint* aTrackDuration = &aaTrackDuration)
-			fixed (uint* aTrackBitRate = &aaTrackBitRate)
-			fixed (uint* aTrackBitDepth = &aaTrackBitDepth)
-			fixed (uint* aTrackSampleRate = &aaTrackSampleRate)
-			fixed (uint* aTrackId = &aaTrackId)
-			{
-				CpProxyLinnCoUkDs1SyncState(iHandle, &aTransportState, aTrackDuration, aTrackBitRate, &aTrackLossless, aTrackBitDepth, aTrackSampleRate, &aTrackCodecName, aTrackId);
-			}
+            char* aTransportState;
+            uint aTrackLossless;
+            char* aTrackCodecName;
+            fixed (uint* aTrackDuration = &aaTrackDuration)
+            fixed (uint* aTrackBitRate = &aaTrackBitRate)
+            fixed (uint* aTrackBitDepth = &aaTrackBitDepth)
+            fixed (uint* aTrackSampleRate = &aaTrackSampleRate)
+            fixed (uint* aTrackId = &aaTrackId)
+            {
+                CpProxyLinnCoUkDs1SyncState(iHandle, &aTransportState, aTrackDuration, aTrackBitRate, &aTrackLossless, aTrackBitDepth, aTrackSampleRate, &aTrackCodecName, aTrackId);
+            }
             aaTransportState = Marshal.PtrToStringAnsi((IntPtr)aTransportState);
             ZappFree(aTransportState);
-			aaTrackLossless = (aTrackLossless != 0);
+            aaTrackLossless = (aTrackLossless != 0);
             aaTrackCodecName = Marshal.PtrToStringAnsi((IntPtr)aTrackCodecName);
             ZappFree(aTrackCodecName);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndState().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginState(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -355,39 +591,66 @@ namespace Zapp
             CpProxyLinnCoUkDs1BeginState(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaTransportState"></param>
+        /// <param name="aaTrackDuration"></param>
+        /// <param name="aaTrackBitRate"></param>
+        /// <param name="aaTrackLossless"></param>
+        /// <param name="aaTrackBitDepth"></param>
+        /// <param name="aaTrackSampleRate"></param>
+        /// <param name="aaTrackCodecName"></param>
+        /// <param name="aaTrackId"></param>
         public unsafe void EndState(IntPtr aAsyncHandle, out string aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out string aaTrackCodecName, out uint aaTrackId)
         {
-			char* aTransportState;
-			uint aTrackLossless;
-			char* aTrackCodecName;
-			fixed (uint* aTrackDuration = &aaTrackDuration)
-			fixed (uint* aTrackBitRate = &aaTrackBitRate)
-			fixed (uint* aTrackBitDepth = &aaTrackBitDepth)
-			fixed (uint* aTrackSampleRate = &aaTrackSampleRate)
-			fixed (uint* aTrackId = &aaTrackId)
-			{
-				if (0 != CpProxyLinnCoUkDs1EndState(iHandle, aAsyncHandle, &aTransportState, aTrackDuration, aTrackBitRate, &aTrackLossless, aTrackBitDepth, aTrackSampleRate, &aTrackCodecName, aTrackId))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aTransportState;
+            uint aTrackLossless;
+            char* aTrackCodecName;
+            fixed (uint* aTrackDuration = &aaTrackDuration)
+            fixed (uint* aTrackBitRate = &aaTrackBitRate)
+            fixed (uint* aTrackBitDepth = &aaTrackBitDepth)
+            fixed (uint* aTrackSampleRate = &aaTrackSampleRate)
+            fixed (uint* aTrackId = &aaTrackId)
+            {
+                if (0 != CpProxyLinnCoUkDs1EndState(iHandle, aAsyncHandle, &aTransportState, aTrackDuration, aTrackBitRate, &aTrackLossless, aTrackBitDepth, aTrackSampleRate, &aTrackCodecName, aTrackId))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaTransportState = Marshal.PtrToStringAnsi((IntPtr)aTransportState);
             ZappFree(aTransportState);
-			aaTrackLossless = (aTrackLossless != 0);
+            aaTrackLossless = (aTrackLossless != 0);
             aaTrackCodecName = Marshal.PtrToStringAnsi((IntPtr)aTrackCodecName);
             ZappFree(aTrackCodecName);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaSupportedProtocols"></param>
         public unsafe void SyncProtocolInfo(out string aaSupportedProtocols)
         {
-			char* aSupportedProtocols;
-			{
-				CpProxyLinnCoUkDs1SyncProtocolInfo(iHandle, &aSupportedProtocols);
-			}
+            char* aSupportedProtocols;
+            {
+                CpProxyLinnCoUkDs1SyncProtocolInfo(iHandle, &aSupportedProtocols);
+            }
             aaSupportedProtocols = Marshal.PtrToStringAnsi((IntPtr)aSupportedProtocols);
             ZappFree(aSupportedProtocols);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndProtocolInfo().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginProtocolInfo(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -395,19 +658,31 @@ namespace Zapp
             CpProxyLinnCoUkDs1BeginProtocolInfo(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaSupportedProtocols"></param>
         public unsafe void EndProtocolInfo(IntPtr aAsyncHandle, out string aaSupportedProtocols)
         {
-			char* aSupportedProtocols;
-			{
-				if (0 != CpProxyLinnCoUkDs1EndProtocolInfo(iHandle, aAsyncHandle, &aSupportedProtocols))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aSupportedProtocols;
+            {
+                if (0 != CpProxyLinnCoUkDs1EndProtocolInfo(iHandle, aAsyncHandle, &aSupportedProtocols))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaSupportedProtocols = Marshal.PtrToStringAnsi((IntPtr)aSupportedProtocols);
             ZappFree(aSupportedProtocols);
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the SupportedProtocols state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkDs1 instance will not overlap.</remarks>
+        /// <param name="aSupportedProtocolsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertySupportedProtocolsChanged(CallbackPropertyChanged aSupportedProtocolsChanged)
         {
             iSupportedProtocolsChanged = aSupportedProtocolsChanged;
@@ -423,6 +698,12 @@ namespace Zapp
             self.iSupportedProtocolsChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the TrackDuration state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkDs1 instance will not overlap.</remarks>
+        /// <param name="aTrackDurationChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackDurationChanged(CallbackPropertyChanged aTrackDurationChanged)
         {
             iTrackDurationChanged = aTrackDurationChanged;
@@ -438,6 +719,12 @@ namespace Zapp
             self.iTrackDurationChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the TrackBitRate state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkDs1 instance will not overlap.</remarks>
+        /// <param name="aTrackBitRateChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackBitRateChanged(CallbackPropertyChanged aTrackBitRateChanged)
         {
             iTrackBitRateChanged = aTrackBitRateChanged;
@@ -453,6 +740,12 @@ namespace Zapp
             self.iTrackBitRateChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the TrackLossless state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkDs1 instance will not overlap.</remarks>
+        /// <param name="aTrackLosslessChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackLosslessChanged(CallbackPropertyChanged aTrackLosslessChanged)
         {
             iTrackLosslessChanged = aTrackLosslessChanged;
@@ -468,6 +761,12 @@ namespace Zapp
             self.iTrackLosslessChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the TrackBitDepth state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkDs1 instance will not overlap.</remarks>
+        /// <param name="aTrackBitDepthChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackBitDepthChanged(CallbackPropertyChanged aTrackBitDepthChanged)
         {
             iTrackBitDepthChanged = aTrackBitDepthChanged;
@@ -483,6 +782,12 @@ namespace Zapp
             self.iTrackBitDepthChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the TrackSampleRate state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkDs1 instance will not overlap.</remarks>
+        /// <param name="aTrackSampleRateChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackSampleRateChanged(CallbackPropertyChanged aTrackSampleRateChanged)
         {
             iTrackSampleRateChanged = aTrackSampleRateChanged;
@@ -498,6 +803,12 @@ namespace Zapp
             self.iTrackSampleRateChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the TrackCodecName state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkDs1 instance will not overlap.</remarks>
+        /// <param name="aTrackCodecNameChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackCodecNameChanged(CallbackPropertyChanged aTrackCodecNameChanged)
         {
             iTrackCodecNameChanged = aTrackCodecNameChanged;
@@ -513,6 +824,12 @@ namespace Zapp
             self.iTrackCodecNameChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the TrackId state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkDs1 instance will not overlap.</remarks>
+        /// <param name="aTrackIdChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackIdChanged(CallbackPropertyChanged aTrackIdChanged)
         {
             iTrackIdChanged = aTrackIdChanged;
@@ -528,6 +845,12 @@ namespace Zapp
             self.iTrackIdChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the TransportState state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkDs1 instance will not overlap.</remarks>
+        /// <param name="aTransportStateChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTransportStateChanged(CallbackPropertyChanged aTransportStateChanged)
         {
             iTransportStateChanged = aTransportStateChanged;
@@ -543,77 +866,143 @@ namespace Zapp
             self.iTransportStateChanged();
         }
 
+        /// <summary>
+        /// Query the value of the SupportedProtocols property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <param name="aSupportedProtocols">Will be set to the value of the property</param>
         public unsafe void PropertySupportedProtocols(out string aSupportedProtocols)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkDs1PropertySupportedProtocols(iHandle, &ptr);
             aSupportedProtocols = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the TrackDuration property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <param name="aTrackDuration">Will be set to the value of the property</param>
         public unsafe void PropertyTrackDuration(out uint aTrackDuration)
         {
-			fixed (uint* trackDuration = &aTrackDuration)
-			{
-	            CpProxyLinnCoUkDs1PropertyTrackDuration(iHandle, trackDuration);
-			}
+            fixed (uint* trackDuration = &aTrackDuration)
+            {
+                CpProxyLinnCoUkDs1PropertyTrackDuration(iHandle, trackDuration);
+            }
         }
 
+        /// <summary>
+        /// Query the value of the TrackBitRate property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <param name="aTrackBitRate">Will be set to the value of the property</param>
         public unsafe void PropertyTrackBitRate(out uint aTrackBitRate)
         {
-			fixed (uint* trackBitRate = &aTrackBitRate)
-			{
-	            CpProxyLinnCoUkDs1PropertyTrackBitRate(iHandle, trackBitRate);
-			}
+            fixed (uint* trackBitRate = &aTrackBitRate)
+            {
+                CpProxyLinnCoUkDs1PropertyTrackBitRate(iHandle, trackBitRate);
+            }
         }
 
+        /// <summary>
+        /// Query the value of the TrackLossless property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <param name="aTrackLossless">Will be set to the value of the property</param>
         public unsafe void PropertyTrackLossless(out bool aTrackLossless)
         {
-			uint trackLossless;
-	        CpProxyLinnCoUkDs1PropertyTrackLossless(iHandle, &trackLossless);
-			aTrackLossless = (trackLossless != 0);
+            uint trackLossless;
+            CpProxyLinnCoUkDs1PropertyTrackLossless(iHandle, &trackLossless);
+            aTrackLossless = (trackLossless != 0);
         }
 
+        /// <summary>
+        /// Query the value of the TrackBitDepth property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <param name="aTrackBitDepth">Will be set to the value of the property</param>
         public unsafe void PropertyTrackBitDepth(out uint aTrackBitDepth)
         {
-			fixed (uint* trackBitDepth = &aTrackBitDepth)
-			{
-	            CpProxyLinnCoUkDs1PropertyTrackBitDepth(iHandle, trackBitDepth);
-			}
+            fixed (uint* trackBitDepth = &aTrackBitDepth)
+            {
+                CpProxyLinnCoUkDs1PropertyTrackBitDepth(iHandle, trackBitDepth);
+            }
         }
 
+        /// <summary>
+        /// Query the value of the TrackSampleRate property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <param name="aTrackSampleRate">Will be set to the value of the property</param>
         public unsafe void PropertyTrackSampleRate(out uint aTrackSampleRate)
         {
-			fixed (uint* trackSampleRate = &aTrackSampleRate)
-			{
-	            CpProxyLinnCoUkDs1PropertyTrackSampleRate(iHandle, trackSampleRate);
-			}
+            fixed (uint* trackSampleRate = &aTrackSampleRate)
+            {
+                CpProxyLinnCoUkDs1PropertyTrackSampleRate(iHandle, trackSampleRate);
+            }
         }
 
+        /// <summary>
+        /// Query the value of the TrackCodecName property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <param name="aTrackCodecName">Will be set to the value of the property</param>
         public unsafe void PropertyTrackCodecName(out string aTrackCodecName)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkDs1PropertyTrackCodecName(iHandle, &ptr);
             aTrackCodecName = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the TrackId property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <param name="aTrackId">Will be set to the value of the property</param>
         public unsafe void PropertyTrackId(out uint aTrackId)
         {
-			fixed (uint* trackId = &aTrackId)
-			{
-	            CpProxyLinnCoUkDs1PropertyTrackId(iHandle, trackId);
-			}
+            fixed (uint* trackId = &aTrackId)
+            {
+                CpProxyLinnCoUkDs1PropertyTrackId(iHandle, trackId);
+            }
         }
 
+        /// <summary>
+        /// Query the value of the TransportState property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <param name="aTransportState">Will be set to the value of the property</param>
         public unsafe void PropertyTransportState(out string aTransportState)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkDs1PropertyTransportState(iHandle, &ptr);
             aTransportState = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);
@@ -626,17 +1015,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            IntPtr handle;
             lock (this)
             {
                 if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyLinnCoUkDs1Destroy(iHandle);
                 iHandle = IntPtr.Zero;
             }
-            CpProxyLinnCoUkDs1Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

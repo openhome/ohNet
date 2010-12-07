@@ -20,6 +20,7 @@ class PropertyUint;
 
 /**
  * Proxy for zapp.org:TestDimmableLight:1
+ * @ingroup Proxies
  */
 class CpProxyZappOrgTestDimmableLight1 : public CpProxy
 {
@@ -94,11 +95,33 @@ public:
      */
     void EndSetLevel(IAsync& aAsync);
 
+    /**
+     * Set a callback to be run when the A_ARG_Level state variable changes.
+     *
+     * Callbacks may be run in different threads but callbacks for a
+     * CpProxyZappOrgTestDimmableLight1 instance will not overlap.
+     *
+     * @param[in]  aFunctor  The callback to run when the state variable changes
+     */
+    void SetPropertyA_ARG_LevelChanged(Functor& aFunctor);
 
+    /**
+     * Query the value of the A_ARG_Level property.
+     *
+     * This function is threadsafe and can only be called if Subscribe() has been
+     * called and a first eventing callback received more recently than any call
+	 * to Unsubscribe().
+     *
+     * @param[out] aA_ARG_Level
+     */
+    void PropertyA_ARG_Level(TUint& aA_ARG_Level) const;
 private:
+    void A_ARG_LevelPropertyChanged();
 private:
     Action* iActionGetLevel;
     Action* iActionSetLevel;
+    PropertyUint* iA_ARG_Level;
+    Functor iA_ARG_LevelChanged;
 };
 
 } // namespace Zapp

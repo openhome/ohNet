@@ -3,70 +3,129 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Zapp;
 
-namespace Zapp
+namespace Zapp.Device.Providers
 {
-    public class DvServiceUpnpOrgContentDirectory3 : IDisposable
+    public interface IDvProviderUpnpOrgContentDirectory3 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the SystemUpdateID property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertySystemUpdateID(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the SystemUpdateID property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertySystemUpdateID(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the ContainerUpdateIDs property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyContainerUpdateIDs(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ContainerUpdateIDs property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyContainerUpdateIDs(out string aValue);
+
+        /// <summary>
+        /// Set the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyLastChange(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyLastChange(out string aValue);
+
+        /// <summary>
+        /// Set the value of the TransferIDs property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyTransferIDs(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the TransferIDs property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyTransferIDs(out string aValue);
+        
+    }
+    /// <summary>
+    /// Provider for the upnp.org:ContentDirectory:3 UPnP service
+    /// </summary>
+    public class DvProviderUpnpOrgContentDirectory3 : DvProvider, IDisposable, IDvProviderUpnpOrgContentDirectory3
     {
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern IntPtr DvServiceUpnpOrgContentDirectory3Create(IntPtr aDeviceHandle);
+        static extern IntPtr DvProviderUpnpOrgContentDirectory3Create(IntPtr aDeviceHandle);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern void DvServiceUpnpOrgContentDirectory3Destroy(IntPtr aHandle);
+        static extern void DvProviderUpnpOrgContentDirectory3Destroy(IntPtr aHandle);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern unsafe int DvServiceUpnpOrgContentDirectory3SetPropertySystemUpdateID(IntPtr aHandle, uint aValue);
+        static extern unsafe int DvProviderUpnpOrgContentDirectory3SetPropertySystemUpdateID(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern unsafe void DvServiceUpnpOrgContentDirectory3GetPropertySystemUpdateID(IntPtr aHandle, uint* aValue);
+        static extern unsafe void DvProviderUpnpOrgContentDirectory3GetPropertySystemUpdateID(IntPtr aHandle, uint* aValue);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern unsafe int DvServiceUpnpOrgContentDirectory3SetPropertyContainerUpdateIDs(IntPtr aHandle, char* aValue);
+        static extern unsafe int DvProviderUpnpOrgContentDirectory3SetPropertyContainerUpdateIDs(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern unsafe void DvServiceUpnpOrgContentDirectory3GetPropertyContainerUpdateIDs(IntPtr aHandle, char** aValue);
+        static extern unsafe void DvProviderUpnpOrgContentDirectory3GetPropertyContainerUpdateIDs(IntPtr aHandle, char** aValue);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern unsafe int DvServiceUpnpOrgContentDirectory3SetPropertyLastChange(IntPtr aHandle, char* aValue);
+        static extern unsafe int DvProviderUpnpOrgContentDirectory3SetPropertyLastChange(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern unsafe void DvServiceUpnpOrgContentDirectory3GetPropertyLastChange(IntPtr aHandle, char** aValue);
+        static extern unsafe void DvProviderUpnpOrgContentDirectory3GetPropertyLastChange(IntPtr aHandle, char** aValue);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern unsafe int DvServiceUpnpOrgContentDirectory3SetPropertyTransferIDs(IntPtr aHandle, char* aValue);
+        static extern unsafe int DvProviderUpnpOrgContentDirectory3SetPropertyTransferIDs(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern unsafe void DvServiceUpnpOrgContentDirectory3GetPropertyTransferIDs(IntPtr aHandle, char** aValue);
+        static extern unsafe void DvProviderUpnpOrgContentDirectory3GetPropertyTransferIDs(IntPtr aHandle, char** aValue);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern void DvServiceUpnpOrgContentDirectory3EnableActionGetSearchCapabilities(IntPtr aHandle, CallbackGetSearchCapabilities aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory3EnableActionGetSearchCapabilities(IntPtr aHandle, CallbackGetSearchCapabilities aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern void DvServiceUpnpOrgContentDirectory3EnableActionGetSortCapabilities(IntPtr aHandle, CallbackGetSortCapabilities aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory3EnableActionGetSortCapabilities(IntPtr aHandle, CallbackGetSortCapabilities aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern void DvServiceUpnpOrgContentDirectory3EnableActionGetSortExtensionCapabilities(IntPtr aHandle, CallbackGetSortExtensionCapabilities aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory3EnableActionGetSortExtensionCapabilities(IntPtr aHandle, CallbackGetSortExtensionCapabilities aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern void DvServiceUpnpOrgContentDirectory3EnableActionGetFeatureList(IntPtr aHandle, CallbackGetFeatureList aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory3EnableActionGetFeatureList(IntPtr aHandle, CallbackGetFeatureList aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern void DvServiceUpnpOrgContentDirectory3EnableActionGetSystemUpdateID(IntPtr aHandle, CallbackGetSystemUpdateID aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory3EnableActionGetSystemUpdateID(IntPtr aHandle, CallbackGetSystemUpdateID aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern void DvServiceUpnpOrgContentDirectory3EnableActionGetServiceResetToken(IntPtr aHandle, CallbackGetServiceResetToken aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory3EnableActionGetServiceResetToken(IntPtr aHandle, CallbackGetServiceResetToken aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern void DvServiceUpnpOrgContentDirectory3EnableActionBrowse(IntPtr aHandle, CallbackBrowse aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory3EnableActionBrowse(IntPtr aHandle, CallbackBrowse aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern void DvServiceUpnpOrgContentDirectory3EnableActionSearch(IntPtr aHandle, CallbackSearch aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory3EnableActionSearch(IntPtr aHandle, CallbackSearch aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern void DvServiceUpnpOrgContentDirectory3EnableActionCreateObject(IntPtr aHandle, CallbackCreateObject aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory3EnableActionCreateObject(IntPtr aHandle, CallbackCreateObject aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern void DvServiceUpnpOrgContentDirectory3EnableActionDestroyObject(IntPtr aHandle, CallbackDestroyObject aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory3EnableActionDestroyObject(IntPtr aHandle, CallbackDestroyObject aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern void DvServiceUpnpOrgContentDirectory3EnableActionUpdateObject(IntPtr aHandle, CallbackUpdateObject aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory3EnableActionUpdateObject(IntPtr aHandle, CallbackUpdateObject aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern void DvServiceUpnpOrgContentDirectory3EnableActionMoveObject(IntPtr aHandle, CallbackMoveObject aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory3EnableActionMoveObject(IntPtr aHandle, CallbackMoveObject aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern void DvServiceUpnpOrgContentDirectory3EnableActionImportResource(IntPtr aHandle, CallbackImportResource aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory3EnableActionImportResource(IntPtr aHandle, CallbackImportResource aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern void DvServiceUpnpOrgContentDirectory3EnableActionExportResource(IntPtr aHandle, CallbackExportResource aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory3EnableActionExportResource(IntPtr aHandle, CallbackExportResource aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern void DvServiceUpnpOrgContentDirectory3EnableActionDeleteResource(IntPtr aHandle, CallbackDeleteResource aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory3EnableActionDeleteResource(IntPtr aHandle, CallbackDeleteResource aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern void DvServiceUpnpOrgContentDirectory3EnableActionStopTransferResource(IntPtr aHandle, CallbackStopTransferResource aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory3EnableActionStopTransferResource(IntPtr aHandle, CallbackStopTransferResource aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern void DvServiceUpnpOrgContentDirectory3EnableActionGetTransferProgress(IntPtr aHandle, CallbackGetTransferProgress aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory3EnableActionGetTransferProgress(IntPtr aHandle, CallbackGetTransferProgress aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern void DvServiceUpnpOrgContentDirectory3EnableActionCreateReference(IntPtr aHandle, CallbackCreateReference aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory3EnableActionCreateReference(IntPtr aHandle, CallbackCreateReference aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern void DvServiceUpnpOrgContentDirectory3EnableActionFreeFormQuery(IntPtr aHandle, CallbackFreeFormQuery aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory3EnableActionFreeFormQuery(IntPtr aHandle, CallbackFreeFormQuery aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory3")]
-        static extern void DvServiceUpnpOrgContentDirectory3EnableActionGetFreeFormQueryCapabilities(IntPtr aHandle, CallbackGetFreeFormQueryCapabilities aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory3EnableActionGetFreeFormQueryCapabilities(IntPtr aHandle, CallbackGetFreeFormQueryCapabilities aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -91,7 +150,6 @@ namespace Zapp
         private unsafe delegate int CallbackFreeFormQuery(IntPtr aPtr, uint aVersion, char* aContainerID, uint aCDSView, char* aQueryRequest, char** aQueryResult, uint* aUpdateID);
         private unsafe delegate int CallbackGetFreeFormQueryCapabilities(IntPtr aPtr, uint aVersion, char** aFFQCapabilities);
 
-        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackGetSearchCapabilities iCallbackGetSearchCapabilities;
         private CallbackGetSortCapabilities iCallbackGetSortCapabilities;
@@ -114,320 +172,686 @@ namespace Zapp
         private CallbackFreeFormQuery iCallbackFreeFormQuery;
         private CallbackGetFreeFormQueryCapabilities iCallbackGetFreeFormQueryCapabilities;
 
-        public DvServiceUpnpOrgContentDirectory3(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderUpnpOrgContentDirectory3(DvDevice aDevice)
         {
-            iHandle = DvServiceUpnpOrgContentDirectory3Create(aDevice.Handle()); 
+            iHandle = DvProviderUpnpOrgContentDirectory3Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertySystemUpdateID(uint aValue)
+        /// <summary>
+        /// Set the value of the SystemUpdateID property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertySystemUpdateID(uint aValue)
         {
-            if (0 != DvServiceUpnpOrgContentDirectory3SetPropertySystemUpdateID(iHandle, aValue))
+            uint changed;
+            if (0 != DvProviderUpnpOrgContentDirectory3SetPropertySystemUpdateID(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the SystemUpdateID property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertySystemUpdateID(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
-                DvServiceUpnpOrgContentDirectory3GetPropertySystemUpdateID(iHandle, value);
+            {
+                DvProviderUpnpOrgContentDirectory3GetPropertySystemUpdateID(iHandle, value);
             }
         }
 
-        public unsafe void SetPropertyContainerUpdateIDs(string aValue)
+        /// <summary>
+        /// Set the value of the ContainerUpdateIDs property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyContainerUpdateIDs(string aValue)
         {
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgContentDirectory3SetPropertyContainerUpdateIDs(iHandle, value);
+            int err = DvProviderUpnpOrgContentDirectory3SetPropertyContainerUpdateIDs(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the ContainerUpdateIDs property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyContainerUpdateIDs(out string aValue)
         {
             char* value;
-            DvServiceUpnpOrgContentDirectory3GetPropertyContainerUpdateIDs(iHandle, &value);
+            DvProviderUpnpOrgContentDirectory3GetPropertyContainerUpdateIDs(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyLastChange(string aValue)
+        /// <summary>
+        /// Set the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyLastChange(string aValue)
         {
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgContentDirectory3SetPropertyLastChange(iHandle, value);
+            int err = DvProviderUpnpOrgContentDirectory3SetPropertyLastChange(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the LastChange property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyLastChange(out string aValue)
         {
             char* value;
-            DvServiceUpnpOrgContentDirectory3GetPropertyLastChange(iHandle, &value);
+            DvProviderUpnpOrgContentDirectory3GetPropertyLastChange(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyTransferIDs(string aValue)
+        /// <summary>
+        /// Set the value of the TransferIDs property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyTransferIDs(string aValue)
         {
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceUpnpOrgContentDirectory3SetPropertyTransferIDs(iHandle, value);
+            int err = DvProviderUpnpOrgContentDirectory3SetPropertyTransferIDs(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the TransferIDs property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyTransferIDs(out string aValue)
         {
             char* value;
-            DvServiceUpnpOrgContentDirectory3GetPropertyTransferIDs(iHandle, &value);
+            DvProviderUpnpOrgContentDirectory3GetPropertyTransferIDs(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Signal that the action GetSearchCapabilities is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetSearchCapabilities must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetSearchCapabilities()
         {
             iCallbackGetSearchCapabilities = new CallbackGetSearchCapabilities(DoGetSearchCapabilities);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory3EnableActionGetSearchCapabilities(iHandle, iCallbackGetSearchCapabilities, ptr);
+            DvProviderUpnpOrgContentDirectory3EnableActionGetSearchCapabilities(iHandle, iCallbackGetSearchCapabilities, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetSortCapabilities is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetSortCapabilities must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetSortCapabilities()
         {
             iCallbackGetSortCapabilities = new CallbackGetSortCapabilities(DoGetSortCapabilities);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory3EnableActionGetSortCapabilities(iHandle, iCallbackGetSortCapabilities, ptr);
+            DvProviderUpnpOrgContentDirectory3EnableActionGetSortCapabilities(iHandle, iCallbackGetSortCapabilities, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetSortExtensionCapabilities is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetSortExtensionCapabilities must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetSortExtensionCapabilities()
         {
             iCallbackGetSortExtensionCapabilities = new CallbackGetSortExtensionCapabilities(DoGetSortExtensionCapabilities);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory3EnableActionGetSortExtensionCapabilities(iHandle, iCallbackGetSortExtensionCapabilities, ptr);
+            DvProviderUpnpOrgContentDirectory3EnableActionGetSortExtensionCapabilities(iHandle, iCallbackGetSortExtensionCapabilities, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetFeatureList is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetFeatureList must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetFeatureList()
         {
             iCallbackGetFeatureList = new CallbackGetFeatureList(DoGetFeatureList);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory3EnableActionGetFeatureList(iHandle, iCallbackGetFeatureList, ptr);
+            DvProviderUpnpOrgContentDirectory3EnableActionGetFeatureList(iHandle, iCallbackGetFeatureList, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetSystemUpdateID is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetSystemUpdateID must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetSystemUpdateID()
         {
             iCallbackGetSystemUpdateID = new CallbackGetSystemUpdateID(DoGetSystemUpdateID);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory3EnableActionGetSystemUpdateID(iHandle, iCallbackGetSystemUpdateID, ptr);
+            DvProviderUpnpOrgContentDirectory3EnableActionGetSystemUpdateID(iHandle, iCallbackGetSystemUpdateID, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetServiceResetToken is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetServiceResetToken must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetServiceResetToken()
         {
             iCallbackGetServiceResetToken = new CallbackGetServiceResetToken(DoGetServiceResetToken);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory3EnableActionGetServiceResetToken(iHandle, iCallbackGetServiceResetToken, ptr);
+            DvProviderUpnpOrgContentDirectory3EnableActionGetServiceResetToken(iHandle, iCallbackGetServiceResetToken, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Browse is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoBrowse must be overridden if this is called.</remarks>
         protected unsafe void EnableActionBrowse()
         {
             iCallbackBrowse = new CallbackBrowse(DoBrowse);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory3EnableActionBrowse(iHandle, iCallbackBrowse, ptr);
+            DvProviderUpnpOrgContentDirectory3EnableActionBrowse(iHandle, iCallbackBrowse, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Search is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSearch must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSearch()
         {
             iCallbackSearch = new CallbackSearch(DoSearch);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory3EnableActionSearch(iHandle, iCallbackSearch, ptr);
+            DvProviderUpnpOrgContentDirectory3EnableActionSearch(iHandle, iCallbackSearch, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action CreateObject is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoCreateObject must be overridden if this is called.</remarks>
         protected unsafe void EnableActionCreateObject()
         {
             iCallbackCreateObject = new CallbackCreateObject(DoCreateObject);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory3EnableActionCreateObject(iHandle, iCallbackCreateObject, ptr);
+            DvProviderUpnpOrgContentDirectory3EnableActionCreateObject(iHandle, iCallbackCreateObject, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DestroyObject is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDestroyObject must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDestroyObject()
         {
             iCallbackDestroyObject = new CallbackDestroyObject(DoDestroyObject);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory3EnableActionDestroyObject(iHandle, iCallbackDestroyObject, ptr);
+            DvProviderUpnpOrgContentDirectory3EnableActionDestroyObject(iHandle, iCallbackDestroyObject, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action UpdateObject is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoUpdateObject must be overridden if this is called.</remarks>
         protected unsafe void EnableActionUpdateObject()
         {
             iCallbackUpdateObject = new CallbackUpdateObject(DoUpdateObject);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory3EnableActionUpdateObject(iHandle, iCallbackUpdateObject, ptr);
+            DvProviderUpnpOrgContentDirectory3EnableActionUpdateObject(iHandle, iCallbackUpdateObject, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action MoveObject is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoMoveObject must be overridden if this is called.</remarks>
         protected unsafe void EnableActionMoveObject()
         {
             iCallbackMoveObject = new CallbackMoveObject(DoMoveObject);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory3EnableActionMoveObject(iHandle, iCallbackMoveObject, ptr);
+            DvProviderUpnpOrgContentDirectory3EnableActionMoveObject(iHandle, iCallbackMoveObject, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action ImportResource is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoImportResource must be overridden if this is called.</remarks>
         protected unsafe void EnableActionImportResource()
         {
             iCallbackImportResource = new CallbackImportResource(DoImportResource);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory3EnableActionImportResource(iHandle, iCallbackImportResource, ptr);
+            DvProviderUpnpOrgContentDirectory3EnableActionImportResource(iHandle, iCallbackImportResource, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action ExportResource is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoExportResource must be overridden if this is called.</remarks>
         protected unsafe void EnableActionExportResource()
         {
             iCallbackExportResource = new CallbackExportResource(DoExportResource);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory3EnableActionExportResource(iHandle, iCallbackExportResource, ptr);
+            DvProviderUpnpOrgContentDirectory3EnableActionExportResource(iHandle, iCallbackExportResource, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DeleteResource is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDeleteResource must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDeleteResource()
         {
             iCallbackDeleteResource = new CallbackDeleteResource(DoDeleteResource);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory3EnableActionDeleteResource(iHandle, iCallbackDeleteResource, ptr);
+            DvProviderUpnpOrgContentDirectory3EnableActionDeleteResource(iHandle, iCallbackDeleteResource, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action StopTransferResource is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoStopTransferResource must be overridden if this is called.</remarks>
         protected unsafe void EnableActionStopTransferResource()
         {
             iCallbackStopTransferResource = new CallbackStopTransferResource(DoStopTransferResource);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory3EnableActionStopTransferResource(iHandle, iCallbackStopTransferResource, ptr);
+            DvProviderUpnpOrgContentDirectory3EnableActionStopTransferResource(iHandle, iCallbackStopTransferResource, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetTransferProgress is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetTransferProgress must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetTransferProgress()
         {
             iCallbackGetTransferProgress = new CallbackGetTransferProgress(DoGetTransferProgress);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory3EnableActionGetTransferProgress(iHandle, iCallbackGetTransferProgress, ptr);
+            DvProviderUpnpOrgContentDirectory3EnableActionGetTransferProgress(iHandle, iCallbackGetTransferProgress, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action CreateReference is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoCreateReference must be overridden if this is called.</remarks>
         protected unsafe void EnableActionCreateReference()
         {
             iCallbackCreateReference = new CallbackCreateReference(DoCreateReference);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory3EnableActionCreateReference(iHandle, iCallbackCreateReference, ptr);
+            DvProviderUpnpOrgContentDirectory3EnableActionCreateReference(iHandle, iCallbackCreateReference, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action FreeFormQuery is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoFreeFormQuery must be overridden if this is called.</remarks>
         protected unsafe void EnableActionFreeFormQuery()
         {
             iCallbackFreeFormQuery = new CallbackFreeFormQuery(DoFreeFormQuery);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory3EnableActionFreeFormQuery(iHandle, iCallbackFreeFormQuery, ptr);
+            DvProviderUpnpOrgContentDirectory3EnableActionFreeFormQuery(iHandle, iCallbackFreeFormQuery, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetFreeFormQueryCapabilities is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetFreeFormQueryCapabilities must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetFreeFormQueryCapabilities()
         {
             iCallbackGetFreeFormQueryCapabilities = new CallbackGetFreeFormQueryCapabilities(DoGetFreeFormQueryCapabilities);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceUpnpOrgContentDirectory3EnableActionGetFreeFormQueryCapabilities(iHandle, iCallbackGetFreeFormQueryCapabilities, ptr);
+            DvProviderUpnpOrgContentDirectory3EnableActionGetFreeFormQueryCapabilities(iHandle, iCallbackGetFreeFormQueryCapabilities, ptr);
         }
 
+        /// <summary>
+        /// GetSearchCapabilities action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetSearchCapabilities action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetSearchCapabilities was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aSearchCaps"></param>
         protected virtual void GetSearchCapabilities(uint aVersion, out string aSearchCaps)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetSortCapabilities action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetSortCapabilities action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetSortCapabilities was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aSortCaps"></param>
         protected virtual void GetSortCapabilities(uint aVersion, out string aSortCaps)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetSortExtensionCapabilities action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetSortExtensionCapabilities action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetSortExtensionCapabilities was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aSortExtensionCaps"></param>
         protected virtual void GetSortExtensionCapabilities(uint aVersion, out string aSortExtensionCaps)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetFeatureList action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetFeatureList action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetFeatureList was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aFeatureList"></param>
         protected virtual void GetFeatureList(uint aVersion, out string aFeatureList)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetSystemUpdateID action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetSystemUpdateID action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetSystemUpdateID was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aId"></param>
         protected virtual void GetSystemUpdateID(uint aVersion, out uint aId)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetServiceResetToken action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetServiceResetToken action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetServiceResetToken was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aResetToken"></param>
         protected virtual void GetServiceResetToken(uint aVersion, out string aResetToken)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Browse action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Browse action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionBrowse was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aObjectID"></param>
+        /// <param name="aBrowseFlag"></param>
+        /// <param name="aFilter"></param>
+        /// <param name="aStartingIndex"></param>
+        /// <param name="aRequestedCount"></param>
+        /// <param name="aSortCriteria"></param>
+        /// <param name="aResult"></param>
+        /// <param name="aNumberReturned"></param>
+        /// <param name="aTotalMatches"></param>
+        /// <param name="aUpdateID"></param>
         protected virtual void Browse(uint aVersion, string aObjectID, string aBrowseFlag, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Search action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Search action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSearch was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aContainerID"></param>
+        /// <param name="aSearchCriteria"></param>
+        /// <param name="aFilter"></param>
+        /// <param name="aStartingIndex"></param>
+        /// <param name="aRequestedCount"></param>
+        /// <param name="aSortCriteria"></param>
+        /// <param name="aResult"></param>
+        /// <param name="aNumberReturned"></param>
+        /// <param name="aTotalMatches"></param>
+        /// <param name="aUpdateID"></param>
         protected virtual void Search(uint aVersion, string aContainerID, string aSearchCriteria, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// CreateObject action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// CreateObject action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionCreateObject was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aContainerID"></param>
+        /// <param name="aElements"></param>
+        /// <param name="aObjectID"></param>
+        /// <param name="aResult"></param>
         protected virtual void CreateObject(uint aVersion, string aContainerID, string aElements, out string aObjectID, out string aResult)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DestroyObject action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DestroyObject action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDestroyObject was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aObjectID"></param>
         protected virtual void DestroyObject(uint aVersion, string aObjectID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// UpdateObject action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// UpdateObject action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionUpdateObject was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aObjectID"></param>
+        /// <param name="aCurrentTagValue"></param>
+        /// <param name="aNewTagValue"></param>
         protected virtual void UpdateObject(uint aVersion, string aObjectID, string aCurrentTagValue, string aNewTagValue)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// MoveObject action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// MoveObject action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionMoveObject was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aObjectID"></param>
+        /// <param name="aNewParentID"></param>
+        /// <param name="aNewObjectID"></param>
         protected virtual void MoveObject(uint aVersion, string aObjectID, string aNewParentID, out string aNewObjectID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// ImportResource action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// ImportResource action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionImportResource was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aSourceURI"></param>
+        /// <param name="aDestinationURI"></param>
+        /// <param name="aTransferID"></param>
         protected virtual void ImportResource(uint aVersion, string aSourceURI, string aDestinationURI, out uint aTransferID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// ExportResource action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// ExportResource action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionExportResource was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aSourceURI"></param>
+        /// <param name="aDestinationURI"></param>
+        /// <param name="aTransferID"></param>
         protected virtual void ExportResource(uint aVersion, string aSourceURI, string aDestinationURI, out uint aTransferID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DeleteResource action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DeleteResource action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDeleteResource was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aResourceURI"></param>
         protected virtual void DeleteResource(uint aVersion, string aResourceURI)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// StopTransferResource action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// StopTransferResource action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionStopTransferResource was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aTransferID"></param>
         protected virtual void StopTransferResource(uint aVersion, uint aTransferID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetTransferProgress action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetTransferProgress action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetTransferProgress was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aTransferID"></param>
+        /// <param name="aTransferStatus"></param>
+        /// <param name="aTransferLength"></param>
+        /// <param name="aTransferTotal"></param>
         protected virtual void GetTransferProgress(uint aVersion, uint aTransferID, out string aTransferStatus, out string aTransferLength, out string aTransferTotal)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// CreateReference action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// CreateReference action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionCreateReference was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aContainerID"></param>
+        /// <param name="aObjectID"></param>
+        /// <param name="aNewID"></param>
         protected virtual void CreateReference(uint aVersion, string aContainerID, string aObjectID, out string aNewID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// FreeFormQuery action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// FreeFormQuery action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionFreeFormQuery was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aContainerID"></param>
+        /// <param name="aCDSView"></param>
+        /// <param name="aQueryRequest"></param>
+        /// <param name="aQueryResult"></param>
+        /// <param name="aUpdateID"></param>
         protected virtual void FreeFormQuery(uint aVersion, string aContainerID, uint aCDSView, string aQueryRequest, out string aQueryResult, out uint aUpdateID)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetFreeFormQueryCapabilities action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetFreeFormQueryCapabilities action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetFreeFormQueryCapabilities was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aFFQCapabilities"></param>
         protected virtual void GetFreeFormQueryCapabilities(uint aVersion, out string aFFQCapabilities)
         {
             throw (new ActionDisabledError());
@@ -436,7 +860,7 @@ namespace Zapp
         private static unsafe int DoGetSearchCapabilities(IntPtr aPtr, uint aVersion, char** aSearchCaps)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory3 self = (DvServiceUpnpOrgContentDirectory3)gch.Target;
+            DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             string searchCaps;
             self.GetSearchCapabilities(aVersion, out searchCaps);
             *aSearchCaps = (char*)Marshal.StringToHGlobalAnsi(searchCaps).ToPointer();
@@ -446,7 +870,7 @@ namespace Zapp
         private static unsafe int DoGetSortCapabilities(IntPtr aPtr, uint aVersion, char** aSortCaps)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory3 self = (DvServiceUpnpOrgContentDirectory3)gch.Target;
+            DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             string sortCaps;
             self.GetSortCapabilities(aVersion, out sortCaps);
             *aSortCaps = (char*)Marshal.StringToHGlobalAnsi(sortCaps).ToPointer();
@@ -456,7 +880,7 @@ namespace Zapp
         private static unsafe int DoGetSortExtensionCapabilities(IntPtr aPtr, uint aVersion, char** aSortExtensionCaps)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory3 self = (DvServiceUpnpOrgContentDirectory3)gch.Target;
+            DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             string sortExtensionCaps;
             self.GetSortExtensionCapabilities(aVersion, out sortExtensionCaps);
             *aSortExtensionCaps = (char*)Marshal.StringToHGlobalAnsi(sortExtensionCaps).ToPointer();
@@ -466,7 +890,7 @@ namespace Zapp
         private static unsafe int DoGetFeatureList(IntPtr aPtr, uint aVersion, char** aFeatureList)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory3 self = (DvServiceUpnpOrgContentDirectory3)gch.Target;
+            DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             string featureList;
             self.GetFeatureList(aVersion, out featureList);
             *aFeatureList = (char*)Marshal.StringToHGlobalAnsi(featureList).ToPointer();
@@ -476,7 +900,7 @@ namespace Zapp
         private static unsafe int DoGetSystemUpdateID(IntPtr aPtr, uint aVersion, uint* aId)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory3 self = (DvServiceUpnpOrgContentDirectory3)gch.Target;
+            DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             uint id;
             self.GetSystemUpdateID(aVersion, out id);
             *aId = id;
@@ -486,7 +910,7 @@ namespace Zapp
         private static unsafe int DoGetServiceResetToken(IntPtr aPtr, uint aVersion, char** aResetToken)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory3 self = (DvServiceUpnpOrgContentDirectory3)gch.Target;
+            DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             string resetToken;
             self.GetServiceResetToken(aVersion, out resetToken);
             *aResetToken = (char*)Marshal.StringToHGlobalAnsi(resetToken).ToPointer();
@@ -496,7 +920,7 @@ namespace Zapp
         private static unsafe int DoBrowse(IntPtr aPtr, uint aVersion, char* aObjectID, char* aBrowseFlag, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory3 self = (DvServiceUpnpOrgContentDirectory3)gch.Target;
+            DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             string objectID = Marshal.PtrToStringAnsi((IntPtr)aObjectID);
             string browseFlag = Marshal.PtrToStringAnsi((IntPtr)aBrowseFlag);
             string filter = Marshal.PtrToStringAnsi((IntPtr)aFilter);
@@ -516,7 +940,7 @@ namespace Zapp
         private static unsafe int DoSearch(IntPtr aPtr, uint aVersion, char* aContainerID, char* aSearchCriteria, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory3 self = (DvServiceUpnpOrgContentDirectory3)gch.Target;
+            DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             string containerID = Marshal.PtrToStringAnsi((IntPtr)aContainerID);
             string searchCriteria = Marshal.PtrToStringAnsi((IntPtr)aSearchCriteria);
             string filter = Marshal.PtrToStringAnsi((IntPtr)aFilter);
@@ -536,7 +960,7 @@ namespace Zapp
         private static unsafe int DoCreateObject(IntPtr aPtr, uint aVersion, char* aContainerID, char* aElements, char** aObjectID, char** aResult)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory3 self = (DvServiceUpnpOrgContentDirectory3)gch.Target;
+            DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             string containerID = Marshal.PtrToStringAnsi((IntPtr)aContainerID);
             string elements = Marshal.PtrToStringAnsi((IntPtr)aElements);
             string objectID;
@@ -550,7 +974,7 @@ namespace Zapp
         private static unsafe int DoDestroyObject(IntPtr aPtr, uint aVersion, char* aObjectID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory3 self = (DvServiceUpnpOrgContentDirectory3)gch.Target;
+            DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             string objectID = Marshal.PtrToStringAnsi((IntPtr)aObjectID);
             self.DestroyObject(aVersion, objectID);
             return 0;
@@ -559,7 +983,7 @@ namespace Zapp
         private static unsafe int DoUpdateObject(IntPtr aPtr, uint aVersion, char* aObjectID, char* aCurrentTagValue, char* aNewTagValue)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory3 self = (DvServiceUpnpOrgContentDirectory3)gch.Target;
+            DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             string objectID = Marshal.PtrToStringAnsi((IntPtr)aObjectID);
             string currentTagValue = Marshal.PtrToStringAnsi((IntPtr)aCurrentTagValue);
             string newTagValue = Marshal.PtrToStringAnsi((IntPtr)aNewTagValue);
@@ -570,7 +994,7 @@ namespace Zapp
         private static unsafe int DoMoveObject(IntPtr aPtr, uint aVersion, char* aObjectID, char* aNewParentID, char** aNewObjectID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory3 self = (DvServiceUpnpOrgContentDirectory3)gch.Target;
+            DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             string objectID = Marshal.PtrToStringAnsi((IntPtr)aObjectID);
             string newParentID = Marshal.PtrToStringAnsi((IntPtr)aNewParentID);
             string newObjectID;
@@ -582,7 +1006,7 @@ namespace Zapp
         private static unsafe int DoImportResource(IntPtr aPtr, uint aVersion, char* aSourceURI, char* aDestinationURI, uint* aTransferID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory3 self = (DvServiceUpnpOrgContentDirectory3)gch.Target;
+            DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             string sourceURI = Marshal.PtrToStringAnsi((IntPtr)aSourceURI);
             string destinationURI = Marshal.PtrToStringAnsi((IntPtr)aDestinationURI);
             uint transferID;
@@ -594,7 +1018,7 @@ namespace Zapp
         private static unsafe int DoExportResource(IntPtr aPtr, uint aVersion, char* aSourceURI, char* aDestinationURI, uint* aTransferID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory3 self = (DvServiceUpnpOrgContentDirectory3)gch.Target;
+            DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             string sourceURI = Marshal.PtrToStringAnsi((IntPtr)aSourceURI);
             string destinationURI = Marshal.PtrToStringAnsi((IntPtr)aDestinationURI);
             uint transferID;
@@ -606,7 +1030,7 @@ namespace Zapp
         private static unsafe int DoDeleteResource(IntPtr aPtr, uint aVersion, char* aResourceURI)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory3 self = (DvServiceUpnpOrgContentDirectory3)gch.Target;
+            DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             string resourceURI = Marshal.PtrToStringAnsi((IntPtr)aResourceURI);
             self.DeleteResource(aVersion, resourceURI);
             return 0;
@@ -615,7 +1039,7 @@ namespace Zapp
         private static unsafe int DoStopTransferResource(IntPtr aPtr, uint aVersion, uint aTransferID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory3 self = (DvServiceUpnpOrgContentDirectory3)gch.Target;
+            DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             self.StopTransferResource(aVersion, aTransferID);
             return 0;
         }
@@ -623,7 +1047,7 @@ namespace Zapp
         private static unsafe int DoGetTransferProgress(IntPtr aPtr, uint aVersion, uint aTransferID, char** aTransferStatus, char** aTransferLength, char** aTransferTotal)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory3 self = (DvServiceUpnpOrgContentDirectory3)gch.Target;
+            DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             string transferStatus;
             string transferLength;
             string transferTotal;
@@ -637,7 +1061,7 @@ namespace Zapp
         private static unsafe int DoCreateReference(IntPtr aPtr, uint aVersion, char* aContainerID, char* aObjectID, char** aNewID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory3 self = (DvServiceUpnpOrgContentDirectory3)gch.Target;
+            DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             string containerID = Marshal.PtrToStringAnsi((IntPtr)aContainerID);
             string objectID = Marshal.PtrToStringAnsi((IntPtr)aObjectID);
             string newID;
@@ -649,7 +1073,7 @@ namespace Zapp
         private static unsafe int DoFreeFormQuery(IntPtr aPtr, uint aVersion, char* aContainerID, uint aCDSView, char* aQueryRequest, char** aQueryResult, uint* aUpdateID)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory3 self = (DvServiceUpnpOrgContentDirectory3)gch.Target;
+            DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             string containerID = Marshal.PtrToStringAnsi((IntPtr)aContainerID);
             string queryRequest = Marshal.PtrToStringAnsi((IntPtr)aQueryRequest);
             string queryResult;
@@ -663,21 +1087,23 @@ namespace Zapp
         private static unsafe int DoGetFreeFormQueryCapabilities(IntPtr aPtr, uint aVersion, char** aFFQCapabilities)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceUpnpOrgContentDirectory3 self = (DvServiceUpnpOrgContentDirectory3)gch.Target;
+            DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             string fFQCapabilities;
             self.GetFreeFormQueryCapabilities(aVersion, out fFQCapabilities);
             *aFFQCapabilities = (char*)Marshal.StringToHGlobalAnsi(fFQCapabilities).ToPointer();
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceUpnpOrgContentDirectory3()
+        ~DvProviderUpnpOrgContentDirectory3()
         {
             DoDispose();
         }
@@ -694,7 +1120,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = IntPtr.Zero;
             }
-            DvServiceUpnpOrgContentDirectory3Destroy(handle);
+            DvProviderUpnpOrgContentDirectory3Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

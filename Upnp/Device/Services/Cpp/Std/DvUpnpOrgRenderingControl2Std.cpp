@@ -2,40 +2,40 @@
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
-void DvServiceUpnpOrgRenderingControl2Cpp::SetPropertyLastChange(const std::string& aValue)
+bool DvProviderUpnpOrgRenderingControl2Cpp::SetPropertyLastChange(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyLastChange, buf);
+    return SetPropertyString(*iPropertyLastChange, buf);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::GetPropertyLastChange(std::string& aValue)
+void DvProviderUpnpOrgRenderingControl2Cpp::GetPropertyLastChange(std::string& aValue)
 {
     const Brx& val = iPropertyLastChange->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-DvServiceUpnpOrgRenderingControl2Cpp::DvServiceUpnpOrgRenderingControl2Cpp(DvDeviceStd& aDevice)
-    : DvService(aDevice.Device(), "upnp.org", "RenderingControl", 2)
+DvProviderUpnpOrgRenderingControl2Cpp::DvProviderUpnpOrgRenderingControl2Cpp(DvDeviceStd& aDevice)
+    : DvProvider(aDevice.Device(), "upnp.org", "RenderingControl", 2)
 {
-    Functor empty;
-    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"), empty);
+    
+    iPropertyLastChange = new PropertyString(new ParameterString("LastChange"));
     iService->AddProperty(iPropertyLastChange); // passes ownership
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionListPresets()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionListPresets()
 {
     Zapp::Action* action = new Zapp::Action("ListPresets");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterString("CurrentPresetNameList"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoListPresets);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoListPresets);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSelectPreset()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSelectPreset()
 {
     Zapp::Action* action = new Zapp::Action("SelectPreset");
     TChar** allowedValues;
@@ -46,227 +46,227 @@ void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSelectPreset()
     allowedValues[index++] = (TChar*)"FactoryDefaults";
     action->AddInputParameter(new ParameterString("PresetName", allowedValues, 1));
     delete[] allowedValues;
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoSelectPreset);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSelectPreset);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetBrightness()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetBrightness()
 {
     Zapp::Action* action = new Zapp::Action("GetBrightness");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentBrightness", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoGetBrightness);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetBrightness);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetBrightness()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetBrightness()
 {
     Zapp::Action* action = new Zapp::Action("SetBrightness");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredBrightness", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoSetBrightness);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetBrightness);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetContrast()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetContrast()
 {
     Zapp::Action* action = new Zapp::Action("GetContrast");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentContrast", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoGetContrast);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetContrast);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetContrast()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetContrast()
 {
     Zapp::Action* action = new Zapp::Action("SetContrast");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredContrast", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoSetContrast);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetContrast);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetSharpness()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetSharpness()
 {
     Zapp::Action* action = new Zapp::Action("GetSharpness");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentSharpness", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoGetSharpness);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetSharpness);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetSharpness()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetSharpness()
 {
     Zapp::Action* action = new Zapp::Action("SetSharpness");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredSharpness", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoSetSharpness);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetSharpness);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetRedVideoGain()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetRedVideoGain()
 {
     Zapp::Action* action = new Zapp::Action("GetRedVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentRedVideoGain", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoGetRedVideoGain);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetRedVideoGain);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetRedVideoGain()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetRedVideoGain()
 {
     Zapp::Action* action = new Zapp::Action("SetRedVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredRedVideoGain", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoSetRedVideoGain);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetRedVideoGain);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetGreenVideoGain()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetGreenVideoGain()
 {
     Zapp::Action* action = new Zapp::Action("GetGreenVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentGreenVideoGain", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoGetGreenVideoGain);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetGreenVideoGain);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetGreenVideoGain()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetGreenVideoGain()
 {
     Zapp::Action* action = new Zapp::Action("SetGreenVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredGreenVideoGain", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoSetGreenVideoGain);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetGreenVideoGain);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetBlueVideoGain()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetBlueVideoGain()
 {
     Zapp::Action* action = new Zapp::Action("GetBlueVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentBlueVideoGain", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoGetBlueVideoGain);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetBlueVideoGain);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetBlueVideoGain()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetBlueVideoGain()
 {
     Zapp::Action* action = new Zapp::Action("SetBlueVideoGain");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredBlueVideoGain", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoSetBlueVideoGain);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetBlueVideoGain);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetRedVideoBlackLevel()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetRedVideoBlackLevel()
 {
     Zapp::Action* action = new Zapp::Action("GetRedVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentRedVideoBlackLevel", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoGetRedVideoBlackLevel);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetRedVideoBlackLevel);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetRedVideoBlackLevel()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetRedVideoBlackLevel()
 {
     Zapp::Action* action = new Zapp::Action("SetRedVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredRedVideoBlackLevel", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoSetRedVideoBlackLevel);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetRedVideoBlackLevel);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetGreenVideoBlackLevel()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetGreenVideoBlackLevel()
 {
     Zapp::Action* action = new Zapp::Action("GetGreenVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentGreenVideoBlackLevel", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoGetGreenVideoBlackLevel);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetGreenVideoBlackLevel);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetGreenVideoBlackLevel()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetGreenVideoBlackLevel()
 {
     Zapp::Action* action = new Zapp::Action("SetGreenVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredGreenVideoBlackLevel", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoSetGreenVideoBlackLevel);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetGreenVideoBlackLevel);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetBlueVideoBlackLevel()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetBlueVideoBlackLevel()
 {
     Zapp::Action* action = new Zapp::Action("GetBlueVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentBlueVideoBlackLevel", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoGetBlueVideoBlackLevel);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetBlueVideoBlackLevel);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetBlueVideoBlackLevel()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetBlueVideoBlackLevel()
 {
     Zapp::Action* action = new Zapp::Action("SetBlueVideoBlackLevel");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredBlueVideoBlackLevel", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoSetBlueVideoBlackLevel);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetBlueVideoBlackLevel);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetColorTemperature()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetColorTemperature()
 {
     Zapp::Action* action = new Zapp::Action("GetColorTemperature");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterUint("CurrentColorTemperature", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoGetColorTemperature);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetColorTemperature);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetColorTemperature()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetColorTemperature()
 {
     Zapp::Action* action = new Zapp::Action("SetColorTemperature");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterUint("DesiredColorTemperature", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoSetColorTemperature);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetColorTemperature);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetHorizontalKeystone()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetHorizontalKeystone()
 {
     Zapp::Action* action = new Zapp::Action("GetHorizontalKeystone");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterInt("CurrentHorizontalKeystone"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoGetHorizontalKeystone);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetHorizontalKeystone);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetHorizontalKeystone()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetHorizontalKeystone()
 {
     Zapp::Action* action = new Zapp::Action("SetHorizontalKeystone");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterInt("DesiredHorizontalKeystone"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoSetHorizontalKeystone);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetHorizontalKeystone);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetVerticalKeystone()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetVerticalKeystone()
 {
     Zapp::Action* action = new Zapp::Action("GetVerticalKeystone");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddOutputParameter(new ParameterInt("CurrentVerticalKeystone"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoGetVerticalKeystone);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetVerticalKeystone);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetVerticalKeystone()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetVerticalKeystone()
 {
     Zapp::Action* action = new Zapp::Action("SetVerticalKeystone");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterInt("DesiredVerticalKeystone"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoSetVerticalKeystone);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetVerticalKeystone);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetMute()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetMute()
 {
     Zapp::Action* action = new Zapp::Action("GetMute");
     TChar** allowedValues;
@@ -278,11 +278,11 @@ void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetMute()
     action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
     delete[] allowedValues;
     action->AddOutputParameter(new ParameterBool("CurrentMute"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoGetMute);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetMute);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetMute()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetMute()
 {
     Zapp::Action* action = new Zapp::Action("SetMute");
     TChar** allowedValues;
@@ -294,11 +294,11 @@ void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetMute()
     action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
     delete[] allowedValues;
     action->AddInputParameter(new ParameterBool("DesiredMute"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoSetMute);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetMute);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetVolume()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetVolume()
 {
     Zapp::Action* action = new Zapp::Action("GetVolume");
     TChar** allowedValues;
@@ -310,11 +310,11 @@ void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetVolume()
     action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
     delete[] allowedValues;
     action->AddOutputParameter(new ParameterUint("CurrentVolume", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoGetVolume);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolume);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetVolume()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetVolume()
 {
     Zapp::Action* action = new Zapp::Action("SetVolume");
     TChar** allowedValues;
@@ -326,11 +326,11 @@ void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetVolume()
     action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
     delete[] allowedValues;
     action->AddInputParameter(new ParameterUint("DesiredVolume", 0, 0, 1));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoSetVolume);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetVolume);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetVolumeDB()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetVolumeDB()
 {
     Zapp::Action* action = new Zapp::Action("GetVolumeDB");
     TChar** allowedValues;
@@ -342,11 +342,11 @@ void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetVolumeDB()
     action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
     delete[] allowedValues;
     action->AddOutputParameter(new ParameterInt("CurrentVolume"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoGetVolumeDB);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolumeDB);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetVolumeDB()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetVolumeDB()
 {
     Zapp::Action* action = new Zapp::Action("SetVolumeDB");
     TChar** allowedValues;
@@ -358,11 +358,11 @@ void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetVolumeDB()
     action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
     delete[] allowedValues;
     action->AddInputParameter(new ParameterInt("DesiredVolume"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoSetVolumeDB);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetVolumeDB);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetVolumeDBRange()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetVolumeDBRange()
 {
     Zapp::Action* action = new Zapp::Action("GetVolumeDBRange");
     TChar** allowedValues;
@@ -375,11 +375,11 @@ void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetVolumeDBRange()
     delete[] allowedValues;
     action->AddOutputParameter(new ParameterInt("MinValue"));
     action->AddOutputParameter(new ParameterInt("MaxValue"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoGetVolumeDBRange);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolumeDBRange);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetLoudness()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetLoudness()
 {
     Zapp::Action* action = new Zapp::Action("GetLoudness");
     TChar** allowedValues;
@@ -391,11 +391,11 @@ void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetLoudness()
     action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
     delete[] allowedValues;
     action->AddOutputParameter(new ParameterBool("CurrentLoudness"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoGetLoudness);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetLoudness);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetLoudness()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetLoudness()
 {
     Zapp::Action* action = new Zapp::Action("SetLoudness");
     TChar** allowedValues;
@@ -407,21 +407,21 @@ void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetLoudness()
     action->AddInputParameter(new ParameterString("Channel", allowedValues, 1));
     delete[] allowedValues;
     action->AddInputParameter(new ParameterBool("DesiredLoudness"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoSetLoudness);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetLoudness);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionGetStateVariables()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionGetStateVariables()
 {
     Zapp::Action* action = new Zapp::Action("GetStateVariables");
     action->AddInputParameter(new ParameterUint("InstanceID"));
     action->AddInputParameter(new ParameterString("StateVariableList"));
     action->AddOutputParameter(new ParameterString("StateVariableValuePairs"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoGetStateVariables);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoGetStateVariables);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetStateVariables()
+void DvProviderUpnpOrgRenderingControl2Cpp::EnableActionSetStateVariables()
 {
     Zapp::Action* action = new Zapp::Action("SetStateVariables");
     action->AddInputParameter(new ParameterUint("InstanceID"));
@@ -430,11 +430,11 @@ void DvServiceUpnpOrgRenderingControl2Cpp::EnableActionSetStateVariables()
     action->AddInputParameter(new ParameterString("ServiceId"));
     action->AddInputParameter(new ParameterString("StateVariableValuePairs"));
     action->AddOutputParameter(new ParameterString("StateVariableList"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceUpnpOrgRenderingControl2Cpp::DoSetStateVariables);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderUpnpOrgRenderingControl2Cpp::DoSetStateVariables);
     iService->AddAction(action, functor);
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoListPresets(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoListPresets(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -449,7 +449,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoListPresets(IDvInvocation& aInvocat
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoSelectPreset(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSelectPreset(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -462,7 +462,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoSelectPreset(IDvInvocation& aInvoca
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoGetBrightness(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetBrightness(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -475,7 +475,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoGetBrightness(IDvInvocation& aInvoc
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoSetBrightness(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetBrightness(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -486,7 +486,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoSetBrightness(IDvInvocation& aInvoc
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoGetContrast(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetContrast(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -499,7 +499,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoGetContrast(IDvInvocation& aInvocat
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoSetContrast(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetContrast(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -510,7 +510,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoSetContrast(IDvInvocation& aInvocat
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoGetSharpness(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetSharpness(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -523,7 +523,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoGetSharpness(IDvInvocation& aInvoca
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoSetSharpness(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetSharpness(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -534,7 +534,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoSetSharpness(IDvInvocation& aInvoca
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoGetRedVideoGain(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetRedVideoGain(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -547,7 +547,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoGetRedVideoGain(IDvInvocation& aInv
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoSetRedVideoGain(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetRedVideoGain(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -558,7 +558,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoSetRedVideoGain(IDvInvocation& aInv
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoGetGreenVideoGain(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetGreenVideoGain(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -571,7 +571,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoGetGreenVideoGain(IDvInvocation& aI
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoSetGreenVideoGain(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetGreenVideoGain(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -582,7 +582,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoSetGreenVideoGain(IDvInvocation& aI
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoGetBlueVideoGain(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetBlueVideoGain(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -595,7 +595,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoGetBlueVideoGain(IDvInvocation& aIn
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoSetBlueVideoGain(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetBlueVideoGain(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -606,7 +606,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoSetBlueVideoGain(IDvInvocation& aIn
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoGetRedVideoBlackLevel(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetRedVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -619,7 +619,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoGetRedVideoBlackLevel(IDvInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoSetRedVideoBlackLevel(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetRedVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -630,7 +630,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoSetRedVideoBlackLevel(IDvInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoGetGreenVideoBlackLevel(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetGreenVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -643,7 +643,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoGetGreenVideoBlackLevel(IDvInvocati
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoSetGreenVideoBlackLevel(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetGreenVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -654,7 +654,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoSetGreenVideoBlackLevel(IDvInvocati
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoGetBlueVideoBlackLevel(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetBlueVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -667,7 +667,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoGetBlueVideoBlackLevel(IDvInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoSetBlueVideoBlackLevel(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetBlueVideoBlackLevel(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -678,7 +678,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoSetBlueVideoBlackLevel(IDvInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoGetColorTemperature(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetColorTemperature(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -691,7 +691,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoGetColorTemperature(IDvInvocation& 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoSetColorTemperature(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetColorTemperature(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -702,7 +702,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoSetColorTemperature(IDvInvocation& 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoGetHorizontalKeystone(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetHorizontalKeystone(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -715,7 +715,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoGetHorizontalKeystone(IDvInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoSetHorizontalKeystone(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetHorizontalKeystone(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -726,7 +726,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoSetHorizontalKeystone(IDvInvocation
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoGetVerticalKeystone(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVerticalKeystone(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -739,7 +739,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoGetVerticalKeystone(IDvInvocation& 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoSetVerticalKeystone(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetVerticalKeystone(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -750,7 +750,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoSetVerticalKeystone(IDvInvocation& 
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoGetMute(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetMute(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -766,7 +766,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoGetMute(IDvInvocation& aInvocation,
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoSetMute(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetMute(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -780,7 +780,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoSetMute(IDvInvocation& aInvocation,
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoGetVolume(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolume(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -796,7 +796,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoGetVolume(IDvInvocation& aInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoSetVolume(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetVolume(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -810,7 +810,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoSetVolume(IDvInvocation& aInvocatio
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoGetVolumeDB(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolumeDB(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -826,7 +826,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoGetVolumeDB(IDvInvocation& aInvocat
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoSetVolumeDB(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetVolumeDB(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -840,7 +840,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoSetVolumeDB(IDvInvocation& aInvocat
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoGetVolumeDBRange(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetVolumeDBRange(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -859,7 +859,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoGetVolumeDBRange(IDvInvocation& aIn
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoGetLoudness(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetLoudness(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -875,7 +875,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoGetLoudness(IDvInvocation& aInvocat
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoSetLoudness(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetLoudness(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -889,7 +889,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoSetLoudness(IDvInvocation& aInvocat
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoGetStateVariables(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoGetStateVariables(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -907,7 +907,7 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoGetStateVariables(IDvInvocation& aI
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::DoSetStateVariables(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderUpnpOrgRenderingControl2Cpp::DoSetStateVariables(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     uint32_t InstanceID = aInvocation.InvocationReadUint("InstanceID");
@@ -934,187 +934,187 @@ void DvServiceUpnpOrgRenderingControl2Cpp::DoSetStateVariables(IDvInvocation& aI
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::ListPresets(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, std::string& /*aCurrentPresetNameList*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::ListPresets(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, std::string& /*aCurrentPresetNameList*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::SelectPreset(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aPresetName*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::SelectPreset(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aPresetName*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::GetBrightness(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aCurrentBrightness*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::GetBrightness(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aCurrentBrightness*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::SetBrightness(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t /*aDesiredBrightness*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::SetBrightness(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t /*aDesiredBrightness*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::GetContrast(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aCurrentContrast*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::GetContrast(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aCurrentContrast*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::SetContrast(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t /*aDesiredContrast*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::SetContrast(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t /*aDesiredContrast*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::GetSharpness(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aCurrentSharpness*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::GetSharpness(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aCurrentSharpness*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::SetSharpness(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t /*aDesiredSharpness*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::SetSharpness(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t /*aDesiredSharpness*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::GetRedVideoGain(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aCurrentRedVideoGain*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::GetRedVideoGain(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aCurrentRedVideoGain*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::SetRedVideoGain(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t /*aDesiredRedVideoGain*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::SetRedVideoGain(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t /*aDesiredRedVideoGain*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::GetGreenVideoGain(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aCurrentGreenVideoGain*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::GetGreenVideoGain(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aCurrentGreenVideoGain*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::SetGreenVideoGain(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t /*aDesiredGreenVideoGain*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::SetGreenVideoGain(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t /*aDesiredGreenVideoGain*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::GetBlueVideoGain(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aCurrentBlueVideoGain*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::GetBlueVideoGain(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aCurrentBlueVideoGain*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::SetBlueVideoGain(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t /*aDesiredBlueVideoGain*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::SetBlueVideoGain(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t /*aDesiredBlueVideoGain*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::GetRedVideoBlackLevel(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aCurrentRedVideoBlackLevel*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::GetRedVideoBlackLevel(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aCurrentRedVideoBlackLevel*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::SetRedVideoBlackLevel(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t /*aDesiredRedVideoBlackLevel*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::SetRedVideoBlackLevel(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t /*aDesiredRedVideoBlackLevel*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::GetGreenVideoBlackLevel(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aCurrentGreenVideoBlackLevel*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::GetGreenVideoBlackLevel(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aCurrentGreenVideoBlackLevel*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::SetGreenVideoBlackLevel(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t /*aDesiredGreenVideoBlackLevel*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::SetGreenVideoBlackLevel(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t /*aDesiredGreenVideoBlackLevel*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::GetBlueVideoBlackLevel(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aCurrentBlueVideoBlackLevel*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::GetBlueVideoBlackLevel(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aCurrentBlueVideoBlackLevel*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::SetBlueVideoBlackLevel(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t /*aDesiredBlueVideoBlackLevel*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::SetBlueVideoBlackLevel(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t /*aDesiredBlueVideoBlackLevel*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::GetColorTemperature(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aCurrentColorTemperature*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::GetColorTemperature(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t& /*aCurrentColorTemperature*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::SetColorTemperature(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t /*aDesiredColorTemperature*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::SetColorTemperature(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, uint32_t /*aDesiredColorTemperature*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::GetHorizontalKeystone(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, int32_t& /*aCurrentHorizontalKeystone*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::GetHorizontalKeystone(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, int32_t& /*aCurrentHorizontalKeystone*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::SetHorizontalKeystone(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, int32_t /*aDesiredHorizontalKeystone*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::SetHorizontalKeystone(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, int32_t /*aDesiredHorizontalKeystone*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::GetVerticalKeystone(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, int32_t& /*aCurrentVerticalKeystone*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::GetVerticalKeystone(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, int32_t& /*aCurrentVerticalKeystone*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::SetVerticalKeystone(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, int32_t /*aDesiredVerticalKeystone*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::SetVerticalKeystone(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, int32_t /*aDesiredVerticalKeystone*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::GetMute(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aChannel*/, bool& /*aCurrentMute*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::GetMute(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aChannel*/, bool& /*aCurrentMute*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::SetMute(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aChannel*/, bool /*aDesiredMute*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::SetMute(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aChannel*/, bool /*aDesiredMute*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::GetVolume(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aChannel*/, uint32_t& /*aCurrentVolume*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::GetVolume(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aChannel*/, uint32_t& /*aCurrentVolume*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::SetVolume(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aChannel*/, uint32_t /*aDesiredVolume*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::SetVolume(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aChannel*/, uint32_t /*aDesiredVolume*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::GetVolumeDB(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aChannel*/, int32_t& /*aCurrentVolume*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::GetVolumeDB(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aChannel*/, int32_t& /*aCurrentVolume*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::SetVolumeDB(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aChannel*/, int32_t /*aDesiredVolume*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::SetVolumeDB(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aChannel*/, int32_t /*aDesiredVolume*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::GetVolumeDBRange(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aChannel*/, int32_t& /*aMinValue*/, int32_t& /*aMaxValue*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::GetVolumeDBRange(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aChannel*/, int32_t& /*aMinValue*/, int32_t& /*aMaxValue*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::GetLoudness(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aChannel*/, bool& /*aCurrentLoudness*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::GetLoudness(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aChannel*/, bool& /*aCurrentLoudness*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::SetLoudness(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aChannel*/, bool /*aDesiredLoudness*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::SetLoudness(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aChannel*/, bool /*aDesiredLoudness*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::GetStateVariables(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aStateVariableList*/, std::string& /*aStateVariableValuePairs*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::GetStateVariables(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aStateVariableList*/, std::string& /*aStateVariableValuePairs*/)
 {
     ASSERTS();
 }
 
-void DvServiceUpnpOrgRenderingControl2Cpp::SetStateVariables(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aRenderingControlUDN*/, const std::string& /*aServiceType*/, const std::string& /*aServiceId*/, const std::string& /*aStateVariableValuePairs*/, std::string& /*aStateVariableList*/)
+void DvProviderUpnpOrgRenderingControl2Cpp::SetStateVariables(uint32_t /*aVersion*/, uint32_t /*aInstanceID*/, const std::string& /*aRenderingControlUDN*/, const std::string& /*aServiceType*/, const std::string& /*aServiceId*/, const std::string& /*aStateVariableValuePairs*/, std::string& /*aStateVariableList*/)
 {
     ASSERTS();
 }

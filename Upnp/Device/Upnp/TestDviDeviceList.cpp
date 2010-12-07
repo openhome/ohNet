@@ -1,4 +1,5 @@
 #include <TestFramework.h>
+#include <OptionParser.h>
 #include <ZappTypes.h>
 #include <Zapp.h>
 #include <Debug.h>
@@ -169,8 +170,17 @@ void CpDevices::Removed(CpDevice& /*aDevice*/)
 
 
 
-void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
+    OptionParser parser;
+    OptionBool loopback("-l", "--loopback", "Use the loopback adapter only");
+    parser.AddOption(&loopback);
+    if (!parser.Parse(aArgc, aArgv) || parser.HelpDisplayed()) {
+        return;
+    }
+    if (loopback.IsSet()) {
+        aInitParams->SetUseLoopbackNetworkInterface();
+    }
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartCombined();
     //Debug::SetLevel(Debug::kDevice/*Debug::kXmlFetch | Debug::kHttp*/);

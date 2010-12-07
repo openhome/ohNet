@@ -14,15 +14,15 @@ using namespace Zapp;
 class SyncGetLevelZappOrgTestDimmableLight1Cpp : public SyncProxyAction
 {
 public:
-    SyncGetLevelZappOrgTestDimmableLight1Cpp(CpProxyZappOrgTestDimmableLight1Cpp& aService, uint32_t& aLevel);
+    SyncGetLevelZappOrgTestDimmableLight1Cpp(CpProxyZappOrgTestDimmableLight1Cpp& aProxy, uint32_t& aLevel);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestDimmableLight1Cpp& iService;
     uint32_t& iLevel;
 };
 
-SyncGetLevelZappOrgTestDimmableLight1Cpp::SyncGetLevelZappOrgTestDimmableLight1Cpp(CpProxyZappOrgTestDimmableLight1Cpp& aService, uint32_t& aLevel)
-    : iService(aService)
+SyncGetLevelZappOrgTestDimmableLight1Cpp::SyncGetLevelZappOrgTestDimmableLight1Cpp(CpProxyZappOrgTestDimmableLight1Cpp& aProxy, uint32_t& aLevel)
+    : iService(aProxy)
     , iLevel(aLevel)
 {
 }
@@ -36,14 +36,14 @@ void SyncGetLevelZappOrgTestDimmableLight1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetLevelZappOrgTestDimmableLight1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetLevelZappOrgTestDimmableLight1Cpp(CpProxyZappOrgTestDimmableLight1Cpp& aService);
+    SyncSetLevelZappOrgTestDimmableLight1Cpp(CpProxyZappOrgTestDimmableLight1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyZappOrgTestDimmableLight1Cpp& iService;
 };
 
-SyncSetLevelZappOrgTestDimmableLight1Cpp::SyncSetLevelZappOrgTestDimmableLight1Cpp(CpProxyZappOrgTestDimmableLight1Cpp& aService)
-    : iService(aService)
+SyncSetLevelZappOrgTestDimmableLight1Cpp::SyncSetLevelZappOrgTestDimmableLight1Cpp(CpProxyZappOrgTestDimmableLight1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -65,6 +65,11 @@ CpProxyZappOrgTestDimmableLight1Cpp::CpProxyZappOrgTestDimmableLight1Cpp(CpDevic
     iActionSetLevel = new Action("SetLevel");
     param = new Zapp::ParameterUint("Level");
     iActionSetLevel->AddInputParameter(param);
+
+    Functor functor;
+    functor = MakeFunctor(*this, &CpProxyZappOrgTestDimmableLight1Cpp::A_ARG_LevelPropertyChanged);
+    iA_ARG_Level = new PropertyUint("A_ARG_Level", functor);
+    AddProperty(iA_ARG_Level);
 }
 
 CpProxyZappOrgTestDimmableLight1Cpp::~CpProxyZappOrgTestDimmableLight1Cpp()
@@ -87,7 +92,7 @@ void CpProxyZappOrgTestDimmableLight1Cpp::BeginGetLevel(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetLevel->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestDimmableLight1Cpp::EndGetLevel(IAsync& aAsync, uint32_t& aLevel)
@@ -116,7 +121,7 @@ void CpProxyZappOrgTestDimmableLight1Cpp::BeginSetLevel(uint32_t aLevel, Functor
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetLevel->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aLevel));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyZappOrgTestDimmableLight1Cpp::EndSetLevel(IAsync& aAsync)
@@ -128,5 +133,25 @@ void CpProxyZappOrgTestDimmableLight1Cpp::EndSetLevel(IAsync& aAsync)
     if (invocation.Error()) {
         THROW(ProxyError);
     }
+}
+
+void CpProxyZappOrgTestDimmableLight1Cpp::SetPropertyA_ARG_LevelChanged(Functor& aFunctor)
+{
+    iLock->Wait();
+    iA_ARG_LevelChanged = aFunctor;
+    iLock->Signal();
+}
+
+void CpProxyZappOrgTestDimmableLight1Cpp::PropertyA_ARG_Level(uint32_t& aA_ARG_Level) const
+{
+    iPropertyLock->Wait();
+    ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
+    aA_ARG_Level = iA_ARG_Level->Value();
+    iPropertyLock->Signal();
+}
+
+void CpProxyZappOrgTestDimmableLight1Cpp::A_ARG_LevelPropertyChanged()
+{
+    ReportEvent(iA_ARG_LevelChanged);
 }
 

@@ -3,106 +3,256 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Zapp;
 
-namespace Zapp
+namespace Zapp.Device.Providers
 {
-    public class DvServiceLinnCoUkUi2 : IDisposable
+    public interface IDvProviderLinnCoUkUi2 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the DisplayBrightness property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyDisplayBrightness(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the DisplayBrightness property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyDisplayBrightness(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the DisplayBrightnessAuto property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyDisplayBrightnessAuto(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the DisplayBrightnessAuto property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyDisplayBrightnessAuto(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the InfraredCommands property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyInfraredCommands(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the InfraredCommands property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyInfraredCommands(out string aValue);
+
+        /// <summary>
+        /// Set the value of the InfraredTerminalCommands property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyInfraredTerminalCommands(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the InfraredTerminalCommands property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyInfraredTerminalCommands(out string aValue);
+
+        /// <summary>
+        /// Set the value of the DisplayUpsideDown property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyDisplayUpsideDown(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the DisplayUpsideDown property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyDisplayUpsideDown(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the DisplayScrollText property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyDisplayScrollText(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the DisplayScrollText property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyDisplayScrollText(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the DisplaySleep property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyDisplaySleep(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the DisplaySleep property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyDisplaySleep(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the DisplayLedOff property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyDisplayLedOff(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the DisplayLedOff property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyDisplayLedOff(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the TerminalInputCode property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyTerminalInputCode(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the TerminalInputCode property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyTerminalInputCode(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the TerminalInputName property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyTerminalInputName(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the TerminalInputName property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyTerminalInputName(out string aValue);
+
+        /// <summary>
+        /// Set the value of the DisplayPixels property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyDisplayPixels(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the DisplayPixels property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyDisplayPixels(out string aValue);
+        
+    }
+    /// <summary>
+    /// Provider for the linn.co.uk:Ui:2 UPnP service
+    /// </summary>
+    public class DvProviderLinnCoUkUi2 : DvProvider, IDisposable, IDvProviderLinnCoUkUi2
     {
         [DllImport("DvLinnCoUkUi2")]
-        static extern IntPtr DvServiceLinnCoUkUi2Create(IntPtr aDeviceHandle);
+        static extern IntPtr DvProviderLinnCoUkUi2Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2Destroy(IntPtr aHandle);
+        static extern void DvProviderLinnCoUkUi2Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayBrightness(IntPtr aHandle, uint aValue);
+        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyDisplayBrightness(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayBrightness(IntPtr aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyDisplayBrightness(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayBrightnessAuto(IntPtr aHandle, int aValue);
+        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyDisplayBrightnessAuto(IntPtr aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayBrightnessAuto(IntPtr aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyDisplayBrightnessAuto(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyInfraredCommands(IntPtr aHandle, char* aValue);
+        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyInfraredCommands(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyInfraredCommands(IntPtr aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyInfraredCommands(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyInfraredTerminalCommands(IntPtr aHandle, char* aValue);
+        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyInfraredTerminalCommands(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyInfraredTerminalCommands(IntPtr aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyInfraredTerminalCommands(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayUpsideDown(IntPtr aHandle, int aValue);
+        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyDisplayUpsideDown(IntPtr aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayUpsideDown(IntPtr aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyDisplayUpsideDown(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayScrollText(IntPtr aHandle, int aValue);
+        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyDisplayScrollText(IntPtr aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayScrollText(IntPtr aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyDisplayScrollText(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplaySleep(IntPtr aHandle, int aValue);
+        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyDisplaySleep(IntPtr aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplaySleep(IntPtr aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyDisplaySleep(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayLedOff(IntPtr aHandle, int aValue);
+        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyDisplayLedOff(IntPtr aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayLedOff(IntPtr aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyDisplayLedOff(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyTerminalInputCode(IntPtr aHandle, uint aValue);
+        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyTerminalInputCode(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyTerminalInputCode(IntPtr aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyTerminalInputCode(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyTerminalInputName(IntPtr aHandle, char* aValue);
+        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyTerminalInputName(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyTerminalInputName(IntPtr aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyTerminalInputName(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvServiceLinnCoUkUi2SetPropertyDisplayPixels(IntPtr aHandle, char* aValue, int aValueLen);
+        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyDisplayPixels(IntPtr aHandle, char* aValue, int aValueLen, uint* aChanged);
         [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvServiceLinnCoUkUi2GetPropertyDisplayPixels(IntPtr aHandle, char** aValue, int* aValueLen);
+        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyDisplayPixels(IntPtr aHandle, char** aValue, int* aValueLen);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionDisplayTestPattern(IntPtr aHandle, CallbackDisplayTestPattern aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionDisplayTestPattern(IntPtr aHandle, CallbackDisplayTestPattern aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionDisplayFill(IntPtr aHandle, CallbackDisplayFill aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionDisplayFill(IntPtr aHandle, CallbackDisplayFill aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionDisplayClear(IntPtr aHandle, CallbackDisplayClear aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionDisplayClear(IntPtr aHandle, CallbackDisplayClear aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSetTestModeEnabled(IntPtr aHandle, CallbackSetTestModeEnabled aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionSetTestModeEnabled(IntPtr aHandle, CallbackSetTestModeEnabled aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSimulateInfraredInput(IntPtr aHandle, CallbackSimulateInfraredInput aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionSimulateInfraredInput(IntPtr aHandle, CallbackSimulateInfraredInput aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSimulateButtonInput(IntPtr aHandle, CallbackSimulateButtonInput aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionSimulateButtonInput(IntPtr aHandle, CallbackSimulateButtonInput aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSimulateLightSensor(IntPtr aHandle, CallbackSimulateLightSensor aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionSimulateLightSensor(IntPtr aHandle, CallbackSimulateLightSensor aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionGetLightSensorData(IntPtr aHandle, CallbackGetLightSensorData aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionGetLightSensorData(IntPtr aHandle, CallbackGetLightSensorData aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSetDisplayBrightness(IntPtr aHandle, CallbackSetDisplayBrightness aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionSetDisplayBrightness(IntPtr aHandle, CallbackSetDisplayBrightness aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSetDisplayBrightnessAuto(IntPtr aHandle, CallbackSetDisplayBrightnessAuto aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionSetDisplayBrightnessAuto(IntPtr aHandle, CallbackSetDisplayBrightnessAuto aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSetInfraredCommands(IntPtr aHandle, CallbackSetInfraredCommands aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionSetInfraredCommands(IntPtr aHandle, CallbackSetInfraredCommands aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionInfraredCommands(IntPtr aHandle, CallbackInfraredCommands aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionInfraredCommands(IntPtr aHandle, CallbackInfraredCommands aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSetInfraredTerminalCommands(IntPtr aHandle, CallbackSetInfraredTerminalCommands aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionSetInfraredTerminalCommands(IntPtr aHandle, CallbackSetInfraredTerminalCommands aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionInfraredTerminalCommands(IntPtr aHandle, CallbackInfraredTerminalCommands aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionInfraredTerminalCommands(IntPtr aHandle, CallbackInfraredTerminalCommands aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionDisplayBrightness(IntPtr aHandle, CallbackDisplayBrightness aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionDisplayBrightness(IntPtr aHandle, CallbackDisplayBrightness aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionDisplayBrightnessAuto(IntPtr aHandle, CallbackDisplayBrightnessAuto aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionDisplayBrightnessAuto(IntPtr aHandle, CallbackDisplayBrightnessAuto aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionDisplayUpsideDown(IntPtr aHandle, CallbackDisplayUpsideDown aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionDisplayUpsideDown(IntPtr aHandle, CallbackDisplayUpsideDown aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSetDisplayUpsideDown(IntPtr aHandle, CallbackSetDisplayUpsideDown aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionSetDisplayUpsideDown(IntPtr aHandle, CallbackSetDisplayUpsideDown aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSetDisplayScrollText(IntPtr aHandle, CallbackSetDisplayScrollText aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionSetDisplayScrollText(IntPtr aHandle, CallbackSetDisplayScrollText aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionDisplayScrollText(IntPtr aHandle, CallbackDisplayScrollText aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionDisplayScrollText(IntPtr aHandle, CallbackDisplayScrollText aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSetDisplaySleep(IntPtr aHandle, CallbackSetDisplaySleep aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionSetDisplaySleep(IntPtr aHandle, CallbackSetDisplaySleep aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionDisplaySleep(IntPtr aHandle, CallbackDisplaySleep aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionDisplaySleep(IntPtr aHandle, CallbackDisplaySleep aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionSetDisplayLedOff(IntPtr aHandle, CallbackSetDisplayLedOff aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionSetDisplayLedOff(IntPtr aHandle, CallbackSetDisplayLedOff aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkUi2")]
-        static extern void DvServiceLinnCoUkUi2EnableActionDisplayLedOff(IntPtr aHandle, CallbackDisplayLedOff aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkUi2EnableActionDisplayLedOff(IntPtr aHandle, CallbackDisplayLedOff aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -131,7 +281,6 @@ namespace Zapp
         private unsafe delegate int CallbackSetDisplayLedOff(IntPtr aPtr, uint aVersion, int aaOff);
         private unsafe delegate int CallbackDisplayLedOff(IntPtr aPtr, uint aVersion, int* aaOff);
 
-        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackDisplayTestPattern iCallbackDisplayTestPattern;
         private CallbackDisplayFill iCallbackDisplayFill;
@@ -158,485 +307,944 @@ namespace Zapp
         private CallbackSetDisplayLedOff iCallbackSetDisplayLedOff;
         private CallbackDisplayLedOff iCallbackDisplayLedOff;
 
-        public DvServiceLinnCoUkUi2(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderLinnCoUkUi2(DvDevice aDevice)
         {
-            iHandle = DvServiceLinnCoUkUi2Create(aDevice.Handle()); 
+            iHandle = DvProviderLinnCoUkUi2Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyDisplayBrightness(uint aValue)
+        /// <summary>
+        /// Set the value of the DisplayBrightness property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyDisplayBrightness(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkUi2SetPropertyDisplayBrightness(iHandle, aValue))
+            uint changed;
+            if (0 != DvProviderLinnCoUkUi2SetPropertyDisplayBrightness(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the DisplayBrightness property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyDisplayBrightness(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
-                DvServiceLinnCoUkUi2GetPropertyDisplayBrightness(iHandle, value);
+            {
+                DvProviderLinnCoUkUi2GetPropertyDisplayBrightness(iHandle, value);
             }
         }
 
-        public unsafe void SetPropertyDisplayBrightnessAuto(bool aValue)
+        /// <summary>
+        /// Set the value of the DisplayBrightnessAuto property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyDisplayBrightnessAuto(bool aValue)
         {
+            uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkUi2SetPropertyDisplayBrightnessAuto(iHandle, value))
+            if (0 != DvProviderLinnCoUkUi2SetPropertyDisplayBrightnessAuto(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the DisplayBrightnessAuto property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyDisplayBrightnessAuto(out bool aValue)
         {
             int value;
-            DvServiceLinnCoUkUi2GetPropertyDisplayBrightnessAuto(iHandle, &value);
+            DvProviderLinnCoUkUi2GetPropertyDisplayBrightnessAuto(iHandle, &value);
             aValue = (value != 0);
         }
 
-        public unsafe void SetPropertyInfraredCommands(string aValue)
+        /// <summary>
+        /// Set the value of the InfraredCommands property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyInfraredCommands(string aValue)
         {
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkUi2SetPropertyInfraredCommands(iHandle, value);
+            int err = DvProviderLinnCoUkUi2SetPropertyInfraredCommands(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the InfraredCommands property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyInfraredCommands(out string aValue)
         {
             char* value;
-            DvServiceLinnCoUkUi2GetPropertyInfraredCommands(iHandle, &value);
+            DvProviderLinnCoUkUi2GetPropertyInfraredCommands(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyInfraredTerminalCommands(string aValue)
+        /// <summary>
+        /// Set the value of the InfraredTerminalCommands property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyInfraredTerminalCommands(string aValue)
         {
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkUi2SetPropertyInfraredTerminalCommands(iHandle, value);
+            int err = DvProviderLinnCoUkUi2SetPropertyInfraredTerminalCommands(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the InfraredTerminalCommands property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyInfraredTerminalCommands(out string aValue)
         {
             char* value;
-            DvServiceLinnCoUkUi2GetPropertyInfraredTerminalCommands(iHandle, &value);
+            DvProviderLinnCoUkUi2GetPropertyInfraredTerminalCommands(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyDisplayUpsideDown(bool aValue)
+        /// <summary>
+        /// Set the value of the DisplayUpsideDown property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyDisplayUpsideDown(bool aValue)
         {
+            uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkUi2SetPropertyDisplayUpsideDown(iHandle, value))
+            if (0 != DvProviderLinnCoUkUi2SetPropertyDisplayUpsideDown(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the DisplayUpsideDown property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyDisplayUpsideDown(out bool aValue)
         {
             int value;
-            DvServiceLinnCoUkUi2GetPropertyDisplayUpsideDown(iHandle, &value);
+            DvProviderLinnCoUkUi2GetPropertyDisplayUpsideDown(iHandle, &value);
             aValue = (value != 0);
         }
 
-        public unsafe void SetPropertyDisplayScrollText(bool aValue)
+        /// <summary>
+        /// Set the value of the DisplayScrollText property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyDisplayScrollText(bool aValue)
         {
+            uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkUi2SetPropertyDisplayScrollText(iHandle, value))
+            if (0 != DvProviderLinnCoUkUi2SetPropertyDisplayScrollText(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the DisplayScrollText property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyDisplayScrollText(out bool aValue)
         {
             int value;
-            DvServiceLinnCoUkUi2GetPropertyDisplayScrollText(iHandle, &value);
+            DvProviderLinnCoUkUi2GetPropertyDisplayScrollText(iHandle, &value);
             aValue = (value != 0);
         }
 
-        public unsafe void SetPropertyDisplaySleep(bool aValue)
+        /// <summary>
+        /// Set the value of the DisplaySleep property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyDisplaySleep(bool aValue)
         {
+            uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkUi2SetPropertyDisplaySleep(iHandle, value))
+            if (0 != DvProviderLinnCoUkUi2SetPropertyDisplaySleep(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the DisplaySleep property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyDisplaySleep(out bool aValue)
         {
             int value;
-            DvServiceLinnCoUkUi2GetPropertyDisplaySleep(iHandle, &value);
+            DvProviderLinnCoUkUi2GetPropertyDisplaySleep(iHandle, &value);
             aValue = (value != 0);
         }
 
-        public unsafe void SetPropertyDisplayLedOff(bool aValue)
+        /// <summary>
+        /// Set the value of the DisplayLedOff property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyDisplayLedOff(bool aValue)
         {
+            uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkUi2SetPropertyDisplayLedOff(iHandle, value))
+            if (0 != DvProviderLinnCoUkUi2SetPropertyDisplayLedOff(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the DisplayLedOff property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyDisplayLedOff(out bool aValue)
         {
             int value;
-            DvServiceLinnCoUkUi2GetPropertyDisplayLedOff(iHandle, &value);
+            DvProviderLinnCoUkUi2GetPropertyDisplayLedOff(iHandle, &value);
             aValue = (value != 0);
         }
 
-        public unsafe void SetPropertyTerminalInputCode(uint aValue)
+        /// <summary>
+        /// Set the value of the TerminalInputCode property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyTerminalInputCode(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkUi2SetPropertyTerminalInputCode(iHandle, aValue))
+            uint changed;
+            if (0 != DvProviderLinnCoUkUi2SetPropertyTerminalInputCode(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the TerminalInputCode property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyTerminalInputCode(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
-                DvServiceLinnCoUkUi2GetPropertyTerminalInputCode(iHandle, value);
+            {
+                DvProviderLinnCoUkUi2GetPropertyTerminalInputCode(iHandle, value);
             }
         }
 
-        public unsafe void SetPropertyTerminalInputName(string aValue)
+        /// <summary>
+        /// Set the value of the TerminalInputName property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyTerminalInputName(string aValue)
         {
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkUi2SetPropertyTerminalInputName(iHandle, value);
+            int err = DvProviderLinnCoUkUi2SetPropertyTerminalInputName(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the TerminalInputName property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyTerminalInputName(out string aValue)
         {
             char* value;
-            DvServiceLinnCoUkUi2GetPropertyTerminalInputName(iHandle, &value);
+            DvProviderLinnCoUkUi2GetPropertyTerminalInputName(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyDisplayPixels(string aValue)
+        /// <summary>
+        /// Set the value of the DisplayPixels property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyDisplayPixels(string aValue)
         {
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int valueLen = aValue.Length;
-            int err = DvServiceLinnCoUkUi2SetPropertyDisplayPixels(iHandle, value, valueLen);
+            int err = DvProviderLinnCoUkUi2SetPropertyDisplayPixels(iHandle, value, valueLen, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the DisplayPixels property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyDisplayPixels(out string aValue)
         {
             char* value;
             int valueLen;
-             DvServiceLinnCoUkUi2GetPropertyDisplayPixels(iHandle, &value, &valueLen);
+             DvProviderLinnCoUkUi2GetPropertyDisplayPixels(iHandle, &value, &valueLen);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value, valueLen);
             ZappFree(value);
         }
 
+        /// <summary>
+        /// Signal that the action DisplayTestPattern is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDisplayTestPattern must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisplayTestPattern()
         {
             iCallbackDisplayTestPattern = new CallbackDisplayTestPattern(DoDisplayTestPattern);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionDisplayTestPattern(iHandle, iCallbackDisplayTestPattern, ptr);
+            DvProviderLinnCoUkUi2EnableActionDisplayTestPattern(iHandle, iCallbackDisplayTestPattern, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DisplayFill is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDisplayFill must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisplayFill()
         {
             iCallbackDisplayFill = new CallbackDisplayFill(DoDisplayFill);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionDisplayFill(iHandle, iCallbackDisplayFill, ptr);
+            DvProviderLinnCoUkUi2EnableActionDisplayFill(iHandle, iCallbackDisplayFill, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DisplayClear is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDisplayClear must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisplayClear()
         {
             iCallbackDisplayClear = new CallbackDisplayClear(DoDisplayClear);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionDisplayClear(iHandle, iCallbackDisplayClear, ptr);
+            DvProviderLinnCoUkUi2EnableActionDisplayClear(iHandle, iCallbackDisplayClear, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetTestModeEnabled is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetTestModeEnabled must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetTestModeEnabled()
         {
             iCallbackSetTestModeEnabled = new CallbackSetTestModeEnabled(DoSetTestModeEnabled);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionSetTestModeEnabled(iHandle, iCallbackSetTestModeEnabled, ptr);
+            DvProviderLinnCoUkUi2EnableActionSetTestModeEnabled(iHandle, iCallbackSetTestModeEnabled, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SimulateInfraredInput is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSimulateInfraredInput must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSimulateInfraredInput()
         {
             iCallbackSimulateInfraredInput = new CallbackSimulateInfraredInput(DoSimulateInfraredInput);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionSimulateInfraredInput(iHandle, iCallbackSimulateInfraredInput, ptr);
+            DvProviderLinnCoUkUi2EnableActionSimulateInfraredInput(iHandle, iCallbackSimulateInfraredInput, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SimulateButtonInput is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSimulateButtonInput must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSimulateButtonInput()
         {
             iCallbackSimulateButtonInput = new CallbackSimulateButtonInput(DoSimulateButtonInput);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionSimulateButtonInput(iHandle, iCallbackSimulateButtonInput, ptr);
+            DvProviderLinnCoUkUi2EnableActionSimulateButtonInput(iHandle, iCallbackSimulateButtonInput, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SimulateLightSensor is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSimulateLightSensor must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSimulateLightSensor()
         {
             iCallbackSimulateLightSensor = new CallbackSimulateLightSensor(DoSimulateLightSensor);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionSimulateLightSensor(iHandle, iCallbackSimulateLightSensor, ptr);
+            DvProviderLinnCoUkUi2EnableActionSimulateLightSensor(iHandle, iCallbackSimulateLightSensor, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action GetLightSensorData is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoGetLightSensorData must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetLightSensorData()
         {
             iCallbackGetLightSensorData = new CallbackGetLightSensorData(DoGetLightSensorData);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionGetLightSensorData(iHandle, iCallbackGetLightSensorData, ptr);
+            DvProviderLinnCoUkUi2EnableActionGetLightSensorData(iHandle, iCallbackGetLightSensorData, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetDisplayBrightness is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetDisplayBrightness must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetDisplayBrightness()
         {
             iCallbackSetDisplayBrightness = new CallbackSetDisplayBrightness(DoSetDisplayBrightness);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionSetDisplayBrightness(iHandle, iCallbackSetDisplayBrightness, ptr);
+            DvProviderLinnCoUkUi2EnableActionSetDisplayBrightness(iHandle, iCallbackSetDisplayBrightness, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetDisplayBrightnessAuto is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetDisplayBrightnessAuto must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetDisplayBrightnessAuto()
         {
             iCallbackSetDisplayBrightnessAuto = new CallbackSetDisplayBrightnessAuto(DoSetDisplayBrightnessAuto);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionSetDisplayBrightnessAuto(iHandle, iCallbackSetDisplayBrightnessAuto, ptr);
+            DvProviderLinnCoUkUi2EnableActionSetDisplayBrightnessAuto(iHandle, iCallbackSetDisplayBrightnessAuto, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetInfraredCommands is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetInfraredCommands must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetInfraredCommands()
         {
             iCallbackSetInfraredCommands = new CallbackSetInfraredCommands(DoSetInfraredCommands);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionSetInfraredCommands(iHandle, iCallbackSetInfraredCommands, ptr);
+            DvProviderLinnCoUkUi2EnableActionSetInfraredCommands(iHandle, iCallbackSetInfraredCommands, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action InfraredCommands is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoInfraredCommands must be overridden if this is called.</remarks>
         protected unsafe void EnableActionInfraredCommands()
         {
             iCallbackInfraredCommands = new CallbackInfraredCommands(DoInfraredCommands);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionInfraredCommands(iHandle, iCallbackInfraredCommands, ptr);
+            DvProviderLinnCoUkUi2EnableActionInfraredCommands(iHandle, iCallbackInfraredCommands, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetInfraredTerminalCommands is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetInfraredTerminalCommands must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetInfraredTerminalCommands()
         {
             iCallbackSetInfraredTerminalCommands = new CallbackSetInfraredTerminalCommands(DoSetInfraredTerminalCommands);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionSetInfraredTerminalCommands(iHandle, iCallbackSetInfraredTerminalCommands, ptr);
+            DvProviderLinnCoUkUi2EnableActionSetInfraredTerminalCommands(iHandle, iCallbackSetInfraredTerminalCommands, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action InfraredTerminalCommands is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoInfraredTerminalCommands must be overridden if this is called.</remarks>
         protected unsafe void EnableActionInfraredTerminalCommands()
         {
             iCallbackInfraredTerminalCommands = new CallbackInfraredTerminalCommands(DoInfraredTerminalCommands);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionInfraredTerminalCommands(iHandle, iCallbackInfraredTerminalCommands, ptr);
+            DvProviderLinnCoUkUi2EnableActionInfraredTerminalCommands(iHandle, iCallbackInfraredTerminalCommands, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DisplayBrightness is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDisplayBrightness must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisplayBrightness()
         {
             iCallbackDisplayBrightness = new CallbackDisplayBrightness(DoDisplayBrightness);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionDisplayBrightness(iHandle, iCallbackDisplayBrightness, ptr);
+            DvProviderLinnCoUkUi2EnableActionDisplayBrightness(iHandle, iCallbackDisplayBrightness, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DisplayBrightnessAuto is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDisplayBrightnessAuto must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisplayBrightnessAuto()
         {
             iCallbackDisplayBrightnessAuto = new CallbackDisplayBrightnessAuto(DoDisplayBrightnessAuto);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionDisplayBrightnessAuto(iHandle, iCallbackDisplayBrightnessAuto, ptr);
+            DvProviderLinnCoUkUi2EnableActionDisplayBrightnessAuto(iHandle, iCallbackDisplayBrightnessAuto, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DisplayUpsideDown is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDisplayUpsideDown must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisplayUpsideDown()
         {
             iCallbackDisplayUpsideDown = new CallbackDisplayUpsideDown(DoDisplayUpsideDown);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionDisplayUpsideDown(iHandle, iCallbackDisplayUpsideDown, ptr);
+            DvProviderLinnCoUkUi2EnableActionDisplayUpsideDown(iHandle, iCallbackDisplayUpsideDown, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetDisplayUpsideDown is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetDisplayUpsideDown must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetDisplayUpsideDown()
         {
             iCallbackSetDisplayUpsideDown = new CallbackSetDisplayUpsideDown(DoSetDisplayUpsideDown);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionSetDisplayUpsideDown(iHandle, iCallbackSetDisplayUpsideDown, ptr);
+            DvProviderLinnCoUkUi2EnableActionSetDisplayUpsideDown(iHandle, iCallbackSetDisplayUpsideDown, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetDisplayScrollText is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetDisplayScrollText must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetDisplayScrollText()
         {
             iCallbackSetDisplayScrollText = new CallbackSetDisplayScrollText(DoSetDisplayScrollText);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionSetDisplayScrollText(iHandle, iCallbackSetDisplayScrollText, ptr);
+            DvProviderLinnCoUkUi2EnableActionSetDisplayScrollText(iHandle, iCallbackSetDisplayScrollText, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DisplayScrollText is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDisplayScrollText must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisplayScrollText()
         {
             iCallbackDisplayScrollText = new CallbackDisplayScrollText(DoDisplayScrollText);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionDisplayScrollText(iHandle, iCallbackDisplayScrollText, ptr);
+            DvProviderLinnCoUkUi2EnableActionDisplayScrollText(iHandle, iCallbackDisplayScrollText, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetDisplaySleep is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetDisplaySleep must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetDisplaySleep()
         {
             iCallbackSetDisplaySleep = new CallbackSetDisplaySleep(DoSetDisplaySleep);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionSetDisplaySleep(iHandle, iCallbackSetDisplaySleep, ptr);
+            DvProviderLinnCoUkUi2EnableActionSetDisplaySleep(iHandle, iCallbackSetDisplaySleep, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DisplaySleep is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDisplaySleep must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisplaySleep()
         {
             iCallbackDisplaySleep = new CallbackDisplaySleep(DoDisplaySleep);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionDisplaySleep(iHandle, iCallbackDisplaySleep, ptr);
+            DvProviderLinnCoUkUi2EnableActionDisplaySleep(iHandle, iCallbackDisplaySleep, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetDisplayLedOff is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetDisplayLedOff must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetDisplayLedOff()
         {
             iCallbackSetDisplayLedOff = new CallbackSetDisplayLedOff(DoSetDisplayLedOff);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionSetDisplayLedOff(iHandle, iCallbackSetDisplayLedOff, ptr);
+            DvProviderLinnCoUkUi2EnableActionSetDisplayLedOff(iHandle, iCallbackSetDisplayLedOff, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action DisplayLedOff is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoDisplayLedOff must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisplayLedOff()
         {
             iCallbackDisplayLedOff = new CallbackDisplayLedOff(DoDisplayLedOff);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkUi2EnableActionDisplayLedOff(iHandle, iCallbackDisplayLedOff, ptr);
+            DvProviderLinnCoUkUi2EnableActionDisplayLedOff(iHandle, iCallbackDisplayLedOff, ptr);
         }
 
+        /// <summary>
+        /// DisplayTestPattern action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DisplayTestPattern action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDisplayTestPattern was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaTestPattern"></param>
         protected virtual void DisplayTestPattern(uint aVersion, int aaTestPattern)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DisplayFill action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DisplayFill action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDisplayFill was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void DisplayFill(uint aVersion)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DisplayClear action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DisplayClear action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDisplayClear was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
         protected virtual void DisplayClear(uint aVersion)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetTestModeEnabled action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetTestModeEnabled action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetTestModeEnabled was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaEnabled"></param>
         protected virtual void SetTestModeEnabled(uint aVersion, bool aaEnabled)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SimulateInfraredInput action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SimulateInfraredInput action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSimulateInfraredInput was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaCode"></param>
         protected virtual void SimulateInfraredInput(uint aVersion, uint aaCode)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SimulateButtonInput action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SimulateButtonInput action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSimulateButtonInput was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaCode"></param>
         protected virtual void SimulateButtonInput(uint aVersion, uint aaCode)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SimulateLightSensor action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SimulateLightSensor action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSimulateLightSensor was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaLightLevel"></param>
         protected virtual void SimulateLightSensor(uint aVersion, uint aaLightLevel)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// GetLightSensorData action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// GetLightSensorData action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionGetLightSensorData was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaLightLevel"></param>
         protected virtual void GetLightSensorData(uint aVersion, out uint aaLightLevel)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetDisplayBrightness action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetDisplayBrightness action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetDisplayBrightness was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaBrightness"></param>
         protected virtual void SetDisplayBrightness(uint aVersion, uint aaBrightness)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetDisplayBrightnessAuto action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetDisplayBrightnessAuto action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetDisplayBrightnessAuto was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaBrightnessAuto"></param>
         protected virtual void SetDisplayBrightnessAuto(uint aVersion, bool aaBrightnessAuto)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetInfraredCommands action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetInfraredCommands action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetInfraredCommands was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaCommands"></param>
         protected virtual void SetInfraredCommands(uint aVersion, string aaCommands)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// InfraredCommands action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// InfraredCommands action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionInfraredCommands was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaCommands"></param>
         protected virtual void InfraredCommands(uint aVersion, out string aaCommands)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetInfraredTerminalCommands action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetInfraredTerminalCommands action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetInfraredTerminalCommands was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaCommands"></param>
         protected virtual void SetInfraredTerminalCommands(uint aVersion, string aaCommands)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// InfraredTerminalCommands action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// InfraredTerminalCommands action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionInfraredTerminalCommands was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaCommands"></param>
         protected virtual void InfraredTerminalCommands(uint aVersion, out string aaCommands)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DisplayBrightness action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DisplayBrightness action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDisplayBrightness was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaBrightness"></param>
         protected virtual void DisplayBrightness(uint aVersion, out uint aaBrightness)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DisplayBrightnessAuto action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DisplayBrightnessAuto action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDisplayBrightnessAuto was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaBrightnessAuto"></param>
         protected virtual void DisplayBrightnessAuto(uint aVersion, out bool aaBrightnessAuto)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DisplayUpsideDown action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DisplayUpsideDown action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDisplayUpsideDown was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaUpsideDown"></param>
         protected virtual void DisplayUpsideDown(uint aVersion, out bool aaUpsideDown)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetDisplayUpsideDown action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetDisplayUpsideDown action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetDisplayUpsideDown was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaUpsideDown"></param>
         protected virtual void SetDisplayUpsideDown(uint aVersion, bool aaUpsideDown)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetDisplayScrollText action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetDisplayScrollText action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetDisplayScrollText was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaDisplayScrollText"></param>
         protected virtual void SetDisplayScrollText(uint aVersion, bool aaDisplayScrollText)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DisplayScrollText action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DisplayScrollText action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDisplayScrollText was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaDisplayScrollTextEnabled"></param>
         protected virtual void DisplayScrollText(uint aVersion, out bool aaDisplayScrollTextEnabled)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetDisplaySleep action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetDisplaySleep action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetDisplaySleep was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaEnabled"></param>
         protected virtual void SetDisplaySleep(uint aVersion, bool aaEnabled)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DisplaySleep action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DisplaySleep action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDisplaySleep was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaEnabled"></param>
         protected virtual void DisplaySleep(uint aVersion, out bool aaEnabled)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetDisplayLedOff action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetDisplayLedOff action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetDisplayLedOff was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaOff"></param>
         protected virtual void SetDisplayLedOff(uint aVersion, bool aaOff)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// DisplayLedOff action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// DisplayLedOff action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionDisplayLedOff was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaOff"></param>
         protected virtual void DisplayLedOff(uint aVersion, out bool aaOff)
         {
             throw (new ActionDisabledError());
@@ -645,7 +1253,7 @@ namespace Zapp
         private static unsafe int DoDisplayTestPattern(IntPtr aPtr, uint aVersion, int aaTestPattern)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             self.DisplayTestPattern(aVersion, aaTestPattern);
             return 0;
         }
@@ -653,7 +1261,7 @@ namespace Zapp
         private static unsafe int DoDisplayFill(IntPtr aPtr, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             self.DisplayFill(aVersion);
             return 0;
         }
@@ -661,7 +1269,7 @@ namespace Zapp
         private static unsafe int DoDisplayClear(IntPtr aPtr, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             self.DisplayClear(aVersion);
             return 0;
         }
@@ -669,7 +1277,7 @@ namespace Zapp
         private static unsafe int DoSetTestModeEnabled(IntPtr aPtr, uint aVersion, int aaEnabled)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             bool aEnabled = (aaEnabled != 0);
             self.SetTestModeEnabled(aVersion, aEnabled);
             return 0;
@@ -678,7 +1286,7 @@ namespace Zapp
         private static unsafe int DoSimulateInfraredInput(IntPtr aPtr, uint aVersion, uint aaCode)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             self.SimulateInfraredInput(aVersion, aaCode);
             return 0;
         }
@@ -686,7 +1294,7 @@ namespace Zapp
         private static unsafe int DoSimulateButtonInput(IntPtr aPtr, uint aVersion, uint aaCode)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             self.SimulateButtonInput(aVersion, aaCode);
             return 0;
         }
@@ -694,7 +1302,7 @@ namespace Zapp
         private static unsafe int DoSimulateLightSensor(IntPtr aPtr, uint aVersion, uint aaLightLevel)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             self.SimulateLightSensor(aVersion, aaLightLevel);
             return 0;
         }
@@ -702,7 +1310,7 @@ namespace Zapp
         private static unsafe int DoGetLightSensorData(IntPtr aPtr, uint aVersion, uint* aaLightLevel)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             uint aLightLevel;
             self.GetLightSensorData(aVersion, out aLightLevel);
             *aaLightLevel = aLightLevel;
@@ -712,7 +1320,7 @@ namespace Zapp
         private static unsafe int DoSetDisplayBrightness(IntPtr aPtr, uint aVersion, uint aaBrightness)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             self.SetDisplayBrightness(aVersion, aaBrightness);
             return 0;
         }
@@ -720,7 +1328,7 @@ namespace Zapp
         private static unsafe int DoSetDisplayBrightnessAuto(IntPtr aPtr, uint aVersion, int aaBrightnessAuto)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             bool aBrightnessAuto = (aaBrightnessAuto != 0);
             self.SetDisplayBrightnessAuto(aVersion, aBrightnessAuto);
             return 0;
@@ -729,7 +1337,7 @@ namespace Zapp
         private static unsafe int DoSetInfraredCommands(IntPtr aPtr, uint aVersion, char* aaCommands)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             string aCommands = Marshal.PtrToStringAnsi((IntPtr)aaCommands);
             self.SetInfraredCommands(aVersion, aCommands);
             return 0;
@@ -738,7 +1346,7 @@ namespace Zapp
         private static unsafe int DoInfraredCommands(IntPtr aPtr, uint aVersion, char** aaCommands)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             string aCommands;
             self.InfraredCommands(aVersion, out aCommands);
             *aaCommands = (char*)Marshal.StringToHGlobalAnsi(aCommands).ToPointer();
@@ -748,7 +1356,7 @@ namespace Zapp
         private static unsafe int DoSetInfraredTerminalCommands(IntPtr aPtr, uint aVersion, char* aaCommands)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             string aCommands = Marshal.PtrToStringAnsi((IntPtr)aaCommands);
             self.SetInfraredTerminalCommands(aVersion, aCommands);
             return 0;
@@ -757,7 +1365,7 @@ namespace Zapp
         private static unsafe int DoInfraredTerminalCommands(IntPtr aPtr, uint aVersion, char** aaCommands)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             string aCommands;
             self.InfraredTerminalCommands(aVersion, out aCommands);
             *aaCommands = (char*)Marshal.StringToHGlobalAnsi(aCommands).ToPointer();
@@ -767,7 +1375,7 @@ namespace Zapp
         private static unsafe int DoDisplayBrightness(IntPtr aPtr, uint aVersion, uint* aaBrightness)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             uint aBrightness;
             self.DisplayBrightness(aVersion, out aBrightness);
             *aaBrightness = aBrightness;
@@ -777,7 +1385,7 @@ namespace Zapp
         private static unsafe int DoDisplayBrightnessAuto(IntPtr aPtr, uint aVersion, int* aaBrightnessAuto)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             bool aBrightnessAuto;
             self.DisplayBrightnessAuto(aVersion, out aBrightnessAuto);
             *aaBrightnessAuto = (aBrightnessAuto ? 1 : 0);
@@ -787,7 +1395,7 @@ namespace Zapp
         private static unsafe int DoDisplayUpsideDown(IntPtr aPtr, uint aVersion, int* aaUpsideDown)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             bool aUpsideDown;
             self.DisplayUpsideDown(aVersion, out aUpsideDown);
             *aaUpsideDown = (aUpsideDown ? 1 : 0);
@@ -797,7 +1405,7 @@ namespace Zapp
         private static unsafe int DoSetDisplayUpsideDown(IntPtr aPtr, uint aVersion, int aaUpsideDown)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             bool aUpsideDown = (aaUpsideDown != 0);
             self.SetDisplayUpsideDown(aVersion, aUpsideDown);
             return 0;
@@ -806,7 +1414,7 @@ namespace Zapp
         private static unsafe int DoSetDisplayScrollText(IntPtr aPtr, uint aVersion, int aaDisplayScrollText)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             bool aDisplayScrollText = (aaDisplayScrollText != 0);
             self.SetDisplayScrollText(aVersion, aDisplayScrollText);
             return 0;
@@ -815,7 +1423,7 @@ namespace Zapp
         private static unsafe int DoDisplayScrollText(IntPtr aPtr, uint aVersion, int* aaDisplayScrollTextEnabled)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             bool aDisplayScrollTextEnabled;
             self.DisplayScrollText(aVersion, out aDisplayScrollTextEnabled);
             *aaDisplayScrollTextEnabled = (aDisplayScrollTextEnabled ? 1 : 0);
@@ -825,7 +1433,7 @@ namespace Zapp
         private static unsafe int DoSetDisplaySleep(IntPtr aPtr, uint aVersion, int aaEnabled)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             bool aEnabled = (aaEnabled != 0);
             self.SetDisplaySleep(aVersion, aEnabled);
             return 0;
@@ -834,7 +1442,7 @@ namespace Zapp
         private static unsafe int DoDisplaySleep(IntPtr aPtr, uint aVersion, int* aaEnabled)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             bool aEnabled;
             self.DisplaySleep(aVersion, out aEnabled);
             *aaEnabled = (aEnabled ? 1 : 0);
@@ -844,7 +1452,7 @@ namespace Zapp
         private static unsafe int DoSetDisplayLedOff(IntPtr aPtr, uint aVersion, int aaOff)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             bool aOff = (aaOff != 0);
             self.SetDisplayLedOff(aVersion, aOff);
             return 0;
@@ -853,21 +1461,23 @@ namespace Zapp
         private static unsafe int DoDisplayLedOff(IntPtr aPtr, uint aVersion, int* aaOff)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkUi2 self = (DvServiceLinnCoUkUi2)gch.Target;
+            DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             bool aOff;
             self.DisplayLedOff(aVersion, out aOff);
             *aaOff = (aOff ? 1 : 0);
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceLinnCoUkUi2()
+        ~DvProviderLinnCoUkUi2()
         {
             DoDispose();
         }
@@ -884,7 +1494,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = IntPtr.Zero;
             }
-            DvServiceLinnCoUkUi2Destroy(handle);
+            DvProviderLinnCoUkUi2Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

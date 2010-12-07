@@ -21,6 +21,7 @@ class PropertyUint;
 
 /**
  * Proxy for linn.co.uk:ProxyManager:1
+ * @ingroup Proxies
  */
 class CpProxyLinnCoUkProxyManager1Cpp : public CpProxy
 {

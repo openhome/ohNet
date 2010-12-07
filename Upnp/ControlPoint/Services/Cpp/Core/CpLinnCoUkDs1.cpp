@@ -11,14 +11,14 @@ using namespace Zapp;
 class SyncPlayLinnCoUkDs1 : public SyncProxyAction
 {
 public:
-    SyncPlayLinnCoUkDs1(CpProxyLinnCoUkDs1& aService);
+    SyncPlayLinnCoUkDs1(CpProxyLinnCoUkDs1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDs1& iService;
 };
 
-SyncPlayLinnCoUkDs1::SyncPlayLinnCoUkDs1(CpProxyLinnCoUkDs1& aService)
-    : iService(aService)
+SyncPlayLinnCoUkDs1::SyncPlayLinnCoUkDs1(CpProxyLinnCoUkDs1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -31,14 +31,14 @@ void SyncPlayLinnCoUkDs1::CompleteRequest(IAsync& aAsync)
 class SyncPauseLinnCoUkDs1 : public SyncProxyAction
 {
 public:
-    SyncPauseLinnCoUkDs1(CpProxyLinnCoUkDs1& aService);
+    SyncPauseLinnCoUkDs1(CpProxyLinnCoUkDs1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDs1& iService;
 };
 
-SyncPauseLinnCoUkDs1::SyncPauseLinnCoUkDs1(CpProxyLinnCoUkDs1& aService)
-    : iService(aService)
+SyncPauseLinnCoUkDs1::SyncPauseLinnCoUkDs1(CpProxyLinnCoUkDs1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -51,14 +51,14 @@ void SyncPauseLinnCoUkDs1::CompleteRequest(IAsync& aAsync)
 class SyncStopLinnCoUkDs1 : public SyncProxyAction
 {
 public:
-    SyncStopLinnCoUkDs1(CpProxyLinnCoUkDs1& aService);
+    SyncStopLinnCoUkDs1(CpProxyLinnCoUkDs1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDs1& iService;
 };
 
-SyncStopLinnCoUkDs1::SyncStopLinnCoUkDs1(CpProxyLinnCoUkDs1& aService)
-    : iService(aService)
+SyncStopLinnCoUkDs1::SyncStopLinnCoUkDs1(CpProxyLinnCoUkDs1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -71,14 +71,14 @@ void SyncStopLinnCoUkDs1::CompleteRequest(IAsync& aAsync)
 class SyncSeekSecondAbsoluteLinnCoUkDs1 : public SyncProxyAction
 {
 public:
-    SyncSeekSecondAbsoluteLinnCoUkDs1(CpProxyLinnCoUkDs1& aService);
+    SyncSeekSecondAbsoluteLinnCoUkDs1(CpProxyLinnCoUkDs1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDs1& iService;
 };
 
-SyncSeekSecondAbsoluteLinnCoUkDs1::SyncSeekSecondAbsoluteLinnCoUkDs1(CpProxyLinnCoUkDs1& aService)
-    : iService(aService)
+SyncSeekSecondAbsoluteLinnCoUkDs1::SyncSeekSecondAbsoluteLinnCoUkDs1(CpProxyLinnCoUkDs1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -91,14 +91,14 @@ void SyncSeekSecondAbsoluteLinnCoUkDs1::CompleteRequest(IAsync& aAsync)
 class SyncSeekSecondRelativeLinnCoUkDs1 : public SyncProxyAction
 {
 public:
-    SyncSeekSecondRelativeLinnCoUkDs1(CpProxyLinnCoUkDs1& aService);
+    SyncSeekSecondRelativeLinnCoUkDs1(CpProxyLinnCoUkDs1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDs1& iService;
 };
 
-SyncSeekSecondRelativeLinnCoUkDs1::SyncSeekSecondRelativeLinnCoUkDs1(CpProxyLinnCoUkDs1& aService)
-    : iService(aService)
+SyncSeekSecondRelativeLinnCoUkDs1::SyncSeekSecondRelativeLinnCoUkDs1(CpProxyLinnCoUkDs1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -111,14 +111,14 @@ void SyncSeekSecondRelativeLinnCoUkDs1::CompleteRequest(IAsync& aAsync)
 class SyncSeekTrackIdLinnCoUkDs1 : public SyncProxyAction
 {
 public:
-    SyncSeekTrackIdLinnCoUkDs1(CpProxyLinnCoUkDs1& aService);
+    SyncSeekTrackIdLinnCoUkDs1(CpProxyLinnCoUkDs1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDs1& iService;
 };
 
-SyncSeekTrackIdLinnCoUkDs1::SyncSeekTrackIdLinnCoUkDs1(CpProxyLinnCoUkDs1& aService)
-    : iService(aService)
+SyncSeekTrackIdLinnCoUkDs1::SyncSeekTrackIdLinnCoUkDs1(CpProxyLinnCoUkDs1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -131,14 +131,14 @@ void SyncSeekTrackIdLinnCoUkDs1::CompleteRequest(IAsync& aAsync)
 class SyncSeekTrackAbsoluteLinnCoUkDs1 : public SyncProxyAction
 {
 public:
-    SyncSeekTrackAbsoluteLinnCoUkDs1(CpProxyLinnCoUkDs1& aService);
+    SyncSeekTrackAbsoluteLinnCoUkDs1(CpProxyLinnCoUkDs1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDs1& iService;
 };
 
-SyncSeekTrackAbsoluteLinnCoUkDs1::SyncSeekTrackAbsoluteLinnCoUkDs1(CpProxyLinnCoUkDs1& aService)
-    : iService(aService)
+SyncSeekTrackAbsoluteLinnCoUkDs1::SyncSeekTrackAbsoluteLinnCoUkDs1(CpProxyLinnCoUkDs1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -151,14 +151,14 @@ void SyncSeekTrackAbsoluteLinnCoUkDs1::CompleteRequest(IAsync& aAsync)
 class SyncSeekTrackRelativeLinnCoUkDs1 : public SyncProxyAction
 {
 public:
-    SyncSeekTrackRelativeLinnCoUkDs1(CpProxyLinnCoUkDs1& aService);
+    SyncSeekTrackRelativeLinnCoUkDs1(CpProxyLinnCoUkDs1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDs1& iService;
 };
 
-SyncSeekTrackRelativeLinnCoUkDs1::SyncSeekTrackRelativeLinnCoUkDs1(CpProxyLinnCoUkDs1& aService)
-    : iService(aService)
+SyncSeekTrackRelativeLinnCoUkDs1::SyncSeekTrackRelativeLinnCoUkDs1(CpProxyLinnCoUkDs1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -171,7 +171,7 @@ void SyncSeekTrackRelativeLinnCoUkDs1::CompleteRequest(IAsync& aAsync)
 class SyncStateLinnCoUkDs1 : public SyncProxyAction
 {
 public:
-    SyncStateLinnCoUkDs1(CpProxyLinnCoUkDs1& aService, Brh& aaTransportState, TUint& aaTrackDuration, TUint& aaTrackBitRate, TBool& aaTrackLossless, TUint& aaTrackBitDepth, TUint& aaTrackSampleRate, Brh& aaTrackCodecName, TUint& aaTrackId);
+    SyncStateLinnCoUkDs1(CpProxyLinnCoUkDs1& aProxy, Brh& aaTransportState, TUint& aaTrackDuration, TUint& aaTrackBitRate, TBool& aaTrackLossless, TUint& aaTrackBitDepth, TUint& aaTrackSampleRate, Brh& aaTrackCodecName, TUint& aaTrackId);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDs1& iService;
@@ -185,8 +185,8 @@ private:
     TUint& iaTrackId;
 };
 
-SyncStateLinnCoUkDs1::SyncStateLinnCoUkDs1(CpProxyLinnCoUkDs1& aService, Brh& aaTransportState, TUint& aaTrackDuration, TUint& aaTrackBitRate, TBool& aaTrackLossless, TUint& aaTrackBitDepth, TUint& aaTrackSampleRate, Brh& aaTrackCodecName, TUint& aaTrackId)
-    : iService(aService)
+SyncStateLinnCoUkDs1::SyncStateLinnCoUkDs1(CpProxyLinnCoUkDs1& aProxy, Brh& aaTransportState, TUint& aaTrackDuration, TUint& aaTrackBitRate, TBool& aaTrackLossless, TUint& aaTrackBitDepth, TUint& aaTrackSampleRate, Brh& aaTrackCodecName, TUint& aaTrackId)
+    : iService(aProxy)
     , iaTransportState(aaTransportState)
     , iaTrackDuration(aaTrackDuration)
     , iaTrackBitRate(aaTrackBitRate)
@@ -207,15 +207,15 @@ void SyncStateLinnCoUkDs1::CompleteRequest(IAsync& aAsync)
 class SyncProtocolInfoLinnCoUkDs1 : public SyncProxyAction
 {
 public:
-    SyncProtocolInfoLinnCoUkDs1(CpProxyLinnCoUkDs1& aService, Brh& aaSupportedProtocols);
+    SyncProtocolInfoLinnCoUkDs1(CpProxyLinnCoUkDs1& aProxy, Brh& aaSupportedProtocols);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDs1& iService;
     Brh& iaSupportedProtocols;
 };
 
-SyncProtocolInfoLinnCoUkDs1::SyncProtocolInfoLinnCoUkDs1(CpProxyLinnCoUkDs1& aService, Brh& aaSupportedProtocols)
-    : iService(aService)
+SyncProtocolInfoLinnCoUkDs1::SyncProtocolInfoLinnCoUkDs1(CpProxyLinnCoUkDs1& aProxy, Brh& aaSupportedProtocols)
+    : iService(aProxy)
     , iaSupportedProtocols(aaSupportedProtocols)
 {
 }
@@ -291,31 +291,31 @@ CpProxyLinnCoUkDs1::CpProxyLinnCoUkDs1(CpDevice& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyLinnCoUkDs1::SupportedProtocolsPropertyChanged);
     iSupportedProtocols = new PropertyString("SupportedProtocols", functor);
-    iService->AddProperty(iSupportedProtocols);
+    AddProperty(iSupportedProtocols);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkDs1::TrackDurationPropertyChanged);
     iTrackDuration = new PropertyUint("TrackDuration", functor);
-    iService->AddProperty(iTrackDuration);
+    AddProperty(iTrackDuration);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkDs1::TrackBitRatePropertyChanged);
     iTrackBitRate = new PropertyUint("TrackBitRate", functor);
-    iService->AddProperty(iTrackBitRate);
+    AddProperty(iTrackBitRate);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkDs1::TrackLosslessPropertyChanged);
     iTrackLossless = new PropertyBool("TrackLossless", functor);
-    iService->AddProperty(iTrackLossless);
+    AddProperty(iTrackLossless);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkDs1::TrackBitDepthPropertyChanged);
     iTrackBitDepth = new PropertyUint("TrackBitDepth", functor);
-    iService->AddProperty(iTrackBitDepth);
+    AddProperty(iTrackBitDepth);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkDs1::TrackSampleRatePropertyChanged);
     iTrackSampleRate = new PropertyUint("TrackSampleRate", functor);
-    iService->AddProperty(iTrackSampleRate);
+    AddProperty(iTrackSampleRate);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkDs1::TrackCodecNamePropertyChanged);
     iTrackCodecName = new PropertyString("TrackCodecName", functor);
-    iService->AddProperty(iTrackCodecName);
+    AddProperty(iTrackCodecName);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkDs1::TrackIdPropertyChanged);
     iTrackId = new PropertyUint("TrackId", functor);
-    iService->AddProperty(iTrackId);
+    AddProperty(iTrackId);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkDs1::TransportStatePropertyChanged);
     iTransportState = new PropertyString("TransportState", functor);
-    iService->AddProperty(iTransportState);
+    AddProperty(iTransportState);
 }
 
 CpProxyLinnCoUkDs1::~CpProxyLinnCoUkDs1()
@@ -343,7 +343,7 @@ void CpProxyLinnCoUkDs1::SyncPlay()
 void CpProxyLinnCoUkDs1::BeginPlay(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionPlay, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDs1::EndPlay(IAsync& aAsync)
@@ -367,7 +367,7 @@ void CpProxyLinnCoUkDs1::SyncPause()
 void CpProxyLinnCoUkDs1::BeginPause(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionPause, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDs1::EndPause(IAsync& aAsync)
@@ -391,7 +391,7 @@ void CpProxyLinnCoUkDs1::SyncStop()
 void CpProxyLinnCoUkDs1::BeginStop(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionStop, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDs1::EndStop(IAsync& aAsync)
@@ -418,7 +418,7 @@ void CpProxyLinnCoUkDs1::BeginSeekSecondAbsolute(TUint aaSecond, FunctorAsync& a
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSeekSecondAbsolute->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaSecond));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDs1::EndSeekSecondAbsolute(IAsync& aAsync)
@@ -445,7 +445,7 @@ void CpProxyLinnCoUkDs1::BeginSeekSecondRelative(TInt aaSecond, FunctorAsync& aF
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSeekSecondRelative->InputParameters();
     invocation->AddInput(new ArgumentInt(*inParams[inIndex++], aaSecond));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDs1::EndSeekSecondRelative(IAsync& aAsync)
@@ -472,7 +472,7 @@ void CpProxyLinnCoUkDs1::BeginSeekTrackId(TUint aaTrackId, FunctorAsync& aFuncto
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSeekTrackId->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaTrackId));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDs1::EndSeekTrackId(IAsync& aAsync)
@@ -499,7 +499,7 @@ void CpProxyLinnCoUkDs1::BeginSeekTrackAbsolute(TUint aaTrack, FunctorAsync& aFu
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSeekTrackAbsolute->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaTrack));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDs1::EndSeekTrackAbsolute(IAsync& aAsync)
@@ -526,7 +526,7 @@ void CpProxyLinnCoUkDs1::BeginSeekTrackRelative(TInt aaTrack, FunctorAsync& aFun
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSeekTrackRelative->InputParameters();
     invocation->AddInput(new ArgumentInt(*inParams[inIndex++], aaTrack));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDs1::EndSeekTrackRelative(IAsync& aAsync)
@@ -560,7 +560,7 @@ void CpProxyLinnCoUkDs1::BeginState(FunctorAsync& aFunctor)
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDs1::EndState(IAsync& aAsync, Brh& aaTransportState, TUint& aaTrackDuration, TUint& aaTrackBitRate, TBool& aaTrackLossless, TUint& aaTrackBitDepth, TUint& aaTrackSampleRate, Brh& aaTrackCodecName, TUint& aaTrackId)
@@ -596,7 +596,7 @@ void CpProxyLinnCoUkDs1::BeginProtocolInfo(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionProtocolInfo->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDs1::EndProtocolInfo(IAsync& aAsync, Brh& aaSupportedProtocols)
@@ -677,56 +677,74 @@ void CpProxyLinnCoUkDs1::SetPropertyTransportStateChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkDs1::PropertySupportedProtocols(Brhz& aSupportedProtocols) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSupportedProtocols.Set(iSupportedProtocols->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkDs1::PropertyTrackDuration(TUint& aTrackDuration) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTrackDuration = iTrackDuration->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkDs1::PropertyTrackBitRate(TUint& aTrackBitRate) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTrackBitRate = iTrackBitRate->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkDs1::PropertyTrackLossless(TBool& aTrackLossless) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTrackLossless = iTrackLossless->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkDs1::PropertyTrackBitDepth(TUint& aTrackBitDepth) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTrackBitDepth = iTrackBitDepth->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkDs1::PropertyTrackSampleRate(TUint& aTrackSampleRate) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTrackSampleRate = iTrackSampleRate->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkDs1::PropertyTrackCodecName(Brhz& aTrackCodecName) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTrackCodecName.Set(iTrackCodecName->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkDs1::PropertyTrackId(TUint& aTrackId) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTrackId = iTrackId->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkDs1::PropertyTransportState(Brhz& aTransportState) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTransportState.Set(iTransportState->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkDs1::SupportedProtocolsPropertyChanged()

@@ -11,15 +11,15 @@ using namespace Zapp;
 class SyncSecondsLinnCoUkMediaTime1 : public SyncProxyAction
 {
 public:
-    SyncSecondsLinnCoUkMediaTime1(CpProxyLinnCoUkMediaTime1& aService, TUint& aaSeconds);
+    SyncSecondsLinnCoUkMediaTime1(CpProxyLinnCoUkMediaTime1& aProxy, TUint& aaSeconds);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkMediaTime1& iService;
     TUint& iaSeconds;
 };
 
-SyncSecondsLinnCoUkMediaTime1::SyncSecondsLinnCoUkMediaTime1(CpProxyLinnCoUkMediaTime1& aService, TUint& aaSeconds)
-    : iService(aService)
+SyncSecondsLinnCoUkMediaTime1::SyncSecondsLinnCoUkMediaTime1(CpProxyLinnCoUkMediaTime1& aProxy, TUint& aaSeconds)
+    : iService(aProxy)
     , iaSeconds(aaSeconds)
 {
 }
@@ -42,7 +42,7 @@ CpProxyLinnCoUkMediaTime1::CpProxyLinnCoUkMediaTime1(CpDevice& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyLinnCoUkMediaTime1::SecondsPropertyChanged);
     iSeconds = new PropertyUint("Seconds", functor);
-    iService->AddProperty(iSeconds);
+    AddProperty(iSeconds);
 }
 
 CpProxyLinnCoUkMediaTime1::~CpProxyLinnCoUkMediaTime1()
@@ -64,7 +64,7 @@ void CpProxyLinnCoUkMediaTime1::BeginSeconds(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionSeconds->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkMediaTime1::EndSeconds(IAsync& aAsync, TUint& aaSeconds)
@@ -89,8 +89,10 @@ void CpProxyLinnCoUkMediaTime1::SetPropertySecondsChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkMediaTime1::PropertySeconds(TUint& aSeconds) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSeconds = iSeconds->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkMediaTime1::SecondsPropertyChanged()

@@ -20,6 +20,7 @@ class PropertyUint;
 
 /**
  * Proxy for upnp.org:AVTransport:1
+ * @ingroup Proxies
  */
 class CpProxyUpnpOrgAVTransport1 : public CpProxy
 {

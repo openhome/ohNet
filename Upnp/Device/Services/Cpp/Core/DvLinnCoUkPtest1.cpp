@@ -2,40 +2,40 @@
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
-DvServiceLinnCoUkPtest1::DvServiceLinnCoUkPtest1(DvDevice& aDevice)
-    : DvService(aDevice.Device(), "linn.co.uk", "Ptest", 1)
+DvProviderLinnCoUkPtest1::DvProviderLinnCoUkPtest1(DvDevice& aDevice)
+    : DvProvider(aDevice.Device(), "linn.co.uk", "Ptest", 1)
 {
-    Functor empty;
+    
 }
 
-void DvServiceLinnCoUkPtest1::EnableActionTestComPort()
+void DvProviderLinnCoUkPtest1::EnableActionTestComPort()
 {
     Zapp::Action* action = new Zapp::Action("TestComPort");
     action->AddInputParameter(new ParameterUint("aPort"));
     action->AddOutputParameter(new ParameterBool("aResult"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkPtest1::DoTestComPort);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPtest1::DoTestComPort);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkPtest1::EnableActionLedsOn()
+void DvProviderLinnCoUkPtest1::EnableActionLedsOn()
 {
     Zapp::Action* action = new Zapp::Action("LedsOn");
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkPtest1::DoLedsOn);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPtest1::DoLedsOn);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkPtest1::EnableActionLedsOff()
+void DvProviderLinnCoUkPtest1::EnableActionLedsOff()
 {
     Zapp::Action* action = new Zapp::Action("LedsOff");
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkPtest1::DoLedsOff);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkPtest1::DoLedsOff);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkPtest1::DoTestComPort(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPtest1::DoTestComPort(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint aPort = aInvocation.InvocationReadUint("aPort");
@@ -45,7 +45,7 @@ void DvServiceLinnCoUkPtest1::DoTestComPort(IDvInvocation& aInvocation, TUint aV
     TestComPort(resp, aVersion, aPort, respaResult);
 }
 
-void DvServiceLinnCoUkPtest1::DoLedsOn(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPtest1::DoLedsOn(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -53,7 +53,7 @@ void DvServiceLinnCoUkPtest1::DoLedsOn(IDvInvocation& aInvocation, TUint aVersio
     LedsOn(resp, aVersion);
 }
 
-void DvServiceLinnCoUkPtest1::DoLedsOff(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkPtest1::DoLedsOff(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -61,17 +61,17 @@ void DvServiceLinnCoUkPtest1::DoLedsOff(IDvInvocation& aInvocation, TUint aVersi
     LedsOff(resp, aVersion);
 }
 
-void DvServiceLinnCoUkPtest1::TestComPort(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaPort*/, IInvocationResponseBool& /*aaResult*/)
+void DvProviderLinnCoUkPtest1::TestComPort(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aaPort*/, IInvocationResponseBool& /*aaResult*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkPtest1::LedsOn(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/)
+void DvProviderLinnCoUkPtest1::LedsOn(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkPtest1::LedsOff(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/)
+void DvProviderLinnCoUkPtest1::LedsOff(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/)
 {
     ASSERTS();
 }

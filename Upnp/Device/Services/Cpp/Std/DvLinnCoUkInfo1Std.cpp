@@ -2,188 +2,188 @@
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkInfo1Cpp::SetPropertyTrackCount(uint32_t aValue)
+bool DvProviderLinnCoUkInfo1Cpp::SetPropertyTrackCount(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyTrackCount, aValue);
+    return SetPropertyUint(*iPropertyTrackCount, aValue);
 }
 
-void DvServiceLinnCoUkInfo1Cpp::GetPropertyTrackCount(uint32_t& aValue)
+void DvProviderLinnCoUkInfo1Cpp::GetPropertyTrackCount(uint32_t& aValue)
 {
     aValue = iPropertyTrackCount->Value();
 }
 
-void DvServiceLinnCoUkInfo1Cpp::SetPropertyDetailsCount(uint32_t aValue)
+bool DvProviderLinnCoUkInfo1Cpp::SetPropertyDetailsCount(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyDetailsCount, aValue);
+    return SetPropertyUint(*iPropertyDetailsCount, aValue);
 }
 
-void DvServiceLinnCoUkInfo1Cpp::GetPropertyDetailsCount(uint32_t& aValue)
+void DvProviderLinnCoUkInfo1Cpp::GetPropertyDetailsCount(uint32_t& aValue)
 {
     aValue = iPropertyDetailsCount->Value();
 }
 
-void DvServiceLinnCoUkInfo1Cpp::SetPropertyMetatextCount(uint32_t aValue)
+bool DvProviderLinnCoUkInfo1Cpp::SetPropertyMetatextCount(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyMetatextCount, aValue);
+    return SetPropertyUint(*iPropertyMetatextCount, aValue);
 }
 
-void DvServiceLinnCoUkInfo1Cpp::GetPropertyMetatextCount(uint32_t& aValue)
+void DvProviderLinnCoUkInfo1Cpp::GetPropertyMetatextCount(uint32_t& aValue)
 {
     aValue = iPropertyMetatextCount->Value();
 }
 
-void DvServiceLinnCoUkInfo1Cpp::SetPropertyUri(const std::string& aValue)
+bool DvProviderLinnCoUkInfo1Cpp::SetPropertyUri(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyUri, buf);
+    return SetPropertyString(*iPropertyUri, buf);
 }
 
-void DvServiceLinnCoUkInfo1Cpp::GetPropertyUri(std::string& aValue)
+void DvProviderLinnCoUkInfo1Cpp::GetPropertyUri(std::string& aValue)
 {
     const Brx& val = iPropertyUri->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkInfo1Cpp::SetPropertyMetadata(const std::string& aValue)
+bool DvProviderLinnCoUkInfo1Cpp::SetPropertyMetadata(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyMetadata, buf);
+    return SetPropertyString(*iPropertyMetadata, buf);
 }
 
-void DvServiceLinnCoUkInfo1Cpp::GetPropertyMetadata(std::string& aValue)
+void DvProviderLinnCoUkInfo1Cpp::GetPropertyMetadata(std::string& aValue)
 {
     const Brx& val = iPropertyMetadata->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkInfo1Cpp::SetPropertyDuration(uint32_t aValue)
+bool DvProviderLinnCoUkInfo1Cpp::SetPropertyDuration(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyDuration, aValue);
+    return SetPropertyUint(*iPropertyDuration, aValue);
 }
 
-void DvServiceLinnCoUkInfo1Cpp::GetPropertyDuration(uint32_t& aValue)
+void DvProviderLinnCoUkInfo1Cpp::GetPropertyDuration(uint32_t& aValue)
 {
     aValue = iPropertyDuration->Value();
 }
 
-void DvServiceLinnCoUkInfo1Cpp::SetPropertyBitRate(uint32_t aValue)
+bool DvProviderLinnCoUkInfo1Cpp::SetPropertyBitRate(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyBitRate, aValue);
+    return SetPropertyUint(*iPropertyBitRate, aValue);
 }
 
-void DvServiceLinnCoUkInfo1Cpp::GetPropertyBitRate(uint32_t& aValue)
+void DvProviderLinnCoUkInfo1Cpp::GetPropertyBitRate(uint32_t& aValue)
 {
     aValue = iPropertyBitRate->Value();
 }
 
-void DvServiceLinnCoUkInfo1Cpp::SetPropertyBitDepth(uint32_t aValue)
+bool DvProviderLinnCoUkInfo1Cpp::SetPropertyBitDepth(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertyBitDepth, aValue);
+    return SetPropertyUint(*iPropertyBitDepth, aValue);
 }
 
-void DvServiceLinnCoUkInfo1Cpp::GetPropertyBitDepth(uint32_t& aValue)
+void DvProviderLinnCoUkInfo1Cpp::GetPropertyBitDepth(uint32_t& aValue)
 {
     aValue = iPropertyBitDepth->Value();
 }
 
-void DvServiceLinnCoUkInfo1Cpp::SetPropertySampleRate(uint32_t aValue)
+bool DvProviderLinnCoUkInfo1Cpp::SetPropertySampleRate(uint32_t aValue)
 {
-    SetPropertyUint(*iPropertySampleRate, aValue);
+    return SetPropertyUint(*iPropertySampleRate, aValue);
 }
 
-void DvServiceLinnCoUkInfo1Cpp::GetPropertySampleRate(uint32_t& aValue)
+void DvProviderLinnCoUkInfo1Cpp::GetPropertySampleRate(uint32_t& aValue)
 {
     aValue = iPropertySampleRate->Value();
 }
 
-void DvServiceLinnCoUkInfo1Cpp::SetPropertyLossless(bool aValue)
+bool DvProviderLinnCoUkInfo1Cpp::SetPropertyLossless(bool aValue)
 {
-    SetPropertyBool(*iPropertyLossless, aValue);
+    return SetPropertyBool(*iPropertyLossless, aValue);
 }
 
-void DvServiceLinnCoUkInfo1Cpp::GetPropertyLossless(bool& aValue)
+void DvProviderLinnCoUkInfo1Cpp::GetPropertyLossless(bool& aValue)
 {
     aValue = iPropertyLossless->Value();
 }
 
-void DvServiceLinnCoUkInfo1Cpp::SetPropertyCodecName(const std::string& aValue)
+bool DvProviderLinnCoUkInfo1Cpp::SetPropertyCodecName(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyCodecName, buf);
+    return SetPropertyString(*iPropertyCodecName, buf);
 }
 
-void DvServiceLinnCoUkInfo1Cpp::GetPropertyCodecName(std::string& aValue)
+void DvProviderLinnCoUkInfo1Cpp::GetPropertyCodecName(std::string& aValue)
 {
     const Brx& val = iPropertyCodecName->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkInfo1Cpp::SetPropertyMetatext(const std::string& aValue)
+bool DvProviderLinnCoUkInfo1Cpp::SetPropertyMetatext(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyMetatext, buf);
+    return SetPropertyString(*iPropertyMetatext, buf);
 }
 
-void DvServiceLinnCoUkInfo1Cpp::GetPropertyMetatext(std::string& aValue)
+void DvProviderLinnCoUkInfo1Cpp::GetPropertyMetatext(std::string& aValue)
 {
     const Brx& val = iPropertyMetatext->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-DvServiceLinnCoUkInfo1Cpp::DvServiceLinnCoUkInfo1Cpp(DvDeviceStd& aDevice)
-    : DvService(aDevice.Device(), "linn.co.uk", "Info", 1)
+DvProviderLinnCoUkInfo1Cpp::DvProviderLinnCoUkInfo1Cpp(DvDeviceStd& aDevice)
+    : DvProvider(aDevice.Device(), "linn.co.uk", "Info", 1)
 {
-    Functor empty;
-    iPropertyTrackCount = new PropertyUint(new ParameterUint("TrackCount"), empty);
+    
+    iPropertyTrackCount = new PropertyUint(new ParameterUint("TrackCount"));
     iService->AddProperty(iPropertyTrackCount); // passes ownership
-    iPropertyDetailsCount = new PropertyUint(new ParameterUint("DetailsCount"), empty);
+    iPropertyDetailsCount = new PropertyUint(new ParameterUint("DetailsCount"));
     iService->AddProperty(iPropertyDetailsCount); // passes ownership
-    iPropertyMetatextCount = new PropertyUint(new ParameterUint("MetatextCount"), empty);
+    iPropertyMetatextCount = new PropertyUint(new ParameterUint("MetatextCount"));
     iService->AddProperty(iPropertyMetatextCount); // passes ownership
-    iPropertyUri = new PropertyString(new ParameterString("Uri"), empty);
+    iPropertyUri = new PropertyString(new ParameterString("Uri"));
     iService->AddProperty(iPropertyUri); // passes ownership
-    iPropertyMetadata = new PropertyString(new ParameterString("Metadata"), empty);
+    iPropertyMetadata = new PropertyString(new ParameterString("Metadata"));
     iService->AddProperty(iPropertyMetadata); // passes ownership
-    iPropertyDuration = new PropertyUint(new ParameterUint("Duration"), empty);
+    iPropertyDuration = new PropertyUint(new ParameterUint("Duration"));
     iService->AddProperty(iPropertyDuration); // passes ownership
-    iPropertyBitRate = new PropertyUint(new ParameterUint("BitRate"), empty);
+    iPropertyBitRate = new PropertyUint(new ParameterUint("BitRate"));
     iService->AddProperty(iPropertyBitRate); // passes ownership
-    iPropertyBitDepth = new PropertyUint(new ParameterUint("BitDepth"), empty);
+    iPropertyBitDepth = new PropertyUint(new ParameterUint("BitDepth"));
     iService->AddProperty(iPropertyBitDepth); // passes ownership
-    iPropertySampleRate = new PropertyUint(new ParameterUint("SampleRate"), empty);
+    iPropertySampleRate = new PropertyUint(new ParameterUint("SampleRate"));
     iService->AddProperty(iPropertySampleRate); // passes ownership
-    iPropertyLossless = new PropertyBool(new ParameterBool("Lossless"), empty);
+    iPropertyLossless = new PropertyBool(new ParameterBool("Lossless"));
     iService->AddProperty(iPropertyLossless); // passes ownership
-    iPropertyCodecName = new PropertyString(new ParameterString("CodecName"), empty);
+    iPropertyCodecName = new PropertyString(new ParameterString("CodecName"));
     iService->AddProperty(iPropertyCodecName); // passes ownership
-    iPropertyMetatext = new PropertyString(new ParameterString("Metatext"), empty);
+    iPropertyMetatext = new PropertyString(new ParameterString("Metatext"));
     iService->AddProperty(iPropertyMetatext); // passes ownership
 }
 
-void DvServiceLinnCoUkInfo1Cpp::EnableActionCounters()
+void DvProviderLinnCoUkInfo1Cpp::EnableActionCounters()
 {
     Zapp::Action* action = new Zapp::Action("Counters");
     action->AddOutputParameter(new ParameterRelated("aTrackCount", *iPropertyTrackCount));
     action->AddOutputParameter(new ParameterRelated("aDetailsCount", *iPropertyDetailsCount));
     action->AddOutputParameter(new ParameterRelated("aMetatextCount", *iPropertyMetatextCount));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkInfo1Cpp::DoCounters);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkInfo1Cpp::DoCounters);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkInfo1Cpp::EnableActionTrack()
+void DvProviderLinnCoUkInfo1Cpp::EnableActionTrack()
 {
     Zapp::Action* action = new Zapp::Action("Track");
     action->AddOutputParameter(new ParameterRelated("aUri", *iPropertyUri));
     action->AddOutputParameter(new ParameterRelated("aMetadata", *iPropertyMetadata));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkInfo1Cpp::DoTrack);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkInfo1Cpp::DoTrack);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkInfo1Cpp::EnableActionDetails()
+void DvProviderLinnCoUkInfo1Cpp::EnableActionDetails()
 {
     Zapp::Action* action = new Zapp::Action("Details");
     action->AddOutputParameter(new ParameterRelated("aDuration", *iPropertyDuration));
@@ -192,19 +192,19 @@ void DvServiceLinnCoUkInfo1Cpp::EnableActionDetails()
     action->AddOutputParameter(new ParameterRelated("aSampleRate", *iPropertySampleRate));
     action->AddOutputParameter(new ParameterRelated("aLossless", *iPropertyLossless));
     action->AddOutputParameter(new ParameterRelated("aCodecName", *iPropertyCodecName));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkInfo1Cpp::DoDetails);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkInfo1Cpp::DoDetails);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkInfo1Cpp::EnableActionMetatext()
+void DvProviderLinnCoUkInfo1Cpp::EnableActionMetatext()
 {
     Zapp::Action* action = new Zapp::Action("Metatext");
     action->AddOutputParameter(new ParameterRelated("aMetatext", *iPropertyMetatext));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkInfo1Cpp::DoMetatext);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkInfo1Cpp::DoMetatext);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkInfo1Cpp::DoCounters(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkInfo1Cpp::DoCounters(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -222,7 +222,7 @@ void DvServiceLinnCoUkInfo1Cpp::DoCounters(IDvInvocation& aInvocation, TUint aVe
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkInfo1Cpp::DoTrack(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkInfo1Cpp::DoTrack(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -241,7 +241,7 @@ void DvServiceLinnCoUkInfo1Cpp::DoTrack(IDvInvocation& aInvocation, TUint aVersi
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkInfo1Cpp::DoDetails(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkInfo1Cpp::DoDetails(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -270,7 +270,7 @@ void DvServiceLinnCoUkInfo1Cpp::DoDetails(IDvInvocation& aInvocation, TUint aVer
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkInfo1Cpp::DoMetatext(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkInfo1Cpp::DoMetatext(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -284,22 +284,22 @@ void DvServiceLinnCoUkInfo1Cpp::DoMetatext(IDvInvocation& aInvocation, TUint aVe
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkInfo1Cpp::Counters(uint32_t /*aVersion*/, uint32_t& /*aaTrackCount*/, uint32_t& /*aaDetailsCount*/, uint32_t& /*aaMetatextCount*/)
+void DvProviderLinnCoUkInfo1Cpp::Counters(uint32_t /*aVersion*/, uint32_t& /*aaTrackCount*/, uint32_t& /*aaDetailsCount*/, uint32_t& /*aaMetatextCount*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkInfo1Cpp::Track(uint32_t /*aVersion*/, std::string& /*aaUri*/, std::string& /*aaMetadata*/)
+void DvProviderLinnCoUkInfo1Cpp::Track(uint32_t /*aVersion*/, std::string& /*aaUri*/, std::string& /*aaMetadata*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkInfo1Cpp::Details(uint32_t /*aVersion*/, uint32_t& /*aaDuration*/, uint32_t& /*aaBitRate*/, uint32_t& /*aaBitDepth*/, uint32_t& /*aaSampleRate*/, bool& /*aaLossless*/, std::string& /*aaCodecName*/)
+void DvProviderLinnCoUkInfo1Cpp::Details(uint32_t /*aVersion*/, uint32_t& /*aaDuration*/, uint32_t& /*aaBitRate*/, uint32_t& /*aaBitDepth*/, uint32_t& /*aaSampleRate*/, bool& /*aaLossless*/, std::string& /*aaCodecName*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkInfo1Cpp::Metatext(uint32_t /*aVersion*/, std::string& /*aaMetatext*/)
+void DvProviderLinnCoUkInfo1Cpp::Metatext(uint32_t /*aVersion*/, std::string& /*aaMetatext*/)
 {
     ASSERTS();
 }

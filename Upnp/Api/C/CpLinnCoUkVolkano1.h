@@ -14,6 +14,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpProxyLinnCoUkVolkano1
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of CpProxyLinnCoUkVolkano1 without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -400,6 +406,8 @@ DllExport void CpProxyLinnCoUkVolkano1BeginSoftwareVersion(THandle aHandle, Zapp
  */
 DllExport int32_t CpProxyLinnCoUkVolkano1EndSoftwareVersion(THandle aHandle, ZappHandleAsync aAsync, char** aaSoftwareVersion);
 
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

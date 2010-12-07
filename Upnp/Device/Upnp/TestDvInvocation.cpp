@@ -1,4 +1,5 @@
 #include <TestFramework.h>
+#include <OptionParser.h>
 #include <ZappTypes.h>
 #include <Core/DvDevice.h>
 #include <Core/DvZappOrgTestBasic1.h>
@@ -15,10 +16,10 @@
 using namespace Zapp;
 using namespace Zapp::TestFramework;
 
-class ServiceTestBasic : public DvServiceZappOrgTestBasic1
+class ProviderTestBasic : public DvProviderZappOrgTestBasic1
 {
 public:
-    ServiceTestBasic(DvDevice& aDevice);
+    ProviderTestBasic(DvDevice& aDevice);
 private:
     void Increment(IInvocationResponse& aResponse, TUint aVersion, TUint aValue, IInvocationResponseUint& aResult);
     void Decrement(IInvocationResponse& aResponse, TUint aVersion, TInt aValue, IInvocationResponseInt& aResult);
@@ -34,12 +35,12 @@ public:
     ~DeviceBasic();
 private:
     DvDevice* iDevice;
-    ServiceTestBasic* iTestBasic;
+    ProviderTestBasic* iTestBasic;
 };
 
 
-ServiceTestBasic::ServiceTestBasic(DvDevice& aDevice)
-    : DvServiceZappOrgTestBasic1(aDevice)
+ProviderTestBasic::ProviderTestBasic(DvDevice& aDevice)
+    : DvProviderZappOrgTestBasic1(aDevice)
 {
     // Initialise all properties in case external control points decide to subscribe to this service
     SetPropertyVarUint(0);
@@ -55,28 +56,28 @@ ServiceTestBasic::ServiceTestBasic(DvDevice& aDevice)
     EnableActionEchoBinary();
 }
 
-void ServiceTestBasic::Increment(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aValue, IInvocationResponseUint& aResult)
+void ProviderTestBasic::Increment(IInvocationResponse& aResponse, TUint /*aVersion*/, TUint aValue, IInvocationResponseUint& aResult)
 {
     aResponse.Start();
     aResult.Write(++aValue);
     aResponse.End();
 }
 
-void ServiceTestBasic::Decrement(IInvocationResponse& aResponse, TUint /*aVersion*/, TInt aValue, IInvocationResponseInt& aResult)
+void ProviderTestBasic::Decrement(IInvocationResponse& aResponse, TUint /*aVersion*/, TInt aValue, IInvocationResponseInt& aResult)
 {
     aResponse.Start();
     aResult.Write(--aValue);
     aResponse.End();
 }
 
-void ServiceTestBasic::Toggle(IInvocationResponse& aResponse, TUint /*aVersion*/, TBool aValue, IInvocationResponseBool& aResult)
+void ProviderTestBasic::Toggle(IInvocationResponse& aResponse, TUint /*aVersion*/, TBool aValue, IInvocationResponseBool& aResult)
 {
     aResponse.Start();
     aResult.Write(!aValue);
     aResponse.End();
 }
 
-void ServiceTestBasic::EchoString(IInvocationResponse& aResponse, TUint /*aVersion*/, const Brx& aValue, IInvocationResponseString& aResult)
+void ProviderTestBasic::EchoString(IInvocationResponse& aResponse, TUint /*aVersion*/, const Brx& aValue, IInvocationResponseString& aResult)
 {
     aResponse.Start();
     aResult.Write(aValue);
@@ -84,7 +85,7 @@ void ServiceTestBasic::EchoString(IInvocationResponse& aResponse, TUint /*aVersi
     aResponse.End();
 }
 
-void ServiceTestBasic::EchoBinary(IInvocationResponse& aResponse, TUint /*aVersion*/, const Brx& aValue, IInvocationResponseBinary& aResult)
+void ProviderTestBasic::EchoBinary(IInvocationResponse& aResponse, TUint /*aVersion*/, const Brx& aValue, IInvocationResponseBinary& aResult)
 {
     aResponse.Start();
     aResult.Write(aValue);
@@ -124,7 +125,7 @@ DeviceBasic::DeviceBasic()
     iDevice->SetAttribute("Upnp.ModelUrl", "http://www.linn.co.uk");
     iDevice->SetAttribute("Upnp.SerialNumber", "123456");
     iDevice->SetAttribute("Upnp.Upc", "123456654321");
-    iTestBasic = new ServiceTestBasic(*iDevice);
+    iTestBasic = new ProviderTestBasic(*iDevice);
     iDevice->SetEnabled();
 }
 
@@ -216,8 +217,8 @@ void CpDevices::Test()
     Brn valBin((const TByte*)&bin[0], 256);
     for (i=0; i<kTestIterations; i++) {
         Brh result;
-        proxy->SyncEchoBinary(valStr, result);
-        ASSERT(result == valStr);
+        proxy->SyncEchoBinary(valBin, result);
+        ASSERT(result == valBin);
     }
 
     delete proxy;
@@ -238,8 +239,17 @@ void CpDevices::Removed(CpDevice& /*aDevice*/)
 }
 
 
-void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], InitialisationParams* aInitParams)
+void Zapp::TestFramework::Runner::Main(TInt aArgc, TChar* aArgv[], InitialisationParams* aInitParams)
 {
+    OptionParser parser;
+    OptionBool loopback("-l", "--loopback", "Use the loopback adapter only");
+    parser.AddOption(&loopback);
+    if (!parser.Parse(aArgc, aArgv) || parser.HelpDisplayed()) {
+        return;
+    }
+    if (loopback.IsSet()) {
+        aInitParams->SetUseLoopbackNetworkInterface();
+    }
     aInitParams->SetMsearchTime(1);
     UpnpLibrary::Initialise(aInitParams);
     UpnpLibrary::StartCombined();

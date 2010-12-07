@@ -1,7 +1,8 @@
 #include <NetworkInterfaceList.h>
 #include <ZappTypes.h>
-#include <Os.h>
+#include <OsWrapper.h>
 #include <Thread.h>
+#include <Stack.h>
 
 using namespace Zapp;
 
@@ -9,10 +10,10 @@ using namespace Zapp;
 NetworkInterfaceList::NetworkInterfaceList(TIpAddress aDefaultSubnet)
     : iListLock("MNIL")
     , iListenerLock("MNIO")
-    , iNextListenerId(0)
+    , iNextListenerId(1)
 {
     iDefaultSubnet = aDefaultSubnet;
-    iNetworkInterfaces = Os::NetworkListInterfaces();
+    iNetworkInterfaces = Os::NetworkListInterfaces(Stack::InitParams().UseLoopbackNetworkInterface());
     iSubnets = CreateSubnetList();
     UpdateCurrentInterface();
     Os::NetworkSetInterfaceChangedObserver(&InterfaceListChanged, this);
@@ -167,7 +168,7 @@ void NetworkInterfaceList::UpdateCurrentInterface()
 void NetworkInterfaceList::HandleInterfaceListChanged()
 {
     iListLock.Wait();
-    std::vector<NetworkInterface*>* list = Os::NetworkListInterfaces();
+    std::vector<NetworkInterface*>* list = Os::NetworkListInterfaces(Stack::InitParams().UseLoopbackNetworkInterface());
     TIpAddress oldAddress = (iCurrent==NULL? 0 : iCurrent->Address());
     ClearInterfaces(iNetworkInterfaces);
     iNetworkInterfaces = list;

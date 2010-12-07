@@ -58,6 +58,7 @@ SsdpListenerMulticast::SsdpListenerMulticast(TIpAddress aInterface)
     , iBuffer(iSocket)
     , iReaderRequest(iBuffer)
 {
+    iSocket.SetRecvBufBytes(kRecvBufBytes);
     iReaderRequest.AddHeader(iHeaderHost);
     iReaderRequest.AddHeader(iHeaderCacheControl);
     iReaderRequest.AddHeader(iHeaderLocation);
@@ -87,20 +88,30 @@ void SsdpListenerMulticast::Run()
                     if (method == Ssdp::kMethodNotify) {
                         LOG(kSsdpMulticast, "SSDP Multicast      Notify\n");
                         iLock.Wait();
+                        EraseDisabled(iNotifyHandlers);
+                        VectorNotifyHandler callbacks;
                         TUint count = (TUint)iNotifyHandlers.size();
-                        for (TUint i = 0; i<count; i++) {
-                            Notify(*(iNotifyHandlers[i].iHandler));
+                        for (TUint i=0; i<count; i++) {
+                            callbacks.push_back(iNotifyHandlers[i]);
                         }
                         iLock.Signal();
+                        for (TUint i = 0; i<count; i++) {
+                            Notify(*(callbacks[i]));
+                        }
                     }
                     else if (method == Ssdp::kMethodMsearch) {
                         LOG(kSsdpMulticast, "SSDP Multicast      Msearch\n");
                         iLock.Wait();
+                        EraseDisabled(iMsearchHandlers);
+                        VectorMsearchHandler callbacks;
                         TUint count = (TUint)iMsearchHandlers.size();
-                        for (TUint i = 0; i<count; i++) {
-                            Msearch(*(iMsearchHandlers[i].iHandler));
+                        for (TUint i=0; i<count; i++) {
+                            callbacks.push_back(iMsearchHandlers[i]);
                         }
                         iLock.Signal();
+                        for (TUint i = 0; i<count; i++) {
+                            Msearch(*(callbacks[i]));
+                        }
                     }
                 }
             }
@@ -115,6 +126,14 @@ void SsdpListenerMulticast::Run()
             LOG2(kSsdpMulticast, kError, "SSDP Multicast      ReaderError\n");
             break;
         }
+    }
+}
+
+void SsdpListenerMulticast::Msearch(MsearchHandler& aHandler)
+{
+    AutoMutex a(aHandler.Mutex());
+    if (!aHandler.IsDisabled()) {
+        Msearch(*(aHandler.Handler()));
     }
 }
 
@@ -147,6 +166,14 @@ void SsdpListenerMulticast::Msearch(ISsdpMsearchHandler& aMsearchHandler)
         default:
             break;
         }
+    }
+}
+
+void SsdpListenerMulticast::Notify(NotifyHandler& aHandler)
+{
+    AutoMutex a(aHandler.Mutex());
+    if (!aHandler.IsDisabled()) {
+        Notify(*(aHandler.Handler()));
     }
 }
 
@@ -259,8 +286,10 @@ void SsdpListenerMulticast::Notify(ISsdpNotifyHandler& aNotifyHandler)
 SsdpListenerMulticast::~SsdpListenerMulticast()
 {
     LOG(kSsdpMulticast, "SSDP Multicast      Destructor\n");
-    iNotifyHandlers.clear();
-    iMsearchHandlers.clear();
+    EraseDisabled(iNotifyHandlers);
+    ASSERT(iNotifyHandlers.size() == 0);
+    EraseDisabled(iMsearchHandlers);
+    ASSERT(iMsearchHandlers.size() == 0);
     iReaderRequest.Interrupt();
     Join();
 }
@@ -270,7 +299,7 @@ TInt SsdpListenerMulticast::AddNotifyHandler(ISsdpNotifyHandler* aNotifyHandler)
     ASSERT(aNotifyHandler != NULL);
     iLock.Wait();
     TInt id = iNextHandlerId;
-    NotifyHandler handler(aNotifyHandler, iNextHandlerId);
+    NotifyHandler* handler = new NotifyHandler(aNotifyHandler, iNextHandlerId);
     iNotifyHandlers.push_back(handler);
     iNextHandlerId++;
     iLock.Signal();
@@ -282,7 +311,7 @@ TInt SsdpListenerMulticast::AddMsearchHandler(ISsdpMsearchHandler* aMsearchHandl
     ASSERT(aMsearchHandler != NULL);
     iLock.Wait();
     TInt id = iNextHandlerId;
-    MsearchHandler handler(aMsearchHandler, iNextHandlerId);
+    MsearchHandler* handler = new MsearchHandler(aMsearchHandler, iNextHandlerId);
     iMsearchHandlers.push_back(handler);
     iNextHandlerId++;
     iLock.Signal();
@@ -294,8 +323,12 @@ void SsdpListenerMulticast::RemoveNotifyHandler(TInt aHandlerId)
     iLock.Wait();
     TUint count = (TUint)iNotifyHandlers.size();
     for (TUint i = 0; i<count; i++) {
-        if (iNotifyHandlers[i].iId == aHandlerId) {
-            iNotifyHandlers.erase(iNotifyHandlers.begin() + i);
+        NotifyHandler* nh = iNotifyHandlers[i];
+        if (nh->Id() == aHandlerId) {
+            nh->Lock();
+            nh->Disable();
+            nh->Unlock();
+            break;
         }
     }
     iLock.Signal();
@@ -306,8 +339,11 @@ void SsdpListenerMulticast::RemoveMsearchHandler(TInt aHandlerId)
     iLock.Wait();
     TUint count = (TUint)iMsearchHandlers.size();
     for (TUint i = 0; i<count; i++) {
-        if (iMsearchHandlers[i].iId == aHandlerId) {
-            iMsearchHandlers.erase(iMsearchHandlers.begin() + i);
+        MsearchHandler* mh = iMsearchHandlers[i];
+        if (mh->Id() == aHandlerId) {
+            mh->Lock();
+            mh->Disable();
+            mh->Unlock();
             break;
         }
     }
@@ -319,6 +355,37 @@ TIpAddress SsdpListenerMulticast::Interface() const
     return iInterface;
 }
 
+void SsdpListenerMulticast::EraseDisabled(VectorNotifyHandler& aVector)
+{
+    VectorNotifyHandler::iterator it = aVector.begin();
+    while (it != aVector.end()) {
+        NotifyHandler* handler = reinterpret_cast<NotifyHandler*>(*it);
+        if (handler->IsDisabled()) {
+            delete handler;
+            it = aVector.erase(it);
+        }
+        else {
+            it++;
+        }
+    }
+}
+
+void SsdpListenerMulticast::EraseDisabled(VectorMsearchHandler& aVector)
+{
+    VectorMsearchHandler::iterator it = aVector.begin();
+    while (it != aVector.end()) {
+        MsearchHandler* handler = reinterpret_cast<MsearchHandler*>(*it);
+        if (handler->IsDisabled()) {
+            delete handler;
+            it = aVector.erase(it);
+        }
+        else {
+            it++;
+        }
+    }
+}
+
+
 // SsdpListenerUnicast
 
 // Writes request to SSDP multicast address and listens for unicast responses
@@ -328,14 +395,15 @@ TIpAddress SsdpListenerMulticast::Interface() const
 
 SsdpListenerUnicast::SsdpListenerUnicast(ISsdpNotifyHandler& aNotifyHandler, TIpAddress aInterface)
     : iNotifyHandler(aNotifyHandler)
-    , iSocket(Endpoint(Ssdp::kMulticastPort, Ssdp::kMulticastAddress),
-              Stack::InitParams().MsearchTtl(),
-              aInterface)
-    , iWriteBuffer(iSocket)
+    , iSocket(Endpoint(Ssdp::kMulticastPort, Ssdp::kMulticastAddress), Stack::InitParams().MsearchTtl(), aInterface)
+    , iSocketWriter(iSocket)
+    , iSocketReader(iSocket)
+    , iWriteBuffer(iSocketWriter)
     , iWriter(iWriteBuffer)
-    , iReadBuffer(iSocket)
+    , iReadBuffer(iSocketReader)
     , iReaderResponse(iReadBuffer)
 {
+    iSocket.SetRecvBufBytes(kRecvBufBytes);
     iReaderResponse.AddHeader(iHeaderCacheControl);
     iReaderResponse.AddHeader(iHeaderExt);
     iReaderResponse.AddHeader(iHeaderLocation);
@@ -347,7 +415,7 @@ SsdpListenerUnicast::SsdpListenerUnicast(ISsdpNotifyHandler& aNotifyHandler, TIp
 SsdpListenerUnicast::~SsdpListenerUnicast()
 {
     LOG(kSsdpUnicast, "SSDP Unicast        Destructor\n");
-    iSocket.ReadInterrupt();
+    iSocketReader.ReadInterrupt();
     Join();
 }
 

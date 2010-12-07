@@ -11,6 +11,7 @@ typedef THandle ZappHandleAsync;
 
 /**
  * Callback which runs when an asynchronous operation completes
+ * @ingroup Callbacks
  *
  * @param[in] aPtr   Client-specified data
  * @param[in] aAsync Handle to the operation
@@ -19,11 +20,13 @@ typedef void (*ZappCallbackAsync)(void* aPtr, ZappHandleAsync aAsync);
 
 /**
  * Callback which runs inside ZappAsyncOutput to output the state of an async object
+ * @ingroup Callbacks
  */
 typedef void (*ZappCallbackAsyncOutput)(const char* aKey, const char* aValue);
 
 /**
  * Output the state of an async object
+ * @ingroup Callbacks
  *
  * @param[in] aAsync   Handle (probably returned to ZappCallbackAsync)
  * @param[in] aOutput  Callback to run for each key/value pair of aAsync's state

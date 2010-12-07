@@ -14,14 +14,14 @@ using namespace Zapp;
 class SyncSetPresetPrefixLinnCoUkJukebox1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetPresetPrefixLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aService);
+    SyncSetPresetPrefixLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkJukebox1Cpp& iService;
 };
 
-SyncSetPresetPrefixLinnCoUkJukebox1Cpp::SyncSetPresetPrefixLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aService)
-    : iService(aService)
+SyncSetPresetPrefixLinnCoUkJukebox1Cpp::SyncSetPresetPrefixLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -34,15 +34,15 @@ void SyncSetPresetPrefixLinnCoUkJukebox1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncPresetPrefixLinnCoUkJukebox1Cpp : public SyncProxyAction
 {
 public:
-    SyncPresetPrefixLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aService, std::string& aaUri);
+    SyncPresetPrefixLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aProxy, std::string& aaUri);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkJukebox1Cpp& iService;
     std::string& iaUri;
 };
 
-SyncPresetPrefixLinnCoUkJukebox1Cpp::SyncPresetPrefixLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aService, std::string& aaUri)
-    : iService(aService)
+SyncPresetPrefixLinnCoUkJukebox1Cpp::SyncPresetPrefixLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aProxy, std::string& aaUri)
+    : iService(aProxy)
     , iaUri(aaUri)
 {
 }
@@ -56,14 +56,14 @@ void SyncPresetPrefixLinnCoUkJukebox1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetAlbumArtFileNameLinnCoUkJukebox1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetAlbumArtFileNameLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aService);
+    SyncSetAlbumArtFileNameLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkJukebox1Cpp& iService;
 };
 
-SyncSetAlbumArtFileNameLinnCoUkJukebox1Cpp::SyncSetAlbumArtFileNameLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aService)
-    : iService(aService)
+SyncSetAlbumArtFileNameLinnCoUkJukebox1Cpp::SyncSetAlbumArtFileNameLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -76,15 +76,15 @@ void SyncSetAlbumArtFileNameLinnCoUkJukebox1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncAlbumArtFileNameLinnCoUkJukebox1Cpp : public SyncProxyAction
 {
 public:
-    SyncAlbumArtFileNameLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aService, std::string& aaName);
+    SyncAlbumArtFileNameLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aProxy, std::string& aaName);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkJukebox1Cpp& iService;
     std::string& iaName;
 };
 
-SyncAlbumArtFileNameLinnCoUkJukebox1Cpp::SyncAlbumArtFileNameLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aService, std::string& aaName)
-    : iService(aService)
+SyncAlbumArtFileNameLinnCoUkJukebox1Cpp::SyncAlbumArtFileNameLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aProxy, std::string& aaName)
+    : iService(aProxy)
     , iaName(aaName)
 {
 }
@@ -98,14 +98,14 @@ void SyncAlbumArtFileNameLinnCoUkJukebox1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncSetCurrentPresetLinnCoUkJukebox1Cpp : public SyncProxyAction
 {
 public:
-    SyncSetCurrentPresetLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aService);
+    SyncSetCurrentPresetLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkJukebox1Cpp& iService;
 };
 
-SyncSetCurrentPresetLinnCoUkJukebox1Cpp::SyncSetCurrentPresetLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aService)
-    : iService(aService)
+SyncSetCurrentPresetLinnCoUkJukebox1Cpp::SyncSetCurrentPresetLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -118,15 +118,15 @@ void SyncSetCurrentPresetLinnCoUkJukebox1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncCurrentPresetLinnCoUkJukebox1Cpp : public SyncProxyAction
 {
 public:
-    SyncCurrentPresetLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aService, uint32_t& aaPreset);
+    SyncCurrentPresetLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aProxy, uint32_t& aaPreset);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkJukebox1Cpp& iService;
     uint32_t& iaPreset;
 };
 
-SyncCurrentPresetLinnCoUkJukebox1Cpp::SyncCurrentPresetLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aService, uint32_t& aaPreset)
-    : iService(aService)
+SyncCurrentPresetLinnCoUkJukebox1Cpp::SyncCurrentPresetLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aProxy, uint32_t& aaPreset)
+    : iService(aProxy)
     , iaPreset(aaPreset)
 {
 }
@@ -140,15 +140,15 @@ void SyncCurrentPresetLinnCoUkJukebox1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncPresetMetaDataLinnCoUkJukebox1Cpp : public SyncProxyAction
 {
 public:
-    SyncPresetMetaDataLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aService, std::string& aaMetaData);
+    SyncPresetMetaDataLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aProxy, std::string& aaMetaData);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkJukebox1Cpp& iService;
     std::string& iaMetaData;
 };
 
-SyncPresetMetaDataLinnCoUkJukebox1Cpp::SyncPresetMetaDataLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aService, std::string& aaMetaData)
-    : iService(aService)
+SyncPresetMetaDataLinnCoUkJukebox1Cpp::SyncPresetMetaDataLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aProxy, std::string& aaMetaData)
+    : iService(aProxy)
     , iaMetaData(aaMetaData)
 {
 }
@@ -162,15 +162,15 @@ void SyncPresetMetaDataLinnCoUkJukebox1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncLoadManifestLinnCoUkJukebox1Cpp : public SyncProxyAction
 {
 public:
-    SyncLoadManifestLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aService, uint32_t& aaTotalPresets);
+    SyncLoadManifestLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aProxy, uint32_t& aaTotalPresets);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkJukebox1Cpp& iService;
     uint32_t& iaTotalPresets;
 };
 
-SyncLoadManifestLinnCoUkJukebox1Cpp::SyncLoadManifestLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aService, uint32_t& aaTotalPresets)
-    : iService(aService)
+SyncLoadManifestLinnCoUkJukebox1Cpp::SyncLoadManifestLinnCoUkJukebox1Cpp(CpProxyLinnCoUkJukebox1Cpp& aProxy, uint32_t& aaTotalPresets)
+    : iService(aProxy)
     , iaTotalPresets(aaTotalPresets)
 {
 }
@@ -223,13 +223,13 @@ CpProxyLinnCoUkJukebox1Cpp::CpProxyLinnCoUkJukebox1Cpp(CpDeviceCpp& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyLinnCoUkJukebox1Cpp::CurrentPresetPropertyChanged);
     iCurrentPreset = new PropertyUint("CurrentPreset", functor);
-    iService->AddProperty(iCurrentPreset);
+    AddProperty(iCurrentPreset);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkJukebox1Cpp::PresetPrefixPropertyChanged);
     iPresetPrefix = new PropertyString("PresetPrefix", functor);
-    iService->AddProperty(iPresetPrefix);
+    AddProperty(iPresetPrefix);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkJukebox1Cpp::AlbumArtFileNamePropertyChanged);
     iAlbumArtFileName = new PropertyString("AlbumArtFileName", functor);
-    iService->AddProperty(iAlbumArtFileName);
+    AddProperty(iAlbumArtFileName);
 }
 
 CpProxyLinnCoUkJukebox1Cpp::~CpProxyLinnCoUkJukebox1Cpp()
@@ -261,7 +261,7 @@ void CpProxyLinnCoUkJukebox1Cpp::BeginSetPresetPrefix(const std::string& aaUri, 
         Brn buf((const TByte*)aaUri.c_str(), (TUint)aaUri.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkJukebox1Cpp::EndSetPresetPrefix(IAsync& aAsync)
@@ -288,7 +288,7 @@ void CpProxyLinnCoUkJukebox1Cpp::BeginPresetPrefix(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionPresetPrefix->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkJukebox1Cpp::EndPresetPrefix(IAsync& aAsync, std::string& aaUri)
@@ -323,7 +323,7 @@ void CpProxyLinnCoUkJukebox1Cpp::BeginSetAlbumArtFileName(const std::string& aaN
         Brn buf((const TByte*)aaName.c_str(), (TUint)aaName.length());
         invocation->AddInput(new ArgumentString(*inParams[inIndex++], buf));
     }
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkJukebox1Cpp::EndSetAlbumArtFileName(IAsync& aAsync)
@@ -350,7 +350,7 @@ void CpProxyLinnCoUkJukebox1Cpp::BeginAlbumArtFileName(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionAlbumArtFileName->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkJukebox1Cpp::EndAlbumArtFileName(IAsync& aAsync, std::string& aaName)
@@ -382,7 +382,7 @@ void CpProxyLinnCoUkJukebox1Cpp::BeginSetCurrentPreset(uint32_t aaPreset, Functo
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetCurrentPreset->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaPreset));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkJukebox1Cpp::EndSetCurrentPreset(IAsync& aAsync)
@@ -409,7 +409,7 @@ void CpProxyLinnCoUkJukebox1Cpp::BeginCurrentPreset(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionCurrentPreset->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkJukebox1Cpp::EndCurrentPreset(IAsync& aAsync, uint32_t& aaPreset)
@@ -441,7 +441,7 @@ void CpProxyLinnCoUkJukebox1Cpp::BeginPresetMetaData(uint32_t aaPreset, FunctorA
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionPresetMetaData->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkJukebox1Cpp::EndPresetMetaData(IAsync& aAsync, std::string& aaMetaData)
@@ -473,7 +473,7 @@ void CpProxyLinnCoUkJukebox1Cpp::BeginLoadManifest(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionLoadManifest->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkJukebox1Cpp::EndLoadManifest(IAsync& aAsync, uint32_t& aaTotalPresets)
@@ -512,22 +512,28 @@ void CpProxyLinnCoUkJukebox1Cpp::SetPropertyAlbumArtFileNameChanged(Functor& aFu
 
 void CpProxyLinnCoUkJukebox1Cpp::PropertyCurrentPreset(uint32_t& aCurrentPreset) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aCurrentPreset = iCurrentPreset->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkJukebox1Cpp::PropertyPresetPrefix(std::string& aPresetPrefix) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iPresetPrefix->Value();
     aPresetPrefix.assign((const char*)val.Ptr(), val.Bytes());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkJukebox1Cpp::PropertyAlbumArtFileName(std::string& aAlbumArtFileName) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     const Brx& val = iAlbumArtFileName->Value();
     aAlbumArtFileName.assign((const char*)val.Ptr(), val.Bytes());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkJukebox1Cpp::CurrentPresetPropertyChanged()

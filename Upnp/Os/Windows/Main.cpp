@@ -25,6 +25,10 @@ void Logger::Log(const char* aMsg)
 
 int __cdecl main(int argc, char* argv[])
 {
+    char* noErrDlgs = getenv("NO_ERROR_DIALOGS");
+    if (noErrDlgs != NULL && strcmp(noErrDlgs, "1") == 0) {
+        _set_abort_behavior(0, _WRITE_ABORT_MSG | _CALL_REPORTFAULT);
+    }
     InitialisationParams* initParams = InitialisationParams::Create();
     Logger logger;
     FunctorMsg functor = MakeFunctorMsg(logger, &Logger::Log);

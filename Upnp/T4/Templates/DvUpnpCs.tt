@@ -1,7 +1,7 @@
-<#@ assembly name="Build/Tools/UpnpServiceXml.dll" #>
+<#@ assembly name="UpnpServiceXml.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="Linn.Xml.UpnpServiceXml" #>
+<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
     string domain = TemplateArgument("domain");
@@ -11,12 +11,12 @@
 
     try
     {
-	   version = Convert.ToUInt32(TemplateArgument("version"));
-	}
-	catch (FormatException)
-	{
+        version = Convert.ToUInt32(TemplateArgument("version"));
+    }
+    catch (FormatException)
+    {
         throw (new ArgumentException("Invalid version number specified"));
-	}
+    }
     catch (OverflowException)
     {
         throw (new ArgumentException("Invalid version number specified"));
@@ -42,21 +42,43 @@
     }
     fileName += type;
     fileName += version;
-    string className = "DvService" + fileName;
+    string className = "DvProvider" + fileName;
     string dllName = "Dv" + fileName;
 
     Initialise();
 
-	Document u = new Document(TemplateArgument("xml"));
+    Document u = new Document(TemplateArgument("xml"));
 #>
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using Zapp;
 
-namespace Zapp
+namespace Zapp.Device.Providers
 {
-    public class <#=className#> : IDisposable
+    public interface I<#=className#> : IDisposable
+    {
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+        /// <summary>
+        /// Set the value of the <#=s.name#> property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetProperty<#=s.name#>(<#=argtype[s.type]#> aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the <#=s.name#> property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetProperty<#=s.name#>(out <#=argtype[s.type]#> aValue);
+<#  } #>        
+    }
+    /// <summary>
+    /// Provider for the <#=domain#>:<#=type#>:<#=version#> UPnP service
+    /// </summary>
+    public class <#=className#> : DvProvider, IDisposable, I<#=className#>
     {
         [DllImport("<#=dllName#>")]
         static extern <#=Handle#> <#=className#>Create(<#=Handle#> aDeviceHandle);
@@ -67,14 +89,14 @@ namespace Zapp
 <#      if (s.type == "bin.base64") #>
 <#      { #>
         [DllImport("<#=dllName#>")]
-        static extern unsafe int <#=className#>SetProperty<#=s.name#>(<#=Handle#> aHandle, <#=inargctype[s.type]#> aValue, int aValueLen);
+        static extern unsafe int <#=className#>SetProperty<#=s.name#>(<#=Handle#> aHandle, <#=inargctype[s.type]#> aValue, int aValueLen, uint* aChanged);
         [DllImport("<#=dllName#>")]
         static extern unsafe void <#=className#>GetProperty<#=s.name#>(<#=Handle#> aHandle, <#=outargctype[s.type]#> aValue, int* aValueLen);
 <#      } #>
 <#      else #>
 <#      { #>
         [DllImport("<#=dllName#>")]
-        static extern unsafe int <#=className#>SetProperty<#=s.name#>(<#=Handle#> aHandle, <#=inargctype[s.type]#> aValue);
+        static extern unsafe int <#=className#>SetProperty<#=s.name#>(<#=Handle#> aHandle, <#=inargctype[s.type]#> aValue, uint* aChanged);
         [DllImport("<#=dllName#>")]
         static extern unsafe void <#=className#>GetProperty<#=s.name#>(<#=Handle#> aHandle, <#=outargctype[s.type]#> aValue);
 <#      } #>
@@ -92,14 +114,17 @@ namespace Zapp
         private unsafe delegate int Callback<#=a.name#>(IntPtr aPtr, uint aVersion<#=ArgsCFull(a)#>);
 <#  } #>
 
-        private <#=Handle#> iHandle;
         private GCHandle iGch;
 <#  foreach (Method a in u.methods) #>
 <#  { #>
         private Callback<#=a.name#> iCallback<#=a.name#>;
 <#  } #>
 
-        public <#=className#>(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected <#=className#>(DvDevice aDevice)
         {
             iHandle = <#=className#>Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
@@ -107,17 +132,23 @@ namespace Zapp
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
 
-        public unsafe void SetProperty<#=s.name#>(<#=argtype[s.type]#> aValue)
+        /// <summary>
+        /// Set the value of the <#=s.name#> property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetProperty<#=s.name#>(<#=argtype[s.type]#> aValue)
         {
+            uint changed;
 <#      if (s.type == "boolean") #>
 <#      { #>
             int value = (aValue ? 1 : 0);
-            if (0 != <#=className#>SetProperty<#=s.name#>(iHandle, value))
+            if (0 != <#=className#>SetProperty<#=s.name#>(iHandle, value, &changed))
 <#      } #>
 <#      else if (s.type == "string" || s.type == "uri") #>
 <#      { #>
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = <#=className#>SetProperty<#=s.name#>(iHandle, value);
+            int err = <#=className#>SetProperty<#=s.name#>(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
 <#      } #>
@@ -125,19 +156,24 @@ namespace Zapp
 <#      { #>
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
             int valueLen = aValue.Length;
-            int err = <#=className#>SetProperty<#=s.name#>(iHandle, value, valueLen);
+            int err = <#=className#>SetProperty<#=s.name#>(iHandle, value, valueLen, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
 <#      } #>
 <#      else #>
 <#      { #>
-            if (0 != <#=className#>SetProperty<#=s.name#>(iHandle, aValue))
+            if (0 != <#=className#>SetProperty<#=s.name#>(iHandle, aValue, &changed))
 <#      } #>
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the <#=s.name#> property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetProperty<#=s.name#>(out <#=argtype[s.type]#> aValue)
         {
 <#      if (s.type == "boolean") #>
@@ -164,7 +200,7 @@ namespace Zapp
 <#      else #>
 <#      { #>
             fixed (<#=argtype[s.type]#>* value = &aValue)
-			{
+            {
                 <#=className#>GetProperty<#=s.name#>(iHandle, value);
             }
 <#      } #>
@@ -173,6 +209,11 @@ namespace Zapp
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
+        /// <summary>
+        /// Signal that the action <#=a.name#> is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// Do<#=a.name#> must be overridden if this is called.</remarks>
         protected unsafe void EnableAction<#=a.name#>()
         {
             iCallback<#=a.name#> = new Callback<#=a.name#>(Do<#=a.name#>);
@@ -183,6 +224,22 @@ namespace Zapp
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
+        /// <summary>
+        /// <#=a.name#> action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// <#=a.name#> action for the owning device.
+        ///
+        /// Must be implemented iff EnableAction<#=a.name#> was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+        /// <param name="a<#=i.name#>"></param>
+<#      } #>
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+        /// <param name="a<#=o.name#>"></param>
+<#      } #>
         protected virtual void <#=a.name#>(uint aVersion<#=ArgsFull(a)#>)
         {
             throw (new ActionDisabledError());
@@ -239,7 +296,9 @@ namespace Zapp
         }
 <#  } #>
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();
@@ -330,10 +389,10 @@ string InArgsCFull(Method a)
         result += inargctype[i.variable.type];
         result += " ";
         result += "a" + i.name;
-		if (i.variable.type == "bin.base64")
-		{
-			result += ", int a" + i.name + "Len";
-		}
+        if (i.variable.type == "bin.base64")
+        {
+            result += ", int a" + i.name + "Len";
+        }
     }
     
     return result;
@@ -353,10 +412,10 @@ string OutArgsCFull(Method a)
         result += outargctype[o.variable.type];
         result += " ";
         result += "a" + o.name;
-		if (o.variable.type == "bin.base64")
-		{
-			result += ", int* a" + o.name + "Len";
-		}
+        if (o.variable.type == "bin.base64")
+        {
+            result += ", int* a" + o.name + "Len";
+        }
     }
     
     return result;
@@ -364,21 +423,21 @@ string OutArgsCFull(Method a)
 
 string ArgsCFull(Method a)
 {
-	string result = InArgsCFull(a);
-	string outArgs = OutArgsCFull(a);
-	if (outArgs.Length > 0)
-	{
-		if (result.Length > 0)
-		{
-			result += ", ";
-		}
-		result += outArgs;
-	}
-	if (result.Length > 0)
-	{
-		result = ", " + result;
-	}
-	return result;
+    string result = InArgsCFull(a);
+    string outArgs = OutArgsCFull(a);
+    if (outArgs.Length > 0)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += outArgs;
+    }
+    if (result.Length > 0)
+    {
+        result = ", " + result;
+    }
+    return result;
 }
 
 string InArgsFull(Method a)
@@ -422,31 +481,31 @@ string OutArgsFull(Method a)
 
 string ArgsFull(Method a)
 {
-	string result = InArgsFull(a);
-	string outArgs = OutArgsFull(a);
-	if (outArgs.Length > 0)
-	{
-		if (result.Length > 0)
-		{
-			result += ", ";
-		}
-		result += outArgs;
-	}
-	if (result.Length > 0)
-	{
-		result = ", " + result;
-	}
-	return result;
+    string result = InArgsFull(a);
+    string outArgs = OutArgsFull(a);
+    if (outArgs.Length > 0)
+    {
+        if (result.Length > 0)
+        {
+            result += ", ";
+        }
+        result += outArgs;
+    }
+    if (result.Length > 0)
+    {
+        result = ", " + result;
+    }
+    return result;
 }
 
 string ArgNameLocal(string aName)
 {
-	string name = aName.Substring(0, 1).ToLower();
-	if (aName.Length > 1)
-	{
-		name += aName.Substring(1, aName.Length-1);
-	}
-	return name;
+    string name = aName.Substring(0, 1).ToLower();
+    if (aName.Length > 1)
+    {
+        name += aName.Substring(1, aName.Length-1);
+    }
+    return name;
 }
 
 string ArgNames(Method a)
@@ -458,14 +517,14 @@ string ArgNames(Method a)
         {
             result += ", ";
         }
-		if (i.variable.type == "boolean" || i.variable.type == "string" || i.variable.type == "bin.base64" || i.variable.type == "uri")
-		{
-			result += ArgNameLocal(i.name);
-		}
-		else
-		{
-	        result += "a" + i.name;
-		}
+        if (i.variable.type == "boolean" || i.variable.type == "string" || i.variable.type == "bin.base64" || i.variable.type == "uri")
+        {
+            result += ArgNameLocal(i.name);
+        }
+        else
+        {
+            result += "a" + i.name;
+        }
     }
     foreach (Argument o in a.outargs)
     {
@@ -473,45 +532,45 @@ string ArgNames(Method a)
         {
             result += ", ";
         }
-		result += "out " + ArgNameLocal(o.name);
+        result += "out " + ArgNameLocal(o.name);
     }
-	if (result.Length > 0)
-	{
-		result = ", " + result;
-	}
-	return result;
+    if (result.Length > 0)
+    {
+        result = ", " + result;
+    }
+    return result;
 }
 
 string TemplateArgument(string aName)
 {
-	string[] args =  System.Environment.GetCommandLineArgs();
-		
-	bool isarg = false;
-	
-	foreach (string arg in args)
-	{
-		if (isarg)
-		{
-			string[] parts = arg.Split(new char[] {':'});
-			
-			if (parts.Length == 2)
-			{
-				if (parts[0] == aName)
-				{
-					return (parts[1]);
-				}
-			}
-			
-			isarg = false;
-			continue;
-		}
-		
-		if (arg == "-a")
-		{
-			isarg = true;
-		}
-	}
-	
-	throw (new ArgumentException(aName + " not specified"));
+    string[] args =  System.Environment.GetCommandLineArgs();
+        
+    bool isarg = false;
+    
+    foreach (string arg in args)
+    {
+        if (isarg)
+        {
+            string[] parts = arg.Split(new char[] {':'});
+            
+            if (parts.Length == 2)
+            {
+                if (parts[0] == aName)
+                {
+                    return (parts[1]);
+                }
+            }
+            
+            isarg = false;
+            continue;
+        }
+        
+        if (arg == "-a")
+        {
+            isarg = true;
+        }
+    }
+    
+    throw (new ArgumentException(aName + " not specified"));
 }
 #>

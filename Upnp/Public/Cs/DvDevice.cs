@@ -2,20 +2,49 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Zapp
+namespace Zapp.Device
 {
-    public abstract class IResourceWriter
+    /// <summary>
+    /// Interface passed to implementors of DvDevice allowing them to serve UI files to Control Points
+    /// </summary>
+    public interface IResourceWriter
     {
-        public abstract void WriteResourceBegin(int aTotalBytes, string aMimeType);
-        public abstract void WriteResource(byte[] aData, int aBytes);
-        public abstract void WriteResourceEnd();
+        /// <summary>
+        /// Must be called before writing any file data
+        /// </summary>
+        /// <param name="aTotalBytes">Size in bytes of the file.  Can be 0 if size is unknown.</param>
+        /// <param name="aMimeType">MIME type of the file.  May be NULL if this is unknown.</param>
+        void WriteResourceBegin(int aTotalBytes, string aMimeType);
+        /// <summary>
+        /// Called to write a block of file data
+        /// </summary>
+        /// <remarks>Will be called 0..n times after WriteResourceBegin and before WriteResourceEnd</remarks>
+        /// <param name="aData">File data to write</param>
+        /// <param name="aBytes">Size in bytes of aData</param>
+        void WriteResource(byte[] aData, int aBytes);
+        /// <summary>
+        /// Called when serving of a file is complete
+        /// </summary>
+        /// <remarks>Must only be called after a call to WriteResourceBegin.
+        /// 
+        /// An error writing the file can be inferred if WriteResource has not been called or
+        /// if aTotalBytes was non-zero in the WriteResourceBegin callback and the sum of aBytes
+        /// values in the WriteResource callbacks does not match aTotalBytes.</remarks>
+        void WriteResourceEnd();
     }
 
-    public abstract class IResourceManager
+    /// <summary>
+    /// Interface used by devices to publish data (typically files)
+    /// </summary>
+    public interface IResourceManager
     {
-        public abstract void WriteResource(string aUriTail, uint aIpAddress, IResourceWriter aWriter);
+        void WriteResource(string aUriTail, uint aIpAddress, IResourceWriter aWriter);
     }
 
+    /// <summary>
+    /// Helper class for writing resources (files) to native code
+    /// </summary>
+    /// @internal
     class ResourceWriter : IResourceWriter
     {
         private IntPtr iWriterData;
@@ -23,7 +52,7 @@ namespace Zapp
         private DvDevice.CallbackWriteResource iWriteResource;
         private DvDevice.CallbackWriteResourceEnd iWriteEnd;
 
-        public ResourceWriter(IResourceManager aManager, string aUriTail, uint aInterface, IntPtr aWriterData,
+        public ResourceWriter(IntPtr aWriterData,
                               DvDevice.CallbackWriteResourceBegin aWriteBegin,
                               DvDevice.CallbackWriteResource aWriteResource,
                               DvDevice.CallbackWriteResourceEnd aWriteEnd)
@@ -32,22 +61,26 @@ namespace Zapp
             iWriteBegin = aWriteBegin;
             iWriteResource = aWriteResource;
             iWriteEnd = aWriteEnd;
-            aManager.WriteResource(aUriTail, aInterface, this);
         }
 
-        public unsafe override void WriteResourceBegin(int aTotalBytes, string aMimeType)
+        public void Write(IResourceManager aManager, string aUriTail, uint aInterface)
+        {
+            aManager.WriteResource(aUriTail, aInterface, this);
+        }                              
+        
+        public unsafe void WriteResourceBegin(int aTotalBytes, string aMimeType)
         {
             char* mimeType = (char*)Marshal.StringToHGlobalAnsi(aMimeType).ToPointer();
             iWriteBegin(iWriterData, aTotalBytes, mimeType);
             Marshal.FreeHGlobal((IntPtr)mimeType);
         }
 
-        public override void WriteResource(byte[] aData, int aBytes)
+        public void WriteResource(byte[] aData, int aBytes)
         {
             iWriteResource(iWriterData, aData, aBytes);
         }
 
-        public override void WriteResourceEnd()
+        public void WriteResourceEnd()
         {
             iWriteEnd(iWriterData);
         }
@@ -92,6 +125,11 @@ namespace Zapp
         private GCHandle iGch;
         private IResourceManager iResourceManager;
 
+        /// <summary>
+        /// Constructor.  Creates a device capable of operating on any of the protocols the device
+        /// stack supports but with no services or attributes as yet
+        /// </summary>
+        /// <param name="aUdn">Universally unique identifier.  The caller is responsible for calculating/assigning this</param>
         public unsafe DvDevice(string aUdn)
         {
             char* udn = (char*)Marshal.StringToHGlobalAnsi(aUdn).ToPointer();
@@ -99,6 +137,12 @@ namespace Zapp
             Marshal.FreeHGlobal((IntPtr)udn);
         }
 
+        /// <summary>
+        /// Constructor.  Creates a device capable of operating on any of the protocols the device
+        /// stack supports but with no services or attributes as yet
+        /// </summary>
+        /// <param name="aUdn">Universally unique identifier.  The caller is responsible for calculating/assigning this</param>
+        /// <param name="aResourceManager">Allows the owner of a device to serve UI files</param>
         public unsafe DvDevice(string aUdn, IResourceManager aResourceManager)
         {
             iResourceManager = aResourceManager;
@@ -117,9 +161,14 @@ namespace Zapp
             GCHandle gch = GCHandle.FromIntPtr(aUserData);
             DvDevice self = (DvDevice)gch.Target;
             string uriTail = Marshal.PtrToStringAnsi((IntPtr)aUriTail);
-            ResourceWriter writer = new ResourceWriter(self.iResourceManager, uriTail, aInterface, aWriterData, aWriteBegin, aWriteResource, aWriteEnd);
+            ResourceWriter writer = new ResourceWriter(aWriterData, aWriteBegin, aWriteResource, aWriteEnd);
+            writer.Write(self.iResourceManager, uriTail, aInterface);
         }
 
+        /// <summary>
+        /// Query the (client-specified) unique device name
+        /// </summary>
+        /// <returns>The name passed to the c'tor</returns>
         public unsafe String Udn()
         {
             IntPtr ip = (IntPtr)DvDeviceUdn(iHandle);
@@ -127,6 +176,10 @@ namespace Zapp
             return udn;
         }
         
+        /// <summary>
+        /// Query whether a device is enabled
+        /// </summary>
+        /// <returns>true if the device is enabled; false otherwise</returns>
         public bool Enabled()
         {
             int enabled = DvDeviceEnabled(iHandle);
@@ -137,11 +190,28 @@ namespace Zapp
             return false;
         }
 
+        /// <summary>
+        /// Set the device ready for external use
+        /// </summary>
+        /// <remarks>When this returns, the device will be available for use using any of the protocols
+        /// the device stack supports.  Services must not be added (DvProvider-derived classes
+        /// created using this device) and attributes must not be set while a device is enabled.
+        /// If these need to change in future, the device must first be disabled.</remarks>
         public void SetEnabled()
         {
             DvDeviceSetEnabled(iHandle);
         }
 
+        /// <summary>
+        /// Disable the device, withdrawing its availability for external use
+        /// </summary>
+        /// <remarks>Services can be added and attributes can be set once a device is disabled.  The device
+        /// will not be available for use again until SetEnabled() is called again.
+        /// 
+        /// This call is asynchronous so returns before the device is fully disabled.  Wait for the
+        /// aCompleted callback before adding services or setting attributes.</remarks>
+        /// <param name="aCompleted">Callback which runs when the device is fully disabled.
+        /// Until this runs, the device should be considered to still be enabled.</param>
         public void SetDisabled(Callback aCompleted)
         {
             GCHandle gch = GCHandle.Alloc(aCompleted);
@@ -157,6 +227,12 @@ namespace Zapp
             cb();
         }
         
+        /// <summary>
+        /// Query the value of an atrribute
+        /// </summary>
+        /// <param name="aKey">string of the form protocol_name.protocol_specific_key.
+        /// Commonly used keys are published ... (!!!! where?)</param>
+        /// <param name="aValue">string containing the attribute or null if the attribute has not been set.</param>
         public unsafe void GetAttribute(string aKey, out string aValue)
         {
             char* key = (char*)Marshal.StringToHGlobalAnsi(aKey).ToPointer();
@@ -167,6 +243,11 @@ namespace Zapp
             ZappFree(value);
         }
         
+        /// <summary>
+        /// Set the value of an attribute
+        /// </summary>
+        /// <param name="aKey">string of the form protocol_name.protocol_specific_key</param>
+        /// <param name="aValue">attribute will be set to a copy of this string</param>
         public unsafe void SetAttribute(string aKey, string aValue)
         {
             char* key = (char*)Marshal.StringToHGlobalAnsi(aKey).ToPointer();
@@ -176,6 +257,12 @@ namespace Zapp
             Marshal.FreeHGlobal((IntPtr)value);
         }
 
+        /// <summary>
+        /// Add a block of xml which will be returned as part of the device description
+        /// </summary>
+        /// <remarks>Use is limited to UPnP for now.  Xml is returned with device xml inside the <device>
+        /// tag (at the same level as most attributes)</remarks>
+        /// <param name="aXml">One or more tag+value blocks</param>
         public unsafe void SetXmlExtension(string aXml)
         {
             char* xml = (char*)Marshal.StringToHGlobalAnsi(aXml).ToPointer();
@@ -183,11 +270,18 @@ namespace Zapp
             Marshal.FreeHGlobal((IntPtr)xml);
         }
 
+        /// <summary>
+        /// Get the handle to the underlying native device
+        /// </summary>
+        /// <returns>Handle to the underlying native device</returns>
         public IntPtr Handle()
         {
             return iHandle;
         }
-        
+
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();

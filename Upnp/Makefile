@@ -3,7 +3,7 @@
 
 # Macros used by Common.mak
 ar = ${CROSS_COMPILE}ar rc $(objdir)
-cflags = -fexceptions -Wall -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -g -O0 -Wno-psabi -fvisibility=hidden -DDllImport="__attribute__ ((visibility(\"default\")))" -DDllExport="__attribute__ ((visibility(\"default\")))" -DDllExportClass="__attribute__ ((visibility(\"default\")))"
+cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LITTLE_ENDIAN -DDEFINE_TRACE -g -O0 -Wno-psabi -fvisibility=hidden -DDllImport="__attribute__ ((visibility(\"default\")))" -DDllExport="__attribute__ ((visibility(\"default\")))" -DDllExportClass="__attribute__ ((visibility(\"default\")))"
 objdir = Build/Obj/Posix/
 inc_build = Build/Include
 includes = -IBuild/Include/ -IBuild/Include/Cpp/
@@ -75,6 +75,7 @@ copy_build_includes:
 	cp -u Arch/*.h $(inc_build)
 	cp -u Arch/I386/ArchSpecific.h $(inc_build)
 	cp -u ControlPoint/*.h $(inc_build)
+	cp -u ControlPoint/Dv/*.h $(inc_build)
 	cp -u ControlPoint/Upnp/*.h $(inc_build)
 	cp -u Device/*.h $(inc_build)
 	cp -u Device/Upnp/*.h $(inc_build)
@@ -83,8 +84,8 @@ copy_build_includes:
 	cp -u Ssdp/*.h $(inc_build)
 	cp -u Os/*.h $(inc_build)
 	cp -u Os/*.inl $(inc_build)
-	cp -u Os/C/Os.h $(inc_build)/C
 	cp -u Public/C/*.h $(inc_build)/C
+	cp -u Public/Cpp/Std/*.h $(inc_build)/Cpp/Std
 	cp -u Thread/Thread.h $(inc_build)
 	cp -u Timer/Timer.h $(inc_build)
 	cp -u Utils/*.h $(inc_build)
@@ -116,3 +117,16 @@ uninstall-libs :
 uninstall-includes :
 	rm -rf $(installincludedir)
 
+docs:
+	rm -rf Build/Docs
+	mkdir -p Build/Docs
+	mkdir -p Build/Docs/C
+	doxygen DoxyfileC
+	mkdir -p Build/Docs/CppCore
+	doxygen DoxyfileCppCore
+	mkdir -p Build/Docs/CppStd
+	doxygen DoxyfileCppStd
+	mkdir -p Build/Docs/Cs
+	doxygen DoxyfileCs
+	mkdir -p Build/Docs/Js
+	perl ./JsDoc/jsdoc.pl -d Build/Docs/Js ControlPoint/Services/Js

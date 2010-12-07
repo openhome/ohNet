@@ -20,6 +20,9 @@ namespace Zapp {
 
 /**
  * List of all UPnP devices on the current subnet
+ *
+ * @see CpDeviceList
+ * @ingroup ControlPoint
  */
 class DllExportClass CpDeviceListUpnpAll : public CpDeviceList
 {
@@ -29,6 +32,7 @@ public:
 
 /**
  * List of all root UPnP devices on the current subnet
+ * @ingroup ControlPoint
  */
 class DllExportClass CpDeviceListUpnpRoot : public CpDeviceList
 {
@@ -38,6 +42,7 @@ public:
 
 /**
  * List of all UPnP devices with a given uuid (udn) on the current subnet
+ * @ingroup ControlPoint
  */
 class DllExportClass CpDeviceListUpnpUuid : public CpDeviceList
 {
@@ -47,6 +52,7 @@ public:
 
 /**
  * List of all UPnP devices of a given device type on the current subnet
+ * @ingroup ControlPoint
  */
 class DllExportClass CpDeviceListUpnpDeviceType : public CpDeviceList
 {
@@ -57,6 +63,7 @@ public:
 
 /**
  * List of all UPnP devices of a given service type on the current subnet
+ * @ingroup ControlPoint
  */
 class DllExportClass CpDeviceListUpnpServiceType : public CpDeviceList
 {

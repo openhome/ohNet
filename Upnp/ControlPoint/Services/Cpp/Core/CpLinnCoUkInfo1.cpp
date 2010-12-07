@@ -11,7 +11,7 @@ using namespace Zapp;
 class SyncCountersLinnCoUkInfo1 : public SyncProxyAction
 {
 public:
-    SyncCountersLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aService, TUint& aaTrackCount, TUint& aaDetailsCount, TUint& aaMetatextCount);
+    SyncCountersLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aProxy, TUint& aaTrackCount, TUint& aaDetailsCount, TUint& aaMetatextCount);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkInfo1& iService;
@@ -20,8 +20,8 @@ private:
     TUint& iaMetatextCount;
 };
 
-SyncCountersLinnCoUkInfo1::SyncCountersLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aService, TUint& aaTrackCount, TUint& aaDetailsCount, TUint& aaMetatextCount)
-    : iService(aService)
+SyncCountersLinnCoUkInfo1::SyncCountersLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aProxy, TUint& aaTrackCount, TUint& aaDetailsCount, TUint& aaMetatextCount)
+    : iService(aProxy)
     , iaTrackCount(aaTrackCount)
     , iaDetailsCount(aaDetailsCount)
     , iaMetatextCount(aaMetatextCount)
@@ -37,7 +37,7 @@ void SyncCountersLinnCoUkInfo1::CompleteRequest(IAsync& aAsync)
 class SyncTrackLinnCoUkInfo1 : public SyncProxyAction
 {
 public:
-    SyncTrackLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aService, Brh& aaUri, Brh& aaMetadata);
+    SyncTrackLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aProxy, Brh& aaUri, Brh& aaMetadata);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkInfo1& iService;
@@ -45,8 +45,8 @@ private:
     Brh& iaMetadata;
 };
 
-SyncTrackLinnCoUkInfo1::SyncTrackLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aService, Brh& aaUri, Brh& aaMetadata)
-    : iService(aService)
+SyncTrackLinnCoUkInfo1::SyncTrackLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aProxy, Brh& aaUri, Brh& aaMetadata)
+    : iService(aProxy)
     , iaUri(aaUri)
     , iaMetadata(aaMetadata)
 {
@@ -61,7 +61,7 @@ void SyncTrackLinnCoUkInfo1::CompleteRequest(IAsync& aAsync)
 class SyncDetailsLinnCoUkInfo1 : public SyncProxyAction
 {
 public:
-    SyncDetailsLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aService, TUint& aaDuration, TUint& aaBitRate, TUint& aaBitDepth, TUint& aaSampleRate, TBool& aaLossless, Brh& aaCodecName);
+    SyncDetailsLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aProxy, TUint& aaDuration, TUint& aaBitRate, TUint& aaBitDepth, TUint& aaSampleRate, TBool& aaLossless, Brh& aaCodecName);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkInfo1& iService;
@@ -73,8 +73,8 @@ private:
     Brh& iaCodecName;
 };
 
-SyncDetailsLinnCoUkInfo1::SyncDetailsLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aService, TUint& aaDuration, TUint& aaBitRate, TUint& aaBitDepth, TUint& aaSampleRate, TBool& aaLossless, Brh& aaCodecName)
-    : iService(aService)
+SyncDetailsLinnCoUkInfo1::SyncDetailsLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aProxy, TUint& aaDuration, TUint& aaBitRate, TUint& aaBitDepth, TUint& aaSampleRate, TBool& aaLossless, Brh& aaCodecName)
+    : iService(aProxy)
     , iaDuration(aaDuration)
     , iaBitRate(aaBitRate)
     , iaBitDepth(aaBitDepth)
@@ -93,15 +93,15 @@ void SyncDetailsLinnCoUkInfo1::CompleteRequest(IAsync& aAsync)
 class SyncMetatextLinnCoUkInfo1 : public SyncProxyAction
 {
 public:
-    SyncMetatextLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aService, Brh& aaMetatext);
+    SyncMetatextLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aProxy, Brh& aaMetatext);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkInfo1& iService;
     Brh& iaMetatext;
 };
 
-SyncMetatextLinnCoUkInfo1::SyncMetatextLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aService, Brh& aaMetatext)
-    : iService(aService)
+SyncMetatextLinnCoUkInfo1::SyncMetatextLinnCoUkInfo1(CpProxyLinnCoUkInfo1& aProxy, Brh& aaMetatext)
+    : iService(aProxy)
     , iaMetatext(aaMetatext)
 {
 }
@@ -152,40 +152,40 @@ CpProxyLinnCoUkInfo1::CpProxyLinnCoUkInfo1(CpDevice& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyLinnCoUkInfo1::TrackCountPropertyChanged);
     iTrackCount = new PropertyUint("TrackCount", functor);
-    iService->AddProperty(iTrackCount);
+    AddProperty(iTrackCount);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkInfo1::DetailsCountPropertyChanged);
     iDetailsCount = new PropertyUint("DetailsCount", functor);
-    iService->AddProperty(iDetailsCount);
+    AddProperty(iDetailsCount);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkInfo1::MetatextCountPropertyChanged);
     iMetatextCount = new PropertyUint("MetatextCount", functor);
-    iService->AddProperty(iMetatextCount);
+    AddProperty(iMetatextCount);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkInfo1::UriPropertyChanged);
     iUri = new PropertyString("Uri", functor);
-    iService->AddProperty(iUri);
+    AddProperty(iUri);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkInfo1::MetadataPropertyChanged);
     iMetadata = new PropertyString("Metadata", functor);
-    iService->AddProperty(iMetadata);
+    AddProperty(iMetadata);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkInfo1::DurationPropertyChanged);
     iDuration = new PropertyUint("Duration", functor);
-    iService->AddProperty(iDuration);
+    AddProperty(iDuration);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkInfo1::BitRatePropertyChanged);
     iBitRate = new PropertyUint("BitRate", functor);
-    iService->AddProperty(iBitRate);
+    AddProperty(iBitRate);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkInfo1::BitDepthPropertyChanged);
     iBitDepth = new PropertyUint("BitDepth", functor);
-    iService->AddProperty(iBitDepth);
+    AddProperty(iBitDepth);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkInfo1::SampleRatePropertyChanged);
     iSampleRate = new PropertyUint("SampleRate", functor);
-    iService->AddProperty(iSampleRate);
+    AddProperty(iSampleRate);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkInfo1::LosslessPropertyChanged);
     iLossless = new PropertyBool("Lossless", functor);
-    iService->AddProperty(iLossless);
+    AddProperty(iLossless);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkInfo1::CodecNamePropertyChanged);
     iCodecName = new PropertyString("CodecName", functor);
-    iService->AddProperty(iCodecName);
+    AddProperty(iCodecName);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkInfo1::MetatextPropertyChanged);
     iMetatext = new PropertyString("Metatext", functor);
-    iService->AddProperty(iMetatext);
+    AddProperty(iMetatext);
 }
 
 CpProxyLinnCoUkInfo1::~CpProxyLinnCoUkInfo1()
@@ -212,7 +212,7 @@ void CpProxyLinnCoUkInfo1::BeginCounters(FunctorAsync& aFunctor)
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkInfo1::EndCounters(IAsync& aAsync, TUint& aaTrackCount, TUint& aaDetailsCount, TUint& aaMetatextCount)
@@ -244,7 +244,7 @@ void CpProxyLinnCoUkInfo1::BeginTrack(FunctorAsync& aFunctor)
     const Action::VectorParameters& outParams = iActionTrack->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkInfo1::EndTrack(IAsync& aAsync, Brh& aaUri, Brh& aaMetadata)
@@ -279,7 +279,7 @@ void CpProxyLinnCoUkInfo1::BeginDetails(FunctorAsync& aFunctor)
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkInfo1::EndDetails(IAsync& aAsync, TUint& aaDuration, TUint& aaBitRate, TUint& aaBitDepth, TUint& aaSampleRate, TBool& aaLossless, Brh& aaCodecName)
@@ -313,7 +313,7 @@ void CpProxyLinnCoUkInfo1::BeginMetatext(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionMetatext->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkInfo1::EndMetatext(IAsync& aAsync, Brh& aaMetatext)
@@ -415,74 +415,98 @@ void CpProxyLinnCoUkInfo1::SetPropertyMetatextChanged(Functor& aFunctor)
 
 void CpProxyLinnCoUkInfo1::PropertyTrackCount(TUint& aTrackCount) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aTrackCount = iTrackCount->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkInfo1::PropertyDetailsCount(TUint& aDetailsCount) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDetailsCount = iDetailsCount->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkInfo1::PropertyMetatextCount(TUint& aMetatextCount) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aMetatextCount = iMetatextCount->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkInfo1::PropertyUri(Brhz& aUri) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aUri.Set(iUri->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkInfo1::PropertyMetadata(Brhz& aMetadata) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aMetadata.Set(iMetadata->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkInfo1::PropertyDuration(TUint& aDuration) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aDuration = iDuration->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkInfo1::PropertyBitRate(TUint& aBitRate) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aBitRate = iBitRate->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkInfo1::PropertyBitDepth(TUint& aBitDepth) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aBitDepth = iBitDepth->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkInfo1::PropertySampleRate(TUint& aSampleRate) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSampleRate = iSampleRate->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkInfo1::PropertyLossless(TBool& aLossless) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aLossless = iLossless->Value();
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkInfo1::PropertyCodecName(Brhz& aCodecName) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aCodecName.Set(iCodecName->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkInfo1::PropertyMetatext(Brhz& aMetatext) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aMetatext.Set(iMetatext->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkInfo1::TrackCountPropertyChanged()

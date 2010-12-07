@@ -4,9 +4,10 @@
 #include <ZappTypes.h>
 #include <Standard.h>
 #include <Buffer.h>
+#include <Thread.h>
 #include <Service.h>
 #include <Stream.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 #include <DviSubscription.h>
 #include <Thread.h>
 #include <Core/DvInvocationResponse.h>
@@ -17,9 +18,11 @@ EXCEPTION(InvocationError);
 
 namespace Zapp {
 
-class IDvInvocation
+class IDviInvocation
 {
 public:
+    virtual void Invoke() = 0;
+    
     virtual void InvocationReadStart() = 0;
     virtual TBool InvocationReadBool(const TChar* aName) = 0;
     virtual void InvocationReadString(const TChar* aName, Brhz& aString) = 0;
@@ -44,19 +47,19 @@ public:
     virtual void InvocationWriteStringEnd(const TChar* aName) = 0;
     virtual void InvocationWriteEnd() = 0;
 
-    virtual ~IDvInvocation() {}
+    virtual ~IDviInvocation() {}
 };
 
 class DvAction
 {
 public:
-    DvAction(Zapp::Action* aAction, FunctorDvInvocation aFunctor);
+    DvAction(Zapp::Action* aAction, FunctorDviInvocation aFunctor);
     Zapp::Action* Action();
     const Zapp::Action* Action() const;
-    FunctorDvInvocation Functor() const;
+    FunctorDviInvocation Functor() const;
 private:
     Zapp::Action* iAction;
-    FunctorDvInvocation iFunctor;
+    FunctorDviInvocation iFunctor;
 };
 
 class DviDevice;
@@ -67,10 +70,10 @@ public:
     void AddRef();
     void RemoveRef();
 
-    DllExport void AddAction(Action* aAction, FunctorDvInvocation aFunctor);
+    DllExport void AddAction(Action* aAction, FunctorDviInvocation aFunctor);
     typedef std::vector<DvAction> VectorActions;
     const VectorActions& DvActions() const;
-    void Invoke(IDvInvocation& aInvocation, TUint aVersion, const Brx& aActionName);
+    void Invoke(IDviInvocation& aInvocation, TUint aVersion, const Brx& aActionName);
 
     void PropertiesLock();
     void PropertiesUnlock();
@@ -92,51 +95,51 @@ private:
     std::vector<DviSubscription*> iSubscriptions;
 };
 
-class InvocationResponse : public IInvocationResponse, private INonCopyable
+class DllExportClass InvocationResponse : public IInvocationResponse, private INonCopyable
 {
 public:
-	DllExport InvocationResponse(IDvInvocation& aInvocation);
+	DllExport InvocationResponse(IDviInvocation& aInvocation);
 	virtual void Error(TInt aCode, const Brx& aReason);
 	virtual void Start();
 	virtual void End();
 private:
-	IDvInvocation& iInvocation;
+	IDviInvocation& iInvocation;
 };
 
-class InvocationResponseBool : public IInvocationResponseBool, private INonCopyable
+class DllExportClass InvocationResponseBool : public IInvocationResponseBool, private INonCopyable
 {
 public:
-	DllExport InvocationResponseBool(IDvInvocation& aInvocation, const TChar* aName);
+	DllExport InvocationResponseBool(IDviInvocation& aInvocation, const TChar* aName);
 	void Write(TBool aValue);
 private:
-	IDvInvocation& iInvocation;
+	IDviInvocation& iInvocation;
 	const TChar* iName;
 };
 
-class InvocationResponseUint : public IInvocationResponseUint, private INonCopyable
+class DllExportClass InvocationResponseUint : public IInvocationResponseUint, private INonCopyable
 {
 public:
-	DllExport InvocationResponseUint(IDvInvocation& aInvocation, const TChar* aName);
+	DllExport InvocationResponseUint(IDviInvocation& aInvocation, const TChar* aName);
 	void Write(TUint aValue);
 private:
-	IDvInvocation& iInvocation;
+	IDviInvocation& iInvocation;
 	const TChar* iName;
 };
 
-class InvocationResponseInt : public IInvocationResponseInt, private INonCopyable
+class DllExportClass InvocationResponseInt : public IInvocationResponseInt, private INonCopyable
 {
 public:
-	DllExport InvocationResponseInt(IDvInvocation& aInvocation, const TChar* aName);
+	DllExport InvocationResponseInt(IDviInvocation& aInvocation, const TChar* aName);
 	void Write(TInt aValue);
 private:
-	IDvInvocation& iInvocation;
+	IDviInvocation& iInvocation;
 	const TChar* iName;
 };
 
-class InvocationResponseBinary : public IInvocationResponseBinary, private INonCopyable
+class DllExportClass InvocationResponseBinary : public IInvocationResponseBinary, private INonCopyable
 {
 public:
-	DllExport InvocationResponseBinary(IDvInvocation& aInvocation, const TChar* aName);
+	DllExport InvocationResponseBinary(IDviInvocation& aInvocation, const TChar* aName);
 	// IWriter
     void Write(TByte aValue);
     void Write(const Brx& aValue);
@@ -144,15 +147,15 @@ public:
 private:
 	void CheckFirst();
 private:
-	IDvInvocation& iInvocation;
+	IDviInvocation& iInvocation;
 	const TChar* iName;
 	TBool iFirst;
 };
 
-class InvocationResponseString : public IInvocationResponseString, private INonCopyable
+class DllExportClass InvocationResponseString : public IInvocationResponseString, private INonCopyable
 {
 public:
-	DllExport InvocationResponseString(IDvInvocation& aInvocation, const TChar* aName);
+	DllExport InvocationResponseString(IDviInvocation& aInvocation, const TChar* aName);
 	// IWriter
     void Write(TByte aValue);
     void Write(const Brx& aValue);
@@ -160,9 +163,50 @@ public:
 private:
 	void CheckFirst();
 private:
-	IDvInvocation& iInvocation;
+	IDviInvocation& iInvocation;
 	const TChar* iName;
 	TBool iFirst;
+};
+
+/**
+ * Dedicated thread which processes action invocations
+ *
+ * Intended for internal use only
+ */
+class DviInvoker : public Thread
+{
+public:
+    DviInvoker(const TChar* aName, Fifo<DviInvoker*>& aFree);
+    ~DviInvoker();
+    void Invoke(IDviInvocation* aInvocation);
+private:
+    void LogError(const TChar* aErr);
+    void Run();
+private:
+    Fifo<DviInvoker*>& iFree;
+    IDviInvocation* iInvocation;
+    Mutex iLock;
+};
+
+/**
+ * Singleton which manages the pools of IDviInvocation and DviInvoker instances
+ */
+class DviInvocationManager : public Thread
+{
+    static const TUint kNumInvokerThreads = 4; // !!!! config param
+    static const TUint kNumInvocations = 20; // !!!! config param
+public:
+    DviInvocationManager();
+    ~DviInvocationManager();
+    static void Queue(IDviInvocation* aInvocation);
+private: // Thread
+    void Run();
+private:
+    Mutex iLock;
+    Fifo<IDviInvocation*> iWaitingInvocations;
+    Fifo<DviInvoker*> iFreeInvokers;
+    DviInvoker** iInvokers;
+    TBool iActive;
 };
 
 } // namespace Zapp

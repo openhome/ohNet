@@ -7,6 +7,7 @@
 #include <Functor.h>
 #include <DviStack.h>
 #include <Debug.h>
+#include <Converter.h>
 
 #include <vector>
 #include <stdlib.h>
@@ -16,16 +17,15 @@ using namespace Zapp;
 // DviSubscription
 
 DviSubscription::DviSubscription(DviDevice& aDevice, IPropertyWriterFactory& aWriterFactory,
-                                 const Endpoint& aSubscriber, const Brx& aSubscriberPath,
-                                 Brh& aSid, TUint& aDurationSecs)
+                                 IDviSubscriptionUserData* aUserData, Brh& aSid, TUint& aDurationSecs)
     : iLock("MDSB")
     , iRefCount(1)
     , iDevice(aDevice)
     , iWriterFactory(aWriterFactory)
-    , iSubscriber(aSubscriber)
-    , iSubscriberPath(aSubscriberPath)
+    , iUserData(aUserData)
     , iService(NULL)
     , iSequenceNumber(0)
+    , iExpired(false)
 {
     aSid.TransferTo(iSid);
     Functor functor = MakeFunctor(*this, &DviSubscription::Expired);
@@ -83,7 +83,7 @@ void DviSubscription::WriteChanges()
     }
 
     iService->PropertiesLock();
-    if (iSubscriber.Address() == 0) {
+    if (iExpired) {
         LOG(kDvEvent, "Subscription expired; don't publish changes\n");
         iService->PropertiesUnlock();
         return;
@@ -100,7 +100,10 @@ void DviSubscription::WriteChanges()
 			ASSERT(seq != 0); // => implementor hasn't initialised the property
 			if (seq != iPropertySequenceNumbers[i]) {
 				if (first) {
-					writer = iWriterFactory.CreateWriter(iSubscriber, iSubscriberPath, iSid, iSequenceNumber);
+					writer = iWriterFactory.CreateWriter(iUserData, iSid, iSequenceNumber);
+                    if (writer == NULL) {
+                        THROW(WriterError);
+                    }
 					if (iSequenceNumber == UINT32_MAX) {
 						iSequenceNumber = 1;
 					}
@@ -129,27 +132,109 @@ void DviSubscription::WriteChanges()
     iService->PropertiesUnlock();
 }
 
-const Endpoint& DviSubscription::Subscriber() const
-{
-    return iSubscriber;
-}
-
 const Brx& DviSubscription::Sid() const
 {
     return iSid;
 }
 
+TBool DviSubscription::PropertiesInitialised() const
+{
+    TBool initialised = true;
+    iLock.Wait();
+    const DviService::VectorProperties& properties = iService->Properties();
+	for (TUint i=0; i<properties.size(); i++) {
+		if (properties[i] == 0) {
+            initialised = false;
+            break;
+        }
+    }
+    iLock.Signal();
+    return initialised;
+}
+
+TBool DviSubscription::HasExpired() const
+{
+    return iExpired;
+}
+
 DviSubscription::~DviSubscription()
 {
     delete iTimer;
+    if (iUserData != NULL) {
+        iUserData->Release();
+    }
 }
 
 void DviSubscription::Expired()
 {
     iLock.Wait();
-    iSubscriber.SetAddress(0);
+    iExpired = true;
     iLock.Signal();
     iService->RemoveSubscription(iSid);
+}
+
+
+// PropertyWriter
+
+PropertyWriter::PropertyWriter()
+    : iWriter(NULL)
+{
+}
+
+void PropertyWriter::SetWriter(IWriter& aWriter)
+{
+    iWriter = &aWriter;
+}
+
+void PropertyWriter::PropertyWriteString(const Brx& aName, const Brx& aValue)
+{
+    WriterBwh writer(1024);
+    Converter::ToXmlEscaped(writer, aValue);
+    Brh buf;
+    writer.TransferTo(buf);
+    WriteVariable(aName, buf);
+}
+
+void PropertyWriter::PropertyWriteInt(const Brx& aName, TInt aValue)
+{
+    Bws<Ascii::kMaxIntStringBytes> buf;
+    (void)Ascii::AppendDec(buf, aValue);
+    WriteVariable(aName, buf);
+}
+
+void PropertyWriter::PropertyWriteUint(const Brx& aName, TUint aValue)
+{
+    Bws<Ascii::kMaxUintStringBytes> buf;
+    (void)Ascii::AppendDec(buf, aValue);
+    WriteVariable(aName, buf);
+}
+
+void PropertyWriter::PropertyWriteBool(const Brx& aName, TBool aValue)
+{
+    PropertyWriteUint(aName, (aValue? 1 : 0));
+}
+
+void PropertyWriter::PropertyWriteBinary(const Brx& aName, const Brx& aValue)
+{
+    WriterBwh writer(1024);
+    Converter::ToBase64(writer, aValue);
+    Brh buf;
+    writer.TransferTo(buf);
+    WriteVariable(aName, buf);
+}
+
+void PropertyWriter::WriteVariable(const Brx& aName, const Brx& aValue)
+{
+    ASSERT(iWriter != NULL);
+    iWriter->Write(Brn("<e:property>"));
+    iWriter->Write('<');
+    iWriter->Write(aName);
+    iWriter->Write('>');
+    iWriter->Write(aValue);
+    iWriter->Write(Brn("</"));
+    iWriter->Write(aName);
+    iWriter->Write('>');
+    iWriter->Write(Brn("</e:property>"));
 }
 
 
@@ -292,6 +377,7 @@ void DviSubscriptionManager::QueueUpdate(DviSubscription& aSubscription)
     DviSubscriptionManager& self = DviSubscriptionManager::Self();
     self.iLock.Wait();
     self.iList.push_back(&aSubscription);
+    ASSERT(aSubscription.PropertiesInitialised());
     aSubscription.AddRef();
     self.Signal();
     self.iLock.Signal();

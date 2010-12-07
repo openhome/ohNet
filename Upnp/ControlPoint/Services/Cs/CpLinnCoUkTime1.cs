@@ -3,9 +3,26 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Zapp;
 
-namespace Zapp
+namespace Zapp.ControlPoint.Proxies
 {
-    public class CpProxyLinnCoUkTime1 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkTime1 : ICpProxy, IDisposable
+    {
+        void SyncTime(out uint aaTrackCount, out uint aaDuration, out uint aaSeconds);
+        void BeginTime(CpProxy.CallbackAsyncComplete aCallback);
+        void EndTime(IntPtr aAsyncHandle, out uint aaTrackCount, out uint aaDuration, out uint aaSeconds);
+
+        void SetPropertyTrackCountChanged(CpProxy.CallbackPropertyChanged aTrackCountChanged);
+        void PropertyTrackCount(out uint aTrackCount);
+        void SetPropertyDurationChanged(CpProxy.CallbackPropertyChanged aDurationChanged);
+        void PropertyDuration(out uint aDuration);
+        void SetPropertySecondsChanged(CpProxy.CallbackPropertyChanged aSecondsChanged);
+        void PropertySeconds(out uint aSeconds);
+    }
+
+    /// <summary>
+    /// Proxy for the linn.co.uk:Time:1 UPnP service
+    /// </summary>
+    public class CpProxyLinnCoUkTime1 : CpProxy, IDisposable, ICpProxyLinnCoUkTime1
     {
         [DllImport("CpLinnCoUkTime1")]
         static extern IntPtr CpProxyLinnCoUkTime1Create(IntPtr aDeviceHandle);
@@ -40,22 +57,43 @@ namespace Zapp
         private Callback iCallbackDurationChanged;
         private Callback iCallbackSecondsChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkTime1(CpDevice aDevice)
         {
             iHandle = CpProxyLinnCoUkTime1Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaTrackCount"></param>
+        /// <param name="aaDuration"></param>
+        /// <param name="aaSeconds"></param>
         public unsafe void SyncTime(out uint aaTrackCount, out uint aaDuration, out uint aaSeconds)
         {
-			fixed (uint* aTrackCount = &aaTrackCount)
-			fixed (uint* aDuration = &aaDuration)
-			fixed (uint* aSeconds = &aaSeconds)
-			{
-				CpProxyLinnCoUkTime1SyncTime(iHandle, aTrackCount, aDuration, aSeconds);
-			}
+            fixed (uint* aTrackCount = &aaTrackCount)
+            fixed (uint* aDuration = &aaDuration)
+            fixed (uint* aSeconds = &aaSeconds)
+            {
+                CpProxyLinnCoUkTime1SyncTime(iHandle, aTrackCount, aDuration, aSeconds);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndTime().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginTime(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -63,19 +101,33 @@ namespace Zapp
             CpProxyLinnCoUkTime1BeginTime(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaTrackCount"></param>
+        /// <param name="aaDuration"></param>
+        /// <param name="aaSeconds"></param>
         public unsafe void EndTime(IntPtr aAsyncHandle, out uint aaTrackCount, out uint aaDuration, out uint aaSeconds)
         {
-			fixed (uint* aTrackCount = &aaTrackCount)
-			fixed (uint* aDuration = &aaDuration)
-			fixed (uint* aSeconds = &aaSeconds)
-			{
-				if (0 != CpProxyLinnCoUkTime1EndTime(iHandle, aAsyncHandle, aTrackCount, aDuration, aSeconds))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* aTrackCount = &aaTrackCount)
+            fixed (uint* aDuration = &aaDuration)
+            fixed (uint* aSeconds = &aaSeconds)
+            {
+                if (0 != CpProxyLinnCoUkTime1EndTime(iHandle, aAsyncHandle, aTrackCount, aDuration, aSeconds))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the TrackCount state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkTime1 instance will not overlap.</remarks>
+        /// <param name="aTrackCountChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackCountChanged(CallbackPropertyChanged aTrackCountChanged)
         {
             iTrackCountChanged = aTrackCountChanged;
@@ -91,6 +143,12 @@ namespace Zapp
             self.iTrackCountChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the Duration state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkTime1 instance will not overlap.</remarks>
+        /// <param name="aDurationChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDurationChanged(CallbackPropertyChanged aDurationChanged)
         {
             iDurationChanged = aDurationChanged;
@@ -106,6 +164,12 @@ namespace Zapp
             self.iDurationChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the Seconds state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkTime1 instance will not overlap.</remarks>
+        /// <param name="aSecondsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertySecondsChanged(CallbackPropertyChanged aSecondsChanged)
         {
             iSecondsChanged = aSecondsChanged;
@@ -121,30 +185,54 @@ namespace Zapp
             self.iSecondsChanged();
         }
 
+        /// <summary>
+        /// Query the value of the TrackCount property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <param name="aTrackCount">Will be set to the value of the property</param>
         public unsafe void PropertyTrackCount(out uint aTrackCount)
         {
-			fixed (uint* trackCount = &aTrackCount)
-			{
-	            CpProxyLinnCoUkTime1PropertyTrackCount(iHandle, trackCount);
-			}
+            fixed (uint* trackCount = &aTrackCount)
+            {
+                CpProxyLinnCoUkTime1PropertyTrackCount(iHandle, trackCount);
+            }
         }
 
+        /// <summary>
+        /// Query the value of the Duration property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <param name="aDuration">Will be set to the value of the property</param>
         public unsafe void PropertyDuration(out uint aDuration)
         {
-			fixed (uint* duration = &aDuration)
-			{
-	            CpProxyLinnCoUkTime1PropertyDuration(iHandle, duration);
-			}
+            fixed (uint* duration = &aDuration)
+            {
+                CpProxyLinnCoUkTime1PropertyDuration(iHandle, duration);
+            }
         }
 
+        /// <summary>
+        /// Query the value of the Seconds property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <param name="aSeconds">Will be set to the value of the property</param>
         public unsafe void PropertySeconds(out uint aSeconds)
         {
-			fixed (uint* seconds = &aSeconds)
-			{
-	            CpProxyLinnCoUkTime1PropertySeconds(iHandle, seconds);
-			}
+            fixed (uint* seconds = &aSeconds)
+            {
+                CpProxyLinnCoUkTime1PropertySeconds(iHandle, seconds);
+            }
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);
@@ -157,17 +245,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            IntPtr handle;
             lock (this)
             {
                 if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyLinnCoUkTime1Destroy(iHandle);
                 iHandle = IntPtr.Zero;
             }
-            CpProxyLinnCoUkTime1Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

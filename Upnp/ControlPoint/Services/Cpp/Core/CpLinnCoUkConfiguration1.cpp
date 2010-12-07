@@ -11,15 +11,15 @@ using namespace Zapp;
 class SyncConfigurationXmlLinnCoUkConfiguration1 : public SyncProxyAction
 {
 public:
-    SyncConfigurationXmlLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aService, Brh& aaConfigurationXml);
+    SyncConfigurationXmlLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aProxy, Brh& aaConfigurationXml);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkConfiguration1& iService;
     Brh& iaConfigurationXml;
 };
 
-SyncConfigurationXmlLinnCoUkConfiguration1::SyncConfigurationXmlLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aService, Brh& aaConfigurationXml)
-    : iService(aService)
+SyncConfigurationXmlLinnCoUkConfiguration1::SyncConfigurationXmlLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aProxy, Brh& aaConfigurationXml)
+    : iService(aProxy)
     , iaConfigurationXml(aaConfigurationXml)
 {
 }
@@ -33,15 +33,15 @@ void SyncConfigurationXmlLinnCoUkConfiguration1::CompleteRequest(IAsync& aAsync)
 class SyncParameterXmlLinnCoUkConfiguration1 : public SyncProxyAction
 {
 public:
-    SyncParameterXmlLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aService, Brh& aaParameterXml);
+    SyncParameterXmlLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aProxy, Brh& aaParameterXml);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkConfiguration1& iService;
     Brh& iaParameterXml;
 };
 
-SyncParameterXmlLinnCoUkConfiguration1::SyncParameterXmlLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aService, Brh& aaParameterXml)
-    : iService(aService)
+SyncParameterXmlLinnCoUkConfiguration1::SyncParameterXmlLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aProxy, Brh& aaParameterXml)
+    : iService(aProxy)
     , iaParameterXml(aaParameterXml)
 {
 }
@@ -55,14 +55,14 @@ void SyncParameterXmlLinnCoUkConfiguration1::CompleteRequest(IAsync& aAsync)
 class SyncSetParameterLinnCoUkConfiguration1 : public SyncProxyAction
 {
 public:
-    SyncSetParameterLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aService);
+    SyncSetParameterLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkConfiguration1& iService;
 };
 
-SyncSetParameterLinnCoUkConfiguration1::SyncSetParameterLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aService)
-    : iService(aService)
+SyncSetParameterLinnCoUkConfiguration1::SyncSetParameterLinnCoUkConfiguration1(CpProxyLinnCoUkConfiguration1& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -96,10 +96,10 @@ CpProxyLinnCoUkConfiguration1::CpProxyLinnCoUkConfiguration1(CpDevice& aDevice)
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyLinnCoUkConfiguration1::ConfigurationXmlPropertyChanged);
     iConfigurationXml = new PropertyString("ConfigurationXml", functor);
-    iService->AddProperty(iConfigurationXml);
+    AddProperty(iConfigurationXml);
     functor = MakeFunctor(*this, &CpProxyLinnCoUkConfiguration1::ParameterXmlPropertyChanged);
     iParameterXml = new PropertyString("ParameterXml", functor);
-    iService->AddProperty(iParameterXml);
+    AddProperty(iParameterXml);
 }
 
 CpProxyLinnCoUkConfiguration1::~CpProxyLinnCoUkConfiguration1()
@@ -123,7 +123,7 @@ void CpProxyLinnCoUkConfiguration1::BeginConfigurationXml(FunctorAsync& aFunctor
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionConfigurationXml->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkConfiguration1::EndConfigurationXml(IAsync& aAsync, Brh& aaConfigurationXml)
@@ -152,7 +152,7 @@ void CpProxyLinnCoUkConfiguration1::BeginParameterXml(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionParameterXml->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkConfiguration1::EndParameterXml(IAsync& aAsync, Brh& aaParameterXml)
@@ -183,7 +183,7 @@ void CpProxyLinnCoUkConfiguration1::BeginSetParameter(const Brx& aaTarget, const
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aaTarget));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aaName));
     invocation->AddInput(new ArgumentString(*inParams[inIndex++], aaValue));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkConfiguration1::EndSetParameter(IAsync& aAsync)
@@ -213,14 +213,18 @@ void CpProxyLinnCoUkConfiguration1::SetPropertyParameterXmlChanged(Functor& aFun
 
 void CpProxyLinnCoUkConfiguration1::PropertyConfigurationXml(Brhz& aConfigurationXml) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aConfigurationXml.Set(iConfigurationXml->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkConfiguration1::PropertyParameterXml(Brhz& aParameterXml) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aParameterXml.Set(iParameterXml->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyLinnCoUkConfiguration1::ConfigurationXmlPropertyChanged()

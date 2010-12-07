@@ -32,10 +32,6 @@ protected:
     explicit inline Brx(const Brx& aBrx);
     TUint iBytes;
 private:
-    TInt16 Int16At(TUint aBytes) const;
-    TUint16 Uint16At(TUint aBytes) const;
-    TUint32 Uint32At(TUint aBytes) const;
-
     Brx& operator=(const Brx& aBrx);
 };
 
@@ -115,14 +111,6 @@ public:
     void Append(const Brx& aB);
     void Append(const TChar* aStr);
     void Append(const TByte* aPtr, TUint aBytes);
-    void AppendUint8(TUint8 aNum);
-    void AppendInt8(TInt8 aNum);
-    void AppendUint16(TUint16 aNum);
-    void AppendInt16(TInt16 aNum);
-    void AppendUint32(TUint32 aNum);
-    void AppendInt32(TInt32 aNum);
-    void AppendUint64(TUint64 aNum);
-    void AppendInt64(TInt64 aNum);
     void AppendPrintf(const TChar* aFormatString, ...);
     const TChar* PtrZ() const;
     void Fill(TByte aFillByte);
@@ -131,7 +119,6 @@ public:
     void SetBytes(TUint aBytes);
     inline TByte& operator[](TUint aByteIndex);
     TByte& At(TUint aByteIndex);
-    TUint32& Uint32At(TUint aByteIndex);
 protected:
     explicit Bwx(TUint aBytes, TUint aMaxBytes);
     TUint iMaxBytes;

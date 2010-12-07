@@ -14,6 +14,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpProxyLinnCoUkDebug2
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of CpProxyLinnCoUkDebug2 without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -138,6 +144,8 @@ DllExport void CpProxyLinnCoUkDebug2BeginMemWrite(THandle aHandle, uint32_t aaMe
  */
 DllExport int32_t CpProxyLinnCoUkDebug2EndMemWrite(THandle aHandle, ZappHandleAsync aAsync);
 
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

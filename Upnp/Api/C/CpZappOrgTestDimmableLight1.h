@@ -14,6 +14,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpProxyZappOrgTestDimmableLight1
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of CpProxyZappOrgTestDimmableLight1 without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -100,7 +106,29 @@ DllExport void CpProxyZappOrgTestDimmableLight1BeginSetLevel(THandle aHandle, ui
  *          arguments is not guaranteed in the case of failure
  */
 DllExport int32_t CpProxyZappOrgTestDimmableLight1EndSetLevel(THandle aHandle, ZappHandleAsync aAsync);
+/**
+ * Set a callback to be run when the A_ARG_Level state variable changes.
+ *
+ * Callbacks may be run in different threads but callbacks for a
+ * CpProxyZappOrgTestDimmableLight1 instance will not overlap.
+ *
+ * @param[in]  aHandle   Handle returned by CpProxyZappOrgTestDimmableLight1Create
+ * @param[in]  aCallback The callback to run when the state variable changes
+ * @param[in]  aPtr      Data to be passed to the callback
+ */
+DllExport void CpProxyZappOrgTestDimmableLight1SetPropertyA_ARG_LevelChanged(THandle aHandle, ZappCallback aCallback, void* aPtr);
 
+/**
+ * Query the value of the A_ARG_Level property.
+ *
+ * This function is threadsafe and can only be called after the first callback
+ * following a call to CpProxyCSubscribe() and before CpProxyCUnsubscribe().
+ *
+ * @param[out] aA_ARG_Level
+ */
+DllExport void CpProxyZappOrgTestDimmableLight1PropertyA_ARG_Level(THandle aHandle, uint32_t* aA_ARG_Level);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

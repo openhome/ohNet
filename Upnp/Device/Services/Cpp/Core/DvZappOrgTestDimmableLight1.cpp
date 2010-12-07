@@ -2,33 +2,45 @@
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
-DvServiceZappOrgTestDimmableLight1::DvServiceZappOrgTestDimmableLight1(DvDevice& aDevice)
-    : DvService(aDevice.Device(), "zapp.org", "TestDimmableLight", 1)
+TBool DvProviderZappOrgTestDimmableLight1::SetPropertyA_ARG_Level(TUint aValue)
 {
-    Functor empty;
+    return SetPropertyUint(*iPropertyA_ARG_Level, aValue);
 }
 
-void DvServiceZappOrgTestDimmableLight1::EnableActionGetLevel()
+void DvProviderZappOrgTestDimmableLight1::GetPropertyA_ARG_Level(TUint& aValue)
+{
+    aValue = iPropertyA_ARG_Level->Value();
+}
+
+DvProviderZappOrgTestDimmableLight1::DvProviderZappOrgTestDimmableLight1(DvDevice& aDevice)
+    : DvProvider(aDevice.Device(), "zapp.org", "TestDimmableLight", 1)
+{
+    
+    iPropertyA_ARG_Level = new PropertyUint(new ParameterUint("A_ARG_Level"));
+    iService->AddProperty(iPropertyA_ARG_Level); // passes ownership
+}
+
+void DvProviderZappOrgTestDimmableLight1::EnableActionGetLevel()
 {
     Zapp::Action* action = new Zapp::Action("GetLevel");
-    action->AddOutputParameter(new ParameterUint("Level"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestDimmableLight1::DoGetLevel);
+    action->AddOutputParameter(new ParameterRelated("Level", *iPropertyA_ARG_Level));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestDimmableLight1::DoGetLevel);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestDimmableLight1::EnableActionSetLevel()
+void DvProviderZappOrgTestDimmableLight1::EnableActionSetLevel()
 {
     Zapp::Action* action = new Zapp::Action("SetLevel");
-    action->AddInputParameter(new ParameterUint("Level"));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceZappOrgTestDimmableLight1::DoSetLevel);
+    action->AddInputParameter(new ParameterRelated("Level", *iPropertyA_ARG_Level));
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderZappOrgTestDimmableLight1::DoSetLevel);
     iService->AddAction(action, functor);
 }
 
-void DvServiceZappOrgTestDimmableLight1::DoGetLevel(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestDimmableLight1::DoGetLevel(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -37,7 +49,7 @@ void DvServiceZappOrgTestDimmableLight1::DoGetLevel(IDvInvocation& aInvocation, 
     GetLevel(resp, aVersion, respLevel);
 }
 
-void DvServiceZappOrgTestDimmableLight1::DoSetLevel(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderZappOrgTestDimmableLight1::DoSetLevel(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     TUint Level = aInvocation.InvocationReadUint("Level");
@@ -46,12 +58,12 @@ void DvServiceZappOrgTestDimmableLight1::DoSetLevel(IDvInvocation& aInvocation, 
     SetLevel(resp, aVersion, Level);
 }
 
-void DvServiceZappOrgTestDimmableLight1::GetLevel(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aLevel*/)
+void DvProviderZappOrgTestDimmableLight1::GetLevel(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, IInvocationResponseUint& /*aLevel*/)
 {
     ASSERTS();
 }
 
-void DvServiceZappOrgTestDimmableLight1::SetLevel(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aLevel*/)
+void DvProviderZappOrgTestDimmableLight1::SetLevel(IInvocationResponse& /*aResponse*/, TUint /*aVersion*/, TUint /*aLevel*/)
 {
     ASSERTS();
 }

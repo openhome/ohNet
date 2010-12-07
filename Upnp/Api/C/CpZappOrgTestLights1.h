@@ -14,6 +14,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpProxyZappOrgTestLights1
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of CpProxyZappOrgTestLights1 without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -288,6 +294,8 @@ DllExport void CpProxyZappOrgTestLights1BeginGetColorComponents(THandle aHandle,
  */
 DllExport int32_t CpProxyZappOrgTestLights1EndGetColorComponents(THandle aHandle, ZappHandleAsync aAsync, uint32_t* aBrightness, uint32_t* aRed, uint32_t* aGreen, uint32_t* aBlue);
 
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

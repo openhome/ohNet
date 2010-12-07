@@ -14,6 +14,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpProxyUpnpOrgRenderingControl1
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of CpProxyUpnpOrgRenderingControl1 without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -1300,6 +1306,8 @@ DllExport void CpProxyUpnpOrgRenderingControl1SetPropertyLastChangeChanged(THand
  * @param[out] aLastChange
  */
 DllExport void CpProxyUpnpOrgRenderingControl1PropertyLastChange(THandle aHandle, char** aLastChange);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

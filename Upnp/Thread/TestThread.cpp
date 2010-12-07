@@ -1,6 +1,6 @@
 #include <TestFramework.h>
 #include <Thread.h>
-#include <Os.h>
+#include <OsWrapper.h>
 
 using namespace Zapp;
 using namespace Zapp::TestFramework;
@@ -688,5 +688,6 @@ void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Initi
     th.Start();
     th.Wait();
 
+    delete aInitParams;
     UpnpLibrary::Close();
 }

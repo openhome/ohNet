@@ -11,7 +11,7 @@ using namespace Zapp;
 class SyncGetProtocolInfoUpnpOrgConnectionManager2 : public SyncProxyAction
 {
 public:
-    SyncGetProtocolInfoUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aService, Brh& aSource, Brh& aSink);
+    SyncGetProtocolInfoUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aProxy, Brh& aSource, Brh& aSink);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgConnectionManager2& iService;
@@ -19,8 +19,8 @@ private:
     Brh& iSink;
 };
 
-SyncGetProtocolInfoUpnpOrgConnectionManager2::SyncGetProtocolInfoUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aService, Brh& aSource, Brh& aSink)
-    : iService(aService)
+SyncGetProtocolInfoUpnpOrgConnectionManager2::SyncGetProtocolInfoUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aProxy, Brh& aSource, Brh& aSink)
+    : iService(aProxy)
     , iSource(aSource)
     , iSink(aSink)
 {
@@ -35,7 +35,7 @@ void SyncGetProtocolInfoUpnpOrgConnectionManager2::CompleteRequest(IAsync& aAsyn
 class SyncPrepareForConnectionUpnpOrgConnectionManager2 : public SyncProxyAction
 {
 public:
-    SyncPrepareForConnectionUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aService, TInt& aConnectionID, TInt& aAVTransportID, TInt& aRcsID);
+    SyncPrepareForConnectionUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aProxy, TInt& aConnectionID, TInt& aAVTransportID, TInt& aRcsID);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgConnectionManager2& iService;
@@ -44,8 +44,8 @@ private:
     TInt& iRcsID;
 };
 
-SyncPrepareForConnectionUpnpOrgConnectionManager2::SyncPrepareForConnectionUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aService, TInt& aConnectionID, TInt& aAVTransportID, TInt& aRcsID)
-    : iService(aService)
+SyncPrepareForConnectionUpnpOrgConnectionManager2::SyncPrepareForConnectionUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aProxy, TInt& aConnectionID, TInt& aAVTransportID, TInt& aRcsID)
+    : iService(aProxy)
     , iConnectionID(aConnectionID)
     , iAVTransportID(aAVTransportID)
     , iRcsID(aRcsID)
@@ -61,14 +61,14 @@ void SyncPrepareForConnectionUpnpOrgConnectionManager2::CompleteRequest(IAsync& 
 class SyncConnectionCompleteUpnpOrgConnectionManager2 : public SyncProxyAction
 {
 public:
-    SyncConnectionCompleteUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aService);
+    SyncConnectionCompleteUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgConnectionManager2& iService;
 };
 
-SyncConnectionCompleteUpnpOrgConnectionManager2::SyncConnectionCompleteUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aService)
-    : iService(aService)
+SyncConnectionCompleteUpnpOrgConnectionManager2::SyncConnectionCompleteUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -81,15 +81,15 @@ void SyncConnectionCompleteUpnpOrgConnectionManager2::CompleteRequest(IAsync& aA
 class SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2 : public SyncProxyAction
 {
 public:
-    SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aService, Brh& aConnectionIDs);
+    SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aProxy, Brh& aConnectionIDs);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgConnectionManager2& iService;
     Brh& iConnectionIDs;
 };
 
-SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2::SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aService, Brh& aConnectionIDs)
-    : iService(aService)
+SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2::SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aProxy, Brh& aConnectionIDs)
+    : iService(aProxy)
     , iConnectionIDs(aConnectionIDs)
 {
 }
@@ -103,7 +103,7 @@ void SyncGetCurrentConnectionIDsUpnpOrgConnectionManager2::CompleteRequest(IAsyn
 class SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2 : public SyncProxyAction
 {
 public:
-    SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aService, TInt& aRcsID, TInt& aAVTransportID, Brh& aProtocolInfo, Brh& aPeerConnectionManager, TInt& aPeerConnectionID, Brh& aDirection, Brh& aStatus);
+    SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aProxy, TInt& aRcsID, TInt& aAVTransportID, Brh& aProtocolInfo, Brh& aPeerConnectionManager, TInt& aPeerConnectionID, Brh& aDirection, Brh& aStatus);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyUpnpOrgConnectionManager2& iService;
@@ -116,8 +116,8 @@ private:
     Brh& iStatus;
 };
 
-SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2::SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aService, TInt& aRcsID, TInt& aAVTransportID, Brh& aProtocolInfo, Brh& aPeerConnectionManager, TInt& aPeerConnectionID, Brh& aDirection, Brh& aStatus)
-    : iService(aService)
+SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2::SyncGetCurrentConnectionInfoUpnpOrgConnectionManager2(CpProxyUpnpOrgConnectionManager2& aProxy, TInt& aRcsID, TInt& aAVTransportID, Brh& aProtocolInfo, Brh& aPeerConnectionManager, TInt& aPeerConnectionID, Brh& aDirection, Brh& aStatus)
+    : iService(aProxy)
     , iRcsID(aRcsID)
     , iAVTransportID(aAVTransportID)
     , iProtocolInfo(aProtocolInfo)
@@ -210,13 +210,13 @@ CpProxyUpnpOrgConnectionManager2::CpProxyUpnpOrgConnectionManager2(CpDevice& aDe
     Functor functor;
     functor = MakeFunctor(*this, &CpProxyUpnpOrgConnectionManager2::SourceProtocolInfoPropertyChanged);
     iSourceProtocolInfo = new PropertyString("SourceProtocolInfo", functor);
-    iService->AddProperty(iSourceProtocolInfo);
+    AddProperty(iSourceProtocolInfo);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgConnectionManager2::SinkProtocolInfoPropertyChanged);
     iSinkProtocolInfo = new PropertyString("SinkProtocolInfo", functor);
-    iService->AddProperty(iSinkProtocolInfo);
+    AddProperty(iSinkProtocolInfo);
     functor = MakeFunctor(*this, &CpProxyUpnpOrgConnectionManager2::CurrentConnectionIDsPropertyChanged);
     iCurrentConnectionIDs = new PropertyString("CurrentConnectionIDs", functor);
-    iService->AddProperty(iCurrentConnectionIDs);
+    AddProperty(iCurrentConnectionIDs);
 }
 
 CpProxyUpnpOrgConnectionManager2::~CpProxyUpnpOrgConnectionManager2()
@@ -243,7 +243,7 @@ void CpProxyUpnpOrgConnectionManager2::BeginGetProtocolInfo(FunctorAsync& aFunct
     const Action::VectorParameters& outParams = iActionGetProtocolInfo->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgConnectionManager2::EndGetProtocolInfo(IAsync& aAsync, Brh& aSource, Brh& aSink)
@@ -281,7 +281,7 @@ void CpProxyUpnpOrgConnectionManager2::BeginPrepareForConnection(const Brx& aRem
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgConnectionManager2::EndPrepareForConnection(IAsync& aAsync, TInt& aConnectionID, TInt& aAVTransportID, TInt& aRcsID)
@@ -312,7 +312,7 @@ void CpProxyUpnpOrgConnectionManager2::BeginConnectionComplete(TInt aConnectionI
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionConnectionComplete->InputParameters();
     invocation->AddInput(new ArgumentInt(*inParams[inIndex++], aConnectionID));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgConnectionManager2::EndConnectionComplete(IAsync& aAsync)
@@ -339,7 +339,7 @@ void CpProxyUpnpOrgConnectionManager2::BeginGetCurrentConnectionIDs(FunctorAsync
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionGetCurrentConnectionIDs->OutputParameters();
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgConnectionManager2::EndGetCurrentConnectionIDs(IAsync& aAsync, Brh& aConnectionIDs)
@@ -377,7 +377,7 @@ void CpProxyUpnpOrgConnectionManager2::BeginGetCurrentConnectionInfo(TInt aConne
     invocation->AddOutput(new ArgumentInt(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
     invocation->AddOutput(new ArgumentString(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyUpnpOrgConnectionManager2::EndGetCurrentConnectionInfo(IAsync& aAsync, TInt& aRcsID, TInt& aAVTransportID, Brh& aProtocolInfo, Brh& aPeerConnectionManager, TInt& aPeerConnectionID, Brh& aDirection, Brh& aStatus)
@@ -422,20 +422,26 @@ void CpProxyUpnpOrgConnectionManager2::SetPropertyCurrentConnectionIDsChanged(Fu
 
 void CpProxyUpnpOrgConnectionManager2::PropertySourceProtocolInfo(Brhz& aSourceProtocolInfo) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSourceProtocolInfo.Set(iSourceProtocolInfo->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyUpnpOrgConnectionManager2::PropertySinkProtocolInfo(Brhz& aSinkProtocolInfo) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aSinkProtocolInfo.Set(iSinkProtocolInfo->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyUpnpOrgConnectionManager2::PropertyCurrentConnectionIDs(Brhz& aCurrentConnectionIDs) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
     aCurrentConnectionIDs.Set(iCurrentConnectionIDs->Value());
+    iPropertyLock->Signal();
 }
 
 void CpProxyUpnpOrgConnectionManager2::SourceProtocolInfoPropertyChanged()

@@ -2,75 +2,75 @@
 #include <ZappTypes.h>
 #include <DviService.h>
 #include <Service.h>
-#include <FunctorDvInvocation.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
-void DvServiceLinnCoUkProduct1Cpp::SetPropertyRoom(const std::string& aValue)
+bool DvProviderLinnCoUkProduct1Cpp::SetPropertyRoom(const std::string& aValue)
 {
     Brn buf((const TByte*)aValue.c_str(), (TUint)aValue.length());
-    SetPropertyString(*iPropertyRoom, buf);
+    return SetPropertyString(*iPropertyRoom, buf);
 }
 
-void DvServiceLinnCoUkProduct1Cpp::GetPropertyRoom(std::string& aValue)
+void DvProviderLinnCoUkProduct1Cpp::GetPropertyRoom(std::string& aValue)
 {
     const Brx& val = iPropertyRoom->Value();
     aValue.assign((const char*)val.Ptr(), val.Bytes());
 }
 
-void DvServiceLinnCoUkProduct1Cpp::SetPropertyStandby(bool aValue)
+bool DvProviderLinnCoUkProduct1Cpp::SetPropertyStandby(bool aValue)
 {
-    SetPropertyBool(*iPropertyStandby, aValue);
+    return SetPropertyBool(*iPropertyStandby, aValue);
 }
 
-void DvServiceLinnCoUkProduct1Cpp::GetPropertyStandby(bool& aValue)
+void DvProviderLinnCoUkProduct1Cpp::GetPropertyStandby(bool& aValue)
 {
     aValue = iPropertyStandby->Value();
 }
 
-DvServiceLinnCoUkProduct1Cpp::DvServiceLinnCoUkProduct1Cpp(DvDeviceStd& aDevice)
-    : DvService(aDevice.Device(), "linn.co.uk", "Product", 1)
+DvProviderLinnCoUkProduct1Cpp::DvProviderLinnCoUkProduct1Cpp(DvDeviceStd& aDevice)
+    : DvProvider(aDevice.Device(), "linn.co.uk", "Product", 1)
 {
-    Functor empty;
-    iPropertyRoom = new PropertyString(new ParameterString("Room"), empty);
+    
+    iPropertyRoom = new PropertyString(new ParameterString("Room"));
     iService->AddProperty(iPropertyRoom); // passes ownership
-    iPropertyStandby = new PropertyBool(new ParameterBool("Standby"), empty);
+    iPropertyStandby = new PropertyBool(new ParameterBool("Standby"));
     iService->AddProperty(iPropertyStandby); // passes ownership
 }
 
-void DvServiceLinnCoUkProduct1Cpp::EnableActionRoom()
+void DvProviderLinnCoUkProduct1Cpp::EnableActionRoom()
 {
     Zapp::Action* action = new Zapp::Action("Room");
     action->AddOutputParameter(new ParameterRelated("aRoom", *iPropertyRoom));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct1Cpp::DoRoom);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct1Cpp::DoRoom);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct1Cpp::EnableActionSetRoom()
+void DvProviderLinnCoUkProduct1Cpp::EnableActionSetRoom()
 {
     Zapp::Action* action = new Zapp::Action("SetRoom");
     action->AddInputParameter(new ParameterRelated("aRoom", *iPropertyRoom));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct1Cpp::DoSetRoom);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct1Cpp::DoSetRoom);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct1Cpp::EnableActionStandby()
+void DvProviderLinnCoUkProduct1Cpp::EnableActionStandby()
 {
     Zapp::Action* action = new Zapp::Action("Standby");
     action->AddOutputParameter(new ParameterRelated("aStandby", *iPropertyStandby));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct1Cpp::DoStandby);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct1Cpp::DoStandby);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct1Cpp::EnableActionSetStandby()
+void DvProviderLinnCoUkProduct1Cpp::EnableActionSetStandby()
 {
     Zapp::Action* action = new Zapp::Action("SetStandby");
     action->AddInputParameter(new ParameterRelated("aStandby", *iPropertyStandby));
-    FunctorDvInvocation functor = MakeFunctorDvInvocation(*this, &DvServiceLinnCoUkProduct1Cpp::DoSetStandby);
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &DvProviderLinnCoUkProduct1Cpp::DoSetStandby);
     iService->AddAction(action, functor);
 }
 
-void DvServiceLinnCoUkProduct1Cpp::DoRoom(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct1Cpp::DoRoom(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -84,7 +84,7 @@ void DvServiceLinnCoUkProduct1Cpp::DoRoom(IDvInvocation& aInvocation, TUint aVer
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProduct1Cpp::DoSetRoom(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct1Cpp::DoSetRoom(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     Brhz buf_aRoom;
@@ -96,7 +96,7 @@ void DvServiceLinnCoUkProduct1Cpp::DoSetRoom(IDvInvocation& aInvocation, TUint a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProduct1Cpp::DoStandby(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct1Cpp::DoStandby(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     aInvocation.InvocationReadEnd();
@@ -108,7 +108,7 @@ void DvServiceLinnCoUkProduct1Cpp::DoStandby(IDvInvocation& aInvocation, TUint a
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProduct1Cpp::DoSetStandby(IDvInvocation& aInvocation, TUint aVersion)
+void DvProviderLinnCoUkProduct1Cpp::DoSetStandby(IDviInvocation& aInvocation, TUint aVersion)
 {
     aInvocation.InvocationReadStart();
     bool aStandby = aInvocation.InvocationReadBool("aStandby");
@@ -118,22 +118,22 @@ void DvServiceLinnCoUkProduct1Cpp::DoSetStandby(IDvInvocation& aInvocation, TUin
 	aInvocation.InvocationWriteEnd();
 }
 
-void DvServiceLinnCoUkProduct1Cpp::Room(uint32_t /*aVersion*/, std::string& /*aaRoom*/)
+void DvProviderLinnCoUkProduct1Cpp::Room(uint32_t /*aVersion*/, std::string& /*aaRoom*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct1Cpp::SetRoom(uint32_t /*aVersion*/, const std::string& /*aaRoom*/)
+void DvProviderLinnCoUkProduct1Cpp::SetRoom(uint32_t /*aVersion*/, const std::string& /*aaRoom*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct1Cpp::Standby(uint32_t /*aVersion*/, bool& /*aaStandby*/)
+void DvProviderLinnCoUkProduct1Cpp::Standby(uint32_t /*aVersion*/, bool& /*aaStandby*/)
 {
     ASSERTS();
 }
 
-void DvServiceLinnCoUkProduct1Cpp::SetStandby(uint32_t /*aVersion*/, bool /*aaStandby*/)
+void DvProviderLinnCoUkProduct1Cpp::SetStandby(uint32_t /*aVersion*/, bool /*aaStandby*/)
 {
     ASSERTS();
 }

@@ -7,10 +7,10 @@
 
 using namespace Zapp;
 
-class DvServiceLinnCoUkDs1C : public DvServiceLinnCoUkDs1
+class DvProviderLinnCoUkDs1C : public DvProviderLinnCoUkDs1
 {
 public:
-    DvServiceLinnCoUkDs1C(DvDevice& aDevice);
+    DvProviderLinnCoUkDs1C(DvDevice& aDevice);
     void EnableActionPlay(CallbackDs1Play aCallback, void* aPtr);
     void EnableActionPause(CallbackDs1Pause aCallback, void* aPtr);
     void EnableActionStop(CallbackDs1Stop aCallback, void* aPtr);
@@ -55,82 +55,82 @@ private:
     void* iPtrProtocolInfo;
 };
 
-DvServiceLinnCoUkDs1C::DvServiceLinnCoUkDs1C(DvDevice& aDevice)
-    : DvServiceLinnCoUkDs1(aDevice)
+DvProviderLinnCoUkDs1C::DvProviderLinnCoUkDs1C(DvDevice& aDevice)
+    : DvProviderLinnCoUkDs1(aDevice)
 {
 }
 
-void DvServiceLinnCoUkDs1C::EnableActionPlay(CallbackDs1Play aCallback, void* aPtr)
+void DvProviderLinnCoUkDs1C::EnableActionPlay(CallbackDs1Play aCallback, void* aPtr)
 {
     iCallbackPlay = aCallback;
     iPtrPlay = aPtr;
-    DvServiceLinnCoUkDs1::EnableActionPlay();
+    DvProviderLinnCoUkDs1::EnableActionPlay();
 }
 
-void DvServiceLinnCoUkDs1C::EnableActionPause(CallbackDs1Pause aCallback, void* aPtr)
+void DvProviderLinnCoUkDs1C::EnableActionPause(CallbackDs1Pause aCallback, void* aPtr)
 {
     iCallbackPause = aCallback;
     iPtrPause = aPtr;
-    DvServiceLinnCoUkDs1::EnableActionPause();
+    DvProviderLinnCoUkDs1::EnableActionPause();
 }
 
-void DvServiceLinnCoUkDs1C::EnableActionStop(CallbackDs1Stop aCallback, void* aPtr)
+void DvProviderLinnCoUkDs1C::EnableActionStop(CallbackDs1Stop aCallback, void* aPtr)
 {
     iCallbackStop = aCallback;
     iPtrStop = aPtr;
-    DvServiceLinnCoUkDs1::EnableActionStop();
+    DvProviderLinnCoUkDs1::EnableActionStop();
 }
 
-void DvServiceLinnCoUkDs1C::EnableActionSeekSecondAbsolute(CallbackDs1SeekSecondAbsolute aCallback, void* aPtr)
+void DvProviderLinnCoUkDs1C::EnableActionSeekSecondAbsolute(CallbackDs1SeekSecondAbsolute aCallback, void* aPtr)
 {
     iCallbackSeekSecondAbsolute = aCallback;
     iPtrSeekSecondAbsolute = aPtr;
-    DvServiceLinnCoUkDs1::EnableActionSeekSecondAbsolute();
+    DvProviderLinnCoUkDs1::EnableActionSeekSecondAbsolute();
 }
 
-void DvServiceLinnCoUkDs1C::EnableActionSeekSecondRelative(CallbackDs1SeekSecondRelative aCallback, void* aPtr)
+void DvProviderLinnCoUkDs1C::EnableActionSeekSecondRelative(CallbackDs1SeekSecondRelative aCallback, void* aPtr)
 {
     iCallbackSeekSecondRelative = aCallback;
     iPtrSeekSecondRelative = aPtr;
-    DvServiceLinnCoUkDs1::EnableActionSeekSecondRelative();
+    DvProviderLinnCoUkDs1::EnableActionSeekSecondRelative();
 }
 
-void DvServiceLinnCoUkDs1C::EnableActionSeekTrackId(CallbackDs1SeekTrackId aCallback, void* aPtr)
+void DvProviderLinnCoUkDs1C::EnableActionSeekTrackId(CallbackDs1SeekTrackId aCallback, void* aPtr)
 {
     iCallbackSeekTrackId = aCallback;
     iPtrSeekTrackId = aPtr;
-    DvServiceLinnCoUkDs1::EnableActionSeekTrackId();
+    DvProviderLinnCoUkDs1::EnableActionSeekTrackId();
 }
 
-void DvServiceLinnCoUkDs1C::EnableActionSeekTrackAbsolute(CallbackDs1SeekTrackAbsolute aCallback, void* aPtr)
+void DvProviderLinnCoUkDs1C::EnableActionSeekTrackAbsolute(CallbackDs1SeekTrackAbsolute aCallback, void* aPtr)
 {
     iCallbackSeekTrackAbsolute = aCallback;
     iPtrSeekTrackAbsolute = aPtr;
-    DvServiceLinnCoUkDs1::EnableActionSeekTrackAbsolute();
+    DvProviderLinnCoUkDs1::EnableActionSeekTrackAbsolute();
 }
 
-void DvServiceLinnCoUkDs1C::EnableActionSeekTrackRelative(CallbackDs1SeekTrackRelative aCallback, void* aPtr)
+void DvProviderLinnCoUkDs1C::EnableActionSeekTrackRelative(CallbackDs1SeekTrackRelative aCallback, void* aPtr)
 {
     iCallbackSeekTrackRelative = aCallback;
     iPtrSeekTrackRelative = aPtr;
-    DvServiceLinnCoUkDs1::EnableActionSeekTrackRelative();
+    DvProviderLinnCoUkDs1::EnableActionSeekTrackRelative();
 }
 
-void DvServiceLinnCoUkDs1C::EnableActionState(CallbackDs1State aCallback, void* aPtr)
+void DvProviderLinnCoUkDs1C::EnableActionState(CallbackDs1State aCallback, void* aPtr)
 {
     iCallbackState = aCallback;
     iPtrState = aPtr;
-    DvServiceLinnCoUkDs1::EnableActionState();
+    DvProviderLinnCoUkDs1::EnableActionState();
 }
 
-void DvServiceLinnCoUkDs1C::EnableActionProtocolInfo(CallbackDs1ProtocolInfo aCallback, void* aPtr)
+void DvProviderLinnCoUkDs1C::EnableActionProtocolInfo(CallbackDs1ProtocolInfo aCallback, void* aPtr)
 {
     iCallbackProtocolInfo = aCallback;
     iPtrProtocolInfo = aPtr;
-    DvServiceLinnCoUkDs1::EnableActionProtocolInfo();
+    DvProviderLinnCoUkDs1::EnableActionProtocolInfo();
 }
 
-void DvServiceLinnCoUkDs1C::Play(IInvocationResponse& aResponse, TUint aVersion)
+void DvProviderLinnCoUkDs1C::Play(IInvocationResponse& aResponse, TUint aVersion)
 {
     ASSERT(iCallbackPlay != NULL);
     if (0 != iCallbackPlay(iPtrPlay, aVersion)) {
@@ -141,7 +141,7 @@ void DvServiceLinnCoUkDs1C::Play(IInvocationResponse& aResponse, TUint aVersion)
     aResponse.End();
 }
 
-void DvServiceLinnCoUkDs1C::Pause(IInvocationResponse& aResponse, TUint aVersion)
+void DvProviderLinnCoUkDs1C::Pause(IInvocationResponse& aResponse, TUint aVersion)
 {
     ASSERT(iCallbackPause != NULL);
     if (0 != iCallbackPause(iPtrPause, aVersion)) {
@@ -152,7 +152,7 @@ void DvServiceLinnCoUkDs1C::Pause(IInvocationResponse& aResponse, TUint aVersion
     aResponse.End();
 }
 
-void DvServiceLinnCoUkDs1C::Stop(IInvocationResponse& aResponse, TUint aVersion)
+void DvProviderLinnCoUkDs1C::Stop(IInvocationResponse& aResponse, TUint aVersion)
 {
     ASSERT(iCallbackStop != NULL);
     if (0 != iCallbackStop(iPtrStop, aVersion)) {
@@ -163,7 +163,7 @@ void DvServiceLinnCoUkDs1C::Stop(IInvocationResponse& aResponse, TUint aVersion)
     aResponse.End();
 }
 
-void DvServiceLinnCoUkDs1C::SeekSecondAbsolute(IInvocationResponse& aResponse, TUint aVersion, TUint aaSecond)
+void DvProviderLinnCoUkDs1C::SeekSecondAbsolute(IInvocationResponse& aResponse, TUint aVersion, TUint aaSecond)
 {
     ASSERT(iCallbackSeekSecondAbsolute != NULL);
     if (0 != iCallbackSeekSecondAbsolute(iPtrSeekSecondAbsolute, aVersion, aaSecond)) {
@@ -174,7 +174,7 @@ void DvServiceLinnCoUkDs1C::SeekSecondAbsolute(IInvocationResponse& aResponse, T
     aResponse.End();
 }
 
-void DvServiceLinnCoUkDs1C::SeekSecondRelative(IInvocationResponse& aResponse, TUint aVersion, TInt aaSecond)
+void DvProviderLinnCoUkDs1C::SeekSecondRelative(IInvocationResponse& aResponse, TUint aVersion, TInt aaSecond)
 {
     ASSERT(iCallbackSeekSecondRelative != NULL);
     if (0 != iCallbackSeekSecondRelative(iPtrSeekSecondRelative, aVersion, aaSecond)) {
@@ -185,7 +185,7 @@ void DvServiceLinnCoUkDs1C::SeekSecondRelative(IInvocationResponse& aResponse, T
     aResponse.End();
 }
 
-void DvServiceLinnCoUkDs1C::SeekTrackId(IInvocationResponse& aResponse, TUint aVersion, TUint aaTrackId)
+void DvProviderLinnCoUkDs1C::SeekTrackId(IInvocationResponse& aResponse, TUint aVersion, TUint aaTrackId)
 {
     ASSERT(iCallbackSeekTrackId != NULL);
     if (0 != iCallbackSeekTrackId(iPtrSeekTrackId, aVersion, aaTrackId)) {
@@ -196,7 +196,7 @@ void DvServiceLinnCoUkDs1C::SeekTrackId(IInvocationResponse& aResponse, TUint aV
     aResponse.End();
 }
 
-void DvServiceLinnCoUkDs1C::SeekTrackAbsolute(IInvocationResponse& aResponse, TUint aVersion, TUint aaTrack)
+void DvProviderLinnCoUkDs1C::SeekTrackAbsolute(IInvocationResponse& aResponse, TUint aVersion, TUint aaTrack)
 {
     ASSERT(iCallbackSeekTrackAbsolute != NULL);
     if (0 != iCallbackSeekTrackAbsolute(iPtrSeekTrackAbsolute, aVersion, aaTrack)) {
@@ -207,7 +207,7 @@ void DvServiceLinnCoUkDs1C::SeekTrackAbsolute(IInvocationResponse& aResponse, TU
     aResponse.End();
 }
 
-void DvServiceLinnCoUkDs1C::SeekTrackRelative(IInvocationResponse& aResponse, TUint aVersion, TInt aaTrack)
+void DvProviderLinnCoUkDs1C::SeekTrackRelative(IInvocationResponse& aResponse, TUint aVersion, TInt aaTrack)
 {
     ASSERT(iCallbackSeekTrackRelative != NULL);
     if (0 != iCallbackSeekTrackRelative(iPtrSeekTrackRelative, aVersion, aaTrack)) {
@@ -218,7 +218,7 @@ void DvServiceLinnCoUkDs1C::SeekTrackRelative(IInvocationResponse& aResponse, TU
     aResponse.End();
 }
 
-void DvServiceLinnCoUkDs1C::State(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaTransportState, IInvocationResponseUint& aaTrackDuration, IInvocationResponseUint& aaTrackBitRate, IInvocationResponseBool& aaTrackLossless, IInvocationResponseUint& aaTrackBitDepth, IInvocationResponseUint& aaTrackSampleRate, IInvocationResponseString& aaTrackCodecName, IInvocationResponseUint& aaTrackId)
+void DvProviderLinnCoUkDs1C::State(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaTransportState, IInvocationResponseUint& aaTrackDuration, IInvocationResponseUint& aaTrackBitRate, IInvocationResponseBool& aaTrackLossless, IInvocationResponseUint& aaTrackBitDepth, IInvocationResponseUint& aaTrackSampleRate, IInvocationResponseString& aaTrackCodecName, IInvocationResponseUint& aaTrackId)
 {
     char* aTransportState;
     uint32_t aTrackDuration;
@@ -251,7 +251,7 @@ void DvServiceLinnCoUkDs1C::State(IInvocationResponse& aResponse, TUint aVersion
     aResponse.End();
 }
 
-void DvServiceLinnCoUkDs1C::ProtocolInfo(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaSupportedProtocols)
+void DvProviderLinnCoUkDs1C::ProtocolInfo(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aaSupportedProtocols)
 {
     char* aSupportedProtocols;
     ASSERT(iCallbackProtocolInfo != NULL);
@@ -269,183 +269,183 @@ void DvServiceLinnCoUkDs1C::ProtocolInfo(IInvocationResponse& aResponse, TUint a
 
 
 
-THandle DvServiceLinnCoUkDs1Create(DvDeviceC aDevice)
+THandle DvProviderLinnCoUkDs1Create(DvDeviceC aDevice)
 {
-	return new DvServiceLinnCoUkDs1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new DvProviderLinnCoUkDs1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvServiceLinnCoUkDs1Destroy(THandle aService)
+void DvProviderLinnCoUkDs1Destroy(THandle aProvider)
 {
-    delete reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService);
+    delete reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider);
 }
 
-void DvServiceLinnCoUkDs1EnableActionPlay(THandle aService, CallbackDs1Play aCallback, void* aPtr)
+void DvProviderLinnCoUkDs1EnableActionPlay(THandle aProvider, CallbackDs1Play aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->EnableActionPlay(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->EnableActionPlay(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkDs1EnableActionPause(THandle aService, CallbackDs1Pause aCallback, void* aPtr)
+void DvProviderLinnCoUkDs1EnableActionPause(THandle aProvider, CallbackDs1Pause aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->EnableActionPause(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->EnableActionPause(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkDs1EnableActionStop(THandle aService, CallbackDs1Stop aCallback, void* aPtr)
+void DvProviderLinnCoUkDs1EnableActionStop(THandle aProvider, CallbackDs1Stop aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->EnableActionStop(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->EnableActionStop(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkDs1EnableActionSeekSecondAbsolute(THandle aService, CallbackDs1SeekSecondAbsolute aCallback, void* aPtr)
+void DvProviderLinnCoUkDs1EnableActionSeekSecondAbsolute(THandle aProvider, CallbackDs1SeekSecondAbsolute aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->EnableActionSeekSecondAbsolute(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->EnableActionSeekSecondAbsolute(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkDs1EnableActionSeekSecondRelative(THandle aService, CallbackDs1SeekSecondRelative aCallback, void* aPtr)
+void DvProviderLinnCoUkDs1EnableActionSeekSecondRelative(THandle aProvider, CallbackDs1SeekSecondRelative aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->EnableActionSeekSecondRelative(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->EnableActionSeekSecondRelative(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkDs1EnableActionSeekTrackId(THandle aService, CallbackDs1SeekTrackId aCallback, void* aPtr)
+void DvProviderLinnCoUkDs1EnableActionSeekTrackId(THandle aProvider, CallbackDs1SeekTrackId aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->EnableActionSeekTrackId(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->EnableActionSeekTrackId(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkDs1EnableActionSeekTrackAbsolute(THandle aService, CallbackDs1SeekTrackAbsolute aCallback, void* aPtr)
+void DvProviderLinnCoUkDs1EnableActionSeekTrackAbsolute(THandle aProvider, CallbackDs1SeekTrackAbsolute aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->EnableActionSeekTrackAbsolute(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->EnableActionSeekTrackAbsolute(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkDs1EnableActionSeekTrackRelative(THandle aService, CallbackDs1SeekTrackRelative aCallback, void* aPtr)
+void DvProviderLinnCoUkDs1EnableActionSeekTrackRelative(THandle aProvider, CallbackDs1SeekTrackRelative aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->EnableActionSeekTrackRelative(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->EnableActionSeekTrackRelative(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkDs1EnableActionState(THandle aService, CallbackDs1State aCallback, void* aPtr)
+void DvProviderLinnCoUkDs1EnableActionState(THandle aProvider, CallbackDs1State aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->EnableActionState(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->EnableActionState(aCallback, aPtr);
 }
 
-void DvServiceLinnCoUkDs1EnableActionProtocolInfo(THandle aService, CallbackDs1ProtocolInfo aCallback, void* aPtr)
+void DvProviderLinnCoUkDs1EnableActionProtocolInfo(THandle aProvider, CallbackDs1ProtocolInfo aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->EnableActionProtocolInfo(aCallback, aPtr);
+    reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->EnableActionProtocolInfo(aCallback, aPtr);
 }
 
-int32_t DvServiceLinnCoUkDs1SetPropertySupportedProtocols(THandle aService, const char* aValue)
+int32_t DvProviderLinnCoUkDs1SetPropertySupportedProtocols(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->SetPropertySupportedProtocols(buf);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->SetPropertySupportedProtocols(buf)? 1 : 0);
     return 0;
 }
 
-void DvServiceLinnCoUkDs1GetPropertySupportedProtocols(THandle aService, char** aValue)
+void DvProviderLinnCoUkDs1GetPropertySupportedProtocols(THandle aProvider, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->GetPropertySupportedProtocols(buf);
+    reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->GetPropertySupportedProtocols(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkDs1SetPropertyTrackDuration(THandle aService, uint32_t aValue)
+int32_t DvProviderLinnCoUkDs1SetPropertyTrackDuration(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->SetPropertyTrackDuration(aValue);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->SetPropertyTrackDuration(aValue)? 1 : 0);
     return 0;
 }
 
-void DvServiceLinnCoUkDs1GetPropertyTrackDuration(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkDs1GetPropertyTrackDuration(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->GetPropertyTrackDuration(val);
+    reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->GetPropertyTrackDuration(val);
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkDs1SetPropertyTrackBitRate(THandle aService, uint32_t aValue)
+int32_t DvProviderLinnCoUkDs1SetPropertyTrackBitRate(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->SetPropertyTrackBitRate(aValue);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->SetPropertyTrackBitRate(aValue)? 1 : 0);
     return 0;
 }
 
-void DvServiceLinnCoUkDs1GetPropertyTrackBitRate(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkDs1GetPropertyTrackBitRate(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->GetPropertyTrackBitRate(val);
+    reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->GetPropertyTrackBitRate(val);
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkDs1SetPropertyTrackLossless(THandle aService, uint32_t aValue)
+int32_t DvProviderLinnCoUkDs1SetPropertyTrackLossless(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->SetPropertyTrackLossless((aValue!=0));
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->SetPropertyTrackLossless((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvServiceLinnCoUkDs1GetPropertyTrackLossless(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkDs1GetPropertyTrackLossless(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->GetPropertyTrackLossless(val);
+    reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->GetPropertyTrackLossless(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvServiceLinnCoUkDs1SetPropertyTrackBitDepth(THandle aService, uint32_t aValue)
+int32_t DvProviderLinnCoUkDs1SetPropertyTrackBitDepth(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->SetPropertyTrackBitDepth(aValue);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->SetPropertyTrackBitDepth(aValue)? 1 : 0);
     return 0;
 }
 
-void DvServiceLinnCoUkDs1GetPropertyTrackBitDepth(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkDs1GetPropertyTrackBitDepth(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->GetPropertyTrackBitDepth(val);
+    reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->GetPropertyTrackBitDepth(val);
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkDs1SetPropertyTrackSampleRate(THandle aService, uint32_t aValue)
+int32_t DvProviderLinnCoUkDs1SetPropertyTrackSampleRate(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->SetPropertyTrackSampleRate(aValue);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->SetPropertyTrackSampleRate(aValue)? 1 : 0);
     return 0;
 }
 
-void DvServiceLinnCoUkDs1GetPropertyTrackSampleRate(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkDs1GetPropertyTrackSampleRate(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->GetPropertyTrackSampleRate(val);
+    reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->GetPropertyTrackSampleRate(val);
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkDs1SetPropertyTrackCodecName(THandle aService, const char* aValue)
+int32_t DvProviderLinnCoUkDs1SetPropertyTrackCodecName(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->SetPropertyTrackCodecName(buf);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->SetPropertyTrackCodecName(buf)? 1 : 0);
     return 0;
 }
 
-void DvServiceLinnCoUkDs1GetPropertyTrackCodecName(THandle aService, char** aValue)
+void DvProviderLinnCoUkDs1GetPropertyTrackCodecName(THandle aProvider, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->GetPropertyTrackCodecName(buf);
+    reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->GetPropertyTrackCodecName(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceLinnCoUkDs1SetPropertyTrackId(THandle aService, uint32_t aValue)
+int32_t DvProviderLinnCoUkDs1SetPropertyTrackId(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->SetPropertyTrackId(aValue);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->SetPropertyTrackId(aValue)? 1 : 0);
     return 0;
 }
 
-void DvServiceLinnCoUkDs1GetPropertyTrackId(THandle aService, uint32_t* aValue)
+void DvProviderLinnCoUkDs1GetPropertyTrackId(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->GetPropertyTrackId(val);
+    reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->GetPropertyTrackId(val);
     *aValue = val;
 }
 
-int32_t DvServiceLinnCoUkDs1SetPropertyTransportState(THandle aService, const char* aValue)
+int32_t DvProviderLinnCoUkDs1SetPropertyTransportState(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->SetPropertyTransportState(buf);
+    *aChanged = (reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->SetPropertyTransportState(buf)? 1 : 0);
     return 0;
 }
 
-void DvServiceLinnCoUkDs1GetPropertyTransportState(THandle aService, char** aValue)
+void DvProviderLinnCoUkDs1GetPropertyTransportState(THandle aProvider, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceLinnCoUkDs1C*>(aService)->GetPropertyTransportState(buf);
+    reinterpret_cast<DvProviderLinnCoUkDs1C*>(aProvider)->GetPropertyTransportState(buf);
     *aValue = (char*)buf.Transfer();
 }
 

@@ -11,10 +11,14 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)CpDeviceCore.$(objext) \
     		   $(objdir)CpDeviceC.$(objext) \
     		   $(objdir)CpDeviceStd.$(objext) \
+    		   $(objdir)CpDeviceDvCore.$(objext) \
+    		   $(objdir)CpDeviceDvStd.$(objext) \
+    		   $(objdir)CpDeviceDvC.$(objext) \
     		   $(objdir)CpDeviceUpnpCore.$(objext) \
     		   $(objdir)CpDeviceUpnpC.$(objext) \
     		   $(objdir)CpDeviceUpnpStd.$(objext) \
     		   $(objdir)CpiDevice.$(objext) \
+    		   $(objdir)CpiDeviceDv.$(objext) \
     		   $(objdir)CpiDeviceUpnp.$(objext) \
     		   $(objdir)CpiService.$(objext) \
     		   $(objdir)CpiStack.$(objext) \
@@ -26,11 +30,14 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)DvDeviceC.$(objext) \
     		   $(objdir)DviDevice.$(objext) \
     		   $(objdir)DviDeviceUpnp.$(objext) \
+    		   $(objdir)DviServer.$(objext) \
     		   $(objdir)DviServerUpnp.$(objext) \
+    		   $(objdir)DviServerWebSocket.$(objext) \
     		   $(objdir)DviService.$(objext) \
     		   $(objdir)DviStack.$(objext) \
     		   $(objdir)DviSubscription.$(objext) \
-    		   $(objdir)DvService.$(objext) \
+    		   $(objdir)DvProvider.$(objext) \
+    		   $(objdir)DvProviderC.$(objext) \
     		   $(objdir)DeviceXml.$(objext) \
     		   $(objdir)Error.$(objext) \
     		   $(objdir)EventUpnp.$(objext) \
@@ -38,8 +45,9 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)Fifo.$(objext) \
     		   $(objdir)Http.$(objext) \
     		   $(objdir)Maths.$(objext) \
+    		   $(objdir)Md5.$(objext) \
     		   $(objdir)NetworkInterfaceList.$(objext) \
-    		   $(objdir)NetworkSockets.$(objext) \
+    		   $(objdir)Network.$(objext) \
     		   $(objdir)Parser.$(objext) \
     		   $(objdir)Printer.$(objext) \
     		   $(objdir)ProtocolUpnp.$(objext) \
@@ -78,11 +86,15 @@ headers = $(inc_build)/Ascii.h \
           $(inc_build)/Cpp/Core/CpDevice.h \
           $(inc_build)/C/CpDevice.h \
           $(inc_build)/Cpp/Std/CpDevice.h \
+          $(inc_build)/Cpp/Core/CpDeviceDv.h \
+          $(inc_build)/Cpp/Std/CpDeviceDv.h \
+          $(inc_build)/C/CpDeviceDv.h \
           $(inc_build)/Cpp/Core/CpDeviceUpnp.h \
           $(inc_build)/C/CpDeviceUpnp.h \
           $(inc_build)/Cpp/Std/CpDeviceUpnp.h \
           $(inc_build)/Debug.h \
           $(inc_build)/CpiDevice.h \
+          $(inc_build)/CpiDeviceDv.h \
           $(inc_build)/CpiDeviceUpnp.h \
           $(inc_build)/CpiService.h \
           $(inc_build)/CpiStack.h \
@@ -95,12 +107,15 @@ headers = $(inc_build)/Ascii.h \
           $(inc_build)/C/DviDeviceC.h \
           $(inc_build)/DviDevice.h \
           $(inc_build)/DviDeviceUpnp.h \
+          $(inc_build)/DviServer.h \
           $(inc_build)/DviServerUpnp.h \
+          $(inc_build)/DviServerWebSocket.h \
           $(inc_build)/DviService.h \
           $(inc_build)/DviStack.h \
           $(inc_build)/DviSubscription.h \
-          $(inc_build)/Cpp/DvService.h \
-          $(inc_build)/FunctorDvInvocation.h \
+          $(inc_build)/Cpp/DvProvider.h \
+          $(inc_build)/C/DvProvider.h \
+          $(inc_build)/FunctorDviInvocation.h \
           $(inc_build)/DeviceXml.h \
           $(inc_build)/Error.h \
           $(inc_build)/EventUpnp.h \
@@ -115,10 +130,10 @@ headers = $(inc_build)/Ascii.h \
           $(inc_build)/Http.h \
           $(inc_build)/Network.h \
           $(inc_build)/NetworkInterfaceList.h \
-          $(inc_build)/Os.h \
-          $(inc_build)/Os.inl \
+          $(inc_build)/OsWrapper.h \
+          $(inc_build)/OsWrapper.inl \
           $(inc_build)/OsTypes.h \
-          $(inc_build)/C/Os.h \
+          $(inc_build)/Os.h \
           $(inc_build)/Parser.h \
           $(inc_build)/Printer.h \
           $(inc_build)/ProtocolUpnp.h \
@@ -164,6 +179,12 @@ $(objdir)CpDeviceC.$(objext) : Public/C/CpDeviceC.cpp $(headers)
 	$(compiler)CpDeviceC.$(objext) -c $(cflags) $(includes) Public/C/CpDeviceC.cpp
 $(objdir)CpDeviceStd.$(objext) : Public/Cpp/Std/CpDeviceStd.cpp $(headers)
 	$(compiler)CpDeviceStd.$(objext) -c $(cflags) $(includes) Public/Cpp/Std/CpDeviceStd.cpp
+$(objdir)CpDeviceDvCore.$(objext) : Public/Cpp/Core/CpDeviceDvCore.cpp $(headers)
+	$(compiler)CpDeviceDvCore.$(objext) -c $(cflags) $(includes) Public/Cpp/Core/CpDeviceDvCore.cpp
+$(objdir)CpDeviceDvStd.$(objext) : Public/Cpp/Std/CpDeviceDvStd.cpp $(headers)
+	$(compiler)CpDeviceDvStd.$(objext) -c $(cflags) $(includes) Public/Cpp/Std/CpDeviceDvStd.cpp
+$(objdir)CpDeviceDvC.$(objext) : Public/C/CpDeviceDvC.cpp $(headers)
+	$(compiler)CpDeviceDvC.$(objext) -c $(cflags) $(includes) Public/C/CpDeviceDvC.cpp
 $(objdir)CpDeviceUpnpCore.$(objext) : Public/Cpp/Core/CpDeviceUpnpCore.cpp $(headers)
 	$(compiler)CpDeviceUpnpCore.$(objext) -c $(cflags) $(includes) Public/Cpp/Core/CpDeviceUpnpCore.cpp
 $(objdir)CpDeviceUpnpC.$(objext) : Public/C/CpDeviceUpnpC.cpp $(headers)
@@ -172,6 +193,8 @@ $(objdir)CpDeviceUpnpStd.$(objext) : Public/Cpp/Std/CpDeviceUpnpStd.cpp $(header
 	$(compiler)CpDeviceUpnpStd.$(objext) -c $(cflags) $(includes) Public/Cpp/Std/CpDeviceUpnpStd.cpp
 $(objdir)CpiDevice.$(objext) : ControlPoint/CpiDevice.cpp $(headers)
 	$(compiler)CpiDevice.$(objext) -c $(cflags) $(includes) ControlPoint/CpiDevice.cpp
+$(objdir)CpiDeviceDv.$(objext) : ControlPoint/Dv/CpiDeviceDv.cpp $(headers)
+	$(compiler)CpiDeviceDv.$(objext) -c $(cflags) $(includes) ControlPoint/Dv/CpiDeviceDv.cpp
 $(objdir)CpiDeviceUpnp.$(objext) : ControlPoint/Upnp/CpiDeviceUpnp.cpp $(headers)
 	$(compiler)CpiDeviceUpnp.$(objext) -c $(cflags) $(includes) ControlPoint/Upnp/CpiDeviceUpnp.cpp
 $(objdir)CpiService.$(objext) : ControlPoint/CpiService.cpp $(headers)
@@ -194,16 +217,22 @@ $(objdir)DviDevice.$(objext) : Device/DviDevice.cpp $(headers)
 	$(compiler)DviDevice.$(objext) -c $(cflags) $(includes) Device/DviDevice.cpp
 $(objdir)DviDeviceUpnp.$(objext) : Device/Upnp/DviDeviceUpnp.cpp $(headers)
 	$(compiler)DviDeviceUpnp.$(objext) -c $(cflags) $(includes) Device/Upnp/DviDeviceUpnp.cpp
+$(objdir)DviServer.$(objext) : Device/DviServer.cpp $(headers)
+	$(compiler)DviServer.$(objext) -c $(cflags) $(includes) Device/DviServer.cpp
 $(objdir)DviServerUpnp.$(objext) : Device/Upnp/DviServerUpnp.cpp $(headers)
 	$(compiler)DviServerUpnp.$(objext) -c $(cflags) $(includes) Device/Upnp/DviServerUpnp.cpp
+$(objdir)DviServerWebSocket.$(objext) : Device/Upnp/DviServerWebSocket.cpp $(headers)
+	$(compiler)DviServerWebSocket.$(objext) -c $(cflags) $(includes) Device/Upnp/DviServerWebSocket.cpp
 $(objdir)DviService.$(objext) : Device/DviService.cpp $(headers)
 	$(compiler)DviService.$(objext) -c $(cflags) $(includes) Device/DviService.cpp
 $(objdir)DviStack.$(objext) : Device/DviStack.cpp $(headers)
 	$(compiler)DviStack.$(objext) -c $(cflags) $(includes) Device/DviStack.cpp
 $(objdir)DviSubscription.$(objext) : Device/DviSubscription.cpp $(headers)
 	$(compiler)DviSubscription.$(objext) -c $(cflags) $(includes) Device/DviSubscription.cpp
-$(objdir)DvService.$(objext) : Public/Cpp/DvService.cpp $(headers)
-	$(compiler)DvService.$(objext) -c $(cflags) $(includes) Public/Cpp/DvService.cpp
+$(objdir)DvProvider.$(objext) : Public/Cpp/DvProvider.cpp $(headers)
+	$(compiler)DvProvider.$(objext) -c $(cflags) $(includes) Public/Cpp/DvProvider.cpp
+$(objdir)DvProviderC.$(objext) : Public/C/DvProviderC.cpp $(headers)
+	$(compiler)DvProviderC.$(objext) -c $(cflags) $(includes) Public/C/DvProviderC.cpp
 $(objdir)DeviceXml.$(objext) : ControlPoint/Upnp/DeviceXml.cpp $(headers)
 	$(compiler)DeviceXml.$(objext) -c $(cflags) $(includes) ControlPoint/Upnp/DeviceXml.cpp
 $(objdir)Error.$(objext) : Utils/Error.cpp $(headers)
@@ -218,10 +247,12 @@ $(objdir)Http.$(objext) : Network/Http.cpp $(headers)
 	$(compiler)Http.$(objext) -c $(cflags) $(includes) Network/Http.cpp
 $(objdir)Maths.$(objext) : Utils/Maths.cpp $(headers)
 	$(compiler)Maths.$(objext) -c $(cflags) $(includes) Utils/Maths.cpp
+$(objdir)Md5.$(objext) : Utils/md5.c $(headers)
+	$(compiler)Md5.$(objext) -c $(cflags) $(includes) Utils/md5.c
 $(objdir)NetworkInterfaceList.$(objext) : Network/NetworkInterfaceList.cpp $(headers)
 	$(compiler)NetworkInterfaceList.$(objext) -c $(cflags) $(includes) Network/NetworkInterfaceList.cpp
-$(objdir)NetworkSockets.$(objext) : Network/NetworkSockets.cpp $(headers)
-	$(compiler)NetworkSockets.$(objext) -c $(cflags) $(includes) Network/NetworkSockets.cpp
+$(objdir)Network.$(objext) : Network/Network.cpp $(headers)
+	$(compiler)Network.$(objext) -c $(cflags) $(includes) Network/Network.cpp
 $(objdir)Parser.$(objext) : Utils/Parser.cpp $(headers)
 	$(compiler)Parser.$(objext) -c $(cflags) $(includes) Utils/Parser.cpp
 $(objdir)Printer.$(objext) : Utils/Printer.cpp $(headers)
@@ -457,31 +488,79 @@ $(objdir)TestDvLights.$(exeext) :  upnp_core $(objdir)TestDvLights.$(objext) $(o
 $(objdir)TestDvLights.$(objext) : Device/Upnp/TestDvLights.cpp $(headers)
 	$(compiler)TestDvLights.$(objext) -c $(cflags) $(includes) Device/Upnp/TestDvLights.cpp
 
+TestDvTestBasic: $(objdir)TestDvTestBasic.$(exeext) 
+$(objdir)TestDvTestBasic.$(exeext) :  upnp_core $(objdir)TestDvTestBasic.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestDvTestBasic.$(exeext) $(objdir)TestDvTestBasic.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+$(objdir)TestDvTestBasic.$(objext) : Device/Upnp/TestDvTestBasic.cpp $(headers)
+	$(compiler)TestDvTestBasic.$(objext) -c $(cflags) $(includes) Device/Upnp/TestDvTestBasic.cpp
+
+TestDeviceFinder: $(objdir)TestDeviceFinder.$(exeext) 
+$(objdir)TestDeviceFinder.$(exeext) :  upnp_core $(objdir)TestDeviceFinder.$(objext) TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestDeviceFinder.$(exeext) $(objdir)TestDeviceFinder.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+$(objdir)TestDeviceFinder.$(objext) : ControlPoint/TestDeviceFinder.cpp $(headers)
+	$(compiler)TestDeviceFinder.$(objext) -c $(cflags) $(includes) ControlPoint/TestDeviceFinder.cpp
+
 TestDvDeviceStd: $(objdir)TestDvDeviceStd.$(exeext) 
-$(objdir)TestDvDeviceStd.$(exeext) :  upnp_core $(objdir)TestDvDeviceStd.$(objext) $(objdir)DvZappOrgTestBasic1Std.$(objext) $(objdir)CpZappOrgTestBasic1Std.$(objext) TestFramework.$(libext)
-	$(link) $(linkoutput)$(objdir)TestDvDeviceStd.$(exeext) $(objdir)TestDvDeviceStd.$(objext) $(objdir)DvZappOrgTestBasic1Std.$(objext) $(objdir)CpZappOrgTestBasic1Std.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+$(objdir)TestDvDeviceStd.$(exeext) :  upnp_core $(objdir)TestDvDeviceStd.$(objext) $(objdir)TestBasicCpStd.$(objext) $(objdir)TestBasicDvStd.$(objext) $(objdir)DvZappOrgTestBasic1Std.$(objext) $(objdir)CpZappOrgTestBasic1Std.$(objext) TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestDvDeviceStd.$(exeext) $(objdir)TestDvDeviceStd.$(objext) $(objdir)TestBasicCpStd.$(objext) $(objdir)TestBasicDvStd.$(objext) $(objdir)DvZappOrgTestBasic1Std.$(objext) $(objdir)CpZappOrgTestBasic1Std.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestDvDeviceStd.$(objext) : Public/Cpp/Std/TestDvDeviceStd.cpp $(headers)
 	$(compiler)TestDvDeviceStd.$(objext) -c $(cflags) $(includes) Public/Cpp/Std/TestDvDeviceStd.cpp
+$(objdir)TestBasicCpStd.$(objext) : Public/Cpp/Std/TestBasicCp.cpp $(headers)
+	$(compiler)TestBasicCpStd.$(objext) -c $(cflags) $(includes) Public/Cpp/Std/TestBasicCp.cpp
+$(objdir)TestBasicDvStd.$(objext) : Public/Cpp/Std/TestBasicDv.cpp $(headers)
+	$(compiler)TestBasicDvStd.$(objext) -c $(cflags) $(includes) Public/Cpp/Std/TestBasicDv.cpp
 
 TestDvDeviceC: $(objdir)TestDvDeviceC.$(exeext) 
-$(objdir)TestDvDeviceC.$(exeext) :  upnp_core $(objdir)TestDvDeviceC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext)
-	$(link) $(linkoutput)$(objdir)TestDvDeviceC.$(exeext) $(objdir)TestDvDeviceC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext) $(objdir)$(libprefix)upnp_core.$(libext)
+$(objdir)TestDvDeviceC.$(exeext) :  upnp_core $(objdir)TestDvDeviceC.$(objext) $(objdir)TestBasicCpC.$(objext) $(objdir)TestBasicDvC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext)
+	$(link) $(linkoutput)$(objdir)TestDvDeviceC.$(exeext) $(objdir)TestDvDeviceC.$(objext) $(objdir)TestBasicCpC.$(objext) $(objdir)TestBasicDvC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestDvDeviceC.$(objext) : Public/C/TestDvDeviceC.cpp $(headers)
 	$(compiler)TestDvDeviceC.$(objext) -c $(cflags) $(includes) Public/C/TestDvDeviceC.cpp
+$(objdir)TestBasicCpC.$(objext) : Public/C/TestBasicCpC.cpp $(headers)
+	$(compiler)TestBasicCpC.$(objext) -c $(cflags) $(includes) Public/C/TestBasicCpC.cpp
+$(objdir)TestBasicDvC.$(objext) : Public/C/TestBasicDvC.cpp $(headers)
+	$(compiler)TestBasicDvC.$(objext) -c $(cflags) $(includes) Public/C/TestBasicDvC.cpp
 
-Tests: TestBuffer TestThread TestFifo TestQueue TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvDeviceStd TestDvDeviceC TestProxyCs
+TestCpDeviceDv: $(objdir)TestCpDeviceDv.$(exeext) 
+$(objdir)TestCpDeviceDv.$(exeext) :  upnp_core $(objdir)TestCpDeviceDv.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestCpDeviceDv.$(exeext) $(objdir)TestCpDeviceDv.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+$(objdir)TestCpDeviceDv.$(objext) : ControlPoint/Dv/TestCpDeviceDv.cpp $(headers)
+	$(compiler)TestCpDeviceDv.$(objext) -c $(cflags) $(includes) ControlPoint/Dv/TestCpDeviceDv.cpp
+
+TestCpDeviceDvStd: $(objdir)TestCpDeviceDvStd.$(exeext) 
+$(objdir)TestCpDeviceDvStd.$(exeext) :  upnp_core $(objdir)TestCpDeviceDvStd.$(objext) $(objdir)TestBasicCpStd.$(objext) $(objdir)TestBasicDvStd.$(objext) $(objdir)DvZappOrgTestBasic1Std.$(objext) $(objdir)CpZappOrgTestBasic1Std.$(objext) TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestCpDeviceDvStd.$(exeext) $(objdir)TestCpDeviceDvStd.$(objext) $(objdir)TestBasicCpStd.$(objext) $(objdir)TestBasicDvStd.$(objext) $(objdir)DvZappOrgTestBasic1Std.$(objext) $(objdir)CpZappOrgTestBasic1Std.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+$(objdir)TestCpDeviceDvStd.$(objext) : Public/Cpp/Std/TestCpDeviceDvStd.cpp $(headers)
+	$(compiler)TestCpDeviceDvStd.$(objext) -c $(cflags) $(includes) Public/Cpp/Std/TestCpDeviceDvStd.cpp
+
+TestCpDeviceDvC: $(objdir)TestCpDeviceDvC.$(exeext) 
+$(objdir)TestCpDeviceDvC.$(exeext) :  upnp_core $(objdir)TestCpDeviceDvC.$(objext) $(objdir)TestBasicCpC.$(objext) $(objdir)TestBasicDvC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext)
+	$(link) $(linkoutput)$(objdir)TestCpDeviceDvC.$(exeext) $(objdir)TestCpDeviceDvC.$(objext) $(objdir)TestBasicCpC.$(objext) $(objdir)TestBasicDvC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext) $(objdir)$(libprefix)upnp_core.$(libext)
+$(objdir)TestCpDeviceDvC.$(objext) : Public/C/TestCpDeviceDvC.cpp $(headers)
+	$(compiler)TestCpDeviceDvC.$(objext) -c $(cflags) $(includes) Public/C/TestCpDeviceDvC.cpp
+
+Tests: TestBuffer TestThread TestFifo TestQueue TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestProxyCs TestDvDeviceCs TestDvLightsCs TestCpDeviceDvCs
 
 Zapp.net.dll : $(objdir)Zapp.net.dll
 
-$(objdir)Zapp.net.dll: $(publiccsdir)CpDevice.cs $(publiccsdir)CpDeviceUpnp.cs $(publiccsdir)CpProxy.cs $(publiccsdir)DvDevice.cs $(publiccsdir)DvServiceErrors.cs $(publiccsdir)Zapp.cs
+$(objdir)Zapp.net.dll: \
+	$(publiccsdir)CpDevice.cs \
+	$(publiccsdir)CpDeviceUpnp.cs \
+	$(publiccsdir)CpProxy.cs \
+	$(publiccsdir)DvDevice.cs \
+	$(publiccsdir)DvProvider.cs \
+	$(publiccsdir)DvProviderErrors.cs \
+	$(publiccsdir)Zapp.cs \
+	$(publiccsdir)CpDeviceDv.cs
 	$(csharp) /unsafe /t:library /debug+\
 		/out:$(objdir)Zapp.net.dll \
 		$(publiccsdir)CpDevice.cs \
 		$(publiccsdir)CpDeviceUpnp.cs \
 		$(publiccsdir)CpProxy.cs \
 		$(publiccsdir)DvDevice.cs \
-		$(publiccsdir)DvServiceErrors.cs \
-		$(publiccsdir)Zapp.cs
+		$(publiccsdir)DvProvider.cs \
+		$(publiccsdir)DvProviderErrors.cs \
+		$(publiccsdir)Zapp.cs \
+		$(publiccsdir)CpDeviceDv.cs
 
 TestProxyCs: $(objdir)TestProxyCs.exe
 
@@ -497,7 +576,65 @@ $(objdir)TestProxyCs.exe: \
 		/reference:$(objdir)Zapp.net.dll \
 		/reference:$(objdir)CpUpnpOrgConnectionManager1.net.dll \
 		$(publiccsdir)TestProxy.cs \
+
+TestDvDeviceCs: $(objdir)TestDvDeviceCs.exe
+
+$(objdir)TestDvDeviceCs.exe: \
+	ZappUpnpDll \
+	CpUpnpOrgConnectionManager1Dll \
+	$(objdir)Zapp.net.dll \
+	$(objdir)DvZappOrgTestBasic1.net.dll \
+	$(objdir)CpZappOrgTestBasic1.net.dll \
+	$(publiccsdir)TestBasicDv.cs \
+	$(publiccsdir)TestBasicCp.cs \
+	$(publiccsdir)TestDvDevice.cs
+	$(csharp) \
+		/d:DEBUG /debug /unsafe /platform:x86 /t:exe \
+		/out:$(objdir)TestDvDeviceCs.exe \
+		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)DvZappOrgTestBasic1.net.dll \
+		/reference:$(objdir)CpZappOrgTestBasic1.net.dll \
+		$(publiccsdir)TestBasicDv.cs \
+		$(publiccsdir)TestBasicCp.cs \
+		$(publiccsdir)TestDvDevice.cs
 		
+TestDvLightsCs: $(objdir)TestDvLightsCs.exe
+
+$(objdir)TestDvLightsCs.exe: \
+	ZappUpnpDll \
+	CpUpnpOrgConnectionManager1Dll \
+	$(objdir)Zapp.net.dll \
+	$(objdir)DvZappOrgTestLights1.net.dll \
+	$(objdir)CpZappOrgTestLights1.net.dll \
+	$(publiccsdir)TestDvLights.cs
+	$(csharp) \
+		/d:DEBUG /debug /unsafe /platform:x86 /t:exe \
+		/out:$(objdir)TestDvLightsCs.exe \
+		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)DvZappOrgTestLights1.net.dll \
+		/reference:$(objdir)CpZappOrgTestLights1.net.dll \
+		$(publiccsdir)TestDvLights.cs
+
+TestCpDeviceDvCs: $(objdir)TestCpDeviceDvCs.exe
+
+$(objdir)TestCpDeviceDvCs.exe: \
+	ZappUpnpDll \
+	CpUpnpOrgConnectionManager1Dll \
+	$(objdir)Zapp.net.dll \
+	$(objdir)DvZappOrgTestBasic1.net.dll \
+	$(objdir)CpZappOrgTestBasic1.net.dll \
+	$(publiccsdir)TestBasicDv.cs \
+	$(publiccsdir)TestBasicCp.cs \
+	$(publiccsdir)TestDvDevice.cs
+	$(csharp) \
+		/d:DEBUG /debug /unsafe /platform:x86 /t:exe \
+		/out:$(objdir)TestCpDeviceDvCs.exe \
+		/reference:$(objdir)Zapp.net.dll \
+		/reference:$(objdir)DvZappOrgTestBasic1.net.dll \
+		/reference:$(objdir)CpZappOrgTestBasic1.net.dll \
+		$(publiccsdir)TestBasicDv.cs \
+		$(publiccsdir)TestBasicCp.cs \
+		$(publiccsdir)TestCpDeviceDv.cs
 
 
 Generated$(dirsep)GenerateSourceFiles.mak : $(tt) Service$(dirsep)Services.xml T4/Templates/UpnpMakeT4.tt

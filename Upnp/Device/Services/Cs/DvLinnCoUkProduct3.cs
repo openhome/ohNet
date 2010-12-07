@@ -3,114 +3,290 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Zapp;
 
-namespace Zapp
+namespace Zapp.Device.Providers
 {
-    public class DvServiceLinnCoUkProduct3 : IDisposable
+    public interface IDvProviderLinnCoUkProduct3 : IDisposable
+    {
+
+        /// <summary>
+        /// Set the value of the ProductType property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductType(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductType property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductType(out string aValue);
+
+        /// <summary>
+        /// Set the value of the ProductModel property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductModel(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductModel property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductModel(out string aValue);
+
+        /// <summary>
+        /// Set the value of the ProductName property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductName(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductName property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductName(out string aValue);
+
+        /// <summary>
+        /// Set the value of the ProductRoom property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductRoom(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductRoom property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductRoom(out string aValue);
+
+        /// <summary>
+        /// Set the value of the ProductStandby property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductStandby(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductStandby property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductStandby(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the ProductSourceIndex property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductSourceIndex(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductSourceIndex property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductSourceIndex(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the ProductSourceCount property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductSourceCount(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductSourceCount property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductSourceCount(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the ProductSourceXml property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductSourceXml(string aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductSourceXml property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductSourceXml(out string aValue);
+
+        /// <summary>
+        /// Set the value of the StartupSourceIndex property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyStartupSourceIndex(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the StartupSourceIndex property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyStartupSourceIndex(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the StartupSourceEnabled property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyStartupSourceEnabled(bool aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the StartupSourceEnabled property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyStartupSourceEnabled(out bool aValue);
+
+        /// <summary>
+        /// Set the value of the ProductAnySourceName property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductAnySourceName(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductAnySourceName property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductAnySourceName(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the ProductAnySourceVisible property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductAnySourceVisible(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductAnySourceVisible property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductAnySourceVisible(out uint aValue);
+
+        /// <summary>
+        /// Set the value of the ProductAnySourceType property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        bool SetPropertyProductAnySourceType(uint aValue);
+
+        /// <summary>
+        /// Get a copy of the value of the ProductAnySourceType property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
+        void GetPropertyProductAnySourceType(out uint aValue);
+        
+    }
+    /// <summary>
+    /// Provider for the linn.co.uk:Product:3 UPnP service
+    /// </summary>
+    public class DvProviderLinnCoUkProduct3 : DvProvider, IDisposable, IDvProviderLinnCoUkProduct3
     {
         [DllImport("DvLinnCoUkProduct3")]
-        static extern IntPtr DvServiceLinnCoUkProduct3Create(IntPtr aDeviceHandle);
+        static extern IntPtr DvProviderLinnCoUkProduct3Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3Destroy(IntPtr aHandle);
+        static extern void DvProviderLinnCoUkProduct3Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe int DvServiceLinnCoUkProduct3SetPropertyProductType(IntPtr aHandle, char* aValue);
+        static extern unsafe int DvProviderLinnCoUkProduct3SetPropertyProductType(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe void DvServiceLinnCoUkProduct3GetPropertyProductType(IntPtr aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkProduct3GetPropertyProductType(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe int DvServiceLinnCoUkProduct3SetPropertyProductModel(IntPtr aHandle, char* aValue);
+        static extern unsafe int DvProviderLinnCoUkProduct3SetPropertyProductModel(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe void DvServiceLinnCoUkProduct3GetPropertyProductModel(IntPtr aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkProduct3GetPropertyProductModel(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe int DvServiceLinnCoUkProduct3SetPropertyProductName(IntPtr aHandle, char* aValue);
+        static extern unsafe int DvProviderLinnCoUkProduct3SetPropertyProductName(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe void DvServiceLinnCoUkProduct3GetPropertyProductName(IntPtr aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkProduct3GetPropertyProductName(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe int DvServiceLinnCoUkProduct3SetPropertyProductRoom(IntPtr aHandle, char* aValue);
+        static extern unsafe int DvProviderLinnCoUkProduct3SetPropertyProductRoom(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe void DvServiceLinnCoUkProduct3GetPropertyProductRoom(IntPtr aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkProduct3GetPropertyProductRoom(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe int DvServiceLinnCoUkProduct3SetPropertyProductStandby(IntPtr aHandle, int aValue);
+        static extern unsafe int DvProviderLinnCoUkProduct3SetPropertyProductStandby(IntPtr aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe void DvServiceLinnCoUkProduct3GetPropertyProductStandby(IntPtr aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkProduct3GetPropertyProductStandby(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe int DvServiceLinnCoUkProduct3SetPropertyProductSourceIndex(IntPtr aHandle, uint aValue);
+        static extern unsafe int DvProviderLinnCoUkProduct3SetPropertyProductSourceIndex(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe void DvServiceLinnCoUkProduct3GetPropertyProductSourceIndex(IntPtr aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkProduct3GetPropertyProductSourceIndex(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe int DvServiceLinnCoUkProduct3SetPropertyProductSourceCount(IntPtr aHandle, uint aValue);
+        static extern unsafe int DvProviderLinnCoUkProduct3SetPropertyProductSourceCount(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe void DvServiceLinnCoUkProduct3GetPropertyProductSourceCount(IntPtr aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkProduct3GetPropertyProductSourceCount(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe int DvServiceLinnCoUkProduct3SetPropertyProductSourceXml(IntPtr aHandle, char* aValue);
+        static extern unsafe int DvProviderLinnCoUkProduct3SetPropertyProductSourceXml(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe void DvServiceLinnCoUkProduct3GetPropertyProductSourceXml(IntPtr aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkProduct3GetPropertyProductSourceXml(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe int DvServiceLinnCoUkProduct3SetPropertyStartupSourceIndex(IntPtr aHandle, uint aValue);
+        static extern unsafe int DvProviderLinnCoUkProduct3SetPropertyStartupSourceIndex(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe void DvServiceLinnCoUkProduct3GetPropertyStartupSourceIndex(IntPtr aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkProduct3GetPropertyStartupSourceIndex(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe int DvServiceLinnCoUkProduct3SetPropertyStartupSourceEnabled(IntPtr aHandle, int aValue);
+        static extern unsafe int DvProviderLinnCoUkProduct3SetPropertyStartupSourceEnabled(IntPtr aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe void DvServiceLinnCoUkProduct3GetPropertyStartupSourceEnabled(IntPtr aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkProduct3GetPropertyStartupSourceEnabled(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe int DvServiceLinnCoUkProduct3SetPropertyProductAnySourceName(IntPtr aHandle, uint aValue);
+        static extern unsafe int DvProviderLinnCoUkProduct3SetPropertyProductAnySourceName(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe void DvServiceLinnCoUkProduct3GetPropertyProductAnySourceName(IntPtr aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkProduct3GetPropertyProductAnySourceName(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe int DvServiceLinnCoUkProduct3SetPropertyProductAnySourceVisible(IntPtr aHandle, uint aValue);
+        static extern unsafe int DvProviderLinnCoUkProduct3SetPropertyProductAnySourceVisible(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe void DvServiceLinnCoUkProduct3GetPropertyProductAnySourceVisible(IntPtr aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkProduct3GetPropertyProductAnySourceVisible(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe int DvServiceLinnCoUkProduct3SetPropertyProductAnySourceType(IntPtr aHandle, uint aValue);
+        static extern unsafe int DvProviderLinnCoUkProduct3SetPropertyProductAnySourceType(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern unsafe void DvServiceLinnCoUkProduct3GetPropertyProductAnySourceType(IntPtr aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkProduct3GetPropertyProductAnySourceType(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionType(IntPtr aHandle, CallbackType aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionType(IntPtr aHandle, CallbackType aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionModel(IntPtr aHandle, CallbackModel aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionModel(IntPtr aHandle, CallbackModel aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionName(IntPtr aHandle, CallbackName aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionName(IntPtr aHandle, CallbackName aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionSetName(IntPtr aHandle, CallbackSetName aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionSetName(IntPtr aHandle, CallbackSetName aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionRoom(IntPtr aHandle, CallbackRoom aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionRoom(IntPtr aHandle, CallbackRoom aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionSetRoom(IntPtr aHandle, CallbackSetRoom aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionSetRoom(IntPtr aHandle, CallbackSetRoom aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionStandby(IntPtr aHandle, CallbackStandby aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionStandby(IntPtr aHandle, CallbackStandby aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionSetStandby(IntPtr aHandle, CallbackSetStandby aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionSetStandby(IntPtr aHandle, CallbackSetStandby aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionSourceCount(IntPtr aHandle, CallbackSourceCount aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionSourceCount(IntPtr aHandle, CallbackSourceCount aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionSourceXml(IntPtr aHandle, CallbackSourceXml aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionSourceXml(IntPtr aHandle, CallbackSourceXml aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionSourceIndex(IntPtr aHandle, CallbackSourceIndex aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionSourceIndex(IntPtr aHandle, CallbackSourceIndex aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionSetSourceIndex(IntPtr aHandle, CallbackSetSourceIndex aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionSetSourceIndex(IntPtr aHandle, CallbackSetSourceIndex aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionSetSourceIndexByName(IntPtr aHandle, CallbackSetSourceIndexByName aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionSetSourceIndexByName(IntPtr aHandle, CallbackSetSourceIndexByName aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionSetStartupSourceIndexByName(IntPtr aHandle, CallbackSetStartupSourceIndexByName aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionSetStartupSourceIndexByName(IntPtr aHandle, CallbackSetStartupSourceIndexByName aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionStartupSourceIndex(IntPtr aHandle, CallbackStartupSourceIndex aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionStartupSourceIndex(IntPtr aHandle, CallbackStartupSourceIndex aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionSetStartupSourceIndex(IntPtr aHandle, CallbackSetStartupSourceIndex aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionSetStartupSourceIndex(IntPtr aHandle, CallbackSetStartupSourceIndex aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionStartupSourceEnabled(IntPtr aHandle, CallbackStartupSourceEnabled aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionStartupSourceEnabled(IntPtr aHandle, CallbackStartupSourceEnabled aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionSetStartupSourceEnabled(IntPtr aHandle, CallbackSetStartupSourceEnabled aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionSetStartupSourceEnabled(IntPtr aHandle, CallbackSetStartupSourceEnabled aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionSourceSystemName(IntPtr aHandle, CallbackSourceSystemName aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionSourceSystemName(IntPtr aHandle, CallbackSourceSystemName aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionSourceName(IntPtr aHandle, CallbackSourceName aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionSourceName(IntPtr aHandle, CallbackSourceName aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionSetSourceName(IntPtr aHandle, CallbackSetSourceName aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionSetSourceName(IntPtr aHandle, CallbackSetSourceName aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionSourceType(IntPtr aHandle, CallbackSourceType aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionSourceType(IntPtr aHandle, CallbackSourceType aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionSourceVisible(IntPtr aHandle, CallbackSourceVisible aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionSourceVisible(IntPtr aHandle, CallbackSourceVisible aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct3")]
-        static extern void DvServiceLinnCoUkProduct3EnableActionSetSourceVisible(IntPtr aHandle, CallbackSetSourceVisible aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct3EnableActionSetSourceVisible(IntPtr aHandle, CallbackSetSourceVisible aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -139,7 +315,6 @@ namespace Zapp
         private unsafe delegate int CallbackSourceVisible(IntPtr aPtr, uint aVersion, uint aaSourceIndex, int* aaSourceVisible);
         private unsafe delegate int CallbackSetSourceVisible(IntPtr aPtr, uint aVersion, uint aaSourceIndex, int aaSourceVisible);
 
-        private IntPtr iHandle;
         private GCHandle iGch;
         private CallbackType iCallbackType;
         private CallbackModel iCallbackModel;
@@ -166,518 +341,1007 @@ namespace Zapp
         private CallbackSourceVisible iCallbackSourceVisible;
         private CallbackSetSourceVisible iCallbackSetSourceVisible;
 
-        public DvServiceLinnCoUkProduct3(DvDevice aDevice)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="aDevice">Device which owns this provider</param>
+        protected DvProviderLinnCoUkProduct3(DvDevice aDevice)
         {
-            iHandle = DvServiceLinnCoUkProduct3Create(aDevice.Handle()); 
+            iHandle = DvProviderLinnCoUkProduct3Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
-        public unsafe void SetPropertyProductType(string aValue)
+        /// <summary>
+        /// Set the value of the ProductType property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyProductType(string aValue)
         {
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkProduct3SetPropertyProductType(iHandle, value);
+            int err = DvProviderLinnCoUkProduct3SetPropertyProductType(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the ProductType property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyProductType(out string aValue)
         {
             char* value;
-            DvServiceLinnCoUkProduct3GetPropertyProductType(iHandle, &value);
+            DvProviderLinnCoUkProduct3GetPropertyProductType(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyProductModel(string aValue)
+        /// <summary>
+        /// Set the value of the ProductModel property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyProductModel(string aValue)
         {
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkProduct3SetPropertyProductModel(iHandle, value);
+            int err = DvProviderLinnCoUkProduct3SetPropertyProductModel(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the ProductModel property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyProductModel(out string aValue)
         {
             char* value;
-            DvServiceLinnCoUkProduct3GetPropertyProductModel(iHandle, &value);
+            DvProviderLinnCoUkProduct3GetPropertyProductModel(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyProductName(string aValue)
+        /// <summary>
+        /// Set the value of the ProductName property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyProductName(string aValue)
         {
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkProduct3SetPropertyProductName(iHandle, value);
+            int err = DvProviderLinnCoUkProduct3SetPropertyProductName(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the ProductName property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyProductName(out string aValue)
         {
             char* value;
-            DvServiceLinnCoUkProduct3GetPropertyProductName(iHandle, &value);
+            DvProviderLinnCoUkProduct3GetPropertyProductName(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyProductRoom(string aValue)
+        /// <summary>
+        /// Set the value of the ProductRoom property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyProductRoom(string aValue)
         {
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkProduct3SetPropertyProductRoom(iHandle, value);
+            int err = DvProviderLinnCoUkProduct3SetPropertyProductRoom(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the ProductRoom property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyProductRoom(out string aValue)
         {
             char* value;
-            DvServiceLinnCoUkProduct3GetPropertyProductRoom(iHandle, &value);
+            DvProviderLinnCoUkProduct3GetPropertyProductRoom(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyProductStandby(bool aValue)
+        /// <summary>
+        /// Set the value of the ProductStandby property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyProductStandby(bool aValue)
         {
+            uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkProduct3SetPropertyProductStandby(iHandle, value))
+            if (0 != DvProviderLinnCoUkProduct3SetPropertyProductStandby(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the ProductStandby property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyProductStandby(out bool aValue)
         {
             int value;
-            DvServiceLinnCoUkProduct3GetPropertyProductStandby(iHandle, &value);
+            DvProviderLinnCoUkProduct3GetPropertyProductStandby(iHandle, &value);
             aValue = (value != 0);
         }
 
-        public unsafe void SetPropertyProductSourceIndex(uint aValue)
+        /// <summary>
+        /// Set the value of the ProductSourceIndex property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyProductSourceIndex(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkProduct3SetPropertyProductSourceIndex(iHandle, aValue))
+            uint changed;
+            if (0 != DvProviderLinnCoUkProduct3SetPropertyProductSourceIndex(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the ProductSourceIndex property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyProductSourceIndex(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
-                DvServiceLinnCoUkProduct3GetPropertyProductSourceIndex(iHandle, value);
+            {
+                DvProviderLinnCoUkProduct3GetPropertyProductSourceIndex(iHandle, value);
             }
         }
 
-        public unsafe void SetPropertyProductSourceCount(uint aValue)
+        /// <summary>
+        /// Set the value of the ProductSourceCount property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyProductSourceCount(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkProduct3SetPropertyProductSourceCount(iHandle, aValue))
+            uint changed;
+            if (0 != DvProviderLinnCoUkProduct3SetPropertyProductSourceCount(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the ProductSourceCount property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyProductSourceCount(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
-                DvServiceLinnCoUkProduct3GetPropertyProductSourceCount(iHandle, value);
+            {
+                DvProviderLinnCoUkProduct3GetPropertyProductSourceCount(iHandle, value);
             }
         }
 
-        public unsafe void SetPropertyProductSourceXml(string aValue)
+        /// <summary>
+        /// Set the value of the ProductSourceXml property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyProductSourceXml(string aValue)
         {
+            uint changed;
             char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvServiceLinnCoUkProduct3SetPropertyProductSourceXml(iHandle, value);
+            int err = DvProviderLinnCoUkProduct3SetPropertyProductSourceXml(iHandle, value, &changed);
             Marshal.FreeHGlobal((IntPtr)value);
             if (err != 0)
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the ProductSourceXml property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyProductSourceXml(out string aValue)
         {
             char* value;
-            DvServiceLinnCoUkProduct3GetPropertyProductSourceXml(iHandle, &value);
+            DvProviderLinnCoUkProduct3GetPropertyProductSourceXml(iHandle, &value);
             aValue = Marshal.PtrToStringAnsi((IntPtr)value);
             ZappFree(value);
         }
 
-        public unsafe void SetPropertyStartupSourceIndex(uint aValue)
+        /// <summary>
+        /// Set the value of the StartupSourceIndex property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyStartupSourceIndex(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkProduct3SetPropertyStartupSourceIndex(iHandle, aValue))
+            uint changed;
+            if (0 != DvProviderLinnCoUkProduct3SetPropertyStartupSourceIndex(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the StartupSourceIndex property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyStartupSourceIndex(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
-                DvServiceLinnCoUkProduct3GetPropertyStartupSourceIndex(iHandle, value);
+            {
+                DvProviderLinnCoUkProduct3GetPropertyStartupSourceIndex(iHandle, value);
             }
         }
 
-        public unsafe void SetPropertyStartupSourceEnabled(bool aValue)
+        /// <summary>
+        /// Set the value of the StartupSourceEnabled property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyStartupSourceEnabled(bool aValue)
         {
+            uint changed;
             int value = (aValue ? 1 : 0);
-            if (0 != DvServiceLinnCoUkProduct3SetPropertyStartupSourceEnabled(iHandle, value))
+            if (0 != DvProviderLinnCoUkProduct3SetPropertyStartupSourceEnabled(iHandle, value, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the StartupSourceEnabled property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyStartupSourceEnabled(out bool aValue)
         {
             int value;
-            DvServiceLinnCoUkProduct3GetPropertyStartupSourceEnabled(iHandle, &value);
+            DvProviderLinnCoUkProduct3GetPropertyStartupSourceEnabled(iHandle, &value);
             aValue = (value != 0);
         }
 
-        public unsafe void SetPropertyProductAnySourceName(uint aValue)
+        /// <summary>
+        /// Set the value of the ProductAnySourceName property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyProductAnySourceName(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkProduct3SetPropertyProductAnySourceName(iHandle, aValue))
+            uint changed;
+            if (0 != DvProviderLinnCoUkProduct3SetPropertyProductAnySourceName(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the ProductAnySourceName property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyProductAnySourceName(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
-                DvServiceLinnCoUkProduct3GetPropertyProductAnySourceName(iHandle, value);
+            {
+                DvProviderLinnCoUkProduct3GetPropertyProductAnySourceName(iHandle, value);
             }
         }
 
-        public unsafe void SetPropertyProductAnySourceVisible(uint aValue)
+        /// <summary>
+        /// Set the value of the ProductAnySourceVisible property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyProductAnySourceVisible(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkProduct3SetPropertyProductAnySourceVisible(iHandle, aValue))
+            uint changed;
+            if (0 != DvProviderLinnCoUkProduct3SetPropertyProductAnySourceVisible(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the ProductAnySourceVisible property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyProductAnySourceVisible(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
-                DvServiceLinnCoUkProduct3GetPropertyProductAnySourceVisible(iHandle, value);
+            {
+                DvProviderLinnCoUkProduct3GetPropertyProductAnySourceVisible(iHandle, value);
             }
         }
 
-        public unsafe void SetPropertyProductAnySourceType(uint aValue)
+        /// <summary>
+        /// Set the value of the ProductAnySourceType property
+        /// </summary>
+        /// <param name="aValue">New value for the property</param>
+        /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
+        public unsafe bool SetPropertyProductAnySourceType(uint aValue)
         {
-            if (0 != DvServiceLinnCoUkProduct3SetPropertyProductAnySourceType(iHandle, aValue))
+            uint changed;
+            if (0 != DvProviderLinnCoUkProduct3SetPropertyProductAnySourceType(iHandle, aValue, &changed))
             {
                 throw(new PropertyUpdateError());
             }
+            return (changed != 0);
         }
 
+        /// <summary>
+        /// Get a copy of the value of the ProductAnySourceType property
+        /// </summary>
+        /// <param name="aValue">Property's value will be copied here</param>
         public unsafe void GetPropertyProductAnySourceType(out uint aValue)
         {
             fixed (uint* value = &aValue)
-			{
-                DvServiceLinnCoUkProduct3GetPropertyProductAnySourceType(iHandle, value);
+            {
+                DvProviderLinnCoUkProduct3GetPropertyProductAnySourceType(iHandle, value);
             }
         }
 
+        /// <summary>
+        /// Signal that the action Type is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoType must be overridden if this is called.</remarks>
         protected unsafe void EnableActionType()
         {
             iCallbackType = new CallbackType(DoType);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionType(iHandle, iCallbackType, ptr);
+            DvProviderLinnCoUkProduct3EnableActionType(iHandle, iCallbackType, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Model is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoModel must be overridden if this is called.</remarks>
         protected unsafe void EnableActionModel()
         {
             iCallbackModel = new CallbackModel(DoModel);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionModel(iHandle, iCallbackModel, ptr);
+            DvProviderLinnCoUkProduct3EnableActionModel(iHandle, iCallbackModel, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Name is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoName must be overridden if this is called.</remarks>
         protected unsafe void EnableActionName()
         {
             iCallbackName = new CallbackName(DoName);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionName(iHandle, iCallbackName, ptr);
+            DvProviderLinnCoUkProduct3EnableActionName(iHandle, iCallbackName, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetName is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetName must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetName()
         {
             iCallbackSetName = new CallbackSetName(DoSetName);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionSetName(iHandle, iCallbackSetName, ptr);
+            DvProviderLinnCoUkProduct3EnableActionSetName(iHandle, iCallbackSetName, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Room is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoRoom must be overridden if this is called.</remarks>
         protected unsafe void EnableActionRoom()
         {
             iCallbackRoom = new CallbackRoom(DoRoom);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionRoom(iHandle, iCallbackRoom, ptr);
+            DvProviderLinnCoUkProduct3EnableActionRoom(iHandle, iCallbackRoom, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetRoom is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetRoom must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetRoom()
         {
             iCallbackSetRoom = new CallbackSetRoom(DoSetRoom);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionSetRoom(iHandle, iCallbackSetRoom, ptr);
+            DvProviderLinnCoUkProduct3EnableActionSetRoom(iHandle, iCallbackSetRoom, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action Standby is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoStandby must be overridden if this is called.</remarks>
         protected unsafe void EnableActionStandby()
         {
             iCallbackStandby = new CallbackStandby(DoStandby);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionStandby(iHandle, iCallbackStandby, ptr);
+            DvProviderLinnCoUkProduct3EnableActionStandby(iHandle, iCallbackStandby, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetStandby is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetStandby must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetStandby()
         {
             iCallbackSetStandby = new CallbackSetStandby(DoSetStandby);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionSetStandby(iHandle, iCallbackSetStandby, ptr);
+            DvProviderLinnCoUkProduct3EnableActionSetStandby(iHandle, iCallbackSetStandby, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SourceCount is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSourceCount must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSourceCount()
         {
             iCallbackSourceCount = new CallbackSourceCount(DoSourceCount);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionSourceCount(iHandle, iCallbackSourceCount, ptr);
+            DvProviderLinnCoUkProduct3EnableActionSourceCount(iHandle, iCallbackSourceCount, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SourceXml is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSourceXml must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSourceXml()
         {
             iCallbackSourceXml = new CallbackSourceXml(DoSourceXml);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionSourceXml(iHandle, iCallbackSourceXml, ptr);
+            DvProviderLinnCoUkProduct3EnableActionSourceXml(iHandle, iCallbackSourceXml, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SourceIndex is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSourceIndex must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSourceIndex()
         {
             iCallbackSourceIndex = new CallbackSourceIndex(DoSourceIndex);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionSourceIndex(iHandle, iCallbackSourceIndex, ptr);
+            DvProviderLinnCoUkProduct3EnableActionSourceIndex(iHandle, iCallbackSourceIndex, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetSourceIndex is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetSourceIndex must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetSourceIndex()
         {
             iCallbackSetSourceIndex = new CallbackSetSourceIndex(DoSetSourceIndex);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionSetSourceIndex(iHandle, iCallbackSetSourceIndex, ptr);
+            DvProviderLinnCoUkProduct3EnableActionSetSourceIndex(iHandle, iCallbackSetSourceIndex, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetSourceIndexByName is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetSourceIndexByName must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetSourceIndexByName()
         {
             iCallbackSetSourceIndexByName = new CallbackSetSourceIndexByName(DoSetSourceIndexByName);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionSetSourceIndexByName(iHandle, iCallbackSetSourceIndexByName, ptr);
+            DvProviderLinnCoUkProduct3EnableActionSetSourceIndexByName(iHandle, iCallbackSetSourceIndexByName, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetStartupSourceIndexByName is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetStartupSourceIndexByName must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetStartupSourceIndexByName()
         {
             iCallbackSetStartupSourceIndexByName = new CallbackSetStartupSourceIndexByName(DoSetStartupSourceIndexByName);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionSetStartupSourceIndexByName(iHandle, iCallbackSetStartupSourceIndexByName, ptr);
+            DvProviderLinnCoUkProduct3EnableActionSetStartupSourceIndexByName(iHandle, iCallbackSetStartupSourceIndexByName, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action StartupSourceIndex is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoStartupSourceIndex must be overridden if this is called.</remarks>
         protected unsafe void EnableActionStartupSourceIndex()
         {
             iCallbackStartupSourceIndex = new CallbackStartupSourceIndex(DoStartupSourceIndex);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionStartupSourceIndex(iHandle, iCallbackStartupSourceIndex, ptr);
+            DvProviderLinnCoUkProduct3EnableActionStartupSourceIndex(iHandle, iCallbackStartupSourceIndex, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetStartupSourceIndex is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetStartupSourceIndex must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetStartupSourceIndex()
         {
             iCallbackSetStartupSourceIndex = new CallbackSetStartupSourceIndex(DoSetStartupSourceIndex);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionSetStartupSourceIndex(iHandle, iCallbackSetStartupSourceIndex, ptr);
+            DvProviderLinnCoUkProduct3EnableActionSetStartupSourceIndex(iHandle, iCallbackSetStartupSourceIndex, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action StartupSourceEnabled is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoStartupSourceEnabled must be overridden if this is called.</remarks>
         protected unsafe void EnableActionStartupSourceEnabled()
         {
             iCallbackStartupSourceEnabled = new CallbackStartupSourceEnabled(DoStartupSourceEnabled);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionStartupSourceEnabled(iHandle, iCallbackStartupSourceEnabled, ptr);
+            DvProviderLinnCoUkProduct3EnableActionStartupSourceEnabled(iHandle, iCallbackStartupSourceEnabled, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetStartupSourceEnabled is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetStartupSourceEnabled must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetStartupSourceEnabled()
         {
             iCallbackSetStartupSourceEnabled = new CallbackSetStartupSourceEnabled(DoSetStartupSourceEnabled);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionSetStartupSourceEnabled(iHandle, iCallbackSetStartupSourceEnabled, ptr);
+            DvProviderLinnCoUkProduct3EnableActionSetStartupSourceEnabled(iHandle, iCallbackSetStartupSourceEnabled, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SourceSystemName is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSourceSystemName must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSourceSystemName()
         {
             iCallbackSourceSystemName = new CallbackSourceSystemName(DoSourceSystemName);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionSourceSystemName(iHandle, iCallbackSourceSystemName, ptr);
+            DvProviderLinnCoUkProduct3EnableActionSourceSystemName(iHandle, iCallbackSourceSystemName, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SourceName is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSourceName must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSourceName()
         {
             iCallbackSourceName = new CallbackSourceName(DoSourceName);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionSourceName(iHandle, iCallbackSourceName, ptr);
+            DvProviderLinnCoUkProduct3EnableActionSourceName(iHandle, iCallbackSourceName, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetSourceName is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetSourceName must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetSourceName()
         {
             iCallbackSetSourceName = new CallbackSetSourceName(DoSetSourceName);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionSetSourceName(iHandle, iCallbackSetSourceName, ptr);
+            DvProviderLinnCoUkProduct3EnableActionSetSourceName(iHandle, iCallbackSetSourceName, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SourceType is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSourceType must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSourceType()
         {
             iCallbackSourceType = new CallbackSourceType(DoSourceType);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionSourceType(iHandle, iCallbackSourceType, ptr);
+            DvProviderLinnCoUkProduct3EnableActionSourceType(iHandle, iCallbackSourceType, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SourceVisible is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSourceVisible must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSourceVisible()
         {
             iCallbackSourceVisible = new CallbackSourceVisible(DoSourceVisible);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionSourceVisible(iHandle, iCallbackSourceVisible, ptr);
+            DvProviderLinnCoUkProduct3EnableActionSourceVisible(iHandle, iCallbackSourceVisible, ptr);
         }
 
+        /// <summary>
+        /// Signal that the action SetSourceVisible is supported.
+        /// </summary>
+        /// <remarks>The action's availability will be published in the device's service.xml.
+        /// DoSetSourceVisible must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetSourceVisible()
         {
             iCallbackSetSourceVisible = new CallbackSetSourceVisible(DoSetSourceVisible);
             IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvServiceLinnCoUkProduct3EnableActionSetSourceVisible(iHandle, iCallbackSetSourceVisible, ptr);
+            DvProviderLinnCoUkProduct3EnableActionSetSourceVisible(iHandle, iCallbackSetSourceVisible, ptr);
         }
 
+        /// <summary>
+        /// Type action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Type action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionType was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaType"></param>
         protected virtual void Type(uint aVersion, out string aaType)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Model action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Model action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionModel was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaModel"></param>
         protected virtual void Model(uint aVersion, out string aaModel)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Name action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Name action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionName was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaName"></param>
         protected virtual void Name(uint aVersion, out string aaName)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetName action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetName action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetName was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaName"></param>
         protected virtual void SetName(uint aVersion, string aaName)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Room action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Room action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionRoom was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaRoom"></param>
         protected virtual void Room(uint aVersion, out string aaRoom)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetRoom action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetRoom action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetRoom was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaRoom"></param>
         protected virtual void SetRoom(uint aVersion, string aaRoom)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// Standby action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// Standby action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionStandby was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaStandby"></param>
         protected virtual void Standby(uint aVersion, out bool aaStandby)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetStandby action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetStandby action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetStandby was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaStandby"></param>
         protected virtual void SetStandby(uint aVersion, bool aaStandby)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SourceCount action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SourceCount action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSourceCount was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSourceCount"></param>
         protected virtual void SourceCount(uint aVersion, out uint aaSourceCount)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SourceXml action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SourceXml action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSourceXml was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSourceXml"></param>
         protected virtual void SourceXml(uint aVersion, out string aaSourceXml)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SourceIndex action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SourceIndex action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSourceIndex was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSourceIndex"></param>
         protected virtual void SourceIndex(uint aVersion, out uint aaSourceIndex)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetSourceIndex action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetSourceIndex action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetSourceIndex was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSourceIndex"></param>
         protected virtual void SetSourceIndex(uint aVersion, uint aaSourceIndex)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetSourceIndexByName action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetSourceIndexByName action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetSourceIndexByName was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSourceName"></param>
         protected virtual void SetSourceIndexByName(uint aVersion, string aaSourceName)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetStartupSourceIndexByName action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetStartupSourceIndexByName action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetStartupSourceIndexByName was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSourceName"></param>
         protected virtual void SetStartupSourceIndexByName(uint aVersion, string aaSourceName)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// StartupSourceIndex action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// StartupSourceIndex action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionStartupSourceIndex was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSourceIndex"></param>
         protected virtual void StartupSourceIndex(uint aVersion, out uint aaSourceIndex)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetStartupSourceIndex action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetStartupSourceIndex action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetStartupSourceIndex was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSourceIndex"></param>
         protected virtual void SetStartupSourceIndex(uint aVersion, uint aaSourceIndex)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// StartupSourceEnabled action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// StartupSourceEnabled action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionStartupSourceEnabled was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaStartupSourceEnabled"></param>
         protected virtual void StartupSourceEnabled(uint aVersion, out bool aaStartupSourceEnabled)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetStartupSourceEnabled action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetStartupSourceEnabled action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetStartupSourceEnabled was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaStartupSourceEnabled"></param>
         protected virtual void SetStartupSourceEnabled(uint aVersion, bool aaStartupSourceEnabled)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SourceSystemName action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SourceSystemName action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSourceSystemName was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSourceIndex"></param>
+        /// <param name="aaSourceName"></param>
         protected virtual void SourceSystemName(uint aVersion, uint aaSourceIndex, out string aaSourceName)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SourceName action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SourceName action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSourceName was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSourceIndex"></param>
+        /// <param name="aaSourceName"></param>
         protected virtual void SourceName(uint aVersion, uint aaSourceIndex, out string aaSourceName)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetSourceName action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetSourceName action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetSourceName was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSourceIndex"></param>
+        /// <param name="aaSourceName"></param>
         protected virtual void SetSourceName(uint aVersion, uint aaSourceIndex, string aaSourceName)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SourceType action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SourceType action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSourceType was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSourceIndex"></param>
+        /// <param name="aaSourceType"></param>
         protected virtual void SourceType(uint aVersion, uint aaSourceIndex, out string aaSourceType)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SourceVisible action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SourceVisible action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSourceVisible was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSourceIndex"></param>
+        /// <param name="aaSourceVisible"></param>
         protected virtual void SourceVisible(uint aVersion, uint aaSourceIndex, out bool aaSourceVisible)
         {
             throw (new ActionDisabledError());
         }
 
+        /// <summary>
+        /// SetSourceVisible action.
+        /// </summary>
+        /// <remarks>Will be called when the device stack receives an invocation of the
+        /// SetSourceVisible action for the owning device.
+        ///
+        /// Must be implemented iff EnableActionSetSourceVisible was called.</remarks>
+        /// <param name="aVersion">Version of the service being requested (will be <= the version advertised)</param>
+        /// <param name="aaSourceIndex"></param>
+        /// <param name="aaSourceVisible"></param>
         protected virtual void SetSourceVisible(uint aVersion, uint aaSourceIndex, bool aaSourceVisible)
         {
             throw (new ActionDisabledError());
@@ -686,7 +1350,7 @@ namespace Zapp
         private static unsafe int DoType(IntPtr aPtr, uint aVersion, char** aaType)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             string aType;
             self.Type(aVersion, out aType);
             *aaType = (char*)Marshal.StringToHGlobalAnsi(aType).ToPointer();
@@ -696,7 +1360,7 @@ namespace Zapp
         private static unsafe int DoModel(IntPtr aPtr, uint aVersion, char** aaModel)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             string aModel;
             self.Model(aVersion, out aModel);
             *aaModel = (char*)Marshal.StringToHGlobalAnsi(aModel).ToPointer();
@@ -706,7 +1370,7 @@ namespace Zapp
         private static unsafe int DoName(IntPtr aPtr, uint aVersion, char** aaName)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             string aName;
             self.Name(aVersion, out aName);
             *aaName = (char*)Marshal.StringToHGlobalAnsi(aName).ToPointer();
@@ -716,7 +1380,7 @@ namespace Zapp
         private static unsafe int DoSetName(IntPtr aPtr, uint aVersion, char* aaName)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             string aName = Marshal.PtrToStringAnsi((IntPtr)aaName);
             self.SetName(aVersion, aName);
             return 0;
@@ -725,7 +1389,7 @@ namespace Zapp
         private static unsafe int DoRoom(IntPtr aPtr, uint aVersion, char** aaRoom)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             string aRoom;
             self.Room(aVersion, out aRoom);
             *aaRoom = (char*)Marshal.StringToHGlobalAnsi(aRoom).ToPointer();
@@ -735,7 +1399,7 @@ namespace Zapp
         private static unsafe int DoSetRoom(IntPtr aPtr, uint aVersion, char* aaRoom)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             string aRoom = Marshal.PtrToStringAnsi((IntPtr)aaRoom);
             self.SetRoom(aVersion, aRoom);
             return 0;
@@ -744,7 +1408,7 @@ namespace Zapp
         private static unsafe int DoStandby(IntPtr aPtr, uint aVersion, int* aaStandby)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             bool aStandby;
             self.Standby(aVersion, out aStandby);
             *aaStandby = (aStandby ? 1 : 0);
@@ -754,7 +1418,7 @@ namespace Zapp
         private static unsafe int DoSetStandby(IntPtr aPtr, uint aVersion, int aaStandby)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             bool aStandby = (aaStandby != 0);
             self.SetStandby(aVersion, aStandby);
             return 0;
@@ -763,7 +1427,7 @@ namespace Zapp
         private static unsafe int DoSourceCount(IntPtr aPtr, uint aVersion, uint* aaSourceCount)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             uint aSourceCount;
             self.SourceCount(aVersion, out aSourceCount);
             *aaSourceCount = aSourceCount;
@@ -773,7 +1437,7 @@ namespace Zapp
         private static unsafe int DoSourceXml(IntPtr aPtr, uint aVersion, char** aaSourceXml)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             string aSourceXml;
             self.SourceXml(aVersion, out aSourceXml);
             *aaSourceXml = (char*)Marshal.StringToHGlobalAnsi(aSourceXml).ToPointer();
@@ -783,7 +1447,7 @@ namespace Zapp
         private static unsafe int DoSourceIndex(IntPtr aPtr, uint aVersion, uint* aaSourceIndex)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             uint aSourceIndex;
             self.SourceIndex(aVersion, out aSourceIndex);
             *aaSourceIndex = aSourceIndex;
@@ -793,7 +1457,7 @@ namespace Zapp
         private static unsafe int DoSetSourceIndex(IntPtr aPtr, uint aVersion, uint aaSourceIndex)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             self.SetSourceIndex(aVersion, aaSourceIndex);
             return 0;
         }
@@ -801,7 +1465,7 @@ namespace Zapp
         private static unsafe int DoSetSourceIndexByName(IntPtr aPtr, uint aVersion, char* aaSourceName)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             string aSourceName = Marshal.PtrToStringAnsi((IntPtr)aaSourceName);
             self.SetSourceIndexByName(aVersion, aSourceName);
             return 0;
@@ -810,7 +1474,7 @@ namespace Zapp
         private static unsafe int DoSetStartupSourceIndexByName(IntPtr aPtr, uint aVersion, char* aaSourceName)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             string aSourceName = Marshal.PtrToStringAnsi((IntPtr)aaSourceName);
             self.SetStartupSourceIndexByName(aVersion, aSourceName);
             return 0;
@@ -819,7 +1483,7 @@ namespace Zapp
         private static unsafe int DoStartupSourceIndex(IntPtr aPtr, uint aVersion, uint* aaSourceIndex)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             uint aSourceIndex;
             self.StartupSourceIndex(aVersion, out aSourceIndex);
             *aaSourceIndex = aSourceIndex;
@@ -829,7 +1493,7 @@ namespace Zapp
         private static unsafe int DoSetStartupSourceIndex(IntPtr aPtr, uint aVersion, uint aaSourceIndex)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             self.SetStartupSourceIndex(aVersion, aaSourceIndex);
             return 0;
         }
@@ -837,7 +1501,7 @@ namespace Zapp
         private static unsafe int DoStartupSourceEnabled(IntPtr aPtr, uint aVersion, int* aaStartupSourceEnabled)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             bool aStartupSourceEnabled;
             self.StartupSourceEnabled(aVersion, out aStartupSourceEnabled);
             *aaStartupSourceEnabled = (aStartupSourceEnabled ? 1 : 0);
@@ -847,7 +1511,7 @@ namespace Zapp
         private static unsafe int DoSetStartupSourceEnabled(IntPtr aPtr, uint aVersion, int aaStartupSourceEnabled)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             bool aStartupSourceEnabled = (aaStartupSourceEnabled != 0);
             self.SetStartupSourceEnabled(aVersion, aStartupSourceEnabled);
             return 0;
@@ -856,7 +1520,7 @@ namespace Zapp
         private static unsafe int DoSourceSystemName(IntPtr aPtr, uint aVersion, uint aaSourceIndex, char** aaSourceName)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             string aSourceName;
             self.SourceSystemName(aVersion, aaSourceIndex, out aSourceName);
             *aaSourceName = (char*)Marshal.StringToHGlobalAnsi(aSourceName).ToPointer();
@@ -866,7 +1530,7 @@ namespace Zapp
         private static unsafe int DoSourceName(IntPtr aPtr, uint aVersion, uint aaSourceIndex, char** aaSourceName)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             string aSourceName;
             self.SourceName(aVersion, aaSourceIndex, out aSourceName);
             *aaSourceName = (char*)Marshal.StringToHGlobalAnsi(aSourceName).ToPointer();
@@ -876,7 +1540,7 @@ namespace Zapp
         private static unsafe int DoSetSourceName(IntPtr aPtr, uint aVersion, uint aaSourceIndex, char* aaSourceName)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             string aSourceName = Marshal.PtrToStringAnsi((IntPtr)aaSourceName);
             self.SetSourceName(aVersion, aaSourceIndex, aSourceName);
             return 0;
@@ -885,7 +1549,7 @@ namespace Zapp
         private static unsafe int DoSourceType(IntPtr aPtr, uint aVersion, uint aaSourceIndex, char** aaSourceType)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             string aSourceType;
             self.SourceType(aVersion, aaSourceIndex, out aSourceType);
             *aaSourceType = (char*)Marshal.StringToHGlobalAnsi(aSourceType).ToPointer();
@@ -895,7 +1559,7 @@ namespace Zapp
         private static unsafe int DoSourceVisible(IntPtr aPtr, uint aVersion, uint aaSourceIndex, int* aaSourceVisible)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             bool aSourceVisible;
             self.SourceVisible(aVersion, aaSourceIndex, out aSourceVisible);
             *aaSourceVisible = (aSourceVisible ? 1 : 0);
@@ -905,20 +1569,22 @@ namespace Zapp
         private static unsafe int DoSetSourceVisible(IntPtr aPtr, uint aVersion, uint aaSourceIndex, int aaSourceVisible)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            DvServiceLinnCoUkProduct3 self = (DvServiceLinnCoUkProduct3)gch.Target;
+            DvProviderLinnCoUkProduct3 self = (DvProviderLinnCoUkProduct3)gch.Target;
             bool aSourceVisible = (aaSourceVisible != 0);
             self.SetSourceVisible(aVersion, aaSourceIndex, aSourceVisible);
             return 0;
         }
 
-
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose();
             GC.SuppressFinalize(this);
         }
 
-        ~DvServiceLinnCoUkProduct3()
+        ~DvProviderLinnCoUkProduct3()
         {
             DoDispose();
         }
@@ -935,7 +1601,7 @@ namespace Zapp
                 handle = iHandle;
                 iHandle = IntPtr.Zero;
             }
-            DvServiceLinnCoUkProduct3Destroy(handle);
+            DvProviderLinnCoUkProduct3Destroy(handle);
             if (iGch.IsAllocated)
             {
                 iGch.Free();

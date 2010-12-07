@@ -4,10 +4,11 @@
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <Core/DvDevice.h>
-#include <DvService.h>
+#include <DvProvider.h>
 
 namespace Zapp {
 
+class IDviInvocation;
 class PropertyInt;
 class PropertyUint;
 class PropertyBool;
@@ -15,22 +16,48 @@ class PropertyString;
 class PropertyBinary;
 
 /**
- * Base Device for linn.co.uk:MediaTime:1
+ * Provider for the linn.co.uk:MediaTime:1 UPnP service
+ * @ingroup Providers
  */
-class DvServiceLinnCoUkMediaTime1 : public DvService
+class DvProviderLinnCoUkMediaTime1 : public DvProvider
 {
 public:
-    virtual ~DvServiceLinnCoUkMediaTime1() {}
-    void SetPropertySeconds(TUint aValue);
+    virtual ~DvProviderLinnCoUkMediaTime1() {}
+    /**
+     * Set the value of the Seconds property
+     *
+     * @return  true if the value has been updated; false if aValue was the same as the previous value
+     */
+    TBool SetPropertySeconds(TUint aValue);
+    /**
+     * Get a copy of the value of the Seconds property
+     */
     void GetPropertySeconds(TUint& aValue);
 protected:
-    DvServiceLinnCoUkMediaTime1(DvDevice& aDevice);
+    /**
+     * Constructor
+     *
+     * @param[in] aDevice  Device which owns this provider
+     */
+    DvProviderLinnCoUkMediaTime1(DvDevice& aDevice);
+    /**
+     * Signal that the action Seconds is supported.
+     * The action's availability will be published in the device's service.xml.
+     * DoSeconds must be overridden if this is called.
+     */
     void EnableActionSeconds();
 private:
+    /**
+     * Seconds action.
+     *
+     * Will be called when the device stack receives an invocation of the
+     * Seconds action for the owning device.
+     * Must be implemented iff EnableActionSeconds was called.
+     */
     virtual void Seconds(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aaSeconds);
 private:
-    DvServiceLinnCoUkMediaTime1();
-    void DoSeconds(IDvInvocation& aInvocation, TUint aVersion);
+    DvProviderLinnCoUkMediaTime1();
+    void DoSeconds(IDviInvocation& aInvocation, TUint aVersion);
 private:
     PropertyUint* iPropertySeconds;
 };

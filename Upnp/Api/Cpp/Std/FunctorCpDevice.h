@@ -9,6 +9,13 @@ namespace Zapp {
 
 class CpDeviceCpp;
 
+/**
+ * Callback used to pass a CpDeviceCpp.
+ *
+ * Typically used by CpDeviceListCpp subclasses.
+ * Must be implemented using a pointer to a non-const member function.
+ * @ingroup ControlPoint
+ */
 class FunctorCpDeviceCpp
 {
 public:
@@ -49,6 +56,16 @@ public:
 };
 
 template<class Object, class CallType>
+/**
+ * Create a FunctorCpDeviceCpp around a non-const C++ member function
+ *
+ * @ingroup ControlPoint
+ *
+ * @param[in] aC        this pointer for the callback
+ * @param[in] callback  Pointer to a non-const member function taking a CpDeviceCpp&
+ *
+ * @return  a FunctorCpDeviceCpp object
+ */
 inline MemberTranslatorCpDeviceCpp<Object,void (CallType::*)(CpDeviceCpp&)>
 MakeFunctorCpDeviceCpp(Object& aC, void(CallType::* const &aF)(CpDeviceCpp&))
     {

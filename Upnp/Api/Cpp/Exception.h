@@ -38,6 +38,11 @@ public: \
 namespace Zapp
 {
 
+/**
+ * @internal
+ * @@ {
+ */
+
 typedef void (*AssertHandler)(const TChar*, TUint);
 
 void AssertHandlerDefault(const TChar*, TUint);
@@ -67,6 +72,8 @@ private:
 void UnhandledExceptionHandler(const TChar* aExceptionMessage, const TChar* aFile, TUint aLine);
 void UnhandledExceptionHandler(std::exception& aException);
 void UnhandledExceptionHandler(Exception& aException);
+
+/* @@} */
 
 } //namespace Zapp
 

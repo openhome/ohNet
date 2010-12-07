@@ -21,6 +21,7 @@ class PropertyUint;
 
 /**
  * Proxy for linn.co.uk:Radio:1
+ * @ingroup Proxies
  */
 class CpProxyLinnCoUkRadio1Cpp : public CpProxy
 {

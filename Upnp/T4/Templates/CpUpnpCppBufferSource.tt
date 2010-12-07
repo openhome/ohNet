@@ -1,7 +1,7 @@
-<#@ assembly name="Build/Tools/UpnpServiceXml.dll" #>
+<#@ assembly name="UpnpServiceXml.dll" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="Linn.Xml.UpnpServiceXml" #>
+<#@ import namespace="Zapp.Xml.UpnpServiceXml" #>
 <#@ template language="C#" #>
 <#
     string domain = TemplateArgument("domain");
@@ -64,7 +64,7 @@ using namespace Zapp;
 class Sync<#=a.name#><#=syncClassSuffix#> : public SyncProxyAction
 {
 public:
-    Sync<#=a.name#><#=syncClassSuffix#>(<#=className#>& aService<#=OutArgTypesAndNamesCommaPrefix(a)#>);
+    Sync<#=a.name#><#=syncClassSuffix#>(<#=className#>& aProxy<#=OutArgTypesAndNamesCommaPrefix(a)#>);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     <#=className#>& iService;
@@ -74,8 +74,8 @@ private:
 <#      } #>
 };
 
-Sync<#=a.name#><#=syncClassSuffix#>::Sync<#=a.name#><#=syncClassSuffix#>(<#=className#>& aService<#=OutArgTypesAndNamesCommaPrefix(a)#>)
-    : iService(aService)
+Sync<#=a.name#><#=syncClassSuffix#>::Sync<#=a.name#><#=syncClassSuffix#>(<#=className#>& aProxy<#=OutArgTypesAndNamesCommaPrefix(a)#>)
+    : iService(aProxy)
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
     , i<#=o.name#>(a<#=o.name#>)
@@ -144,7 +144,7 @@ void Sync<#=a.name#><#=syncClassSuffix#>::CompleteRequest(IAsync& aAsync)
 <#  { #>
     functor = MakeFunctor(*this, &<#=className#>::<#=s.name#>PropertyChanged);
     i<#=s.name#> = new <#=proptype[s.type]#>("<#=s.name#>", functor);
-    iService->AddProperty(i<#=s.name#>);
+    AddProperty(i<#=s.name#>);
 <#  } #>
 }
 
@@ -187,7 +187,7 @@ void <#=className#>::Begin<#=a.name#>(<#=InTypesAndNamesTrailingComma(a)#>Functo
     invocation->AddOutput(new <#=argclass[o.variable.type]#>(*outParams[outIndex++]));
 <#          } #>
 <#      } #>
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void <#=className#>::End<#=a.name#>(<#=PrefixedOutArgTypesAndNames("IAsync& aAsync", a)#>)
@@ -231,6 +231,7 @@ void <#=className#>::SetProperty<#=s.name#>Changed(Functor& aFunctor)
 
 void <#=className#>::Property<#=s.name#>(<#=propargtype[s.type]#> a<#=s.name#>) const
 {
+    iPropertyLock->Wait();
     ASSERT(iCpSubscriptionStatus == CpProxy::eSubscribed);
 <#      if (s.type=="string" || s.type=="bin.base64" || s.type=="uri") #>
 <#      { #>
@@ -240,6 +241,7 @@ void <#=className#>::Property<#=s.name#>(<#=propargtype[s.type]#> a<#=s.name#>) 
 <#      { #>
     a<#=s.name#> = i<#=s.name#>->Value();
 <#      } #>
+    iPropertyLock->Signal();
 }
 <#  } #>
 <#  foreach (Variable s in u.evented) #>

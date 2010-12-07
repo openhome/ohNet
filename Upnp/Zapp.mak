@@ -22,12 +22,12 @@ libprefix =
 libext = lib
 exeext = exe
 compiler = cl /nologo /Fo$(objdir)
-link = link /nologo /debug /machine:I386 /SUBSYSTEM:CONSOLE /map Ws2_32.lib Iphlpapi.lib
+link = link /nologo /debug /SUBSYSTEM:CONSOLE /map Ws2_32.lib Iphlpapi.lib /incremental:no
 linkoutput = /out:
 dllprefix =
 dllext = dll
-link_dll = link /nologo /debug /machine:I386  /map Ws2_32.lib Iphlpapi.lib /dll
-link_dll_service = link /nologo /debug /machine:I386  /map $(objdir)ZappUpnp.lib Ws2_32.lib Iphlpapi.lib /dll
+link_dll = link /nologo /debug /map Ws2_32.lib Iphlpapi.lib /dll
+link_dll_service = link /nologo /debug  /map $(objdir)ZappUpnp.lib Ws2_32.lib Iphlpapi.lib /dll
 csharp = csc /nologo /platform:x86
 publiccsdir = Public\Cs^\
 dirsep = ^\
@@ -64,12 +64,6 @@ include UserTargets.mak
 
 # Following macros must be provided by each file which wraps Common.mak
 
-TestDvDeviceCs: ZappUpnpDll CpZappOrgTestBasic1Dll DvZappOrgTestBasic1Dll
-	$(csharp) /d:DEBUG /debug /unsafe /platform:x86 /t:exe -out:$(objdir)TestDvDeviceCs.exe Public\\Cs\\CpDevice.cs Public\\Cs\\CpDeviceUpnp.cs Public\\Cs\\CpProxy.cs Public\\Cs\\Zapp.cs Public\\Cs\\AssemblyInfo.cs ControlPoint\\Services\\Cs\\CpZappOrgTestBasic1.cs  Public\\Cs\\DvDevice.cs Public\\Cs\\DvServiceErrors.cs Device\\Services\\Cs\\DvZappOrgTestBasic1.cs  Public\\Cs\\TestDvDevice.cs
-
-TestDvLightsCs: ZappUpnpDll CpZappOrgTestLights1Dll DvZappOrgTestLights1Dll
-	$(csharp) /d:DEBUG /debug /unsafe /platform:x86 /t:exe -out:$(objdir)TestDvLightsCs.exe Public\\Cs\\CpDevice.cs Public\\Cs\\CpDeviceUpnp.cs Public\\Cs\\CpProxy.cs Public\\Cs\\Zapp.cs Public\\Cs\\AssemblyInfo.cs ControlPoint\\Services\\Cs\\CpZappOrgTestLights1.cs  Public\\Cs\\DvDevice.cs Public\\Cs\\DvServiceErrors.cs Device\\Services\\Cs\\DvZappOrgTestLights1.cs  Public\\Cs\\TestDvLights.cs
-
 make_obj_dir:
 	if not exist $(objdirbare) mkdir $(objdirbare)
 
@@ -89,6 +83,7 @@ copy_build_includes:
 	copy Arch\*.h $(inc_build) > nul
 	copy Arch\I386\ArchSpecific.h $(inc_build) > nul
 	copy ControlPoint\*.h $(inc_build) > nul
+	copy ControlPoint\Dv\*.h $(inc_build) > nul
 	copy ControlPoint\Upnp\*.h $(inc_build) > nul
 	copy Device\*.h $(inc_build) > nul
 	copy Device\Upnp\*.h $(inc_build) > nul
@@ -97,8 +92,8 @@ copy_build_includes:
 	copy Ssdp\*.h $(inc_build) > nul
 	copy Os\*.h $(inc_build) > nul
 	copy Os\*.inl $(inc_build) > nul
-	copy Os\C\Os.h $(inc_build)\C > nul
 	copy Public\C\*.h $(inc_build)\C > nul
+	copy Public\Cpp\Std\*.h $(inc_build)\Cpp\Std > nul
 	copy Thread\Thread.h $(inc_build) > nul
 	copy Timer\Timer.h $(inc_build) > nul
 	copy Utils\*.h $(inc_build) > nul

@@ -27,9 +27,9 @@ Option::Option(const TChar* aShortName, const TChar* aLongName, const TChar* aHe
 
 Option::~Option()
 {
-    delete iShortName;
-    delete iLongName;
-    delete iHelpText;
+    delete[] iShortName;
+    delete[] iLongName;
+    delete[] iHelpText;
 }
 
 TBool Option::Match(const TChar* aName) const
@@ -227,6 +227,7 @@ TBool OptionParser::Parse(TInt aArgc, TChar* aArgv[])
     // Check if help option has been set
     if (iHelpOption.IsSet()) {
         DisplayHelp();
+        return (false);
     }
 
     return true;

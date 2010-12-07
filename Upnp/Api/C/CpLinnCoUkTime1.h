@@ -14,6 +14,12 @@ extern "C" {
 #endif
 
 /**
+ * @addtogroup CpProxyLinnCoUkTime1
+ * @ingroup Proxies
+ * @{
+ */
+
+/**
  * Constructor.
  * Creates an instance of CpProxyLinnCoUkTime1 without support for eventing.
  * Use CpProxyC[Un]Subscribe() to enable/disable querying of state variable and
@@ -132,6 +138,8 @@ DllExport void CpProxyLinnCoUkTime1PropertyDuration(THandle aHandle, uint32_t* a
  * @param[out] aSeconds
  */
 DllExport void CpProxyLinnCoUkTime1PropertySeconds(THandle aHandle, uint32_t* aSeconds);
+
+/* @} */
 
 #ifdef __cplusplus
 } // extern "C"

@@ -14,15 +14,15 @@ using namespace Zapp;
 class SyncTestComPortLinnCoUkPtest1Cpp : public SyncProxyAction
 {
 public:
-    SyncTestComPortLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aService, bool& aaResult);
+    SyncTestComPortLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aProxy, bool& aaResult);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkPtest1Cpp& iService;
     bool& iaResult;
 };
 
-SyncTestComPortLinnCoUkPtest1Cpp::SyncTestComPortLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aService, bool& aaResult)
-    : iService(aService)
+SyncTestComPortLinnCoUkPtest1Cpp::SyncTestComPortLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aProxy, bool& aaResult)
+    : iService(aProxy)
     , iaResult(aaResult)
 {
 }
@@ -36,14 +36,14 @@ void SyncTestComPortLinnCoUkPtest1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncLedsOnLinnCoUkPtest1Cpp : public SyncProxyAction
 {
 public:
-    SyncLedsOnLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aService);
+    SyncLedsOnLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkPtest1Cpp& iService;
 };
 
-SyncLedsOnLinnCoUkPtest1Cpp::SyncLedsOnLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aService)
-    : iService(aService)
+SyncLedsOnLinnCoUkPtest1Cpp::SyncLedsOnLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -56,14 +56,14 @@ void SyncLedsOnLinnCoUkPtest1Cpp::CompleteRequest(IAsync& aAsync)
 class SyncLedsOffLinnCoUkPtest1Cpp : public SyncProxyAction
 {
 public:
-    SyncLedsOffLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aService);
+    SyncLedsOffLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkPtest1Cpp& iService;
 };
 
-SyncLedsOffLinnCoUkPtest1Cpp::SyncLedsOffLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aService)
-    : iService(aService)
+SyncLedsOffLinnCoUkPtest1Cpp::SyncLedsOffLinnCoUkPtest1Cpp(CpProxyLinnCoUkPtest1Cpp& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -113,7 +113,7 @@ void CpProxyLinnCoUkPtest1Cpp::BeginTestComPort(uint32_t aaPort, FunctorAsync& a
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionTestComPort->OutputParameters();
     invocation->AddOutput(new ArgumentBool(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPtest1Cpp::EndTestComPort(IAsync& aAsync, bool& aaResult)
@@ -139,7 +139,7 @@ void CpProxyLinnCoUkPtest1Cpp::SyncLedsOn()
 void CpProxyLinnCoUkPtest1Cpp::BeginLedsOn(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionLedsOn, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPtest1Cpp::EndLedsOn(IAsync& aAsync)
@@ -163,7 +163,7 @@ void CpProxyLinnCoUkPtest1Cpp::SyncLedsOff()
 void CpProxyLinnCoUkPtest1Cpp::BeginLedsOff(FunctorAsync& aFunctor)
 {
     Invocation* invocation = iService->Invocation(*iActionLedsOff, aFunctor);
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkPtest1Cpp::EndLedsOff(IAsync& aAsync)

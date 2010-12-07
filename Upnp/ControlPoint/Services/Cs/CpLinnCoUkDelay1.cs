@@ -3,9 +3,48 @@ using System.Runtime.InteropServices;
 using System.Text;
 using Zapp;
 
-namespace Zapp
+namespace Zapp.ControlPoint.Proxies
 {
-    public class CpProxyLinnCoUkDelay1 : CpProxy, IDisposable
+    public interface ICpProxyLinnCoUkDelay1 : ICpProxy, IDisposable
+    {
+        void SyncPresetXml(out string aaPresetXml);
+        void BeginPresetXml(CpProxy.CallbackAsyncComplete aCallback);
+        void EndPresetXml(IntPtr aAsyncHandle, out string aaPresetXml);
+        void SyncPresetIndex(out uint aaIndex);
+        void BeginPresetIndex(CpProxy.CallbackAsyncComplete aCallback);
+        void EndPresetIndex(IntPtr aAsyncHandle, out uint aaIndex);
+        void SyncSetPresetIndex(uint aaIndex);
+        void BeginSetPresetIndex(uint aaIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetPresetIndex(IntPtr aAsyncHandle);
+        void SyncSetPresetDelay(uint aaIndex, uint aaDelay);
+        void BeginSetPresetDelay(uint aaIndex, uint aaDelay, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetPresetDelay(IntPtr aAsyncHandle);
+        void SyncSetPresetVisible(uint aaIndex, bool aaVisible);
+        void BeginSetPresetVisible(uint aaIndex, bool aaVisible, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetPresetVisible(IntPtr aAsyncHandle);
+        void SyncSetPresetName(uint aaIndex, string aaName);
+        void BeginSetPresetName(uint aaIndex, string aaName, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetPresetName(IntPtr aAsyncHandle);
+        void SyncDelayMinimum(out uint aaDelay);
+        void BeginDelayMinimum(CpProxy.CallbackAsyncComplete aCallback);
+        void EndDelayMinimum(IntPtr aAsyncHandle, out uint aaDelay);
+        void SyncDelayMaximum(out uint aaDelay);
+        void BeginDelayMaximum(CpProxy.CallbackAsyncComplete aCallback);
+        void EndDelayMaximum(IntPtr aAsyncHandle, out uint aaDelay);
+        void SyncPresetCount(out uint aaCount);
+        void BeginPresetCount(CpProxy.CallbackAsyncComplete aCallback);
+        void EndPresetCount(IntPtr aAsyncHandle, out uint aaCount);
+
+        void SetPropertyPresetXmlChanged(CpProxy.CallbackPropertyChanged aPresetXmlChanged);
+        void PropertyPresetXml(out string aPresetXml);
+        void SetPropertyPresetIndexChanged(CpProxy.CallbackPropertyChanged aPresetIndexChanged);
+        void PropertyPresetIndex(out uint aPresetIndex);
+    }
+
+    /// <summary>
+    /// Proxy for the linn.co.uk:Delay:1 UPnP service
+    /// </summary>
+    public class CpProxyLinnCoUkDelay1 : CpProxy, IDisposable, ICpProxyLinnCoUkDelay1
     {
         [DllImport("CpLinnCoUkDelay1")]
         static extern IntPtr CpProxyLinnCoUkDelay1Create(IntPtr aDeviceHandle);
@@ -82,22 +121,41 @@ namespace Zapp
         private Callback iCallbackPresetXmlChanged;
         private Callback iCallbackPresetIndexChanged;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
+        /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkDelay1(CpDevice aDevice)
         {
             iHandle = CpProxyLinnCoUkDelay1Create(aDevice.Handle());
             iGch = GCHandle.Alloc(this);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaPresetXml"></param>
         public unsafe void SyncPresetXml(out string aaPresetXml)
         {
-			char* aPresetXml;
-			{
-				CpProxyLinnCoUkDelay1SyncPresetXml(iHandle, &aPresetXml);
-			}
+            char* aPresetXml;
+            {
+                CpProxyLinnCoUkDelay1SyncPresetXml(iHandle, &aPresetXml);
+            }
             aaPresetXml = Marshal.PtrToStringAnsi((IntPtr)aPresetXml);
             ZappFree(aPresetXml);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndPresetXml().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginPresetXml(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -105,27 +163,47 @@ namespace Zapp
             CpProxyLinnCoUkDelay1BeginPresetXml(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaPresetXml"></param>
         public unsafe void EndPresetXml(IntPtr aAsyncHandle, out string aaPresetXml)
         {
-			char* aPresetXml;
-			{
-				if (0 != CpProxyLinnCoUkDelay1EndPresetXml(iHandle, aAsyncHandle, &aPresetXml))
-				{
-					throw(new ProxyError());
-				}
-			}
+            char* aPresetXml;
+            {
+                if (0 != CpProxyLinnCoUkDelay1EndPresetXml(iHandle, aAsyncHandle, &aPresetXml))
+                {
+                    throw(new ProxyError());
+                }
+            }
             aaPresetXml = Marshal.PtrToStringAnsi((IntPtr)aPresetXml);
             ZappFree(aPresetXml);
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaIndex"></param>
         public unsafe void SyncPresetIndex(out uint aaIndex)
         {
-			fixed (uint* aIndex = &aaIndex)
-			{
-				CpProxyLinnCoUkDelay1SyncPresetIndex(iHandle, aIndex);
-			}
+            fixed (uint* aIndex = &aaIndex)
+            {
+                CpProxyLinnCoUkDelay1SyncPresetIndex(iHandle, aIndex);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndPresetIndex().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginPresetIndex(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -133,24 +211,45 @@ namespace Zapp
             CpProxyLinnCoUkDelay1BeginPresetIndex(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaIndex"></param>
         public unsafe void EndPresetIndex(IntPtr aAsyncHandle, out uint aaIndex)
         {
-			fixed (uint* aIndex = &aaIndex)
-			{
-				if (0 != CpProxyLinnCoUkDelay1EndPresetIndex(iHandle, aAsyncHandle, aIndex))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* aIndex = &aaIndex)
+            {
+                if (0 != CpProxyLinnCoUkDelay1EndPresetIndex(iHandle, aAsyncHandle, aIndex))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaIndex"></param>
         public unsafe void SyncSetPresetIndex(uint aaIndex)
         {
-			{
-				CpProxyLinnCoUkDelay1SyncSetPresetIndex(iHandle, aaIndex);
-			}
+            {
+                CpProxyLinnCoUkDelay1SyncSetPresetIndex(iHandle, aaIndex);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetPresetIndex().</remarks>
+        /// <param name="aaIndex"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetPresetIndex(uint aaIndex, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -158,23 +257,45 @@ namespace Zapp
             CpProxyLinnCoUkDelay1BeginSetPresetIndex(iHandle, aaIndex, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetPresetIndex(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDelay1EndSetPresetIndex(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDelay1EndSetPresetIndex(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaIndex"></param>
+        /// <param name="aaDelay"></param>
         public unsafe void SyncSetPresetDelay(uint aaIndex, uint aaDelay)
         {
-			{
-				CpProxyLinnCoUkDelay1SyncSetPresetDelay(iHandle, aaIndex, aaDelay);
-			}
+            {
+                CpProxyLinnCoUkDelay1SyncSetPresetDelay(iHandle, aaIndex, aaDelay);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetPresetDelay().</remarks>
+        /// <param name="aaIndex"></param>
+        /// <param name="aaDelay"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetPresetDelay(uint aaIndex, uint aaDelay, CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -182,78 +303,141 @@ namespace Zapp
             CpProxyLinnCoUkDelay1BeginSetPresetDelay(iHandle, aaIndex, aaDelay, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetPresetDelay(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDelay1EndSetPresetDelay(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDelay1EndSetPresetDelay(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaIndex"></param>
+        /// <param name="aaVisible"></param>
         public unsafe void SyncSetPresetVisible(uint aaIndex, bool aaVisible)
         {
-			uint aVisible = (aaVisible? 1u : 0u);
-			{
-				CpProxyLinnCoUkDelay1SyncSetPresetVisible(iHandle, aaIndex, aVisible);
-			}
+            uint aVisible = (aaVisible? 1u : 0u);
+            {
+                CpProxyLinnCoUkDelay1SyncSetPresetVisible(iHandle, aaIndex, aVisible);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetPresetVisible().</remarks>
+        /// <param name="aaIndex"></param>
+        /// <param name="aaVisible"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetPresetVisible(uint aaIndex, bool aaVisible, CallbackAsyncComplete aCallback)
         {
-			uint aVisible = (aaVisible? 1u : 0u);
+            uint aVisible = (aaVisible? 1u : 0u);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkDelay1BeginSetPresetVisible(iHandle, aaIndex, aVisible, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetPresetVisible(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDelay1EndSetPresetVisible(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDelay1EndSetPresetVisible(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaIndex"></param>
+        /// <param name="aaName"></param>
         public unsafe void SyncSetPresetName(uint aaIndex, string aaName)
         {
-			char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
-			{
-				CpProxyLinnCoUkDelay1SyncSetPresetName(iHandle, aaIndex, aName);
-			}
-			Marshal.FreeHGlobal((IntPtr)aName);
+            char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
+            {
+                CpProxyLinnCoUkDelay1SyncSetPresetName(iHandle, aaIndex, aName);
+            }
+            Marshal.FreeHGlobal((IntPtr)aName);
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndSetPresetName().</remarks>
+        /// <param name="aaIndex"></param>
+        /// <param name="aaName"></param>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginSetPresetName(uint aaIndex, string aaName, CallbackAsyncComplete aCallback)
         {
-			char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
+            char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
             GCHandle gch = GCHandle.Alloc(aCallback);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
             CpProxyLinnCoUkDelay1BeginSetPresetName(iHandle, aaIndex, aName, iActionComplete, ptr);
-			Marshal.FreeHGlobal((IntPtr)aName);
+            Marshal.FreeHGlobal((IntPtr)aName);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         public unsafe void EndSetPresetName(IntPtr aAsyncHandle)
         {
-			{
-				if (0 != CpProxyLinnCoUkDelay1EndSetPresetName(iHandle, aAsyncHandle))
-				{
-					throw(new ProxyError());
-				}
-			}
+            {
+                if (0 != CpProxyLinnCoUkDelay1EndSetPresetName(iHandle, aAsyncHandle))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaDelay"></param>
         public unsafe void SyncDelayMinimum(out uint aaDelay)
         {
-			fixed (uint* aDelay = &aaDelay)
-			{
-				CpProxyLinnCoUkDelay1SyncDelayMinimum(iHandle, aDelay);
-			}
+            fixed (uint* aDelay = &aaDelay)
+            {
+                CpProxyLinnCoUkDelay1SyncDelayMinimum(iHandle, aDelay);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndDelayMinimum().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDelayMinimum(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -261,25 +445,45 @@ namespace Zapp
             CpProxyLinnCoUkDelay1BeginDelayMinimum(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaDelay"></param>
         public unsafe void EndDelayMinimum(IntPtr aAsyncHandle, out uint aaDelay)
         {
-			fixed (uint* aDelay = &aaDelay)
-			{
-				if (0 != CpProxyLinnCoUkDelay1EndDelayMinimum(iHandle, aAsyncHandle, aDelay))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* aDelay = &aaDelay)
+            {
+                if (0 != CpProxyLinnCoUkDelay1EndDelayMinimum(iHandle, aAsyncHandle, aDelay))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaDelay"></param>
         public unsafe void SyncDelayMaximum(out uint aaDelay)
         {
-			fixed (uint* aDelay = &aaDelay)
-			{
-				CpProxyLinnCoUkDelay1SyncDelayMaximum(iHandle, aDelay);
-			}
+            fixed (uint* aDelay = &aaDelay)
+            {
+                CpProxyLinnCoUkDelay1SyncDelayMaximum(iHandle, aDelay);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndDelayMaximum().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginDelayMaximum(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -287,25 +491,45 @@ namespace Zapp
             CpProxyLinnCoUkDelay1BeginDelayMaximum(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaDelay"></param>
         public unsafe void EndDelayMaximum(IntPtr aAsyncHandle, out uint aaDelay)
         {
-			fixed (uint* aDelay = &aaDelay)
-			{
-				if (0 != CpProxyLinnCoUkDelay1EndDelayMaximum(iHandle, aAsyncHandle, aDelay))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* aDelay = &aaDelay)
+            {
+                if (0 != CpProxyLinnCoUkDelay1EndDelayMaximum(iHandle, aAsyncHandle, aDelay))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Invoke the action synchronously
+        /// </summary>
+        /// <remarks>Blocks until the action has been processed
+        /// on the device and sets any output arguments</remarks>
+        /// <param name="aaCount"></param>
         public unsafe void SyncPresetCount(out uint aaCount)
         {
-			fixed (uint* aCount = &aaCount)
-			{
-				CpProxyLinnCoUkDelay1SyncPresetCount(iHandle, aCount);
-			}
+            fixed (uint* aCount = &aaCount)
+            {
+                CpProxyLinnCoUkDelay1SyncPresetCount(iHandle, aCount);
+            }
         }
 
+        /// <summary>
+        /// Invoke the action asynchronously
+        /// </summary>
+        /// <remarks>Returns immediately and will run the client-specified callback when the action
+        /// later completes.  Any output arguments can then be retrieved by calling
+        /// EndPresetCount().</remarks>
+        /// <param name="aCallback">Delegate to run when the action completes.
+        /// This is guaranteed to be run but may indicate an error</param>
         public unsafe void BeginPresetCount(CallbackAsyncComplete aCallback)
         {
             GCHandle gch = GCHandle.Alloc(aCallback);
@@ -313,17 +537,29 @@ namespace Zapp
             CpProxyLinnCoUkDelay1BeginPresetCount(iHandle, iActionComplete, ptr);
         }
 
+        /// <summary>
+        /// Retrieve the output arguments from an asynchronously invoked action.
+        /// </summary>
+        /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
+        /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
+        /// <param name="aaCount"></param>
         public unsafe void EndPresetCount(IntPtr aAsyncHandle, out uint aaCount)
         {
-			fixed (uint* aCount = &aaCount)
-			{
-				if (0 != CpProxyLinnCoUkDelay1EndPresetCount(iHandle, aAsyncHandle, aCount))
-				{
-					throw(new ProxyError());
-				}
-			}
+            fixed (uint* aCount = &aaCount)
+            {
+                if (0 != CpProxyLinnCoUkDelay1EndPresetCount(iHandle, aAsyncHandle, aCount))
+                {
+                    throw(new ProxyError());
+                }
+            }
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the PresetXml state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkDelay1 instance will not overlap.</remarks>
+        /// <param name="aPresetXmlChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyPresetXmlChanged(CallbackPropertyChanged aPresetXmlChanged)
         {
             iPresetXmlChanged = aPresetXmlChanged;
@@ -339,6 +575,12 @@ namespace Zapp
             self.iPresetXmlChanged();
         }
 
+        /// <summary>
+        /// Set a delegate to be run when the PresetIndex state variable changes.
+        /// </summary>
+        /// <remarks>Callbacks may be run in different threads but callbacks for a
+        /// CpProxyLinnCoUkDelay1 instance will not overlap.</remarks>
+        /// <param name="aPresetIndexChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyPresetIndexChanged(CallbackPropertyChanged aPresetIndexChanged)
         {
             iPresetIndexChanged = aPresetIndexChanged;
@@ -354,22 +596,39 @@ namespace Zapp
             self.iPresetIndexChanged();
         }
 
+        /// <summary>
+        /// Query the value of the PresetXml property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <param name="aPresetXml">Will be set to the value of the property</param>
         public unsafe void PropertyPresetXml(out string aPresetXml)
         {
-			char* ptr;
+            char* ptr;
             CpProxyLinnCoUkDelay1PropertyPresetXml(iHandle, &ptr);
             aPresetXml = Marshal.PtrToStringAnsi((IntPtr)ptr);
             ZappFree(ptr);
         }
 
+        /// <summary>
+        /// Query the value of the PresetIndex property.
+        /// </summary>
+        /// <remarks>This function is threadsafe and can only be called if Subscribe() has been
+        /// called and a first eventing callback received more recently than any call
+        /// to Unsubscribe().</remarks>
+        /// <param name="aPresetIndex">Will be set to the value of the property</param>
         public unsafe void PropertyPresetIndex(out uint aPresetIndex)
         {
-			fixed (uint* presetIndex = &aPresetIndex)
-			{
-	            CpProxyLinnCoUkDelay1PropertyPresetIndex(iHandle, presetIndex);
-			}
+            fixed (uint* presetIndex = &aPresetIndex)
+            {
+                CpProxyLinnCoUkDelay1PropertyPresetIndex(iHandle, presetIndex);
+            }
         }
 
+        /// <summary>
+        /// Must be called for each class instance.  Must be called before Core.Library.Close().
+        /// </summary>
         public void Dispose()
         {
             DoDispose(true);
@@ -382,17 +641,15 @@ namespace Zapp
 
         private void DoDispose(bool aDisposing)
         {
-            IntPtr handle;
             lock (this)
             {
                 if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
+                CpProxyLinnCoUkDelay1Destroy(iHandle);
                 iHandle = IntPtr.Zero;
             }
-            CpProxyLinnCoUkDelay1Destroy(handle);
             iGch.Free();
             if (aDisposing)
             {

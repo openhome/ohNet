@@ -374,5 +374,6 @@ void Zapp::TestFramework::Runner::Main(TInt /*aArgc*/, TChar* /*aArgv*/[], Initi
     runner.Add(new SuiteFifoLiteBasic());
     runner.Run();
 
+    delete aInitParams;
     UpnpLibrary::Close();
 }

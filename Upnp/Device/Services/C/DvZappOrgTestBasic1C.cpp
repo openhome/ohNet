@@ -7,10 +7,10 @@
 
 using namespace Zapp;
 
-class DvServiceZappOrgTestBasic1C : public DvServiceZappOrgTestBasic1
+class DvProviderZappOrgTestBasic1C : public DvProviderZappOrgTestBasic1
 {
 public:
-    DvServiceZappOrgTestBasic1C(DvDevice& aDevice);
+    DvProviderZappOrgTestBasic1C(DvDevice& aDevice);
     void EnableActionIncrement(CallbackTestBasic1Increment aCallback, void* aPtr);
     void EnableActionDecrement(CallbackTestBasic1Decrement aCallback, void* aPtr);
     void EnableActionToggle(CallbackTestBasic1Toggle aCallback, void* aPtr);
@@ -27,6 +27,9 @@ public:
     void EnableActionGetString(CallbackTestBasic1GetString aCallback, void* aPtr);
     void EnableActionSetBinary(CallbackTestBasic1SetBinary aCallback, void* aPtr);
     void EnableActionGetBinary(CallbackTestBasic1GetBinary aCallback, void* aPtr);
+    void EnableActionToggleBool(CallbackTestBasic1ToggleBool aCallback, void* aPtr);
+    void EnableActionWriteFile(CallbackTestBasic1WriteFile aCallback, void* aPtr);
+    void EnableActionShutdown(CallbackTestBasic1Shutdown aCallback, void* aPtr);
 private:
     void Increment(IInvocationResponse& aResponse, TUint aVersion, TUint aValue, IInvocationResponseUint& aResult);
     void Decrement(IInvocationResponse& aResponse, TUint aVersion, TInt aValue, IInvocationResponseInt& aResult);
@@ -44,6 +47,9 @@ private:
     void GetString(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValueStr);
     void SetBinary(IInvocationResponse& aResponse, TUint aVersion, const Brx& aValueBin);
     void GetBinary(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBinary& aValueBin);
+    void ToggleBool(IInvocationResponse& aResponse, TUint aVersion);
+    void WriteFile(IInvocationResponse& aResponse, TUint aVersion, const Brx& aData, const Brx& aFileFullName);
+    void Shutdown(IInvocationResponse& aResponse, TUint aVersion);
 private:
     CallbackTestBasic1Increment iCallbackIncrement;
     void* iPtrIncrement;
@@ -77,126 +83,153 @@ private:
     void* iPtrSetBinary;
     CallbackTestBasic1GetBinary iCallbackGetBinary;
     void* iPtrGetBinary;
+    CallbackTestBasic1ToggleBool iCallbackToggleBool;
+    void* iPtrToggleBool;
+    CallbackTestBasic1WriteFile iCallbackWriteFile;
+    void* iPtrWriteFile;
+    CallbackTestBasic1Shutdown iCallbackShutdown;
+    void* iPtrShutdown;
 };
 
-DvServiceZappOrgTestBasic1C::DvServiceZappOrgTestBasic1C(DvDevice& aDevice)
-    : DvServiceZappOrgTestBasic1(aDevice)
+DvProviderZappOrgTestBasic1C::DvProviderZappOrgTestBasic1C(DvDevice& aDevice)
+    : DvProviderZappOrgTestBasic1(aDevice)
 {
 }
 
-void DvServiceZappOrgTestBasic1C::EnableActionIncrement(CallbackTestBasic1Increment aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1C::EnableActionIncrement(CallbackTestBasic1Increment aCallback, void* aPtr)
 {
     iCallbackIncrement = aCallback;
     iPtrIncrement = aPtr;
-    DvServiceZappOrgTestBasic1::EnableActionIncrement();
+    DvProviderZappOrgTestBasic1::EnableActionIncrement();
 }
 
-void DvServiceZappOrgTestBasic1C::EnableActionDecrement(CallbackTestBasic1Decrement aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1C::EnableActionDecrement(CallbackTestBasic1Decrement aCallback, void* aPtr)
 {
     iCallbackDecrement = aCallback;
     iPtrDecrement = aPtr;
-    DvServiceZappOrgTestBasic1::EnableActionDecrement();
+    DvProviderZappOrgTestBasic1::EnableActionDecrement();
 }
 
-void DvServiceZappOrgTestBasic1C::EnableActionToggle(CallbackTestBasic1Toggle aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1C::EnableActionToggle(CallbackTestBasic1Toggle aCallback, void* aPtr)
 {
     iCallbackToggle = aCallback;
     iPtrToggle = aPtr;
-    DvServiceZappOrgTestBasic1::EnableActionToggle();
+    DvProviderZappOrgTestBasic1::EnableActionToggle();
 }
 
-void DvServiceZappOrgTestBasic1C::EnableActionEchoString(CallbackTestBasic1EchoString aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1C::EnableActionEchoString(CallbackTestBasic1EchoString aCallback, void* aPtr)
 {
     iCallbackEchoString = aCallback;
     iPtrEchoString = aPtr;
-    DvServiceZappOrgTestBasic1::EnableActionEchoString();
+    DvProviderZappOrgTestBasic1::EnableActionEchoString();
 }
 
-void DvServiceZappOrgTestBasic1C::EnableActionEchoBinary(CallbackTestBasic1EchoBinary aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1C::EnableActionEchoBinary(CallbackTestBasic1EchoBinary aCallback, void* aPtr)
 {
     iCallbackEchoBinary = aCallback;
     iPtrEchoBinary = aPtr;
-    DvServiceZappOrgTestBasic1::EnableActionEchoBinary();
+    DvProviderZappOrgTestBasic1::EnableActionEchoBinary();
 }
 
-void DvServiceZappOrgTestBasic1C::EnableActionSetUint(CallbackTestBasic1SetUint aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1C::EnableActionSetUint(CallbackTestBasic1SetUint aCallback, void* aPtr)
 {
     iCallbackSetUint = aCallback;
     iPtrSetUint = aPtr;
-    DvServiceZappOrgTestBasic1::EnableActionSetUint();
+    DvProviderZappOrgTestBasic1::EnableActionSetUint();
 }
 
-void DvServiceZappOrgTestBasic1C::EnableActionGetUint(CallbackTestBasic1GetUint aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1C::EnableActionGetUint(CallbackTestBasic1GetUint aCallback, void* aPtr)
 {
     iCallbackGetUint = aCallback;
     iPtrGetUint = aPtr;
-    DvServiceZappOrgTestBasic1::EnableActionGetUint();
+    DvProviderZappOrgTestBasic1::EnableActionGetUint();
 }
 
-void DvServiceZappOrgTestBasic1C::EnableActionSetInt(CallbackTestBasic1SetInt aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1C::EnableActionSetInt(CallbackTestBasic1SetInt aCallback, void* aPtr)
 {
     iCallbackSetInt = aCallback;
     iPtrSetInt = aPtr;
-    DvServiceZappOrgTestBasic1::EnableActionSetInt();
+    DvProviderZappOrgTestBasic1::EnableActionSetInt();
 }
 
-void DvServiceZappOrgTestBasic1C::EnableActionGetInt(CallbackTestBasic1GetInt aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1C::EnableActionGetInt(CallbackTestBasic1GetInt aCallback, void* aPtr)
 {
     iCallbackGetInt = aCallback;
     iPtrGetInt = aPtr;
-    DvServiceZappOrgTestBasic1::EnableActionGetInt();
+    DvProviderZappOrgTestBasic1::EnableActionGetInt();
 }
 
-void DvServiceZappOrgTestBasic1C::EnableActionSetBool(CallbackTestBasic1SetBool aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1C::EnableActionSetBool(CallbackTestBasic1SetBool aCallback, void* aPtr)
 {
     iCallbackSetBool = aCallback;
     iPtrSetBool = aPtr;
-    DvServiceZappOrgTestBasic1::EnableActionSetBool();
+    DvProviderZappOrgTestBasic1::EnableActionSetBool();
 }
 
-void DvServiceZappOrgTestBasic1C::EnableActionGetBool(CallbackTestBasic1GetBool aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1C::EnableActionGetBool(CallbackTestBasic1GetBool aCallback, void* aPtr)
 {
     iCallbackGetBool = aCallback;
     iPtrGetBool = aPtr;
-    DvServiceZappOrgTestBasic1::EnableActionGetBool();
+    DvProviderZappOrgTestBasic1::EnableActionGetBool();
 }
 
-void DvServiceZappOrgTestBasic1C::EnableActionSetMultiple(CallbackTestBasic1SetMultiple aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1C::EnableActionSetMultiple(CallbackTestBasic1SetMultiple aCallback, void* aPtr)
 {
     iCallbackSetMultiple = aCallback;
     iPtrSetMultiple = aPtr;
-    DvServiceZappOrgTestBasic1::EnableActionSetMultiple();
+    DvProviderZappOrgTestBasic1::EnableActionSetMultiple();
 }
 
-void DvServiceZappOrgTestBasic1C::EnableActionSetString(CallbackTestBasic1SetString aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1C::EnableActionSetString(CallbackTestBasic1SetString aCallback, void* aPtr)
 {
     iCallbackSetString = aCallback;
     iPtrSetString = aPtr;
-    DvServiceZappOrgTestBasic1::EnableActionSetString();
+    DvProviderZappOrgTestBasic1::EnableActionSetString();
 }
 
-void DvServiceZappOrgTestBasic1C::EnableActionGetString(CallbackTestBasic1GetString aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1C::EnableActionGetString(CallbackTestBasic1GetString aCallback, void* aPtr)
 {
     iCallbackGetString = aCallback;
     iPtrGetString = aPtr;
-    DvServiceZappOrgTestBasic1::EnableActionGetString();
+    DvProviderZappOrgTestBasic1::EnableActionGetString();
 }
 
-void DvServiceZappOrgTestBasic1C::EnableActionSetBinary(CallbackTestBasic1SetBinary aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1C::EnableActionSetBinary(CallbackTestBasic1SetBinary aCallback, void* aPtr)
 {
     iCallbackSetBinary = aCallback;
     iPtrSetBinary = aPtr;
-    DvServiceZappOrgTestBasic1::EnableActionSetBinary();
+    DvProviderZappOrgTestBasic1::EnableActionSetBinary();
 }
 
-void DvServiceZappOrgTestBasic1C::EnableActionGetBinary(CallbackTestBasic1GetBinary aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1C::EnableActionGetBinary(CallbackTestBasic1GetBinary aCallback, void* aPtr)
 {
     iCallbackGetBinary = aCallback;
     iPtrGetBinary = aPtr;
-    DvServiceZappOrgTestBasic1::EnableActionGetBinary();
+    DvProviderZappOrgTestBasic1::EnableActionGetBinary();
 }
 
-void DvServiceZappOrgTestBasic1C::Increment(IInvocationResponse& aResponse, TUint aVersion, TUint aValue, IInvocationResponseUint& aResult)
+void DvProviderZappOrgTestBasic1C::EnableActionToggleBool(CallbackTestBasic1ToggleBool aCallback, void* aPtr)
+{
+    iCallbackToggleBool = aCallback;
+    iPtrToggleBool = aPtr;
+    DvProviderZappOrgTestBasic1::EnableActionToggleBool();
+}
+
+void DvProviderZappOrgTestBasic1C::EnableActionWriteFile(CallbackTestBasic1WriteFile aCallback, void* aPtr)
+{
+    iCallbackWriteFile = aCallback;
+    iPtrWriteFile = aPtr;
+    DvProviderZappOrgTestBasic1::EnableActionWriteFile();
+}
+
+void DvProviderZappOrgTestBasic1C::EnableActionShutdown(CallbackTestBasic1Shutdown aCallback, void* aPtr)
+{
+    iCallbackShutdown = aCallback;
+    iPtrShutdown = aPtr;
+    DvProviderZappOrgTestBasic1::EnableActionShutdown();
+}
+
+void DvProviderZappOrgTestBasic1C::Increment(IInvocationResponse& aResponse, TUint aVersion, TUint aValue, IInvocationResponseUint& aResult)
 {
     uint32_t Result;
     ASSERT(iCallbackIncrement != NULL);
@@ -209,7 +242,7 @@ void DvServiceZappOrgTestBasic1C::Increment(IInvocationResponse& aResponse, TUin
     aResponse.End();
 }
 
-void DvServiceZappOrgTestBasic1C::Decrement(IInvocationResponse& aResponse, TUint aVersion, TInt aValue, IInvocationResponseInt& aResult)
+void DvProviderZappOrgTestBasic1C::Decrement(IInvocationResponse& aResponse, TUint aVersion, TInt aValue, IInvocationResponseInt& aResult)
 {
     int32_t Result;
     ASSERT(iCallbackDecrement != NULL);
@@ -222,7 +255,7 @@ void DvServiceZappOrgTestBasic1C::Decrement(IInvocationResponse& aResponse, TUin
     aResponse.End();
 }
 
-void DvServiceZappOrgTestBasic1C::Toggle(IInvocationResponse& aResponse, TUint aVersion, TBool aValue, IInvocationResponseBool& aResult)
+void DvProviderZappOrgTestBasic1C::Toggle(IInvocationResponse& aResponse, TUint aVersion, TBool aValue, IInvocationResponseBool& aResult)
 {
     uint32_t Result;
     ASSERT(iCallbackToggle != NULL);
@@ -235,7 +268,7 @@ void DvServiceZappOrgTestBasic1C::Toggle(IInvocationResponse& aResponse, TUint a
     aResponse.End();
 }
 
-void DvServiceZappOrgTestBasic1C::EchoString(IInvocationResponse& aResponse, TUint aVersion, const Brx& aValue, IInvocationResponseString& aResult)
+void DvProviderZappOrgTestBasic1C::EchoString(IInvocationResponse& aResponse, TUint aVersion, const Brx& aValue, IInvocationResponseString& aResult)
 {
     char* Result;
     ASSERT(iCallbackEchoString != NULL);
@@ -251,7 +284,7 @@ void DvServiceZappOrgTestBasic1C::EchoString(IInvocationResponse& aResponse, TUi
     aResponse.End();
 }
 
-void DvServiceZappOrgTestBasic1C::EchoBinary(IInvocationResponse& aResponse, TUint aVersion, const Brx& aValue, IInvocationResponseBinary& aResult)
+void DvProviderZappOrgTestBasic1C::EchoBinary(IInvocationResponse& aResponse, TUint aVersion, const Brx& aValue, IInvocationResponseBinary& aResult)
 {
     char* Result;
     uint32_t ResultLen;
@@ -269,7 +302,7 @@ void DvServiceZappOrgTestBasic1C::EchoBinary(IInvocationResponse& aResponse, TUi
     aResponse.End();
 }
 
-void DvServiceZappOrgTestBasic1C::SetUint(IInvocationResponse& aResponse, TUint aVersion, TUint aValueUint)
+void DvProviderZappOrgTestBasic1C::SetUint(IInvocationResponse& aResponse, TUint aVersion, TUint aValueUint)
 {
     ASSERT(iCallbackSetUint != NULL);
     if (0 != iCallbackSetUint(iPtrSetUint, aVersion, aValueUint)) {
@@ -280,7 +313,7 @@ void DvServiceZappOrgTestBasic1C::SetUint(IInvocationResponse& aResponse, TUint 
     aResponse.End();
 }
 
-void DvServiceZappOrgTestBasic1C::GetUint(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aValueUint)
+void DvProviderZappOrgTestBasic1C::GetUint(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseUint& aValueUint)
 {
     uint32_t ValueUint;
     ASSERT(iCallbackGetUint != NULL);
@@ -293,7 +326,7 @@ void DvServiceZappOrgTestBasic1C::GetUint(IInvocationResponse& aResponse, TUint 
     aResponse.End();
 }
 
-void DvServiceZappOrgTestBasic1C::SetInt(IInvocationResponse& aResponse, TUint aVersion, TInt aValueInt)
+void DvProviderZappOrgTestBasic1C::SetInt(IInvocationResponse& aResponse, TUint aVersion, TInt aValueInt)
 {
     ASSERT(iCallbackSetInt != NULL);
     if (0 != iCallbackSetInt(iPtrSetInt, aVersion, aValueInt)) {
@@ -304,7 +337,7 @@ void DvServiceZappOrgTestBasic1C::SetInt(IInvocationResponse& aResponse, TUint a
     aResponse.End();
 }
 
-void DvServiceZappOrgTestBasic1C::GetInt(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseInt& aValueInt)
+void DvProviderZappOrgTestBasic1C::GetInt(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseInt& aValueInt)
 {
     int32_t ValueInt;
     ASSERT(iCallbackGetInt != NULL);
@@ -317,7 +350,7 @@ void DvServiceZappOrgTestBasic1C::GetInt(IInvocationResponse& aResponse, TUint a
     aResponse.End();
 }
 
-void DvServiceZappOrgTestBasic1C::SetBool(IInvocationResponse& aResponse, TUint aVersion, TBool aValueBool)
+void DvProviderZappOrgTestBasic1C::SetBool(IInvocationResponse& aResponse, TUint aVersion, TBool aValueBool)
 {
     ASSERT(iCallbackSetBool != NULL);
     if (0 != iCallbackSetBool(iPtrSetBool, aVersion, aValueBool)) {
@@ -328,7 +361,7 @@ void DvServiceZappOrgTestBasic1C::SetBool(IInvocationResponse& aResponse, TUint 
     aResponse.End();
 }
 
-void DvServiceZappOrgTestBasic1C::GetBool(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aValueBool)
+void DvProviderZappOrgTestBasic1C::GetBool(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBool& aValueBool)
 {
     uint32_t ValueBool;
     ASSERT(iCallbackGetBool != NULL);
@@ -341,7 +374,7 @@ void DvServiceZappOrgTestBasic1C::GetBool(IInvocationResponse& aResponse, TUint 
     aResponse.End();
 }
 
-void DvServiceZappOrgTestBasic1C::SetMultiple(IInvocationResponse& aResponse, TUint aVersion, TUint aValueUint, TInt aValueInt, TBool aValueBool)
+void DvProviderZappOrgTestBasic1C::SetMultiple(IInvocationResponse& aResponse, TUint aVersion, TUint aValueUint, TInt aValueInt, TBool aValueBool)
 {
     ASSERT(iCallbackSetMultiple != NULL);
     if (0 != iCallbackSetMultiple(iPtrSetMultiple, aVersion, aValueUint, aValueInt, aValueBool)) {
@@ -352,7 +385,7 @@ void DvServiceZappOrgTestBasic1C::SetMultiple(IInvocationResponse& aResponse, TU
     aResponse.End();
 }
 
-void DvServiceZappOrgTestBasic1C::SetString(IInvocationResponse& aResponse, TUint aVersion, const Brx& aValueStr)
+void DvProviderZappOrgTestBasic1C::SetString(IInvocationResponse& aResponse, TUint aVersion, const Brx& aValueStr)
 {
     ASSERT(iCallbackSetString != NULL);
     if (0 != iCallbackSetString(iPtrSetString, aVersion, (const char*)aValueStr.Ptr())) {
@@ -363,7 +396,7 @@ void DvServiceZappOrgTestBasic1C::SetString(IInvocationResponse& aResponse, TUin
     aResponse.End();
 }
 
-void DvServiceZappOrgTestBasic1C::GetString(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValueStr)
+void DvProviderZappOrgTestBasic1C::GetString(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseString& aValueStr)
 {
     char* ValueStr;
     ASSERT(iCallbackGetString != NULL);
@@ -379,7 +412,7 @@ void DvServiceZappOrgTestBasic1C::GetString(IInvocationResponse& aResponse, TUin
     aResponse.End();
 }
 
-void DvServiceZappOrgTestBasic1C::SetBinary(IInvocationResponse& aResponse, TUint aVersion, const Brx& aValueBin)
+void DvProviderZappOrgTestBasic1C::SetBinary(IInvocationResponse& aResponse, TUint aVersion, const Brx& aValueBin)
 {
     ASSERT(iCallbackSetBinary != NULL);
     if (0 != iCallbackSetBinary(iPtrSetBinary, aVersion, (const char*)aValueBin.Ptr(), aValueBin.Bytes())) {
@@ -390,7 +423,7 @@ void DvServiceZappOrgTestBasic1C::SetBinary(IInvocationResponse& aResponse, TUin
     aResponse.End();
 }
 
-void DvServiceZappOrgTestBasic1C::GetBinary(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBinary& aValueBin)
+void DvProviderZappOrgTestBasic1C::GetBinary(IInvocationResponse& aResponse, TUint aVersion, IInvocationResponseBinary& aValueBin)
 {
     char* ValueBin;
     uint32_t ValueBinLen;
@@ -408,163 +441,211 @@ void DvServiceZappOrgTestBasic1C::GetBinary(IInvocationResponse& aResponse, TUin
     aResponse.End();
 }
 
-
-
-THandle DvServiceZappOrgTestBasic1Create(DvDeviceC aDevice)
+void DvProviderZappOrgTestBasic1C::ToggleBool(IInvocationResponse& aResponse, TUint aVersion)
 {
-	return new DvServiceZappOrgTestBasic1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+    ASSERT(iCallbackToggleBool != NULL);
+    if (0 != iCallbackToggleBool(iPtrToggleBool, aVersion)) {
+        aResponse.Error(502, Brn("Action failed"));
+        return;
+    }
+    aResponse.Start();
+    aResponse.End();
 }
 
-void DvServiceZappOrgTestBasic1Destroy(THandle aService)
+void DvProviderZappOrgTestBasic1C::WriteFile(IInvocationResponse& aResponse, TUint aVersion, const Brx& aData, const Brx& aFileFullName)
 {
-    delete reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService);
+    ASSERT(iCallbackWriteFile != NULL);
+    if (0 != iCallbackWriteFile(iPtrWriteFile, aVersion, (const char*)aData.Ptr(), (const char*)aFileFullName.Ptr())) {
+        aResponse.Error(502, Brn("Action failed"));
+        return;
+    }
+    aResponse.Start();
+    aResponse.End();
 }
 
-void DvServiceZappOrgTestBasic1EnableActionIncrement(THandle aService, CallbackTestBasic1Increment aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1C::Shutdown(IInvocationResponse& aResponse, TUint aVersion)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->EnableActionIncrement(aCallback, aPtr);
+    ASSERT(iCallbackShutdown != NULL);
+    if (0 != iCallbackShutdown(iPtrShutdown, aVersion)) {
+        aResponse.Error(502, Brn("Action failed"));
+        return;
+    }
+    aResponse.Start();
+    aResponse.End();
 }
 
-void DvServiceZappOrgTestBasic1EnableActionDecrement(THandle aService, CallbackTestBasic1Decrement aCallback, void* aPtr)
+
+
+THandle DvProviderZappOrgTestBasic1Create(DvDeviceC aDevice)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->EnableActionDecrement(aCallback, aPtr);
+	return new DvProviderZappOrgTestBasic1C(*(DviDeviceC::DeviceFromHandle(aDevice)));
 }
 
-void DvServiceZappOrgTestBasic1EnableActionToggle(THandle aService, CallbackTestBasic1Toggle aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1Destroy(THandle aProvider)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->EnableActionToggle(aCallback, aPtr);
+    delete reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider);
 }
 
-void DvServiceZappOrgTestBasic1EnableActionEchoString(THandle aService, CallbackTestBasic1EchoString aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionIncrement(THandle aProvider, CallbackTestBasic1Increment aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->EnableActionEchoString(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionIncrement(aCallback, aPtr);
 }
 
-void DvServiceZappOrgTestBasic1EnableActionEchoBinary(THandle aService, CallbackTestBasic1EchoBinary aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionDecrement(THandle aProvider, CallbackTestBasic1Decrement aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->EnableActionEchoBinary(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionDecrement(aCallback, aPtr);
 }
 
-void DvServiceZappOrgTestBasic1EnableActionSetUint(THandle aService, CallbackTestBasic1SetUint aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionToggle(THandle aProvider, CallbackTestBasic1Toggle aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->EnableActionSetUint(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionToggle(aCallback, aPtr);
 }
 
-void DvServiceZappOrgTestBasic1EnableActionGetUint(THandle aService, CallbackTestBasic1GetUint aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionEchoString(THandle aProvider, CallbackTestBasic1EchoString aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->EnableActionGetUint(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionEchoString(aCallback, aPtr);
 }
 
-void DvServiceZappOrgTestBasic1EnableActionSetInt(THandle aService, CallbackTestBasic1SetInt aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionEchoBinary(THandle aProvider, CallbackTestBasic1EchoBinary aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->EnableActionSetInt(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionEchoBinary(aCallback, aPtr);
 }
 
-void DvServiceZappOrgTestBasic1EnableActionGetInt(THandle aService, CallbackTestBasic1GetInt aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionSetUint(THandle aProvider, CallbackTestBasic1SetUint aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->EnableActionGetInt(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionSetUint(aCallback, aPtr);
 }
 
-void DvServiceZappOrgTestBasic1EnableActionSetBool(THandle aService, CallbackTestBasic1SetBool aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionGetUint(THandle aProvider, CallbackTestBasic1GetUint aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->EnableActionSetBool(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionGetUint(aCallback, aPtr);
 }
 
-void DvServiceZappOrgTestBasic1EnableActionGetBool(THandle aService, CallbackTestBasic1GetBool aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionSetInt(THandle aProvider, CallbackTestBasic1SetInt aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->EnableActionGetBool(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionSetInt(aCallback, aPtr);
 }
 
-void DvServiceZappOrgTestBasic1EnableActionSetMultiple(THandle aService, CallbackTestBasic1SetMultiple aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionGetInt(THandle aProvider, CallbackTestBasic1GetInt aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->EnableActionSetMultiple(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionGetInt(aCallback, aPtr);
 }
 
-void DvServiceZappOrgTestBasic1EnableActionSetString(THandle aService, CallbackTestBasic1SetString aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionSetBool(THandle aProvider, CallbackTestBasic1SetBool aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->EnableActionSetString(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionSetBool(aCallback, aPtr);
 }
 
-void DvServiceZappOrgTestBasic1EnableActionGetString(THandle aService, CallbackTestBasic1GetString aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionGetBool(THandle aProvider, CallbackTestBasic1GetBool aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->EnableActionGetString(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionGetBool(aCallback, aPtr);
 }
 
-void DvServiceZappOrgTestBasic1EnableActionSetBinary(THandle aService, CallbackTestBasic1SetBinary aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionSetMultiple(THandle aProvider, CallbackTestBasic1SetMultiple aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->EnableActionSetBinary(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionSetMultiple(aCallback, aPtr);
 }
 
-void DvServiceZappOrgTestBasic1EnableActionGetBinary(THandle aService, CallbackTestBasic1GetBinary aCallback, void* aPtr)
+void DvProviderZappOrgTestBasic1EnableActionSetString(THandle aProvider, CallbackTestBasic1SetString aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->EnableActionGetBinary(aCallback, aPtr);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionSetString(aCallback, aPtr);
 }
 
-int32_t DvServiceZappOrgTestBasic1SetPropertyVarUint(THandle aService, uint32_t aValue)
+void DvProviderZappOrgTestBasic1EnableActionGetString(THandle aProvider, CallbackTestBasic1GetString aCallback, void* aPtr)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->SetPropertyVarUint(aValue);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionGetString(aCallback, aPtr);
+}
+
+void DvProviderZappOrgTestBasic1EnableActionSetBinary(THandle aProvider, CallbackTestBasic1SetBinary aCallback, void* aPtr)
+{
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionSetBinary(aCallback, aPtr);
+}
+
+void DvProviderZappOrgTestBasic1EnableActionGetBinary(THandle aProvider, CallbackTestBasic1GetBinary aCallback, void* aPtr)
+{
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionGetBinary(aCallback, aPtr);
+}
+
+void DvProviderZappOrgTestBasic1EnableActionToggleBool(THandle aProvider, CallbackTestBasic1ToggleBool aCallback, void* aPtr)
+{
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionToggleBool(aCallback, aPtr);
+}
+
+void DvProviderZappOrgTestBasic1EnableActionWriteFile(THandle aProvider, CallbackTestBasic1WriteFile aCallback, void* aPtr)
+{
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionWriteFile(aCallback, aPtr);
+}
+
+void DvProviderZappOrgTestBasic1EnableActionShutdown(THandle aProvider, CallbackTestBasic1Shutdown aCallback, void* aPtr)
+{
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->EnableActionShutdown(aCallback, aPtr);
+}
+
+int32_t DvProviderZappOrgTestBasic1SetPropertyVarUint(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
+{
+    *aChanged = (reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->SetPropertyVarUint(aValue)? 1 : 0);
     return 0;
 }
 
-void DvServiceZappOrgTestBasic1GetPropertyVarUint(THandle aService, uint32_t* aValue)
+void DvProviderZappOrgTestBasic1GetPropertyVarUint(THandle aProvider, uint32_t* aValue)
 {
     uint32_t val;
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->GetPropertyVarUint(val);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->GetPropertyVarUint(val);
     *aValue = val;
 }
 
-int32_t DvServiceZappOrgTestBasic1SetPropertyVarInt(THandle aService, int32_t aValue)
+int32_t DvProviderZappOrgTestBasic1SetPropertyVarInt(THandle aProvider, int32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->SetPropertyVarInt(aValue);
+    *aChanged = (reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->SetPropertyVarInt(aValue)? 1 : 0);
     return 0;
 }
 
-void DvServiceZappOrgTestBasic1GetPropertyVarInt(THandle aService, int32_t* aValue)
+void DvProviderZappOrgTestBasic1GetPropertyVarInt(THandle aProvider, int32_t* aValue)
 {
     int32_t val;
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->GetPropertyVarInt(val);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->GetPropertyVarInt(val);
     *aValue = val;
 }
 
-int32_t DvServiceZappOrgTestBasic1SetPropertyVarBool(THandle aService, uint32_t aValue)
+int32_t DvProviderZappOrgTestBasic1SetPropertyVarBool(THandle aProvider, uint32_t aValue, uint32_t* aChanged)
 {
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->SetPropertyVarBool((aValue!=0));
+    *aChanged = (reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->SetPropertyVarBool((aValue!=0))? 1 : 0);
     return 0;
 }
 
-void DvServiceZappOrgTestBasic1GetPropertyVarBool(THandle aService, uint32_t* aValue)
+void DvProviderZappOrgTestBasic1GetPropertyVarBool(THandle aProvider, uint32_t* aValue)
 {
     TBool val;
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->GetPropertyVarBool(val);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->GetPropertyVarBool(val);
     *aValue = (val? 1 : 0);
 }
 
-int32_t DvServiceZappOrgTestBasic1SetPropertyVarStr(THandle aService, const char* aValue)
+int32_t DvProviderZappOrgTestBasic1SetPropertyVarStr(THandle aProvider, const char* aValue, uint32_t* aChanged)
 {
     Brhz buf(aValue);
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->SetPropertyVarStr(buf);
+    *aChanged = (reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->SetPropertyVarStr(buf)? 1 : 0);
     return 0;
 }
 
-void DvServiceZappOrgTestBasic1GetPropertyVarStr(THandle aService, char** aValue)
+void DvProviderZappOrgTestBasic1GetPropertyVarStr(THandle aProvider, char** aValue)
 {
     Brhz buf;
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->GetPropertyVarStr(buf);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->GetPropertyVarStr(buf);
     *aValue = (char*)buf.Transfer();
 }
 
-int32_t DvServiceZappOrgTestBasic1SetPropertyVarBin(THandle aService, const char* aValue, uint32_t aValueLen)
+int32_t DvProviderZappOrgTestBasic1SetPropertyVarBin(THandle aProvider, const char* aValue, uint32_t aValueLen, uint32_t* aChanged)
 {
     Brh buf;
     buf.Set((const TByte*)aValue, aValueLen);
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->SetPropertyVarBin(buf);
+    *aChanged = (reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->SetPropertyVarBin(buf)? 1 : 0);
     return 0;
 }
 
-void DvServiceZappOrgTestBasic1GetPropertyVarBin(THandle aService, char** aValue, uint32_t* aValueLen)
+void DvProviderZappOrgTestBasic1GetPropertyVarBin(THandle aProvider, char** aValue, uint32_t* aValueLen)
 {
     Brh buf;
-    reinterpret_cast<DvServiceZappOrgTestBasic1C*>(aService)->GetPropertyVarBin(buf);
+    reinterpret_cast<DvProviderZappOrgTestBasic1C*>(aProvider)->GetPropertyVarBin(buf);
     *aValueLen = buf.Bytes();
     *aValue = (char*)buf.Extract();
 }

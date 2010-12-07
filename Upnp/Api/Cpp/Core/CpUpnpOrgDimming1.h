@@ -20,6 +20,7 @@ class PropertyUint;
 
 /**
  * Proxy for upnp.org:Dimming:1
+ * @ingroup Proxies
  */
 class CpProxyUpnpOrgDimming1 : public CpProxy
 {

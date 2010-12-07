@@ -11,14 +11,14 @@ using namespace Zapp;
 class SyncSetDebugLevelLinnCoUkDebug2 : public SyncProxyAction
 {
 public:
-    SyncSetDebugLevelLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aService);
+    SyncSetDebugLevelLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDebug2& iService;
 };
 
-SyncSetDebugLevelLinnCoUkDebug2::SyncSetDebugLevelLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aService)
-    : iService(aService)
+SyncSetDebugLevelLinnCoUkDebug2::SyncSetDebugLevelLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -31,15 +31,15 @@ void SyncSetDebugLevelLinnCoUkDebug2::CompleteRequest(IAsync& aAsync)
 class SyncDebugLevelLinnCoUkDebug2 : public SyncProxyAction
 {
 public:
-    SyncDebugLevelLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aService, TUint& aaDebugLevel);
+    SyncDebugLevelLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aProxy, TUint& aaDebugLevel);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDebug2& iService;
     TUint& iaDebugLevel;
 };
 
-SyncDebugLevelLinnCoUkDebug2::SyncDebugLevelLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aService, TUint& aaDebugLevel)
-    : iService(aService)
+SyncDebugLevelLinnCoUkDebug2::SyncDebugLevelLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aProxy, TUint& aaDebugLevel)
+    : iService(aProxy)
     , iaDebugLevel(aaDebugLevel)
 {
 }
@@ -53,14 +53,14 @@ void SyncDebugLevelLinnCoUkDebug2::CompleteRequest(IAsync& aAsync)
 class SyncMemWriteLinnCoUkDebug2 : public SyncProxyAction
 {
 public:
-    SyncMemWriteLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aService);
+    SyncMemWriteLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aProxy);
     virtual void CompleteRequest(IAsync& aAsync);
 private:
     CpProxyLinnCoUkDebug2& iService;
 };
 
-SyncMemWriteLinnCoUkDebug2::SyncMemWriteLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aService)
-    : iService(aService)
+SyncMemWriteLinnCoUkDebug2::SyncMemWriteLinnCoUkDebug2(CpProxyLinnCoUkDebug2& aProxy)
+    : iService(aProxy)
 {
 }
 
@@ -111,7 +111,7 @@ void CpProxyLinnCoUkDebug2::BeginSetDebugLevel(TUint aaDebugLevel, FunctorAsync&
     TUint inIndex = 0;
     const Action::VectorParameters& inParams = iActionSetDebugLevel->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaDebugLevel));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDebug2::EndSetDebugLevel(IAsync& aAsync)
@@ -138,7 +138,7 @@ void CpProxyLinnCoUkDebug2::BeginDebugLevel(FunctorAsync& aFunctor)
     TUint outIndex = 0;
     const Action::VectorParameters& outParams = iActionDebugLevel->OutputParameters();
     invocation->AddOutput(new ArgumentUint(*outParams[outIndex++]));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDebug2::EndDebugLevel(IAsync& aAsync, TUint& aaDebugLevel)
@@ -168,7 +168,7 @@ void CpProxyLinnCoUkDebug2::BeginMemWrite(TUint aaMemAddress, const Brx& aaMemDa
     const Action::VectorParameters& inParams = iActionMemWrite->InputParameters();
     invocation->AddInput(new ArgumentUint(*inParams[inIndex++], aaMemAddress));
     invocation->AddInput(new ArgumentBinary(*inParams[inIndex++], aaMemData));
-    invocation->Invoke();
+    iInvocable.InvokeAction(*invocation);
 }
 
 void CpProxyLinnCoUkDebug2::EndMemWrite(IAsync& aAsync)
