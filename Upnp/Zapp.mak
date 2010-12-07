@@ -36,16 +36,20 @@ installlibdir = $(installdir)\lib
 installincludedir = $(installdir)\include
 mkdir = Scripts\mkdir.bat
 rmdir = Scripts\rmdir.bat
+uset4 = no
+
 default : all
 
 include T4Windows.mak
 # Actual building of code is shared between platforms
 include Common.mak
 
+!if "$(uset4)"=="yes"
 !if exist (Generated\GenerateSourceFiles.mak)
 !include Generated\GenerateSourceFiles.mak
 !else
 !message Note: Generated\GenerateSourceFiles.mak does not yet exist. Try "make generate-makefiles".
+!endif
 !endif
 
 !if exist (Generated\Proxies.mak)
