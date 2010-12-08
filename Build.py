@@ -214,7 +214,7 @@ def GenDocs(module, os, nightly, arch):
 		Build(Environment['tool'],docgen_cmd,'')
 
                 import paramiko
-		rsyncCmd = "rsync -avz --exclude='*.o' --exclude='*.a' --exclude='Include' Upnp/Build/Docs/ "+username+"@"+host+":~/"
+		rsyncCmd = "rsync -avz --exclude='*.o' --exclude='*.a' --exclude='Include' Upnp/Build/Docs/ "+username+"@"+host+":~/doc"
                 ret = subprocess.call(rsyncCmd, shell=True)
                 if ret != 0:
                           print ret
