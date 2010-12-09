@@ -2,10 +2,10 @@ import sys
 import os
 import subprocess
 import threading
-import paramiko
-
 
 def rssh(username,host,cmd):
+
+	import paramiko
 
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
