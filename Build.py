@@ -261,7 +261,7 @@ def ArmTests(module, arch, nightly):
 
 		excludes = ['*.o', '*.a', 'Include','Docs']
                 ret = rsync('hudson-zapp','sheeva002.linn.co.uk','Upnp/Build','~/',excludes)
-                ret = rsync('hudson-zapp','sheeva002.linn.co.uk','AllTests.py','~/',excludes)
+                ret = rsync('hudson-zapp','sheeva002.linn.co.uk','Upnp/AllTests.py','~/',excludes)
 
                 if ret != 0:
 			  print ret
