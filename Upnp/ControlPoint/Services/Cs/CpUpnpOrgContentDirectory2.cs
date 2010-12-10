@@ -9,55 +9,55 @@ namespace Zapp.ControlPoint.Proxies
     {
         void SyncGetSearchCapabilities(out string aSearchCaps);
         void BeginGetSearchCapabilities(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetSearchCapabilities(uint aAsyncHandle, out string aSearchCaps);
+        void EndGetSearchCapabilities(IntPtr aAsyncHandle, out string aSearchCaps);
         void SyncGetSortCapabilities(out string aSortCaps);
         void BeginGetSortCapabilities(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetSortCapabilities(uint aAsyncHandle, out string aSortCaps);
+        void EndGetSortCapabilities(IntPtr aAsyncHandle, out string aSortCaps);
         void SyncGetSortExtensionCapabilities(out string aSortExtensionCaps);
         void BeginGetSortExtensionCapabilities(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetSortExtensionCapabilities(uint aAsyncHandle, out string aSortExtensionCaps);
+        void EndGetSortExtensionCapabilities(IntPtr aAsyncHandle, out string aSortExtensionCaps);
         void SyncGetFeatureList(out string aFeatureList);
         void BeginGetFeatureList(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetFeatureList(uint aAsyncHandle, out string aFeatureList);
+        void EndGetFeatureList(IntPtr aAsyncHandle, out string aFeatureList);
         void SyncGetSystemUpdateID(out uint aId);
         void BeginGetSystemUpdateID(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetSystemUpdateID(uint aAsyncHandle, out uint aId);
+        void EndGetSystemUpdateID(IntPtr aAsyncHandle, out uint aId);
         void SyncBrowse(string aObjectID, string aBrowseFlag, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
         void BeginBrowse(string aObjectID, string aBrowseFlag, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, CpProxy.CallbackAsyncComplete aCallback);
-        void EndBrowse(uint aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
+        void EndBrowse(IntPtr aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
         void SyncSearch(string aContainerID, string aSearchCriteria, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
         void BeginSearch(string aContainerID, string aSearchCriteria, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSearch(uint aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
+        void EndSearch(IntPtr aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
         void SyncCreateObject(string aContainerID, string aElements, out string aObjectID, out string aResult);
         void BeginCreateObject(string aContainerID, string aElements, CpProxy.CallbackAsyncComplete aCallback);
-        void EndCreateObject(uint aAsyncHandle, out string aObjectID, out string aResult);
+        void EndCreateObject(IntPtr aAsyncHandle, out string aObjectID, out string aResult);
         void SyncDestroyObject(string aObjectID);
         void BeginDestroyObject(string aObjectID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndDestroyObject(uint aAsyncHandle);
+        void EndDestroyObject(IntPtr aAsyncHandle);
         void SyncUpdateObject(string aObjectID, string aCurrentTagValue, string aNewTagValue);
         void BeginUpdateObject(string aObjectID, string aCurrentTagValue, string aNewTagValue, CpProxy.CallbackAsyncComplete aCallback);
-        void EndUpdateObject(uint aAsyncHandle);
+        void EndUpdateObject(IntPtr aAsyncHandle);
         void SyncMoveObject(string aObjectID, string aNewParentID, out string aNewObjectID);
         void BeginMoveObject(string aObjectID, string aNewParentID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndMoveObject(uint aAsyncHandle, out string aNewObjectID);
+        void EndMoveObject(IntPtr aAsyncHandle, out string aNewObjectID);
         void SyncImportResource(string aSourceURI, string aDestinationURI, out uint aTransferID);
         void BeginImportResource(string aSourceURI, string aDestinationURI, CpProxy.CallbackAsyncComplete aCallback);
-        void EndImportResource(uint aAsyncHandle, out uint aTransferID);
+        void EndImportResource(IntPtr aAsyncHandle, out uint aTransferID);
         void SyncExportResource(string aSourceURI, string aDestinationURI, out uint aTransferID);
         void BeginExportResource(string aSourceURI, string aDestinationURI, CpProxy.CallbackAsyncComplete aCallback);
-        void EndExportResource(uint aAsyncHandle, out uint aTransferID);
+        void EndExportResource(IntPtr aAsyncHandle, out uint aTransferID);
         void SyncDeleteResource(string aResourceURI);
         void BeginDeleteResource(string aResourceURI, CpProxy.CallbackAsyncComplete aCallback);
-        void EndDeleteResource(uint aAsyncHandle);
+        void EndDeleteResource(IntPtr aAsyncHandle);
         void SyncStopTransferResource(uint aTransferID);
         void BeginStopTransferResource(uint aTransferID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndStopTransferResource(uint aAsyncHandle);
+        void EndStopTransferResource(IntPtr aAsyncHandle);
         void SyncGetTransferProgress(uint aTransferID, out string aTransferStatus, out string aTransferLength, out string aTransferTotal);
         void BeginGetTransferProgress(uint aTransferID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetTransferProgress(uint aAsyncHandle, out string aTransferStatus, out string aTransferLength, out string aTransferTotal);
+        void EndGetTransferProgress(IntPtr aAsyncHandle, out string aTransferStatus, out string aTransferLength, out string aTransferTotal);
         void SyncCreateReference(string aContainerID, string aObjectID, out string aNewID);
         void BeginCreateReference(string aContainerID, string aObjectID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndCreateReference(uint aAsyncHandle, out string aNewID);
+        void EndCreateReference(IntPtr aAsyncHandle, out string aNewID);
 
         void SetPropertySystemUpdateIDChanged(CpProxy.CallbackPropertyChanged aSystemUpdateIDChanged);
         void PropertySystemUpdateID(out uint aSystemUpdateID);
@@ -73,123 +73,123 @@ namespace Zapp.ControlPoint.Proxies
     public class CpProxyUpnpOrgContentDirectory2 : CpProxy, IDisposable, ICpProxyUpnpOrgContentDirectory2
     {
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern uint CpProxyUpnpOrgContentDirectory2Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyUpnpOrgContentDirectory2Create(IntPtr aDeviceHandle);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern void CpProxyUpnpOrgContentDirectory2Destroy(uint aHandle);
+        static extern void CpProxyUpnpOrgContentDirectory2Destroy(IntPtr aHandle);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncGetSearchCapabilities(uint aHandle, char** aSearchCaps);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncGetSearchCapabilities(IntPtr aHandle, char** aSearchCaps);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginGetSearchCapabilities(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginGetSearchCapabilities(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndGetSearchCapabilities(uint aHandle, uint aAsync, char** aSearchCaps);
+        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndGetSearchCapabilities(IntPtr aHandle, IntPtr aAsync, char** aSearchCaps);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncGetSortCapabilities(uint aHandle, char** aSortCaps);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncGetSortCapabilities(IntPtr aHandle, char** aSortCaps);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginGetSortCapabilities(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginGetSortCapabilities(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndGetSortCapabilities(uint aHandle, uint aAsync, char** aSortCaps);
+        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndGetSortCapabilities(IntPtr aHandle, IntPtr aAsync, char** aSortCaps);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncGetSortExtensionCapabilities(uint aHandle, char** aSortExtensionCaps);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncGetSortExtensionCapabilities(IntPtr aHandle, char** aSortExtensionCaps);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginGetSortExtensionCapabilities(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginGetSortExtensionCapabilities(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndGetSortExtensionCapabilities(uint aHandle, uint aAsync, char** aSortExtensionCaps);
+        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndGetSortExtensionCapabilities(IntPtr aHandle, IntPtr aAsync, char** aSortExtensionCaps);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncGetFeatureList(uint aHandle, char** aFeatureList);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncGetFeatureList(IntPtr aHandle, char** aFeatureList);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginGetFeatureList(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginGetFeatureList(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndGetFeatureList(uint aHandle, uint aAsync, char** aFeatureList);
+        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndGetFeatureList(IntPtr aHandle, IntPtr aAsync, char** aFeatureList);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncGetSystemUpdateID(uint aHandle, uint* aId);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncGetSystemUpdateID(IntPtr aHandle, uint* aId);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginGetSystemUpdateID(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginGetSystemUpdateID(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndGetSystemUpdateID(uint aHandle, uint aAsync, uint* aId);
+        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndGetSystemUpdateID(IntPtr aHandle, IntPtr aAsync, uint* aId);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncBrowse(uint aHandle, char* aObjectID, char* aBrowseFlag, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncBrowse(IntPtr aHandle, char* aObjectID, char* aBrowseFlag, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginBrowse(uint aHandle, char* aObjectID, char* aBrowseFlag, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginBrowse(IntPtr aHandle, char* aObjectID, char* aBrowseFlag, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndBrowse(uint aHandle, uint aAsync, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
+        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndBrowse(IntPtr aHandle, IntPtr aAsync, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncSearch(uint aHandle, char* aContainerID, char* aSearchCriteria, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncSearch(IntPtr aHandle, char* aContainerID, char* aSearchCriteria, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginSearch(uint aHandle, char* aContainerID, char* aSearchCriteria, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginSearch(IntPtr aHandle, char* aContainerID, char* aSearchCriteria, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndSearch(uint aHandle, uint aAsync, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
+        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndSearch(IntPtr aHandle, IntPtr aAsync, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncCreateObject(uint aHandle, char* aContainerID, char* aElements, char** aObjectID, char** aResult);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncCreateObject(IntPtr aHandle, char* aContainerID, char* aElements, char** aObjectID, char** aResult);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginCreateObject(uint aHandle, char* aContainerID, char* aElements, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginCreateObject(IntPtr aHandle, char* aContainerID, char* aElements, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndCreateObject(uint aHandle, uint aAsync, char** aObjectID, char** aResult);
+        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndCreateObject(IntPtr aHandle, IntPtr aAsync, char** aObjectID, char** aResult);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncDestroyObject(uint aHandle, char* aObjectID);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncDestroyObject(IntPtr aHandle, char* aObjectID);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginDestroyObject(uint aHandle, char* aObjectID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginDestroyObject(IntPtr aHandle, char* aObjectID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndDestroyObject(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndDestroyObject(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncUpdateObject(uint aHandle, char* aObjectID, char* aCurrentTagValue, char* aNewTagValue);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncUpdateObject(IntPtr aHandle, char* aObjectID, char* aCurrentTagValue, char* aNewTagValue);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginUpdateObject(uint aHandle, char* aObjectID, char* aCurrentTagValue, char* aNewTagValue, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginUpdateObject(IntPtr aHandle, char* aObjectID, char* aCurrentTagValue, char* aNewTagValue, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndUpdateObject(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndUpdateObject(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncMoveObject(uint aHandle, char* aObjectID, char* aNewParentID, char** aNewObjectID);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncMoveObject(IntPtr aHandle, char* aObjectID, char* aNewParentID, char** aNewObjectID);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginMoveObject(uint aHandle, char* aObjectID, char* aNewParentID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginMoveObject(IntPtr aHandle, char* aObjectID, char* aNewParentID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndMoveObject(uint aHandle, uint aAsync, char** aNewObjectID);
+        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndMoveObject(IntPtr aHandle, IntPtr aAsync, char** aNewObjectID);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncImportResource(uint aHandle, char* aSourceURI, char* aDestinationURI, uint* aTransferID);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncImportResource(IntPtr aHandle, char* aSourceURI, char* aDestinationURI, uint* aTransferID);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginImportResource(uint aHandle, char* aSourceURI, char* aDestinationURI, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginImportResource(IntPtr aHandle, char* aSourceURI, char* aDestinationURI, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndImportResource(uint aHandle, uint aAsync, uint* aTransferID);
+        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndImportResource(IntPtr aHandle, IntPtr aAsync, uint* aTransferID);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncExportResource(uint aHandle, char* aSourceURI, char* aDestinationURI, uint* aTransferID);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncExportResource(IntPtr aHandle, char* aSourceURI, char* aDestinationURI, uint* aTransferID);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginExportResource(uint aHandle, char* aSourceURI, char* aDestinationURI, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginExportResource(IntPtr aHandle, char* aSourceURI, char* aDestinationURI, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndExportResource(uint aHandle, uint aAsync, uint* aTransferID);
+        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndExportResource(IntPtr aHandle, IntPtr aAsync, uint* aTransferID);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncDeleteResource(uint aHandle, char* aResourceURI);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncDeleteResource(IntPtr aHandle, char* aResourceURI);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginDeleteResource(uint aHandle, char* aResourceURI, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginDeleteResource(IntPtr aHandle, char* aResourceURI, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndDeleteResource(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndDeleteResource(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncStopTransferResource(uint aHandle, uint aTransferID);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncStopTransferResource(IntPtr aHandle, uint aTransferID);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginStopTransferResource(uint aHandle, uint aTransferID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginStopTransferResource(IntPtr aHandle, uint aTransferID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndStopTransferResource(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndStopTransferResource(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncGetTransferProgress(uint aHandle, uint aTransferID, char** aTransferStatus, char** aTransferLength, char** aTransferTotal);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncGetTransferProgress(IntPtr aHandle, uint aTransferID, char** aTransferStatus, char** aTransferLength, char** aTransferTotal);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginGetTransferProgress(uint aHandle, uint aTransferID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginGetTransferProgress(IntPtr aHandle, uint aTransferID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndGetTransferProgress(uint aHandle, uint aAsync, char** aTransferStatus, char** aTransferLength, char** aTransferTotal);
+        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndGetTransferProgress(IntPtr aHandle, IntPtr aAsync, char** aTransferStatus, char** aTransferLength, char** aTransferTotal);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncCreateReference(uint aHandle, char* aContainerID, char* aObjectID, char** aNewID);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2SyncCreateReference(IntPtr aHandle, char* aContainerID, char* aObjectID, char** aNewID);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginCreateReference(uint aHandle, char* aContainerID, char* aObjectID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2BeginCreateReference(IntPtr aHandle, char* aContainerID, char* aObjectID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndCreateReference(uint aHandle, uint aAsync, char** aNewID);
+        static extern unsafe int CpProxyUpnpOrgContentDirectory2EndCreateReference(IntPtr aHandle, IntPtr aAsync, char** aNewID);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern void CpProxyUpnpOrgContentDirectory2SetPropertySystemUpdateIDChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyUpnpOrgContentDirectory2SetPropertySystemUpdateIDChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern void CpProxyUpnpOrgContentDirectory2SetPropertyContainerUpdateIDsChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyUpnpOrgContentDirectory2SetPropertyContainerUpdateIDsChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern void CpProxyUpnpOrgContentDirectory2SetPropertyTransferIDsChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyUpnpOrgContentDirectory2SetPropertyTransferIDsChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2PropertySystemUpdateID(uint aHandle, uint* aSystemUpdateID);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2PropertySystemUpdateID(IntPtr aHandle, uint* aSystemUpdateID);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2PropertyContainerUpdateIDs(uint aHandle, char** aContainerUpdateIDs);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2PropertyContainerUpdateIDs(IntPtr aHandle, char** aContainerUpdateIDs);
         [DllImport("CpUpnpOrgContentDirectory2")]
-        static extern unsafe void CpProxyUpnpOrgContentDirectory2PropertyTransferIDs(uint aHandle, char** aTransferIDs);
+        static extern unsafe void CpProxyUpnpOrgContentDirectory2PropertyTransferIDs(IntPtr aHandle, char** aTransferIDs);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -249,7 +249,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aSearchCaps"></param>
-        public unsafe void EndGetSearchCapabilities(uint aAsyncHandle, out string aSearchCaps)
+        public unsafe void EndGetSearchCapabilities(IntPtr aAsyncHandle, out string aSearchCaps)
         {
             char* searchCaps;
             {
@@ -299,7 +299,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aSortCaps"></param>
-        public unsafe void EndGetSortCapabilities(uint aAsyncHandle, out string aSortCaps)
+        public unsafe void EndGetSortCapabilities(IntPtr aAsyncHandle, out string aSortCaps)
         {
             char* sortCaps;
             {
@@ -349,7 +349,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aSortExtensionCaps"></param>
-        public unsafe void EndGetSortExtensionCapabilities(uint aAsyncHandle, out string aSortExtensionCaps)
+        public unsafe void EndGetSortExtensionCapabilities(IntPtr aAsyncHandle, out string aSortExtensionCaps)
         {
             char* sortExtensionCaps;
             {
@@ -399,7 +399,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aFeatureList"></param>
-        public unsafe void EndGetFeatureList(uint aAsyncHandle, out string aFeatureList)
+        public unsafe void EndGetFeatureList(IntPtr aAsyncHandle, out string aFeatureList)
         {
             char* featureList;
             {
@@ -447,7 +447,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aId"></param>
-        public unsafe void EndGetSystemUpdateID(uint aAsyncHandle, out uint aId)
+        public unsafe void EndGetSystemUpdateID(IntPtr aAsyncHandle, out uint aId)
         {
             fixed (uint* id = &aId)
             {
@@ -532,7 +532,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aNumberReturned"></param>
         /// <param name="aTotalMatches"></param>
         /// <param name="aUpdateID"></param>
-        public unsafe void EndBrowse(uint aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
+        public unsafe void EndBrowse(IntPtr aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
             char* result;
             fixed (uint* numberReturned = &aNumberReturned)
@@ -622,7 +622,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aNumberReturned"></param>
         /// <param name="aTotalMatches"></param>
         /// <param name="aUpdateID"></param>
-        public unsafe void EndSearch(uint aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
+        public unsafe void EndSearch(IntPtr aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
             char* result;
             fixed (uint* numberReturned = &aNumberReturned)
@@ -692,7 +692,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aObjectID"></param>
         /// <param name="aResult"></param>
-        public unsafe void EndCreateObject(uint aAsyncHandle, out string aObjectID, out string aResult)
+        public unsafe void EndCreateObject(IntPtr aAsyncHandle, out string aObjectID, out string aResult)
         {
             char* objectID;
             char* result;
@@ -746,7 +746,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndDestroyObject(uint aAsyncHandle)
+        public unsafe void EndDestroyObject(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyUpnpOrgContentDirectory2EndDestroyObject(iHandle, aAsyncHandle))
@@ -806,7 +806,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndUpdateObject(uint aAsyncHandle)
+        public unsafe void EndUpdateObject(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyUpnpOrgContentDirectory2EndUpdateObject(iHandle, aAsyncHandle))
@@ -865,7 +865,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aNewObjectID"></param>
-        public unsafe void EndMoveObject(uint aAsyncHandle, out string aNewObjectID)
+        public unsafe void EndMoveObject(IntPtr aAsyncHandle, out string aNewObjectID)
         {
             char* newObjectID;
             {
@@ -925,7 +925,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aTransferID"></param>
-        public unsafe void EndImportResource(uint aAsyncHandle, out uint aTransferID)
+        public unsafe void EndImportResource(IntPtr aAsyncHandle, out uint aTransferID)
         {
             fixed (uint* transferID = &aTransferID)
             {
@@ -983,7 +983,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aTransferID"></param>
-        public unsafe void EndExportResource(uint aAsyncHandle, out uint aTransferID)
+        public unsafe void EndExportResource(IntPtr aAsyncHandle, out uint aTransferID)
         {
             fixed (uint* transferID = &aTransferID)
             {
@@ -1032,7 +1032,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndDeleteResource(uint aAsyncHandle)
+        public unsafe void EndDeleteResource(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyUpnpOrgContentDirectory2EndDeleteResource(iHandle, aAsyncHandle))
@@ -1076,7 +1076,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndStopTransferResource(uint aAsyncHandle)
+        public unsafe void EndStopTransferResource(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyUpnpOrgContentDirectory2EndStopTransferResource(iHandle, aAsyncHandle))
@@ -1135,7 +1135,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTransferStatus"></param>
         /// <param name="aTransferLength"></param>
         /// <param name="aTransferTotal"></param>
-        public unsafe void EndGetTransferProgress(uint aAsyncHandle, out string aTransferStatus, out string aTransferLength, out string aTransferTotal)
+        public unsafe void EndGetTransferProgress(IntPtr aAsyncHandle, out string aTransferStatus, out string aTransferLength, out string aTransferTotal)
         {
             char* transferStatus;
             char* transferLength;
@@ -1203,7 +1203,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aNewID"></param>
-        public unsafe void EndCreateReference(uint aAsyncHandle, out string aNewID)
+        public unsafe void EndCreateReference(IntPtr aAsyncHandle, out string aNewID)
         {
             char* newID;
             {
@@ -1341,12 +1341,12 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 CpProxyUpnpOrgContentDirectory2Destroy(iHandle);
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             iGch.Free();
             if (aDisposing)

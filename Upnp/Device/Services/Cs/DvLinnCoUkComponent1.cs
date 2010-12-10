@@ -67,47 +67,47 @@ namespace Zapp.Device.Providers
     public class DvProviderLinnCoUkComponent1 : DvProvider, IDisposable, IDvProviderLinnCoUkComponent1
     {
         [DllImport("DvLinnCoUkComponent1")]
-        static extern uint DvProviderLinnCoUkComponent1Create(uint aDeviceHandle);
+        static extern IntPtr DvProviderLinnCoUkComponent1Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvProviderLinnCoUkComponent1Destroy(uint aHandle);
+        static extern void DvProviderLinnCoUkComponent1Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern unsafe int DvProviderLinnCoUkComponent1SetPropertyAmplifierEnabled(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkComponent1SetPropertyAmplifierEnabled(IntPtr aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern unsafe void DvProviderLinnCoUkComponent1GetPropertyAmplifierEnabled(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkComponent1GetPropertyAmplifierEnabled(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern unsafe int DvProviderLinnCoUkComponent1SetPropertyAmplifierAttenuation(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkComponent1SetPropertyAmplifierAttenuation(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern unsafe void DvProviderLinnCoUkComponent1GetPropertyAmplifierAttenuation(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkComponent1GetPropertyAmplifierAttenuation(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern unsafe int DvProviderLinnCoUkComponent1SetPropertyVolumeControlEnabled(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkComponent1SetPropertyVolumeControlEnabled(IntPtr aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern unsafe void DvProviderLinnCoUkComponent1GetPropertyVolumeControlEnabled(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkComponent1GetPropertyVolumeControlEnabled(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern unsafe int DvProviderLinnCoUkComponent1SetPropertyDigitalAudioOutputRaw(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkComponent1SetPropertyDigitalAudioOutputRaw(IntPtr aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern unsafe void DvProviderLinnCoUkComponent1GetPropertyDigitalAudioOutputRaw(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkComponent1GetPropertyDigitalAudioOutputRaw(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvProviderLinnCoUkComponent1EnableActionAmplifierEnabled(uint aHandle, CallbackAmplifierEnabled aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionAmplifierEnabled(IntPtr aHandle, CallbackAmplifierEnabled aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvProviderLinnCoUkComponent1EnableActionSetAmplifierEnabled(uint aHandle, CallbackSetAmplifierEnabled aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionSetAmplifierEnabled(IntPtr aHandle, CallbackSetAmplifierEnabled aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvProviderLinnCoUkComponent1EnableActionAmplifierAttenuation(uint aHandle, CallbackAmplifierAttenuation aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionAmplifierAttenuation(IntPtr aHandle, CallbackAmplifierAttenuation aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvProviderLinnCoUkComponent1EnableActionSetAmplifierAttenuation(uint aHandle, CallbackSetAmplifierAttenuation aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionSetAmplifierAttenuation(IntPtr aHandle, CallbackSetAmplifierAttenuation aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvProviderLinnCoUkComponent1EnableActionSetVolumeControlEnabled(uint aHandle, CallbackSetVolumeControlEnabled aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionSetVolumeControlEnabled(IntPtr aHandle, CallbackSetVolumeControlEnabled aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvProviderLinnCoUkComponent1EnableActionVolumeControlEnabled(uint aHandle, CallbackVolumeControlEnabled aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionVolumeControlEnabled(IntPtr aHandle, CallbackVolumeControlEnabled aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvProviderLinnCoUkComponent1EnableActionSetDigitalAudioOutputRaw(uint aHandle, CallbackSetDigitalAudioOutputRaw aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionSetDigitalAudioOutputRaw(IntPtr aHandle, CallbackSetDigitalAudioOutputRaw aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvProviderLinnCoUkComponent1EnableActionDigitalAudioOutputRaw(uint aHandle, CallbackDigitalAudioOutputRaw aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionDigitalAudioOutputRaw(IntPtr aHandle, CallbackDigitalAudioOutputRaw aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvProviderLinnCoUkComponent1EnableActionAmplifierOverTemperature(uint aHandle, CallbackAmplifierOverTemperature aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionAmplifierOverTemperature(IntPtr aHandle, CallbackAmplifierOverTemperature aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvProviderLinnCoUkComponent1EnableActionEthernetLinkConnected(uint aHandle, CallbackEthernetLinkConnected aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionEthernetLinkConnected(IntPtr aHandle, CallbackEthernetLinkConnected aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkComponent1")]
-        static extern void DvProviderLinnCoUkComponent1EnableActionLocate(uint aHandle, CallbackLocate aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkComponent1EnableActionLocate(IntPtr aHandle, CallbackLocate aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -662,15 +662,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvProviderLinnCoUkComponent1Destroy(handle);
             if (iGch.IsAllocated)

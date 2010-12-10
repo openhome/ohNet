@@ -15,15 +15,15 @@ namespace Zapp.Device.Providers
     public class DvProviderLinnCoUkPtest1 : DvProvider, IDisposable, IDvProviderLinnCoUkPtest1
     {
         [DllImport("DvLinnCoUkPtest1")]
-        static extern uint DvProviderLinnCoUkPtest1Create(uint aDeviceHandle);
+        static extern IntPtr DvProviderLinnCoUkPtest1Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkPtest1")]
-        static extern void DvProviderLinnCoUkPtest1Destroy(uint aHandle);
+        static extern void DvProviderLinnCoUkPtest1Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkPtest1")]
-        static extern void DvProviderLinnCoUkPtest1EnableActionTestComPort(uint aHandle, CallbackTestComPort aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPtest1EnableActionTestComPort(IntPtr aHandle, CallbackTestComPort aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPtest1")]
-        static extern void DvProviderLinnCoUkPtest1EnableActionLedsOn(uint aHandle, CallbackLedsOn aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPtest1EnableActionLedsOn(IntPtr aHandle, CallbackLedsOn aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPtest1")]
-        static extern void DvProviderLinnCoUkPtest1EnableActionLedsOff(uint aHandle, CallbackLedsOff aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPtest1EnableActionLedsOff(IntPtr aHandle, CallbackLedsOff aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -165,15 +165,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvProviderLinnCoUkPtest1Destroy(handle);
             if (iGch.IsAllocated)

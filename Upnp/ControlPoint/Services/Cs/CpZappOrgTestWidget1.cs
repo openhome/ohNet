@@ -9,10 +9,10 @@ namespace Zapp.ControlPoint.Proxies
     {
         void SyncSetReadWriteRegister(uint aRegisterIndex, uint aRegisterValue);
         void BeginSetReadWriteRegister(uint aRegisterIndex, uint aRegisterValue, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetReadWriteRegister(uint aAsyncHandle);
+        void EndSetReadWriteRegister(IntPtr aAsyncHandle);
         void SyncGetWidgetClass(out uint aWidgetClass);
         void BeginGetWidgetClass(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetWidgetClass(uint aAsyncHandle, out uint aWidgetClass);
+        void EndGetWidgetClass(IntPtr aAsyncHandle, out uint aWidgetClass);
 
         void SetPropertyReadWriteRegister0Changed(CpProxy.CallbackPropertyChanged aReadWriteRegister0Changed);
         void PropertyReadWriteRegister0(out uint aReadWriteRegister0);
@@ -38,53 +38,53 @@ namespace Zapp.ControlPoint.Proxies
     public class CpProxyZappOrgTestWidget1 : CpProxy, IDisposable, ICpProxyZappOrgTestWidget1
     {
         [DllImport("CpZappOrgTestWidget1")]
-        static extern uint CpProxyZappOrgTestWidget1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyZappOrgTestWidget1Create(IntPtr aDeviceHandle);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern void CpProxyZappOrgTestWidget1Destroy(uint aHandle);
+        static extern void CpProxyZappOrgTestWidget1Destroy(IntPtr aHandle);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern unsafe void CpProxyZappOrgTestWidget1SyncSetReadWriteRegister(uint aHandle, uint aRegisterIndex, uint aRegisterValue);
+        static extern unsafe void CpProxyZappOrgTestWidget1SyncSetReadWriteRegister(IntPtr aHandle, uint aRegisterIndex, uint aRegisterValue);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern unsafe void CpProxyZappOrgTestWidget1BeginSetReadWriteRegister(uint aHandle, uint aRegisterIndex, uint aRegisterValue, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestWidget1BeginSetReadWriteRegister(IntPtr aHandle, uint aRegisterIndex, uint aRegisterValue, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern unsafe int CpProxyZappOrgTestWidget1EndSetReadWriteRegister(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyZappOrgTestWidget1EndSetReadWriteRegister(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern unsafe void CpProxyZappOrgTestWidget1SyncGetWidgetClass(uint aHandle, uint* aWidgetClass);
+        static extern unsafe void CpProxyZappOrgTestWidget1SyncGetWidgetClass(IntPtr aHandle, uint* aWidgetClass);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern unsafe void CpProxyZappOrgTestWidget1BeginGetWidgetClass(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestWidget1BeginGetWidgetClass(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern unsafe int CpProxyZappOrgTestWidget1EndGetWidgetClass(uint aHandle, uint aAsync, uint* aWidgetClass);
+        static extern unsafe int CpProxyZappOrgTestWidget1EndGetWidgetClass(IntPtr aHandle, IntPtr aAsync, uint* aWidgetClass);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern void CpProxyZappOrgTestWidget1SetPropertyReadWriteRegister0Changed(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyZappOrgTestWidget1SetPropertyReadWriteRegister0Changed(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern void CpProxyZappOrgTestWidget1SetPropertyReadWriteRegister1Changed(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyZappOrgTestWidget1SetPropertyReadWriteRegister1Changed(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern void CpProxyZappOrgTestWidget1SetPropertyReadWriteRegister2Changed(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyZappOrgTestWidget1SetPropertyReadWriteRegister2Changed(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern void CpProxyZappOrgTestWidget1SetPropertyReadWriteRegister3Changed(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyZappOrgTestWidget1SetPropertyReadWriteRegister3Changed(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern void CpProxyZappOrgTestWidget1SetPropertyReadOnlyRegister4Changed(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyZappOrgTestWidget1SetPropertyReadOnlyRegister4Changed(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern void CpProxyZappOrgTestWidget1SetPropertyReadOnlyRegister5Changed(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyZappOrgTestWidget1SetPropertyReadOnlyRegister5Changed(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern void CpProxyZappOrgTestWidget1SetPropertyReadOnlyRegister6Changed(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyZappOrgTestWidget1SetPropertyReadOnlyRegister6Changed(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern void CpProxyZappOrgTestWidget1SetPropertyReadOnlyRegister7Changed(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyZappOrgTestWidget1SetPropertyReadOnlyRegister7Changed(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern unsafe void CpProxyZappOrgTestWidget1PropertyReadWriteRegister0(uint aHandle, uint* aReadWriteRegister0);
+        static extern unsafe void CpProxyZappOrgTestWidget1PropertyReadWriteRegister0(IntPtr aHandle, uint* aReadWriteRegister0);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern unsafe void CpProxyZappOrgTestWidget1PropertyReadWriteRegister1(uint aHandle, uint* aReadWriteRegister1);
+        static extern unsafe void CpProxyZappOrgTestWidget1PropertyReadWriteRegister1(IntPtr aHandle, uint* aReadWriteRegister1);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern unsafe void CpProxyZappOrgTestWidget1PropertyReadWriteRegister2(uint aHandle, uint* aReadWriteRegister2);
+        static extern unsafe void CpProxyZappOrgTestWidget1PropertyReadWriteRegister2(IntPtr aHandle, uint* aReadWriteRegister2);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern unsafe void CpProxyZappOrgTestWidget1PropertyReadWriteRegister3(uint aHandle, uint* aReadWriteRegister3);
+        static extern unsafe void CpProxyZappOrgTestWidget1PropertyReadWriteRegister3(IntPtr aHandle, uint* aReadWriteRegister3);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern unsafe void CpProxyZappOrgTestWidget1PropertyReadOnlyRegister4(uint aHandle, uint* aReadOnlyRegister4);
+        static extern unsafe void CpProxyZappOrgTestWidget1PropertyReadOnlyRegister4(IntPtr aHandle, uint* aReadOnlyRegister4);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern unsafe void CpProxyZappOrgTestWidget1PropertyReadOnlyRegister5(uint aHandle, uint* aReadOnlyRegister5);
+        static extern unsafe void CpProxyZappOrgTestWidget1PropertyReadOnlyRegister5(IntPtr aHandle, uint* aReadOnlyRegister5);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern unsafe void CpProxyZappOrgTestWidget1PropertyReadOnlyRegister6(uint aHandle, uint* aReadOnlyRegister6);
+        static extern unsafe void CpProxyZappOrgTestWidget1PropertyReadOnlyRegister6(IntPtr aHandle, uint* aReadOnlyRegister6);
         [DllImport("CpZappOrgTestWidget1")]
-        static extern unsafe void CpProxyZappOrgTestWidget1PropertyReadOnlyRegister7(uint aHandle, uint* aReadOnlyRegister7);
+        static extern unsafe void CpProxyZappOrgTestWidget1PropertyReadOnlyRegister7(IntPtr aHandle, uint* aReadOnlyRegister7);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -153,7 +153,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetReadWriteRegister(uint aAsyncHandle)
+        public unsafe void EndSetReadWriteRegister(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyZappOrgTestWidget1EndSetReadWriteRegister(iHandle, aAsyncHandle))
@@ -198,7 +198,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aWidgetClass"></param>
-        public unsafe void EndGetWidgetClass(uint aAsyncHandle, out uint aWidgetClass)
+        public unsafe void EndGetWidgetClass(IntPtr aAsyncHandle, out uint aWidgetClass)
         {
             fixed (uint* widgetClass = &aWidgetClass)
             {
@@ -514,12 +514,12 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 CpProxyZappOrgTestWidget1Destroy(iHandle);
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             iGch.Free();
             if (aDisposing)

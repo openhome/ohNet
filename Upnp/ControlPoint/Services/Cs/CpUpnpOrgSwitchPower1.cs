@@ -9,13 +9,13 @@ namespace Zapp.ControlPoint.Proxies
     {
         void SyncSetTarget(bool anewTargetValue);
         void BeginSetTarget(bool anewTargetValue, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetTarget(uint aAsyncHandle);
+        void EndSetTarget(IntPtr aAsyncHandle);
         void SyncGetTarget(out bool aRetTargetValue);
         void BeginGetTarget(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetTarget(uint aAsyncHandle, out bool aRetTargetValue);
+        void EndGetTarget(IntPtr aAsyncHandle, out bool aRetTargetValue);
         void SyncGetStatus(out bool aResultStatus);
         void BeginGetStatus(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetStatus(uint aAsyncHandle, out bool aResultStatus);
+        void EndGetStatus(IntPtr aAsyncHandle, out bool aResultStatus);
 
         void SetPropertyStatusChanged(CpProxy.CallbackPropertyChanged aStatusChanged);
         void PropertyStatus(out bool aStatus);
@@ -27,31 +27,31 @@ namespace Zapp.ControlPoint.Proxies
     public class CpProxyUpnpOrgSwitchPower1 : CpProxy, IDisposable, ICpProxyUpnpOrgSwitchPower1
     {
         [DllImport("CpUpnpOrgSwitchPower1")]
-        static extern uint CpProxyUpnpOrgSwitchPower1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyUpnpOrgSwitchPower1Create(IntPtr aDeviceHandle);
         [DllImport("CpUpnpOrgSwitchPower1")]
-        static extern void CpProxyUpnpOrgSwitchPower1Destroy(uint aHandle);
+        static extern void CpProxyUpnpOrgSwitchPower1Destroy(IntPtr aHandle);
         [DllImport("CpUpnpOrgSwitchPower1")]
-        static extern unsafe void CpProxyUpnpOrgSwitchPower1SyncSetTarget(uint aHandle, uint anewTargetValue);
+        static extern unsafe void CpProxyUpnpOrgSwitchPower1SyncSetTarget(IntPtr aHandle, uint anewTargetValue);
         [DllImport("CpUpnpOrgSwitchPower1")]
-        static extern unsafe void CpProxyUpnpOrgSwitchPower1BeginSetTarget(uint aHandle, uint anewTargetValue, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgSwitchPower1BeginSetTarget(IntPtr aHandle, uint anewTargetValue, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgSwitchPower1")]
-        static extern unsafe int CpProxyUpnpOrgSwitchPower1EndSetTarget(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgSwitchPower1EndSetTarget(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgSwitchPower1")]
-        static extern unsafe void CpProxyUpnpOrgSwitchPower1SyncGetTarget(uint aHandle, uint* aRetTargetValue);
+        static extern unsafe void CpProxyUpnpOrgSwitchPower1SyncGetTarget(IntPtr aHandle, uint* aRetTargetValue);
         [DllImport("CpUpnpOrgSwitchPower1")]
-        static extern unsafe void CpProxyUpnpOrgSwitchPower1BeginGetTarget(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgSwitchPower1BeginGetTarget(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgSwitchPower1")]
-        static extern unsafe int CpProxyUpnpOrgSwitchPower1EndGetTarget(uint aHandle, uint aAsync, uint* aRetTargetValue);
+        static extern unsafe int CpProxyUpnpOrgSwitchPower1EndGetTarget(IntPtr aHandle, IntPtr aAsync, uint* aRetTargetValue);
         [DllImport("CpUpnpOrgSwitchPower1")]
-        static extern unsafe void CpProxyUpnpOrgSwitchPower1SyncGetStatus(uint aHandle, uint* aResultStatus);
+        static extern unsafe void CpProxyUpnpOrgSwitchPower1SyncGetStatus(IntPtr aHandle, uint* aResultStatus);
         [DllImport("CpUpnpOrgSwitchPower1")]
-        static extern unsafe void CpProxyUpnpOrgSwitchPower1BeginGetStatus(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgSwitchPower1BeginGetStatus(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgSwitchPower1")]
-        static extern unsafe int CpProxyUpnpOrgSwitchPower1EndGetStatus(uint aHandle, uint aAsync, uint* aResultStatus);
+        static extern unsafe int CpProxyUpnpOrgSwitchPower1EndGetStatus(IntPtr aHandle, IntPtr aAsync, uint* aResultStatus);
         [DllImport("CpUpnpOrgSwitchPower1")]
-        static extern void CpProxyUpnpOrgSwitchPower1SetPropertyStatusChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyUpnpOrgSwitchPower1SetPropertyStatusChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgSwitchPower1")]
-        static extern unsafe void CpProxyUpnpOrgSwitchPower1PropertyStatus(uint aHandle, uint* aStatus);
+        static extern unsafe void CpProxyUpnpOrgSwitchPower1PropertyStatus(IntPtr aHandle, uint* aStatus);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -106,7 +106,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetTarget(uint aAsyncHandle)
+        public unsafe void EndSetTarget(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyUpnpOrgSwitchPower1EndSetTarget(iHandle, aAsyncHandle))
@@ -152,7 +152,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aRetTargetValue"></param>
-        public unsafe void EndGetTarget(uint aAsyncHandle, out bool aRetTargetValue)
+        public unsafe void EndGetTarget(IntPtr aAsyncHandle, out bool aRetTargetValue)
         {
             uint retTargetValue;
             {
@@ -200,7 +200,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aResultStatus"></param>
-        public unsafe void EndGetStatus(uint aAsyncHandle, out bool aResultStatus)
+        public unsafe void EndGetStatus(IntPtr aAsyncHandle, out bool aResultStatus)
         {
             uint resultStatus;
             {
@@ -264,12 +264,12 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 CpProxyUpnpOrgSwitchPower1Destroy(iHandle);
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             iGch.Free();
             if (aDisposing)

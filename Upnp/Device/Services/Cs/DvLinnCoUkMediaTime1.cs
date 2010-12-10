@@ -28,15 +28,15 @@ namespace Zapp.Device.Providers
     public class DvProviderLinnCoUkMediaTime1 : DvProvider, IDisposable, IDvProviderLinnCoUkMediaTime1
     {
         [DllImport("DvLinnCoUkMediaTime1")]
-        static extern uint DvProviderLinnCoUkMediaTime1Create(uint aDeviceHandle);
+        static extern IntPtr DvProviderLinnCoUkMediaTime1Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkMediaTime1")]
-        static extern void DvProviderLinnCoUkMediaTime1Destroy(uint aHandle);
+        static extern void DvProviderLinnCoUkMediaTime1Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkMediaTime1")]
-        static extern unsafe int DvProviderLinnCoUkMediaTime1SetPropertySeconds(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkMediaTime1SetPropertySeconds(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkMediaTime1")]
-        static extern unsafe void DvProviderLinnCoUkMediaTime1GetPropertySeconds(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkMediaTime1GetPropertySeconds(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkMediaTime1")]
-        static extern void DvProviderLinnCoUkMediaTime1EnableActionSeconds(uint aHandle, CallbackSeconds aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkMediaTime1EnableActionSeconds(IntPtr aHandle, CallbackSeconds aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -134,15 +134,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvProviderLinnCoUkMediaTime1Destroy(handle);
             if (iGch.IsAllocated)

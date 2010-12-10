@@ -15,15 +15,15 @@ namespace Zapp.Device.Providers
     public class DvProviderLinnCoUkDebug2 : DvProvider, IDisposable, IDvProviderLinnCoUkDebug2
     {
         [DllImport("DvLinnCoUkDebug2")]
-        static extern uint DvProviderLinnCoUkDebug2Create(uint aDeviceHandle);
+        static extern IntPtr DvProviderLinnCoUkDebug2Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkDebug2")]
-        static extern void DvProviderLinnCoUkDebug2Destroy(uint aHandle);
+        static extern void DvProviderLinnCoUkDebug2Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkDebug2")]
-        static extern void DvProviderLinnCoUkDebug2EnableActionSetDebugLevel(uint aHandle, CallbackSetDebugLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDebug2EnableActionSetDebugLevel(IntPtr aHandle, CallbackSetDebugLevel aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDebug2")]
-        static extern void DvProviderLinnCoUkDebug2EnableActionDebugLevel(uint aHandle, CallbackDebugLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDebug2EnableActionDebugLevel(IntPtr aHandle, CallbackDebugLevel aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDebug2")]
-        static extern void DvProviderLinnCoUkDebug2EnableActionMemWrite(uint aHandle, CallbackMemWrite aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDebug2EnableActionMemWrite(IntPtr aHandle, CallbackMemWrite aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -168,15 +168,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvProviderLinnCoUkDebug2Destroy(handle);
             if (iGch.IsAllocated)

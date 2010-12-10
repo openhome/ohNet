@@ -9,34 +9,34 @@ namespace Zapp.ControlPoint.Proxies
     {
         void SyncPlay();
         void BeginPlay(CpProxy.CallbackAsyncComplete aCallback);
-        void EndPlay(uint aAsyncHandle);
+        void EndPlay(IntPtr aAsyncHandle);
         void SyncPause();
         void BeginPause(CpProxy.CallbackAsyncComplete aCallback);
-        void EndPause(uint aAsyncHandle);
+        void EndPause(IntPtr aAsyncHandle);
         void SyncStop();
         void BeginStop(CpProxy.CallbackAsyncComplete aCallback);
-        void EndStop(uint aAsyncHandle);
+        void EndStop(IntPtr aAsyncHandle);
         void SyncSeekSecondAbsolute(uint aaSecond);
         void BeginSeekSecondAbsolute(uint aaSecond, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSeekSecondAbsolute(uint aAsyncHandle);
+        void EndSeekSecondAbsolute(IntPtr aAsyncHandle);
         void SyncSeekSecondRelative(int aaSecond);
         void BeginSeekSecondRelative(int aaSecond, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSeekSecondRelative(uint aAsyncHandle);
+        void EndSeekSecondRelative(IntPtr aAsyncHandle);
         void SyncSeekTrackId(uint aaTrackId);
         void BeginSeekTrackId(uint aaTrackId, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSeekTrackId(uint aAsyncHandle);
+        void EndSeekTrackId(IntPtr aAsyncHandle);
         void SyncSeekTrackAbsolute(uint aaTrack);
         void BeginSeekTrackAbsolute(uint aaTrack, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSeekTrackAbsolute(uint aAsyncHandle);
+        void EndSeekTrackAbsolute(IntPtr aAsyncHandle);
         void SyncSeekTrackRelative(int aaTrack);
         void BeginSeekTrackRelative(int aaTrack, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSeekTrackRelative(uint aAsyncHandle);
+        void EndSeekTrackRelative(IntPtr aAsyncHandle);
         void SyncState(out string aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out string aaTrackCodecName, out uint aaTrackId);
         void BeginState(CpProxy.CallbackAsyncComplete aCallback);
-        void EndState(uint aAsyncHandle, out string aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out string aaTrackCodecName, out uint aaTrackId);
+        void EndState(IntPtr aAsyncHandle, out string aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out string aaTrackCodecName, out uint aaTrackId);
         void SyncProtocolInfo(out string aaSupportedProtocols);
         void BeginProtocolInfo(CpProxy.CallbackAsyncComplete aCallback);
-        void EndProtocolInfo(uint aAsyncHandle, out string aaSupportedProtocols);
+        void EndProtocolInfo(IntPtr aAsyncHandle, out string aaSupportedProtocols);
 
         void SetPropertySupportedProtocolsChanged(CpProxy.CallbackPropertyChanged aSupportedProtocolsChanged);
         void PropertySupportedProtocols(out string aSupportedProtocols);
@@ -64,105 +64,105 @@ namespace Zapp.ControlPoint.Proxies
     public class CpProxyLinnCoUkDs1 : CpProxy, IDisposable, ICpProxyLinnCoUkDs1
     {
         [DllImport("CpLinnCoUkDs1")]
-        static extern uint CpProxyLinnCoUkDs1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyLinnCoUkDs1Create(IntPtr aDeviceHandle);
         [DllImport("CpLinnCoUkDs1")]
-        static extern void CpProxyLinnCoUkDs1Destroy(uint aHandle);
+        static extern void CpProxyLinnCoUkDs1Destroy(IntPtr aHandle);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1SyncPlay(uint aHandle);
+        static extern unsafe void CpProxyLinnCoUkDs1SyncPlay(IntPtr aHandle);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1BeginPlay(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDs1BeginPlay(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe int CpProxyLinnCoUkDs1EndPlay(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkDs1EndPlay(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1SyncPause(uint aHandle);
+        static extern unsafe void CpProxyLinnCoUkDs1SyncPause(IntPtr aHandle);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1BeginPause(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDs1BeginPause(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe int CpProxyLinnCoUkDs1EndPause(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkDs1EndPause(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1SyncStop(uint aHandle);
+        static extern unsafe void CpProxyLinnCoUkDs1SyncStop(IntPtr aHandle);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1BeginStop(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDs1BeginStop(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe int CpProxyLinnCoUkDs1EndStop(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkDs1EndStop(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1SyncSeekSecondAbsolute(uint aHandle, uint aaSecond);
+        static extern unsafe void CpProxyLinnCoUkDs1SyncSeekSecondAbsolute(IntPtr aHandle, uint aaSecond);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1BeginSeekSecondAbsolute(uint aHandle, uint aaSecond, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDs1BeginSeekSecondAbsolute(IntPtr aHandle, uint aaSecond, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe int CpProxyLinnCoUkDs1EndSeekSecondAbsolute(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkDs1EndSeekSecondAbsolute(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1SyncSeekSecondRelative(uint aHandle, int aaSecond);
+        static extern unsafe void CpProxyLinnCoUkDs1SyncSeekSecondRelative(IntPtr aHandle, int aaSecond);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1BeginSeekSecondRelative(uint aHandle, int aaSecond, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDs1BeginSeekSecondRelative(IntPtr aHandle, int aaSecond, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe int CpProxyLinnCoUkDs1EndSeekSecondRelative(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkDs1EndSeekSecondRelative(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1SyncSeekTrackId(uint aHandle, uint aaTrackId);
+        static extern unsafe void CpProxyLinnCoUkDs1SyncSeekTrackId(IntPtr aHandle, uint aaTrackId);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1BeginSeekTrackId(uint aHandle, uint aaTrackId, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDs1BeginSeekTrackId(IntPtr aHandle, uint aaTrackId, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe int CpProxyLinnCoUkDs1EndSeekTrackId(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkDs1EndSeekTrackId(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1SyncSeekTrackAbsolute(uint aHandle, uint aaTrack);
+        static extern unsafe void CpProxyLinnCoUkDs1SyncSeekTrackAbsolute(IntPtr aHandle, uint aaTrack);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1BeginSeekTrackAbsolute(uint aHandle, uint aaTrack, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDs1BeginSeekTrackAbsolute(IntPtr aHandle, uint aaTrack, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe int CpProxyLinnCoUkDs1EndSeekTrackAbsolute(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkDs1EndSeekTrackAbsolute(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1SyncSeekTrackRelative(uint aHandle, int aaTrack);
+        static extern unsafe void CpProxyLinnCoUkDs1SyncSeekTrackRelative(IntPtr aHandle, int aaTrack);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1BeginSeekTrackRelative(uint aHandle, int aaTrack, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDs1BeginSeekTrackRelative(IntPtr aHandle, int aaTrack, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe int CpProxyLinnCoUkDs1EndSeekTrackRelative(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkDs1EndSeekTrackRelative(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1SyncState(uint aHandle, char** aaTransportState, uint* aaTrackDuration, uint* aaTrackBitRate, uint* aaTrackLossless, uint* aaTrackBitDepth, uint* aaTrackSampleRate, char** aaTrackCodecName, uint* aaTrackId);
+        static extern unsafe void CpProxyLinnCoUkDs1SyncState(IntPtr aHandle, char** aaTransportState, uint* aaTrackDuration, uint* aaTrackBitRate, uint* aaTrackLossless, uint* aaTrackBitDepth, uint* aaTrackSampleRate, char** aaTrackCodecName, uint* aaTrackId);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1BeginState(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDs1BeginState(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe int CpProxyLinnCoUkDs1EndState(uint aHandle, uint aAsync, char** aaTransportState, uint* aaTrackDuration, uint* aaTrackBitRate, uint* aaTrackLossless, uint* aaTrackBitDepth, uint* aaTrackSampleRate, char** aaTrackCodecName, uint* aaTrackId);
+        static extern unsafe int CpProxyLinnCoUkDs1EndState(IntPtr aHandle, IntPtr aAsync, char** aaTransportState, uint* aaTrackDuration, uint* aaTrackBitRate, uint* aaTrackLossless, uint* aaTrackBitDepth, uint* aaTrackSampleRate, char** aaTrackCodecName, uint* aaTrackId);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1SyncProtocolInfo(uint aHandle, char** aaSupportedProtocols);
+        static extern unsafe void CpProxyLinnCoUkDs1SyncProtocolInfo(IntPtr aHandle, char** aaSupportedProtocols);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1BeginProtocolInfo(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDs1BeginProtocolInfo(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe int CpProxyLinnCoUkDs1EndProtocolInfo(uint aHandle, uint aAsync, char** aaSupportedProtocols);
+        static extern unsafe int CpProxyLinnCoUkDs1EndProtocolInfo(IntPtr aHandle, IntPtr aAsync, char** aaSupportedProtocols);
         [DllImport("CpLinnCoUkDs1")]
-        static extern void CpProxyLinnCoUkDs1SetPropertySupportedProtocolsChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkDs1SetPropertySupportedProtocolsChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDs1")]
-        static extern void CpProxyLinnCoUkDs1SetPropertyTrackDurationChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkDs1SetPropertyTrackDurationChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDs1")]
-        static extern void CpProxyLinnCoUkDs1SetPropertyTrackBitRateChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkDs1SetPropertyTrackBitRateChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDs1")]
-        static extern void CpProxyLinnCoUkDs1SetPropertyTrackLosslessChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkDs1SetPropertyTrackLosslessChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDs1")]
-        static extern void CpProxyLinnCoUkDs1SetPropertyTrackBitDepthChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkDs1SetPropertyTrackBitDepthChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDs1")]
-        static extern void CpProxyLinnCoUkDs1SetPropertyTrackSampleRateChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkDs1SetPropertyTrackSampleRateChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDs1")]
-        static extern void CpProxyLinnCoUkDs1SetPropertyTrackCodecNameChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkDs1SetPropertyTrackCodecNameChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDs1")]
-        static extern void CpProxyLinnCoUkDs1SetPropertyTrackIdChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkDs1SetPropertyTrackIdChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDs1")]
-        static extern void CpProxyLinnCoUkDs1SetPropertyTransportStateChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkDs1SetPropertyTransportStateChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1PropertySupportedProtocols(uint aHandle, char** aSupportedProtocols);
+        static extern unsafe void CpProxyLinnCoUkDs1PropertySupportedProtocols(IntPtr aHandle, char** aSupportedProtocols);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1PropertyTrackDuration(uint aHandle, uint* aTrackDuration);
+        static extern unsafe void CpProxyLinnCoUkDs1PropertyTrackDuration(IntPtr aHandle, uint* aTrackDuration);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1PropertyTrackBitRate(uint aHandle, uint* aTrackBitRate);
+        static extern unsafe void CpProxyLinnCoUkDs1PropertyTrackBitRate(IntPtr aHandle, uint* aTrackBitRate);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1PropertyTrackLossless(uint aHandle, uint* aTrackLossless);
+        static extern unsafe void CpProxyLinnCoUkDs1PropertyTrackLossless(IntPtr aHandle, uint* aTrackLossless);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1PropertyTrackBitDepth(uint aHandle, uint* aTrackBitDepth);
+        static extern unsafe void CpProxyLinnCoUkDs1PropertyTrackBitDepth(IntPtr aHandle, uint* aTrackBitDepth);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1PropertyTrackSampleRate(uint aHandle, uint* aTrackSampleRate);
+        static extern unsafe void CpProxyLinnCoUkDs1PropertyTrackSampleRate(IntPtr aHandle, uint* aTrackSampleRate);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1PropertyTrackCodecName(uint aHandle, char** aTrackCodecName);
+        static extern unsafe void CpProxyLinnCoUkDs1PropertyTrackCodecName(IntPtr aHandle, char** aTrackCodecName);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1PropertyTrackId(uint aHandle, uint* aTrackId);
+        static extern unsafe void CpProxyLinnCoUkDs1PropertyTrackId(IntPtr aHandle, uint* aTrackId);
         [DllImport("CpLinnCoUkDs1")]
-        static extern unsafe void CpProxyLinnCoUkDs1PropertyTransportState(uint aHandle, char** aTransportState);
+        static extern unsafe void CpProxyLinnCoUkDs1PropertyTransportState(IntPtr aHandle, char** aTransportState);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -229,7 +229,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndPlay(uint aAsyncHandle)
+        public unsafe void EndPlay(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkDs1EndPlay(iHandle, aAsyncHandle))
@@ -271,7 +271,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndPause(uint aAsyncHandle)
+        public unsafe void EndPause(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkDs1EndPause(iHandle, aAsyncHandle))
@@ -313,7 +313,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndStop(uint aAsyncHandle)
+        public unsafe void EndStop(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkDs1EndStop(iHandle, aAsyncHandle))
@@ -357,7 +357,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSeekSecondAbsolute(uint aAsyncHandle)
+        public unsafe void EndSeekSecondAbsolute(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkDs1EndSeekSecondAbsolute(iHandle, aAsyncHandle))
@@ -401,7 +401,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSeekSecondRelative(uint aAsyncHandle)
+        public unsafe void EndSeekSecondRelative(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkDs1EndSeekSecondRelative(iHandle, aAsyncHandle))
@@ -445,7 +445,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSeekTrackId(uint aAsyncHandle)
+        public unsafe void EndSeekTrackId(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkDs1EndSeekTrackId(iHandle, aAsyncHandle))
@@ -489,7 +489,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSeekTrackAbsolute(uint aAsyncHandle)
+        public unsafe void EndSeekTrackAbsolute(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkDs1EndSeekTrackAbsolute(iHandle, aAsyncHandle))
@@ -533,7 +533,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSeekTrackRelative(uint aAsyncHandle)
+        public unsafe void EndSeekTrackRelative(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkDs1EndSeekTrackRelative(iHandle, aAsyncHandle))
@@ -604,7 +604,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrackSampleRate"></param>
         /// <param name="aaTrackCodecName"></param>
         /// <param name="aaTrackId"></param>
-        public unsafe void EndState(uint aAsyncHandle, out string aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out string aaTrackCodecName, out uint aaTrackId)
+        public unsafe void EndState(IntPtr aAsyncHandle, out string aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out string aaTrackCodecName, out uint aaTrackId)
         {
             char* aTransportState;
             uint aTrackLossless;
@@ -664,7 +664,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSupportedProtocols"></param>
-        public unsafe void EndProtocolInfo(uint aAsyncHandle, out string aaSupportedProtocols)
+        public unsafe void EndProtocolInfo(IntPtr aAsyncHandle, out string aaSupportedProtocols)
         {
             char* aSupportedProtocols;
             {
@@ -1017,12 +1017,12 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 CpProxyLinnCoUkDs1Destroy(iHandle);
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             iGch.Free();
             if (aDisposing)

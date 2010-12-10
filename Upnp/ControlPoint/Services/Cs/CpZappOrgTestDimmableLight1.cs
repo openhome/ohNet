@@ -9,10 +9,10 @@ namespace Zapp.ControlPoint.Proxies
     {
         void SyncGetLevel(out uint aLevel);
         void BeginGetLevel(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetLevel(uint aAsyncHandle, out uint aLevel);
+        void EndGetLevel(IntPtr aAsyncHandle, out uint aLevel);
         void SyncSetLevel(uint aLevel);
         void BeginSetLevel(uint aLevel, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetLevel(uint aAsyncHandle);
+        void EndSetLevel(IntPtr aAsyncHandle);
 
         void SetPropertyA_ARG_LevelChanged(CpProxy.CallbackPropertyChanged aA_ARG_LevelChanged);
         void PropertyA_ARG_Level(out uint aA_ARG_Level);
@@ -24,25 +24,25 @@ namespace Zapp.ControlPoint.Proxies
     public class CpProxyZappOrgTestDimmableLight1 : CpProxy, IDisposable, ICpProxyZappOrgTestDimmableLight1
     {
         [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern uint CpProxyZappOrgTestDimmableLight1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyZappOrgTestDimmableLight1Create(IntPtr aDeviceHandle);
         [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern void CpProxyZappOrgTestDimmableLight1Destroy(uint aHandle);
+        static extern void CpProxyZappOrgTestDimmableLight1Destroy(IntPtr aHandle);
         [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern unsafe void CpProxyZappOrgTestDimmableLight1SyncGetLevel(uint aHandle, uint* aLevel);
+        static extern unsafe void CpProxyZappOrgTestDimmableLight1SyncGetLevel(IntPtr aHandle, uint* aLevel);
         [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern unsafe void CpProxyZappOrgTestDimmableLight1BeginGetLevel(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestDimmableLight1BeginGetLevel(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern unsafe int CpProxyZappOrgTestDimmableLight1EndGetLevel(uint aHandle, uint aAsync, uint* aLevel);
+        static extern unsafe int CpProxyZappOrgTestDimmableLight1EndGetLevel(IntPtr aHandle, IntPtr aAsync, uint* aLevel);
         [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern unsafe void CpProxyZappOrgTestDimmableLight1SyncSetLevel(uint aHandle, uint aLevel);
+        static extern unsafe void CpProxyZappOrgTestDimmableLight1SyncSetLevel(IntPtr aHandle, uint aLevel);
         [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern unsafe void CpProxyZappOrgTestDimmableLight1BeginSetLevel(uint aHandle, uint aLevel, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestDimmableLight1BeginSetLevel(IntPtr aHandle, uint aLevel, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern unsafe int CpProxyZappOrgTestDimmableLight1EndSetLevel(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyZappOrgTestDimmableLight1EndSetLevel(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern void CpProxyZappOrgTestDimmableLight1SetPropertyA_ARG_LevelChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyZappOrgTestDimmableLight1SetPropertyA_ARG_LevelChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern unsafe void CpProxyZappOrgTestDimmableLight1PropertyA_ARG_Level(uint aHandle, uint* aA_ARG_Level);
+        static extern unsafe void CpProxyZappOrgTestDimmableLight1PropertyA_ARG_Level(IntPtr aHandle, uint* aA_ARG_Level);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -96,7 +96,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aLevel"></param>
-        public unsafe void EndGetLevel(uint aAsyncHandle, out uint aLevel)
+        public unsafe void EndGetLevel(IntPtr aAsyncHandle, out uint aLevel)
         {
             fixed (uint* level = &aLevel)
             {
@@ -141,7 +141,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetLevel(uint aAsyncHandle)
+        public unsafe void EndSetLevel(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyZappOrgTestDimmableLight1EndSetLevel(iHandle, aAsyncHandle))
@@ -204,12 +204,12 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 CpProxyZappOrgTestDimmableLight1Destroy(iHandle);
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             iGch.Free();
             if (aDisposing)

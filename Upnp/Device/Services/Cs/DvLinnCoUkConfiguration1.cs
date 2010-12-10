@@ -41,23 +41,23 @@ namespace Zapp.Device.Providers
     public class DvProviderLinnCoUkConfiguration1 : DvProvider, IDisposable, IDvProviderLinnCoUkConfiguration1
     {
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern uint DvProviderLinnCoUkConfiguration1Create(uint aDeviceHandle);
+        static extern IntPtr DvProviderLinnCoUkConfiguration1Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern void DvProviderLinnCoUkConfiguration1Destroy(uint aHandle);
+        static extern void DvProviderLinnCoUkConfiguration1Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern unsafe int DvProviderLinnCoUkConfiguration1SetPropertyConfigurationXml(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkConfiguration1SetPropertyConfigurationXml(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern unsafe void DvProviderLinnCoUkConfiguration1GetPropertyConfigurationXml(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkConfiguration1GetPropertyConfigurationXml(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern unsafe int DvProviderLinnCoUkConfiguration1SetPropertyParameterXml(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkConfiguration1SetPropertyParameterXml(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern unsafe void DvProviderLinnCoUkConfiguration1GetPropertyParameterXml(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkConfiguration1GetPropertyParameterXml(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern void DvProviderLinnCoUkConfiguration1EnableActionConfigurationXml(uint aHandle, CallbackConfigurationXml aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkConfiguration1EnableActionConfigurationXml(IntPtr aHandle, CallbackConfigurationXml aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern void DvProviderLinnCoUkConfiguration1EnableActionParameterXml(uint aHandle, CallbackParameterXml aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkConfiguration1EnableActionParameterXml(IntPtr aHandle, CallbackParameterXml aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkConfiguration1")]
-        static extern void DvProviderLinnCoUkConfiguration1EnableActionSetParameter(uint aHandle, CallbackSetParameter aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkConfiguration1EnableActionSetParameter(IntPtr aHandle, CallbackSetParameter aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -267,15 +267,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvProviderLinnCoUkConfiguration1Destroy(handle);
             if (iGch.IsAllocated)

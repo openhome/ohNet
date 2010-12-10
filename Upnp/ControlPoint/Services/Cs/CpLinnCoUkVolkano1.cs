@@ -9,37 +9,37 @@ namespace Zapp.ControlPoint.Proxies
     {
         void SyncReboot();
         void BeginReboot(CpProxy.CallbackAsyncComplete aCallback);
-        void EndReboot(uint aAsyncHandle);
+        void EndReboot(IntPtr aAsyncHandle);
         void SyncBootMode(out string aaMode);
         void BeginBootMode(CpProxy.CallbackAsyncComplete aCallback);
-        void EndBootMode(uint aAsyncHandle, out string aaMode);
+        void EndBootMode(IntPtr aAsyncHandle, out string aaMode);
         void SyncSetBootMode(string aaMode);
         void BeginSetBootMode(string aaMode, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetBootMode(uint aAsyncHandle);
+        void EndSetBootMode(IntPtr aAsyncHandle);
         void SyncBspType(out string aaBspType);
         void BeginBspType(CpProxy.CallbackAsyncComplete aCallback);
-        void EndBspType(uint aAsyncHandle, out string aaBspType);
+        void EndBspType(IntPtr aAsyncHandle, out string aaBspType);
         void SyncUglyName(out string aaUglyName);
         void BeginUglyName(CpProxy.CallbackAsyncComplete aCallback);
-        void EndUglyName(uint aAsyncHandle, out string aaUglyName);
+        void EndUglyName(IntPtr aAsyncHandle, out string aaUglyName);
         void SyncMacAddress(out string aaMacAddress);
         void BeginMacAddress(CpProxy.CallbackAsyncComplete aCallback);
-        void EndMacAddress(uint aAsyncHandle, out string aaMacAddress);
+        void EndMacAddress(IntPtr aAsyncHandle, out string aaMacAddress);
         void SyncProductId(out string aaProductNumber);
         void BeginProductId(CpProxy.CallbackAsyncComplete aCallback);
-        void EndProductId(uint aAsyncHandle, out string aaProductNumber);
+        void EndProductId(IntPtr aAsyncHandle, out string aaProductNumber);
         void SyncBoardId(uint aaIndex, out string aaBoardNumber);
         void BeginBoardId(uint aaIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndBoardId(uint aAsyncHandle, out string aaBoardNumber);
+        void EndBoardId(IntPtr aAsyncHandle, out string aaBoardNumber);
         void SyncBoardType(uint aaIndex, out string aaBoardNumber);
         void BeginBoardType(uint aaIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndBoardType(uint aAsyncHandle, out string aaBoardNumber);
+        void EndBoardType(IntPtr aAsyncHandle, out string aaBoardNumber);
         void SyncMaxBoards(out uint aaMaxBoards);
         void BeginMaxBoards(CpProxy.CallbackAsyncComplete aCallback);
-        void EndMaxBoards(uint aAsyncHandle, out uint aaMaxBoards);
+        void EndMaxBoards(IntPtr aAsyncHandle, out uint aaMaxBoards);
         void SyncSoftwareVersion(out string aaSoftwareVersion);
         void BeginSoftwareVersion(CpProxy.CallbackAsyncComplete aCallback);
-        void EndSoftwareVersion(uint aAsyncHandle, out string aaSoftwareVersion);
+        void EndSoftwareVersion(IntPtr aAsyncHandle, out string aaSoftwareVersion);
 
     }
 
@@ -49,75 +49,75 @@ namespace Zapp.ControlPoint.Proxies
     public class CpProxyLinnCoUkVolkano1 : CpProxy, IDisposable, ICpProxyLinnCoUkVolkano1
     {
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern uint CpProxyLinnCoUkVolkano1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyLinnCoUkVolkano1Create(IntPtr aDeviceHandle);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern void CpProxyLinnCoUkVolkano1Destroy(uint aHandle);
+        static extern void CpProxyLinnCoUkVolkano1Destroy(IntPtr aHandle);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncReboot(uint aHandle);
+        static extern unsafe void CpProxyLinnCoUkVolkano1SyncReboot(IntPtr aHandle);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginReboot(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkVolkano1BeginReboot(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndReboot(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkVolkano1EndReboot(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncBootMode(uint aHandle, char** aaMode);
+        static extern unsafe void CpProxyLinnCoUkVolkano1SyncBootMode(IntPtr aHandle, char** aaMode);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginBootMode(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkVolkano1BeginBootMode(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndBootMode(uint aHandle, uint aAsync, char** aaMode);
+        static extern unsafe int CpProxyLinnCoUkVolkano1EndBootMode(IntPtr aHandle, IntPtr aAsync, char** aaMode);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncSetBootMode(uint aHandle, char* aaMode);
+        static extern unsafe void CpProxyLinnCoUkVolkano1SyncSetBootMode(IntPtr aHandle, char* aaMode);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginSetBootMode(uint aHandle, char* aaMode, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkVolkano1BeginSetBootMode(IntPtr aHandle, char* aaMode, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndSetBootMode(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkVolkano1EndSetBootMode(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncBspType(uint aHandle, char** aaBspType);
+        static extern unsafe void CpProxyLinnCoUkVolkano1SyncBspType(IntPtr aHandle, char** aaBspType);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginBspType(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkVolkano1BeginBspType(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndBspType(uint aHandle, uint aAsync, char** aaBspType);
+        static extern unsafe int CpProxyLinnCoUkVolkano1EndBspType(IntPtr aHandle, IntPtr aAsync, char** aaBspType);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncUglyName(uint aHandle, char** aaUglyName);
+        static extern unsafe void CpProxyLinnCoUkVolkano1SyncUglyName(IntPtr aHandle, char** aaUglyName);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginUglyName(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkVolkano1BeginUglyName(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndUglyName(uint aHandle, uint aAsync, char** aaUglyName);
+        static extern unsafe int CpProxyLinnCoUkVolkano1EndUglyName(IntPtr aHandle, IntPtr aAsync, char** aaUglyName);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncMacAddress(uint aHandle, char** aaMacAddress);
+        static extern unsafe void CpProxyLinnCoUkVolkano1SyncMacAddress(IntPtr aHandle, char** aaMacAddress);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginMacAddress(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkVolkano1BeginMacAddress(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndMacAddress(uint aHandle, uint aAsync, char** aaMacAddress);
+        static extern unsafe int CpProxyLinnCoUkVolkano1EndMacAddress(IntPtr aHandle, IntPtr aAsync, char** aaMacAddress);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncProductId(uint aHandle, char** aaProductNumber);
+        static extern unsafe void CpProxyLinnCoUkVolkano1SyncProductId(IntPtr aHandle, char** aaProductNumber);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginProductId(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkVolkano1BeginProductId(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndProductId(uint aHandle, uint aAsync, char** aaProductNumber);
+        static extern unsafe int CpProxyLinnCoUkVolkano1EndProductId(IntPtr aHandle, IntPtr aAsync, char** aaProductNumber);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncBoardId(uint aHandle, uint aaIndex, char** aaBoardNumber);
+        static extern unsafe void CpProxyLinnCoUkVolkano1SyncBoardId(IntPtr aHandle, uint aaIndex, char** aaBoardNumber);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginBoardId(uint aHandle, uint aaIndex, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkVolkano1BeginBoardId(IntPtr aHandle, uint aaIndex, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndBoardId(uint aHandle, uint aAsync, char** aaBoardNumber);
+        static extern unsafe int CpProxyLinnCoUkVolkano1EndBoardId(IntPtr aHandle, IntPtr aAsync, char** aaBoardNumber);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncBoardType(uint aHandle, uint aaIndex, char** aaBoardNumber);
+        static extern unsafe void CpProxyLinnCoUkVolkano1SyncBoardType(IntPtr aHandle, uint aaIndex, char** aaBoardNumber);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginBoardType(uint aHandle, uint aaIndex, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkVolkano1BeginBoardType(IntPtr aHandle, uint aaIndex, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndBoardType(uint aHandle, uint aAsync, char** aaBoardNumber);
+        static extern unsafe int CpProxyLinnCoUkVolkano1EndBoardType(IntPtr aHandle, IntPtr aAsync, char** aaBoardNumber);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncMaxBoards(uint aHandle, uint* aaMaxBoards);
+        static extern unsafe void CpProxyLinnCoUkVolkano1SyncMaxBoards(IntPtr aHandle, uint* aaMaxBoards);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginMaxBoards(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkVolkano1BeginMaxBoards(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndMaxBoards(uint aHandle, uint aAsync, uint* aaMaxBoards);
+        static extern unsafe int CpProxyLinnCoUkVolkano1EndMaxBoards(IntPtr aHandle, IntPtr aAsync, uint* aaMaxBoards);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncSoftwareVersion(uint aHandle, char** aaSoftwareVersion);
+        static extern unsafe void CpProxyLinnCoUkVolkano1SyncSoftwareVersion(IntPtr aHandle, char** aaSoftwareVersion);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginSoftwareVersion(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkVolkano1BeginSoftwareVersion(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndSoftwareVersion(uint aHandle, uint aAsync, char** aaSoftwareVersion);
+        static extern unsafe int CpProxyLinnCoUkVolkano1EndSoftwareVersion(IntPtr aHandle, IntPtr aAsync, char** aaSoftwareVersion);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -166,7 +166,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndReboot(uint aAsyncHandle)
+        public unsafe void EndReboot(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkVolkano1EndReboot(iHandle, aAsyncHandle))
@@ -213,7 +213,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaMode"></param>
-        public unsafe void EndBootMode(uint aAsyncHandle, out string aaMode)
+        public unsafe void EndBootMode(IntPtr aAsyncHandle, out string aaMode)
         {
             char* aMode;
             {
@@ -264,7 +264,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetBootMode(uint aAsyncHandle)
+        public unsafe void EndSetBootMode(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkVolkano1EndSetBootMode(iHandle, aAsyncHandle))
@@ -311,7 +311,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaBspType"></param>
-        public unsafe void EndBspType(uint aAsyncHandle, out string aaBspType)
+        public unsafe void EndBspType(IntPtr aAsyncHandle, out string aaBspType)
         {
             char* aBspType;
             {
@@ -361,7 +361,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaUglyName"></param>
-        public unsafe void EndUglyName(uint aAsyncHandle, out string aaUglyName)
+        public unsafe void EndUglyName(IntPtr aAsyncHandle, out string aaUglyName)
         {
             char* aUglyName;
             {
@@ -411,7 +411,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaMacAddress"></param>
-        public unsafe void EndMacAddress(uint aAsyncHandle, out string aaMacAddress)
+        public unsafe void EndMacAddress(IntPtr aAsyncHandle, out string aaMacAddress)
         {
             char* aMacAddress;
             {
@@ -461,7 +461,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaProductNumber"></param>
-        public unsafe void EndProductId(uint aAsyncHandle, out string aaProductNumber)
+        public unsafe void EndProductId(IntPtr aAsyncHandle, out string aaProductNumber)
         {
             char* aProductNumber;
             {
@@ -513,7 +513,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaBoardNumber"></param>
-        public unsafe void EndBoardId(uint aAsyncHandle, out string aaBoardNumber)
+        public unsafe void EndBoardId(IntPtr aAsyncHandle, out string aaBoardNumber)
         {
             char* aBoardNumber;
             {
@@ -565,7 +565,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaBoardNumber"></param>
-        public unsafe void EndBoardType(uint aAsyncHandle, out string aaBoardNumber)
+        public unsafe void EndBoardType(IntPtr aAsyncHandle, out string aaBoardNumber)
         {
             char* aBoardNumber;
             {
@@ -613,7 +613,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaMaxBoards"></param>
-        public unsafe void EndMaxBoards(uint aAsyncHandle, out uint aaMaxBoards)
+        public unsafe void EndMaxBoards(IntPtr aAsyncHandle, out uint aaMaxBoards)
         {
             fixed (uint* aMaxBoards = &aaMaxBoards)
             {
@@ -661,7 +661,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSoftwareVersion"></param>
-        public unsafe void EndSoftwareVersion(uint aAsyncHandle, out string aaSoftwareVersion)
+        public unsafe void EndSoftwareVersion(IntPtr aAsyncHandle, out string aaSoftwareVersion)
         {
             char* aSoftwareVersion;
             {
@@ -691,12 +691,12 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 CpProxyLinnCoUkVolkano1Destroy(iHandle);
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             iGch.Free();
             if (aDisposing)

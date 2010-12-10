@@ -67,49 +67,49 @@ namespace Zapp.Device.Providers
     public class DvProviderLinnCoUkPlaylist1 : DvProvider, IDisposable, IDvProviderLinnCoUkPlaylist1
     {
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern uint DvProviderLinnCoUkPlaylist1Create(uint aDeviceHandle);
+        static extern IntPtr DvProviderLinnCoUkPlaylist1Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1Destroy(uint aHandle);
+        static extern void DvProviderLinnCoUkPlaylist1Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern unsafe int DvProviderLinnCoUkPlaylist1SetPropertyIdArray(uint aHandle, char* aValue, int aValueLen, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkPlaylist1SetPropertyIdArray(IntPtr aHandle, char* aValue, int aValueLen, uint* aChanged);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern unsafe void DvProviderLinnCoUkPlaylist1GetPropertyIdArray(uint aHandle, char** aValue, int* aValueLen);
+        static extern unsafe void DvProviderLinnCoUkPlaylist1GetPropertyIdArray(IntPtr aHandle, char** aValue, int* aValueLen);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern unsafe int DvProviderLinnCoUkPlaylist1SetPropertyRepeat(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkPlaylist1SetPropertyRepeat(IntPtr aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern unsafe void DvProviderLinnCoUkPlaylist1GetPropertyRepeat(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkPlaylist1GetPropertyRepeat(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern unsafe int DvProviderLinnCoUkPlaylist1SetPropertyShuffle(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkPlaylist1SetPropertyShuffle(IntPtr aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern unsafe void DvProviderLinnCoUkPlaylist1GetPropertyShuffle(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkPlaylist1GetPropertyShuffle(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern unsafe int DvProviderLinnCoUkPlaylist1SetPropertyTracksMax(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkPlaylist1SetPropertyTracksMax(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern unsafe void DvProviderLinnCoUkPlaylist1GetPropertyTracksMax(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkPlaylist1GetPropertyTracksMax(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionRead(uint aHandle, CallbackRead aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPlaylist1EnableActionRead(IntPtr aHandle, CallbackRead aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionReadList(uint aHandle, CallbackReadList aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPlaylist1EnableActionReadList(IntPtr aHandle, CallbackReadList aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionInsert(uint aHandle, CallbackInsert aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPlaylist1EnableActionInsert(IntPtr aHandle, CallbackInsert aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionDelete(uint aHandle, CallbackDelete aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPlaylist1EnableActionDelete(IntPtr aHandle, CallbackDelete aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionDeleteAll(uint aHandle, CallbackDeleteAll aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPlaylist1EnableActionDeleteAll(IntPtr aHandle, CallbackDeleteAll aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionSetRepeat(uint aHandle, CallbackSetRepeat aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPlaylist1EnableActionSetRepeat(IntPtr aHandle, CallbackSetRepeat aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionRepeat(uint aHandle, CallbackRepeat aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPlaylist1EnableActionRepeat(IntPtr aHandle, CallbackRepeat aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionSetShuffle(uint aHandle, CallbackSetShuffle aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPlaylist1EnableActionSetShuffle(IntPtr aHandle, CallbackSetShuffle aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionShuffle(uint aHandle, CallbackShuffle aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPlaylist1EnableActionShuffle(IntPtr aHandle, CallbackShuffle aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionTracksMax(uint aHandle, CallbackTracksMax aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPlaylist1EnableActionTracksMax(IntPtr aHandle, CallbackTracksMax aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionIdArray(uint aHandle, CallbackIdArray aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPlaylist1EnableActionIdArray(IntPtr aHandle, CallbackIdArray aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionIdArrayChanged(uint aHandle, CallbackIdArrayChanged aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPlaylist1EnableActionIdArrayChanged(IntPtr aHandle, CallbackIdArrayChanged aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -720,15 +720,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvProviderLinnCoUkPlaylist1Destroy(handle);
             if (iGch.IsAllocated)

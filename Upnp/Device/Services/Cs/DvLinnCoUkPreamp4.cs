@@ -93,61 +93,61 @@ namespace Zapp.Device.Providers
     public class DvProviderLinnCoUkPreamp4 : DvProvider, IDisposable, IDvProviderLinnCoUkPreamp4
     {
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern uint DvProviderLinnCoUkPreamp4Create(uint aDeviceHandle);
+        static extern IntPtr DvProviderLinnCoUkPreamp4Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4Destroy(uint aHandle);
+        static extern void DvProviderLinnCoUkPreamp4Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyVolume(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyVolume(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyVolume(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyVolume(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyMute(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyMute(IntPtr aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyMute(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyMute(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyBalance(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyBalance(IntPtr aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyBalance(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyBalance(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyVolumeLimit(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyVolumeLimit(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyVolumeLimit(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyVolumeLimit(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyStartupVolume(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyStartupVolume(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyStartupVolume(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyStartupVolume(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyStartupVolumeEnabled(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkPreamp4SetPropertyStartupVolumeEnabled(IntPtr aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyStartupVolumeEnabled(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkPreamp4GetPropertyStartupVolumeEnabled(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionVolumeInc(uint aHandle, CallbackVolumeInc aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionVolumeInc(IntPtr aHandle, CallbackVolumeInc aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionVolumeDec(uint aHandle, CallbackVolumeDec aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionVolumeDec(IntPtr aHandle, CallbackVolumeDec aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionSetVolume(uint aHandle, CallbackSetVolume aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionSetVolume(IntPtr aHandle, CallbackSetVolume aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionVolume(uint aHandle, CallbackVolume aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionVolume(IntPtr aHandle, CallbackVolume aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionSetMute(uint aHandle, CallbackSetMute aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionSetMute(IntPtr aHandle, CallbackSetMute aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionMute(uint aHandle, CallbackMute aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionMute(IntPtr aHandle, CallbackMute aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionSetBalance(uint aHandle, CallbackSetBalance aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionSetBalance(IntPtr aHandle, CallbackSetBalance aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionBalance(uint aHandle, CallbackBalance aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionBalance(IntPtr aHandle, CallbackBalance aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionSetVolumeLimit(uint aHandle, CallbackSetVolumeLimit aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionSetVolumeLimit(IntPtr aHandle, CallbackSetVolumeLimit aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionVolumeLimit(uint aHandle, CallbackVolumeLimit aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionVolumeLimit(IntPtr aHandle, CallbackVolumeLimit aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionSetStartupVolume(uint aHandle, CallbackSetStartupVolume aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionSetStartupVolume(IntPtr aHandle, CallbackSetStartupVolume aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionStartupVolume(uint aHandle, CallbackStartupVolume aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionStartupVolume(IntPtr aHandle, CallbackStartupVolume aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionSetStartupVolumeEnabled(uint aHandle, CallbackSetStartupVolumeEnabled aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionSetStartupVolumeEnabled(IntPtr aHandle, CallbackSetStartupVolumeEnabled aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkPreamp4")]
-        static extern void DvProviderLinnCoUkPreamp4EnableActionStartupVolumeEnabled(uint aHandle, CallbackStartupVolumeEnabled aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkPreamp4EnableActionStartupVolumeEnabled(IntPtr aHandle, CallbackStartupVolumeEnabled aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -858,15 +858,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvProviderLinnCoUkPreamp4Destroy(handle);
             if (iGch.IsAllocated)

@@ -28,83 +28,83 @@ namespace Zapp.Device.Providers
     public class DvProviderUpnpOrgRenderingControl1 : DvProvider, IDisposable, IDvProviderUpnpOrgRenderingControl1
     {
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern uint DvProviderUpnpOrgRenderingControl1Create(uint aDeviceHandle);
+        static extern IntPtr DvProviderUpnpOrgRenderingControl1Create(IntPtr aDeviceHandle);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1Destroy(uint aHandle);
+        static extern void DvProviderUpnpOrgRenderingControl1Destroy(IntPtr aHandle);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern unsafe int DvProviderUpnpOrgRenderingControl1SetPropertyLastChange(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgRenderingControl1SetPropertyLastChange(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern unsafe void DvProviderUpnpOrgRenderingControl1GetPropertyLastChange(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderUpnpOrgRenderingControl1GetPropertyLastChange(IntPtr aHandle, char** aValue);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionListPresets(uint aHandle, CallbackListPresets aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionListPresets(IntPtr aHandle, CallbackListPresets aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSelectPreset(uint aHandle, CallbackSelectPreset aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSelectPreset(IntPtr aHandle, CallbackSelectPreset aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetBrightness(uint aHandle, CallbackGetBrightness aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetBrightness(IntPtr aHandle, CallbackGetBrightness aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetBrightness(uint aHandle, CallbackSetBrightness aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetBrightness(IntPtr aHandle, CallbackSetBrightness aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetContrast(uint aHandle, CallbackGetContrast aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetContrast(IntPtr aHandle, CallbackGetContrast aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetContrast(uint aHandle, CallbackSetContrast aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetContrast(IntPtr aHandle, CallbackSetContrast aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetSharpness(uint aHandle, CallbackGetSharpness aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetSharpness(IntPtr aHandle, CallbackGetSharpness aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetSharpness(uint aHandle, CallbackSetSharpness aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetSharpness(IntPtr aHandle, CallbackSetSharpness aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetRedVideoGain(uint aHandle, CallbackGetRedVideoGain aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetRedVideoGain(IntPtr aHandle, CallbackGetRedVideoGain aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetRedVideoGain(uint aHandle, CallbackSetRedVideoGain aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetRedVideoGain(IntPtr aHandle, CallbackSetRedVideoGain aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetGreenVideoGain(uint aHandle, CallbackGetGreenVideoGain aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetGreenVideoGain(IntPtr aHandle, CallbackGetGreenVideoGain aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetGreenVideoGain(uint aHandle, CallbackSetGreenVideoGain aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetGreenVideoGain(IntPtr aHandle, CallbackSetGreenVideoGain aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetBlueVideoGain(uint aHandle, CallbackGetBlueVideoGain aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetBlueVideoGain(IntPtr aHandle, CallbackGetBlueVideoGain aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetBlueVideoGain(uint aHandle, CallbackSetBlueVideoGain aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetBlueVideoGain(IntPtr aHandle, CallbackSetBlueVideoGain aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetRedVideoBlackLevel(uint aHandle, CallbackGetRedVideoBlackLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetRedVideoBlackLevel(IntPtr aHandle, CallbackGetRedVideoBlackLevel aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetRedVideoBlackLevel(uint aHandle, CallbackSetRedVideoBlackLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetRedVideoBlackLevel(IntPtr aHandle, CallbackSetRedVideoBlackLevel aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetGreenVideoBlackLevel(uint aHandle, CallbackGetGreenVideoBlackLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetGreenVideoBlackLevel(IntPtr aHandle, CallbackGetGreenVideoBlackLevel aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetGreenVideoBlackLevel(uint aHandle, CallbackSetGreenVideoBlackLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetGreenVideoBlackLevel(IntPtr aHandle, CallbackSetGreenVideoBlackLevel aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetBlueVideoBlackLevel(uint aHandle, CallbackGetBlueVideoBlackLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetBlueVideoBlackLevel(IntPtr aHandle, CallbackGetBlueVideoBlackLevel aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetBlueVideoBlackLevel(uint aHandle, CallbackSetBlueVideoBlackLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetBlueVideoBlackLevel(IntPtr aHandle, CallbackSetBlueVideoBlackLevel aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetColorTemperature(uint aHandle, CallbackGetColorTemperature aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetColorTemperature(IntPtr aHandle, CallbackGetColorTemperature aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetColorTemperature(uint aHandle, CallbackSetColorTemperature aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetColorTemperature(IntPtr aHandle, CallbackSetColorTemperature aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetHorizontalKeystone(uint aHandle, CallbackGetHorizontalKeystone aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetHorizontalKeystone(IntPtr aHandle, CallbackGetHorizontalKeystone aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetHorizontalKeystone(uint aHandle, CallbackSetHorizontalKeystone aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetHorizontalKeystone(IntPtr aHandle, CallbackSetHorizontalKeystone aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetVerticalKeystone(uint aHandle, CallbackGetVerticalKeystone aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetVerticalKeystone(IntPtr aHandle, CallbackGetVerticalKeystone aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetVerticalKeystone(uint aHandle, CallbackSetVerticalKeystone aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetVerticalKeystone(IntPtr aHandle, CallbackSetVerticalKeystone aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetMute(uint aHandle, CallbackGetMute aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetMute(IntPtr aHandle, CallbackGetMute aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetMute(uint aHandle, CallbackSetMute aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetMute(IntPtr aHandle, CallbackSetMute aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetVolume(uint aHandle, CallbackGetVolume aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetVolume(IntPtr aHandle, CallbackGetVolume aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetVolume(uint aHandle, CallbackSetVolume aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetVolume(IntPtr aHandle, CallbackSetVolume aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetVolumeDB(uint aHandle, CallbackGetVolumeDB aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetVolumeDB(IntPtr aHandle, CallbackGetVolumeDB aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetVolumeDB(uint aHandle, CallbackSetVolumeDB aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetVolumeDB(IntPtr aHandle, CallbackSetVolumeDB aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetVolumeDBRange(uint aHandle, CallbackGetVolumeDBRange aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetVolumeDBRange(IntPtr aHandle, CallbackGetVolumeDBRange aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetLoudness(uint aHandle, CallbackGetLoudness aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionGetLoudness(IntPtr aHandle, CallbackGetLoudness aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgRenderingControl1")]
-        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetLoudness(uint aHandle, CallbackSetLoudness aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgRenderingControl1EnableActionSetLoudness(IntPtr aHandle, CallbackSetLoudness aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -1522,15 +1522,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvProviderUpnpOrgRenderingControl1Destroy(handle);
             if (iGch.IsAllocated)

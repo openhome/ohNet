@@ -9,34 +9,34 @@ namespace Zapp.ControlPoint.Proxies
     {
         void SyncKontrolProductConnected(out string aaConnected);
         void BeginKontrolProductConnected(CpProxy.CallbackAsyncComplete aCallback);
-        void EndKontrolProductConnected(uint aAsyncHandle, out string aaConnected);
+        void EndKontrolProductConnected(IntPtr aAsyncHandle, out string aaConnected);
         void SyncSetKontrolProductConnected(string aaConnected);
         void BeginSetKontrolProductConnected(string aaConnected, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetKontrolProductConnected(uint aAsyncHandle);
+        void EndSetKontrolProductConnected(IntPtr aAsyncHandle);
         void SyncKontrolProductComPort(out uint aaPort);
         void BeginKontrolProductComPort(CpProxy.CallbackAsyncComplete aCallback);
-        void EndKontrolProductComPort(uint aAsyncHandle, out uint aaPort);
+        void EndKontrolProductComPort(IntPtr aAsyncHandle, out uint aaPort);
         void SyncSetKontrolProductComPort(uint aaConnected);
         void BeginSetKontrolProductComPort(uint aaConnected, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetKontrolProductComPort(uint aAsyncHandle);
+        void EndSetKontrolProductComPort(IntPtr aAsyncHandle);
         void SyncDiscPlayerConnected(out string aaConnected);
         void BeginDiscPlayerConnected(CpProxy.CallbackAsyncComplete aCallback);
-        void EndDiscPlayerConnected(uint aAsyncHandle, out string aaConnected);
+        void EndDiscPlayerConnected(IntPtr aAsyncHandle, out string aaConnected);
         void SyncSetDiscPlayerConnected(string aaConnected);
         void BeginSetDiscPlayerConnected(string aaConnected, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetDiscPlayerConnected(uint aAsyncHandle);
+        void EndSetDiscPlayerConnected(IntPtr aAsyncHandle);
         void SyncDiscPlayerComPort(out uint aaPort);
         void BeginDiscPlayerComPort(CpProxy.CallbackAsyncComplete aCallback);
-        void EndDiscPlayerComPort(uint aAsyncHandle, out uint aaPort);
+        void EndDiscPlayerComPort(IntPtr aAsyncHandle, out uint aaPort);
         void SyncSetDiscPlayerComPort(uint aaConnected);
         void BeginSetDiscPlayerComPort(uint aaConnected, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetDiscPlayerComPort(uint aAsyncHandle);
+        void EndSetDiscPlayerComPort(IntPtr aAsyncHandle);
         void SyncTestKontrolProductConnection(out bool aaResult);
         void BeginTestKontrolProductConnection(CpProxy.CallbackAsyncComplete aCallback);
-        void EndTestKontrolProductConnection(uint aAsyncHandle, out bool aaResult);
+        void EndTestKontrolProductConnection(IntPtr aAsyncHandle, out bool aaResult);
         void SyncTestDiscPlayerConnection(out bool aaResult);
         void BeginTestDiscPlayerConnection(CpProxy.CallbackAsyncComplete aCallback);
-        void EndTestDiscPlayerConnection(uint aAsyncHandle, out bool aaResult);
+        void EndTestDiscPlayerConnection(IntPtr aAsyncHandle, out bool aaResult);
 
         void SetPropertyKontrolProductConnectedChanged(CpProxy.CallbackPropertyChanged aKontrolProductConnectedChanged);
         void PropertyKontrolProductConnected(out string aKontrolProductConnected);
@@ -54,85 +54,85 @@ namespace Zapp.ControlPoint.Proxies
     public class CpProxyLinnCoUkProxyManager1 : CpProxy, IDisposable, ICpProxyLinnCoUkProxyManager1
     {
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern uint CpProxyLinnCoUkProxyManager1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyLinnCoUkProxyManager1Create(IntPtr aDeviceHandle);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern void CpProxyLinnCoUkProxyManager1Destroy(uint aHandle);
+        static extern void CpProxyLinnCoUkProxyManager1Destroy(IntPtr aHandle);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1SyncKontrolProductConnected(uint aHandle, char** aaConnected);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1SyncKontrolProductConnected(IntPtr aHandle, char** aaConnected);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1BeginKontrolProductConnected(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1BeginKontrolProductConnected(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe int CpProxyLinnCoUkProxyManager1EndKontrolProductConnected(uint aHandle, uint aAsync, char** aaConnected);
+        static extern unsafe int CpProxyLinnCoUkProxyManager1EndKontrolProductConnected(IntPtr aHandle, IntPtr aAsync, char** aaConnected);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1SyncSetKontrolProductConnected(uint aHandle, char* aaConnected);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1SyncSetKontrolProductConnected(IntPtr aHandle, char* aaConnected);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1BeginSetKontrolProductConnected(uint aHandle, char* aaConnected, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1BeginSetKontrolProductConnected(IntPtr aHandle, char* aaConnected, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe int CpProxyLinnCoUkProxyManager1EndSetKontrolProductConnected(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkProxyManager1EndSetKontrolProductConnected(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1SyncKontrolProductComPort(uint aHandle, uint* aaPort);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1SyncKontrolProductComPort(IntPtr aHandle, uint* aaPort);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1BeginKontrolProductComPort(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1BeginKontrolProductComPort(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe int CpProxyLinnCoUkProxyManager1EndKontrolProductComPort(uint aHandle, uint aAsync, uint* aaPort);
+        static extern unsafe int CpProxyLinnCoUkProxyManager1EndKontrolProductComPort(IntPtr aHandle, IntPtr aAsync, uint* aaPort);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1SyncSetKontrolProductComPort(uint aHandle, uint aaConnected);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1SyncSetKontrolProductComPort(IntPtr aHandle, uint aaConnected);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1BeginSetKontrolProductComPort(uint aHandle, uint aaConnected, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1BeginSetKontrolProductComPort(IntPtr aHandle, uint aaConnected, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe int CpProxyLinnCoUkProxyManager1EndSetKontrolProductComPort(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkProxyManager1EndSetKontrolProductComPort(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1SyncDiscPlayerConnected(uint aHandle, char** aaConnected);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1SyncDiscPlayerConnected(IntPtr aHandle, char** aaConnected);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1BeginDiscPlayerConnected(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1BeginDiscPlayerConnected(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe int CpProxyLinnCoUkProxyManager1EndDiscPlayerConnected(uint aHandle, uint aAsync, char** aaConnected);
+        static extern unsafe int CpProxyLinnCoUkProxyManager1EndDiscPlayerConnected(IntPtr aHandle, IntPtr aAsync, char** aaConnected);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1SyncSetDiscPlayerConnected(uint aHandle, char* aaConnected);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1SyncSetDiscPlayerConnected(IntPtr aHandle, char* aaConnected);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1BeginSetDiscPlayerConnected(uint aHandle, char* aaConnected, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1BeginSetDiscPlayerConnected(IntPtr aHandle, char* aaConnected, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe int CpProxyLinnCoUkProxyManager1EndSetDiscPlayerConnected(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkProxyManager1EndSetDiscPlayerConnected(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1SyncDiscPlayerComPort(uint aHandle, uint* aaPort);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1SyncDiscPlayerComPort(IntPtr aHandle, uint* aaPort);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1BeginDiscPlayerComPort(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1BeginDiscPlayerComPort(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe int CpProxyLinnCoUkProxyManager1EndDiscPlayerComPort(uint aHandle, uint aAsync, uint* aaPort);
+        static extern unsafe int CpProxyLinnCoUkProxyManager1EndDiscPlayerComPort(IntPtr aHandle, IntPtr aAsync, uint* aaPort);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1SyncSetDiscPlayerComPort(uint aHandle, uint aaConnected);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1SyncSetDiscPlayerComPort(IntPtr aHandle, uint aaConnected);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1BeginSetDiscPlayerComPort(uint aHandle, uint aaConnected, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1BeginSetDiscPlayerComPort(IntPtr aHandle, uint aaConnected, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe int CpProxyLinnCoUkProxyManager1EndSetDiscPlayerComPort(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkProxyManager1EndSetDiscPlayerComPort(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1SyncTestKontrolProductConnection(uint aHandle, uint* aaResult);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1SyncTestKontrolProductConnection(IntPtr aHandle, uint* aaResult);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1BeginTestKontrolProductConnection(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1BeginTestKontrolProductConnection(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe int CpProxyLinnCoUkProxyManager1EndTestKontrolProductConnection(uint aHandle, uint aAsync, uint* aaResult);
+        static extern unsafe int CpProxyLinnCoUkProxyManager1EndTestKontrolProductConnection(IntPtr aHandle, IntPtr aAsync, uint* aaResult);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1SyncTestDiscPlayerConnection(uint aHandle, uint* aaResult);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1SyncTestDiscPlayerConnection(IntPtr aHandle, uint* aaResult);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1BeginTestDiscPlayerConnection(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1BeginTestDiscPlayerConnection(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe int CpProxyLinnCoUkProxyManager1EndTestDiscPlayerConnection(uint aHandle, uint aAsync, uint* aaResult);
+        static extern unsafe int CpProxyLinnCoUkProxyManager1EndTestDiscPlayerConnection(IntPtr aHandle, IntPtr aAsync, uint* aaResult);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern void CpProxyLinnCoUkProxyManager1SetPropertyKontrolProductConnectedChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkProxyManager1SetPropertyKontrolProductConnectedChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern void CpProxyLinnCoUkProxyManager1SetPropertyKontrolProductComPortChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkProxyManager1SetPropertyKontrolProductComPortChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern void CpProxyLinnCoUkProxyManager1SetPropertyDiscPlayerConnectedChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkProxyManager1SetPropertyDiscPlayerConnectedChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern void CpProxyLinnCoUkProxyManager1SetPropertyDiscPlayerComPortChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkProxyManager1SetPropertyDiscPlayerComPortChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1PropertyKontrolProductConnected(uint aHandle, char** aKontrolProductConnected);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1PropertyKontrolProductConnected(IntPtr aHandle, char** aKontrolProductConnected);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1PropertyKontrolProductComPort(uint aHandle, uint* aKontrolProductComPort);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1PropertyKontrolProductComPort(IntPtr aHandle, uint* aKontrolProductComPort);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1PropertyDiscPlayerConnected(uint aHandle, char** aDiscPlayerConnected);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1PropertyDiscPlayerConnected(IntPtr aHandle, char** aDiscPlayerConnected);
         [DllImport("CpLinnCoUkProxyManager1")]
-        static extern unsafe void CpProxyLinnCoUkProxyManager1PropertyDiscPlayerComPort(uint aHandle, uint* aDiscPlayerComPort);
+        static extern unsafe void CpProxyLinnCoUkProxyManager1PropertyDiscPlayerComPort(IntPtr aHandle, uint* aDiscPlayerComPort);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -194,7 +194,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaConnected"></param>
-        public unsafe void EndKontrolProductConnected(uint aAsyncHandle, out string aaConnected)
+        public unsafe void EndKontrolProductConnected(IntPtr aAsyncHandle, out string aaConnected)
         {
             char* aConnected;
             {
@@ -245,7 +245,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetKontrolProductConnected(uint aAsyncHandle)
+        public unsafe void EndSetKontrolProductConnected(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkProxyManager1EndSetKontrolProductConnected(iHandle, aAsyncHandle))
@@ -290,7 +290,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaPort"></param>
-        public unsafe void EndKontrolProductComPort(uint aAsyncHandle, out uint aaPort)
+        public unsafe void EndKontrolProductComPort(IntPtr aAsyncHandle, out uint aaPort)
         {
             fixed (uint* aPort = &aaPort)
             {
@@ -335,7 +335,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetKontrolProductComPort(uint aAsyncHandle)
+        public unsafe void EndSetKontrolProductComPort(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkProxyManager1EndSetKontrolProductComPort(iHandle, aAsyncHandle))
@@ -382,7 +382,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaConnected"></param>
-        public unsafe void EndDiscPlayerConnected(uint aAsyncHandle, out string aaConnected)
+        public unsafe void EndDiscPlayerConnected(IntPtr aAsyncHandle, out string aaConnected)
         {
             char* aConnected;
             {
@@ -433,7 +433,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetDiscPlayerConnected(uint aAsyncHandle)
+        public unsafe void EndSetDiscPlayerConnected(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkProxyManager1EndSetDiscPlayerConnected(iHandle, aAsyncHandle))
@@ -478,7 +478,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaPort"></param>
-        public unsafe void EndDiscPlayerComPort(uint aAsyncHandle, out uint aaPort)
+        public unsafe void EndDiscPlayerComPort(IntPtr aAsyncHandle, out uint aaPort)
         {
             fixed (uint* aPort = &aaPort)
             {
@@ -523,7 +523,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetDiscPlayerComPort(uint aAsyncHandle)
+        public unsafe void EndSetDiscPlayerComPort(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkProxyManager1EndSetDiscPlayerComPort(iHandle, aAsyncHandle))
@@ -569,7 +569,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaResult"></param>
-        public unsafe void EndTestKontrolProductConnection(uint aAsyncHandle, out bool aaResult)
+        public unsafe void EndTestKontrolProductConnection(IntPtr aAsyncHandle, out bool aaResult)
         {
             uint aResult;
             {
@@ -617,7 +617,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaResult"></param>
-        public unsafe void EndTestDiscPlayerConnection(uint aAsyncHandle, out bool aaResult)
+        public unsafe void EndTestDiscPlayerConnection(IntPtr aAsyncHandle, out bool aaResult)
         {
             uint aResult;
             {
@@ -790,12 +790,12 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 CpProxyLinnCoUkProxyManager1Destroy(iHandle);
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             iGch.Free();
             if (aDisposing)

@@ -9,67 +9,67 @@ namespace Zapp.ControlPoint.Proxies
     {
         void SyncSetAVTransportURI(uint aInstanceID, string aCurrentURI, string aCurrentURIMetaData);
         void BeginSetAVTransportURI(uint aInstanceID, string aCurrentURI, string aCurrentURIMetaData, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetAVTransportURI(uint aAsyncHandle);
+        void EndSetAVTransportURI(IntPtr aAsyncHandle);
         void SyncSetNextAVTransportURI(uint aInstanceID, string aNextURI, string aNextURIMetaData);
         void BeginSetNextAVTransportURI(uint aInstanceID, string aNextURI, string aNextURIMetaData, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetNextAVTransportURI(uint aAsyncHandle);
+        void EndSetNextAVTransportURI(IntPtr aAsyncHandle);
         void SyncGetMediaInfo(uint aInstanceID, out uint aNrTracks, out string aMediaDuration, out string aCurrentURI, out string aCurrentURIMetaData, out string aNextURI, out string aNextURIMetaData, out string aPlayMedium, out string aRecordMedium, out string aWriteStatus);
         void BeginGetMediaInfo(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetMediaInfo(uint aAsyncHandle, out uint aNrTracks, out string aMediaDuration, out string aCurrentURI, out string aCurrentURIMetaData, out string aNextURI, out string aNextURIMetaData, out string aPlayMedium, out string aRecordMedium, out string aWriteStatus);
+        void EndGetMediaInfo(IntPtr aAsyncHandle, out uint aNrTracks, out string aMediaDuration, out string aCurrentURI, out string aCurrentURIMetaData, out string aNextURI, out string aNextURIMetaData, out string aPlayMedium, out string aRecordMedium, out string aWriteStatus);
         void SyncGetMediaInfo_Ext(uint aInstanceID, out string aCurrentType, out uint aNrTracks, out string aMediaDuration, out string aCurrentURI, out string aCurrentURIMetaData, out string aNextURI, out string aNextURIMetaData, out string aPlayMedium, out string aRecordMedium, out string aWriteStatus);
         void BeginGetMediaInfo_Ext(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetMediaInfo_Ext(uint aAsyncHandle, out string aCurrentType, out uint aNrTracks, out string aMediaDuration, out string aCurrentURI, out string aCurrentURIMetaData, out string aNextURI, out string aNextURIMetaData, out string aPlayMedium, out string aRecordMedium, out string aWriteStatus);
+        void EndGetMediaInfo_Ext(IntPtr aAsyncHandle, out string aCurrentType, out uint aNrTracks, out string aMediaDuration, out string aCurrentURI, out string aCurrentURIMetaData, out string aNextURI, out string aNextURIMetaData, out string aPlayMedium, out string aRecordMedium, out string aWriteStatus);
         void SyncGetTransportInfo(uint aInstanceID, out string aCurrentTransportState, out string aCurrentTransportStatus, out string aCurrentSpeed);
         void BeginGetTransportInfo(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetTransportInfo(uint aAsyncHandle, out string aCurrentTransportState, out string aCurrentTransportStatus, out string aCurrentSpeed);
+        void EndGetTransportInfo(IntPtr aAsyncHandle, out string aCurrentTransportState, out string aCurrentTransportStatus, out string aCurrentSpeed);
         void SyncGetPositionInfo(uint aInstanceID, out uint aTrack, out string aTrackDuration, out string aTrackMetaData, out string aTrackURI, out string aRelTime, out string aAbsTime, out int aRelCount, out int aAbsCount);
         void BeginGetPositionInfo(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetPositionInfo(uint aAsyncHandle, out uint aTrack, out string aTrackDuration, out string aTrackMetaData, out string aTrackURI, out string aRelTime, out string aAbsTime, out int aRelCount, out int aAbsCount);
+        void EndGetPositionInfo(IntPtr aAsyncHandle, out uint aTrack, out string aTrackDuration, out string aTrackMetaData, out string aTrackURI, out string aRelTime, out string aAbsTime, out int aRelCount, out int aAbsCount);
         void SyncGetDeviceCapabilities(uint aInstanceID, out string aPlayMedia, out string aRecMedia, out string aRecQualityModes);
         void BeginGetDeviceCapabilities(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetDeviceCapabilities(uint aAsyncHandle, out string aPlayMedia, out string aRecMedia, out string aRecQualityModes);
+        void EndGetDeviceCapabilities(IntPtr aAsyncHandle, out string aPlayMedia, out string aRecMedia, out string aRecQualityModes);
         void SyncGetTransportSettings(uint aInstanceID, out string aPlayMode, out string aRecQualityMode);
         void BeginGetTransportSettings(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetTransportSettings(uint aAsyncHandle, out string aPlayMode, out string aRecQualityMode);
+        void EndGetTransportSettings(IntPtr aAsyncHandle, out string aPlayMode, out string aRecQualityMode);
         void SyncStop(uint aInstanceID);
         void BeginStop(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndStop(uint aAsyncHandle);
+        void EndStop(IntPtr aAsyncHandle);
         void SyncPlay(uint aInstanceID, string aSpeed);
         void BeginPlay(uint aInstanceID, string aSpeed, CpProxy.CallbackAsyncComplete aCallback);
-        void EndPlay(uint aAsyncHandle);
+        void EndPlay(IntPtr aAsyncHandle);
         void SyncPause(uint aInstanceID);
         void BeginPause(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndPause(uint aAsyncHandle);
+        void EndPause(IntPtr aAsyncHandle);
         void SyncRecord(uint aInstanceID);
         void BeginRecord(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndRecord(uint aAsyncHandle);
+        void EndRecord(IntPtr aAsyncHandle);
         void SyncSeek(uint aInstanceID, string aUnit, string aTarget);
         void BeginSeek(uint aInstanceID, string aUnit, string aTarget, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSeek(uint aAsyncHandle);
+        void EndSeek(IntPtr aAsyncHandle);
         void SyncNext(uint aInstanceID);
         void BeginNext(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndNext(uint aAsyncHandle);
+        void EndNext(IntPtr aAsyncHandle);
         void SyncPrevious(uint aInstanceID);
         void BeginPrevious(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndPrevious(uint aAsyncHandle);
+        void EndPrevious(IntPtr aAsyncHandle);
         void SyncSetPlayMode(uint aInstanceID, string aNewPlayMode);
         void BeginSetPlayMode(uint aInstanceID, string aNewPlayMode, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetPlayMode(uint aAsyncHandle);
+        void EndSetPlayMode(IntPtr aAsyncHandle);
         void SyncSetRecordQualityMode(uint aInstanceID, string aNewRecordQualityMode);
         void BeginSetRecordQualityMode(uint aInstanceID, string aNewRecordQualityMode, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetRecordQualityMode(uint aAsyncHandle);
+        void EndSetRecordQualityMode(IntPtr aAsyncHandle);
         void SyncGetCurrentTransportActions(uint aInstanceID, out string aActions);
         void BeginGetCurrentTransportActions(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetCurrentTransportActions(uint aAsyncHandle, out string aActions);
+        void EndGetCurrentTransportActions(IntPtr aAsyncHandle, out string aActions);
         void SyncGetDRMState(uint aInstanceID, out string aCurrentDRMState);
         void BeginGetDRMState(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetDRMState(uint aAsyncHandle, out string aCurrentDRMState);
+        void EndGetDRMState(IntPtr aAsyncHandle, out string aCurrentDRMState);
         void SyncGetStateVariables(uint aInstanceID, string aStateVariableList, out string aStateVariableValuePairs);
         void BeginGetStateVariables(uint aInstanceID, string aStateVariableList, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetStateVariables(uint aAsyncHandle, out string aStateVariableValuePairs);
+        void EndGetStateVariables(IntPtr aAsyncHandle, out string aStateVariableValuePairs);
         void SyncSetStateVariables(uint aInstanceID, string aAVTransportUDN, string aServiceType, string aServiceId, string aStateVariableValuePairs, out string aStateVariableList);
         void BeginSetStateVariables(uint aInstanceID, string aAVTransportUDN, string aServiceType, string aServiceId, string aStateVariableValuePairs, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetStateVariables(uint aAsyncHandle, out string aStateVariableList);
+        void EndSetStateVariables(IntPtr aAsyncHandle, out string aStateVariableList);
 
         void SetPropertyLastChangeChanged(CpProxy.CallbackPropertyChanged aLastChangeChanged);
         void PropertyLastChange(out string aLastChange);
@@ -83,143 +83,143 @@ namespace Zapp.ControlPoint.Proxies
     public class CpProxyUpnpOrgAVTransport2 : CpProxy, IDisposable, ICpProxyUpnpOrgAVTransport2
     {
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern uint CpProxyUpnpOrgAVTransport2Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyUpnpOrgAVTransport2Create(IntPtr aDeviceHandle);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern void CpProxyUpnpOrgAVTransport2Destroy(uint aHandle);
+        static extern void CpProxyUpnpOrgAVTransport2Destroy(IntPtr aHandle);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncSetAVTransportURI(uint aHandle, uint aInstanceID, char* aCurrentURI, char* aCurrentURIMetaData);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncSetAVTransportURI(IntPtr aHandle, uint aInstanceID, char* aCurrentURI, char* aCurrentURIMetaData);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginSetAVTransportURI(uint aHandle, uint aInstanceID, char* aCurrentURI, char* aCurrentURIMetaData, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginSetAVTransportURI(IntPtr aHandle, uint aInstanceID, char* aCurrentURI, char* aCurrentURIMetaData, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe int CpProxyUpnpOrgAVTransport2EndSetAVTransportURI(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgAVTransport2EndSetAVTransportURI(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncSetNextAVTransportURI(uint aHandle, uint aInstanceID, char* aNextURI, char* aNextURIMetaData);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncSetNextAVTransportURI(IntPtr aHandle, uint aInstanceID, char* aNextURI, char* aNextURIMetaData);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginSetNextAVTransportURI(uint aHandle, uint aInstanceID, char* aNextURI, char* aNextURIMetaData, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginSetNextAVTransportURI(IntPtr aHandle, uint aInstanceID, char* aNextURI, char* aNextURIMetaData, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe int CpProxyUpnpOrgAVTransport2EndSetNextAVTransportURI(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgAVTransport2EndSetNextAVTransportURI(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncGetMediaInfo(uint aHandle, uint aInstanceID, uint* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncGetMediaInfo(IntPtr aHandle, uint aInstanceID, uint* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginGetMediaInfo(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginGetMediaInfo(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe int CpProxyUpnpOrgAVTransport2EndGetMediaInfo(uint aHandle, uint aAsync, uint* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
+        static extern unsafe int CpProxyUpnpOrgAVTransport2EndGetMediaInfo(IntPtr aHandle, IntPtr aAsync, uint* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncGetMediaInfo_Ext(uint aHandle, uint aInstanceID, char** aCurrentType, uint* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncGetMediaInfo_Ext(IntPtr aHandle, uint aInstanceID, char** aCurrentType, uint* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginGetMediaInfo_Ext(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginGetMediaInfo_Ext(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe int CpProxyUpnpOrgAVTransport2EndGetMediaInfo_Ext(uint aHandle, uint aAsync, char** aCurrentType, uint* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
+        static extern unsafe int CpProxyUpnpOrgAVTransport2EndGetMediaInfo_Ext(IntPtr aHandle, IntPtr aAsync, char** aCurrentType, uint* aNrTracks, char** aMediaDuration, char** aCurrentURI, char** aCurrentURIMetaData, char** aNextURI, char** aNextURIMetaData, char** aPlayMedium, char** aRecordMedium, char** aWriteStatus);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncGetTransportInfo(uint aHandle, uint aInstanceID, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncGetTransportInfo(IntPtr aHandle, uint aInstanceID, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginGetTransportInfo(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginGetTransportInfo(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe int CpProxyUpnpOrgAVTransport2EndGetTransportInfo(uint aHandle, uint aAsync, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed);
+        static extern unsafe int CpProxyUpnpOrgAVTransport2EndGetTransportInfo(IntPtr aHandle, IntPtr aAsync, char** aCurrentTransportState, char** aCurrentTransportStatus, char** aCurrentSpeed);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncGetPositionInfo(uint aHandle, uint aInstanceID, uint* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int* aRelCount, int* aAbsCount);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncGetPositionInfo(IntPtr aHandle, uint aInstanceID, uint* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int* aRelCount, int* aAbsCount);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginGetPositionInfo(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginGetPositionInfo(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe int CpProxyUpnpOrgAVTransport2EndGetPositionInfo(uint aHandle, uint aAsync, uint* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int* aRelCount, int* aAbsCount);
+        static extern unsafe int CpProxyUpnpOrgAVTransport2EndGetPositionInfo(IntPtr aHandle, IntPtr aAsync, uint* aTrack, char** aTrackDuration, char** aTrackMetaData, char** aTrackURI, char** aRelTime, char** aAbsTime, int* aRelCount, int* aAbsCount);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncGetDeviceCapabilities(uint aHandle, uint aInstanceID, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncGetDeviceCapabilities(IntPtr aHandle, uint aInstanceID, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginGetDeviceCapabilities(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginGetDeviceCapabilities(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe int CpProxyUpnpOrgAVTransport2EndGetDeviceCapabilities(uint aHandle, uint aAsync, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes);
+        static extern unsafe int CpProxyUpnpOrgAVTransport2EndGetDeviceCapabilities(IntPtr aHandle, IntPtr aAsync, char** aPlayMedia, char** aRecMedia, char** aRecQualityModes);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncGetTransportSettings(uint aHandle, uint aInstanceID, char** aPlayMode, char** aRecQualityMode);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncGetTransportSettings(IntPtr aHandle, uint aInstanceID, char** aPlayMode, char** aRecQualityMode);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginGetTransportSettings(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginGetTransportSettings(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe int CpProxyUpnpOrgAVTransport2EndGetTransportSettings(uint aHandle, uint aAsync, char** aPlayMode, char** aRecQualityMode);
+        static extern unsafe int CpProxyUpnpOrgAVTransport2EndGetTransportSettings(IntPtr aHandle, IntPtr aAsync, char** aPlayMode, char** aRecQualityMode);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncStop(uint aHandle, uint aInstanceID);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncStop(IntPtr aHandle, uint aInstanceID);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginStop(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginStop(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe int CpProxyUpnpOrgAVTransport2EndStop(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgAVTransport2EndStop(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncPlay(uint aHandle, uint aInstanceID, char* aSpeed);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncPlay(IntPtr aHandle, uint aInstanceID, char* aSpeed);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginPlay(uint aHandle, uint aInstanceID, char* aSpeed, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginPlay(IntPtr aHandle, uint aInstanceID, char* aSpeed, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe int CpProxyUpnpOrgAVTransport2EndPlay(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgAVTransport2EndPlay(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncPause(uint aHandle, uint aInstanceID);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncPause(IntPtr aHandle, uint aInstanceID);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginPause(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginPause(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe int CpProxyUpnpOrgAVTransport2EndPause(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgAVTransport2EndPause(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncRecord(uint aHandle, uint aInstanceID);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncRecord(IntPtr aHandle, uint aInstanceID);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginRecord(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginRecord(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe int CpProxyUpnpOrgAVTransport2EndRecord(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgAVTransport2EndRecord(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncSeek(uint aHandle, uint aInstanceID, char* aUnit, char* aTarget);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncSeek(IntPtr aHandle, uint aInstanceID, char* aUnit, char* aTarget);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginSeek(uint aHandle, uint aInstanceID, char* aUnit, char* aTarget, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginSeek(IntPtr aHandle, uint aInstanceID, char* aUnit, char* aTarget, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe int CpProxyUpnpOrgAVTransport2EndSeek(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgAVTransport2EndSeek(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncNext(uint aHandle, uint aInstanceID);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncNext(IntPtr aHandle, uint aInstanceID);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginNext(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginNext(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe int CpProxyUpnpOrgAVTransport2EndNext(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgAVTransport2EndNext(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncPrevious(uint aHandle, uint aInstanceID);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncPrevious(IntPtr aHandle, uint aInstanceID);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginPrevious(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginPrevious(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe int CpProxyUpnpOrgAVTransport2EndPrevious(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgAVTransport2EndPrevious(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncSetPlayMode(uint aHandle, uint aInstanceID, char* aNewPlayMode);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncSetPlayMode(IntPtr aHandle, uint aInstanceID, char* aNewPlayMode);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginSetPlayMode(uint aHandle, uint aInstanceID, char* aNewPlayMode, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginSetPlayMode(IntPtr aHandle, uint aInstanceID, char* aNewPlayMode, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe int CpProxyUpnpOrgAVTransport2EndSetPlayMode(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgAVTransport2EndSetPlayMode(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncSetRecordQualityMode(uint aHandle, uint aInstanceID, char* aNewRecordQualityMode);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncSetRecordQualityMode(IntPtr aHandle, uint aInstanceID, char* aNewRecordQualityMode);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginSetRecordQualityMode(uint aHandle, uint aInstanceID, char* aNewRecordQualityMode, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginSetRecordQualityMode(IntPtr aHandle, uint aInstanceID, char* aNewRecordQualityMode, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe int CpProxyUpnpOrgAVTransport2EndSetRecordQualityMode(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyUpnpOrgAVTransport2EndSetRecordQualityMode(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncGetCurrentTransportActions(uint aHandle, uint aInstanceID, char** aActions);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncGetCurrentTransportActions(IntPtr aHandle, uint aInstanceID, char** aActions);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginGetCurrentTransportActions(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginGetCurrentTransportActions(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe int CpProxyUpnpOrgAVTransport2EndGetCurrentTransportActions(uint aHandle, uint aAsync, char** aActions);
+        static extern unsafe int CpProxyUpnpOrgAVTransport2EndGetCurrentTransportActions(IntPtr aHandle, IntPtr aAsync, char** aActions);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncGetDRMState(uint aHandle, uint aInstanceID, char** aCurrentDRMState);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncGetDRMState(IntPtr aHandle, uint aInstanceID, char** aCurrentDRMState);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginGetDRMState(uint aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginGetDRMState(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe int CpProxyUpnpOrgAVTransport2EndGetDRMState(uint aHandle, uint aAsync, char** aCurrentDRMState);
+        static extern unsafe int CpProxyUpnpOrgAVTransport2EndGetDRMState(IntPtr aHandle, IntPtr aAsync, char** aCurrentDRMState);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncGetStateVariables(uint aHandle, uint aInstanceID, char* aStateVariableList, char** aStateVariableValuePairs);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncGetStateVariables(IntPtr aHandle, uint aInstanceID, char* aStateVariableList, char** aStateVariableValuePairs);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginGetStateVariables(uint aHandle, uint aInstanceID, char* aStateVariableList, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginGetStateVariables(IntPtr aHandle, uint aInstanceID, char* aStateVariableList, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe int CpProxyUpnpOrgAVTransport2EndGetStateVariables(uint aHandle, uint aAsync, char** aStateVariableValuePairs);
+        static extern unsafe int CpProxyUpnpOrgAVTransport2EndGetStateVariables(IntPtr aHandle, IntPtr aAsync, char** aStateVariableValuePairs);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncSetStateVariables(uint aHandle, uint aInstanceID, char* aAVTransportUDN, char* aServiceType, char* aServiceId, char* aStateVariableValuePairs, char** aStateVariableList);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2SyncSetStateVariables(IntPtr aHandle, uint aInstanceID, char* aAVTransportUDN, char* aServiceType, char* aServiceId, char* aStateVariableValuePairs, char** aStateVariableList);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginSetStateVariables(uint aHandle, uint aInstanceID, char* aAVTransportUDN, char* aServiceType, char* aServiceId, char* aStateVariableValuePairs, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2BeginSetStateVariables(IntPtr aHandle, uint aInstanceID, char* aAVTransportUDN, char* aServiceType, char* aServiceId, char* aStateVariableValuePairs, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe int CpProxyUpnpOrgAVTransport2EndSetStateVariables(uint aHandle, uint aAsync, char** aStateVariableList);
+        static extern unsafe int CpProxyUpnpOrgAVTransport2EndSetStateVariables(IntPtr aHandle, IntPtr aAsync, char** aStateVariableList);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern void CpProxyUpnpOrgAVTransport2SetPropertyLastChangeChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyUpnpOrgAVTransport2SetPropertyLastChangeChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern void CpProxyUpnpOrgAVTransport2SetPropertyDRMStateChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyUpnpOrgAVTransport2SetPropertyDRMStateChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2PropertyLastChange(uint aHandle, char** aLastChange);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2PropertyLastChange(IntPtr aHandle, char** aLastChange);
         [DllImport("CpUpnpOrgAVTransport2")]
-        static extern unsafe void CpProxyUpnpOrgAVTransport2PropertyDRMState(uint aHandle, char** aDRMState);
+        static extern unsafe void CpProxyUpnpOrgAVTransport2PropertyDRMState(IntPtr aHandle, char** aDRMState);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -286,7 +286,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetAVTransportURI(uint aAsyncHandle)
+        public unsafe void EndSetAVTransportURI(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyUpnpOrgAVTransport2EndSetAVTransportURI(iHandle, aAsyncHandle))
@@ -342,7 +342,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetNextAVTransportURI(uint aAsyncHandle)
+        public unsafe void EndSetNextAVTransportURI(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyUpnpOrgAVTransport2EndSetNextAVTransportURI(iHandle, aAsyncHandle))
@@ -429,7 +429,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aPlayMedium"></param>
         /// <param name="aRecordMedium"></param>
         /// <param name="aWriteStatus"></param>
-        public unsafe void EndGetMediaInfo(uint aAsyncHandle, out uint aNrTracks, out string aMediaDuration, out string aCurrentURI, out string aCurrentURIMetaData, out string aNextURI, out string aNextURIMetaData, out string aPlayMedium, out string aRecordMedium, out string aWriteStatus)
+        public unsafe void EndGetMediaInfo(IntPtr aAsyncHandle, out uint aNrTracks, out string aMediaDuration, out string aCurrentURI, out string aCurrentURIMetaData, out string aNextURI, out string aNextURIMetaData, out string aPlayMedium, out string aRecordMedium, out string aWriteStatus)
         {
             char* mediaDuration;
             char* currentURI;
@@ -546,7 +546,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aPlayMedium"></param>
         /// <param name="aRecordMedium"></param>
         /// <param name="aWriteStatus"></param>
-        public unsafe void EndGetMediaInfo_Ext(uint aAsyncHandle, out string aCurrentType, out uint aNrTracks, out string aMediaDuration, out string aCurrentURI, out string aCurrentURIMetaData, out string aNextURI, out string aNextURIMetaData, out string aPlayMedium, out string aRecordMedium, out string aWriteStatus)
+        public unsafe void EndGetMediaInfo_Ext(IntPtr aAsyncHandle, out string aCurrentType, out uint aNrTracks, out string aMediaDuration, out string aCurrentURI, out string aCurrentURIMetaData, out string aNextURI, out string aNextURIMetaData, out string aPlayMedium, out string aRecordMedium, out string aWriteStatus)
         {
             char* currentType;
             char* mediaDuration;
@@ -633,7 +633,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aCurrentTransportState"></param>
         /// <param name="aCurrentTransportStatus"></param>
         /// <param name="aCurrentSpeed"></param>
-        public unsafe void EndGetTransportInfo(uint aAsyncHandle, out string aCurrentTransportState, out string aCurrentTransportStatus, out string aCurrentSpeed)
+        public unsafe void EndGetTransportInfo(IntPtr aAsyncHandle, out string aCurrentTransportState, out string aCurrentTransportStatus, out string aCurrentSpeed)
         {
             char* currentTransportState;
             char* currentTransportStatus;
@@ -720,7 +720,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAbsTime"></param>
         /// <param name="aRelCount"></param>
         /// <param name="aAbsCount"></param>
-        public unsafe void EndGetPositionInfo(uint aAsyncHandle, out uint aTrack, out string aTrackDuration, out string aTrackMetaData, out string aTrackURI, out string aRelTime, out string aAbsTime, out int aRelCount, out int aAbsCount)
+        public unsafe void EndGetPositionInfo(IntPtr aAsyncHandle, out uint aTrack, out string aTrackDuration, out string aTrackMetaData, out string aTrackURI, out string aRelTime, out string aAbsTime, out int aRelCount, out int aAbsCount)
         {
             char* trackDuration;
             char* trackMetaData;
@@ -797,7 +797,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aPlayMedia"></param>
         /// <param name="aRecMedia"></param>
         /// <param name="aRecQualityModes"></param>
-        public unsafe void EndGetDeviceCapabilities(uint aAsyncHandle, out string aPlayMedia, out string aRecMedia, out string aRecQualityModes)
+        public unsafe void EndGetDeviceCapabilities(IntPtr aAsyncHandle, out string aPlayMedia, out string aRecMedia, out string aRecQualityModes)
         {
             char* playMedia;
             char* recMedia;
@@ -860,7 +860,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aPlayMode"></param>
         /// <param name="aRecQualityMode"></param>
-        public unsafe void EndGetTransportSettings(uint aAsyncHandle, out string aPlayMode, out string aRecQualityMode)
+        public unsafe void EndGetTransportSettings(IntPtr aAsyncHandle, out string aPlayMode, out string aRecQualityMode)
         {
             char* playMode;
             char* recQualityMode;
@@ -910,7 +910,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndStop(uint aAsyncHandle)
+        public unsafe void EndStop(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyUpnpOrgAVTransport2EndStop(iHandle, aAsyncHandle))
@@ -960,7 +960,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndPlay(uint aAsyncHandle)
+        public unsafe void EndPlay(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyUpnpOrgAVTransport2EndPlay(iHandle, aAsyncHandle))
@@ -1004,7 +1004,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndPause(uint aAsyncHandle)
+        public unsafe void EndPause(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyUpnpOrgAVTransport2EndPause(iHandle, aAsyncHandle))
@@ -1048,7 +1048,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndRecord(uint aAsyncHandle)
+        public unsafe void EndRecord(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyUpnpOrgAVTransport2EndRecord(iHandle, aAsyncHandle))
@@ -1104,7 +1104,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSeek(uint aAsyncHandle)
+        public unsafe void EndSeek(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyUpnpOrgAVTransport2EndSeek(iHandle, aAsyncHandle))
@@ -1148,7 +1148,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndNext(uint aAsyncHandle)
+        public unsafe void EndNext(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyUpnpOrgAVTransport2EndNext(iHandle, aAsyncHandle))
@@ -1192,7 +1192,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndPrevious(uint aAsyncHandle)
+        public unsafe void EndPrevious(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyUpnpOrgAVTransport2EndPrevious(iHandle, aAsyncHandle))
@@ -1242,7 +1242,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetPlayMode(uint aAsyncHandle)
+        public unsafe void EndSetPlayMode(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyUpnpOrgAVTransport2EndSetPlayMode(iHandle, aAsyncHandle))
@@ -1292,7 +1292,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetRecordQualityMode(uint aAsyncHandle)
+        public unsafe void EndSetRecordQualityMode(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyUpnpOrgAVTransport2EndSetRecordQualityMode(iHandle, aAsyncHandle))
@@ -1341,7 +1341,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aActions"></param>
-        public unsafe void EndGetCurrentTransportActions(uint aAsyncHandle, out string aActions)
+        public unsafe void EndGetCurrentTransportActions(IntPtr aAsyncHandle, out string aActions)
         {
             char* actions;
             {
@@ -1393,7 +1393,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aCurrentDRMState"></param>
-        public unsafe void EndGetDRMState(uint aAsyncHandle, out string aCurrentDRMState)
+        public unsafe void EndGetDRMState(IntPtr aAsyncHandle, out string aCurrentDRMState)
         {
             char* currentDRMState;
             {
@@ -1451,7 +1451,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aStateVariableValuePairs"></param>
-        public unsafe void EndGetStateVariables(uint aAsyncHandle, out string aStateVariableValuePairs)
+        public unsafe void EndGetStateVariables(IntPtr aAsyncHandle, out string aStateVariableValuePairs)
         {
             char* stateVariableValuePairs;
             {
@@ -1527,7 +1527,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aStateVariableList"></param>
-        public unsafe void EndSetStateVariables(uint aAsyncHandle, out string aStateVariableList)
+        public unsafe void EndSetStateVariables(IntPtr aAsyncHandle, out string aStateVariableList)
         {
             char* stateVariableList;
             {
@@ -1629,12 +1629,12 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 CpProxyUpnpOrgAVTransport2Destroy(iHandle);
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             iGch.Free();
             if (aDisposing)

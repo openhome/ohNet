@@ -13,11 +13,11 @@ namespace Zapp.Device
     public class DvProvider
     {
         [DllImport("ZappUpnp")]
-        static extern void DvProviderPropertiesLock(uint aHandle);
+        static extern void DvProviderPropertiesLock(IntPtr aHandle);
         [DllImport("ZappUpnp")]
-        static extern void DvProviderPropertiesUnlock(uint aHandle);
+        static extern void DvProviderPropertiesUnlock(IntPtr aHandle);
         
-        protected uint iHandle;
+        protected IntPtr iHandle;
 
         protected DvProvider()
         {

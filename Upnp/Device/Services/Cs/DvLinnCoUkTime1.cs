@@ -54,23 +54,23 @@ namespace Zapp.Device.Providers
     public class DvProviderLinnCoUkTime1 : DvProvider, IDisposable, IDvProviderLinnCoUkTime1
     {
         [DllImport("DvLinnCoUkTime1")]
-        static extern uint DvProviderLinnCoUkTime1Create(uint aDeviceHandle);
+        static extern IntPtr DvProviderLinnCoUkTime1Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkTime1")]
-        static extern void DvProviderLinnCoUkTime1Destroy(uint aHandle);
+        static extern void DvProviderLinnCoUkTime1Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe int DvProviderLinnCoUkTime1SetPropertyTrackCount(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkTime1SetPropertyTrackCount(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe void DvProviderLinnCoUkTime1GetPropertyTrackCount(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkTime1GetPropertyTrackCount(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe int DvProviderLinnCoUkTime1SetPropertyDuration(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkTime1SetPropertyDuration(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe void DvProviderLinnCoUkTime1GetPropertyDuration(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkTime1GetPropertyDuration(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe int DvProviderLinnCoUkTime1SetPropertySeconds(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkTime1SetPropertySeconds(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkTime1")]
-        static extern unsafe void DvProviderLinnCoUkTime1GetPropertySeconds(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkTime1GetPropertySeconds(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkTime1")]
-        static extern void DvProviderLinnCoUkTime1EnableActionTime(uint aHandle, CallbackTime aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkTime1EnableActionTime(IntPtr aHandle, CallbackTime aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -228,15 +228,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvProviderLinnCoUkTime1Destroy(handle);
             if (iGch.IsAllocated)

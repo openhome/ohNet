@@ -9,43 +9,43 @@ namespace Zapp.ControlPoint.Proxies
     {
         void SyncEcho(string aaIn, out string aaOut);
         void BeginEcho(string aaIn, CpProxy.CallbackAsyncComplete aCallback);
-        void EndEcho(uint aAsyncHandle, out string aaOut);
+        void EndEcho(IntPtr aAsyncHandle, out string aaOut);
         void SyncElfFile(out string aaElfFile);
         void BeginElfFile(CpProxy.CallbackAsyncComplete aCallback);
-        void EndElfFile(uint aAsyncHandle, out string aaElfFile);
+        void EndElfFile(IntPtr aAsyncHandle, out string aaElfFile);
         void SyncElfFingerprint(out string aaElfFileFingerprint);
         void BeginElfFingerprint(CpProxy.CallbackAsyncComplete aCallback);
-        void EndElfFingerprint(uint aAsyncHandle, out string aaElfFileFingerprint);
+        void EndElfFingerprint(IntPtr aAsyncHandle, out string aaElfFileFingerprint);
         void SyncCrashDataStatus(out string aaCrashDataStatus);
         void BeginCrashDataStatus(CpProxy.CallbackAsyncComplete aCallback);
-        void EndCrashDataStatus(uint aAsyncHandle, out string aaCrashDataStatus);
+        void EndCrashDataStatus(IntPtr aAsyncHandle, out string aaCrashDataStatus);
         void SyncCrashDataFetch(out string aaCrashData);
         void BeginCrashDataFetch(CpProxy.CallbackAsyncComplete aCallback);
-        void EndCrashDataFetch(uint aAsyncHandle, out string aaCrashData);
+        void EndCrashDataFetch(IntPtr aAsyncHandle, out string aaCrashData);
         void SyncCrashDataClear();
         void BeginCrashDataClear(CpProxy.CallbackAsyncComplete aCallback);
-        void EndCrashDataClear(uint aAsyncHandle);
+        void EndCrashDataClear(IntPtr aAsyncHandle);
         void SyncSysLog(out string aaSysLog);
         void BeginSysLog(CpProxy.CallbackAsyncComplete aCallback);
-        void EndSysLog(uint aAsyncHandle, out string aaSysLog);
+        void EndSysLog(IntPtr aAsyncHandle, out string aaSysLog);
         void SyncDiagnostic(string aaDiagnosticType, out string aaDiagnosticInfo);
         void BeginDiagnostic(string aaDiagnosticType, CpProxy.CallbackAsyncComplete aCallback);
-        void EndDiagnostic(uint aAsyncHandle, out string aaDiagnosticInfo);
+        void EndDiagnostic(IntPtr aAsyncHandle, out string aaDiagnosticInfo);
         void SyncStateVariable(out uint aaStateVariable);
         void BeginStateVariable(CpProxy.CallbackAsyncComplete aCallback);
-        void EndStateVariable(uint aAsyncHandle, out uint aaStateVariable);
+        void EndStateVariable(IntPtr aAsyncHandle, out uint aaStateVariable);
         void SyncSetStateVariable(uint aaStateVariable);
         void BeginSetStateVariable(uint aaStateVariable, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetStateVariable(uint aAsyncHandle);
+        void EndSetStateVariable(IntPtr aAsyncHandle);
         void SyncStateVariablePeriod(out uint aaPeriod);
         void BeginStateVariablePeriod(CpProxy.CallbackAsyncComplete aCallback);
-        void EndStateVariablePeriod(uint aAsyncHandle, out uint aaPeriod);
+        void EndStateVariablePeriod(IntPtr aAsyncHandle, out uint aaPeriod);
         void SyncSetStateVariablePeriod(uint aaPeriod);
         void BeginSetStateVariablePeriod(uint aaPeriod, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetStateVariablePeriod(uint aAsyncHandle);
+        void EndSetStateVariablePeriod(IntPtr aAsyncHandle);
         void SyncReboot(uint aaDelay);
         void BeginReboot(uint aaDelay, CpProxy.CallbackAsyncComplete aCallback);
-        void EndReboot(uint aAsyncHandle);
+        void EndReboot(IntPtr aAsyncHandle);
 
         void SetPropertyaStateVariableChanged(CpProxy.CallbackPropertyChanged aaStateVariableChanged);
         void PropertyaStateVariable(out uint aaStateVariable);
@@ -57,91 +57,91 @@ namespace Zapp.ControlPoint.Proxies
     public class CpProxyLinnCoUkDiagnostics1 : CpProxy, IDisposable, ICpProxyLinnCoUkDiagnostics1
     {
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern uint CpProxyLinnCoUkDiagnostics1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyLinnCoUkDiagnostics1Create(IntPtr aDeviceHandle);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern void CpProxyLinnCoUkDiagnostics1Destroy(uint aHandle);
+        static extern void CpProxyLinnCoUkDiagnostics1Destroy(IntPtr aHandle);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncEcho(uint aHandle, char* aaIn, char** aaOut);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncEcho(IntPtr aHandle, char* aaIn, char** aaOut);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginEcho(uint aHandle, char* aaIn, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginEcho(IntPtr aHandle, char* aaIn, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndEcho(uint aHandle, uint aAsync, char** aaOut);
+        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndEcho(IntPtr aHandle, IntPtr aAsync, char** aaOut);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncElfFile(uint aHandle, char** aaElfFile);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncElfFile(IntPtr aHandle, char** aaElfFile);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginElfFile(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginElfFile(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndElfFile(uint aHandle, uint aAsync, char** aaElfFile);
+        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndElfFile(IntPtr aHandle, IntPtr aAsync, char** aaElfFile);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncElfFingerprint(uint aHandle, char** aaElfFileFingerprint);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncElfFingerprint(IntPtr aHandle, char** aaElfFileFingerprint);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginElfFingerprint(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginElfFingerprint(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndElfFingerprint(uint aHandle, uint aAsync, char** aaElfFileFingerprint);
+        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndElfFingerprint(IntPtr aHandle, IntPtr aAsync, char** aaElfFileFingerprint);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncCrashDataStatus(uint aHandle, char** aaCrashDataStatus);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncCrashDataStatus(IntPtr aHandle, char** aaCrashDataStatus);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginCrashDataStatus(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginCrashDataStatus(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndCrashDataStatus(uint aHandle, uint aAsync, char** aaCrashDataStatus);
+        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndCrashDataStatus(IntPtr aHandle, IntPtr aAsync, char** aaCrashDataStatus);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncCrashDataFetch(uint aHandle, char** aaCrashData, uint* aaCrashDataLen);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncCrashDataFetch(IntPtr aHandle, char** aaCrashData, uint* aaCrashDataLen);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginCrashDataFetch(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginCrashDataFetch(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndCrashDataFetch(uint aHandle, uint aAsync, char** aaCrashData, uint* aaCrashDataLen);
+        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndCrashDataFetch(IntPtr aHandle, IntPtr aAsync, char** aaCrashData, uint* aaCrashDataLen);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncCrashDataClear(uint aHandle);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncCrashDataClear(IntPtr aHandle);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginCrashDataClear(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginCrashDataClear(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndCrashDataClear(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndCrashDataClear(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncSysLog(uint aHandle, char** aaSysLog, uint* aaSysLogLen);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncSysLog(IntPtr aHandle, char** aaSysLog, uint* aaSysLogLen);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginSysLog(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginSysLog(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndSysLog(uint aHandle, uint aAsync, char** aaSysLog, uint* aaSysLogLen);
+        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndSysLog(IntPtr aHandle, IntPtr aAsync, char** aaSysLog, uint* aaSysLogLen);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncDiagnostic(uint aHandle, char* aaDiagnosticType, char** aaDiagnosticInfo);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncDiagnostic(IntPtr aHandle, char* aaDiagnosticType, char** aaDiagnosticInfo);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginDiagnostic(uint aHandle, char* aaDiagnosticType, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginDiagnostic(IntPtr aHandle, char* aaDiagnosticType, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndDiagnostic(uint aHandle, uint aAsync, char** aaDiagnosticInfo);
+        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndDiagnostic(IntPtr aHandle, IntPtr aAsync, char** aaDiagnosticInfo);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncStateVariable(uint aHandle, uint* aaStateVariable);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncStateVariable(IntPtr aHandle, uint* aaStateVariable);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginStateVariable(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginStateVariable(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndStateVariable(uint aHandle, uint aAsync, uint* aaStateVariable);
+        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndStateVariable(IntPtr aHandle, IntPtr aAsync, uint* aaStateVariable);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncSetStateVariable(uint aHandle, uint aaStateVariable);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncSetStateVariable(IntPtr aHandle, uint aaStateVariable);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginSetStateVariable(uint aHandle, uint aaStateVariable, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginSetStateVariable(IntPtr aHandle, uint aaStateVariable, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndSetStateVariable(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndSetStateVariable(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncStateVariablePeriod(uint aHandle, uint* aaPeriod);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncStateVariablePeriod(IntPtr aHandle, uint* aaPeriod);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginStateVariablePeriod(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginStateVariablePeriod(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndStateVariablePeriod(uint aHandle, uint aAsync, uint* aaPeriod);
+        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndStateVariablePeriod(IntPtr aHandle, IntPtr aAsync, uint* aaPeriod);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncSetStateVariablePeriod(uint aHandle, uint aaPeriod);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncSetStateVariablePeriod(IntPtr aHandle, uint aaPeriod);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginSetStateVariablePeriod(uint aHandle, uint aaPeriod, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginSetStateVariablePeriod(IntPtr aHandle, uint aaPeriod, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndSetStateVariablePeriod(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndSetStateVariablePeriod(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncReboot(uint aHandle, uint aaDelay);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1SyncReboot(IntPtr aHandle, uint aaDelay);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginReboot(uint aHandle, uint aaDelay, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1BeginReboot(IntPtr aHandle, uint aaDelay, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndReboot(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkDiagnostics1EndReboot(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern void CpProxyLinnCoUkDiagnostics1SetPropertyaStateVariableChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkDiagnostics1SetPropertyaStateVariableChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkDiagnostics1")]
-        static extern unsafe void CpProxyLinnCoUkDiagnostics1PropertyaStateVariable(uint aHandle, uint* aaStateVariable);
+        static extern unsafe void CpProxyLinnCoUkDiagnostics1PropertyaStateVariable(IntPtr aHandle, uint* aaStateVariable);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -203,7 +203,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaOut"></param>
-        public unsafe void EndEcho(uint aAsyncHandle, out string aaOut)
+        public unsafe void EndEcho(IntPtr aAsyncHandle, out string aaOut)
         {
             char* aOut;
             {
@@ -253,7 +253,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaElfFile"></param>
-        public unsafe void EndElfFile(uint aAsyncHandle, out string aaElfFile)
+        public unsafe void EndElfFile(IntPtr aAsyncHandle, out string aaElfFile)
         {
             char* aElfFile;
             {
@@ -303,7 +303,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaElfFileFingerprint"></param>
-        public unsafe void EndElfFingerprint(uint aAsyncHandle, out string aaElfFileFingerprint)
+        public unsafe void EndElfFingerprint(IntPtr aAsyncHandle, out string aaElfFileFingerprint)
         {
             char* aElfFileFingerprint;
             {
@@ -353,7 +353,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaCrashDataStatus"></param>
-        public unsafe void EndCrashDataStatus(uint aAsyncHandle, out string aaCrashDataStatus)
+        public unsafe void EndCrashDataStatus(IntPtr aAsyncHandle, out string aaCrashDataStatus)
         {
             char* aCrashDataStatus;
             {
@@ -404,7 +404,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaCrashData"></param>
-        public unsafe void EndCrashDataFetch(uint aAsyncHandle, out string aaCrashData)
+        public unsafe void EndCrashDataFetch(IntPtr aAsyncHandle, out string aaCrashData)
         {
             char* aCrashData;
             uint aCrashDataLen;
@@ -450,7 +450,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndCrashDataClear(uint aAsyncHandle)
+        public unsafe void EndCrashDataClear(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkDiagnostics1EndCrashDataClear(iHandle, aAsyncHandle))
@@ -498,7 +498,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSysLog"></param>
-        public unsafe void EndSysLog(uint aAsyncHandle, out string aaSysLog)
+        public unsafe void EndSysLog(IntPtr aAsyncHandle, out string aaSysLog)
         {
             char* aSysLog;
             uint aSysLogLen;
@@ -555,7 +555,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaDiagnosticInfo"></param>
-        public unsafe void EndDiagnostic(uint aAsyncHandle, out string aaDiagnosticInfo)
+        public unsafe void EndDiagnostic(IntPtr aAsyncHandle, out string aaDiagnosticInfo)
         {
             char* aDiagnosticInfo;
             {
@@ -603,7 +603,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaStateVariable"></param>
-        public unsafe void EndStateVariable(uint aAsyncHandle, out uint aaStateVariable)
+        public unsafe void EndStateVariable(IntPtr aAsyncHandle, out uint aaStateVariable)
         {
             fixed (uint* aStateVariable = &aaStateVariable)
             {
@@ -648,7 +648,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetStateVariable(uint aAsyncHandle)
+        public unsafe void EndSetStateVariable(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkDiagnostics1EndSetStateVariable(iHandle, aAsyncHandle))
@@ -693,7 +693,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaPeriod"></param>
-        public unsafe void EndStateVariablePeriod(uint aAsyncHandle, out uint aaPeriod)
+        public unsafe void EndStateVariablePeriod(IntPtr aAsyncHandle, out uint aaPeriod)
         {
             fixed (uint* aPeriod = &aaPeriod)
             {
@@ -738,7 +738,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetStateVariablePeriod(uint aAsyncHandle)
+        public unsafe void EndSetStateVariablePeriod(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkDiagnostics1EndSetStateVariablePeriod(iHandle, aAsyncHandle))
@@ -782,7 +782,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndReboot(uint aAsyncHandle)
+        public unsafe void EndReboot(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkDiagnostics1EndReboot(iHandle, aAsyncHandle))
@@ -845,12 +845,12 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 CpProxyLinnCoUkDiagnostics1Destroy(iHandle);
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             iGch.Free();
             if (aDisposing)

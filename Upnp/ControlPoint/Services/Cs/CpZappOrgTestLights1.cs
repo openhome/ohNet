@@ -9,25 +9,25 @@ namespace Zapp.ControlPoint.Proxies
     {
         void SyncGetCount(out uint aCount);
         void BeginGetCount(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetCount(uint aAsyncHandle, out uint aCount);
+        void EndGetCount(IntPtr aAsyncHandle, out uint aCount);
         void SyncGetRoom(uint aIndex, out string aRoomName);
         void BeginGetRoom(uint aIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetRoom(uint aAsyncHandle, out string aRoomName);
+        void EndGetRoom(IntPtr aAsyncHandle, out string aRoomName);
         void SyncGetName(uint aIndex, out string aFriendlyName);
         void BeginGetName(uint aIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetName(uint aAsyncHandle, out string aFriendlyName);
+        void EndGetName(IntPtr aAsyncHandle, out string aFriendlyName);
         void SyncGetPosition(uint aIndex, out uint aX, out uint aY, out uint aZ);
         void BeginGetPosition(uint aIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetPosition(uint aAsyncHandle, out uint aX, out uint aY, out uint aZ);
+        void EndGetPosition(IntPtr aAsyncHandle, out uint aX, out uint aY, out uint aZ);
         void SyncSetColor(uint aIndex, uint aColor);
         void BeginSetColor(uint aIndex, uint aColor, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetColor(uint aAsyncHandle);
+        void EndSetColor(IntPtr aAsyncHandle);
         void SyncGetColor(uint aIndex, out uint aColor);
         void BeginGetColor(uint aIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetColor(uint aAsyncHandle, out uint aColor);
+        void EndGetColor(IntPtr aAsyncHandle, out uint aColor);
         void SyncGetColorComponents(uint aColor, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue);
         void BeginGetColorComponents(uint aColor, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetColorComponents(uint aAsyncHandle, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue);
+        void EndGetColorComponents(IntPtr aAsyncHandle, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue);
 
     }
 
@@ -37,51 +37,51 @@ namespace Zapp.ControlPoint.Proxies
     public class CpProxyZappOrgTestLights1 : CpProxy, IDisposable, ICpProxyZappOrgTestLights1
     {
         [DllImport("CpZappOrgTestLights1")]
-        static extern uint CpProxyZappOrgTestLights1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyZappOrgTestLights1Create(IntPtr aDeviceHandle);
         [DllImport("CpZappOrgTestLights1")]
-        static extern void CpProxyZappOrgTestLights1Destroy(uint aHandle);
+        static extern void CpProxyZappOrgTestLights1Destroy(IntPtr aHandle);
         [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1SyncGetCount(uint aHandle, uint* aCount);
+        static extern unsafe void CpProxyZappOrgTestLights1SyncGetCount(IntPtr aHandle, uint* aCount);
         [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1BeginGetCount(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestLights1BeginGetCount(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe int CpProxyZappOrgTestLights1EndGetCount(uint aHandle, uint aAsync, uint* aCount);
+        static extern unsafe int CpProxyZappOrgTestLights1EndGetCount(IntPtr aHandle, IntPtr aAsync, uint* aCount);
         [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1SyncGetRoom(uint aHandle, uint aIndex, char** aRoomName);
+        static extern unsafe void CpProxyZappOrgTestLights1SyncGetRoom(IntPtr aHandle, uint aIndex, char** aRoomName);
         [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1BeginGetRoom(uint aHandle, uint aIndex, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestLights1BeginGetRoom(IntPtr aHandle, uint aIndex, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe int CpProxyZappOrgTestLights1EndGetRoom(uint aHandle, uint aAsync, char** aRoomName);
+        static extern unsafe int CpProxyZappOrgTestLights1EndGetRoom(IntPtr aHandle, IntPtr aAsync, char** aRoomName);
         [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1SyncGetName(uint aHandle, uint aIndex, char** aFriendlyName);
+        static extern unsafe void CpProxyZappOrgTestLights1SyncGetName(IntPtr aHandle, uint aIndex, char** aFriendlyName);
         [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1BeginGetName(uint aHandle, uint aIndex, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestLights1BeginGetName(IntPtr aHandle, uint aIndex, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe int CpProxyZappOrgTestLights1EndGetName(uint aHandle, uint aAsync, char** aFriendlyName);
+        static extern unsafe int CpProxyZappOrgTestLights1EndGetName(IntPtr aHandle, IntPtr aAsync, char** aFriendlyName);
         [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1SyncGetPosition(uint aHandle, uint aIndex, uint* aX, uint* aY, uint* aZ);
+        static extern unsafe void CpProxyZappOrgTestLights1SyncGetPosition(IntPtr aHandle, uint aIndex, uint* aX, uint* aY, uint* aZ);
         [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1BeginGetPosition(uint aHandle, uint aIndex, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestLights1BeginGetPosition(IntPtr aHandle, uint aIndex, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe int CpProxyZappOrgTestLights1EndGetPosition(uint aHandle, uint aAsync, uint* aX, uint* aY, uint* aZ);
+        static extern unsafe int CpProxyZappOrgTestLights1EndGetPosition(IntPtr aHandle, IntPtr aAsync, uint* aX, uint* aY, uint* aZ);
         [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1SyncSetColor(uint aHandle, uint aIndex, uint aColor);
+        static extern unsafe void CpProxyZappOrgTestLights1SyncSetColor(IntPtr aHandle, uint aIndex, uint aColor);
         [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1BeginSetColor(uint aHandle, uint aIndex, uint aColor, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestLights1BeginSetColor(IntPtr aHandle, uint aIndex, uint aColor, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe int CpProxyZappOrgTestLights1EndSetColor(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyZappOrgTestLights1EndSetColor(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1SyncGetColor(uint aHandle, uint aIndex, uint* aColor);
+        static extern unsafe void CpProxyZappOrgTestLights1SyncGetColor(IntPtr aHandle, uint aIndex, uint* aColor);
         [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1BeginGetColor(uint aHandle, uint aIndex, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestLights1BeginGetColor(IntPtr aHandle, uint aIndex, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe int CpProxyZappOrgTestLights1EndGetColor(uint aHandle, uint aAsync, uint* aColor);
+        static extern unsafe int CpProxyZappOrgTestLights1EndGetColor(IntPtr aHandle, IntPtr aAsync, uint* aColor);
         [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1SyncGetColorComponents(uint aHandle, uint aColor, uint* aBrightness, uint* aRed, uint* aGreen, uint* aBlue);
+        static extern unsafe void CpProxyZappOrgTestLights1SyncGetColorComponents(IntPtr aHandle, uint aColor, uint* aBrightness, uint* aRed, uint* aGreen, uint* aBlue);
         [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe void CpProxyZappOrgTestLights1BeginGetColorComponents(uint aHandle, uint aColor, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestLights1BeginGetColorComponents(IntPtr aHandle, uint aColor, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestLights1")]
-        static extern unsafe int CpProxyZappOrgTestLights1EndGetColorComponents(uint aHandle, uint aAsync, uint* aBrightness, uint* aRed, uint* aGreen, uint* aBlue);
+        static extern unsafe int CpProxyZappOrgTestLights1EndGetColorComponents(IntPtr aHandle, IntPtr aAsync, uint* aBrightness, uint* aRed, uint* aGreen, uint* aBlue);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -133,7 +133,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aCount"></param>
-        public unsafe void EndGetCount(uint aAsyncHandle, out uint aCount)
+        public unsafe void EndGetCount(IntPtr aAsyncHandle, out uint aCount)
         {
             fixed (uint* count = &aCount)
             {
@@ -183,7 +183,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aRoomName"></param>
-        public unsafe void EndGetRoom(uint aAsyncHandle, out string aRoomName)
+        public unsafe void EndGetRoom(IntPtr aAsyncHandle, out string aRoomName)
         {
             char* roomName;
             {
@@ -235,7 +235,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aFriendlyName"></param>
-        public unsafe void EndGetName(uint aAsyncHandle, out string aFriendlyName)
+        public unsafe void EndGetName(IntPtr aAsyncHandle, out string aFriendlyName)
         {
             char* friendlyName;
             {
@@ -291,7 +291,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aX"></param>
         /// <param name="aY"></param>
         /// <param name="aZ"></param>
-        public unsafe void EndGetPosition(uint aAsyncHandle, out uint aX, out uint aY, out uint aZ)
+        public unsafe void EndGetPosition(IntPtr aAsyncHandle, out uint aX, out uint aY, out uint aZ)
         {
             fixed (uint* x = &aX)
             fixed (uint* y = &aY)
@@ -340,7 +340,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetColor(uint aAsyncHandle)
+        public unsafe void EndSetColor(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyZappOrgTestLights1EndSetColor(iHandle, aAsyncHandle))
@@ -387,7 +387,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aColor"></param>
-        public unsafe void EndGetColor(uint aAsyncHandle, out uint aColor)
+        public unsafe void EndGetColor(IntPtr aAsyncHandle, out uint aColor)
         {
             fixed (uint* color = &aColor)
             {
@@ -444,7 +444,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRed"></param>
         /// <param name="aGreen"></param>
         /// <param name="aBlue"></param>
-        public unsafe void EndGetColorComponents(uint aAsyncHandle, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue)
+        public unsafe void EndGetColorComponents(IntPtr aAsyncHandle, out uint aBrightness, out uint aRed, out uint aGreen, out uint aBlue)
         {
             fixed (uint* brightness = &aBrightness)
             fixed (uint* red = &aRed)
@@ -475,12 +475,12 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 CpProxyZappOrgTestLights1Destroy(iHandle);
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             iGch.Free();
             if (aDisposing)

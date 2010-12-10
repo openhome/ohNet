@@ -171,65 +171,65 @@ namespace Zapp.Device.Providers
     public class DvProviderLinnCoUkInfo1 : DvProvider, IDisposable, IDvProviderLinnCoUkInfo1
     {
         [DllImport("DvLinnCoUkInfo1")]
-        static extern uint DvProviderLinnCoUkInfo1Create(uint aDeviceHandle);
+        static extern IntPtr DvProviderLinnCoUkInfo1Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern void DvProviderLinnCoUkInfo1Destroy(uint aHandle);
+        static extern void DvProviderLinnCoUkInfo1Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyTrackCount(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyTrackCount(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyTrackCount(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyTrackCount(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyDetailsCount(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyDetailsCount(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyDetailsCount(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyDetailsCount(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyMetatextCount(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyMetatextCount(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyMetatextCount(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyMetatextCount(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyUri(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyUri(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyUri(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyUri(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyMetadata(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyMetadata(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyMetadata(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyMetadata(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyDuration(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyDuration(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyDuration(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyDuration(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyBitRate(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyBitRate(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyBitRate(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyBitRate(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyBitDepth(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyBitDepth(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyBitDepth(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyBitDepth(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertySampleRate(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertySampleRate(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertySampleRate(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertySampleRate(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyLossless(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyLossless(IntPtr aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyLossless(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyLossless(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyCodecName(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyCodecName(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyCodecName(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyCodecName(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyMetatext(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkInfo1SetPropertyMetatext(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyMetatext(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkInfo1GetPropertyMetatext(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern void DvProviderLinnCoUkInfo1EnableActionCounters(uint aHandle, CallbackCounters aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkInfo1EnableActionCounters(IntPtr aHandle, CallbackCounters aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern void DvProviderLinnCoUkInfo1EnableActionTrack(uint aHandle, CallbackTrack aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkInfo1EnableActionTrack(IntPtr aHandle, CallbackTrack aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern void DvProviderLinnCoUkInfo1EnableActionDetails(uint aHandle, CallbackDetails aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkInfo1EnableActionDetails(IntPtr aHandle, CallbackDetails aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkInfo1")]
-        static extern void DvProviderLinnCoUkInfo1EnableActionMetatext(uint aHandle, CallbackMetatext aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkInfo1EnableActionMetatext(IntPtr aHandle, CallbackMetatext aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -774,15 +774,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvProviderLinnCoUkInfo1Destroy(handle);
             if (iGch.IsAllocated)

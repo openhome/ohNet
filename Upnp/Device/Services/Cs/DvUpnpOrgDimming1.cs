@@ -80,71 +80,71 @@ namespace Zapp.Device.Providers
     public class DvProviderUpnpOrgDimming1 : DvProvider, IDisposable, IDvProviderUpnpOrgDimming1
     {
         [DllImport("DvUpnpOrgDimming1")]
-        static extern uint DvProviderUpnpOrgDimming1Create(uint aDeviceHandle);
+        static extern IntPtr DvProviderUpnpOrgDimming1Create(IntPtr aDeviceHandle);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1Destroy(uint aHandle);
+        static extern void DvProviderUpnpOrgDimming1Destroy(IntPtr aHandle);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe int DvProviderUpnpOrgDimming1SetPropertyLoadLevelStatus(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgDimming1SetPropertyLoadLevelStatus(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe void DvProviderUpnpOrgDimming1GetPropertyLoadLevelStatus(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderUpnpOrgDimming1GetPropertyLoadLevelStatus(IntPtr aHandle, uint* aValue);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe int DvProviderUpnpOrgDimming1SetPropertyStepDelta(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgDimming1SetPropertyStepDelta(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe void DvProviderUpnpOrgDimming1GetPropertyStepDelta(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderUpnpOrgDimming1GetPropertyStepDelta(IntPtr aHandle, uint* aValue);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe int DvProviderUpnpOrgDimming1SetPropertyRampRate(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgDimming1SetPropertyRampRate(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe void DvProviderUpnpOrgDimming1GetPropertyRampRate(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderUpnpOrgDimming1GetPropertyRampRate(IntPtr aHandle, uint* aValue);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe int DvProviderUpnpOrgDimming1SetPropertyIsRamping(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgDimming1SetPropertyIsRamping(IntPtr aHandle, int aValue, uint* aChanged);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe void DvProviderUpnpOrgDimming1GetPropertyIsRamping(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderUpnpOrgDimming1GetPropertyIsRamping(IntPtr aHandle, int* aValue);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe int DvProviderUpnpOrgDimming1SetPropertyRampPaused(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgDimming1SetPropertyRampPaused(IntPtr aHandle, int aValue, uint* aChanged);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern unsafe void DvProviderUpnpOrgDimming1GetPropertyRampPaused(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderUpnpOrgDimming1GetPropertyRampPaused(IntPtr aHandle, int* aValue);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionSetLoadLevelTarget(uint aHandle, CallbackSetLoadLevelTarget aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionSetLoadLevelTarget(IntPtr aHandle, CallbackSetLoadLevelTarget aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionGetLoadLevelTarget(uint aHandle, CallbackGetLoadLevelTarget aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionGetLoadLevelTarget(IntPtr aHandle, CallbackGetLoadLevelTarget aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionGetLoadLevelStatus(uint aHandle, CallbackGetLoadLevelStatus aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionGetLoadLevelStatus(IntPtr aHandle, CallbackGetLoadLevelStatus aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionSetOnEffectLevel(uint aHandle, CallbackSetOnEffectLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionSetOnEffectLevel(IntPtr aHandle, CallbackSetOnEffectLevel aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionSetOnEffect(uint aHandle, CallbackSetOnEffect aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionSetOnEffect(IntPtr aHandle, CallbackSetOnEffect aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionGetOnEffectParameters(uint aHandle, CallbackGetOnEffectParameters aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionGetOnEffectParameters(IntPtr aHandle, CallbackGetOnEffectParameters aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionStepUp(uint aHandle, CallbackStepUp aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionStepUp(IntPtr aHandle, CallbackStepUp aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionStepDown(uint aHandle, CallbackStepDown aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionStepDown(IntPtr aHandle, CallbackStepDown aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionStartRampUp(uint aHandle, CallbackStartRampUp aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionStartRampUp(IntPtr aHandle, CallbackStartRampUp aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionStartRampDown(uint aHandle, CallbackStartRampDown aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionStartRampDown(IntPtr aHandle, CallbackStartRampDown aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionStopRamp(uint aHandle, CallbackStopRamp aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionStopRamp(IntPtr aHandle, CallbackStopRamp aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionStartRampToLevel(uint aHandle, CallbackStartRampToLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionStartRampToLevel(IntPtr aHandle, CallbackStartRampToLevel aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionSetStepDelta(uint aHandle, CallbackSetStepDelta aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionSetStepDelta(IntPtr aHandle, CallbackSetStepDelta aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionGetStepDelta(uint aHandle, CallbackGetStepDelta aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionGetStepDelta(IntPtr aHandle, CallbackGetStepDelta aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionSetRampRate(uint aHandle, CallbackSetRampRate aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionSetRampRate(IntPtr aHandle, CallbackSetRampRate aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionGetRampRate(uint aHandle, CallbackGetRampRate aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionGetRampRate(IntPtr aHandle, CallbackGetRampRate aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionPauseRamp(uint aHandle, CallbackPauseRamp aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionPauseRamp(IntPtr aHandle, CallbackPauseRamp aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionResumeRamp(uint aHandle, CallbackResumeRamp aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionResumeRamp(IntPtr aHandle, CallbackResumeRamp aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionGetIsRamping(uint aHandle, CallbackGetIsRamping aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionGetIsRamping(IntPtr aHandle, CallbackGetIsRamping aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionGetRampPaused(uint aHandle, CallbackGetRampPaused aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionGetRampPaused(IntPtr aHandle, CallbackGetRampPaused aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgDimming1")]
-        static extern void DvProviderUpnpOrgDimming1EnableActionGetRampTime(uint aHandle, CallbackGetRampTime aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgDimming1EnableActionGetRampTime(IntPtr aHandle, CallbackGetRampTime aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -1082,15 +1082,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvProviderUpnpOrgDimming1Destroy(handle);
             if (iGch.IsAllocated)

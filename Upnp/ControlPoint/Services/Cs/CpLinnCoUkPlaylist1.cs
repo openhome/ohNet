@@ -9,40 +9,40 @@ namespace Zapp.ControlPoint.Proxies
     {
         void SyncRead(uint aaId, out string aaUri, out string aaMetaData);
         void BeginRead(uint aaId, CpProxy.CallbackAsyncComplete aCallback);
-        void EndRead(uint aAsyncHandle, out string aaUri, out string aaMetaData);
+        void EndRead(IntPtr aAsyncHandle, out string aaUri, out string aaMetaData);
         void SyncReadList(string aaIdList, out string aaMetaDataList);
         void BeginReadList(string aaIdList, CpProxy.CallbackAsyncComplete aCallback);
-        void EndReadList(uint aAsyncHandle, out string aaMetaDataList);
+        void EndReadList(IntPtr aAsyncHandle, out string aaMetaDataList);
         void SyncInsert(uint aaAfterId, string aaUri, string aaMetaData, out uint aaNewId);
         void BeginInsert(uint aaAfterId, string aaUri, string aaMetaData, CpProxy.CallbackAsyncComplete aCallback);
-        void EndInsert(uint aAsyncHandle, out uint aaNewId);
+        void EndInsert(IntPtr aAsyncHandle, out uint aaNewId);
         void SyncDelete(uint aaId);
         void BeginDelete(uint aaId, CpProxy.CallbackAsyncComplete aCallback);
-        void EndDelete(uint aAsyncHandle);
+        void EndDelete(IntPtr aAsyncHandle);
         void SyncDeleteAll();
         void BeginDeleteAll(CpProxy.CallbackAsyncComplete aCallback);
-        void EndDeleteAll(uint aAsyncHandle);
+        void EndDeleteAll(IntPtr aAsyncHandle);
         void SyncSetRepeat(bool aaRepeat);
         void BeginSetRepeat(bool aaRepeat, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetRepeat(uint aAsyncHandle);
+        void EndSetRepeat(IntPtr aAsyncHandle);
         void SyncRepeat(out bool aaRepeat);
         void BeginRepeat(CpProxy.CallbackAsyncComplete aCallback);
-        void EndRepeat(uint aAsyncHandle, out bool aaRepeat);
+        void EndRepeat(IntPtr aAsyncHandle, out bool aaRepeat);
         void SyncSetShuffle(bool aaShuffle);
         void BeginSetShuffle(bool aaShuffle, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetShuffle(uint aAsyncHandle);
+        void EndSetShuffle(IntPtr aAsyncHandle);
         void SyncShuffle(out bool aaShuffle);
         void BeginShuffle(CpProxy.CallbackAsyncComplete aCallback);
-        void EndShuffle(uint aAsyncHandle, out bool aaShuffle);
+        void EndShuffle(IntPtr aAsyncHandle, out bool aaShuffle);
         void SyncTracksMax(out uint aaTracksMax);
         void BeginTracksMax(CpProxy.CallbackAsyncComplete aCallback);
-        void EndTracksMax(uint aAsyncHandle, out uint aaTracksMax);
+        void EndTracksMax(IntPtr aAsyncHandle, out uint aaTracksMax);
         void SyncIdArray(out uint aaIdArrayToken, out string aaIdArray);
         void BeginIdArray(CpProxy.CallbackAsyncComplete aCallback);
-        void EndIdArray(uint aAsyncHandle, out uint aaIdArrayToken, out string aaIdArray);
+        void EndIdArray(IntPtr aAsyncHandle, out uint aaIdArrayToken, out string aaIdArray);
         void SyncIdArrayChanged(uint aaIdArrayToken, out bool aaIdArrayChanged);
         void BeginIdArrayChanged(uint aaIdArrayToken, CpProxy.CallbackAsyncComplete aCallback);
-        void EndIdArrayChanged(uint aAsyncHandle, out bool aaIdArrayChanged);
+        void EndIdArrayChanged(IntPtr aAsyncHandle, out bool aaIdArrayChanged);
 
         void SetPropertyIdArrayChanged(CpProxy.CallbackPropertyChanged aIdArrayChanged);
         void PropertyIdArray(out string aIdArray);
@@ -60,97 +60,97 @@ namespace Zapp.ControlPoint.Proxies
     public class CpProxyLinnCoUkPlaylist1 : CpProxy, IDisposable, ICpProxyLinnCoUkPlaylist1
     {
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern uint CpProxyLinnCoUkPlaylist1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyLinnCoUkPlaylist1Create(IntPtr aDeviceHandle);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern void CpProxyLinnCoUkPlaylist1Destroy(uint aHandle);
+        static extern void CpProxyLinnCoUkPlaylist1Destroy(IntPtr aHandle);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncRead(uint aHandle, uint aaId, char** aaUri, char** aaMetaData);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncRead(IntPtr aHandle, uint aaId, char** aaUri, char** aaMetaData);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginRead(uint aHandle, uint aaId, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginRead(IntPtr aHandle, uint aaId, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe int CpProxyLinnCoUkPlaylist1EndRead(uint aHandle, uint aAsync, char** aaUri, char** aaMetaData);
+        static extern unsafe int CpProxyLinnCoUkPlaylist1EndRead(IntPtr aHandle, IntPtr aAsync, char** aaUri, char** aaMetaData);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncReadList(uint aHandle, char* aaIdList, char** aaMetaDataList);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncReadList(IntPtr aHandle, char* aaIdList, char** aaMetaDataList);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginReadList(uint aHandle, char* aaIdList, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginReadList(IntPtr aHandle, char* aaIdList, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe int CpProxyLinnCoUkPlaylist1EndReadList(uint aHandle, uint aAsync, char** aaMetaDataList);
+        static extern unsafe int CpProxyLinnCoUkPlaylist1EndReadList(IntPtr aHandle, IntPtr aAsync, char** aaMetaDataList);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncInsert(uint aHandle, uint aaAfterId, char* aaUri, char* aaMetaData, uint* aaNewId);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncInsert(IntPtr aHandle, uint aaAfterId, char* aaUri, char* aaMetaData, uint* aaNewId);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginInsert(uint aHandle, uint aaAfterId, char* aaUri, char* aaMetaData, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginInsert(IntPtr aHandle, uint aaAfterId, char* aaUri, char* aaMetaData, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe int CpProxyLinnCoUkPlaylist1EndInsert(uint aHandle, uint aAsync, uint* aaNewId);
+        static extern unsafe int CpProxyLinnCoUkPlaylist1EndInsert(IntPtr aHandle, IntPtr aAsync, uint* aaNewId);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncDelete(uint aHandle, uint aaId);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncDelete(IntPtr aHandle, uint aaId);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginDelete(uint aHandle, uint aaId, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginDelete(IntPtr aHandle, uint aaId, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe int CpProxyLinnCoUkPlaylist1EndDelete(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkPlaylist1EndDelete(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncDeleteAll(uint aHandle);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncDeleteAll(IntPtr aHandle);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginDeleteAll(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginDeleteAll(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe int CpProxyLinnCoUkPlaylist1EndDeleteAll(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkPlaylist1EndDeleteAll(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncSetRepeat(uint aHandle, uint aaRepeat);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncSetRepeat(IntPtr aHandle, uint aaRepeat);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginSetRepeat(uint aHandle, uint aaRepeat, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginSetRepeat(IntPtr aHandle, uint aaRepeat, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe int CpProxyLinnCoUkPlaylist1EndSetRepeat(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkPlaylist1EndSetRepeat(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncRepeat(uint aHandle, uint* aaRepeat);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncRepeat(IntPtr aHandle, uint* aaRepeat);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginRepeat(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginRepeat(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe int CpProxyLinnCoUkPlaylist1EndRepeat(uint aHandle, uint aAsync, uint* aaRepeat);
+        static extern unsafe int CpProxyLinnCoUkPlaylist1EndRepeat(IntPtr aHandle, IntPtr aAsync, uint* aaRepeat);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncSetShuffle(uint aHandle, uint aaShuffle);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncSetShuffle(IntPtr aHandle, uint aaShuffle);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginSetShuffle(uint aHandle, uint aaShuffle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginSetShuffle(IntPtr aHandle, uint aaShuffle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe int CpProxyLinnCoUkPlaylist1EndSetShuffle(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkPlaylist1EndSetShuffle(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncShuffle(uint aHandle, uint* aaShuffle);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncShuffle(IntPtr aHandle, uint* aaShuffle);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginShuffle(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginShuffle(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe int CpProxyLinnCoUkPlaylist1EndShuffle(uint aHandle, uint aAsync, uint* aaShuffle);
+        static extern unsafe int CpProxyLinnCoUkPlaylist1EndShuffle(IntPtr aHandle, IntPtr aAsync, uint* aaShuffle);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncTracksMax(uint aHandle, uint* aaTracksMax);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncTracksMax(IntPtr aHandle, uint* aaTracksMax);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginTracksMax(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginTracksMax(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe int CpProxyLinnCoUkPlaylist1EndTracksMax(uint aHandle, uint aAsync, uint* aaTracksMax);
+        static extern unsafe int CpProxyLinnCoUkPlaylist1EndTracksMax(IntPtr aHandle, IntPtr aAsync, uint* aaTracksMax);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncIdArray(uint aHandle, uint* aaIdArrayToken, char** aaIdArray, uint* aaIdArrayLen);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncIdArray(IntPtr aHandle, uint* aaIdArrayToken, char** aaIdArray, uint* aaIdArrayLen);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginIdArray(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginIdArray(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe int CpProxyLinnCoUkPlaylist1EndIdArray(uint aHandle, uint aAsync, uint* aaIdArrayToken, char** aaIdArray, uint* aaIdArrayLen);
+        static extern unsafe int CpProxyLinnCoUkPlaylist1EndIdArray(IntPtr aHandle, IntPtr aAsync, uint* aaIdArrayToken, char** aaIdArray, uint* aaIdArrayLen);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncIdArrayChanged(uint aHandle, uint aaIdArrayToken, uint* aaIdArrayChanged);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1SyncIdArrayChanged(IntPtr aHandle, uint aaIdArrayToken, uint* aaIdArrayChanged);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginIdArrayChanged(uint aHandle, uint aaIdArrayToken, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1BeginIdArrayChanged(IntPtr aHandle, uint aaIdArrayToken, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe int CpProxyLinnCoUkPlaylist1EndIdArrayChanged(uint aHandle, uint aAsync, uint* aaIdArrayChanged);
+        static extern unsafe int CpProxyLinnCoUkPlaylist1EndIdArrayChanged(IntPtr aHandle, IntPtr aAsync, uint* aaIdArrayChanged);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern void CpProxyLinnCoUkPlaylist1SetPropertyIdArrayChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkPlaylist1SetPropertyIdArrayChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern void CpProxyLinnCoUkPlaylist1SetPropertyRepeatChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkPlaylist1SetPropertyRepeatChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern void CpProxyLinnCoUkPlaylist1SetPropertyShuffleChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkPlaylist1SetPropertyShuffleChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern void CpProxyLinnCoUkPlaylist1SetPropertyTracksMaxChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkPlaylist1SetPropertyTracksMaxChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1PropertyIdArray(uint aHandle, char** aIdArray, uint* aLen);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1PropertyIdArray(IntPtr aHandle, char** aIdArray, uint* aLen);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1PropertyRepeat(uint aHandle, uint* aRepeat);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1PropertyRepeat(IntPtr aHandle, uint* aRepeat);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1PropertyShuffle(uint aHandle, uint* aShuffle);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1PropertyShuffle(IntPtr aHandle, uint* aShuffle);
         [DllImport("CpLinnCoUkPlaylist1")]
-        static extern unsafe void CpProxyLinnCoUkPlaylist1PropertyTracksMax(uint aHandle, uint* aTracksMax);
+        static extern unsafe void CpProxyLinnCoUkPlaylist1PropertyTracksMax(IntPtr aHandle, uint* aTracksMax);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -219,7 +219,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaUri"></param>
         /// <param name="aaMetaData"></param>
-        public unsafe void EndRead(uint aAsyncHandle, out string aaUri, out string aaMetaData)
+        public unsafe void EndRead(IntPtr aAsyncHandle, out string aaUri, out string aaMetaData)
         {
             char* aUri;
             char* aMetaData;
@@ -278,7 +278,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaMetaDataList"></param>
-        public unsafe void EndReadList(uint aAsyncHandle, out string aaMetaDataList)
+        public unsafe void EndReadList(IntPtr aAsyncHandle, out string aaMetaDataList)
         {
             char* aMetaDataList;
             {
@@ -340,7 +340,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaNewId"></param>
-        public unsafe void EndInsert(uint aAsyncHandle, out uint aaNewId)
+        public unsafe void EndInsert(IntPtr aAsyncHandle, out uint aaNewId)
         {
             fixed (uint* aNewId = &aaNewId)
             {
@@ -385,7 +385,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndDelete(uint aAsyncHandle)
+        public unsafe void EndDelete(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkPlaylist1EndDelete(iHandle, aAsyncHandle))
@@ -427,7 +427,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndDeleteAll(uint aAsyncHandle)
+        public unsafe void EndDeleteAll(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkPlaylist1EndDeleteAll(iHandle, aAsyncHandle))
@@ -473,7 +473,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetRepeat(uint aAsyncHandle)
+        public unsafe void EndSetRepeat(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkPlaylist1EndSetRepeat(iHandle, aAsyncHandle))
@@ -519,7 +519,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaRepeat"></param>
-        public unsafe void EndRepeat(uint aAsyncHandle, out bool aaRepeat)
+        public unsafe void EndRepeat(IntPtr aAsyncHandle, out bool aaRepeat)
         {
             uint aRepeat;
             {
@@ -567,7 +567,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetShuffle(uint aAsyncHandle)
+        public unsafe void EndSetShuffle(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkPlaylist1EndSetShuffle(iHandle, aAsyncHandle))
@@ -613,7 +613,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaShuffle"></param>
-        public unsafe void EndShuffle(uint aAsyncHandle, out bool aaShuffle)
+        public unsafe void EndShuffle(IntPtr aAsyncHandle, out bool aaShuffle)
         {
             uint aShuffle;
             {
@@ -660,7 +660,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaTracksMax"></param>
-        public unsafe void EndTracksMax(uint aAsyncHandle, out uint aaTracksMax)
+        public unsafe void EndTracksMax(IntPtr aAsyncHandle, out uint aaTracksMax)
         {
             fixed (uint* aTracksMax = &aaTracksMax)
             {
@@ -712,7 +712,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaIdArrayToken"></param>
         /// <param name="aaIdArray"></param>
-        public unsafe void EndIdArray(uint aAsyncHandle, out uint aaIdArrayToken, out string aaIdArray)
+        public unsafe void EndIdArray(IntPtr aAsyncHandle, out uint aaIdArrayToken, out string aaIdArray)
         {
             char* aIdArray;
             uint aIdArrayLen;
@@ -765,7 +765,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaIdArrayChanged"></param>
-        public unsafe void EndIdArrayChanged(uint aAsyncHandle, out bool aaIdArrayChanged)
+        public unsafe void EndIdArrayChanged(IntPtr aAsyncHandle, out bool aaIdArrayChanged)
         {
             uint aIdArrayChanged;
             {
@@ -937,12 +937,12 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 CpProxyLinnCoUkPlaylist1Destroy(iHandle);
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             iGch.Free();
             if (aDisposing)

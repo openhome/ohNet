@@ -54,49 +54,49 @@ namespace Zapp.Device.Providers
     public class DvProviderUpnpOrgContentDirectory1 : DvProvider, IDisposable, IDvProviderUpnpOrgContentDirectory1
     {
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern uint DvProviderUpnpOrgContentDirectory1Create(uint aDeviceHandle);
+        static extern IntPtr DvProviderUpnpOrgContentDirectory1Create(IntPtr aDeviceHandle);
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern void DvProviderUpnpOrgContentDirectory1Destroy(uint aHandle);
+        static extern void DvProviderUpnpOrgContentDirectory1Destroy(IntPtr aHandle);
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern unsafe int DvProviderUpnpOrgContentDirectory1SetPropertyTransferIDs(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgContentDirectory1SetPropertyTransferIDs(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern unsafe void DvProviderUpnpOrgContentDirectory1GetPropertyTransferIDs(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderUpnpOrgContentDirectory1GetPropertyTransferIDs(IntPtr aHandle, char** aValue);
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern unsafe int DvProviderUpnpOrgContentDirectory1SetPropertySystemUpdateID(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgContentDirectory1SetPropertySystemUpdateID(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern unsafe void DvProviderUpnpOrgContentDirectory1GetPropertySystemUpdateID(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderUpnpOrgContentDirectory1GetPropertySystemUpdateID(IntPtr aHandle, uint* aValue);
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern unsafe int DvProviderUpnpOrgContentDirectory1SetPropertyContainerUpdateIDs(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgContentDirectory1SetPropertyContainerUpdateIDs(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern unsafe void DvProviderUpnpOrgContentDirectory1GetPropertyContainerUpdateIDs(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderUpnpOrgContentDirectory1GetPropertyContainerUpdateIDs(IntPtr aHandle, char** aValue);
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern void DvProviderUpnpOrgContentDirectory1EnableActionGetSearchCapabilities(uint aHandle, CallbackGetSearchCapabilities aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory1EnableActionGetSearchCapabilities(IntPtr aHandle, CallbackGetSearchCapabilities aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern void DvProviderUpnpOrgContentDirectory1EnableActionGetSortCapabilities(uint aHandle, CallbackGetSortCapabilities aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory1EnableActionGetSortCapabilities(IntPtr aHandle, CallbackGetSortCapabilities aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern void DvProviderUpnpOrgContentDirectory1EnableActionGetSystemUpdateID(uint aHandle, CallbackGetSystemUpdateID aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory1EnableActionGetSystemUpdateID(IntPtr aHandle, CallbackGetSystemUpdateID aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern void DvProviderUpnpOrgContentDirectory1EnableActionBrowse(uint aHandle, CallbackBrowse aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory1EnableActionBrowse(IntPtr aHandle, CallbackBrowse aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern void DvProviderUpnpOrgContentDirectory1EnableActionSearch(uint aHandle, CallbackSearch aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory1EnableActionSearch(IntPtr aHandle, CallbackSearch aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern void DvProviderUpnpOrgContentDirectory1EnableActionCreateObject(uint aHandle, CallbackCreateObject aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory1EnableActionCreateObject(IntPtr aHandle, CallbackCreateObject aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern void DvProviderUpnpOrgContentDirectory1EnableActionDestroyObject(uint aHandle, CallbackDestroyObject aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory1EnableActionDestroyObject(IntPtr aHandle, CallbackDestroyObject aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern void DvProviderUpnpOrgContentDirectory1EnableActionUpdateObject(uint aHandle, CallbackUpdateObject aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory1EnableActionUpdateObject(IntPtr aHandle, CallbackUpdateObject aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern void DvProviderUpnpOrgContentDirectory1EnableActionImportResource(uint aHandle, CallbackImportResource aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory1EnableActionImportResource(IntPtr aHandle, CallbackImportResource aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern void DvProviderUpnpOrgContentDirectory1EnableActionExportResource(uint aHandle, CallbackExportResource aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory1EnableActionExportResource(IntPtr aHandle, CallbackExportResource aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern void DvProviderUpnpOrgContentDirectory1EnableActionStopTransferResource(uint aHandle, CallbackStopTransferResource aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory1EnableActionStopTransferResource(IntPtr aHandle, CallbackStopTransferResource aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern void DvProviderUpnpOrgContentDirectory1EnableActionGetTransferProgress(uint aHandle, CallbackGetTransferProgress aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory1EnableActionGetTransferProgress(IntPtr aHandle, CallbackGetTransferProgress aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern void DvProviderUpnpOrgContentDirectory1EnableActionDeleteResource(uint aHandle, CallbackDeleteResource aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory1EnableActionDeleteResource(IntPtr aHandle, CallbackDeleteResource aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgContentDirectory1")]
-        static extern void DvProviderUpnpOrgContentDirectory1EnableActionCreateReference(uint aHandle, CallbackCreateReference aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgContentDirectory1EnableActionCreateReference(IntPtr aHandle, CallbackCreateReference aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -811,15 +811,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvProviderUpnpOrgContentDirectory1Destroy(handle);
             if (iGch.IsAllocated)

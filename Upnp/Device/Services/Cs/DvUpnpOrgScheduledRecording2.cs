@@ -28,49 +28,49 @@ namespace Zapp.Device.Providers
     public class DvProviderUpnpOrgScheduledRecording2 : DvProvider, IDisposable, IDvProviderUpnpOrgScheduledRecording2
     {
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern uint DvProviderUpnpOrgScheduledRecording2Create(uint aDeviceHandle);
+        static extern IntPtr DvProviderUpnpOrgScheduledRecording2Create(IntPtr aDeviceHandle);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern void DvProviderUpnpOrgScheduledRecording2Destroy(uint aHandle);
+        static extern void DvProviderUpnpOrgScheduledRecording2Destroy(IntPtr aHandle);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern unsafe int DvProviderUpnpOrgScheduledRecording2SetPropertyLastChange(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgScheduledRecording2SetPropertyLastChange(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern unsafe void DvProviderUpnpOrgScheduledRecording2GetPropertyLastChange(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderUpnpOrgScheduledRecording2GetPropertyLastChange(IntPtr aHandle, char** aValue);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionGetSortCapabilities(uint aHandle, CallbackGetSortCapabilities aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionGetSortCapabilities(IntPtr aHandle, CallbackGetSortCapabilities aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionGetPropertyList(uint aHandle, CallbackGetPropertyList aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionGetPropertyList(IntPtr aHandle, CallbackGetPropertyList aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionGetAllowedValues(uint aHandle, CallbackGetAllowedValues aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionGetAllowedValues(IntPtr aHandle, CallbackGetAllowedValues aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionGetStateUpdateID(uint aHandle, CallbackGetStateUpdateID aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionGetStateUpdateID(IntPtr aHandle, CallbackGetStateUpdateID aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionBrowseRecordSchedules(uint aHandle, CallbackBrowseRecordSchedules aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionBrowseRecordSchedules(IntPtr aHandle, CallbackBrowseRecordSchedules aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionBrowseRecordTasks(uint aHandle, CallbackBrowseRecordTasks aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionBrowseRecordTasks(IntPtr aHandle, CallbackBrowseRecordTasks aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionCreateRecordSchedule(uint aHandle, CallbackCreateRecordSchedule aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionCreateRecordSchedule(IntPtr aHandle, CallbackCreateRecordSchedule aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionDeleteRecordSchedule(uint aHandle, CallbackDeleteRecordSchedule aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionDeleteRecordSchedule(IntPtr aHandle, CallbackDeleteRecordSchedule aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionGetRecordSchedule(uint aHandle, CallbackGetRecordSchedule aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionGetRecordSchedule(IntPtr aHandle, CallbackGetRecordSchedule aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionEnableRecordSchedule(uint aHandle, CallbackEnableRecordSchedule aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionEnableRecordSchedule(IntPtr aHandle, CallbackEnableRecordSchedule aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionDisableRecordSchedule(uint aHandle, CallbackDisableRecordSchedule aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionDisableRecordSchedule(IntPtr aHandle, CallbackDisableRecordSchedule aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionDeleteRecordTask(uint aHandle, CallbackDeleteRecordTask aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionDeleteRecordTask(IntPtr aHandle, CallbackDeleteRecordTask aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionGetRecordTask(uint aHandle, CallbackGetRecordTask aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionGetRecordTask(IntPtr aHandle, CallbackGetRecordTask aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionEnableRecordTask(uint aHandle, CallbackEnableRecordTask aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionEnableRecordTask(IntPtr aHandle, CallbackEnableRecordTask aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionDisableRecordTask(uint aHandle, CallbackDisableRecordTask aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionDisableRecordTask(IntPtr aHandle, CallbackDisableRecordTask aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionResetRecordTask(uint aHandle, CallbackResetRecordTask aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionResetRecordTask(IntPtr aHandle, CallbackResetRecordTask aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionGetRecordScheduleConflicts(uint aHandle, CallbackGetRecordScheduleConflicts aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionGetRecordScheduleConflicts(IntPtr aHandle, CallbackGetRecordScheduleConflicts aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgScheduledRecording2")]
-        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionGetRecordTaskConflicts(uint aHandle, CallbackGetRecordTaskConflicts aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgScheduledRecording2EnableActionGetRecordTaskConflicts(IntPtr aHandle, CallbackGetRecordTaskConflicts aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -883,15 +883,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvProviderUpnpOrgScheduledRecording2Destroy(handle);
             if (iGch.IsAllocated)

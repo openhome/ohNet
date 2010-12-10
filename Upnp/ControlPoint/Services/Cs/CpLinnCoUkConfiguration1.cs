@@ -9,13 +9,13 @@ namespace Zapp.ControlPoint.Proxies
     {
         void SyncConfigurationXml(out string aaConfigurationXml);
         void BeginConfigurationXml(CpProxy.CallbackAsyncComplete aCallback);
-        void EndConfigurationXml(uint aAsyncHandle, out string aaConfigurationXml);
+        void EndConfigurationXml(IntPtr aAsyncHandle, out string aaConfigurationXml);
         void SyncParameterXml(out string aaParameterXml);
         void BeginParameterXml(CpProxy.CallbackAsyncComplete aCallback);
-        void EndParameterXml(uint aAsyncHandle, out string aaParameterXml);
+        void EndParameterXml(IntPtr aAsyncHandle, out string aaParameterXml);
         void SyncSetParameter(string aaTarget, string aaName, string aaValue);
         void BeginSetParameter(string aaTarget, string aaName, string aaValue, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetParameter(uint aAsyncHandle);
+        void EndSetParameter(IntPtr aAsyncHandle);
 
         void SetPropertyConfigurationXmlChanged(CpProxy.CallbackPropertyChanged aConfigurationXmlChanged);
         void PropertyConfigurationXml(out string aConfigurationXml);
@@ -29,35 +29,35 @@ namespace Zapp.ControlPoint.Proxies
     public class CpProxyLinnCoUkConfiguration1 : CpProxy, IDisposable, ICpProxyLinnCoUkConfiguration1
     {
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern uint CpProxyLinnCoUkConfiguration1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyLinnCoUkConfiguration1Create(IntPtr aDeviceHandle);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern void CpProxyLinnCoUkConfiguration1Destroy(uint aHandle);
+        static extern void CpProxyLinnCoUkConfiguration1Destroy(IntPtr aHandle);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe void CpProxyLinnCoUkConfiguration1SyncConfigurationXml(uint aHandle, char** aaConfigurationXml);
+        static extern unsafe void CpProxyLinnCoUkConfiguration1SyncConfigurationXml(IntPtr aHandle, char** aaConfigurationXml);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe void CpProxyLinnCoUkConfiguration1BeginConfigurationXml(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkConfiguration1BeginConfigurationXml(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe int CpProxyLinnCoUkConfiguration1EndConfigurationXml(uint aHandle, uint aAsync, char** aaConfigurationXml);
+        static extern unsafe int CpProxyLinnCoUkConfiguration1EndConfigurationXml(IntPtr aHandle, IntPtr aAsync, char** aaConfigurationXml);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe void CpProxyLinnCoUkConfiguration1SyncParameterXml(uint aHandle, char** aaParameterXml);
+        static extern unsafe void CpProxyLinnCoUkConfiguration1SyncParameterXml(IntPtr aHandle, char** aaParameterXml);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe void CpProxyLinnCoUkConfiguration1BeginParameterXml(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkConfiguration1BeginParameterXml(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe int CpProxyLinnCoUkConfiguration1EndParameterXml(uint aHandle, uint aAsync, char** aaParameterXml);
+        static extern unsafe int CpProxyLinnCoUkConfiguration1EndParameterXml(IntPtr aHandle, IntPtr aAsync, char** aaParameterXml);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe void CpProxyLinnCoUkConfiguration1SyncSetParameter(uint aHandle, char* aaTarget, char* aaName, char* aaValue);
+        static extern unsafe void CpProxyLinnCoUkConfiguration1SyncSetParameter(IntPtr aHandle, char* aaTarget, char* aaName, char* aaValue);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe void CpProxyLinnCoUkConfiguration1BeginSetParameter(uint aHandle, char* aaTarget, char* aaName, char* aaValue, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkConfiguration1BeginSetParameter(IntPtr aHandle, char* aaTarget, char* aaName, char* aaValue, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe int CpProxyLinnCoUkConfiguration1EndSetParameter(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkConfiguration1EndSetParameter(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern void CpProxyLinnCoUkConfiguration1SetPropertyConfigurationXmlChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkConfiguration1SetPropertyConfigurationXmlChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern void CpProxyLinnCoUkConfiguration1SetPropertyParameterXmlChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkConfiguration1SetPropertyParameterXmlChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe void CpProxyLinnCoUkConfiguration1PropertyConfigurationXml(uint aHandle, char** aConfigurationXml);
+        static extern unsafe void CpProxyLinnCoUkConfiguration1PropertyConfigurationXml(IntPtr aHandle, char** aConfigurationXml);
         [DllImport("CpLinnCoUkConfiguration1")]
-        static extern unsafe void CpProxyLinnCoUkConfiguration1PropertyParameterXml(uint aHandle, char** aParameterXml);
+        static extern unsafe void CpProxyLinnCoUkConfiguration1PropertyParameterXml(IntPtr aHandle, char** aParameterXml);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -115,7 +115,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaConfigurationXml"></param>
-        public unsafe void EndConfigurationXml(uint aAsyncHandle, out string aaConfigurationXml)
+        public unsafe void EndConfigurationXml(IntPtr aAsyncHandle, out string aaConfigurationXml)
         {
             char* aConfigurationXml;
             {
@@ -165,7 +165,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaParameterXml"></param>
-        public unsafe void EndParameterXml(uint aAsyncHandle, out string aaParameterXml)
+        public unsafe void EndParameterXml(IntPtr aAsyncHandle, out string aaParameterXml)
         {
             char* aParameterXml;
             {
@@ -228,7 +228,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetParameter(uint aAsyncHandle)
+        public unsafe void EndSetParameter(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkConfiguration1EndSetParameter(iHandle, aAsyncHandle))
@@ -327,12 +327,12 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 CpProxyLinnCoUkConfiguration1Destroy(iHandle);
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             iGch.Free();
             if (aDisposing)

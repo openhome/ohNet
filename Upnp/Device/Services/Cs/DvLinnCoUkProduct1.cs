@@ -41,25 +41,25 @@ namespace Zapp.Device.Providers
     public class DvProviderLinnCoUkProduct1 : DvProvider, IDisposable, IDvProviderLinnCoUkProduct1
     {
         [DllImport("DvLinnCoUkProduct1")]
-        static extern uint DvProviderLinnCoUkProduct1Create(uint aDeviceHandle);
+        static extern IntPtr DvProviderLinnCoUkProduct1Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkProduct1")]
-        static extern void DvProviderLinnCoUkProduct1Destroy(uint aHandle);
+        static extern void DvProviderLinnCoUkProduct1Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkProduct1")]
-        static extern unsafe int DvProviderLinnCoUkProduct1SetPropertyRoom(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkProduct1SetPropertyRoom(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct1")]
-        static extern unsafe void DvProviderLinnCoUkProduct1GetPropertyRoom(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkProduct1GetPropertyRoom(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkProduct1")]
-        static extern unsafe int DvProviderLinnCoUkProduct1SetPropertyStandby(uint aHandle, int aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkProduct1SetPropertyStandby(IntPtr aHandle, int aValue, uint* aChanged);
         [DllImport("DvLinnCoUkProduct1")]
-        static extern unsafe void DvProviderLinnCoUkProduct1GetPropertyStandby(uint aHandle, int* aValue);
+        static extern unsafe void DvProviderLinnCoUkProduct1GetPropertyStandby(IntPtr aHandle, int* aValue);
         [DllImport("DvLinnCoUkProduct1")]
-        static extern void DvProviderLinnCoUkProduct1EnableActionRoom(uint aHandle, CallbackRoom aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct1EnableActionRoom(IntPtr aHandle, CallbackRoom aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct1")]
-        static extern void DvProviderLinnCoUkProduct1EnableActionSetRoom(uint aHandle, CallbackSetRoom aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct1EnableActionSetRoom(IntPtr aHandle, CallbackSetRoom aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct1")]
-        static extern void DvProviderLinnCoUkProduct1EnableActionStandby(uint aHandle, CallbackStandby aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct1EnableActionStandby(IntPtr aHandle, CallbackStandby aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkProduct1")]
-        static extern void DvProviderLinnCoUkProduct1EnableActionSetStandby(uint aHandle, CallbackSetStandby aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkProduct1EnableActionSetStandby(IntPtr aHandle, CallbackSetStandby aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -299,15 +299,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvProviderLinnCoUkProduct1Destroy(handle);
             if (iGch.IsAllocated)

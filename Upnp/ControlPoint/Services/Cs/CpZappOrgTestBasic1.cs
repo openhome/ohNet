@@ -9,61 +9,61 @@ namespace Zapp.ControlPoint.Proxies
     {
         void SyncIncrement(uint aValue, out uint aResult);
         void BeginIncrement(uint aValue, CpProxy.CallbackAsyncComplete aCallback);
-        void EndIncrement(uint aAsyncHandle, out uint aResult);
+        void EndIncrement(IntPtr aAsyncHandle, out uint aResult);
         void SyncDecrement(int aValue, out int aResult);
         void BeginDecrement(int aValue, CpProxy.CallbackAsyncComplete aCallback);
-        void EndDecrement(uint aAsyncHandle, out int aResult);
+        void EndDecrement(IntPtr aAsyncHandle, out int aResult);
         void SyncToggle(bool aValue, out bool aResult);
         void BeginToggle(bool aValue, CpProxy.CallbackAsyncComplete aCallback);
-        void EndToggle(uint aAsyncHandle, out bool aResult);
+        void EndToggle(IntPtr aAsyncHandle, out bool aResult);
         void SyncEchoString(string aValue, out string aResult);
         void BeginEchoString(string aValue, CpProxy.CallbackAsyncComplete aCallback);
-        void EndEchoString(uint aAsyncHandle, out string aResult);
+        void EndEchoString(IntPtr aAsyncHandle, out string aResult);
         void SyncEchoBinary(string aValue, out string aResult);
         void BeginEchoBinary(string aValue, CpProxy.CallbackAsyncComplete aCallback);
-        void EndEchoBinary(uint aAsyncHandle, out string aResult);
+        void EndEchoBinary(IntPtr aAsyncHandle, out string aResult);
         void SyncSetUint(uint aValueUint);
         void BeginSetUint(uint aValueUint, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetUint(uint aAsyncHandle);
+        void EndSetUint(IntPtr aAsyncHandle);
         void SyncGetUint(out uint aValueUint);
         void BeginGetUint(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetUint(uint aAsyncHandle, out uint aValueUint);
+        void EndGetUint(IntPtr aAsyncHandle, out uint aValueUint);
         void SyncSetInt(int aValueInt);
         void BeginSetInt(int aValueInt, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetInt(uint aAsyncHandle);
+        void EndSetInt(IntPtr aAsyncHandle);
         void SyncGetInt(out int aValueInt);
         void BeginGetInt(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetInt(uint aAsyncHandle, out int aValueInt);
+        void EndGetInt(IntPtr aAsyncHandle, out int aValueInt);
         void SyncSetBool(bool aValueBool);
         void BeginSetBool(bool aValueBool, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetBool(uint aAsyncHandle);
+        void EndSetBool(IntPtr aAsyncHandle);
         void SyncGetBool(out bool aValueBool);
         void BeginGetBool(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetBool(uint aAsyncHandle, out bool aValueBool);
+        void EndGetBool(IntPtr aAsyncHandle, out bool aValueBool);
         void SyncSetMultiple(uint aValueUint, int aValueInt, bool aValueBool);
         void BeginSetMultiple(uint aValueUint, int aValueInt, bool aValueBool, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetMultiple(uint aAsyncHandle);
+        void EndSetMultiple(IntPtr aAsyncHandle);
         void SyncSetString(string aValueStr);
         void BeginSetString(string aValueStr, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetString(uint aAsyncHandle);
+        void EndSetString(IntPtr aAsyncHandle);
         void SyncGetString(out string aValueStr);
         void BeginGetString(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetString(uint aAsyncHandle, out string aValueStr);
+        void EndGetString(IntPtr aAsyncHandle, out string aValueStr);
         void SyncSetBinary(string aValueBin);
         void BeginSetBinary(string aValueBin, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetBinary(uint aAsyncHandle);
+        void EndSetBinary(IntPtr aAsyncHandle);
         void SyncGetBinary(out string aValueBin);
         void BeginGetBinary(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetBinary(uint aAsyncHandle, out string aValueBin);
+        void EndGetBinary(IntPtr aAsyncHandle, out string aValueBin);
         void SyncToggleBool();
         void BeginToggleBool(CpProxy.CallbackAsyncComplete aCallback);
-        void EndToggleBool(uint aAsyncHandle);
+        void EndToggleBool(IntPtr aAsyncHandle);
         void SyncWriteFile(string aData, string aFileFullName);
         void BeginWriteFile(string aData, string aFileFullName, CpProxy.CallbackAsyncComplete aCallback);
-        void EndWriteFile(uint aAsyncHandle);
+        void EndWriteFile(IntPtr aAsyncHandle);
         void SyncShutdown();
         void BeginShutdown(CpProxy.CallbackAsyncComplete aCallback);
-        void EndShutdown(uint aAsyncHandle);
+        void EndShutdown(IntPtr aAsyncHandle);
 
         void SetPropertyVarUintChanged(CpProxy.CallbackPropertyChanged aVarUintChanged);
         void PropertyVarUint(out uint aVarUint);
@@ -83,143 +83,143 @@ namespace Zapp.ControlPoint.Proxies
     public class CpProxyZappOrgTestBasic1 : CpProxy, IDisposable, ICpProxyZappOrgTestBasic1
     {
         [DllImport("CpZappOrgTestBasic1")]
-        static extern uint CpProxyZappOrgTestBasic1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyZappOrgTestBasic1Create(IntPtr aDeviceHandle);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern void CpProxyZappOrgTestBasic1Destroy(uint aHandle);
+        static extern void CpProxyZappOrgTestBasic1Destroy(IntPtr aHandle);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncIncrement(uint aHandle, uint aValue, uint* aResult);
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncIncrement(IntPtr aHandle, uint aValue, uint* aResult);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginIncrement(uint aHandle, uint aValue, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginIncrement(IntPtr aHandle, uint aValue, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndIncrement(uint aHandle, uint aAsync, uint* aResult);
+        static extern unsafe int CpProxyZappOrgTestBasic1EndIncrement(IntPtr aHandle, IntPtr aAsync, uint* aResult);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncDecrement(uint aHandle, int aValue, int* aResult);
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncDecrement(IntPtr aHandle, int aValue, int* aResult);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginDecrement(uint aHandle, int aValue, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginDecrement(IntPtr aHandle, int aValue, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndDecrement(uint aHandle, uint aAsync, int* aResult);
+        static extern unsafe int CpProxyZappOrgTestBasic1EndDecrement(IntPtr aHandle, IntPtr aAsync, int* aResult);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncToggle(uint aHandle, uint aValue, uint* aResult);
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncToggle(IntPtr aHandle, uint aValue, uint* aResult);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginToggle(uint aHandle, uint aValue, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginToggle(IntPtr aHandle, uint aValue, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndToggle(uint aHandle, uint aAsync, uint* aResult);
+        static extern unsafe int CpProxyZappOrgTestBasic1EndToggle(IntPtr aHandle, IntPtr aAsync, uint* aResult);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncEchoString(uint aHandle, char* aValue, char** aResult);
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncEchoString(IntPtr aHandle, char* aValue, char** aResult);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginEchoString(uint aHandle, char* aValue, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginEchoString(IntPtr aHandle, char* aValue, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndEchoString(uint aHandle, uint aAsync, char** aResult);
+        static extern unsafe int CpProxyZappOrgTestBasic1EndEchoString(IntPtr aHandle, IntPtr aAsync, char** aResult);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncEchoBinary(uint aHandle, char* aValue, uint aValueLen, char** aResult, uint* aResultLen);
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncEchoBinary(IntPtr aHandle, char* aValue, uint aValueLen, char** aResult, uint* aResultLen);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginEchoBinary(uint aHandle, char* aValue, uint aValueLen, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginEchoBinary(IntPtr aHandle, char* aValue, uint aValueLen, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndEchoBinary(uint aHandle, uint aAsync, char** aResult, uint* aResultLen);
+        static extern unsafe int CpProxyZappOrgTestBasic1EndEchoBinary(IntPtr aHandle, IntPtr aAsync, char** aResult, uint* aResultLen);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncSetUint(uint aHandle, uint aValueUint);
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncSetUint(IntPtr aHandle, uint aValueUint);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginSetUint(uint aHandle, uint aValueUint, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginSetUint(IntPtr aHandle, uint aValueUint, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndSetUint(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyZappOrgTestBasic1EndSetUint(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncGetUint(uint aHandle, uint* aValueUint);
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncGetUint(IntPtr aHandle, uint* aValueUint);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginGetUint(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginGetUint(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndGetUint(uint aHandle, uint aAsync, uint* aValueUint);
+        static extern unsafe int CpProxyZappOrgTestBasic1EndGetUint(IntPtr aHandle, IntPtr aAsync, uint* aValueUint);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncSetInt(uint aHandle, int aValueInt);
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncSetInt(IntPtr aHandle, int aValueInt);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginSetInt(uint aHandle, int aValueInt, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginSetInt(IntPtr aHandle, int aValueInt, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndSetInt(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyZappOrgTestBasic1EndSetInt(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncGetInt(uint aHandle, int* aValueInt);
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncGetInt(IntPtr aHandle, int* aValueInt);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginGetInt(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginGetInt(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndGetInt(uint aHandle, uint aAsync, int* aValueInt);
+        static extern unsafe int CpProxyZappOrgTestBasic1EndGetInt(IntPtr aHandle, IntPtr aAsync, int* aValueInt);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncSetBool(uint aHandle, uint aValueBool);
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncSetBool(IntPtr aHandle, uint aValueBool);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginSetBool(uint aHandle, uint aValueBool, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginSetBool(IntPtr aHandle, uint aValueBool, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndSetBool(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyZappOrgTestBasic1EndSetBool(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncGetBool(uint aHandle, uint* aValueBool);
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncGetBool(IntPtr aHandle, uint* aValueBool);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginGetBool(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginGetBool(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndGetBool(uint aHandle, uint aAsync, uint* aValueBool);
+        static extern unsafe int CpProxyZappOrgTestBasic1EndGetBool(IntPtr aHandle, IntPtr aAsync, uint* aValueBool);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncSetMultiple(uint aHandle, uint aValueUint, int aValueInt, uint aValueBool);
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncSetMultiple(IntPtr aHandle, uint aValueUint, int aValueInt, uint aValueBool);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginSetMultiple(uint aHandle, uint aValueUint, int aValueInt, uint aValueBool, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginSetMultiple(IntPtr aHandle, uint aValueUint, int aValueInt, uint aValueBool, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndSetMultiple(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyZappOrgTestBasic1EndSetMultiple(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncSetString(uint aHandle, char* aValueStr);
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncSetString(IntPtr aHandle, char* aValueStr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginSetString(uint aHandle, char* aValueStr, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginSetString(IntPtr aHandle, char* aValueStr, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndSetString(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyZappOrgTestBasic1EndSetString(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncGetString(uint aHandle, char** aValueStr);
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncGetString(IntPtr aHandle, char** aValueStr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginGetString(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginGetString(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndGetString(uint aHandle, uint aAsync, char** aValueStr);
+        static extern unsafe int CpProxyZappOrgTestBasic1EndGetString(IntPtr aHandle, IntPtr aAsync, char** aValueStr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncSetBinary(uint aHandle, char* aValueBin, uint aValueBinLen);
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncSetBinary(IntPtr aHandle, char* aValueBin, uint aValueBinLen);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginSetBinary(uint aHandle, char* aValueBin, uint aValueBinLen, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginSetBinary(IntPtr aHandle, char* aValueBin, uint aValueBinLen, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndSetBinary(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyZappOrgTestBasic1EndSetBinary(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncGetBinary(uint aHandle, char** aValueBin, uint* aValueBinLen);
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncGetBinary(IntPtr aHandle, char** aValueBin, uint* aValueBinLen);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginGetBinary(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginGetBinary(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndGetBinary(uint aHandle, uint aAsync, char** aValueBin, uint* aValueBinLen);
+        static extern unsafe int CpProxyZappOrgTestBasic1EndGetBinary(IntPtr aHandle, IntPtr aAsync, char** aValueBin, uint* aValueBinLen);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncToggleBool(uint aHandle);
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncToggleBool(IntPtr aHandle);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginToggleBool(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginToggleBool(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndToggleBool(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyZappOrgTestBasic1EndToggleBool(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncWriteFile(uint aHandle, char* aData, char* aFileFullName);
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncWriteFile(IntPtr aHandle, char* aData, char* aFileFullName);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginWriteFile(uint aHandle, char* aData, char* aFileFullName, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginWriteFile(IntPtr aHandle, char* aData, char* aFileFullName, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndWriteFile(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyZappOrgTestBasic1EndWriteFile(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncShutdown(uint aHandle);
+        static extern unsafe void CpProxyZappOrgTestBasic1SyncShutdown(IntPtr aHandle);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginShutdown(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyZappOrgTestBasic1BeginShutdown(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndShutdown(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyZappOrgTestBasic1EndShutdown(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern void CpProxyZappOrgTestBasic1SetPropertyVarUintChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyZappOrgTestBasic1SetPropertyVarUintChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern void CpProxyZappOrgTestBasic1SetPropertyVarIntChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyZappOrgTestBasic1SetPropertyVarIntChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern void CpProxyZappOrgTestBasic1SetPropertyVarBoolChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyZappOrgTestBasic1SetPropertyVarBoolChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern void CpProxyZappOrgTestBasic1SetPropertyVarStrChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyZappOrgTestBasic1SetPropertyVarStrChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern void CpProxyZappOrgTestBasic1SetPropertyVarBinChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyZappOrgTestBasic1SetPropertyVarBinChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1PropertyVarUint(uint aHandle, uint* aVarUint);
+        static extern unsafe void CpProxyZappOrgTestBasic1PropertyVarUint(IntPtr aHandle, uint* aVarUint);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1PropertyVarInt(uint aHandle, int* aVarInt);
+        static extern unsafe void CpProxyZappOrgTestBasic1PropertyVarInt(IntPtr aHandle, int* aVarInt);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1PropertyVarBool(uint aHandle, uint* aVarBool);
+        static extern unsafe void CpProxyZappOrgTestBasic1PropertyVarBool(IntPtr aHandle, uint* aVarBool);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1PropertyVarStr(uint aHandle, char** aVarStr);
+        static extern unsafe void CpProxyZappOrgTestBasic1PropertyVarStr(IntPtr aHandle, char** aVarStr);
         [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1PropertyVarBin(uint aHandle, char** aVarBin, uint* aLen);
+        static extern unsafe void CpProxyZappOrgTestBasic1PropertyVarBin(IntPtr aHandle, char** aVarBin, uint* aLen);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -283,7 +283,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aResult"></param>
-        public unsafe void EndIncrement(uint aAsyncHandle, out uint aResult)
+        public unsafe void EndIncrement(IntPtr aAsyncHandle, out uint aResult)
         {
             fixed (uint* result = &aResult)
             {
@@ -331,7 +331,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aResult"></param>
-        public unsafe void EndDecrement(uint aAsyncHandle, out int aResult)
+        public unsafe void EndDecrement(IntPtr aAsyncHandle, out int aResult)
         {
             fixed (int* result = &aResult)
             {
@@ -382,7 +382,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aResult"></param>
-        public unsafe void EndToggle(uint aAsyncHandle, out bool aResult)
+        public unsafe void EndToggle(IntPtr aAsyncHandle, out bool aResult)
         {
             uint result;
             {
@@ -437,7 +437,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aResult"></param>
-        public unsafe void EndEchoString(uint aAsyncHandle, out string aResult)
+        public unsafe void EndEchoString(IntPtr aAsyncHandle, out string aResult)
         {
             char* result;
             {
@@ -496,7 +496,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aResult"></param>
-        public unsafe void EndEchoBinary(uint aAsyncHandle, out string aResult)
+        public unsafe void EndEchoBinary(IntPtr aAsyncHandle, out string aResult)
         {
             char* result;
             uint resultLen;
@@ -544,7 +544,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetUint(uint aAsyncHandle)
+        public unsafe void EndSetUint(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyZappOrgTestBasic1EndSetUint(iHandle, aAsyncHandle))
@@ -589,7 +589,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aValueUint"></param>
-        public unsafe void EndGetUint(uint aAsyncHandle, out uint aValueUint)
+        public unsafe void EndGetUint(IntPtr aAsyncHandle, out uint aValueUint)
         {
             fixed (uint* valueUint = &aValueUint)
             {
@@ -634,7 +634,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetInt(uint aAsyncHandle)
+        public unsafe void EndSetInt(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyZappOrgTestBasic1EndSetInt(iHandle, aAsyncHandle))
@@ -679,7 +679,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aValueInt"></param>
-        public unsafe void EndGetInt(uint aAsyncHandle, out int aValueInt)
+        public unsafe void EndGetInt(IntPtr aAsyncHandle, out int aValueInt)
         {
             fixed (int* valueInt = &aValueInt)
             {
@@ -726,7 +726,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetBool(uint aAsyncHandle)
+        public unsafe void EndSetBool(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyZappOrgTestBasic1EndSetBool(iHandle, aAsyncHandle))
@@ -772,7 +772,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aValueBool"></param>
-        public unsafe void EndGetBool(uint aAsyncHandle, out bool aValueBool)
+        public unsafe void EndGetBool(IntPtr aAsyncHandle, out bool aValueBool)
         {
             uint valueBool;
             {
@@ -824,7 +824,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetMultiple(uint aAsyncHandle)
+        public unsafe void EndSetMultiple(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyZappOrgTestBasic1EndSetMultiple(iHandle, aAsyncHandle))
@@ -872,7 +872,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetString(uint aAsyncHandle)
+        public unsafe void EndSetString(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyZappOrgTestBasic1EndSetString(iHandle, aAsyncHandle))
@@ -919,7 +919,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aValueStr"></param>
-        public unsafe void EndGetString(uint aAsyncHandle, out string aValueStr)
+        public unsafe void EndGetString(IntPtr aAsyncHandle, out string aValueStr)
         {
             char* valueStr;
             {
@@ -972,7 +972,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetBinary(uint aAsyncHandle)
+        public unsafe void EndSetBinary(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyZappOrgTestBasic1EndSetBinary(iHandle, aAsyncHandle))
@@ -1020,7 +1020,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aValueBin"></param>
-        public unsafe void EndGetBinary(uint aAsyncHandle, out string aValueBin)
+        public unsafe void EndGetBinary(IntPtr aAsyncHandle, out string aValueBin)
         {
             char* valueBin;
             uint valueBinLen;
@@ -1066,7 +1066,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndToggleBool(uint aAsyncHandle)
+        public unsafe void EndToggleBool(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyZappOrgTestBasic1EndToggleBool(iHandle, aAsyncHandle))
@@ -1120,7 +1120,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndWriteFile(uint aAsyncHandle)
+        public unsafe void EndWriteFile(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyZappOrgTestBasic1EndWriteFile(iHandle, aAsyncHandle))
@@ -1162,7 +1162,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndShutdown(uint aAsyncHandle)
+        public unsafe void EndShutdown(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyZappOrgTestBasic1EndShutdown(iHandle, aAsyncHandle))
@@ -1369,12 +1369,12 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 CpProxyZappOrgTestBasic1Destroy(iHandle);
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             iGch.Free();
             if (aDisposing)

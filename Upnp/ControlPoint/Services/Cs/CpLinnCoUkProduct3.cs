@@ -9,76 +9,76 @@ namespace Zapp.ControlPoint.Proxies
     {
         void SyncType(out string aaType);
         void BeginType(CpProxy.CallbackAsyncComplete aCallback);
-        void EndType(uint aAsyncHandle, out string aaType);
+        void EndType(IntPtr aAsyncHandle, out string aaType);
         void SyncModel(out string aaModel);
         void BeginModel(CpProxy.CallbackAsyncComplete aCallback);
-        void EndModel(uint aAsyncHandle, out string aaModel);
+        void EndModel(IntPtr aAsyncHandle, out string aaModel);
         void SyncName(out string aaName);
         void BeginName(CpProxy.CallbackAsyncComplete aCallback);
-        void EndName(uint aAsyncHandle, out string aaName);
+        void EndName(IntPtr aAsyncHandle, out string aaName);
         void SyncSetName(string aaName);
         void BeginSetName(string aaName, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetName(uint aAsyncHandle);
+        void EndSetName(IntPtr aAsyncHandle);
         void SyncRoom(out string aaRoom);
         void BeginRoom(CpProxy.CallbackAsyncComplete aCallback);
-        void EndRoom(uint aAsyncHandle, out string aaRoom);
+        void EndRoom(IntPtr aAsyncHandle, out string aaRoom);
         void SyncSetRoom(string aaRoom);
         void BeginSetRoom(string aaRoom, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetRoom(uint aAsyncHandle);
+        void EndSetRoom(IntPtr aAsyncHandle);
         void SyncStandby(out bool aaStandby);
         void BeginStandby(CpProxy.CallbackAsyncComplete aCallback);
-        void EndStandby(uint aAsyncHandle, out bool aaStandby);
+        void EndStandby(IntPtr aAsyncHandle, out bool aaStandby);
         void SyncSetStandby(bool aaStandby);
         void BeginSetStandby(bool aaStandby, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetStandby(uint aAsyncHandle);
+        void EndSetStandby(IntPtr aAsyncHandle);
         void SyncSourceCount(out uint aaSourceCount);
         void BeginSourceCount(CpProxy.CallbackAsyncComplete aCallback);
-        void EndSourceCount(uint aAsyncHandle, out uint aaSourceCount);
+        void EndSourceCount(IntPtr aAsyncHandle, out uint aaSourceCount);
         void SyncSourceXml(out string aaSourceXml);
         void BeginSourceXml(CpProxy.CallbackAsyncComplete aCallback);
-        void EndSourceXml(uint aAsyncHandle, out string aaSourceXml);
+        void EndSourceXml(IntPtr aAsyncHandle, out string aaSourceXml);
         void SyncSourceIndex(out uint aaSourceIndex);
         void BeginSourceIndex(CpProxy.CallbackAsyncComplete aCallback);
-        void EndSourceIndex(uint aAsyncHandle, out uint aaSourceIndex);
+        void EndSourceIndex(IntPtr aAsyncHandle, out uint aaSourceIndex);
         void SyncSetSourceIndex(uint aaSourceIndex);
         void BeginSetSourceIndex(uint aaSourceIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetSourceIndex(uint aAsyncHandle);
+        void EndSetSourceIndex(IntPtr aAsyncHandle);
         void SyncSetSourceIndexByName(string aaSourceName);
         void BeginSetSourceIndexByName(string aaSourceName, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetSourceIndexByName(uint aAsyncHandle);
+        void EndSetSourceIndexByName(IntPtr aAsyncHandle);
         void SyncSetStartupSourceIndexByName(string aaSourceName);
         void BeginSetStartupSourceIndexByName(string aaSourceName, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetStartupSourceIndexByName(uint aAsyncHandle);
+        void EndSetStartupSourceIndexByName(IntPtr aAsyncHandle);
         void SyncStartupSourceIndex(out uint aaSourceIndex);
         void BeginStartupSourceIndex(CpProxy.CallbackAsyncComplete aCallback);
-        void EndStartupSourceIndex(uint aAsyncHandle, out uint aaSourceIndex);
+        void EndStartupSourceIndex(IntPtr aAsyncHandle, out uint aaSourceIndex);
         void SyncSetStartupSourceIndex(uint aaSourceIndex);
         void BeginSetStartupSourceIndex(uint aaSourceIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetStartupSourceIndex(uint aAsyncHandle);
+        void EndSetStartupSourceIndex(IntPtr aAsyncHandle);
         void SyncStartupSourceEnabled(out bool aaStartupSourceEnabled);
         void BeginStartupSourceEnabled(CpProxy.CallbackAsyncComplete aCallback);
-        void EndStartupSourceEnabled(uint aAsyncHandle, out bool aaStartupSourceEnabled);
+        void EndStartupSourceEnabled(IntPtr aAsyncHandle, out bool aaStartupSourceEnabled);
         void SyncSetStartupSourceEnabled(bool aaStartupSourceEnabled);
         void BeginSetStartupSourceEnabled(bool aaStartupSourceEnabled, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetStartupSourceEnabled(uint aAsyncHandle);
+        void EndSetStartupSourceEnabled(IntPtr aAsyncHandle);
         void SyncSourceSystemName(uint aaSourceIndex, out string aaSourceName);
         void BeginSourceSystemName(uint aaSourceIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSourceSystemName(uint aAsyncHandle, out string aaSourceName);
+        void EndSourceSystemName(IntPtr aAsyncHandle, out string aaSourceName);
         void SyncSourceName(uint aaSourceIndex, out string aaSourceName);
         void BeginSourceName(uint aaSourceIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSourceName(uint aAsyncHandle, out string aaSourceName);
+        void EndSourceName(IntPtr aAsyncHandle, out string aaSourceName);
         void SyncSetSourceName(uint aaSourceIndex, string aaSourceName);
         void BeginSetSourceName(uint aaSourceIndex, string aaSourceName, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetSourceName(uint aAsyncHandle);
+        void EndSetSourceName(IntPtr aAsyncHandle);
         void SyncSourceType(uint aaSourceIndex, out string aaSourceType);
         void BeginSourceType(uint aaSourceIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSourceType(uint aAsyncHandle, out string aaSourceType);
+        void EndSourceType(IntPtr aAsyncHandle, out string aaSourceType);
         void SyncSourceVisible(uint aaSourceIndex, out bool aaSourceVisible);
         void BeginSourceVisible(uint aaSourceIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSourceVisible(uint aAsyncHandle, out bool aaSourceVisible);
+        void EndSourceVisible(IntPtr aAsyncHandle, out bool aaSourceVisible);
         void SyncSetSourceVisible(uint aaSourceIndex, bool aaSourceVisible);
         void BeginSetSourceVisible(uint aaSourceIndex, bool aaSourceVisible, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetSourceVisible(uint aAsyncHandle);
+        void EndSetSourceVisible(IntPtr aAsyncHandle);
 
         void SetPropertyProductTypeChanged(CpProxy.CallbackPropertyChanged aProductTypeChanged);
         void PropertyProductType(out string aProductType);
@@ -114,205 +114,205 @@ namespace Zapp.ControlPoint.Proxies
     public class CpProxyLinnCoUkProduct3 : CpProxy, IDisposable, ICpProxyLinnCoUkProduct3
     {
         [DllImport("CpLinnCoUkProduct3")]
-        static extern uint CpProxyLinnCoUkProduct3Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyLinnCoUkProduct3Create(IntPtr aDeviceHandle);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern void CpProxyLinnCoUkProduct3Destroy(uint aHandle);
+        static extern void CpProxyLinnCoUkProduct3Destroy(IntPtr aHandle);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncType(uint aHandle, char** aaType);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncType(IntPtr aHandle, char** aaType);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginType(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginType(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndType(uint aHandle, uint aAsync, char** aaType);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndType(IntPtr aHandle, IntPtr aAsync, char** aaType);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncModel(uint aHandle, char** aaModel);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncModel(IntPtr aHandle, char** aaModel);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginModel(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginModel(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndModel(uint aHandle, uint aAsync, char** aaModel);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndModel(IntPtr aHandle, IntPtr aAsync, char** aaModel);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncName(uint aHandle, char** aaName);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncName(IntPtr aHandle, char** aaName);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginName(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginName(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndName(uint aHandle, uint aAsync, char** aaName);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndName(IntPtr aHandle, IntPtr aAsync, char** aaName);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncSetName(uint aHandle, char* aaName);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncSetName(IntPtr aHandle, char* aaName);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginSetName(uint aHandle, char* aaName, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginSetName(IntPtr aHandle, char* aaName, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndSetName(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndSetName(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncRoom(uint aHandle, char** aaRoom);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncRoom(IntPtr aHandle, char** aaRoom);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginRoom(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginRoom(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndRoom(uint aHandle, uint aAsync, char** aaRoom);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndRoom(IntPtr aHandle, IntPtr aAsync, char** aaRoom);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncSetRoom(uint aHandle, char* aaRoom);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncSetRoom(IntPtr aHandle, char* aaRoom);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginSetRoom(uint aHandle, char* aaRoom, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginSetRoom(IntPtr aHandle, char* aaRoom, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndSetRoom(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndSetRoom(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncStandby(uint aHandle, uint* aaStandby);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncStandby(IntPtr aHandle, uint* aaStandby);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginStandby(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginStandby(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndStandby(uint aHandle, uint aAsync, uint* aaStandby);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndStandby(IntPtr aHandle, IntPtr aAsync, uint* aaStandby);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncSetStandby(uint aHandle, uint aaStandby);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncSetStandby(IntPtr aHandle, uint aaStandby);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginSetStandby(uint aHandle, uint aaStandby, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginSetStandby(IntPtr aHandle, uint aaStandby, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndSetStandby(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndSetStandby(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncSourceCount(uint aHandle, uint* aaSourceCount);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncSourceCount(IntPtr aHandle, uint* aaSourceCount);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginSourceCount(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginSourceCount(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndSourceCount(uint aHandle, uint aAsync, uint* aaSourceCount);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndSourceCount(IntPtr aHandle, IntPtr aAsync, uint* aaSourceCount);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncSourceXml(uint aHandle, char** aaSourceXml);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncSourceXml(IntPtr aHandle, char** aaSourceXml);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginSourceXml(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginSourceXml(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndSourceXml(uint aHandle, uint aAsync, char** aaSourceXml);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndSourceXml(IntPtr aHandle, IntPtr aAsync, char** aaSourceXml);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncSourceIndex(uint aHandle, uint* aaSourceIndex);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncSourceIndex(IntPtr aHandle, uint* aaSourceIndex);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginSourceIndex(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginSourceIndex(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndSourceIndex(uint aHandle, uint aAsync, uint* aaSourceIndex);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndSourceIndex(IntPtr aHandle, IntPtr aAsync, uint* aaSourceIndex);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncSetSourceIndex(uint aHandle, uint aaSourceIndex);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncSetSourceIndex(IntPtr aHandle, uint aaSourceIndex);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginSetSourceIndex(uint aHandle, uint aaSourceIndex, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginSetSourceIndex(IntPtr aHandle, uint aaSourceIndex, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndSetSourceIndex(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndSetSourceIndex(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncSetSourceIndexByName(uint aHandle, char* aaSourceName);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncSetSourceIndexByName(IntPtr aHandle, char* aaSourceName);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginSetSourceIndexByName(uint aHandle, char* aaSourceName, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginSetSourceIndexByName(IntPtr aHandle, char* aaSourceName, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndSetSourceIndexByName(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndSetSourceIndexByName(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncSetStartupSourceIndexByName(uint aHandle, char* aaSourceName);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncSetStartupSourceIndexByName(IntPtr aHandle, char* aaSourceName);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginSetStartupSourceIndexByName(uint aHandle, char* aaSourceName, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginSetStartupSourceIndexByName(IntPtr aHandle, char* aaSourceName, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndSetStartupSourceIndexByName(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndSetStartupSourceIndexByName(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncStartupSourceIndex(uint aHandle, uint* aaSourceIndex);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncStartupSourceIndex(IntPtr aHandle, uint* aaSourceIndex);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginStartupSourceIndex(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginStartupSourceIndex(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndStartupSourceIndex(uint aHandle, uint aAsync, uint* aaSourceIndex);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndStartupSourceIndex(IntPtr aHandle, IntPtr aAsync, uint* aaSourceIndex);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncSetStartupSourceIndex(uint aHandle, uint aaSourceIndex);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncSetStartupSourceIndex(IntPtr aHandle, uint aaSourceIndex);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginSetStartupSourceIndex(uint aHandle, uint aaSourceIndex, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginSetStartupSourceIndex(IntPtr aHandle, uint aaSourceIndex, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndSetStartupSourceIndex(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndSetStartupSourceIndex(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncStartupSourceEnabled(uint aHandle, uint* aaStartupSourceEnabled);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncStartupSourceEnabled(IntPtr aHandle, uint* aaStartupSourceEnabled);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginStartupSourceEnabled(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginStartupSourceEnabled(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndStartupSourceEnabled(uint aHandle, uint aAsync, uint* aaStartupSourceEnabled);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndStartupSourceEnabled(IntPtr aHandle, IntPtr aAsync, uint* aaStartupSourceEnabled);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncSetStartupSourceEnabled(uint aHandle, uint aaStartupSourceEnabled);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncSetStartupSourceEnabled(IntPtr aHandle, uint aaStartupSourceEnabled);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginSetStartupSourceEnabled(uint aHandle, uint aaStartupSourceEnabled, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginSetStartupSourceEnabled(IntPtr aHandle, uint aaStartupSourceEnabled, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndSetStartupSourceEnabled(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndSetStartupSourceEnabled(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncSourceSystemName(uint aHandle, uint aaSourceIndex, char** aaSourceName);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncSourceSystemName(IntPtr aHandle, uint aaSourceIndex, char** aaSourceName);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginSourceSystemName(uint aHandle, uint aaSourceIndex, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginSourceSystemName(IntPtr aHandle, uint aaSourceIndex, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndSourceSystemName(uint aHandle, uint aAsync, char** aaSourceName);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndSourceSystemName(IntPtr aHandle, IntPtr aAsync, char** aaSourceName);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncSourceName(uint aHandle, uint aaSourceIndex, char** aaSourceName);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncSourceName(IntPtr aHandle, uint aaSourceIndex, char** aaSourceName);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginSourceName(uint aHandle, uint aaSourceIndex, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginSourceName(IntPtr aHandle, uint aaSourceIndex, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndSourceName(uint aHandle, uint aAsync, char** aaSourceName);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndSourceName(IntPtr aHandle, IntPtr aAsync, char** aaSourceName);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncSetSourceName(uint aHandle, uint aaSourceIndex, char* aaSourceName);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncSetSourceName(IntPtr aHandle, uint aaSourceIndex, char* aaSourceName);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginSetSourceName(uint aHandle, uint aaSourceIndex, char* aaSourceName, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginSetSourceName(IntPtr aHandle, uint aaSourceIndex, char* aaSourceName, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndSetSourceName(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndSetSourceName(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncSourceType(uint aHandle, uint aaSourceIndex, char** aaSourceType);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncSourceType(IntPtr aHandle, uint aaSourceIndex, char** aaSourceType);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginSourceType(uint aHandle, uint aaSourceIndex, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginSourceType(IntPtr aHandle, uint aaSourceIndex, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndSourceType(uint aHandle, uint aAsync, char** aaSourceType);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndSourceType(IntPtr aHandle, IntPtr aAsync, char** aaSourceType);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncSourceVisible(uint aHandle, uint aaSourceIndex, uint* aaSourceVisible);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncSourceVisible(IntPtr aHandle, uint aaSourceIndex, uint* aaSourceVisible);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginSourceVisible(uint aHandle, uint aaSourceIndex, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginSourceVisible(IntPtr aHandle, uint aaSourceIndex, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndSourceVisible(uint aHandle, uint aAsync, uint* aaSourceVisible);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndSourceVisible(IntPtr aHandle, IntPtr aAsync, uint* aaSourceVisible);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3SyncSetSourceVisible(uint aHandle, uint aaSourceIndex, uint aaSourceVisible);
+        static extern unsafe void CpProxyLinnCoUkProduct3SyncSetSourceVisible(IntPtr aHandle, uint aaSourceIndex, uint aaSourceVisible);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3BeginSetSourceVisible(uint aHandle, uint aaSourceIndex, uint aaSourceVisible, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkProduct3BeginSetSourceVisible(IntPtr aHandle, uint aaSourceIndex, uint aaSourceVisible, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe int CpProxyLinnCoUkProduct3EndSetSourceVisible(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkProduct3EndSetSourceVisible(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern void CpProxyLinnCoUkProduct3SetPropertyProductTypeChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkProduct3SetPropertyProductTypeChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern void CpProxyLinnCoUkProduct3SetPropertyProductModelChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkProduct3SetPropertyProductModelChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern void CpProxyLinnCoUkProduct3SetPropertyProductNameChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkProduct3SetPropertyProductNameChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern void CpProxyLinnCoUkProduct3SetPropertyProductRoomChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkProduct3SetPropertyProductRoomChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern void CpProxyLinnCoUkProduct3SetPropertyProductStandbyChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkProduct3SetPropertyProductStandbyChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern void CpProxyLinnCoUkProduct3SetPropertyProductSourceIndexChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkProduct3SetPropertyProductSourceIndexChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern void CpProxyLinnCoUkProduct3SetPropertyProductSourceCountChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkProduct3SetPropertyProductSourceCountChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern void CpProxyLinnCoUkProduct3SetPropertyProductSourceXmlChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkProduct3SetPropertyProductSourceXmlChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern void CpProxyLinnCoUkProduct3SetPropertyStartupSourceIndexChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkProduct3SetPropertyStartupSourceIndexChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern void CpProxyLinnCoUkProduct3SetPropertyStartupSourceEnabledChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkProduct3SetPropertyStartupSourceEnabledChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern void CpProxyLinnCoUkProduct3SetPropertyProductAnySourceNameChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkProduct3SetPropertyProductAnySourceNameChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern void CpProxyLinnCoUkProduct3SetPropertyProductAnySourceVisibleChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkProduct3SetPropertyProductAnySourceVisibleChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern void CpProxyLinnCoUkProduct3SetPropertyProductAnySourceTypeChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkProduct3SetPropertyProductAnySourceTypeChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductType(uint aHandle, char** aProductType);
+        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductType(IntPtr aHandle, char** aProductType);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductModel(uint aHandle, char** aProductModel);
+        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductModel(IntPtr aHandle, char** aProductModel);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductName(uint aHandle, char** aProductName);
+        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductName(IntPtr aHandle, char** aProductName);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductRoom(uint aHandle, char** aProductRoom);
+        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductRoom(IntPtr aHandle, char** aProductRoom);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductStandby(uint aHandle, uint* aProductStandby);
+        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductStandby(IntPtr aHandle, uint* aProductStandby);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductSourceIndex(uint aHandle, uint* aProductSourceIndex);
+        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductSourceIndex(IntPtr aHandle, uint* aProductSourceIndex);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductSourceCount(uint aHandle, uint* aProductSourceCount);
+        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductSourceCount(IntPtr aHandle, uint* aProductSourceCount);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductSourceXml(uint aHandle, char** aProductSourceXml);
+        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductSourceXml(IntPtr aHandle, char** aProductSourceXml);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3PropertyStartupSourceIndex(uint aHandle, uint* aStartupSourceIndex);
+        static extern unsafe void CpProxyLinnCoUkProduct3PropertyStartupSourceIndex(IntPtr aHandle, uint* aStartupSourceIndex);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3PropertyStartupSourceEnabled(uint aHandle, uint* aStartupSourceEnabled);
+        static extern unsafe void CpProxyLinnCoUkProduct3PropertyStartupSourceEnabled(IntPtr aHandle, uint* aStartupSourceEnabled);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductAnySourceName(uint aHandle, uint* aProductAnySourceName);
+        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductAnySourceName(IntPtr aHandle, uint* aProductAnySourceName);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductAnySourceVisible(uint aHandle, uint* aProductAnySourceVisible);
+        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductAnySourceVisible(IntPtr aHandle, uint* aProductAnySourceVisible);
         [DllImport("CpLinnCoUkProduct3")]
-        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductAnySourceType(uint aHandle, uint* aProductAnySourceType);
+        static extern unsafe void CpProxyLinnCoUkProduct3PropertyProductAnySourceType(IntPtr aHandle, uint* aProductAnySourceType);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -392,7 +392,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaType"></param>
-        public unsafe void EndType(uint aAsyncHandle, out string aaType)
+        public unsafe void EndType(IntPtr aAsyncHandle, out string aaType)
         {
             char* aType;
             {
@@ -442,7 +442,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaModel"></param>
-        public unsafe void EndModel(uint aAsyncHandle, out string aaModel)
+        public unsafe void EndModel(IntPtr aAsyncHandle, out string aaModel)
         {
             char* aModel;
             {
@@ -492,7 +492,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaName"></param>
-        public unsafe void EndName(uint aAsyncHandle, out string aaName)
+        public unsafe void EndName(IntPtr aAsyncHandle, out string aaName)
         {
             char* aName;
             {
@@ -543,7 +543,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetName(uint aAsyncHandle)
+        public unsafe void EndSetName(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkProduct3EndSetName(iHandle, aAsyncHandle))
@@ -590,7 +590,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaRoom"></param>
-        public unsafe void EndRoom(uint aAsyncHandle, out string aaRoom)
+        public unsafe void EndRoom(IntPtr aAsyncHandle, out string aaRoom)
         {
             char* aRoom;
             {
@@ -641,7 +641,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetRoom(uint aAsyncHandle)
+        public unsafe void EndSetRoom(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkProduct3EndSetRoom(iHandle, aAsyncHandle))
@@ -687,7 +687,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaStandby"></param>
-        public unsafe void EndStandby(uint aAsyncHandle, out bool aaStandby)
+        public unsafe void EndStandby(IntPtr aAsyncHandle, out bool aaStandby)
         {
             uint aStandby;
             {
@@ -735,7 +735,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetStandby(uint aAsyncHandle)
+        public unsafe void EndSetStandby(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkProduct3EndSetStandby(iHandle, aAsyncHandle))
@@ -780,7 +780,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSourceCount"></param>
-        public unsafe void EndSourceCount(uint aAsyncHandle, out uint aaSourceCount)
+        public unsafe void EndSourceCount(IntPtr aAsyncHandle, out uint aaSourceCount)
         {
             fixed (uint* aSourceCount = &aaSourceCount)
             {
@@ -828,7 +828,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSourceXml"></param>
-        public unsafe void EndSourceXml(uint aAsyncHandle, out string aaSourceXml)
+        public unsafe void EndSourceXml(IntPtr aAsyncHandle, out string aaSourceXml)
         {
             char* aSourceXml;
             {
@@ -876,7 +876,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSourceIndex"></param>
-        public unsafe void EndSourceIndex(uint aAsyncHandle, out uint aaSourceIndex)
+        public unsafe void EndSourceIndex(IntPtr aAsyncHandle, out uint aaSourceIndex)
         {
             fixed (uint* aSourceIndex = &aaSourceIndex)
             {
@@ -921,7 +921,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetSourceIndex(uint aAsyncHandle)
+        public unsafe void EndSetSourceIndex(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkProduct3EndSetSourceIndex(iHandle, aAsyncHandle))
@@ -969,7 +969,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetSourceIndexByName(uint aAsyncHandle)
+        public unsafe void EndSetSourceIndexByName(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkProduct3EndSetSourceIndexByName(iHandle, aAsyncHandle))
@@ -1017,7 +1017,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetStartupSourceIndexByName(uint aAsyncHandle)
+        public unsafe void EndSetStartupSourceIndexByName(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkProduct3EndSetStartupSourceIndexByName(iHandle, aAsyncHandle))
@@ -1062,7 +1062,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSourceIndex"></param>
-        public unsafe void EndStartupSourceIndex(uint aAsyncHandle, out uint aaSourceIndex)
+        public unsafe void EndStartupSourceIndex(IntPtr aAsyncHandle, out uint aaSourceIndex)
         {
             fixed (uint* aSourceIndex = &aaSourceIndex)
             {
@@ -1107,7 +1107,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetStartupSourceIndex(uint aAsyncHandle)
+        public unsafe void EndSetStartupSourceIndex(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkProduct3EndSetStartupSourceIndex(iHandle, aAsyncHandle))
@@ -1153,7 +1153,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaStartupSourceEnabled"></param>
-        public unsafe void EndStartupSourceEnabled(uint aAsyncHandle, out bool aaStartupSourceEnabled)
+        public unsafe void EndStartupSourceEnabled(IntPtr aAsyncHandle, out bool aaStartupSourceEnabled)
         {
             uint aStartupSourceEnabled;
             {
@@ -1201,7 +1201,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetStartupSourceEnabled(uint aAsyncHandle)
+        public unsafe void EndSetStartupSourceEnabled(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkProduct3EndSetStartupSourceEnabled(iHandle, aAsyncHandle))
@@ -1250,7 +1250,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSourceName"></param>
-        public unsafe void EndSourceSystemName(uint aAsyncHandle, out string aaSourceName)
+        public unsafe void EndSourceSystemName(IntPtr aAsyncHandle, out string aaSourceName)
         {
             char* aSourceName;
             {
@@ -1302,7 +1302,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSourceName"></param>
-        public unsafe void EndSourceName(uint aAsyncHandle, out string aaSourceName)
+        public unsafe void EndSourceName(IntPtr aAsyncHandle, out string aaSourceName)
         {
             char* aSourceName;
             {
@@ -1355,7 +1355,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetSourceName(uint aAsyncHandle)
+        public unsafe void EndSetSourceName(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkProduct3EndSetSourceName(iHandle, aAsyncHandle))
@@ -1404,7 +1404,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSourceType"></param>
-        public unsafe void EndSourceType(uint aAsyncHandle, out string aaSourceType)
+        public unsafe void EndSourceType(IntPtr aAsyncHandle, out string aaSourceType)
         {
             char* aSourceType;
             {
@@ -1455,7 +1455,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSourceVisible"></param>
-        public unsafe void EndSourceVisible(uint aAsyncHandle, out bool aaSourceVisible)
+        public unsafe void EndSourceVisible(IntPtr aAsyncHandle, out bool aaSourceVisible)
         {
             uint aSourceVisible;
             {
@@ -1505,7 +1505,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetSourceVisible(uint aAsyncHandle)
+        public unsafe void EndSetSourceVisible(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkProduct3EndSetSourceVisible(iHandle, aAsyncHandle))
@@ -1998,12 +1998,12 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 CpProxyLinnCoUkProduct3Destroy(iHandle);
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             iGch.Free();
             if (aDisposing)

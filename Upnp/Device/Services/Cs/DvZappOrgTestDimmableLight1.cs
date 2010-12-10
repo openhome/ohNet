@@ -28,17 +28,17 @@ namespace Zapp.Device.Providers
     public class DvProviderZappOrgTestDimmableLight1 : DvProvider, IDisposable, IDvProviderZappOrgTestDimmableLight1
     {
         [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern uint DvProviderZappOrgTestDimmableLight1Create(uint aDeviceHandle);
+        static extern IntPtr DvProviderZappOrgTestDimmableLight1Create(IntPtr aDeviceHandle);
         [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern void DvProviderZappOrgTestDimmableLight1Destroy(uint aHandle);
+        static extern void DvProviderZappOrgTestDimmableLight1Destroy(IntPtr aHandle);
         [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern unsafe int DvProviderZappOrgTestDimmableLight1SetPropertyA_ARG_Level(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderZappOrgTestDimmableLight1SetPropertyA_ARG_Level(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern unsafe void DvProviderZappOrgTestDimmableLight1GetPropertyA_ARG_Level(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderZappOrgTestDimmableLight1GetPropertyA_ARG_Level(IntPtr aHandle, uint* aValue);
         [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern void DvProviderZappOrgTestDimmableLight1EnableActionGetLevel(uint aHandle, CallbackGetLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderZappOrgTestDimmableLight1EnableActionGetLevel(IntPtr aHandle, CallbackGetLevel aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestDimmableLight1")]
-        static extern void DvProviderZappOrgTestDimmableLight1EnableActionSetLevel(uint aHandle, CallbackSetLevel aCallback, IntPtr aPtr);
+        static extern void DvProviderZappOrgTestDimmableLight1EnableActionSetLevel(IntPtr aHandle, CallbackSetLevel aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -172,15 +172,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvProviderZappOrgTestDimmableLight1Destroy(handle);
             if (iGch.IsAllocated)

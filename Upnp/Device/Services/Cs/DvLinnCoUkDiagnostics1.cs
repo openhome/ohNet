@@ -28,39 +28,39 @@ namespace Zapp.Device.Providers
     public class DvProviderLinnCoUkDiagnostics1 : DvProvider, IDisposable, IDvProviderLinnCoUkDiagnostics1
     {
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern uint DvProviderLinnCoUkDiagnostics1Create(uint aDeviceHandle);
+        static extern IntPtr DvProviderLinnCoUkDiagnostics1Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1Destroy(uint aHandle);
+        static extern void DvProviderLinnCoUkDiagnostics1Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern unsafe int DvProviderLinnCoUkDiagnostics1SetPropertyaStateVariable(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkDiagnostics1SetPropertyaStateVariable(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern unsafe void DvProviderLinnCoUkDiagnostics1GetPropertyaStateVariable(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkDiagnostics1GetPropertyaStateVariable(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionEcho(uint aHandle, CallbackEcho aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionEcho(IntPtr aHandle, CallbackEcho aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionElfFile(uint aHandle, CallbackElfFile aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionElfFile(IntPtr aHandle, CallbackElfFile aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionElfFingerprint(uint aHandle, CallbackElfFingerprint aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionElfFingerprint(IntPtr aHandle, CallbackElfFingerprint aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionCrashDataStatus(uint aHandle, CallbackCrashDataStatus aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionCrashDataStatus(IntPtr aHandle, CallbackCrashDataStatus aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionCrashDataFetch(uint aHandle, CallbackCrashDataFetch aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionCrashDataFetch(IntPtr aHandle, CallbackCrashDataFetch aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionCrashDataClear(uint aHandle, CallbackCrashDataClear aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionCrashDataClear(IntPtr aHandle, CallbackCrashDataClear aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionSysLog(uint aHandle, CallbackSysLog aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionSysLog(IntPtr aHandle, CallbackSysLog aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionDiagnostic(uint aHandle, CallbackDiagnostic aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionDiagnostic(IntPtr aHandle, CallbackDiagnostic aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionStateVariable(uint aHandle, CallbackStateVariable aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionStateVariable(IntPtr aHandle, CallbackStateVariable aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionSetStateVariable(uint aHandle, CallbackSetStateVariable aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionSetStateVariable(IntPtr aHandle, CallbackSetStateVariable aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionStateVariablePeriod(uint aHandle, CallbackStateVariablePeriod aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionStateVariablePeriod(IntPtr aHandle, CallbackStateVariablePeriod aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionSetStateVariablePeriod(uint aHandle, CallbackSetStateVariablePeriod aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionSetStateVariablePeriod(IntPtr aHandle, CallbackSetStateVariablePeriod aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkDiagnostics1")]
-        static extern void DvProviderLinnCoUkDiagnostics1EnableActionReboot(uint aHandle, CallbackReboot aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkDiagnostics1EnableActionReboot(IntPtr aHandle, CallbackReboot aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -611,15 +611,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvProviderLinnCoUkDiagnostics1Destroy(handle);
             if (iGch.IsAllocated)

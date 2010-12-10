@@ -81,30 +81,30 @@ namespace Zapp.Device.Providers
     public class <#=className#> : DvProvider, IDisposable, I<#=className#>
     {
         [DllImport("<#=dllName#>")]
-        static extern uint <#=className#>Create(uint aDeviceHandle);
+        static extern <#=Handle#> <#=className#>Create(<#=Handle#> aDeviceHandle);
         [DllImport("<#=dllName#>")]
-        static extern void <#=className#>Destroy(uint aHandle);
+        static extern void <#=className#>Destroy(<#=Handle#> aHandle);
 <#  foreach (Variable s in u.evented) #>
 <#  { #>
 <#      if (s.type == "bin.base64") #>
 <#      { #>
         [DllImport("<#=dllName#>")]
-        static extern unsafe int <#=className#>SetProperty<#=s.name#>(uint aHandle, <#=inargctype[s.type]#> aValue, int aValueLen, uint* aChanged);
+        static extern unsafe int <#=className#>SetProperty<#=s.name#>(<#=Handle#> aHandle, <#=inargctype[s.type]#> aValue, int aValueLen, uint* aChanged);
         [DllImport("<#=dllName#>")]
-        static extern unsafe void <#=className#>GetProperty<#=s.name#>(uint aHandle, <#=outargctype[s.type]#> aValue, int* aValueLen);
+        static extern unsafe void <#=className#>GetProperty<#=s.name#>(<#=Handle#> aHandle, <#=outargctype[s.type]#> aValue, int* aValueLen);
 <#      } #>
 <#      else #>
 <#      { #>
         [DllImport("<#=dllName#>")]
-        static extern unsafe int <#=className#>SetProperty<#=s.name#>(uint aHandle, <#=inargctype[s.type]#> aValue, uint* aChanged);
+        static extern unsafe int <#=className#>SetProperty<#=s.name#>(<#=Handle#> aHandle, <#=inargctype[s.type]#> aValue, uint* aChanged);
         [DllImport("<#=dllName#>")]
-        static extern unsafe void <#=className#>GetProperty<#=s.name#>(uint aHandle, <#=outargctype[s.type]#> aValue);
+        static extern unsafe void <#=className#>GetProperty<#=s.name#>(<#=Handle#> aHandle, <#=outargctype[s.type]#> aValue);
 <#      } #>
 <#  } #>
 <#  foreach (Method a in u.methods) #>
 <#  { #>
         [DllImport("<#=dllName#>")]
-        static extern void <#=className#>EnableAction<#=a.name#>(uint aHandle, Callback<#=a.name#> aCallback, IntPtr aPtr);
+        static extern void <#=className#>EnableAction<#=a.name#>(<#=Handle#> aHandle, Callback<#=a.name#> aCallback, IntPtr aPtr);
 <#  } #>
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
@@ -312,15 +312,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            <#=Handle#> handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             <#=className#>Destroy(handle);
             if (iGch.IsAllocated)
@@ -332,6 +332,9 @@ namespace Zapp.Device.Providers
 }
 
 <#+
+
+const string Handle = "IntPtr";
+
 Dictionary<string,string> argtype = new Dictionary<string,string>();
 Dictionary<string,string> inargctype = new Dictionary<string,string>();
 Dictionary<string,string> outargctype = new Dictionary<string,string>();

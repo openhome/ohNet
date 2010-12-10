@@ -54,31 +54,31 @@ namespace Zapp.Device.Providers
     public class DvProviderUpnpOrgConnectionManager1 : DvProvider, IDisposable, IDvProviderUpnpOrgConnectionManager1
     {
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern uint DvProviderUpnpOrgConnectionManager1Create(uint aDeviceHandle);
+        static extern IntPtr DvProviderUpnpOrgConnectionManager1Create(IntPtr aDeviceHandle);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern void DvProviderUpnpOrgConnectionManager1Destroy(uint aHandle);
+        static extern void DvProviderUpnpOrgConnectionManager1Destroy(IntPtr aHandle);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern unsafe int DvProviderUpnpOrgConnectionManager1SetPropertySourceProtocolInfo(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgConnectionManager1SetPropertySourceProtocolInfo(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern unsafe void DvProviderUpnpOrgConnectionManager1GetPropertySourceProtocolInfo(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderUpnpOrgConnectionManager1GetPropertySourceProtocolInfo(IntPtr aHandle, char** aValue);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern unsafe int DvProviderUpnpOrgConnectionManager1SetPropertySinkProtocolInfo(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgConnectionManager1SetPropertySinkProtocolInfo(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern unsafe void DvProviderUpnpOrgConnectionManager1GetPropertySinkProtocolInfo(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderUpnpOrgConnectionManager1GetPropertySinkProtocolInfo(IntPtr aHandle, char** aValue);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern unsafe int DvProviderUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDs(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderUpnpOrgConnectionManager1SetPropertyCurrentConnectionIDs(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern unsafe void DvProviderUpnpOrgConnectionManager1GetPropertyCurrentConnectionIDs(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderUpnpOrgConnectionManager1GetPropertyCurrentConnectionIDs(IntPtr aHandle, char** aValue);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern void DvProviderUpnpOrgConnectionManager1EnableActionGetProtocolInfo(uint aHandle, CallbackGetProtocolInfo aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgConnectionManager1EnableActionGetProtocolInfo(IntPtr aHandle, CallbackGetProtocolInfo aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern void DvProviderUpnpOrgConnectionManager1EnableActionPrepareForConnection(uint aHandle, CallbackPrepareForConnection aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgConnectionManager1EnableActionPrepareForConnection(IntPtr aHandle, CallbackPrepareForConnection aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern void DvProviderUpnpOrgConnectionManager1EnableActionConnectionComplete(uint aHandle, CallbackConnectionComplete aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgConnectionManager1EnableActionConnectionComplete(IntPtr aHandle, CallbackConnectionComplete aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern void DvProviderUpnpOrgConnectionManager1EnableActionGetCurrentConnectionIDs(uint aHandle, CallbackGetCurrentConnectionIDs aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgConnectionManager1EnableActionGetCurrentConnectionIDs(IntPtr aHandle, CallbackGetCurrentConnectionIDs aCallback, IntPtr aPtr);
         [DllImport("DvUpnpOrgConnectionManager1")]
-        static extern void DvProviderUpnpOrgConnectionManager1EnableActionGetCurrentConnectionInfo(uint aHandle, CallbackGetCurrentConnectionInfo aCallback, IntPtr aPtr);
+        static extern void DvProviderUpnpOrgConnectionManager1EnableActionGetCurrentConnectionInfo(IntPtr aHandle, CallbackGetCurrentConnectionInfo aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -424,15 +424,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvProviderUpnpOrgConnectionManager1Destroy(handle);
             if (iGch.IsAllocated)

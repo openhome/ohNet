@@ -9,37 +9,37 @@ namespace Zapp.ControlPoint.Proxies
     {
         void SyncAmplifierEnabled(out bool aaEnabled);
         void BeginAmplifierEnabled(CpProxy.CallbackAsyncComplete aCallback);
-        void EndAmplifierEnabled(uint aAsyncHandle, out bool aaEnabled);
+        void EndAmplifierEnabled(IntPtr aAsyncHandle, out bool aaEnabled);
         void SyncSetAmplifierEnabled(bool aaEnabled);
         void BeginSetAmplifierEnabled(bool aaEnabled, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetAmplifierEnabled(uint aAsyncHandle);
+        void EndSetAmplifierEnabled(IntPtr aAsyncHandle);
         void SyncAmplifierAttenuation(out string aaAttenuation);
         void BeginAmplifierAttenuation(CpProxy.CallbackAsyncComplete aCallback);
-        void EndAmplifierAttenuation(uint aAsyncHandle, out string aaAttenuation);
+        void EndAmplifierAttenuation(IntPtr aAsyncHandle, out string aaAttenuation);
         void SyncSetAmplifierAttenuation(string aaAttenuation);
         void BeginSetAmplifierAttenuation(string aaAttenuation, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetAmplifierAttenuation(uint aAsyncHandle);
+        void EndSetAmplifierAttenuation(IntPtr aAsyncHandle);
         void SyncSetVolumeControlEnabled(bool aaEnabled);
         void BeginSetVolumeControlEnabled(bool aaEnabled, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetVolumeControlEnabled(uint aAsyncHandle);
+        void EndSetVolumeControlEnabled(IntPtr aAsyncHandle);
         void SyncVolumeControlEnabled(out bool aaEnabled);
         void BeginVolumeControlEnabled(CpProxy.CallbackAsyncComplete aCallback);
-        void EndVolumeControlEnabled(uint aAsyncHandle, out bool aaEnabled);
+        void EndVolumeControlEnabled(IntPtr aAsyncHandle, out bool aaEnabled);
         void SyncSetDigitalAudioOutputRaw(bool aaRaw);
         void BeginSetDigitalAudioOutputRaw(bool aaRaw, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetDigitalAudioOutputRaw(uint aAsyncHandle);
+        void EndSetDigitalAudioOutputRaw(IntPtr aAsyncHandle);
         void SyncDigitalAudioOutputRaw(out bool aaRaw);
         void BeginDigitalAudioOutputRaw(CpProxy.CallbackAsyncComplete aCallback);
-        void EndDigitalAudioOutputRaw(uint aAsyncHandle, out bool aaRaw);
+        void EndDigitalAudioOutputRaw(IntPtr aAsyncHandle, out bool aaRaw);
         void SyncAmplifierOverTemperature(out bool aaOverTemperature);
         void BeginAmplifierOverTemperature(CpProxy.CallbackAsyncComplete aCallback);
-        void EndAmplifierOverTemperature(uint aAsyncHandle, out bool aaOverTemperature);
+        void EndAmplifierOverTemperature(IntPtr aAsyncHandle, out bool aaOverTemperature);
         void SyncEthernetLinkConnected(out bool aaLinkConnected);
         void BeginEthernetLinkConnected(CpProxy.CallbackAsyncComplete aCallback);
-        void EndEthernetLinkConnected(uint aAsyncHandle, out bool aaLinkConnected);
+        void EndEthernetLinkConnected(IntPtr aAsyncHandle, out bool aaLinkConnected);
         void SyncLocate();
         void BeginLocate(CpProxy.CallbackAsyncComplete aCallback);
-        void EndLocate(uint aAsyncHandle);
+        void EndLocate(IntPtr aAsyncHandle);
 
         void SetPropertyAmplifierEnabledChanged(CpProxy.CallbackPropertyChanged aAmplifierEnabledChanged);
         void PropertyAmplifierEnabled(out bool aAmplifierEnabled);
@@ -57,91 +57,91 @@ namespace Zapp.ControlPoint.Proxies
     public class CpProxyLinnCoUkComponent1 : CpProxy, IDisposable, ICpProxyLinnCoUkComponent1
     {
         [DllImport("CpLinnCoUkComponent1")]
-        static extern uint CpProxyLinnCoUkComponent1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyLinnCoUkComponent1Create(IntPtr aDeviceHandle);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern void CpProxyLinnCoUkComponent1Destroy(uint aHandle);
+        static extern void CpProxyLinnCoUkComponent1Destroy(IntPtr aHandle);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1SyncAmplifierEnabled(uint aHandle, uint* aaEnabled);
+        static extern unsafe void CpProxyLinnCoUkComponent1SyncAmplifierEnabled(IntPtr aHandle, uint* aaEnabled);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1BeginAmplifierEnabled(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkComponent1BeginAmplifierEnabled(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe int CpProxyLinnCoUkComponent1EndAmplifierEnabled(uint aHandle, uint aAsync, uint* aaEnabled);
+        static extern unsafe int CpProxyLinnCoUkComponent1EndAmplifierEnabled(IntPtr aHandle, IntPtr aAsync, uint* aaEnabled);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1SyncSetAmplifierEnabled(uint aHandle, uint aaEnabled);
+        static extern unsafe void CpProxyLinnCoUkComponent1SyncSetAmplifierEnabled(IntPtr aHandle, uint aaEnabled);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1BeginSetAmplifierEnabled(uint aHandle, uint aaEnabled, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkComponent1BeginSetAmplifierEnabled(IntPtr aHandle, uint aaEnabled, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe int CpProxyLinnCoUkComponent1EndSetAmplifierEnabled(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkComponent1EndSetAmplifierEnabled(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1SyncAmplifierAttenuation(uint aHandle, char** aaAttenuation);
+        static extern unsafe void CpProxyLinnCoUkComponent1SyncAmplifierAttenuation(IntPtr aHandle, char** aaAttenuation);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1BeginAmplifierAttenuation(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkComponent1BeginAmplifierAttenuation(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe int CpProxyLinnCoUkComponent1EndAmplifierAttenuation(uint aHandle, uint aAsync, char** aaAttenuation);
+        static extern unsafe int CpProxyLinnCoUkComponent1EndAmplifierAttenuation(IntPtr aHandle, IntPtr aAsync, char** aaAttenuation);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1SyncSetAmplifierAttenuation(uint aHandle, char* aaAttenuation);
+        static extern unsafe void CpProxyLinnCoUkComponent1SyncSetAmplifierAttenuation(IntPtr aHandle, char* aaAttenuation);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1BeginSetAmplifierAttenuation(uint aHandle, char* aaAttenuation, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkComponent1BeginSetAmplifierAttenuation(IntPtr aHandle, char* aaAttenuation, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe int CpProxyLinnCoUkComponent1EndSetAmplifierAttenuation(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkComponent1EndSetAmplifierAttenuation(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1SyncSetVolumeControlEnabled(uint aHandle, uint aaEnabled);
+        static extern unsafe void CpProxyLinnCoUkComponent1SyncSetVolumeControlEnabled(IntPtr aHandle, uint aaEnabled);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1BeginSetVolumeControlEnabled(uint aHandle, uint aaEnabled, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkComponent1BeginSetVolumeControlEnabled(IntPtr aHandle, uint aaEnabled, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe int CpProxyLinnCoUkComponent1EndSetVolumeControlEnabled(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkComponent1EndSetVolumeControlEnabled(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1SyncVolumeControlEnabled(uint aHandle, uint* aaEnabled);
+        static extern unsafe void CpProxyLinnCoUkComponent1SyncVolumeControlEnabled(IntPtr aHandle, uint* aaEnabled);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1BeginVolumeControlEnabled(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkComponent1BeginVolumeControlEnabled(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe int CpProxyLinnCoUkComponent1EndVolumeControlEnabled(uint aHandle, uint aAsync, uint* aaEnabled);
+        static extern unsafe int CpProxyLinnCoUkComponent1EndVolumeControlEnabled(IntPtr aHandle, IntPtr aAsync, uint* aaEnabled);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1SyncSetDigitalAudioOutputRaw(uint aHandle, uint aaRaw);
+        static extern unsafe void CpProxyLinnCoUkComponent1SyncSetDigitalAudioOutputRaw(IntPtr aHandle, uint aaRaw);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1BeginSetDigitalAudioOutputRaw(uint aHandle, uint aaRaw, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkComponent1BeginSetDigitalAudioOutputRaw(IntPtr aHandle, uint aaRaw, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe int CpProxyLinnCoUkComponent1EndSetDigitalAudioOutputRaw(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkComponent1EndSetDigitalAudioOutputRaw(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1SyncDigitalAudioOutputRaw(uint aHandle, uint* aaRaw);
+        static extern unsafe void CpProxyLinnCoUkComponent1SyncDigitalAudioOutputRaw(IntPtr aHandle, uint* aaRaw);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1BeginDigitalAudioOutputRaw(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkComponent1BeginDigitalAudioOutputRaw(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe int CpProxyLinnCoUkComponent1EndDigitalAudioOutputRaw(uint aHandle, uint aAsync, uint* aaRaw);
+        static extern unsafe int CpProxyLinnCoUkComponent1EndDigitalAudioOutputRaw(IntPtr aHandle, IntPtr aAsync, uint* aaRaw);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1SyncAmplifierOverTemperature(uint aHandle, uint* aaOverTemperature);
+        static extern unsafe void CpProxyLinnCoUkComponent1SyncAmplifierOverTemperature(IntPtr aHandle, uint* aaOverTemperature);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1BeginAmplifierOverTemperature(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkComponent1BeginAmplifierOverTemperature(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe int CpProxyLinnCoUkComponent1EndAmplifierOverTemperature(uint aHandle, uint aAsync, uint* aaOverTemperature);
+        static extern unsafe int CpProxyLinnCoUkComponent1EndAmplifierOverTemperature(IntPtr aHandle, IntPtr aAsync, uint* aaOverTemperature);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1SyncEthernetLinkConnected(uint aHandle, uint* aaLinkConnected);
+        static extern unsafe void CpProxyLinnCoUkComponent1SyncEthernetLinkConnected(IntPtr aHandle, uint* aaLinkConnected);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1BeginEthernetLinkConnected(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkComponent1BeginEthernetLinkConnected(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe int CpProxyLinnCoUkComponent1EndEthernetLinkConnected(uint aHandle, uint aAsync, uint* aaLinkConnected);
+        static extern unsafe int CpProxyLinnCoUkComponent1EndEthernetLinkConnected(IntPtr aHandle, IntPtr aAsync, uint* aaLinkConnected);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1SyncLocate(uint aHandle);
+        static extern unsafe void CpProxyLinnCoUkComponent1SyncLocate(IntPtr aHandle);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1BeginLocate(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkComponent1BeginLocate(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe int CpProxyLinnCoUkComponent1EndLocate(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkComponent1EndLocate(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern void CpProxyLinnCoUkComponent1SetPropertyAmplifierEnabledChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkComponent1SetPropertyAmplifierEnabledChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern void CpProxyLinnCoUkComponent1SetPropertyAmplifierAttenuationChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkComponent1SetPropertyAmplifierAttenuationChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern void CpProxyLinnCoUkComponent1SetPropertyVolumeControlEnabledChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkComponent1SetPropertyVolumeControlEnabledChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern void CpProxyLinnCoUkComponent1SetPropertyDigitalAudioOutputRawChanged(uint aHandle, Callback aCallback, IntPtr aPtr);
+        static extern void CpProxyLinnCoUkComponent1SetPropertyDigitalAudioOutputRawChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1PropertyAmplifierEnabled(uint aHandle, uint* aAmplifierEnabled);
+        static extern unsafe void CpProxyLinnCoUkComponent1PropertyAmplifierEnabled(IntPtr aHandle, uint* aAmplifierEnabled);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1PropertyAmplifierAttenuation(uint aHandle, char** aAmplifierAttenuation);
+        static extern unsafe void CpProxyLinnCoUkComponent1PropertyAmplifierAttenuation(IntPtr aHandle, char** aAmplifierAttenuation);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1PropertyVolumeControlEnabled(uint aHandle, uint* aVolumeControlEnabled);
+        static extern unsafe void CpProxyLinnCoUkComponent1PropertyVolumeControlEnabled(IntPtr aHandle, uint* aVolumeControlEnabled);
         [DllImport("CpLinnCoUkComponent1")]
-        static extern unsafe void CpProxyLinnCoUkComponent1PropertyDigitalAudioOutputRaw(uint aHandle, uint* aDigitalAudioOutputRaw);
+        static extern unsafe void CpProxyLinnCoUkComponent1PropertyDigitalAudioOutputRaw(IntPtr aHandle, uint* aDigitalAudioOutputRaw);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -202,7 +202,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaEnabled"></param>
-        public unsafe void EndAmplifierEnabled(uint aAsyncHandle, out bool aaEnabled)
+        public unsafe void EndAmplifierEnabled(IntPtr aAsyncHandle, out bool aaEnabled)
         {
             uint aEnabled;
             {
@@ -250,7 +250,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetAmplifierEnabled(uint aAsyncHandle)
+        public unsafe void EndSetAmplifierEnabled(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkComponent1EndSetAmplifierEnabled(iHandle, aAsyncHandle))
@@ -297,7 +297,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaAttenuation"></param>
-        public unsafe void EndAmplifierAttenuation(uint aAsyncHandle, out string aaAttenuation)
+        public unsafe void EndAmplifierAttenuation(IntPtr aAsyncHandle, out string aaAttenuation)
         {
             char* aAttenuation;
             {
@@ -348,7 +348,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetAmplifierAttenuation(uint aAsyncHandle)
+        public unsafe void EndSetAmplifierAttenuation(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkComponent1EndSetAmplifierAttenuation(iHandle, aAsyncHandle))
@@ -394,7 +394,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetVolumeControlEnabled(uint aAsyncHandle)
+        public unsafe void EndSetVolumeControlEnabled(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkComponent1EndSetVolumeControlEnabled(iHandle, aAsyncHandle))
@@ -440,7 +440,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaEnabled"></param>
-        public unsafe void EndVolumeControlEnabled(uint aAsyncHandle, out bool aaEnabled)
+        public unsafe void EndVolumeControlEnabled(IntPtr aAsyncHandle, out bool aaEnabled)
         {
             uint aEnabled;
             {
@@ -488,7 +488,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetDigitalAudioOutputRaw(uint aAsyncHandle)
+        public unsafe void EndSetDigitalAudioOutputRaw(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkComponent1EndSetDigitalAudioOutputRaw(iHandle, aAsyncHandle))
@@ -534,7 +534,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaRaw"></param>
-        public unsafe void EndDigitalAudioOutputRaw(uint aAsyncHandle, out bool aaRaw)
+        public unsafe void EndDigitalAudioOutputRaw(IntPtr aAsyncHandle, out bool aaRaw)
         {
             uint aRaw;
             {
@@ -582,7 +582,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaOverTemperature"></param>
-        public unsafe void EndAmplifierOverTemperature(uint aAsyncHandle, out bool aaOverTemperature)
+        public unsafe void EndAmplifierOverTemperature(IntPtr aAsyncHandle, out bool aaOverTemperature)
         {
             uint aOverTemperature;
             {
@@ -630,7 +630,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaLinkConnected"></param>
-        public unsafe void EndEthernetLinkConnected(uint aAsyncHandle, out bool aaLinkConnected)
+        public unsafe void EndEthernetLinkConnected(IntPtr aAsyncHandle, out bool aaLinkConnected)
         {
             uint aLinkConnected;
             {
@@ -674,7 +674,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndLocate(uint aAsyncHandle)
+        public unsafe void EndLocate(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkComponent1EndLocate(iHandle, aAsyncHandle))
@@ -842,12 +842,12 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 CpProxyLinnCoUkComponent1Destroy(iHandle);
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             iGch.Free();
             if (aDisposing)

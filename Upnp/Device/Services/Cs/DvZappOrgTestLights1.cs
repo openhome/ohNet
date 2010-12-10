@@ -15,23 +15,23 @@ namespace Zapp.Device.Providers
     public class DvProviderZappOrgTestLights1 : DvProvider, IDisposable, IDvProviderZappOrgTestLights1
     {
         [DllImport("DvZappOrgTestLights1")]
-        static extern uint DvProviderZappOrgTestLights1Create(uint aDeviceHandle);
+        static extern IntPtr DvProviderZappOrgTestLights1Create(IntPtr aDeviceHandle);
         [DllImport("DvZappOrgTestLights1")]
-        static extern void DvProviderZappOrgTestLights1Destroy(uint aHandle);
+        static extern void DvProviderZappOrgTestLights1Destroy(IntPtr aHandle);
         [DllImport("DvZappOrgTestLights1")]
-        static extern void DvProviderZappOrgTestLights1EnableActionGetCount(uint aHandle, CallbackGetCount aCallback, IntPtr aPtr);
+        static extern void DvProviderZappOrgTestLights1EnableActionGetCount(IntPtr aHandle, CallbackGetCount aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestLights1")]
-        static extern void DvProviderZappOrgTestLights1EnableActionGetRoom(uint aHandle, CallbackGetRoom aCallback, IntPtr aPtr);
+        static extern void DvProviderZappOrgTestLights1EnableActionGetRoom(IntPtr aHandle, CallbackGetRoom aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestLights1")]
-        static extern void DvProviderZappOrgTestLights1EnableActionGetName(uint aHandle, CallbackGetName aCallback, IntPtr aPtr);
+        static extern void DvProviderZappOrgTestLights1EnableActionGetName(IntPtr aHandle, CallbackGetName aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestLights1")]
-        static extern void DvProviderZappOrgTestLights1EnableActionGetPosition(uint aHandle, CallbackGetPosition aCallback, IntPtr aPtr);
+        static extern void DvProviderZappOrgTestLights1EnableActionGetPosition(IntPtr aHandle, CallbackGetPosition aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestLights1")]
-        static extern void DvProviderZappOrgTestLights1EnableActionSetColor(uint aHandle, CallbackSetColor aCallback, IntPtr aPtr);
+        static extern void DvProviderZappOrgTestLights1EnableActionSetColor(IntPtr aHandle, CallbackSetColor aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestLights1")]
-        static extern void DvProviderZappOrgTestLights1EnableActionGetColor(uint aHandle, CallbackGetColor aCallback, IntPtr aPtr);
+        static extern void DvProviderZappOrgTestLights1EnableActionGetColor(IntPtr aHandle, CallbackGetColor aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestLights1")]
-        static extern void DvProviderZappOrgTestLights1EnableActionGetColorComponents(uint aHandle, CallbackGetColorComponents aCallback, IntPtr aPtr);
+        static extern void DvProviderZappOrgTestLights1EnableActionGetColorComponents(IntPtr aHandle, CallbackGetColorComponents aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -349,15 +349,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvProviderZappOrgTestLights1Destroy(handle);
             if (iGch.IsAllocated)

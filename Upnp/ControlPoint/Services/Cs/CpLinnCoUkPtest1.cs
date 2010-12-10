@@ -9,13 +9,13 @@ namespace Zapp.ControlPoint.Proxies
     {
         void SyncTestComPort(uint aaPort, out bool aaResult);
         void BeginTestComPort(uint aaPort, CpProxy.CallbackAsyncComplete aCallback);
-        void EndTestComPort(uint aAsyncHandle, out bool aaResult);
+        void EndTestComPort(IntPtr aAsyncHandle, out bool aaResult);
         void SyncLedsOn();
         void BeginLedsOn(CpProxy.CallbackAsyncComplete aCallback);
-        void EndLedsOn(uint aAsyncHandle);
+        void EndLedsOn(IntPtr aAsyncHandle);
         void SyncLedsOff();
         void BeginLedsOff(CpProxy.CallbackAsyncComplete aCallback);
-        void EndLedsOff(uint aAsyncHandle);
+        void EndLedsOff(IntPtr aAsyncHandle);
 
     }
 
@@ -25,27 +25,27 @@ namespace Zapp.ControlPoint.Proxies
     public class CpProxyLinnCoUkPtest1 : CpProxy, IDisposable, ICpProxyLinnCoUkPtest1
     {
         [DllImport("CpLinnCoUkPtest1")]
-        static extern uint CpProxyLinnCoUkPtest1Create(uint aDeviceHandle);
+        static extern IntPtr CpProxyLinnCoUkPtest1Create(IntPtr aDeviceHandle);
         [DllImport("CpLinnCoUkPtest1")]
-        static extern void CpProxyLinnCoUkPtest1Destroy(uint aHandle);
+        static extern void CpProxyLinnCoUkPtest1Destroy(IntPtr aHandle);
         [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe void CpProxyLinnCoUkPtest1SyncTestComPort(uint aHandle, uint aaPort, uint* aaResult);
+        static extern unsafe void CpProxyLinnCoUkPtest1SyncTestComPort(IntPtr aHandle, uint aaPort, uint* aaResult);
         [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe void CpProxyLinnCoUkPtest1BeginTestComPort(uint aHandle, uint aaPort, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPtest1BeginTestComPort(IntPtr aHandle, uint aaPort, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe int CpProxyLinnCoUkPtest1EndTestComPort(uint aHandle, uint aAsync, uint* aaResult);
+        static extern unsafe int CpProxyLinnCoUkPtest1EndTestComPort(IntPtr aHandle, IntPtr aAsync, uint* aaResult);
         [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe void CpProxyLinnCoUkPtest1SyncLedsOn(uint aHandle);
+        static extern unsafe void CpProxyLinnCoUkPtest1SyncLedsOn(IntPtr aHandle);
         [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe void CpProxyLinnCoUkPtest1BeginLedsOn(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPtest1BeginLedsOn(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe int CpProxyLinnCoUkPtest1EndLedsOn(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkPtest1EndLedsOn(IntPtr aHandle, IntPtr aAsync);
         [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe void CpProxyLinnCoUkPtest1SyncLedsOff(uint aHandle);
+        static extern unsafe void CpProxyLinnCoUkPtest1SyncLedsOff(IntPtr aHandle);
         [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe void CpProxyLinnCoUkPtest1BeginLedsOff(uint aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
+        static extern unsafe void CpProxyLinnCoUkPtest1BeginLedsOff(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
         [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe int CpProxyLinnCoUkPtest1EndLedsOff(uint aHandle, uint aAsync);
+        static extern unsafe int CpProxyLinnCoUkPtest1EndLedsOff(IntPtr aHandle, IntPtr aAsync);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -100,7 +100,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaResult"></param>
-        public unsafe void EndTestComPort(uint aAsyncHandle, out bool aaResult)
+        public unsafe void EndTestComPort(IntPtr aAsyncHandle, out bool aaResult)
         {
             uint aResult;
             {
@@ -144,7 +144,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndLedsOn(uint aAsyncHandle)
+        public unsafe void EndLedsOn(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkPtest1EndLedsOn(iHandle, aAsyncHandle))
@@ -186,7 +186,7 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndLedsOff(uint aAsyncHandle)
+        public unsafe void EndLedsOff(IntPtr aAsyncHandle)
         {
             {
                 if (0 != CpProxyLinnCoUkPtest1EndLedsOff(iHandle, aAsyncHandle))
@@ -213,12 +213,12 @@ namespace Zapp.ControlPoint.Proxies
         {
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 CpProxyLinnCoUkPtest1Destroy(iHandle);
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             iGch.Free();
             if (aDisposing)

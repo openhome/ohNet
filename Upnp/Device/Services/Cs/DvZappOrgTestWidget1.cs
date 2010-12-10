@@ -119,45 +119,45 @@ namespace Zapp.Device.Providers
     public class DvProviderZappOrgTestWidget1 : DvProvider, IDisposable, IDvProviderZappOrgTestWidget1
     {
         [DllImport("DvZappOrgTestWidget1")]
-        static extern uint DvProviderZappOrgTestWidget1Create(uint aDeviceHandle);
+        static extern IntPtr DvProviderZappOrgTestWidget1Create(IntPtr aDeviceHandle);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern void DvProviderZappOrgTestWidget1Destroy(uint aHandle);
+        static extern void DvProviderZappOrgTestWidget1Destroy(IntPtr aHandle);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe int DvProviderZappOrgTestWidget1SetPropertyReadWriteRegister0(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderZappOrgTestWidget1SetPropertyReadWriteRegister0(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe void DvProviderZappOrgTestWidget1GetPropertyReadWriteRegister0(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderZappOrgTestWidget1GetPropertyReadWriteRegister0(IntPtr aHandle, uint* aValue);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe int DvProviderZappOrgTestWidget1SetPropertyReadWriteRegister1(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderZappOrgTestWidget1SetPropertyReadWriteRegister1(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe void DvProviderZappOrgTestWidget1GetPropertyReadWriteRegister1(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderZappOrgTestWidget1GetPropertyReadWriteRegister1(IntPtr aHandle, uint* aValue);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe int DvProviderZappOrgTestWidget1SetPropertyReadWriteRegister2(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderZappOrgTestWidget1SetPropertyReadWriteRegister2(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe void DvProviderZappOrgTestWidget1GetPropertyReadWriteRegister2(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderZappOrgTestWidget1GetPropertyReadWriteRegister2(IntPtr aHandle, uint* aValue);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe int DvProviderZappOrgTestWidget1SetPropertyReadWriteRegister3(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderZappOrgTestWidget1SetPropertyReadWriteRegister3(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe void DvProviderZappOrgTestWidget1GetPropertyReadWriteRegister3(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderZappOrgTestWidget1GetPropertyReadWriteRegister3(IntPtr aHandle, uint* aValue);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe int DvProviderZappOrgTestWidget1SetPropertyReadOnlyRegister4(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderZappOrgTestWidget1SetPropertyReadOnlyRegister4(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe void DvProviderZappOrgTestWidget1GetPropertyReadOnlyRegister4(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderZappOrgTestWidget1GetPropertyReadOnlyRegister4(IntPtr aHandle, uint* aValue);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe int DvProviderZappOrgTestWidget1SetPropertyReadOnlyRegister5(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderZappOrgTestWidget1SetPropertyReadOnlyRegister5(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe void DvProviderZappOrgTestWidget1GetPropertyReadOnlyRegister5(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderZappOrgTestWidget1GetPropertyReadOnlyRegister5(IntPtr aHandle, uint* aValue);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe int DvProviderZappOrgTestWidget1SetPropertyReadOnlyRegister6(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderZappOrgTestWidget1SetPropertyReadOnlyRegister6(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe void DvProviderZappOrgTestWidget1GetPropertyReadOnlyRegister6(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderZappOrgTestWidget1GetPropertyReadOnlyRegister6(IntPtr aHandle, uint* aValue);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe int DvProviderZappOrgTestWidget1SetPropertyReadOnlyRegister7(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderZappOrgTestWidget1SetPropertyReadOnlyRegister7(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern unsafe void DvProviderZappOrgTestWidget1GetPropertyReadOnlyRegister7(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderZappOrgTestWidget1GetPropertyReadOnlyRegister7(IntPtr aHandle, uint* aValue);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern void DvProviderZappOrgTestWidget1EnableActionSetReadWriteRegister(uint aHandle, CallbackSetReadWriteRegister aCallback, IntPtr aPtr);
+        static extern void DvProviderZappOrgTestWidget1EnableActionSetReadWriteRegister(IntPtr aHandle, CallbackSetReadWriteRegister aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestWidget1")]
-        static extern void DvProviderZappOrgTestWidget1EnableActionGetWidgetClass(uint aHandle, CallbackGetWidgetClass aCallback, IntPtr aPtr);
+        static extern void DvProviderZappOrgTestWidget1EnableActionGetWidgetClass(IntPtr aHandle, CallbackGetWidgetClass aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -481,15 +481,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvProviderZappOrgTestWidget1Destroy(handle);
             if (iGch.IsAllocated)

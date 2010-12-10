@@ -54,37 +54,37 @@ namespace Zapp.Device.Providers
     public class DvProviderLinnCoUkJukebox1 : DvProvider, IDisposable, IDvProviderLinnCoUkJukebox1
     {
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern uint DvProviderLinnCoUkJukebox1Create(uint aDeviceHandle);
+        static extern IntPtr DvProviderLinnCoUkJukebox1Create(IntPtr aDeviceHandle);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern void DvProviderLinnCoUkJukebox1Destroy(uint aHandle);
+        static extern void DvProviderLinnCoUkJukebox1Destroy(IntPtr aHandle);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern unsafe int DvProviderLinnCoUkJukebox1SetPropertyCurrentPreset(uint aHandle, uint aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkJukebox1SetPropertyCurrentPreset(IntPtr aHandle, uint aValue, uint* aChanged);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern unsafe void DvProviderLinnCoUkJukebox1GetPropertyCurrentPreset(uint aHandle, uint* aValue);
+        static extern unsafe void DvProviderLinnCoUkJukebox1GetPropertyCurrentPreset(IntPtr aHandle, uint* aValue);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern unsafe int DvProviderLinnCoUkJukebox1SetPropertyPresetPrefix(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkJukebox1SetPropertyPresetPrefix(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern unsafe void DvProviderLinnCoUkJukebox1GetPropertyPresetPrefix(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkJukebox1GetPropertyPresetPrefix(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern unsafe int DvProviderLinnCoUkJukebox1SetPropertyAlbumArtFileName(uint aHandle, char* aValue, uint* aChanged);
+        static extern unsafe int DvProviderLinnCoUkJukebox1SetPropertyAlbumArtFileName(IntPtr aHandle, char* aValue, uint* aChanged);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern unsafe void DvProviderLinnCoUkJukebox1GetPropertyAlbumArtFileName(uint aHandle, char** aValue);
+        static extern unsafe void DvProviderLinnCoUkJukebox1GetPropertyAlbumArtFileName(IntPtr aHandle, char** aValue);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern void DvProviderLinnCoUkJukebox1EnableActionSetPresetPrefix(uint aHandle, CallbackSetPresetPrefix aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkJukebox1EnableActionSetPresetPrefix(IntPtr aHandle, CallbackSetPresetPrefix aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern void DvProviderLinnCoUkJukebox1EnableActionPresetPrefix(uint aHandle, CallbackPresetPrefix aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkJukebox1EnableActionPresetPrefix(IntPtr aHandle, CallbackPresetPrefix aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern void DvProviderLinnCoUkJukebox1EnableActionSetAlbumArtFileName(uint aHandle, CallbackSetAlbumArtFileName aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkJukebox1EnableActionSetAlbumArtFileName(IntPtr aHandle, CallbackSetAlbumArtFileName aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern void DvProviderLinnCoUkJukebox1EnableActionAlbumArtFileName(uint aHandle, CallbackAlbumArtFileName aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkJukebox1EnableActionAlbumArtFileName(IntPtr aHandle, CallbackAlbumArtFileName aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern void DvProviderLinnCoUkJukebox1EnableActionSetCurrentPreset(uint aHandle, CallbackSetCurrentPreset aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkJukebox1EnableActionSetCurrentPreset(IntPtr aHandle, CallbackSetCurrentPreset aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern void DvProviderLinnCoUkJukebox1EnableActionCurrentPreset(uint aHandle, CallbackCurrentPreset aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkJukebox1EnableActionCurrentPreset(IntPtr aHandle, CallbackCurrentPreset aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern void DvProviderLinnCoUkJukebox1EnableActionPresetMetaData(uint aHandle, CallbackPresetMetaData aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkJukebox1EnableActionPresetMetaData(IntPtr aHandle, CallbackPresetMetaData aCallback, IntPtr aPtr);
         [DllImport("DvLinnCoUkJukebox1")]
-        static extern void DvProviderLinnCoUkJukebox1EnableActionLoadManifest(uint aHandle, CallbackLoadManifest aCallback, IntPtr aPtr);
+        static extern void DvProviderLinnCoUkJukebox1EnableActionLoadManifest(IntPtr aHandle, CallbackLoadManifest aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -505,15 +505,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvProviderLinnCoUkJukebox1Destroy(handle);
             if (iGch.IsAllocated)

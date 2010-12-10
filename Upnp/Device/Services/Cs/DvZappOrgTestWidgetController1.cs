@@ -15,17 +15,17 @@ namespace Zapp.Device.Providers
     public class DvProviderZappOrgTestWidgetController1 : DvProvider, IDisposable, IDvProviderZappOrgTestWidgetController1
     {
         [DllImport("DvZappOrgTestWidgetController1")]
-        static extern uint DvProviderZappOrgTestWidgetController1Create(uint aDeviceHandle);
+        static extern IntPtr DvProviderZappOrgTestWidgetController1Create(IntPtr aDeviceHandle);
         [DllImport("DvZappOrgTestWidgetController1")]
-        static extern void DvProviderZappOrgTestWidgetController1Destroy(uint aHandle);
+        static extern void DvProviderZappOrgTestWidgetController1Destroy(IntPtr aHandle);
         [DllImport("DvZappOrgTestWidgetController1")]
-        static extern void DvProviderZappOrgTestWidgetController1EnableActionCreateWidget(uint aHandle, CallbackCreateWidget aCallback, IntPtr aPtr);
+        static extern void DvProviderZappOrgTestWidgetController1EnableActionCreateWidget(IntPtr aHandle, CallbackCreateWidget aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestWidgetController1")]
-        static extern void DvProviderZappOrgTestWidgetController1EnableActionRemoveWidget(uint aHandle, CallbackRemoveWidget aCallback, IntPtr aPtr);
+        static extern void DvProviderZappOrgTestWidgetController1EnableActionRemoveWidget(IntPtr aHandle, CallbackRemoveWidget aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestWidgetController1")]
-        static extern void DvProviderZappOrgTestWidgetController1EnableActionSetWidgetRegister(uint aHandle, CallbackSetWidgetRegister aCallback, IntPtr aPtr);
+        static extern void DvProviderZappOrgTestWidgetController1EnableActionSetWidgetRegister(IntPtr aHandle, CallbackSetWidgetRegister aCallback, IntPtr aPtr);
         [DllImport("DvZappOrgTestWidgetController1")]
-        static extern void DvProviderZappOrgTestWidgetController1EnableActionGetWidgetRegister(uint aHandle, CallbackGetWidgetRegister aCallback, IntPtr aPtr);
+        static extern void DvProviderZappOrgTestWidgetController1EnableActionGetWidgetRegister(IntPtr aHandle, CallbackGetWidgetRegister aCallback, IntPtr aPtr);
         [DllImport("ZappUpnp")]
         static extern unsafe void ZappFree(void* aPtr);
 
@@ -213,15 +213,15 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            uint handle;
+            IntPtr handle;
             lock (this)
             {
-                if (iHandle == 0)
+                if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
                 handle = iHandle;
-                iHandle = 0;
+                iHandle = IntPtr.Zero;
             }
             DvProviderZappOrgTestWidgetController1Destroy(handle);
             if (iGch.IsAllocated)
