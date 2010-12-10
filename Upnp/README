@@ -19,14 +19,21 @@ Building
 --------
 
 On windows, in the UPnP directory, run:
-	make generate-makefiles
-	make
+	make generate-makefiles uset4=yes
+	make uset4=yes
 The first step is only required if the service XML or the associated templates have
 been altered. If you have a clean distribution or you have never touched these files,
 there's no need to run it, but it should not hurt.
 
 On Linux, in the UPnP directory, run:
+	make uset4=yes
+
+Any time make builds the T4 template compiler it will conservatively consider all the
+template-generated files to be out of date and rebuild them. This can be very time-
+consuming and is generally unnecessary. To avoid rebuilding these files, just run:
 	make
+
+Without the "uset4=yes" setting, it will skip out the template generation.
 
 Installing
 ----------
