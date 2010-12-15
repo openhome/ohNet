@@ -145,15 +145,15 @@ void DeviceList::PollSubscribe()
         TUint countBefore = gSubscriptionCount;
         Print("Device %s", CpDeviceCUdn(device));
         THandle connMgr = CpProxyUpnpOrgConnectionManager1Create(device);
-        CpProxyCSetPropertyChanged(connMgr, initialNotificationComplete, &sem);
+        CpProxySetPropertyChanged(connMgr, initialNotificationComplete, &sem);
         TUint startTime = Os::TimeInMs();
         while(true) {
-            CpProxyCSubscribe(connMgr);
+            CpProxySubscribe(connMgr);
             try {
                 sem.Wait(kDevicePollMs);
             }
             catch(Timeout&) {}
-            CpProxyCUnsubscribe(connMgr);
+            CpProxyUnsubscribe(connMgr);
             if (Os::TimeInMs() - startTime > kDevicePollMs) {
                 break;
             }

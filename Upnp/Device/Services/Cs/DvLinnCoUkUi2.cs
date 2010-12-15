@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -19,7 +20,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the DisplayBrightness property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyDisplayBrightness(out uint aValue);
+        uint PropertyDisplayBrightness();
 
         /// <summary>
         /// Set the value of the DisplayBrightnessAuto property
@@ -32,7 +33,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the DisplayBrightnessAuto property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyDisplayBrightnessAuto(out bool aValue);
+        bool PropertyDisplayBrightnessAuto();
 
         /// <summary>
         /// Set the value of the InfraredCommands property
@@ -45,7 +46,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the InfraredCommands property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyInfraredCommands(out string aValue);
+        string PropertyInfraredCommands();
 
         /// <summary>
         /// Set the value of the InfraredTerminalCommands property
@@ -58,7 +59,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the InfraredTerminalCommands property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyInfraredTerminalCommands(out string aValue);
+        string PropertyInfraredTerminalCommands();
 
         /// <summary>
         /// Set the value of the DisplayUpsideDown property
@@ -71,7 +72,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the DisplayUpsideDown property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyDisplayUpsideDown(out bool aValue);
+        bool PropertyDisplayUpsideDown();
 
         /// <summary>
         /// Set the value of the DisplayScrollText property
@@ -84,7 +85,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the DisplayScrollText property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyDisplayScrollText(out bool aValue);
+        bool PropertyDisplayScrollText();
 
         /// <summary>
         /// Set the value of the DisplaySleep property
@@ -97,7 +98,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the DisplaySleep property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyDisplaySleep(out bool aValue);
+        bool PropertyDisplaySleep();
 
         /// <summary>
         /// Set the value of the DisplayLedOff property
@@ -110,7 +111,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the DisplayLedOff property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyDisplayLedOff(out bool aValue);
+        bool PropertyDisplayLedOff();
 
         /// <summary>
         /// Set the value of the TerminalInputCode property
@@ -123,7 +124,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the TerminalInputCode property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyTerminalInputCode(out uint aValue);
+        uint PropertyTerminalInputCode();
 
         /// <summary>
         /// Set the value of the TerminalInputName property
@@ -136,7 +137,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the TerminalInputName property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyTerminalInputName(out string aValue);
+        string PropertyTerminalInputName();
 
         /// <summary>
         /// Set the value of the DisplayPixels property
@@ -149,7 +150,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the DisplayPixels property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyDisplayPixels(out string aValue);
+        string PropertyDisplayPixels();
         
     }
     /// <summary>
@@ -157,164 +158,84 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class DvProviderLinnCoUkUi2 : DvProvider, IDisposable, IDvProviderLinnCoUkUi2
     {
-        [DllImport("DvLinnCoUkUi2")]
-        static extern IntPtr DvProviderLinnCoUkUi2Create(IntPtr aDeviceHandle);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2Destroy(IntPtr aHandle);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyDisplayBrightness(IntPtr aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyDisplayBrightness(IntPtr aHandle, uint* aValue);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyDisplayBrightnessAuto(IntPtr aHandle, int aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyDisplayBrightnessAuto(IntPtr aHandle, int* aValue);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyInfraredCommands(IntPtr aHandle, char* aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyInfraredCommands(IntPtr aHandle, char** aValue);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyInfraredTerminalCommands(IntPtr aHandle, char* aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyInfraredTerminalCommands(IntPtr aHandle, char** aValue);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyDisplayUpsideDown(IntPtr aHandle, int aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyDisplayUpsideDown(IntPtr aHandle, int* aValue);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyDisplayScrollText(IntPtr aHandle, int aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyDisplayScrollText(IntPtr aHandle, int* aValue);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyDisplaySleep(IntPtr aHandle, int aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyDisplaySleep(IntPtr aHandle, int* aValue);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyDisplayLedOff(IntPtr aHandle, int aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyDisplayLedOff(IntPtr aHandle, int* aValue);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyTerminalInputCode(IntPtr aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyTerminalInputCode(IntPtr aHandle, uint* aValue);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyTerminalInputName(IntPtr aHandle, char* aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyTerminalInputName(IntPtr aHandle, char** aValue);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe int DvProviderLinnCoUkUi2SetPropertyDisplayPixels(IntPtr aHandle, char* aValue, int aValueLen, uint* aChanged);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern unsafe void DvProviderLinnCoUkUi2GetPropertyDisplayPixels(IntPtr aHandle, char** aValue, int* aValueLen);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionDisplayTestPattern(IntPtr aHandle, CallbackDisplayTestPattern aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionDisplayFill(IntPtr aHandle, CallbackDisplayFill aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionDisplayClear(IntPtr aHandle, CallbackDisplayClear aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSetTestModeEnabled(IntPtr aHandle, CallbackSetTestModeEnabled aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSimulateInfraredInput(IntPtr aHandle, CallbackSimulateInfraredInput aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSimulateButtonInput(IntPtr aHandle, CallbackSimulateButtonInput aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSimulateLightSensor(IntPtr aHandle, CallbackSimulateLightSensor aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionGetLightSensorData(IntPtr aHandle, CallbackGetLightSensorData aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSetDisplayBrightness(IntPtr aHandle, CallbackSetDisplayBrightness aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSetDisplayBrightnessAuto(IntPtr aHandle, CallbackSetDisplayBrightnessAuto aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSetInfraredCommands(IntPtr aHandle, CallbackSetInfraredCommands aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionInfraredCommands(IntPtr aHandle, CallbackInfraredCommands aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSetInfraredTerminalCommands(IntPtr aHandle, CallbackSetInfraredTerminalCommands aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionInfraredTerminalCommands(IntPtr aHandle, CallbackInfraredTerminalCommands aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionDisplayBrightness(IntPtr aHandle, CallbackDisplayBrightness aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionDisplayBrightnessAuto(IntPtr aHandle, CallbackDisplayBrightnessAuto aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionDisplayUpsideDown(IntPtr aHandle, CallbackDisplayUpsideDown aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSetDisplayUpsideDown(IntPtr aHandle, CallbackSetDisplayUpsideDown aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSetDisplayScrollText(IntPtr aHandle, CallbackSetDisplayScrollText aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionDisplayScrollText(IntPtr aHandle, CallbackDisplayScrollText aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSetDisplaySleep(IntPtr aHandle, CallbackSetDisplaySleep aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionDisplaySleep(IntPtr aHandle, CallbackDisplaySleep aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionSetDisplayLedOff(IntPtr aHandle, CallbackSetDisplayLedOff aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkUi2")]
-        static extern void DvProviderLinnCoUkUi2EnableActionDisplayLedOff(IntPtr aHandle, CallbackDisplayLedOff aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private unsafe delegate int CallbackDisplayTestPattern(IntPtr aPtr, uint aVersion, int aaTestPattern);
-        private unsafe delegate int CallbackDisplayFill(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackDisplayClear(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackSetTestModeEnabled(IntPtr aPtr, uint aVersion, int aaEnabled);
-        private unsafe delegate int CallbackSimulateInfraredInput(IntPtr aPtr, uint aVersion, uint aaCode);
-        private unsafe delegate int CallbackSimulateButtonInput(IntPtr aPtr, uint aVersion, uint aaCode);
-        private unsafe delegate int CallbackSimulateLightSensor(IntPtr aPtr, uint aVersion, uint aaLightLevel);
-        private unsafe delegate int CallbackGetLightSensorData(IntPtr aPtr, uint aVersion, uint* aaLightLevel);
-        private unsafe delegate int CallbackSetDisplayBrightness(IntPtr aPtr, uint aVersion, uint aaBrightness);
-        private unsafe delegate int CallbackSetDisplayBrightnessAuto(IntPtr aPtr, uint aVersion, int aaBrightnessAuto);
-        private unsafe delegate int CallbackSetInfraredCommands(IntPtr aPtr, uint aVersion, char* aaCommands);
-        private unsafe delegate int CallbackInfraredCommands(IntPtr aPtr, uint aVersion, char** aaCommands);
-        private unsafe delegate int CallbackSetInfraredTerminalCommands(IntPtr aPtr, uint aVersion, char* aaCommands);
-        private unsafe delegate int CallbackInfraredTerminalCommands(IntPtr aPtr, uint aVersion, char** aaCommands);
-        private unsafe delegate int CallbackDisplayBrightness(IntPtr aPtr, uint aVersion, uint* aaBrightness);
-        private unsafe delegate int CallbackDisplayBrightnessAuto(IntPtr aPtr, uint aVersion, int* aaBrightnessAuto);
-        private unsafe delegate int CallbackDisplayUpsideDown(IntPtr aPtr, uint aVersion, int* aaUpsideDown);
-        private unsafe delegate int CallbackSetDisplayUpsideDown(IntPtr aPtr, uint aVersion, int aaUpsideDown);
-        private unsafe delegate int CallbackSetDisplayScrollText(IntPtr aPtr, uint aVersion, int aaDisplayScrollText);
-        private unsafe delegate int CallbackDisplayScrollText(IntPtr aPtr, uint aVersion, int* aaDisplayScrollTextEnabled);
-        private unsafe delegate int CallbackSetDisplaySleep(IntPtr aPtr, uint aVersion, int aaEnabled);
-        private unsafe delegate int CallbackDisplaySleep(IntPtr aPtr, uint aVersion, int* aaEnabled);
-        private unsafe delegate int CallbackSetDisplayLedOff(IntPtr aPtr, uint aVersion, int aaOff);
-        private unsafe delegate int CallbackDisplayLedOff(IntPtr aPtr, uint aVersion, int* aaOff);
-
         private GCHandle iGch;
-        private CallbackDisplayTestPattern iCallbackDisplayTestPattern;
-        private CallbackDisplayFill iCallbackDisplayFill;
-        private CallbackDisplayClear iCallbackDisplayClear;
-        private CallbackSetTestModeEnabled iCallbackSetTestModeEnabled;
-        private CallbackSimulateInfraredInput iCallbackSimulateInfraredInput;
-        private CallbackSimulateButtonInput iCallbackSimulateButtonInput;
-        private CallbackSimulateLightSensor iCallbackSimulateLightSensor;
-        private CallbackGetLightSensorData iCallbackGetLightSensorData;
-        private CallbackSetDisplayBrightness iCallbackSetDisplayBrightness;
-        private CallbackSetDisplayBrightnessAuto iCallbackSetDisplayBrightnessAuto;
-        private CallbackSetInfraredCommands iCallbackSetInfraredCommands;
-        private CallbackInfraredCommands iCallbackInfraredCommands;
-        private CallbackSetInfraredTerminalCommands iCallbackSetInfraredTerminalCommands;
-        private CallbackInfraredTerminalCommands iCallbackInfraredTerminalCommands;
-        private CallbackDisplayBrightness iCallbackDisplayBrightness;
-        private CallbackDisplayBrightnessAuto iCallbackDisplayBrightnessAuto;
-        private CallbackDisplayUpsideDown iCallbackDisplayUpsideDown;
-        private CallbackSetDisplayUpsideDown iCallbackSetDisplayUpsideDown;
-        private CallbackSetDisplayScrollText iCallbackSetDisplayScrollText;
-        private CallbackDisplayScrollText iCallbackDisplayScrollText;
-        private CallbackSetDisplaySleep iCallbackSetDisplaySleep;
-        private CallbackDisplaySleep iCallbackDisplaySleep;
-        private CallbackSetDisplayLedOff iCallbackSetDisplayLedOff;
-        private CallbackDisplayLedOff iCallbackDisplayLedOff;
+        private ActionDelegate iDelegateDisplayTestPattern;
+        private ActionDelegate iDelegateDisplayFill;
+        private ActionDelegate iDelegateDisplayClear;
+        private ActionDelegate iDelegateSetTestModeEnabled;
+        private ActionDelegate iDelegateSimulateInfraredInput;
+        private ActionDelegate iDelegateSimulateButtonInput;
+        private ActionDelegate iDelegateSimulateLightSensor;
+        private ActionDelegate iDelegateGetLightSensorData;
+        private ActionDelegate iDelegateSetDisplayBrightness;
+        private ActionDelegate iDelegateSetDisplayBrightnessAuto;
+        private ActionDelegate iDelegateSetInfraredCommands;
+        private ActionDelegate iDelegateInfraredCommands;
+        private ActionDelegate iDelegateSetInfraredTerminalCommands;
+        private ActionDelegate iDelegateInfraredTerminalCommands;
+        private ActionDelegate iDelegateDisplayBrightness;
+        private ActionDelegate iDelegateDisplayBrightnessAuto;
+        private ActionDelegate iDelegateDisplayUpsideDown;
+        private ActionDelegate iDelegateSetDisplayUpsideDown;
+        private ActionDelegate iDelegateSetDisplayScrollText;
+        private ActionDelegate iDelegateDisplayScrollText;
+        private ActionDelegate iDelegateSetDisplaySleep;
+        private ActionDelegate iDelegateDisplaySleep;
+        private ActionDelegate iDelegateSetDisplayLedOff;
+        private ActionDelegate iDelegateDisplayLedOff;
+        private PropertyUint iPropertyDisplayBrightness;
+        private PropertyBool iPropertyDisplayBrightnessAuto;
+        private PropertyString iPropertyInfraredCommands;
+        private PropertyString iPropertyInfraredTerminalCommands;
+        private PropertyBool iPropertyDisplayUpsideDown;
+        private PropertyBool iPropertyDisplayScrollText;
+        private PropertyBool iPropertyDisplaySleep;
+        private PropertyBool iPropertyDisplayLedOff;
+        private PropertyUint iPropertyTerminalInputCode;
+        private PropertyString iPropertyTerminalInputName;
+        private PropertyBinary iPropertyDisplayPixels;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderLinnCoUkUi2(DvDevice aDevice)
+            : base(aDevice, "linn-co-uk", "Ui", 2)
         {
-            iHandle = DvProviderLinnCoUkUi2Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
+            List<String> allowedValues = new List<String>();
+            iPropertyDisplayBrightness = new PropertyUint(new ParameterUint("DisplayBrightness"));
+            AddProperty(iPropertyDisplayBrightness);
+            iPropertyDisplayBrightnessAuto = new PropertyBool(new ParameterBool("DisplayBrightnessAuto"));
+            AddProperty(iPropertyDisplayBrightnessAuto);
+            allowedValues.Add("None");
+            allowedValues.Add("All");
+            allowedValues.Add("Cd");
+            allowedValues.Add("Dvd");
+            iPropertyInfraredCommands = new PropertyString(new ParameterString("InfraredCommands", allowedValues));
+            AddProperty(iPropertyInfraredCommands);
+            allowedValues.Clear();
+            allowedValues.Add("None");
+            allowedValues.Add("All");
+            allowedValues.Add("Cd");
+            allowedValues.Add("Dvd");
+            iPropertyInfraredTerminalCommands = new PropertyString(new ParameterString("InfraredTerminalCommands", allowedValues));
+            AddProperty(iPropertyInfraredTerminalCommands);
+            allowedValues.Clear();
+            iPropertyDisplayUpsideDown = new PropertyBool(new ParameterBool("DisplayUpsideDown"));
+            AddProperty(iPropertyDisplayUpsideDown);
+            iPropertyDisplayScrollText = new PropertyBool(new ParameterBool("DisplayScrollText"));
+            AddProperty(iPropertyDisplayScrollText);
+            iPropertyDisplaySleep = new PropertyBool(new ParameterBool("DisplaySleep"));
+            AddProperty(iPropertyDisplaySleep);
+            iPropertyDisplayLedOff = new PropertyBool(new ParameterBool("DisplayLedOff"));
+            AddProperty(iPropertyDisplayLedOff);
+            iPropertyTerminalInputCode = new PropertyUint(new ParameterUint("TerminalInputCode"));
+            AddProperty(iPropertyTerminalInputCode);
+            iPropertyTerminalInputName = new PropertyString(new ParameterString("TerminalInputName", allowedValues));
+            AddProperty(iPropertyTerminalInputName);
+            iPropertyDisplayPixels = new PropertyBinary(new ParameterBinary("DisplayPixels"));
+            AddProperty(iPropertyDisplayPixels);
         }
 
         /// <summary>
@@ -322,26 +243,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyDisplayBrightness(uint aValue)
+        public bool SetPropertyDisplayBrightness(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderLinnCoUkUi2SetPropertyDisplayBrightness(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyDisplayBrightness, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the DisplayBrightness property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyDisplayBrightness(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyDisplayBrightness()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderLinnCoUkUi2GetPropertyDisplayBrightness(iHandle, value);
-            }
+            return iPropertyDisplayBrightness.Value();
         }
 
         /// <summary>
@@ -349,26 +262,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyDisplayBrightnessAuto(bool aValue)
+        public bool SetPropertyDisplayBrightnessAuto(bool aValue)
         {
-            uint changed;
-            int value = (aValue ? 1 : 0);
-            if (0 != DvProviderLinnCoUkUi2SetPropertyDisplayBrightnessAuto(iHandle, value, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBool(iPropertyDisplayBrightnessAuto, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the DisplayBrightnessAuto property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyDisplayBrightnessAuto(out bool aValue)
+        /// <returns>The value of the property</returns>
+        public bool PropertyDisplayBrightnessAuto()
         {
-            int value;
-            DvProviderLinnCoUkUi2GetPropertyDisplayBrightnessAuto(iHandle, &value);
-            aValue = (value != 0);
+            return iPropertyDisplayBrightnessAuto.Value();
         }
 
         /// <summary>
@@ -376,29 +281,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyInfraredCommands(string aValue)
+        public bool SetPropertyInfraredCommands(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderLinnCoUkUi2SetPropertyInfraredCommands(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyString(iPropertyInfraredCommands, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the InfraredCommands property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyInfraredCommands(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyInfraredCommands()
         {
-            char* value;
-            DvProviderLinnCoUkUi2GetPropertyInfraredCommands(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
+            return iPropertyInfraredCommands.Value();
         }
 
         /// <summary>
@@ -406,29 +300,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyInfraredTerminalCommands(string aValue)
+        public bool SetPropertyInfraredTerminalCommands(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderLinnCoUkUi2SetPropertyInfraredTerminalCommands(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyString(iPropertyInfraredTerminalCommands, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the InfraredTerminalCommands property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyInfraredTerminalCommands(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyInfraredTerminalCommands()
         {
-            char* value;
-            DvProviderLinnCoUkUi2GetPropertyInfraredTerminalCommands(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
+            return iPropertyInfraredTerminalCommands.Value();
         }
 
         /// <summary>
@@ -436,26 +319,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyDisplayUpsideDown(bool aValue)
+        public bool SetPropertyDisplayUpsideDown(bool aValue)
         {
-            uint changed;
-            int value = (aValue ? 1 : 0);
-            if (0 != DvProviderLinnCoUkUi2SetPropertyDisplayUpsideDown(iHandle, value, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBool(iPropertyDisplayUpsideDown, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the DisplayUpsideDown property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyDisplayUpsideDown(out bool aValue)
+        /// <returns>The value of the property</returns>
+        public bool PropertyDisplayUpsideDown()
         {
-            int value;
-            DvProviderLinnCoUkUi2GetPropertyDisplayUpsideDown(iHandle, &value);
-            aValue = (value != 0);
+            return iPropertyDisplayUpsideDown.Value();
         }
 
         /// <summary>
@@ -463,26 +338,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyDisplayScrollText(bool aValue)
+        public bool SetPropertyDisplayScrollText(bool aValue)
         {
-            uint changed;
-            int value = (aValue ? 1 : 0);
-            if (0 != DvProviderLinnCoUkUi2SetPropertyDisplayScrollText(iHandle, value, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBool(iPropertyDisplayScrollText, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the DisplayScrollText property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyDisplayScrollText(out bool aValue)
+        /// <returns>The value of the property</returns>
+        public bool PropertyDisplayScrollText()
         {
-            int value;
-            DvProviderLinnCoUkUi2GetPropertyDisplayScrollText(iHandle, &value);
-            aValue = (value != 0);
+            return iPropertyDisplayScrollText.Value();
         }
 
         /// <summary>
@@ -490,26 +357,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyDisplaySleep(bool aValue)
+        public bool SetPropertyDisplaySleep(bool aValue)
         {
-            uint changed;
-            int value = (aValue ? 1 : 0);
-            if (0 != DvProviderLinnCoUkUi2SetPropertyDisplaySleep(iHandle, value, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBool(iPropertyDisplaySleep, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the DisplaySleep property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyDisplaySleep(out bool aValue)
+        /// <returns>The value of the property</returns>
+        public bool PropertyDisplaySleep()
         {
-            int value;
-            DvProviderLinnCoUkUi2GetPropertyDisplaySleep(iHandle, &value);
-            aValue = (value != 0);
+            return iPropertyDisplaySleep.Value();
         }
 
         /// <summary>
@@ -517,26 +376,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyDisplayLedOff(bool aValue)
+        public bool SetPropertyDisplayLedOff(bool aValue)
         {
-            uint changed;
-            int value = (aValue ? 1 : 0);
-            if (0 != DvProviderLinnCoUkUi2SetPropertyDisplayLedOff(iHandle, value, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBool(iPropertyDisplayLedOff, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the DisplayLedOff property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyDisplayLedOff(out bool aValue)
+        /// <returns>The value of the property</returns>
+        public bool PropertyDisplayLedOff()
         {
-            int value;
-            DvProviderLinnCoUkUi2GetPropertyDisplayLedOff(iHandle, &value);
-            aValue = (value != 0);
+            return iPropertyDisplayLedOff.Value();
         }
 
         /// <summary>
@@ -544,26 +395,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyTerminalInputCode(uint aValue)
+        public bool SetPropertyTerminalInputCode(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderLinnCoUkUi2SetPropertyTerminalInputCode(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyTerminalInputCode, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the TerminalInputCode property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyTerminalInputCode(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyTerminalInputCode()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderLinnCoUkUi2GetPropertyTerminalInputCode(iHandle, value);
-            }
+            return iPropertyTerminalInputCode.Value();
         }
 
         /// <summary>
@@ -571,29 +414,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyTerminalInputName(string aValue)
+        public bool SetPropertyTerminalInputName(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderLinnCoUkUi2SetPropertyTerminalInputName(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyString(iPropertyTerminalInputName, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the TerminalInputName property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyTerminalInputName(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyTerminalInputName()
         {
-            char* value;
-            DvProviderLinnCoUkUi2GetPropertyTerminalInputName(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
+            return iPropertyTerminalInputName.Value();
         }
 
         /// <summary>
@@ -601,31 +433,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyDisplayPixels(string aValue)
+        public bool SetPropertyDisplayPixels(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int valueLen = aValue.Length;
-            int err = DvProviderLinnCoUkUi2SetPropertyDisplayPixels(iHandle, value, valueLen, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBinary(iPropertyDisplayPixels, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the DisplayPixels property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyDisplayPixels(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyDisplayPixels()
         {
-            char* value;
-            int valueLen;
-             DvProviderLinnCoUkUi2GetPropertyDisplayPixels(iHandle, &value, &valueLen);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value, valueLen);
-            ZappFree(value);
+            return iPropertyDisplayPixels.Value();
         }
 
         /// <summary>
@@ -635,9 +454,10 @@ namespace Zapp.Device.Providers
         /// DoDisplayTestPattern must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisplayTestPattern()
         {
-            iCallbackDisplayTestPattern = new CallbackDisplayTestPattern(DoDisplayTestPattern);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionDisplayTestPattern(iHandle, iCallbackDisplayTestPattern, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DisplayTestPattern");
+            action.AddInputParameter(new ParameterInt("aTestPattern", 0, 6));
+            iDelegateDisplayTestPattern = new ActionDelegate(DoDisplayTestPattern);
+            EnableAction(action, iDelegateDisplayTestPattern, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -647,9 +467,9 @@ namespace Zapp.Device.Providers
         /// DoDisplayFill must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisplayFill()
         {
-            iCallbackDisplayFill = new CallbackDisplayFill(DoDisplayFill);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionDisplayFill(iHandle, iCallbackDisplayFill, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DisplayFill");
+            iDelegateDisplayFill = new ActionDelegate(DoDisplayFill);
+            EnableAction(action, iDelegateDisplayFill, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -659,9 +479,9 @@ namespace Zapp.Device.Providers
         /// DoDisplayClear must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisplayClear()
         {
-            iCallbackDisplayClear = new CallbackDisplayClear(DoDisplayClear);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionDisplayClear(iHandle, iCallbackDisplayClear, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DisplayClear");
+            iDelegateDisplayClear = new ActionDelegate(DoDisplayClear);
+            EnableAction(action, iDelegateDisplayClear, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -671,9 +491,10 @@ namespace Zapp.Device.Providers
         /// DoSetTestModeEnabled must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetTestModeEnabled()
         {
-            iCallbackSetTestModeEnabled = new CallbackSetTestModeEnabled(DoSetTestModeEnabled);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSetTestModeEnabled(iHandle, iCallbackSetTestModeEnabled, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetTestModeEnabled");
+            action.AddInputParameter(new ParameterBool("aEnabled"));
+            iDelegateSetTestModeEnabled = new ActionDelegate(DoSetTestModeEnabled);
+            EnableAction(action, iDelegateSetTestModeEnabled, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -683,9 +504,10 @@ namespace Zapp.Device.Providers
         /// DoSimulateInfraredInput must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSimulateInfraredInput()
         {
-            iCallbackSimulateInfraredInput = new CallbackSimulateInfraredInput(DoSimulateInfraredInput);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSimulateInfraredInput(iHandle, iCallbackSimulateInfraredInput, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SimulateInfraredInput");
+            action.AddInputParameter(new ParameterRelated("aCode", iPropertyTerminalInputCode));
+            iDelegateSimulateInfraredInput = new ActionDelegate(DoSimulateInfraredInput);
+            EnableAction(action, iDelegateSimulateInfraredInput, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -695,9 +517,10 @@ namespace Zapp.Device.Providers
         /// DoSimulateButtonInput must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSimulateButtonInput()
         {
-            iCallbackSimulateButtonInput = new CallbackSimulateButtonInput(DoSimulateButtonInput);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSimulateButtonInput(iHandle, iCallbackSimulateButtonInput, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SimulateButtonInput");
+            action.AddInputParameter(new ParameterRelated("aCode", iPropertyTerminalInputCode));
+            iDelegateSimulateButtonInput = new ActionDelegate(DoSimulateButtonInput);
+            EnableAction(action, iDelegateSimulateButtonInput, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -707,9 +530,10 @@ namespace Zapp.Device.Providers
         /// DoSimulateLightSensor must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSimulateLightSensor()
         {
-            iCallbackSimulateLightSensor = new CallbackSimulateLightSensor(DoSimulateLightSensor);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSimulateLightSensor(iHandle, iCallbackSimulateLightSensor, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SimulateLightSensor");
+            action.AddInputParameter(new ParameterUint("aLightLevel"));
+            iDelegateSimulateLightSensor = new ActionDelegate(DoSimulateLightSensor);
+            EnableAction(action, iDelegateSimulateLightSensor, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -719,9 +543,10 @@ namespace Zapp.Device.Providers
         /// DoGetLightSensorData must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetLightSensorData()
         {
-            iCallbackGetLightSensorData = new CallbackGetLightSensorData(DoGetLightSensorData);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionGetLightSensorData(iHandle, iCallbackGetLightSensorData, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetLightSensorData");
+            action.AddOutputParameter(new ParameterUint("aLightLevel"));
+            iDelegateGetLightSensorData = new ActionDelegate(DoGetLightSensorData);
+            EnableAction(action, iDelegateGetLightSensorData, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -731,9 +556,10 @@ namespace Zapp.Device.Providers
         /// DoSetDisplayBrightness must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetDisplayBrightness()
         {
-            iCallbackSetDisplayBrightness = new CallbackSetDisplayBrightness(DoSetDisplayBrightness);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSetDisplayBrightness(iHandle, iCallbackSetDisplayBrightness, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetDisplayBrightness");
+            action.AddInputParameter(new ParameterRelated("aBrightness", iPropertyDisplayBrightness));
+            iDelegateSetDisplayBrightness = new ActionDelegate(DoSetDisplayBrightness);
+            EnableAction(action, iDelegateSetDisplayBrightness, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -743,9 +569,10 @@ namespace Zapp.Device.Providers
         /// DoSetDisplayBrightnessAuto must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetDisplayBrightnessAuto()
         {
-            iCallbackSetDisplayBrightnessAuto = new CallbackSetDisplayBrightnessAuto(DoSetDisplayBrightnessAuto);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSetDisplayBrightnessAuto(iHandle, iCallbackSetDisplayBrightnessAuto, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetDisplayBrightnessAuto");
+            action.AddInputParameter(new ParameterRelated("aBrightnessAuto", iPropertyDisplayBrightnessAuto));
+            iDelegateSetDisplayBrightnessAuto = new ActionDelegate(DoSetDisplayBrightnessAuto);
+            EnableAction(action, iDelegateSetDisplayBrightnessAuto, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -755,9 +582,11 @@ namespace Zapp.Device.Providers
         /// DoSetInfraredCommands must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetInfraredCommands()
         {
-            iCallbackSetInfraredCommands = new CallbackSetInfraredCommands(DoSetInfraredCommands);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSetInfraredCommands(iHandle, iCallbackSetInfraredCommands, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetInfraredCommands");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterRelated("aCommands", iPropertyInfraredCommands));
+            iDelegateSetInfraredCommands = new ActionDelegate(DoSetInfraredCommands);
+            EnableAction(action, iDelegateSetInfraredCommands, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -767,9 +596,11 @@ namespace Zapp.Device.Providers
         /// DoInfraredCommands must be overridden if this is called.</remarks>
         protected unsafe void EnableActionInfraredCommands()
         {
-            iCallbackInfraredCommands = new CallbackInfraredCommands(DoInfraredCommands);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionInfraredCommands(iHandle, iCallbackInfraredCommands, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("InfraredCommands");
+            List<String> allowedValues = new List<String>();
+            action.AddOutputParameter(new ParameterRelated("aCommands", iPropertyInfraredCommands));
+            iDelegateInfraredCommands = new ActionDelegate(DoInfraredCommands);
+            EnableAction(action, iDelegateInfraredCommands, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -779,9 +610,11 @@ namespace Zapp.Device.Providers
         /// DoSetInfraredTerminalCommands must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetInfraredTerminalCommands()
         {
-            iCallbackSetInfraredTerminalCommands = new CallbackSetInfraredTerminalCommands(DoSetInfraredTerminalCommands);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSetInfraredTerminalCommands(iHandle, iCallbackSetInfraredTerminalCommands, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetInfraredTerminalCommands");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterRelated("aCommands", iPropertyInfraredTerminalCommands));
+            iDelegateSetInfraredTerminalCommands = new ActionDelegate(DoSetInfraredTerminalCommands);
+            EnableAction(action, iDelegateSetInfraredTerminalCommands, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -791,9 +624,11 @@ namespace Zapp.Device.Providers
         /// DoInfraredTerminalCommands must be overridden if this is called.</remarks>
         protected unsafe void EnableActionInfraredTerminalCommands()
         {
-            iCallbackInfraredTerminalCommands = new CallbackInfraredTerminalCommands(DoInfraredTerminalCommands);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionInfraredTerminalCommands(iHandle, iCallbackInfraredTerminalCommands, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("InfraredTerminalCommands");
+            List<String> allowedValues = new List<String>();
+            action.AddOutputParameter(new ParameterRelated("aCommands", iPropertyInfraredTerminalCommands));
+            iDelegateInfraredTerminalCommands = new ActionDelegate(DoInfraredTerminalCommands);
+            EnableAction(action, iDelegateInfraredTerminalCommands, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -803,9 +638,10 @@ namespace Zapp.Device.Providers
         /// DoDisplayBrightness must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisplayBrightness()
         {
-            iCallbackDisplayBrightness = new CallbackDisplayBrightness(DoDisplayBrightness);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionDisplayBrightness(iHandle, iCallbackDisplayBrightness, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DisplayBrightness");
+            action.AddOutputParameter(new ParameterRelated("aBrightness", iPropertyDisplayBrightness));
+            iDelegateDisplayBrightness = new ActionDelegate(DoDisplayBrightness);
+            EnableAction(action, iDelegateDisplayBrightness, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -815,9 +651,10 @@ namespace Zapp.Device.Providers
         /// DoDisplayBrightnessAuto must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisplayBrightnessAuto()
         {
-            iCallbackDisplayBrightnessAuto = new CallbackDisplayBrightnessAuto(DoDisplayBrightnessAuto);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionDisplayBrightnessAuto(iHandle, iCallbackDisplayBrightnessAuto, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DisplayBrightnessAuto");
+            action.AddOutputParameter(new ParameterRelated("aBrightnessAuto", iPropertyDisplayBrightnessAuto));
+            iDelegateDisplayBrightnessAuto = new ActionDelegate(DoDisplayBrightnessAuto);
+            EnableAction(action, iDelegateDisplayBrightnessAuto, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -827,9 +664,10 @@ namespace Zapp.Device.Providers
         /// DoDisplayUpsideDown must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisplayUpsideDown()
         {
-            iCallbackDisplayUpsideDown = new CallbackDisplayUpsideDown(DoDisplayUpsideDown);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionDisplayUpsideDown(iHandle, iCallbackDisplayUpsideDown, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DisplayUpsideDown");
+            action.AddOutputParameter(new ParameterRelated("aUpsideDown", iPropertyDisplayUpsideDown));
+            iDelegateDisplayUpsideDown = new ActionDelegate(DoDisplayUpsideDown);
+            EnableAction(action, iDelegateDisplayUpsideDown, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -839,9 +677,10 @@ namespace Zapp.Device.Providers
         /// DoSetDisplayUpsideDown must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetDisplayUpsideDown()
         {
-            iCallbackSetDisplayUpsideDown = new CallbackSetDisplayUpsideDown(DoSetDisplayUpsideDown);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSetDisplayUpsideDown(iHandle, iCallbackSetDisplayUpsideDown, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetDisplayUpsideDown");
+            action.AddInputParameter(new ParameterRelated("aUpsideDown", iPropertyDisplayUpsideDown));
+            iDelegateSetDisplayUpsideDown = new ActionDelegate(DoSetDisplayUpsideDown);
+            EnableAction(action, iDelegateSetDisplayUpsideDown, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -851,9 +690,10 @@ namespace Zapp.Device.Providers
         /// DoSetDisplayScrollText must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetDisplayScrollText()
         {
-            iCallbackSetDisplayScrollText = new CallbackSetDisplayScrollText(DoSetDisplayScrollText);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSetDisplayScrollText(iHandle, iCallbackSetDisplayScrollText, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetDisplayScrollText");
+            action.AddInputParameter(new ParameterRelated("aDisplayScrollText", iPropertyDisplayScrollText));
+            iDelegateSetDisplayScrollText = new ActionDelegate(DoSetDisplayScrollText);
+            EnableAction(action, iDelegateSetDisplayScrollText, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -863,9 +703,10 @@ namespace Zapp.Device.Providers
         /// DoDisplayScrollText must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisplayScrollText()
         {
-            iCallbackDisplayScrollText = new CallbackDisplayScrollText(DoDisplayScrollText);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionDisplayScrollText(iHandle, iCallbackDisplayScrollText, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DisplayScrollText");
+            action.AddOutputParameter(new ParameterRelated("aDisplayScrollTextEnabled", iPropertyDisplayScrollText));
+            iDelegateDisplayScrollText = new ActionDelegate(DoDisplayScrollText);
+            EnableAction(action, iDelegateDisplayScrollText, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -875,9 +716,10 @@ namespace Zapp.Device.Providers
         /// DoSetDisplaySleep must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetDisplaySleep()
         {
-            iCallbackSetDisplaySleep = new CallbackSetDisplaySleep(DoSetDisplaySleep);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSetDisplaySleep(iHandle, iCallbackSetDisplaySleep, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetDisplaySleep");
+            action.AddInputParameter(new ParameterRelated("aEnabled", iPropertyDisplaySleep));
+            iDelegateSetDisplaySleep = new ActionDelegate(DoSetDisplaySleep);
+            EnableAction(action, iDelegateSetDisplaySleep, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -887,9 +729,10 @@ namespace Zapp.Device.Providers
         /// DoDisplaySleep must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisplaySleep()
         {
-            iCallbackDisplaySleep = new CallbackDisplaySleep(DoDisplaySleep);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionDisplaySleep(iHandle, iCallbackDisplaySleep, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DisplaySleep");
+            action.AddOutputParameter(new ParameterRelated("aEnabled", iPropertyDisplaySleep));
+            iDelegateDisplaySleep = new ActionDelegate(DoDisplaySleep);
+            EnableAction(action, iDelegateDisplaySleep, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -899,9 +742,10 @@ namespace Zapp.Device.Providers
         /// DoSetDisplayLedOff must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetDisplayLedOff()
         {
-            iCallbackSetDisplayLedOff = new CallbackSetDisplayLedOff(DoSetDisplayLedOff);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionSetDisplayLedOff(iHandle, iCallbackSetDisplayLedOff, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetDisplayLedOff");
+            action.AddInputParameter(new ParameterRelated("aOff", iPropertyDisplayLedOff));
+            iDelegateSetDisplayLedOff = new ActionDelegate(DoSetDisplayLedOff);
+            EnableAction(action, iDelegateSetDisplayLedOff, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -911,9 +755,10 @@ namespace Zapp.Device.Providers
         /// DoDisplayLedOff must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisplayLedOff()
         {
-            iCallbackDisplayLedOff = new CallbackDisplayLedOff(DoDisplayLedOff);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkUi2EnableActionDisplayLedOff(iHandle, iCallbackDisplayLedOff, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DisplayLedOff");
+            action.AddOutputParameter(new ParameterRelated("aOff", iPropertyDisplayLedOff));
+            iDelegateDisplayLedOff = new ActionDelegate(DoDisplayLedOff);
+            EnableAction(action, iDelegateDisplayLedOff, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -1250,221 +1095,298 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoDisplayTestPattern(IntPtr aPtr, uint aVersion, int aaTestPattern)
+        private static unsafe int DoDisplayTestPattern(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            self.DisplayTestPattern(aVersion, aaTestPattern);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            int aTestPattern = invocation.ReadInt("aTestPattern");
+            self.DisplayTestPattern(aVersion, aTestPattern);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoDisplayFill(IntPtr aPtr, uint aVersion)
+        private static unsafe int DoDisplayFill(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             self.DisplayFill(aVersion);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoDisplayClear(IntPtr aPtr, uint aVersion)
+        private static unsafe int DoDisplayClear(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             self.DisplayClear(aVersion);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetTestModeEnabled(IntPtr aPtr, uint aVersion, int aaEnabled)
+        private static unsafe int DoSetTestModeEnabled(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            bool aEnabled = (aaEnabled != 0);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool aEnabled = invocation.ReadBool("aEnabled");
             self.SetTestModeEnabled(aVersion, aEnabled);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSimulateInfraredInput(IntPtr aPtr, uint aVersion, uint aaCode)
+        private static unsafe int DoSimulateInfraredInput(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            self.SimulateInfraredInput(aVersion, aaCode);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aCode = invocation.ReadUint("aCode");
+            self.SimulateInfraredInput(aVersion, aCode);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSimulateButtonInput(IntPtr aPtr, uint aVersion, uint aaCode)
+        private static unsafe int DoSimulateButtonInput(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            self.SimulateButtonInput(aVersion, aaCode);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aCode = invocation.ReadUint("aCode");
+            self.SimulateButtonInput(aVersion, aCode);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSimulateLightSensor(IntPtr aPtr, uint aVersion, uint aaLightLevel)
+        private static unsafe int DoSimulateLightSensor(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            self.SimulateLightSensor(aVersion, aaLightLevel);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aLightLevel = invocation.ReadUint("aLightLevel");
+            self.SimulateLightSensor(aVersion, aLightLevel);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoGetLightSensorData(IntPtr aPtr, uint aVersion, uint* aaLightLevel)
+        private static unsafe int DoGetLightSensorData(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint aLightLevel;
             self.GetLightSensorData(aVersion, out aLightLevel);
-            *aaLightLevel = aLightLevel;
+            invocation.WriteStart();
+            invocation.WriteUint("aLightLevel", aLightLevel);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetDisplayBrightness(IntPtr aPtr, uint aVersion, uint aaBrightness)
+        private static unsafe int DoSetDisplayBrightness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            self.SetDisplayBrightness(aVersion, aaBrightness);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aBrightness = invocation.ReadUint("aBrightness");
+            self.SetDisplayBrightness(aVersion, aBrightness);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetDisplayBrightnessAuto(IntPtr aPtr, uint aVersion, int aaBrightnessAuto)
+        private static unsafe int DoSetDisplayBrightnessAuto(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            bool aBrightnessAuto = (aaBrightnessAuto != 0);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool aBrightnessAuto = invocation.ReadBool("aBrightnessAuto");
             self.SetDisplayBrightnessAuto(aVersion, aBrightnessAuto);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetInfraredCommands(IntPtr aPtr, uint aVersion, char* aaCommands)
+        private static unsafe int DoSetInfraredCommands(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            string aCommands = Marshal.PtrToStringAnsi((IntPtr)aaCommands);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string aCommands = invocation.ReadString("aCommands");
             self.SetInfraredCommands(aVersion, aCommands);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoInfraredCommands(IntPtr aPtr, uint aVersion, char** aaCommands)
+        private static unsafe int DoInfraredCommands(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aCommands;
             self.InfraredCommands(aVersion, out aCommands);
-            *aaCommands = (char*)Marshal.StringToHGlobalAnsi(aCommands).ToPointer();
+            invocation.WriteStart();
+            invocation.WriteString("aCommands", aCommands);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetInfraredTerminalCommands(IntPtr aPtr, uint aVersion, char* aaCommands)
+        private static unsafe int DoSetInfraredTerminalCommands(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            string aCommands = Marshal.PtrToStringAnsi((IntPtr)aaCommands);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string aCommands = invocation.ReadString("aCommands");
             self.SetInfraredTerminalCommands(aVersion, aCommands);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoInfraredTerminalCommands(IntPtr aPtr, uint aVersion, char** aaCommands)
+        private static unsafe int DoInfraredTerminalCommands(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aCommands;
             self.InfraredTerminalCommands(aVersion, out aCommands);
-            *aaCommands = (char*)Marshal.StringToHGlobalAnsi(aCommands).ToPointer();
+            invocation.WriteStart();
+            invocation.WriteString("aCommands", aCommands);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoDisplayBrightness(IntPtr aPtr, uint aVersion, uint* aaBrightness)
+        private static unsafe int DoDisplayBrightness(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint aBrightness;
             self.DisplayBrightness(aVersion, out aBrightness);
-            *aaBrightness = aBrightness;
+            invocation.WriteStart();
+            invocation.WriteUint("aBrightness", aBrightness);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoDisplayBrightnessAuto(IntPtr aPtr, uint aVersion, int* aaBrightnessAuto)
+        private static unsafe int DoDisplayBrightnessAuto(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             bool aBrightnessAuto;
             self.DisplayBrightnessAuto(aVersion, out aBrightnessAuto);
-            *aaBrightnessAuto = (aBrightnessAuto ? 1 : 0);
+            invocation.WriteStart();
+            invocation.WriteBool("aBrightnessAuto", aBrightnessAuto);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoDisplayUpsideDown(IntPtr aPtr, uint aVersion, int* aaUpsideDown)
+        private static unsafe int DoDisplayUpsideDown(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             bool aUpsideDown;
             self.DisplayUpsideDown(aVersion, out aUpsideDown);
-            *aaUpsideDown = (aUpsideDown ? 1 : 0);
+            invocation.WriteStart();
+            invocation.WriteBool("aUpsideDown", aUpsideDown);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetDisplayUpsideDown(IntPtr aPtr, uint aVersion, int aaUpsideDown)
+        private static unsafe int DoSetDisplayUpsideDown(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            bool aUpsideDown = (aaUpsideDown != 0);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool aUpsideDown = invocation.ReadBool("aUpsideDown");
             self.SetDisplayUpsideDown(aVersion, aUpsideDown);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetDisplayScrollText(IntPtr aPtr, uint aVersion, int aaDisplayScrollText)
+        private static unsafe int DoSetDisplayScrollText(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            bool aDisplayScrollText = (aaDisplayScrollText != 0);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool aDisplayScrollText = invocation.ReadBool("aDisplayScrollText");
             self.SetDisplayScrollText(aVersion, aDisplayScrollText);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoDisplayScrollText(IntPtr aPtr, uint aVersion, int* aaDisplayScrollTextEnabled)
+        private static unsafe int DoDisplayScrollText(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             bool aDisplayScrollTextEnabled;
             self.DisplayScrollText(aVersion, out aDisplayScrollTextEnabled);
-            *aaDisplayScrollTextEnabled = (aDisplayScrollTextEnabled ? 1 : 0);
+            invocation.WriteStart();
+            invocation.WriteBool("aDisplayScrollTextEnabled", aDisplayScrollTextEnabled);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetDisplaySleep(IntPtr aPtr, uint aVersion, int aaEnabled)
+        private static unsafe int DoSetDisplaySleep(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            bool aEnabled = (aaEnabled != 0);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool aEnabled = invocation.ReadBool("aEnabled");
             self.SetDisplaySleep(aVersion, aEnabled);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoDisplaySleep(IntPtr aPtr, uint aVersion, int* aaEnabled)
+        private static unsafe int DoDisplaySleep(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             bool aEnabled;
             self.DisplaySleep(aVersion, out aEnabled);
-            *aaEnabled = (aEnabled ? 1 : 0);
+            invocation.WriteStart();
+            invocation.WriteBool("aEnabled", aEnabled);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetDisplayLedOff(IntPtr aPtr, uint aVersion, int aaOff)
+        private static unsafe int DoSetDisplayLedOff(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
-            bool aOff = (aaOff != 0);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool aOff = invocation.ReadBool("aOff");
             self.SetDisplayLedOff(aVersion, aOff);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoDisplayLedOff(IntPtr aPtr, uint aVersion, int* aaOff)
+        private static unsafe int DoDisplayLedOff(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             bool aOff;
             self.DisplayLedOff(aVersion, out aOff);
-            *aaOff = (aOff ? 1 : 0);
+            invocation.WriteStart();
+            invocation.WriteBool("aOff", aOff);
+            invocation.WriteEnd();
             return 0;
         }
 
@@ -1484,21 +1406,16 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            IntPtr handle;
             lock (this)
             {
                 if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
+                DisposeProvider();
                 iHandle = IntPtr.Zero;
             }
-            DvProviderLinnCoUkUi2Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }

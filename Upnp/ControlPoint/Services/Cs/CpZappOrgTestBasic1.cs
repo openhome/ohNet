@@ -1,7 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Text;
-using Zapp;
+using Zapp.Core;
+using Zapp.ControlPoint;
 
 namespace Zapp.ControlPoint.Proxies
 {
@@ -16,12 +18,12 @@ namespace Zapp.ControlPoint.Proxies
         void SyncToggle(bool aValue, out bool aResult);
         void BeginToggle(bool aValue, CpProxy.CallbackAsyncComplete aCallback);
         void EndToggle(IntPtr aAsyncHandle, out bool aResult);
-        void SyncEchoString(string aValue, out string aResult);
-        void BeginEchoString(string aValue, CpProxy.CallbackAsyncComplete aCallback);
-        void EndEchoString(IntPtr aAsyncHandle, out string aResult);
-        void SyncEchoBinary(string aValue, out string aResult);
-        void BeginEchoBinary(string aValue, CpProxy.CallbackAsyncComplete aCallback);
-        void EndEchoBinary(IntPtr aAsyncHandle, out string aResult);
+        void SyncEchoString(String aValue, out String aResult);
+        void BeginEchoString(String aValue, CpProxy.CallbackAsyncComplete aCallback);
+        void EndEchoString(IntPtr aAsyncHandle, out String aResult);
+        void SyncEchoBinary(String aValue, out String aResult);
+        void BeginEchoBinary(String aValue, CpProxy.CallbackAsyncComplete aCallback);
+        void EndEchoBinary(IntPtr aAsyncHandle, out String aResult);
         void SyncSetUint(uint aValueUint);
         void BeginSetUint(uint aValueUint, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetUint(IntPtr aAsyncHandle);
@@ -43,197 +45,389 @@ namespace Zapp.ControlPoint.Proxies
         void SyncSetMultiple(uint aValueUint, int aValueInt, bool aValueBool);
         void BeginSetMultiple(uint aValueUint, int aValueInt, bool aValueBool, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetMultiple(IntPtr aAsyncHandle);
-        void SyncSetString(string aValueStr);
-        void BeginSetString(string aValueStr, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSetString(String aValueStr);
+        void BeginSetString(String aValueStr, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetString(IntPtr aAsyncHandle);
-        void SyncGetString(out string aValueStr);
+        void SyncGetString(out String aValueStr);
         void BeginGetString(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetString(IntPtr aAsyncHandle, out string aValueStr);
-        void SyncSetBinary(string aValueBin);
-        void BeginSetBinary(string aValueBin, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetString(IntPtr aAsyncHandle, out String aValueStr);
+        void SyncSetBinary(String aValueBin);
+        void BeginSetBinary(String aValueBin, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetBinary(IntPtr aAsyncHandle);
-        void SyncGetBinary(out string aValueBin);
+        void SyncGetBinary(out String aValueBin);
         void BeginGetBinary(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetBinary(IntPtr aAsyncHandle, out string aValueBin);
+        void EndGetBinary(IntPtr aAsyncHandle, out String aValueBin);
         void SyncToggleBool();
         void BeginToggleBool(CpProxy.CallbackAsyncComplete aCallback);
         void EndToggleBool(IntPtr aAsyncHandle);
-        void SyncWriteFile(string aData, string aFileFullName);
-        void BeginWriteFile(string aData, string aFileFullName, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncWriteFile(String aData, String aFileFullName);
+        void BeginWriteFile(String aData, String aFileFullName, CpProxy.CallbackAsyncComplete aCallback);
         void EndWriteFile(IntPtr aAsyncHandle);
         void SyncShutdown();
         void BeginShutdown(CpProxy.CallbackAsyncComplete aCallback);
         void EndShutdown(IntPtr aAsyncHandle);
-
         void SetPropertyVarUintChanged(CpProxy.CallbackPropertyChanged aVarUintChanged);
-        void PropertyVarUint(out uint aVarUint);
+        uint PropertyVarUint();
         void SetPropertyVarIntChanged(CpProxy.CallbackPropertyChanged aVarIntChanged);
-        void PropertyVarInt(out int aVarInt);
+        int PropertyVarInt();
         void SetPropertyVarBoolChanged(CpProxy.CallbackPropertyChanged aVarBoolChanged);
-        void PropertyVarBool(out bool aVarBool);
+        bool PropertyVarBool();
         void SetPropertyVarStrChanged(CpProxy.CallbackPropertyChanged aVarStrChanged);
-        void PropertyVarStr(out string aVarStr);
+        String PropertyVarStr();
         void SetPropertyVarBinChanged(CpProxy.CallbackPropertyChanged aVarBinChanged);
-        void PropertyVarBin(out string aVarBin);
+        String PropertyVarBin();
     }
+
+    internal class SyncIncrementZappOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestBasic1 iService;
+        private uint iResult;
+
+        public SyncIncrementZappOrgTestBasic1(CpProxyZappOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint Result()
+        {
+            return iResult;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndIncrement(aAsyncHandle, out iResult);
+        }
+    };
+
+    internal class SyncDecrementZappOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestBasic1 iService;
+        private int iResult;
+
+        public SyncDecrementZappOrgTestBasic1(CpProxyZappOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public int Result()
+        {
+            return iResult;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndDecrement(aAsyncHandle, out iResult);
+        }
+    };
+
+    internal class SyncToggleZappOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestBasic1 iService;
+        private bool iResult;
+
+        public SyncToggleZappOrgTestBasic1(CpProxyZappOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public bool Result()
+        {
+            return iResult;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndToggle(aAsyncHandle, out iResult);
+        }
+    };
+
+    internal class SyncEchoStringZappOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestBasic1 iService;
+        private String iResult;
+
+        public SyncEchoStringZappOrgTestBasic1(CpProxyZappOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Result()
+        {
+            return iResult;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndEchoString(aAsyncHandle, out iResult);
+        }
+    };
+
+    internal class SyncEchoBinaryZappOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestBasic1 iService;
+        private String iResult;
+
+        public SyncEchoBinaryZappOrgTestBasic1(CpProxyZappOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Result()
+        {
+            return iResult;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndEchoBinary(aAsyncHandle, out iResult);
+        }
+    };
+
+    internal class SyncSetUintZappOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestBasic1 iService;
+
+        public SyncSetUintZappOrgTestBasic1(CpProxyZappOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetUint(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetUintZappOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestBasic1 iService;
+        private uint iValueUint;
+
+        public SyncGetUintZappOrgTestBasic1(CpProxyZappOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint ValueUint()
+        {
+            return iValueUint;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetUint(aAsyncHandle, out iValueUint);
+        }
+    };
+
+    internal class SyncSetIntZappOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestBasic1 iService;
+
+        public SyncSetIntZappOrgTestBasic1(CpProxyZappOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetInt(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetIntZappOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestBasic1 iService;
+        private int iValueInt;
+
+        public SyncGetIntZappOrgTestBasic1(CpProxyZappOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public int ValueInt()
+        {
+            return iValueInt;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetInt(aAsyncHandle, out iValueInt);
+        }
+    };
+
+    internal class SyncSetBoolZappOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestBasic1 iService;
+
+        public SyncSetBoolZappOrgTestBasic1(CpProxyZappOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetBool(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetBoolZappOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestBasic1 iService;
+        private bool iValueBool;
+
+        public SyncGetBoolZappOrgTestBasic1(CpProxyZappOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public bool ValueBool()
+        {
+            return iValueBool;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetBool(aAsyncHandle, out iValueBool);
+        }
+    };
+
+    internal class SyncSetMultipleZappOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestBasic1 iService;
+
+        public SyncSetMultipleZappOrgTestBasic1(CpProxyZappOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetMultiple(aAsyncHandle);
+        }
+    };
+
+    internal class SyncSetStringZappOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestBasic1 iService;
+
+        public SyncSetStringZappOrgTestBasic1(CpProxyZappOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetString(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetStringZappOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestBasic1 iService;
+        private String iValueStr;
+
+        public SyncGetStringZappOrgTestBasic1(CpProxyZappOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String ValueStr()
+        {
+            return iValueStr;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetString(aAsyncHandle, out iValueStr);
+        }
+    };
+
+    internal class SyncSetBinaryZappOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestBasic1 iService;
+
+        public SyncSetBinaryZappOrgTestBasic1(CpProxyZappOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetBinary(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetBinaryZappOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestBasic1 iService;
+        private String iValueBin;
+
+        public SyncGetBinaryZappOrgTestBasic1(CpProxyZappOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String ValueBin()
+        {
+            return iValueBin;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetBinary(aAsyncHandle, out iValueBin);
+        }
+    };
+
+    internal class SyncToggleBoolZappOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestBasic1 iService;
+
+        public SyncToggleBoolZappOrgTestBasic1(CpProxyZappOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndToggleBool(aAsyncHandle);
+        }
+    };
+
+    internal class SyncWriteFileZappOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestBasic1 iService;
+
+        public SyncWriteFileZappOrgTestBasic1(CpProxyZappOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndWriteFile(aAsyncHandle);
+        }
+    };
+
+    internal class SyncShutdownZappOrgTestBasic1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestBasic1 iService;
+
+        public SyncShutdownZappOrgTestBasic1(CpProxyZappOrgTestBasic1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndShutdown(aAsyncHandle);
+        }
+    };
 
     /// <summary>
     /// Proxy for the zapp.org:TestBasic:1 UPnP service
     /// </summary>
     public class CpProxyZappOrgTestBasic1 : CpProxy, IDisposable, ICpProxyZappOrgTestBasic1
     {
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern IntPtr CpProxyZappOrgTestBasic1Create(IntPtr aDeviceHandle);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern void CpProxyZappOrgTestBasic1Destroy(IntPtr aHandle);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncIncrement(IntPtr aHandle, uint aValue, uint* aResult);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginIncrement(IntPtr aHandle, uint aValue, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndIncrement(IntPtr aHandle, IntPtr aAsync, uint* aResult);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncDecrement(IntPtr aHandle, int aValue, int* aResult);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginDecrement(IntPtr aHandle, int aValue, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndDecrement(IntPtr aHandle, IntPtr aAsync, int* aResult);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncToggle(IntPtr aHandle, uint aValue, uint* aResult);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginToggle(IntPtr aHandle, uint aValue, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndToggle(IntPtr aHandle, IntPtr aAsync, uint* aResult);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncEchoString(IntPtr aHandle, char* aValue, char** aResult);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginEchoString(IntPtr aHandle, char* aValue, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndEchoString(IntPtr aHandle, IntPtr aAsync, char** aResult);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncEchoBinary(IntPtr aHandle, char* aValue, uint aValueLen, char** aResult, uint* aResultLen);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginEchoBinary(IntPtr aHandle, char* aValue, uint aValueLen, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndEchoBinary(IntPtr aHandle, IntPtr aAsync, char** aResult, uint* aResultLen);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncSetUint(IntPtr aHandle, uint aValueUint);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginSetUint(IntPtr aHandle, uint aValueUint, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndSetUint(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncGetUint(IntPtr aHandle, uint* aValueUint);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginGetUint(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndGetUint(IntPtr aHandle, IntPtr aAsync, uint* aValueUint);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncSetInt(IntPtr aHandle, int aValueInt);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginSetInt(IntPtr aHandle, int aValueInt, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndSetInt(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncGetInt(IntPtr aHandle, int* aValueInt);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginGetInt(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndGetInt(IntPtr aHandle, IntPtr aAsync, int* aValueInt);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncSetBool(IntPtr aHandle, uint aValueBool);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginSetBool(IntPtr aHandle, uint aValueBool, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndSetBool(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncGetBool(IntPtr aHandle, uint* aValueBool);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginGetBool(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndGetBool(IntPtr aHandle, IntPtr aAsync, uint* aValueBool);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncSetMultiple(IntPtr aHandle, uint aValueUint, int aValueInt, uint aValueBool);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginSetMultiple(IntPtr aHandle, uint aValueUint, int aValueInt, uint aValueBool, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndSetMultiple(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncSetString(IntPtr aHandle, char* aValueStr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginSetString(IntPtr aHandle, char* aValueStr, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndSetString(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncGetString(IntPtr aHandle, char** aValueStr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginGetString(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndGetString(IntPtr aHandle, IntPtr aAsync, char** aValueStr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncSetBinary(IntPtr aHandle, char* aValueBin, uint aValueBinLen);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginSetBinary(IntPtr aHandle, char* aValueBin, uint aValueBinLen, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndSetBinary(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncGetBinary(IntPtr aHandle, char** aValueBin, uint* aValueBinLen);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginGetBinary(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndGetBinary(IntPtr aHandle, IntPtr aAsync, char** aValueBin, uint* aValueBinLen);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncToggleBool(IntPtr aHandle);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginToggleBool(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndToggleBool(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncWriteFile(IntPtr aHandle, char* aData, char* aFileFullName);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginWriteFile(IntPtr aHandle, char* aData, char* aFileFullName, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndWriteFile(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1SyncShutdown(IntPtr aHandle);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1BeginShutdown(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe int CpProxyZappOrgTestBasic1EndShutdown(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern void CpProxyZappOrgTestBasic1SetPropertyVarUintChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern void CpProxyZappOrgTestBasic1SetPropertyVarIntChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern void CpProxyZappOrgTestBasic1SetPropertyVarBoolChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern void CpProxyZappOrgTestBasic1SetPropertyVarStrChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern void CpProxyZappOrgTestBasic1SetPropertyVarBinChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1PropertyVarUint(IntPtr aHandle, uint* aVarUint);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1PropertyVarInt(IntPtr aHandle, int* aVarInt);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1PropertyVarBool(IntPtr aHandle, uint* aVarBool);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1PropertyVarStr(IntPtr aHandle, char** aVarStr);
-        [DllImport("CpZappOrgTestBasic1")]
-        static extern unsafe void CpProxyZappOrgTestBasic1PropertyVarBin(IntPtr aHandle, char** aVarBin, uint* aLen);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private GCHandle iGch;
+        private Zapp.Core.Action iActionIncrement;
+        private Zapp.Core.Action iActionDecrement;
+        private Zapp.Core.Action iActionToggle;
+        private Zapp.Core.Action iActionEchoString;
+        private Zapp.Core.Action iActionEchoBinary;
+        private Zapp.Core.Action iActionSetUint;
+        private Zapp.Core.Action iActionGetUint;
+        private Zapp.Core.Action iActionSetInt;
+        private Zapp.Core.Action iActionGetInt;
+        private Zapp.Core.Action iActionSetBool;
+        private Zapp.Core.Action iActionGetBool;
+        private Zapp.Core.Action iActionSetMultiple;
+        private Zapp.Core.Action iActionSetString;
+        private Zapp.Core.Action iActionGetString;
+        private Zapp.Core.Action iActionSetBinary;
+        private Zapp.Core.Action iActionGetBinary;
+        private Zapp.Core.Action iActionToggleBool;
+        private Zapp.Core.Action iActionWriteFile;
+        private Zapp.Core.Action iActionShutdown;
+        private PropertyUint iVarUint;
+        private PropertyInt iVarInt;
+        private PropertyBool iVarBool;
+        private PropertyString iVarStr;
+        private PropertyBinary iVarBin;
         private CallbackPropertyChanged iVarUintChanged;
         private CallbackPropertyChanged iVarIntChanged;
         private CallbackPropertyChanged iVarBoolChanged;
         private CallbackPropertyChanged iVarStrChanged;
         private CallbackPropertyChanged iVarBinChanged;
-        private Callback iCallbackVarUintChanged;
-        private Callback iCallbackVarIntChanged;
-        private Callback iCallbackVarBoolChanged;
-        private Callback iCallbackVarStrChanged;
-        private Callback iCallbackVarBinChanged;
 
         /// <summary>
         /// Constructor
@@ -241,9 +435,109 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
         /// <param name="aDevice">The device to use</param>
         public CpProxyZappOrgTestBasic1(CpDevice aDevice)
+            : base("zapp-org", "TestBasic", 1, aDevice)
         {
-            iHandle = CpProxyZappOrgTestBasic1Create(aDevice.Handle());
-            iGch = GCHandle.Alloc(this);
+            Zapp.Core.Parameter param;
+            List<String> allowedValues = new List<String>();
+
+            iActionIncrement = new Zapp.Core.Action("Increment");
+            param = new ParameterUint("Value");
+            iActionIncrement.AddInputParameter(param);
+            param = new ParameterUint("Result");
+            iActionIncrement.AddOutputParameter(param);
+
+            iActionDecrement = new Zapp.Core.Action("Decrement");
+            param = new ParameterInt("Value");
+            iActionDecrement.AddInputParameter(param);
+            param = new ParameterInt("Result");
+            iActionDecrement.AddOutputParameter(param);
+
+            iActionToggle = new Zapp.Core.Action("Toggle");
+            param = new ParameterBool("Value");
+            iActionToggle.AddInputParameter(param);
+            param = new ParameterBool("Result");
+            iActionToggle.AddOutputParameter(param);
+
+            iActionEchoString = new Zapp.Core.Action("EchoString");
+            param = new ParameterString("Value", allowedValues);
+            iActionEchoString.AddInputParameter(param);
+            param = new ParameterString("Result", allowedValues);
+            iActionEchoString.AddOutputParameter(param);
+
+            iActionEchoBinary = new Zapp.Core.Action("EchoBinary");
+            param = new ParameterBinary("Value");
+            iActionEchoBinary.AddInputParameter(param);
+            param = new ParameterBinary("Result");
+            iActionEchoBinary.AddOutputParameter(param);
+
+            iActionSetUint = new Zapp.Core.Action("SetUint");
+            param = new ParameterUint("ValueUint");
+            iActionSetUint.AddInputParameter(param);
+
+            iActionGetUint = new Zapp.Core.Action("GetUint");
+            param = new ParameterUint("ValueUint");
+            iActionGetUint.AddOutputParameter(param);
+
+            iActionSetInt = new Zapp.Core.Action("SetInt");
+            param = new ParameterInt("ValueInt");
+            iActionSetInt.AddInputParameter(param);
+
+            iActionGetInt = new Zapp.Core.Action("GetInt");
+            param = new ParameterInt("ValueInt");
+            iActionGetInt.AddOutputParameter(param);
+
+            iActionSetBool = new Zapp.Core.Action("SetBool");
+            param = new ParameterBool("ValueBool");
+            iActionSetBool.AddInputParameter(param);
+
+            iActionGetBool = new Zapp.Core.Action("GetBool");
+            param = new ParameterBool("ValueBool");
+            iActionGetBool.AddOutputParameter(param);
+
+            iActionSetMultiple = new Zapp.Core.Action("SetMultiple");
+            param = new ParameterUint("ValueUint");
+            iActionSetMultiple.AddInputParameter(param);
+            param = new ParameterInt("ValueInt");
+            iActionSetMultiple.AddInputParameter(param);
+            param = new ParameterBool("ValueBool");
+            iActionSetMultiple.AddInputParameter(param);
+
+            iActionSetString = new Zapp.Core.Action("SetString");
+            param = new ParameterString("ValueStr", allowedValues);
+            iActionSetString.AddInputParameter(param);
+
+            iActionGetString = new Zapp.Core.Action("GetString");
+            param = new ParameterString("ValueStr", allowedValues);
+            iActionGetString.AddOutputParameter(param);
+
+            iActionSetBinary = new Zapp.Core.Action("SetBinary");
+            param = new ParameterBinary("ValueBin");
+            iActionSetBinary.AddInputParameter(param);
+
+            iActionGetBinary = new Zapp.Core.Action("GetBinary");
+            param = new ParameterBinary("ValueBin");
+            iActionGetBinary.AddOutputParameter(param);
+
+            iActionToggleBool = new Zapp.Core.Action("ToggleBool");
+
+            iActionWriteFile = new Zapp.Core.Action("WriteFile");
+            param = new ParameterString("Data", allowedValues);
+            iActionWriteFile.AddInputParameter(param);
+            param = new ParameterString("FileFullName", allowedValues);
+            iActionWriteFile.AddInputParameter(param);
+
+            iActionShutdown = new Zapp.Core.Action("Shutdown");
+
+            iVarUint = new PropertyUint("VarUint", VarUintPropertyChanged);
+            AddProperty(iVarUint);
+            iVarInt = new PropertyInt("VarInt", VarIntPropertyChanged);
+            AddProperty(iVarInt);
+            iVarBool = new PropertyBool("VarBool", VarBoolPropertyChanged);
+            AddProperty(iVarBool);
+            iVarStr = new PropertyString("VarStr", VarStrPropertyChanged);
+            AddProperty(iVarStr);
+            iVarBin = new PropertyBinary("VarBin", VarBinPropertyChanged);
+            AddProperty(iVarBin);
         }
 
         /// <summary>
@@ -253,12 +547,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aValue"></param>
         /// <param name="aResult"></param>
-        public unsafe void SyncIncrement(uint aValue, out uint aResult)
+        public void SyncIncrement(uint aValue, out uint aResult)
         {
-            fixed (uint* result = &aResult)
-            {
-                CpProxyZappOrgTestBasic1SyncIncrement(iHandle, aValue, result);
-            }
+            SyncIncrementZappOrgTestBasic1 sync = new SyncIncrementZappOrgTestBasic1(this);
+            BeginIncrement(aValue, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aResult = sync.Result();
         }
 
         /// <summary>
@@ -270,11 +565,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aValue"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginIncrement(uint aValue, CallbackAsyncComplete aCallback)
+        public void BeginIncrement(uint aValue, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestBasic1BeginIncrement(iHandle, aValue, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionIncrement, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionIncrement.InputParameter(inIndex++), aValue));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionIncrement.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -283,15 +581,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aResult"></param>
-        public unsafe void EndIncrement(IntPtr aAsyncHandle, out uint aResult)
+        public void EndIncrement(IntPtr aAsyncHandle, out uint aResult)
         {
-            fixed (uint* result = &aResult)
-            {
-                if (0 != CpProxyZappOrgTestBasic1EndIncrement(iHandle, aAsyncHandle, result))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aResult = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -301,12 +594,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aValue"></param>
         /// <param name="aResult"></param>
-        public unsafe void SyncDecrement(int aValue, out int aResult)
+        public void SyncDecrement(int aValue, out int aResult)
         {
-            fixed (int* result = &aResult)
-            {
-                CpProxyZappOrgTestBasic1SyncDecrement(iHandle, aValue, result);
-            }
+            SyncDecrementZappOrgTestBasic1 sync = new SyncDecrementZappOrgTestBasic1(this);
+            BeginDecrement(aValue, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aResult = sync.Result();
         }
 
         /// <summary>
@@ -318,11 +612,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aValue"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginDecrement(int aValue, CallbackAsyncComplete aCallback)
+        public void BeginDecrement(int aValue, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestBasic1BeginDecrement(iHandle, aValue, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionDecrement, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentInt((ParameterInt)iActionDecrement.InputParameter(inIndex++), aValue));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentInt((ParameterInt)iActionDecrement.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -331,15 +628,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aResult"></param>
-        public unsafe void EndDecrement(IntPtr aAsyncHandle, out int aResult)
+        public void EndDecrement(IntPtr aAsyncHandle, out int aResult)
         {
-            fixed (int* result = &aResult)
-            {
-                if (0 != CpProxyZappOrgTestBasic1EndDecrement(iHandle, aAsyncHandle, result))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aResult = Invocation.OutputInt(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -349,14 +641,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aValue"></param>
         /// <param name="aResult"></param>
-        public unsafe void SyncToggle(bool aValue, out bool aResult)
+        public void SyncToggle(bool aValue, out bool aResult)
         {
-            uint value = (aValue? 1u : 0u);
-            uint result;
-            {
-                CpProxyZappOrgTestBasic1SyncToggle(iHandle, value, &result);
-            }
-            aResult = (result != 0);
+            SyncToggleZappOrgTestBasic1 sync = new SyncToggleZappOrgTestBasic1(this);
+            BeginToggle(aValue, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aResult = sync.Result();
         }
 
         /// <summary>
@@ -368,12 +659,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aValue"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginToggle(bool aValue, CallbackAsyncComplete aCallback)
+        public void BeginToggle(bool aValue, CallbackAsyncComplete aCallback)
         {
-            uint value = (aValue? 1u : 0u);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestBasic1BeginToggle(iHandle, value, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionToggle, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentBool((ParameterBool)iActionToggle.InputParameter(inIndex++), aValue));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentBool((ParameterBool)iActionToggle.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -382,16 +675,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aResult"></param>
-        public unsafe void EndToggle(IntPtr aAsyncHandle, out bool aResult)
+        public void EndToggle(IntPtr aAsyncHandle, out bool aResult)
         {
-            uint result;
-            {
-                if (0 != CpProxyZappOrgTestBasic1EndToggle(iHandle, aAsyncHandle, &result))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aResult = (result != 0);
+            uint index = 0;
+            aResult = Invocation.OutputBool(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -401,16 +688,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aValue"></param>
         /// <param name="aResult"></param>
-        public unsafe void SyncEchoString(string aValue, out string aResult)
+        public void SyncEchoString(String aValue, out String aResult)
         {
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue);
-            char* result;
-            {
-                CpProxyZappOrgTestBasic1SyncEchoString(iHandle, value, &result);
-            }
-            Marshal.FreeHGlobal((IntPtr)value);
-            aResult = Marshal.PtrToStringAnsi((IntPtr)result);
-            ZappFree(result);
+            SyncEchoStringZappOrgTestBasic1 sync = new SyncEchoStringZappOrgTestBasic1(this);
+            BeginEchoString(aValue, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aResult = sync.Result();
         }
 
         /// <summary>
@@ -422,13 +706,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aValue"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginEchoString(string aValue, CallbackAsyncComplete aCallback)
+        public void BeginEchoString(String aValue, CallbackAsyncComplete aCallback)
         {
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestBasic1BeginEchoString(iHandle, value, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)value);
+            Invocation invocation = iService.Invocation(iActionEchoString, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionEchoString.InputParameter(inIndex++), aValue));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionEchoString.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -437,17 +722,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aResult"></param>
-        public unsafe void EndEchoString(IntPtr aAsyncHandle, out string aResult)
+        public void EndEchoString(IntPtr aAsyncHandle, out String aResult)
         {
-            char* result;
-            {
-                if (0 != CpProxyZappOrgTestBasic1EndEchoString(iHandle, aAsyncHandle, &result))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aResult = Marshal.PtrToStringAnsi((IntPtr)result);
-            ZappFree(result);
+            uint index = 0;
+            aResult = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -457,18 +735,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aValue"></param>
         /// <param name="aResult"></param>
-        public unsafe void SyncEchoBinary(string aValue, out string aResult)
+        public void SyncEchoBinary(String aValue, out String aResult)
         {
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue);
-            uint valueLen = (uint)aValue.Length;
-            char* result;
-            uint resultLen;
-            {
-                CpProxyZappOrgTestBasic1SyncEchoBinary(iHandle, value, valueLen, &result, &resultLen);
-            }
-            Marshal.FreeHGlobal((IntPtr)value);
-            aResult = Marshal.PtrToStringAnsi((IntPtr)result, (int)resultLen);
-            ZappFree(result);
+            SyncEchoBinaryZappOrgTestBasic1 sync = new SyncEchoBinaryZappOrgTestBasic1(this);
+            BeginEchoBinary(aValue, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aResult = sync.Result();
         }
 
         /// <summary>
@@ -480,14 +753,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aValue"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginEchoBinary(string aValue, CallbackAsyncComplete aCallback)
+        public void BeginEchoBinary(String aValue, CallbackAsyncComplete aCallback)
         {
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue);
-            uint valueLen = (uint)aValue.Length;
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestBasic1BeginEchoBinary(iHandle, value, valueLen, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)value);
+            Invocation invocation = iService.Invocation(iActionEchoBinary, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentBinary((ParameterBinary)iActionEchoBinary.InputParameter(inIndex++), aValue));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentBinary((ParameterBinary)iActionEchoBinary.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -496,18 +769,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aResult"></param>
-        public unsafe void EndEchoBinary(IntPtr aAsyncHandle, out string aResult)
+        public void EndEchoBinary(IntPtr aAsyncHandle, out String aResult)
         {
-            char* result;
-            uint resultLen;
-            {
-                if (0 != CpProxyZappOrgTestBasic1EndEchoBinary(iHandle, aAsyncHandle, &result, &resultLen))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aResult = Marshal.PtrToStringAnsi((IntPtr)result, (int)resultLen);
-            ZappFree(result);
+            uint index = 0;
+            aResult = Invocation.OutputBinary(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -516,11 +781,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aValueUint"></param>
-        public unsafe void SyncSetUint(uint aValueUint)
+        public void SyncSetUint(uint aValueUint)
         {
-            {
-                CpProxyZappOrgTestBasic1SyncSetUint(iHandle, aValueUint);
-            }
+            SyncSetUintZappOrgTestBasic1 sync = new SyncSetUintZappOrgTestBasic1(this);
+            BeginSetUint(aValueUint, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -532,11 +798,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aValueUint"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetUint(uint aValueUint, CallbackAsyncComplete aCallback)
+        public void BeginSetUint(uint aValueUint, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestBasic1BeginSetUint(iHandle, aValueUint, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetUint, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetUint.InputParameter(inIndex++), aValueUint));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -544,14 +811,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetUint(IntPtr aAsyncHandle)
+        public void EndSetUint(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyZappOrgTestBasic1EndSetUint(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -560,12 +821,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aValueUint"></param>
-        public unsafe void SyncGetUint(out uint aValueUint)
+        public void SyncGetUint(out uint aValueUint)
         {
-            fixed (uint* valueUint = &aValueUint)
-            {
-                CpProxyZappOrgTestBasic1SyncGetUint(iHandle, valueUint);
-            }
+            SyncGetUintZappOrgTestBasic1 sync = new SyncGetUintZappOrgTestBasic1(this);
+            BeginGetUint(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aValueUint = sync.ValueUint();
         }
 
         /// <summary>
@@ -576,11 +838,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndGetUint().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetUint(CallbackAsyncComplete aCallback)
+        public void BeginGetUint(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestBasic1BeginGetUint(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetUint, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetUint.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -589,15 +852,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aValueUint"></param>
-        public unsafe void EndGetUint(IntPtr aAsyncHandle, out uint aValueUint)
+        public void EndGetUint(IntPtr aAsyncHandle, out uint aValueUint)
         {
-            fixed (uint* valueUint = &aValueUint)
-            {
-                if (0 != CpProxyZappOrgTestBasic1EndGetUint(iHandle, aAsyncHandle, valueUint))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aValueUint = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -606,11 +864,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aValueInt"></param>
-        public unsafe void SyncSetInt(int aValueInt)
+        public void SyncSetInt(int aValueInt)
         {
-            {
-                CpProxyZappOrgTestBasic1SyncSetInt(iHandle, aValueInt);
-            }
+            SyncSetIntZappOrgTestBasic1 sync = new SyncSetIntZappOrgTestBasic1(this);
+            BeginSetInt(aValueInt, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -622,11 +881,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aValueInt"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetInt(int aValueInt, CallbackAsyncComplete aCallback)
+        public void BeginSetInt(int aValueInt, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestBasic1BeginSetInt(iHandle, aValueInt, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetInt, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentInt((ParameterInt)iActionSetInt.InputParameter(inIndex++), aValueInt));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -634,14 +894,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetInt(IntPtr aAsyncHandle)
+        public void EndSetInt(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyZappOrgTestBasic1EndSetInt(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -650,12 +904,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aValueInt"></param>
-        public unsafe void SyncGetInt(out int aValueInt)
+        public void SyncGetInt(out int aValueInt)
         {
-            fixed (int* valueInt = &aValueInt)
-            {
-                CpProxyZappOrgTestBasic1SyncGetInt(iHandle, valueInt);
-            }
+            SyncGetIntZappOrgTestBasic1 sync = new SyncGetIntZappOrgTestBasic1(this);
+            BeginGetInt(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aValueInt = sync.ValueInt();
         }
 
         /// <summary>
@@ -666,11 +921,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndGetInt().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetInt(CallbackAsyncComplete aCallback)
+        public void BeginGetInt(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestBasic1BeginGetInt(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetInt, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentInt((ParameterInt)iActionGetInt.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -679,15 +935,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aValueInt"></param>
-        public unsafe void EndGetInt(IntPtr aAsyncHandle, out int aValueInt)
+        public void EndGetInt(IntPtr aAsyncHandle, out int aValueInt)
         {
-            fixed (int* valueInt = &aValueInt)
-            {
-                if (0 != CpProxyZappOrgTestBasic1EndGetInt(iHandle, aAsyncHandle, valueInt))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aValueInt = Invocation.OutputInt(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -696,12 +947,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aValueBool"></param>
-        public unsafe void SyncSetBool(bool aValueBool)
+        public void SyncSetBool(bool aValueBool)
         {
-            uint valueBool = (aValueBool? 1u : 0u);
-            {
-                CpProxyZappOrgTestBasic1SyncSetBool(iHandle, valueBool);
-            }
+            SyncSetBoolZappOrgTestBasic1 sync = new SyncSetBoolZappOrgTestBasic1(this);
+            BeginSetBool(aValueBool, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -713,12 +964,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aValueBool"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetBool(bool aValueBool, CallbackAsyncComplete aCallback)
+        public void BeginSetBool(bool aValueBool, CallbackAsyncComplete aCallback)
         {
-            uint valueBool = (aValueBool? 1u : 0u);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestBasic1BeginSetBool(iHandle, valueBool, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetBool, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentBool((ParameterBool)iActionSetBool.InputParameter(inIndex++), aValueBool));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -726,14 +977,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetBool(IntPtr aAsyncHandle)
+        public void EndSetBool(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyZappOrgTestBasic1EndSetBool(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -742,13 +987,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aValueBool"></param>
-        public unsafe void SyncGetBool(out bool aValueBool)
+        public void SyncGetBool(out bool aValueBool)
         {
-            uint valueBool;
-            {
-                CpProxyZappOrgTestBasic1SyncGetBool(iHandle, &valueBool);
-            }
-            aValueBool = (valueBool != 0);
+            SyncGetBoolZappOrgTestBasic1 sync = new SyncGetBoolZappOrgTestBasic1(this);
+            BeginGetBool(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aValueBool = sync.ValueBool();
         }
 
         /// <summary>
@@ -759,11 +1004,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndGetBool().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetBool(CallbackAsyncComplete aCallback)
+        public void BeginGetBool(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestBasic1BeginGetBool(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetBool, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentBool((ParameterBool)iActionGetBool.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -772,16 +1018,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aValueBool"></param>
-        public unsafe void EndGetBool(IntPtr aAsyncHandle, out bool aValueBool)
+        public void EndGetBool(IntPtr aAsyncHandle, out bool aValueBool)
         {
-            uint valueBool;
-            {
-                if (0 != CpProxyZappOrgTestBasic1EndGetBool(iHandle, aAsyncHandle, &valueBool))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aValueBool = (valueBool != 0);
+            uint index = 0;
+            aValueBool = Invocation.OutputBool(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -792,12 +1032,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aValueUint"></param>
         /// <param name="aValueInt"></param>
         /// <param name="aValueBool"></param>
-        public unsafe void SyncSetMultiple(uint aValueUint, int aValueInt, bool aValueBool)
+        public void SyncSetMultiple(uint aValueUint, int aValueInt, bool aValueBool)
         {
-            uint valueBool = (aValueBool? 1u : 0u);
-            {
-                CpProxyZappOrgTestBasic1SyncSetMultiple(iHandle, aValueUint, aValueInt, valueBool);
-            }
+            SyncSetMultipleZappOrgTestBasic1 sync = new SyncSetMultipleZappOrgTestBasic1(this);
+            BeginSetMultiple(aValueUint, aValueInt, aValueBool, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -811,12 +1051,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aValueBool"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetMultiple(uint aValueUint, int aValueInt, bool aValueBool, CallbackAsyncComplete aCallback)
+        public void BeginSetMultiple(uint aValueUint, int aValueInt, bool aValueBool, CallbackAsyncComplete aCallback)
         {
-            uint valueBool = (aValueBool? 1u : 0u);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestBasic1BeginSetMultiple(iHandle, aValueUint, aValueInt, valueBool, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetMultiple, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetMultiple.InputParameter(inIndex++), aValueUint));
+            invocation.AddInput(new ArgumentInt((ParameterInt)iActionSetMultiple.InputParameter(inIndex++), aValueInt));
+            invocation.AddInput(new ArgumentBool((ParameterBool)iActionSetMultiple.InputParameter(inIndex++), aValueBool));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -824,14 +1066,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetMultiple(IntPtr aAsyncHandle)
+        public void EndSetMultiple(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyZappOrgTestBasic1EndSetMultiple(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -840,13 +1076,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aValueStr"></param>
-        public unsafe void SyncSetString(string aValueStr)
+        public void SyncSetString(String aValueStr)
         {
-            char* valueStr = (char*)Marshal.StringToHGlobalAnsi(aValueStr);
-            {
-                CpProxyZappOrgTestBasic1SyncSetString(iHandle, valueStr);
-            }
-            Marshal.FreeHGlobal((IntPtr)valueStr);
+            SyncSetStringZappOrgTestBasic1 sync = new SyncSetStringZappOrgTestBasic1(this);
+            BeginSetString(aValueStr, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -858,13 +1093,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aValueStr"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetString(string aValueStr, CallbackAsyncComplete aCallback)
+        public void BeginSetString(String aValueStr, CallbackAsyncComplete aCallback)
         {
-            char* valueStr = (char*)Marshal.StringToHGlobalAnsi(aValueStr);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestBasic1BeginSetString(iHandle, valueStr, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)valueStr);
+            Invocation invocation = iService.Invocation(iActionSetString, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSetString.InputParameter(inIndex++), aValueStr));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -872,14 +1106,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetString(IntPtr aAsyncHandle)
+        public void EndSetString(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyZappOrgTestBasic1EndSetString(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -888,14 +1116,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aValueStr"></param>
-        public unsafe void SyncGetString(out string aValueStr)
+        public void SyncGetString(out String aValueStr)
         {
-            char* valueStr;
-            {
-                CpProxyZappOrgTestBasic1SyncGetString(iHandle, &valueStr);
-            }
-            aValueStr = Marshal.PtrToStringAnsi((IntPtr)valueStr);
-            ZappFree(valueStr);
+            SyncGetStringZappOrgTestBasic1 sync = new SyncGetStringZappOrgTestBasic1(this);
+            BeginGetString(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aValueStr = sync.ValueStr();
         }
 
         /// <summary>
@@ -906,11 +1133,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndGetString().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetString(CallbackAsyncComplete aCallback)
+        public void BeginGetString(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestBasic1BeginGetString(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetString, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetString.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -919,17 +1147,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aValueStr"></param>
-        public unsafe void EndGetString(IntPtr aAsyncHandle, out string aValueStr)
+        public void EndGetString(IntPtr aAsyncHandle, out String aValueStr)
         {
-            char* valueStr;
-            {
-                if (0 != CpProxyZappOrgTestBasic1EndGetString(iHandle, aAsyncHandle, &valueStr))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aValueStr = Marshal.PtrToStringAnsi((IntPtr)valueStr);
-            ZappFree(valueStr);
+            uint index = 0;
+            aValueStr = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -938,14 +1159,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aValueBin"></param>
-        public unsafe void SyncSetBinary(string aValueBin)
+        public void SyncSetBinary(String aValueBin)
         {
-            char* valueBin = (char*)Marshal.StringToHGlobalAnsi(aValueBin);
-            uint valueBinLen = (uint)aValueBin.Length;
-            {
-                CpProxyZappOrgTestBasic1SyncSetBinary(iHandle, valueBin, valueBinLen);
-            }
-            Marshal.FreeHGlobal((IntPtr)valueBin);
+            SyncSetBinaryZappOrgTestBasic1 sync = new SyncSetBinaryZappOrgTestBasic1(this);
+            BeginSetBinary(aValueBin, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -957,14 +1176,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aValueBin"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetBinary(string aValueBin, CallbackAsyncComplete aCallback)
+        public void BeginSetBinary(String aValueBin, CallbackAsyncComplete aCallback)
         {
-            char* valueBin = (char*)Marshal.StringToHGlobalAnsi(aValueBin);
-            uint valueBinLen = (uint)aValueBin.Length;
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestBasic1BeginSetBinary(iHandle, valueBin, valueBinLen, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)valueBin);
+            Invocation invocation = iService.Invocation(iActionSetBinary, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentBinary((ParameterBinary)iActionSetBinary.InputParameter(inIndex++), aValueBin));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -972,14 +1189,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetBinary(IntPtr aAsyncHandle)
+        public void EndSetBinary(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyZappOrgTestBasic1EndSetBinary(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -988,15 +1199,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aValueBin"></param>
-        public unsafe void SyncGetBinary(out string aValueBin)
+        public void SyncGetBinary(out String aValueBin)
         {
-            char* valueBin;
-            uint valueBinLen;
-            {
-                CpProxyZappOrgTestBasic1SyncGetBinary(iHandle, &valueBin, &valueBinLen);
-            }
-            aValueBin = Marshal.PtrToStringAnsi((IntPtr)valueBin, (int)valueBinLen);
-            ZappFree(valueBin);
+            SyncGetBinaryZappOrgTestBasic1 sync = new SyncGetBinaryZappOrgTestBasic1(this);
+            BeginGetBinary(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aValueBin = sync.ValueBin();
         }
 
         /// <summary>
@@ -1007,11 +1216,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndGetBinary().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetBinary(CallbackAsyncComplete aCallback)
+        public void BeginGetBinary(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestBasic1BeginGetBinary(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetBinary, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentBinary((ParameterBinary)iActionGetBinary.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1020,18 +1230,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aValueBin"></param>
-        public unsafe void EndGetBinary(IntPtr aAsyncHandle, out string aValueBin)
+        public void EndGetBinary(IntPtr aAsyncHandle, out String aValueBin)
         {
-            char* valueBin;
-            uint valueBinLen;
-            {
-                if (0 != CpProxyZappOrgTestBasic1EndGetBinary(iHandle, aAsyncHandle, &valueBin, &valueBinLen))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aValueBin = Marshal.PtrToStringAnsi((IntPtr)valueBin, (int)valueBinLen);
-            ZappFree(valueBin);
+            uint index = 0;
+            aValueBin = Invocation.OutputBinary(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -1039,11 +1241,12 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        public unsafe void SyncToggleBool()
+        public void SyncToggleBool()
         {
-            {
-                CpProxyZappOrgTestBasic1SyncToggleBool(iHandle);
-            }
+            SyncToggleBoolZappOrgTestBasic1 sync = new SyncToggleBoolZappOrgTestBasic1(this);
+            BeginToggleBool(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -1054,11 +1257,10 @@ namespace Zapp.ControlPoint.Proxies
         /// EndToggleBool().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginToggleBool(CallbackAsyncComplete aCallback)
+        public void BeginToggleBool(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestBasic1BeginToggleBool(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionToggleBool, aCallback);
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1066,14 +1268,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndToggleBool(IntPtr aAsyncHandle)
+        public void EndToggleBool(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyZappOrgTestBasic1EndToggleBool(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -1083,15 +1279,12 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aData"></param>
         /// <param name="aFileFullName"></param>
-        public unsafe void SyncWriteFile(string aData, string aFileFullName)
+        public void SyncWriteFile(String aData, String aFileFullName)
         {
-            char* data = (char*)Marshal.StringToHGlobalAnsi(aData);
-            char* fileFullName = (char*)Marshal.StringToHGlobalAnsi(aFileFullName);
-            {
-                CpProxyZappOrgTestBasic1SyncWriteFile(iHandle, data, fileFullName);
-            }
-            Marshal.FreeHGlobal((IntPtr)data);
-            Marshal.FreeHGlobal((IntPtr)fileFullName);
+            SyncWriteFileZappOrgTestBasic1 sync = new SyncWriteFileZappOrgTestBasic1(this);
+            BeginWriteFile(aData, aFileFullName, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -1104,15 +1297,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aFileFullName"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginWriteFile(string aData, string aFileFullName, CallbackAsyncComplete aCallback)
+        public void BeginWriteFile(String aData, String aFileFullName, CallbackAsyncComplete aCallback)
         {
-            char* data = (char*)Marshal.StringToHGlobalAnsi(aData);
-            char* fileFullName = (char*)Marshal.StringToHGlobalAnsi(aFileFullName);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestBasic1BeginWriteFile(iHandle, data, fileFullName, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)data);
-            Marshal.FreeHGlobal((IntPtr)fileFullName);
+            Invocation invocation = iService.Invocation(iActionWriteFile, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionWriteFile.InputParameter(inIndex++), aData));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionWriteFile.InputParameter(inIndex++), aFileFullName));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1120,14 +1311,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndWriteFile(IntPtr aAsyncHandle)
+        public void EndWriteFile(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyZappOrgTestBasic1EndWriteFile(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -1135,11 +1320,12 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        public unsafe void SyncShutdown()
+        public void SyncShutdown()
         {
-            {
-                CpProxyZappOrgTestBasic1SyncShutdown(iHandle);
-            }
+            SyncShutdownZappOrgTestBasic1 sync = new SyncShutdownZappOrgTestBasic1(this);
+            BeginShutdown(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -1150,11 +1336,10 @@ namespace Zapp.ControlPoint.Proxies
         /// EndShutdown().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginShutdown(CallbackAsyncComplete aCallback)
+        public void BeginShutdown(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestBasic1BeginShutdown(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionShutdown, aCallback);
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1162,14 +1347,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndShutdown(IntPtr aAsyncHandle)
+        public void EndShutdown(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyZappOrgTestBasic1EndShutdown(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -1180,17 +1359,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVarUintChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVarUintChanged(CallbackPropertyChanged aVarUintChanged)
         {
-            iVarUintChanged = aVarUintChanged;
-            iCallbackVarUintChanged = new Callback(PropertyVarUintChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyZappOrgTestBasic1SetPropertyVarUintChanged(iHandle, iCallbackVarUintChanged, ptr);
+            lock (this)
+            {
+                iVarUintChanged = aVarUintChanged;
+            }
         }
 
-        private void PropertyVarUintChanged(IntPtr aPtr)
+        private void VarUintPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyZappOrgTestBasic1 self = (CpProxyZappOrgTestBasic1)gch.Target;
-            self.iVarUintChanged();
+            lock (this)
+            {
+                if (iVarUintChanged != null)
+                {
+                    iVarUintChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -1201,17 +1384,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVarIntChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVarIntChanged(CallbackPropertyChanged aVarIntChanged)
         {
-            iVarIntChanged = aVarIntChanged;
-            iCallbackVarIntChanged = new Callback(PropertyVarIntChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyZappOrgTestBasic1SetPropertyVarIntChanged(iHandle, iCallbackVarIntChanged, ptr);
+            lock (this)
+            {
+                iVarIntChanged = aVarIntChanged;
+            }
         }
 
-        private void PropertyVarIntChanged(IntPtr aPtr)
+        private void VarIntPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyZappOrgTestBasic1 self = (CpProxyZappOrgTestBasic1)gch.Target;
-            self.iVarIntChanged();
+            lock (this)
+            {
+                if (iVarIntChanged != null)
+                {
+                    iVarIntChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -1222,17 +1409,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVarBoolChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVarBoolChanged(CallbackPropertyChanged aVarBoolChanged)
         {
-            iVarBoolChanged = aVarBoolChanged;
-            iCallbackVarBoolChanged = new Callback(PropertyVarBoolChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyZappOrgTestBasic1SetPropertyVarBoolChanged(iHandle, iCallbackVarBoolChanged, ptr);
+            lock (this)
+            {
+                iVarBoolChanged = aVarBoolChanged;
+            }
         }
 
-        private void PropertyVarBoolChanged(IntPtr aPtr)
+        private void VarBoolPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyZappOrgTestBasic1 self = (CpProxyZappOrgTestBasic1)gch.Target;
-            self.iVarBoolChanged();
+            lock (this)
+            {
+                if (iVarBoolChanged != null)
+                {
+                    iVarBoolChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -1243,17 +1434,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVarStrChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVarStrChanged(CallbackPropertyChanged aVarStrChanged)
         {
-            iVarStrChanged = aVarStrChanged;
-            iCallbackVarStrChanged = new Callback(PropertyVarStrChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyZappOrgTestBasic1SetPropertyVarStrChanged(iHandle, iCallbackVarStrChanged, ptr);
+            lock (this)
+            {
+                iVarStrChanged = aVarStrChanged;
+            }
         }
 
-        private void PropertyVarStrChanged(IntPtr aPtr)
+        private void VarStrPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyZappOrgTestBasic1 self = (CpProxyZappOrgTestBasic1)gch.Target;
-            self.iVarStrChanged();
+            lock (this)
+            {
+                if (iVarStrChanged != null)
+                {
+                    iVarStrChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -1264,17 +1459,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aVarBinChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyVarBinChanged(CallbackPropertyChanged aVarBinChanged)
         {
-            iVarBinChanged = aVarBinChanged;
-            iCallbackVarBinChanged = new Callback(PropertyVarBinChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyZappOrgTestBasic1SetPropertyVarBinChanged(iHandle, iCallbackVarBinChanged, ptr);
+            lock (this)
+            {
+                iVarBinChanged = aVarBinChanged;
+            }
         }
 
-        private void PropertyVarBinChanged(IntPtr aPtr)
+        private void VarBinPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyZappOrgTestBasic1 self = (CpProxyZappOrgTestBasic1)gch.Target;
-            self.iVarBinChanged();
+            lock (this)
+            {
+                if (iVarBinChanged != null)
+                {
+                    iVarBinChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -1284,12 +1483,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aVarUint">Will be set to the value of the property</param>
-        public unsafe void PropertyVarUint(out uint aVarUint)
+        public uint PropertyVarUint()
         {
-            fixed (uint* varUint = &aVarUint)
-            {
-                CpProxyZappOrgTestBasic1PropertyVarUint(iHandle, varUint);
-            }
+            return iVarUint.Value();
         }
 
         /// <summary>
@@ -1299,12 +1495,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aVarInt">Will be set to the value of the property</param>
-        public unsafe void PropertyVarInt(out int aVarInt)
+        public int PropertyVarInt()
         {
-            fixed (int* varInt = &aVarInt)
-            {
-                CpProxyZappOrgTestBasic1PropertyVarInt(iHandle, varInt);
-            }
+            return iVarInt.Value();
         }
 
         /// <summary>
@@ -1314,11 +1507,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aVarBool">Will be set to the value of the property</param>
-        public unsafe void PropertyVarBool(out bool aVarBool)
+        public bool PropertyVarBool()
         {
-            uint varBool;
-            CpProxyZappOrgTestBasic1PropertyVarBool(iHandle, &varBool);
-            aVarBool = (varBool != 0);
+            return iVarBool.Value();
         }
 
         /// <summary>
@@ -1328,12 +1519,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aVarStr">Will be set to the value of the property</param>
-        public unsafe void PropertyVarStr(out string aVarStr)
+        public String PropertyVarStr()
         {
-            char* ptr;
-            CpProxyZappOrgTestBasic1PropertyVarStr(iHandle, &ptr);
-            aVarStr = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iVarStr.Value();
         }
 
         /// <summary>
@@ -1343,13 +1531,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aVarBin">Will be set to the value of the property</param>
-        public unsafe void PropertyVarBin(out string aVarBin)
+        public String PropertyVarBin()
         {
-            char* ptr;
-            uint len;
-            CpProxyZappOrgTestBasic1PropertyVarBin(iHandle, &ptr, &len);
-            aVarBin = Marshal.PtrToStringAnsi((IntPtr)ptr, (int)len);
-            ZappFree(ptr);
+            return iVarBin.Value();
         }
 
         /// <summary>
@@ -1373,17 +1557,31 @@ namespace Zapp.ControlPoint.Proxies
                 {
                     return;
                 }
-                CpProxyZappOrgTestBasic1Destroy(iHandle);
+                DisposeProxy();
                 iHandle = IntPtr.Zero;
+                iActionIncrement.Dispose();
+                iActionDecrement.Dispose();
+                iActionToggle.Dispose();
+                iActionEchoString.Dispose();
+                iActionEchoBinary.Dispose();
+                iActionSetUint.Dispose();
+                iActionGetUint.Dispose();
+                iActionSetInt.Dispose();
+                iActionGetInt.Dispose();
+                iActionSetBool.Dispose();
+                iActionGetBool.Dispose();
+                iActionSetMultiple.Dispose();
+                iActionSetString.Dispose();
+                iActionGetString.Dispose();
+                iActionSetBinary.Dispose();
+                iActionGetBinary.Dispose();
+                iActionToggleBool.Dispose();
+                iActionWriteFile.Dispose();
+                iActionShutdown.Dispose();
             }
-            iGch.Free();
             if (aDisposing)
             {
                 GC.SuppressFinalize(this);
-            }
-            else
-            {
-                DisposeProxy();
             }
         }
     }

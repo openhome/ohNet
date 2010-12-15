@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -14,67 +15,26 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class DvProviderLinnCoUkVolkano1 : DvProvider, IDisposable, IDvProviderLinnCoUkVolkano1
     {
-        [DllImport("DvLinnCoUkVolkano1")]
-        static extern IntPtr DvProviderLinnCoUkVolkano1Create(IntPtr aDeviceHandle);
-        [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvProviderLinnCoUkVolkano1Destroy(IntPtr aHandle);
-        [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvProviderLinnCoUkVolkano1EnableActionReboot(IntPtr aHandle, CallbackReboot aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvProviderLinnCoUkVolkano1EnableActionBootMode(IntPtr aHandle, CallbackBootMode aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvProviderLinnCoUkVolkano1EnableActionSetBootMode(IntPtr aHandle, CallbackSetBootMode aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvProviderLinnCoUkVolkano1EnableActionBspType(IntPtr aHandle, CallbackBspType aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvProviderLinnCoUkVolkano1EnableActionUglyName(IntPtr aHandle, CallbackUglyName aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvProviderLinnCoUkVolkano1EnableActionMacAddress(IntPtr aHandle, CallbackMacAddress aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvProviderLinnCoUkVolkano1EnableActionProductId(IntPtr aHandle, CallbackProductId aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvProviderLinnCoUkVolkano1EnableActionBoardId(IntPtr aHandle, CallbackBoardId aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvProviderLinnCoUkVolkano1EnableActionBoardType(IntPtr aHandle, CallbackBoardType aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvProviderLinnCoUkVolkano1EnableActionMaxBoards(IntPtr aHandle, CallbackMaxBoards aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkVolkano1")]
-        static extern void DvProviderLinnCoUkVolkano1EnableActionSoftwareVersion(IntPtr aHandle, CallbackSoftwareVersion aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private unsafe delegate int CallbackReboot(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackBootMode(IntPtr aPtr, uint aVersion, char** aaMode);
-        private unsafe delegate int CallbackSetBootMode(IntPtr aPtr, uint aVersion, char* aaMode);
-        private unsafe delegate int CallbackBspType(IntPtr aPtr, uint aVersion, char** aaBspType);
-        private unsafe delegate int CallbackUglyName(IntPtr aPtr, uint aVersion, char** aaUglyName);
-        private unsafe delegate int CallbackMacAddress(IntPtr aPtr, uint aVersion, char** aaMacAddress);
-        private unsafe delegate int CallbackProductId(IntPtr aPtr, uint aVersion, char** aaProductNumber);
-        private unsafe delegate int CallbackBoardId(IntPtr aPtr, uint aVersion, uint aaIndex, char** aaBoardNumber);
-        private unsafe delegate int CallbackBoardType(IntPtr aPtr, uint aVersion, uint aaIndex, char** aaBoardNumber);
-        private unsafe delegate int CallbackMaxBoards(IntPtr aPtr, uint aVersion, uint* aaMaxBoards);
-        private unsafe delegate int CallbackSoftwareVersion(IntPtr aPtr, uint aVersion, char** aaSoftwareVersion);
-
         private GCHandle iGch;
-        private CallbackReboot iCallbackReboot;
-        private CallbackBootMode iCallbackBootMode;
-        private CallbackSetBootMode iCallbackSetBootMode;
-        private CallbackBspType iCallbackBspType;
-        private CallbackUglyName iCallbackUglyName;
-        private CallbackMacAddress iCallbackMacAddress;
-        private CallbackProductId iCallbackProductId;
-        private CallbackBoardId iCallbackBoardId;
-        private CallbackBoardType iCallbackBoardType;
-        private CallbackMaxBoards iCallbackMaxBoards;
-        private CallbackSoftwareVersion iCallbackSoftwareVersion;
+        private ActionDelegate iDelegateReboot;
+        private ActionDelegate iDelegateBootMode;
+        private ActionDelegate iDelegateSetBootMode;
+        private ActionDelegate iDelegateBspType;
+        private ActionDelegate iDelegateUglyName;
+        private ActionDelegate iDelegateMacAddress;
+        private ActionDelegate iDelegateProductId;
+        private ActionDelegate iDelegateBoardId;
+        private ActionDelegate iDelegateBoardType;
+        private ActionDelegate iDelegateMaxBoards;
+        private ActionDelegate iDelegateSoftwareVersion;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderLinnCoUkVolkano1(DvDevice aDevice)
+            : base(aDevice, "linn-co-uk", "Volkano", 1)
         {
-            iHandle = DvProviderLinnCoUkVolkano1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
@@ -85,9 +45,9 @@ namespace Zapp.Device.Providers
         /// DoReboot must be overridden if this is called.</remarks>
         protected unsafe void EnableActionReboot()
         {
-            iCallbackReboot = new CallbackReboot(DoReboot);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkVolkano1EnableActionReboot(iHandle, iCallbackReboot, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Reboot");
+            iDelegateReboot = new ActionDelegate(DoReboot);
+            EnableAction(action, iDelegateReboot, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -97,9 +57,15 @@ namespace Zapp.Device.Providers
         /// DoBootMode must be overridden if this is called.</remarks>
         protected unsafe void EnableActionBootMode()
         {
-            iCallbackBootMode = new CallbackBootMode(DoBootMode);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkVolkano1EnableActionBootMode(iHandle, iCallbackBootMode, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("BootMode");
+            List<String> allowedValues = new List<String>();
+            allowedValues.Add("Main");
+            allowedValues.Add("Fallback");
+            allowedValues.Add("Ram");
+            action.AddOutputParameter(new ParameterString("aMode", allowedValues));
+            allowedValues.Clear();
+            iDelegateBootMode = new ActionDelegate(DoBootMode);
+            EnableAction(action, iDelegateBootMode, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -109,9 +75,14 @@ namespace Zapp.Device.Providers
         /// DoSetBootMode must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetBootMode()
         {
-            iCallbackSetBootMode = new CallbackSetBootMode(DoSetBootMode);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkVolkano1EnableActionSetBootMode(iHandle, iCallbackSetBootMode, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetBootMode");
+            List<String> allowedValues = new List<String>();
+            allowedValues.Add("Main");
+            allowedValues.Add("Fallback");
+            action.AddInputParameter(new ParameterString("aMode", allowedValues));
+            allowedValues.Clear();
+            iDelegateSetBootMode = new ActionDelegate(DoSetBootMode);
+            EnableAction(action, iDelegateSetBootMode, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -121,9 +92,11 @@ namespace Zapp.Device.Providers
         /// DoBspType must be overridden if this is called.</remarks>
         protected unsafe void EnableActionBspType()
         {
-            iCallbackBspType = new CallbackBspType(DoBspType);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkVolkano1EnableActionBspType(iHandle, iCallbackBspType, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("BspType");
+            List<String> allowedValues = new List<String>();
+            action.AddOutputParameter(new ParameterString("aBspType", allowedValues));
+            iDelegateBspType = new ActionDelegate(DoBspType);
+            EnableAction(action, iDelegateBspType, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -133,9 +106,11 @@ namespace Zapp.Device.Providers
         /// DoUglyName must be overridden if this is called.</remarks>
         protected unsafe void EnableActionUglyName()
         {
-            iCallbackUglyName = new CallbackUglyName(DoUglyName);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkVolkano1EnableActionUglyName(iHandle, iCallbackUglyName, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("UglyName");
+            List<String> allowedValues = new List<String>();
+            action.AddOutputParameter(new ParameterString("aUglyName", allowedValues));
+            iDelegateUglyName = new ActionDelegate(DoUglyName);
+            EnableAction(action, iDelegateUglyName, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -145,9 +120,11 @@ namespace Zapp.Device.Providers
         /// DoMacAddress must be overridden if this is called.</remarks>
         protected unsafe void EnableActionMacAddress()
         {
-            iCallbackMacAddress = new CallbackMacAddress(DoMacAddress);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkVolkano1EnableActionMacAddress(iHandle, iCallbackMacAddress, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("MacAddress");
+            List<String> allowedValues = new List<String>();
+            action.AddOutputParameter(new ParameterString("aMacAddress", allowedValues));
+            iDelegateMacAddress = new ActionDelegate(DoMacAddress);
+            EnableAction(action, iDelegateMacAddress, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -157,9 +134,11 @@ namespace Zapp.Device.Providers
         /// DoProductId must be overridden if this is called.</remarks>
         protected unsafe void EnableActionProductId()
         {
-            iCallbackProductId = new CallbackProductId(DoProductId);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkVolkano1EnableActionProductId(iHandle, iCallbackProductId, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("ProductId");
+            List<String> allowedValues = new List<String>();
+            action.AddOutputParameter(new ParameterString("aProductNumber", allowedValues));
+            iDelegateProductId = new ActionDelegate(DoProductId);
+            EnableAction(action, iDelegateProductId, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -169,9 +148,12 @@ namespace Zapp.Device.Providers
         /// DoBoardId must be overridden if this is called.</remarks>
         protected unsafe void EnableActionBoardId()
         {
-            iCallbackBoardId = new CallbackBoardId(DoBoardId);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkVolkano1EnableActionBoardId(iHandle, iCallbackBoardId, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("BoardId");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("aIndex"));
+            action.AddOutputParameter(new ParameterString("aBoardNumber", allowedValues));
+            iDelegateBoardId = new ActionDelegate(DoBoardId);
+            EnableAction(action, iDelegateBoardId, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -181,9 +163,12 @@ namespace Zapp.Device.Providers
         /// DoBoardType must be overridden if this is called.</remarks>
         protected unsafe void EnableActionBoardType()
         {
-            iCallbackBoardType = new CallbackBoardType(DoBoardType);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkVolkano1EnableActionBoardType(iHandle, iCallbackBoardType, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("BoardType");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("aIndex"));
+            action.AddOutputParameter(new ParameterString("aBoardNumber", allowedValues));
+            iDelegateBoardType = new ActionDelegate(DoBoardType);
+            EnableAction(action, iDelegateBoardType, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -193,9 +178,10 @@ namespace Zapp.Device.Providers
         /// DoMaxBoards must be overridden if this is called.</remarks>
         protected unsafe void EnableActionMaxBoards()
         {
-            iCallbackMaxBoards = new CallbackMaxBoards(DoMaxBoards);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkVolkano1EnableActionMaxBoards(iHandle, iCallbackMaxBoards, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("MaxBoards");
+            action.AddOutputParameter(new ParameterUint("aMaxBoards"));
+            iDelegateMaxBoards = new ActionDelegate(DoMaxBoards);
+            EnableAction(action, iDelegateMaxBoards, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -205,9 +191,11 @@ namespace Zapp.Device.Providers
         /// DoSoftwareVersion must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSoftwareVersion()
         {
-            iCallbackSoftwareVersion = new CallbackSoftwareVersion(DoSoftwareVersion);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkVolkano1EnableActionSoftwareVersion(iHandle, iCallbackSoftwareVersion, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SoftwareVersion");
+            List<String> allowedValues = new List<String>();
+            action.AddOutputParameter(new ParameterString("aSoftwareVersion", allowedValues));
+            iDelegateSoftwareVersion = new ActionDelegate(DoSoftwareVersion);
+            EnableAction(action, iDelegateSoftwareVersion, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -365,110 +353,145 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoReboot(IntPtr aPtr, uint aVersion)
+        private static unsafe int DoReboot(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             self.Reboot(aVersion);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoBootMode(IntPtr aPtr, uint aVersion, char** aaMode)
+        private static unsafe int DoBootMode(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aMode;
             self.BootMode(aVersion, out aMode);
-            *aaMode = (char*)Marshal.StringToHGlobalAnsi(aMode).ToPointer();
+            invocation.WriteStart();
+            invocation.WriteString("aMode", aMode);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetBootMode(IntPtr aPtr, uint aVersion, char* aaMode)
+        private static unsafe int DoSetBootMode(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;
-            string aMode = Marshal.PtrToStringAnsi((IntPtr)aaMode);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string aMode = invocation.ReadString("aMode");
             self.SetBootMode(aVersion, aMode);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoBspType(IntPtr aPtr, uint aVersion, char** aaBspType)
+        private static unsafe int DoBspType(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aBspType;
             self.BspType(aVersion, out aBspType);
-            *aaBspType = (char*)Marshal.StringToHGlobalAnsi(aBspType).ToPointer();
+            invocation.WriteStart();
+            invocation.WriteString("aBspType", aBspType);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoUglyName(IntPtr aPtr, uint aVersion, char** aaUglyName)
+        private static unsafe int DoUglyName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aUglyName;
             self.UglyName(aVersion, out aUglyName);
-            *aaUglyName = (char*)Marshal.StringToHGlobalAnsi(aUglyName).ToPointer();
+            invocation.WriteStart();
+            invocation.WriteString("aUglyName", aUglyName);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoMacAddress(IntPtr aPtr, uint aVersion, char** aaMacAddress)
+        private static unsafe int DoMacAddress(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aMacAddress;
             self.MacAddress(aVersion, out aMacAddress);
-            *aaMacAddress = (char*)Marshal.StringToHGlobalAnsi(aMacAddress).ToPointer();
+            invocation.WriteStart();
+            invocation.WriteString("aMacAddress", aMacAddress);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoProductId(IntPtr aPtr, uint aVersion, char** aaProductNumber)
+        private static unsafe int DoProductId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aProductNumber;
             self.ProductId(aVersion, out aProductNumber);
-            *aaProductNumber = (char*)Marshal.StringToHGlobalAnsi(aProductNumber).ToPointer();
+            invocation.WriteStart();
+            invocation.WriteString("aProductNumber", aProductNumber);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoBoardId(IntPtr aPtr, uint aVersion, uint aaIndex, char** aaBoardNumber)
+        private static unsafe int DoBoardId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aIndex = invocation.ReadUint("aIndex");
             string aBoardNumber;
-            self.BoardId(aVersion, aaIndex, out aBoardNumber);
-            *aaBoardNumber = (char*)Marshal.StringToHGlobalAnsi(aBoardNumber).ToPointer();
+            self.BoardId(aVersion, aIndex, out aBoardNumber);
+            invocation.WriteStart();
+            invocation.WriteString("aBoardNumber", aBoardNumber);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoBoardType(IntPtr aPtr, uint aVersion, uint aaIndex, char** aaBoardNumber)
+        private static unsafe int DoBoardType(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aIndex = invocation.ReadUint("aIndex");
             string aBoardNumber;
-            self.BoardType(aVersion, aaIndex, out aBoardNumber);
-            *aaBoardNumber = (char*)Marshal.StringToHGlobalAnsi(aBoardNumber).ToPointer();
+            self.BoardType(aVersion, aIndex, out aBoardNumber);
+            invocation.WriteStart();
+            invocation.WriteString("aBoardNumber", aBoardNumber);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoMaxBoards(IntPtr aPtr, uint aVersion, uint* aaMaxBoards)
+        private static unsafe int DoMaxBoards(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint aMaxBoards;
             self.MaxBoards(aVersion, out aMaxBoards);
-            *aaMaxBoards = aMaxBoards;
+            invocation.WriteStart();
+            invocation.WriteUint("aMaxBoards", aMaxBoards);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSoftwareVersion(IntPtr aPtr, uint aVersion, char** aaSoftwareVersion)
+        private static unsafe int DoSoftwareVersion(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkVolkano1 self = (DvProviderLinnCoUkVolkano1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aSoftwareVersion;
             self.SoftwareVersion(aVersion, out aSoftwareVersion);
-            *aaSoftwareVersion = (char*)Marshal.StringToHGlobalAnsi(aSoftwareVersion).ToPointer();
+            invocation.WriteStart();
+            invocation.WriteString("aSoftwareVersion", aSoftwareVersion);
+            invocation.WriteEnd();
             return 0;
         }
 
@@ -488,21 +511,16 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            IntPtr handle;
             lock (this)
             {
                 if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
+                DisposeProvider();
                 iHandle = IntPtr.Zero;
             }
-            DvProviderLinnCoUkVolkano1Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }

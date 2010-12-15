@@ -82,8 +82,8 @@ void TestBasicCpC::TestSubscriptions(CpDeviceC aDevice)
     Print("  Subscriptions\n");
     THandle proxy = CpProxyZappOrgTestBasic1Create(aDevice);
     Semaphore sem("TSEM", 0);
-    CpProxyCSetPropertyChanged(proxy, updatesComplete, &sem);
-    CpProxyCSubscribe(proxy);
+    CpProxySetPropertyChanged(proxy, updatesComplete, &sem);
+    CpProxySubscribe(proxy);
     sem.Wait(); // wait for initial event
 
     /* For each property,

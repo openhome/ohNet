@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -19,7 +20,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the VarUint property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyVarUint(out uint aValue);
+        uint PropertyVarUint();
 
         /// <summary>
         /// Set the value of the VarInt property
@@ -32,7 +33,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the VarInt property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyVarInt(out int aValue);
+        int PropertyVarInt();
 
         /// <summary>
         /// Set the value of the VarBool property
@@ -45,7 +46,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the VarBool property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyVarBool(out bool aValue);
+        bool PropertyVarBool();
 
         /// <summary>
         /// Set the value of the VarStr property
@@ -58,7 +59,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the VarStr property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyVarStr(out string aValue);
+        string PropertyVarStr();
 
         /// <summary>
         /// Set the value of the VarBin property
@@ -71,7 +72,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the VarBin property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyVarBin(out string aValue);
+        string PropertyVarBin();
         
     }
     /// <summary>
@@ -79,120 +80,51 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class DvProviderZappOrgTestBasic1 : DvProvider, IDisposable, IDvProviderZappOrgTestBasic1
     {
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern IntPtr DvProviderZappOrgTestBasic1Create(IntPtr aDeviceHandle);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvProviderZappOrgTestBasic1Destroy(IntPtr aHandle);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe int DvProviderZappOrgTestBasic1SetPropertyVarUint(IntPtr aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe void DvProviderZappOrgTestBasic1GetPropertyVarUint(IntPtr aHandle, uint* aValue);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe int DvProviderZappOrgTestBasic1SetPropertyVarInt(IntPtr aHandle, int aValue, uint* aChanged);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe void DvProviderZappOrgTestBasic1GetPropertyVarInt(IntPtr aHandle, int* aValue);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe int DvProviderZappOrgTestBasic1SetPropertyVarBool(IntPtr aHandle, int aValue, uint* aChanged);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe void DvProviderZappOrgTestBasic1GetPropertyVarBool(IntPtr aHandle, int* aValue);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe int DvProviderZappOrgTestBasic1SetPropertyVarStr(IntPtr aHandle, char* aValue, uint* aChanged);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe void DvProviderZappOrgTestBasic1GetPropertyVarStr(IntPtr aHandle, char** aValue);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe int DvProviderZappOrgTestBasic1SetPropertyVarBin(IntPtr aHandle, char* aValue, int aValueLen, uint* aChanged);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern unsafe void DvProviderZappOrgTestBasic1GetPropertyVarBin(IntPtr aHandle, char** aValue, int* aValueLen);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvProviderZappOrgTestBasic1EnableActionIncrement(IntPtr aHandle, CallbackIncrement aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvProviderZappOrgTestBasic1EnableActionDecrement(IntPtr aHandle, CallbackDecrement aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvProviderZappOrgTestBasic1EnableActionToggle(IntPtr aHandle, CallbackToggle aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvProviderZappOrgTestBasic1EnableActionEchoString(IntPtr aHandle, CallbackEchoString aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvProviderZappOrgTestBasic1EnableActionEchoBinary(IntPtr aHandle, CallbackEchoBinary aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvProviderZappOrgTestBasic1EnableActionSetUint(IntPtr aHandle, CallbackSetUint aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvProviderZappOrgTestBasic1EnableActionGetUint(IntPtr aHandle, CallbackGetUint aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvProviderZappOrgTestBasic1EnableActionSetInt(IntPtr aHandle, CallbackSetInt aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvProviderZappOrgTestBasic1EnableActionGetInt(IntPtr aHandle, CallbackGetInt aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvProviderZappOrgTestBasic1EnableActionSetBool(IntPtr aHandle, CallbackSetBool aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvProviderZappOrgTestBasic1EnableActionGetBool(IntPtr aHandle, CallbackGetBool aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvProviderZappOrgTestBasic1EnableActionSetMultiple(IntPtr aHandle, CallbackSetMultiple aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvProviderZappOrgTestBasic1EnableActionSetString(IntPtr aHandle, CallbackSetString aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvProviderZappOrgTestBasic1EnableActionGetString(IntPtr aHandle, CallbackGetString aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvProviderZappOrgTestBasic1EnableActionSetBinary(IntPtr aHandle, CallbackSetBinary aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvProviderZappOrgTestBasic1EnableActionGetBinary(IntPtr aHandle, CallbackGetBinary aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvProviderZappOrgTestBasic1EnableActionToggleBool(IntPtr aHandle, CallbackToggleBool aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvProviderZappOrgTestBasic1EnableActionWriteFile(IntPtr aHandle, CallbackWriteFile aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestBasic1")]
-        static extern void DvProviderZappOrgTestBasic1EnableActionShutdown(IntPtr aHandle, CallbackShutdown aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private unsafe delegate int CallbackIncrement(IntPtr aPtr, uint aVersion, uint aValue, uint* aResult);
-        private unsafe delegate int CallbackDecrement(IntPtr aPtr, uint aVersion, int aValue, int* aResult);
-        private unsafe delegate int CallbackToggle(IntPtr aPtr, uint aVersion, int aValue, int* aResult);
-        private unsafe delegate int CallbackEchoString(IntPtr aPtr, uint aVersion, char* aValue, char** aResult);
-        private unsafe delegate int CallbackEchoBinary(IntPtr aPtr, uint aVersion, char* aValue, int aValueLen, char** aResult, int* aResultLen);
-        private unsafe delegate int CallbackSetUint(IntPtr aPtr, uint aVersion, uint aValueUint);
-        private unsafe delegate int CallbackGetUint(IntPtr aPtr, uint aVersion, uint* aValueUint);
-        private unsafe delegate int CallbackSetInt(IntPtr aPtr, uint aVersion, int aValueInt);
-        private unsafe delegate int CallbackGetInt(IntPtr aPtr, uint aVersion, int* aValueInt);
-        private unsafe delegate int CallbackSetBool(IntPtr aPtr, uint aVersion, int aValueBool);
-        private unsafe delegate int CallbackGetBool(IntPtr aPtr, uint aVersion, int* aValueBool);
-        private unsafe delegate int CallbackSetMultiple(IntPtr aPtr, uint aVersion, uint aValueUint, int aValueInt, int aValueBool);
-        private unsafe delegate int CallbackSetString(IntPtr aPtr, uint aVersion, char* aValueStr);
-        private unsafe delegate int CallbackGetString(IntPtr aPtr, uint aVersion, char** aValueStr);
-        private unsafe delegate int CallbackSetBinary(IntPtr aPtr, uint aVersion, char* aValueBin, int aValueBinLen);
-        private unsafe delegate int CallbackGetBinary(IntPtr aPtr, uint aVersion, char** aValueBin, int* aValueBinLen);
-        private unsafe delegate int CallbackToggleBool(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackWriteFile(IntPtr aPtr, uint aVersion, char* aData, char* aFileFullName);
-        private unsafe delegate int CallbackShutdown(IntPtr aPtr, uint aVersion);
-
         private GCHandle iGch;
-        private CallbackIncrement iCallbackIncrement;
-        private CallbackDecrement iCallbackDecrement;
-        private CallbackToggle iCallbackToggle;
-        private CallbackEchoString iCallbackEchoString;
-        private CallbackEchoBinary iCallbackEchoBinary;
-        private CallbackSetUint iCallbackSetUint;
-        private CallbackGetUint iCallbackGetUint;
-        private CallbackSetInt iCallbackSetInt;
-        private CallbackGetInt iCallbackGetInt;
-        private CallbackSetBool iCallbackSetBool;
-        private CallbackGetBool iCallbackGetBool;
-        private CallbackSetMultiple iCallbackSetMultiple;
-        private CallbackSetString iCallbackSetString;
-        private CallbackGetString iCallbackGetString;
-        private CallbackSetBinary iCallbackSetBinary;
-        private CallbackGetBinary iCallbackGetBinary;
-        private CallbackToggleBool iCallbackToggleBool;
-        private CallbackWriteFile iCallbackWriteFile;
-        private CallbackShutdown iCallbackShutdown;
+        private ActionDelegate iDelegateIncrement;
+        private ActionDelegate iDelegateDecrement;
+        private ActionDelegate iDelegateToggle;
+        private ActionDelegate iDelegateEchoString;
+        private ActionDelegate iDelegateEchoBinary;
+        private ActionDelegate iDelegateSetUint;
+        private ActionDelegate iDelegateGetUint;
+        private ActionDelegate iDelegateSetInt;
+        private ActionDelegate iDelegateGetInt;
+        private ActionDelegate iDelegateSetBool;
+        private ActionDelegate iDelegateGetBool;
+        private ActionDelegate iDelegateSetMultiple;
+        private ActionDelegate iDelegateSetString;
+        private ActionDelegate iDelegateGetString;
+        private ActionDelegate iDelegateSetBinary;
+        private ActionDelegate iDelegateGetBinary;
+        private ActionDelegate iDelegateToggleBool;
+        private ActionDelegate iDelegateWriteFile;
+        private ActionDelegate iDelegateShutdown;
+        private PropertyUint iPropertyVarUint;
+        private PropertyInt iPropertyVarInt;
+        private PropertyBool iPropertyVarBool;
+        private PropertyString iPropertyVarStr;
+        private PropertyBinary iPropertyVarBin;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderZappOrgTestBasic1(DvDevice aDevice)
+            : base(aDevice, "zapp-org", "TestBasic", 1)
         {
-            iHandle = DvProviderZappOrgTestBasic1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
+            List<String> allowedValues = new List<String>();
+            iPropertyVarUint = new PropertyUint(new ParameterUint("VarUint"));
+            AddProperty(iPropertyVarUint);
+            iPropertyVarInt = new PropertyInt(new ParameterInt("VarInt"));
+            AddProperty(iPropertyVarInt);
+            iPropertyVarBool = new PropertyBool(new ParameterBool("VarBool"));
+            AddProperty(iPropertyVarBool);
+            iPropertyVarStr = new PropertyString(new ParameterString("VarStr", allowedValues));
+            AddProperty(iPropertyVarStr);
+            iPropertyVarBin = new PropertyBinary(new ParameterBinary("VarBin"));
+            AddProperty(iPropertyVarBin);
         }
 
         /// <summary>
@@ -200,26 +132,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyVarUint(uint aValue)
+        public bool SetPropertyVarUint(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderZappOrgTestBasic1SetPropertyVarUint(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyVarUint, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the VarUint property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyVarUint(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyVarUint()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderZappOrgTestBasic1GetPropertyVarUint(iHandle, value);
-            }
+            return iPropertyVarUint.Value();
         }
 
         /// <summary>
@@ -227,26 +151,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyVarInt(int aValue)
+        public bool SetPropertyVarInt(int aValue)
         {
-            uint changed;
-            if (0 != DvProviderZappOrgTestBasic1SetPropertyVarInt(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyInt(iPropertyVarInt, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the VarInt property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyVarInt(out int aValue)
+        /// <returns>The value of the property</returns>
+        public int PropertyVarInt()
         {
-            fixed (int* value = &aValue)
-            {
-                DvProviderZappOrgTestBasic1GetPropertyVarInt(iHandle, value);
-            }
+            return iPropertyVarInt.Value();
         }
 
         /// <summary>
@@ -254,26 +170,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyVarBool(bool aValue)
+        public bool SetPropertyVarBool(bool aValue)
         {
-            uint changed;
-            int value = (aValue ? 1 : 0);
-            if (0 != DvProviderZappOrgTestBasic1SetPropertyVarBool(iHandle, value, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBool(iPropertyVarBool, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the VarBool property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyVarBool(out bool aValue)
+        /// <returns>The value of the property</returns>
+        public bool PropertyVarBool()
         {
-            int value;
-            DvProviderZappOrgTestBasic1GetPropertyVarBool(iHandle, &value);
-            aValue = (value != 0);
+            return iPropertyVarBool.Value();
         }
 
         /// <summary>
@@ -281,29 +189,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyVarStr(string aValue)
+        public bool SetPropertyVarStr(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderZappOrgTestBasic1SetPropertyVarStr(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyString(iPropertyVarStr, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the VarStr property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyVarStr(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyVarStr()
         {
-            char* value;
-            DvProviderZappOrgTestBasic1GetPropertyVarStr(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
+            return iPropertyVarStr.Value();
         }
 
         /// <summary>
@@ -311,31 +208,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyVarBin(string aValue)
+        public bool SetPropertyVarBin(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int valueLen = aValue.Length;
-            int err = DvProviderZappOrgTestBasic1SetPropertyVarBin(iHandle, value, valueLen, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBinary(iPropertyVarBin, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the VarBin property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyVarBin(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyVarBin()
         {
-            char* value;
-            int valueLen;
-             DvProviderZappOrgTestBasic1GetPropertyVarBin(iHandle, &value, &valueLen);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value, valueLen);
-            ZappFree(value);
+            return iPropertyVarBin.Value();
         }
 
         /// <summary>
@@ -345,9 +229,11 @@ namespace Zapp.Device.Providers
         /// DoIncrement must be overridden if this is called.</remarks>
         protected unsafe void EnableActionIncrement()
         {
-            iCallbackIncrement = new CallbackIncrement(DoIncrement);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestBasic1EnableActionIncrement(iHandle, iCallbackIncrement, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Increment");
+            action.AddInputParameter(new ParameterUint("Value"));
+            action.AddOutputParameter(new ParameterUint("Result"));
+            iDelegateIncrement = new ActionDelegate(DoIncrement);
+            EnableAction(action, iDelegateIncrement, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -357,9 +243,11 @@ namespace Zapp.Device.Providers
         /// DoDecrement must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDecrement()
         {
-            iCallbackDecrement = new CallbackDecrement(DoDecrement);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestBasic1EnableActionDecrement(iHandle, iCallbackDecrement, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Decrement");
+            action.AddInputParameter(new ParameterInt("Value"));
+            action.AddOutputParameter(new ParameterInt("Result"));
+            iDelegateDecrement = new ActionDelegate(DoDecrement);
+            EnableAction(action, iDelegateDecrement, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -369,9 +257,11 @@ namespace Zapp.Device.Providers
         /// DoToggle must be overridden if this is called.</remarks>
         protected unsafe void EnableActionToggle()
         {
-            iCallbackToggle = new CallbackToggle(DoToggle);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestBasic1EnableActionToggle(iHandle, iCallbackToggle, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Toggle");
+            action.AddInputParameter(new ParameterBool("Value"));
+            action.AddOutputParameter(new ParameterBool("Result"));
+            iDelegateToggle = new ActionDelegate(DoToggle);
+            EnableAction(action, iDelegateToggle, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -381,9 +271,12 @@ namespace Zapp.Device.Providers
         /// DoEchoString must be overridden if this is called.</remarks>
         protected unsafe void EnableActionEchoString()
         {
-            iCallbackEchoString = new CallbackEchoString(DoEchoString);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestBasic1EnableActionEchoString(iHandle, iCallbackEchoString, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("EchoString");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterString("Value", allowedValues));
+            action.AddOutputParameter(new ParameterString("Result", allowedValues));
+            iDelegateEchoString = new ActionDelegate(DoEchoString);
+            EnableAction(action, iDelegateEchoString, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -393,9 +286,11 @@ namespace Zapp.Device.Providers
         /// DoEchoBinary must be overridden if this is called.</remarks>
         protected unsafe void EnableActionEchoBinary()
         {
-            iCallbackEchoBinary = new CallbackEchoBinary(DoEchoBinary);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestBasic1EnableActionEchoBinary(iHandle, iCallbackEchoBinary, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("EchoBinary");
+            action.AddInputParameter(new ParameterBinary("Value"));
+            action.AddOutputParameter(new ParameterBinary("Result"));
+            iDelegateEchoBinary = new ActionDelegate(DoEchoBinary);
+            EnableAction(action, iDelegateEchoBinary, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -405,9 +300,10 @@ namespace Zapp.Device.Providers
         /// DoSetUint must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetUint()
         {
-            iCallbackSetUint = new CallbackSetUint(DoSetUint);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestBasic1EnableActionSetUint(iHandle, iCallbackSetUint, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetUint");
+            action.AddInputParameter(new ParameterRelated("ValueUint", iPropertyVarUint));
+            iDelegateSetUint = new ActionDelegate(DoSetUint);
+            EnableAction(action, iDelegateSetUint, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -417,9 +313,10 @@ namespace Zapp.Device.Providers
         /// DoGetUint must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetUint()
         {
-            iCallbackGetUint = new CallbackGetUint(DoGetUint);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestBasic1EnableActionGetUint(iHandle, iCallbackGetUint, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetUint");
+            action.AddOutputParameter(new ParameterRelated("ValueUint", iPropertyVarUint));
+            iDelegateGetUint = new ActionDelegate(DoGetUint);
+            EnableAction(action, iDelegateGetUint, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -429,9 +326,10 @@ namespace Zapp.Device.Providers
         /// DoSetInt must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetInt()
         {
-            iCallbackSetInt = new CallbackSetInt(DoSetInt);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestBasic1EnableActionSetInt(iHandle, iCallbackSetInt, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetInt");
+            action.AddInputParameter(new ParameterRelated("ValueInt", iPropertyVarInt));
+            iDelegateSetInt = new ActionDelegate(DoSetInt);
+            EnableAction(action, iDelegateSetInt, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -441,9 +339,10 @@ namespace Zapp.Device.Providers
         /// DoGetInt must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetInt()
         {
-            iCallbackGetInt = new CallbackGetInt(DoGetInt);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestBasic1EnableActionGetInt(iHandle, iCallbackGetInt, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetInt");
+            action.AddOutputParameter(new ParameterRelated("ValueInt", iPropertyVarInt));
+            iDelegateGetInt = new ActionDelegate(DoGetInt);
+            EnableAction(action, iDelegateGetInt, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -453,9 +352,10 @@ namespace Zapp.Device.Providers
         /// DoSetBool must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetBool()
         {
-            iCallbackSetBool = new CallbackSetBool(DoSetBool);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestBasic1EnableActionSetBool(iHandle, iCallbackSetBool, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetBool");
+            action.AddInputParameter(new ParameterRelated("ValueBool", iPropertyVarBool));
+            iDelegateSetBool = new ActionDelegate(DoSetBool);
+            EnableAction(action, iDelegateSetBool, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -465,9 +365,10 @@ namespace Zapp.Device.Providers
         /// DoGetBool must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetBool()
         {
-            iCallbackGetBool = new CallbackGetBool(DoGetBool);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestBasic1EnableActionGetBool(iHandle, iCallbackGetBool, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetBool");
+            action.AddOutputParameter(new ParameterRelated("ValueBool", iPropertyVarBool));
+            iDelegateGetBool = new ActionDelegate(DoGetBool);
+            EnableAction(action, iDelegateGetBool, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -477,9 +378,12 @@ namespace Zapp.Device.Providers
         /// DoSetMultiple must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetMultiple()
         {
-            iCallbackSetMultiple = new CallbackSetMultiple(DoSetMultiple);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestBasic1EnableActionSetMultiple(iHandle, iCallbackSetMultiple, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetMultiple");
+            action.AddInputParameter(new ParameterRelated("ValueUint", iPropertyVarUint));
+            action.AddInputParameter(new ParameterRelated("ValueInt", iPropertyVarInt));
+            action.AddInputParameter(new ParameterRelated("ValueBool", iPropertyVarBool));
+            iDelegateSetMultiple = new ActionDelegate(DoSetMultiple);
+            EnableAction(action, iDelegateSetMultiple, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -489,9 +393,11 @@ namespace Zapp.Device.Providers
         /// DoSetString must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetString()
         {
-            iCallbackSetString = new CallbackSetString(DoSetString);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestBasic1EnableActionSetString(iHandle, iCallbackSetString, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetString");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterRelated("ValueStr", iPropertyVarStr));
+            iDelegateSetString = new ActionDelegate(DoSetString);
+            EnableAction(action, iDelegateSetString, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -501,9 +407,11 @@ namespace Zapp.Device.Providers
         /// DoGetString must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetString()
         {
-            iCallbackGetString = new CallbackGetString(DoGetString);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestBasic1EnableActionGetString(iHandle, iCallbackGetString, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetString");
+            List<String> allowedValues = new List<String>();
+            action.AddOutputParameter(new ParameterRelated("ValueStr", iPropertyVarStr));
+            iDelegateGetString = new ActionDelegate(DoGetString);
+            EnableAction(action, iDelegateGetString, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -513,9 +421,10 @@ namespace Zapp.Device.Providers
         /// DoSetBinary must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetBinary()
         {
-            iCallbackSetBinary = new CallbackSetBinary(DoSetBinary);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestBasic1EnableActionSetBinary(iHandle, iCallbackSetBinary, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetBinary");
+            action.AddInputParameter(new ParameterRelated("ValueBin", iPropertyVarBin));
+            iDelegateSetBinary = new ActionDelegate(DoSetBinary);
+            EnableAction(action, iDelegateSetBinary, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -525,9 +434,10 @@ namespace Zapp.Device.Providers
         /// DoGetBinary must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetBinary()
         {
-            iCallbackGetBinary = new CallbackGetBinary(DoGetBinary);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestBasic1EnableActionGetBinary(iHandle, iCallbackGetBinary, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetBinary");
+            action.AddOutputParameter(new ParameterRelated("ValueBin", iPropertyVarBin));
+            iDelegateGetBinary = new ActionDelegate(DoGetBinary);
+            EnableAction(action, iDelegateGetBinary, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -537,9 +447,9 @@ namespace Zapp.Device.Providers
         /// DoToggleBool must be overridden if this is called.</remarks>
         protected unsafe void EnableActionToggleBool()
         {
-            iCallbackToggleBool = new CallbackToggleBool(DoToggleBool);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestBasic1EnableActionToggleBool(iHandle, iCallbackToggleBool, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("ToggleBool");
+            iDelegateToggleBool = new ActionDelegate(DoToggleBool);
+            EnableAction(action, iDelegateToggleBool, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -549,9 +459,12 @@ namespace Zapp.Device.Providers
         /// DoWriteFile must be overridden if this is called.</remarks>
         protected unsafe void EnableActionWriteFile()
         {
-            iCallbackWriteFile = new CallbackWriteFile(DoWriteFile);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestBasic1EnableActionWriteFile(iHandle, iCallbackWriteFile, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("WriteFile");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterString("Data", allowedValues));
+            action.AddInputParameter(new ParameterString("FileFullName", allowedValues));
+            iDelegateWriteFile = new ActionDelegate(DoWriteFile);
+            EnableAction(action, iDelegateWriteFile, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -561,9 +474,9 @@ namespace Zapp.Device.Providers
         /// DoShutdown must be overridden if this is called.</remarks>
         protected unsafe void EnableActionShutdown()
         {
-            iCallbackShutdown = new CallbackShutdown(DoShutdown);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestBasic1EnableActionShutdown(iHandle, iCallbackShutdown, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Shutdown");
+            iDelegateShutdown = new ActionDelegate(DoShutdown);
+            EnableAction(action, iDelegateShutdown, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -838,186 +751,247 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoIncrement(IntPtr aPtr, uint aVersion, uint aValue, uint* aResult)
+        private static unsafe int DoIncrement(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint value = invocation.ReadUint("Value");
             uint result;
-            self.Increment(aVersion, aValue, out result);
-            *aResult = result;
+            self.Increment(aVersion, value, out result);
+            invocation.WriteStart();
+            invocation.WriteUint("Result", result);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoDecrement(IntPtr aPtr, uint aVersion, int aValue, int* aResult)
+        private static unsafe int DoDecrement(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            int value = invocation.ReadInt("Value");
             int result;
-            self.Decrement(aVersion, aValue, out result);
-            *aResult = result;
+            self.Decrement(aVersion, value, out result);
+            invocation.WriteStart();
+            invocation.WriteInt("Result", result);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoToggle(IntPtr aPtr, uint aVersion, int aValue, int* aResult)
+        private static unsafe int DoToggle(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
-            bool value = (aValue != 0);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool value = invocation.ReadBool("Value");
             bool result;
             self.Toggle(aVersion, value, out result);
-            *aResult = (result ? 1 : 0);
+            invocation.WriteStart();
+            invocation.WriteBool("Result", result);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoEchoString(IntPtr aPtr, uint aVersion, char* aValue, char** aResult)
+        private static unsafe int DoEchoString(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
-            string value = Marshal.PtrToStringAnsi((IntPtr)aValue);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string value = invocation.ReadString("Value");
             string result;
             self.EchoString(aVersion, value, out result);
-            *aResult = (char*)Marshal.StringToHGlobalAnsi(result).ToPointer();
+            invocation.WriteStart();
+            invocation.WriteString("Result", result);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoEchoBinary(IntPtr aPtr, uint aVersion, char* aValue, int aValueLen, char** aResult, int* aResultLen)
+        private static unsafe int DoEchoBinary(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
-            string value = Marshal.PtrToStringAnsi((IntPtr)aValue, aValueLen);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string value = invocation.ReadBinary("Value");
             string result;
             self.EchoBinary(aVersion, value, out result);
-            *aResult = (char*)Marshal.StringToHGlobalAnsi(result).ToPointer();
-            *aResultLen = result.Length;
+            invocation.WriteStart();
+            invocation.WriteBinary("Result", result);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetUint(IntPtr aPtr, uint aVersion, uint aValueUint)
+        private static unsafe int DoSetUint(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
-            self.SetUint(aVersion, aValueUint);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint valueUint = invocation.ReadUint("ValueUint");
+            self.SetUint(aVersion, valueUint);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoGetUint(IntPtr aPtr, uint aVersion, uint* aValueUint)
+        private static unsafe int DoGetUint(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint valueUint;
             self.GetUint(aVersion, out valueUint);
-            *aValueUint = valueUint;
+            invocation.WriteStart();
+            invocation.WriteUint("ValueUint", valueUint);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetInt(IntPtr aPtr, uint aVersion, int aValueInt)
+        private static unsafe int DoSetInt(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
-            self.SetInt(aVersion, aValueInt);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            int valueInt = invocation.ReadInt("ValueInt");
+            self.SetInt(aVersion, valueInt);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoGetInt(IntPtr aPtr, uint aVersion, int* aValueInt)
+        private static unsafe int DoGetInt(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             int valueInt;
             self.GetInt(aVersion, out valueInt);
-            *aValueInt = valueInt;
+            invocation.WriteStart();
+            invocation.WriteInt("ValueInt", valueInt);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetBool(IntPtr aPtr, uint aVersion, int aValueBool)
+        private static unsafe int DoSetBool(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
-            bool valueBool = (aValueBool != 0);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool valueBool = invocation.ReadBool("ValueBool");
             self.SetBool(aVersion, valueBool);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoGetBool(IntPtr aPtr, uint aVersion, int* aValueBool)
+        private static unsafe int DoGetBool(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             bool valueBool;
             self.GetBool(aVersion, out valueBool);
-            *aValueBool = (valueBool ? 1 : 0);
+            invocation.WriteStart();
+            invocation.WriteBool("ValueBool", valueBool);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetMultiple(IntPtr aPtr, uint aVersion, uint aValueUint, int aValueInt, int aValueBool)
+        private static unsafe int DoSetMultiple(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
-            bool valueBool = (aValueBool != 0);
-            self.SetMultiple(aVersion, aValueUint, aValueInt, valueBool);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint valueUint = invocation.ReadUint("ValueUint");
+            int valueInt = invocation.ReadInt("ValueInt");
+            bool valueBool = invocation.ReadBool("ValueBool");
+            self.SetMultiple(aVersion, valueUint, valueInt, valueBool);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetString(IntPtr aPtr, uint aVersion, char* aValueStr)
+        private static unsafe int DoSetString(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
-            string valueStr = Marshal.PtrToStringAnsi((IntPtr)aValueStr);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string valueStr = invocation.ReadString("ValueStr");
             self.SetString(aVersion, valueStr);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoGetString(IntPtr aPtr, uint aVersion, char** aValueStr)
+        private static unsafe int DoGetString(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string valueStr;
             self.GetString(aVersion, out valueStr);
-            *aValueStr = (char*)Marshal.StringToHGlobalAnsi(valueStr).ToPointer();
+            invocation.WriteStart();
+            invocation.WriteString("ValueStr", valueStr);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetBinary(IntPtr aPtr, uint aVersion, char* aValueBin, int aValueBinLen)
+        private static unsafe int DoSetBinary(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
-            string valueBin = Marshal.PtrToStringAnsi((IntPtr)aValueBin, aValueBinLen);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string valueBin = invocation.ReadBinary("ValueBin");
             self.SetBinary(aVersion, valueBin);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoGetBinary(IntPtr aPtr, uint aVersion, char** aValueBin, int* aValueBinLen)
+        private static unsafe int DoGetBinary(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string valueBin;
             self.GetBinary(aVersion, out valueBin);
-            *aValueBin = (char*)Marshal.StringToHGlobalAnsi(valueBin).ToPointer();
-            *aValueBinLen = valueBin.Length;
+            invocation.WriteStart();
+            invocation.WriteBinary("ValueBin", valueBin);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoToggleBool(IntPtr aPtr, uint aVersion)
+        private static unsafe int DoToggleBool(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             self.ToggleBool(aVersion);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoWriteFile(IntPtr aPtr, uint aVersion, char* aData, char* aFileFullName)
+        private static unsafe int DoWriteFile(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
-            string data = Marshal.PtrToStringAnsi((IntPtr)aData);
-            string fileFullName = Marshal.PtrToStringAnsi((IntPtr)aFileFullName);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string data = invocation.ReadString("Data");
+            string fileFullName = invocation.ReadString("FileFullName");
             self.WriteFile(aVersion, data, fileFullName);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoShutdown(IntPtr aPtr, uint aVersion)
+        private static unsafe int DoShutdown(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             self.Shutdown(aVersion);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
@@ -1037,21 +1011,16 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            IntPtr handle;
             lock (this)
             {
                 if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
+                DisposeProvider();
                 iHandle = IntPtr.Zero;
             }
-            DvProviderZappOrgTestBasic1Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }

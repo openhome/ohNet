@@ -1,7 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Text;
-using Zapp;
+using Zapp.Core;
+using Zapp.ControlPoint;
 
 namespace Zapp.ControlPoint.Proxies
 {
@@ -13,42 +15,52 @@ namespace Zapp.ControlPoint.Proxies
         void SyncSetLevel(uint aLevel);
         void BeginSetLevel(uint aLevel, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetLevel(IntPtr aAsyncHandle);
-
         void SetPropertyA_ARG_LevelChanged(CpProxy.CallbackPropertyChanged aA_ARG_LevelChanged);
-        void PropertyA_ARG_Level(out uint aA_ARG_Level);
+        uint PropertyA_ARG_Level();
     }
+
+    internal class SyncGetLevelZappOrgTestDimmableLight1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestDimmableLight1 iService;
+        private uint iLevel;
+
+        public SyncGetLevelZappOrgTestDimmableLight1(CpProxyZappOrgTestDimmableLight1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint Level()
+        {
+            return iLevel;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetLevel(aAsyncHandle, out iLevel);
+        }
+    };
+
+    internal class SyncSetLevelZappOrgTestDimmableLight1 : SyncProxyAction
+    {
+        private CpProxyZappOrgTestDimmableLight1 iService;
+
+        public SyncSetLevelZappOrgTestDimmableLight1(CpProxyZappOrgTestDimmableLight1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetLevel(aAsyncHandle);
+        }
+    };
 
     /// <summary>
     /// Proxy for the zapp.org:TestDimmableLight:1 UPnP service
     /// </summary>
     public class CpProxyZappOrgTestDimmableLight1 : CpProxy, IDisposable, ICpProxyZappOrgTestDimmableLight1
     {
-        [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern IntPtr CpProxyZappOrgTestDimmableLight1Create(IntPtr aDeviceHandle);
-        [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern void CpProxyZappOrgTestDimmableLight1Destroy(IntPtr aHandle);
-        [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern unsafe void CpProxyZappOrgTestDimmableLight1SyncGetLevel(IntPtr aHandle, uint* aLevel);
-        [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern unsafe void CpProxyZappOrgTestDimmableLight1BeginGetLevel(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern unsafe int CpProxyZappOrgTestDimmableLight1EndGetLevel(IntPtr aHandle, IntPtr aAsync, uint* aLevel);
-        [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern unsafe void CpProxyZappOrgTestDimmableLight1SyncSetLevel(IntPtr aHandle, uint aLevel);
-        [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern unsafe void CpProxyZappOrgTestDimmableLight1BeginSetLevel(IntPtr aHandle, uint aLevel, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern unsafe int CpProxyZappOrgTestDimmableLight1EndSetLevel(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern void CpProxyZappOrgTestDimmableLight1SetPropertyA_ARG_LevelChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpZappOrgTestDimmableLight1")]
-        static extern unsafe void CpProxyZappOrgTestDimmableLight1PropertyA_ARG_Level(IntPtr aHandle, uint* aA_ARG_Level);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private GCHandle iGch;
+        private Zapp.Core.Action iActionGetLevel;
+        private Zapp.Core.Action iActionSetLevel;
+        private PropertyUint iA_ARG_Level;
         private CallbackPropertyChanged iA_ARG_LevelChanged;
-        private Callback iCallbackA_ARG_LevelChanged;
 
         /// <summary>
         /// Constructor
@@ -56,9 +68,20 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
         /// <param name="aDevice">The device to use</param>
         public CpProxyZappOrgTestDimmableLight1(CpDevice aDevice)
+            : base("zapp-org", "TestDimmableLight", 1, aDevice)
         {
-            iHandle = CpProxyZappOrgTestDimmableLight1Create(aDevice.Handle());
-            iGch = GCHandle.Alloc(this);
+            Zapp.Core.Parameter param;
+
+            iActionGetLevel = new Zapp.Core.Action("GetLevel");
+            param = new ParameterUint("Level");
+            iActionGetLevel.AddOutputParameter(param);
+
+            iActionSetLevel = new Zapp.Core.Action("SetLevel");
+            param = new ParameterUint("Level");
+            iActionSetLevel.AddInputParameter(param);
+
+            iA_ARG_Level = new PropertyUint("A_ARG_Level", A_ARG_LevelPropertyChanged);
+            AddProperty(iA_ARG_Level);
         }
 
         /// <summary>
@@ -67,12 +90,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aLevel"></param>
-        public unsafe void SyncGetLevel(out uint aLevel)
+        public void SyncGetLevel(out uint aLevel)
         {
-            fixed (uint* level = &aLevel)
-            {
-                CpProxyZappOrgTestDimmableLight1SyncGetLevel(iHandle, level);
-            }
+            SyncGetLevelZappOrgTestDimmableLight1 sync = new SyncGetLevelZappOrgTestDimmableLight1(this);
+            BeginGetLevel(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aLevel = sync.Level();
         }
 
         /// <summary>
@@ -83,11 +107,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndGetLevel().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetLevel(CallbackAsyncComplete aCallback)
+        public void BeginGetLevel(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestDimmableLight1BeginGetLevel(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetLevel, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetLevel.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -96,15 +121,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aLevel"></param>
-        public unsafe void EndGetLevel(IntPtr aAsyncHandle, out uint aLevel)
+        public void EndGetLevel(IntPtr aAsyncHandle, out uint aLevel)
         {
-            fixed (uint* level = &aLevel)
-            {
-                if (0 != CpProxyZappOrgTestDimmableLight1EndGetLevel(iHandle, aAsyncHandle, level))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aLevel = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -113,11 +133,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aLevel"></param>
-        public unsafe void SyncSetLevel(uint aLevel)
+        public void SyncSetLevel(uint aLevel)
         {
-            {
-                CpProxyZappOrgTestDimmableLight1SyncSetLevel(iHandle, aLevel);
-            }
+            SyncSetLevelZappOrgTestDimmableLight1 sync = new SyncSetLevelZappOrgTestDimmableLight1(this);
+            BeginSetLevel(aLevel, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -129,11 +150,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aLevel"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetLevel(uint aLevel, CallbackAsyncComplete aCallback)
+        public void BeginSetLevel(uint aLevel, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyZappOrgTestDimmableLight1BeginSetLevel(iHandle, aLevel, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetLevel, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetLevel.InputParameter(inIndex++), aLevel));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -141,14 +163,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetLevel(IntPtr aAsyncHandle)
+        public void EndSetLevel(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyZappOrgTestDimmableLight1EndSetLevel(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -159,17 +175,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aA_ARG_LevelChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyA_ARG_LevelChanged(CallbackPropertyChanged aA_ARG_LevelChanged)
         {
-            iA_ARG_LevelChanged = aA_ARG_LevelChanged;
-            iCallbackA_ARG_LevelChanged = new Callback(PropertyA_ARG_LevelChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyZappOrgTestDimmableLight1SetPropertyA_ARG_LevelChanged(iHandle, iCallbackA_ARG_LevelChanged, ptr);
+            lock (this)
+            {
+                iA_ARG_LevelChanged = aA_ARG_LevelChanged;
+            }
         }
 
-        private void PropertyA_ARG_LevelChanged(IntPtr aPtr)
+        private void A_ARG_LevelPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyZappOrgTestDimmableLight1 self = (CpProxyZappOrgTestDimmableLight1)gch.Target;
-            self.iA_ARG_LevelChanged();
+            lock (this)
+            {
+                if (iA_ARG_LevelChanged != null)
+                {
+                    iA_ARG_LevelChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -179,12 +199,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aA_ARG_Level">Will be set to the value of the property</param>
-        public unsafe void PropertyA_ARG_Level(out uint aA_ARG_Level)
+        public uint PropertyA_ARG_Level()
         {
-            fixed (uint* a_ARG_Level = &aA_ARG_Level)
-            {
-                CpProxyZappOrgTestDimmableLight1PropertyA_ARG_Level(iHandle, a_ARG_Level);
-            }
+            return iA_ARG_Level.Value();
         }
 
         /// <summary>
@@ -208,17 +225,14 @@ namespace Zapp.ControlPoint.Proxies
                 {
                     return;
                 }
-                CpProxyZappOrgTestDimmableLight1Destroy(iHandle);
+                DisposeProxy();
                 iHandle = IntPtr.Zero;
+                iActionGetLevel.Dispose();
+                iActionSetLevel.Dispose();
             }
-            iGch.Free();
             if (aDisposing)
             {
                 GC.SuppressFinalize(this);
-            }
-            else
-            {
-                DisposeProxy();
             }
         }
     }

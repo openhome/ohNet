@@ -1,17 +1,19 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Text;
-using Zapp;
+using Zapp.Core;
+using Zapp.ControlPoint;
 
 namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyUpnpOrgRenderingControl2 : ICpProxy, IDisposable
     {
-        void SyncListPresets(uint aInstanceID, out string aCurrentPresetNameList);
+        void SyncListPresets(uint aInstanceID, out String aCurrentPresetNameList);
         void BeginListPresets(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndListPresets(IntPtr aAsyncHandle, out string aCurrentPresetNameList);
-        void SyncSelectPreset(uint aInstanceID, string aPresetName);
-        void BeginSelectPreset(uint aInstanceID, string aPresetName, CpProxy.CallbackAsyncComplete aCallback);
+        void EndListPresets(IntPtr aAsyncHandle, out String aCurrentPresetNameList);
+        void SyncSelectPreset(uint aInstanceID, String aPresetName);
+        void BeginSelectPreset(uint aInstanceID, String aPresetName, CpProxy.CallbackAsyncComplete aCallback);
         void EndSelectPreset(IntPtr aAsyncHandle);
         void SyncGetBrightness(uint aInstanceID, out uint aCurrentBrightness);
         void BeginGetBrightness(uint aInstanceID, CpProxy.CallbackAsyncComplete aCallback);
@@ -85,285 +87,710 @@ namespace Zapp.ControlPoint.Proxies
         void SyncSetVerticalKeystone(uint aInstanceID, int aDesiredVerticalKeystone);
         void BeginSetVerticalKeystone(uint aInstanceID, int aDesiredVerticalKeystone, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetVerticalKeystone(IntPtr aAsyncHandle);
-        void SyncGetMute(uint aInstanceID, string aChannel, out bool aCurrentMute);
-        void BeginGetMute(uint aInstanceID, string aChannel, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncGetMute(uint aInstanceID, String aChannel, out bool aCurrentMute);
+        void BeginGetMute(uint aInstanceID, String aChannel, CpProxy.CallbackAsyncComplete aCallback);
         void EndGetMute(IntPtr aAsyncHandle, out bool aCurrentMute);
-        void SyncSetMute(uint aInstanceID, string aChannel, bool aDesiredMute);
-        void BeginSetMute(uint aInstanceID, string aChannel, bool aDesiredMute, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSetMute(uint aInstanceID, String aChannel, bool aDesiredMute);
+        void BeginSetMute(uint aInstanceID, String aChannel, bool aDesiredMute, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetMute(IntPtr aAsyncHandle);
-        void SyncGetVolume(uint aInstanceID, string aChannel, out uint aCurrentVolume);
-        void BeginGetVolume(uint aInstanceID, string aChannel, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncGetVolume(uint aInstanceID, String aChannel, out uint aCurrentVolume);
+        void BeginGetVolume(uint aInstanceID, String aChannel, CpProxy.CallbackAsyncComplete aCallback);
         void EndGetVolume(IntPtr aAsyncHandle, out uint aCurrentVolume);
-        void SyncSetVolume(uint aInstanceID, string aChannel, uint aDesiredVolume);
-        void BeginSetVolume(uint aInstanceID, string aChannel, uint aDesiredVolume, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSetVolume(uint aInstanceID, String aChannel, uint aDesiredVolume);
+        void BeginSetVolume(uint aInstanceID, String aChannel, uint aDesiredVolume, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetVolume(IntPtr aAsyncHandle);
-        void SyncGetVolumeDB(uint aInstanceID, string aChannel, out int aCurrentVolume);
-        void BeginGetVolumeDB(uint aInstanceID, string aChannel, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncGetVolumeDB(uint aInstanceID, String aChannel, out int aCurrentVolume);
+        void BeginGetVolumeDB(uint aInstanceID, String aChannel, CpProxy.CallbackAsyncComplete aCallback);
         void EndGetVolumeDB(IntPtr aAsyncHandle, out int aCurrentVolume);
-        void SyncSetVolumeDB(uint aInstanceID, string aChannel, int aDesiredVolume);
-        void BeginSetVolumeDB(uint aInstanceID, string aChannel, int aDesiredVolume, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSetVolumeDB(uint aInstanceID, String aChannel, int aDesiredVolume);
+        void BeginSetVolumeDB(uint aInstanceID, String aChannel, int aDesiredVolume, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetVolumeDB(IntPtr aAsyncHandle);
-        void SyncGetVolumeDBRange(uint aInstanceID, string aChannel, out int aMinValue, out int aMaxValue);
-        void BeginGetVolumeDBRange(uint aInstanceID, string aChannel, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncGetVolumeDBRange(uint aInstanceID, String aChannel, out int aMinValue, out int aMaxValue);
+        void BeginGetVolumeDBRange(uint aInstanceID, String aChannel, CpProxy.CallbackAsyncComplete aCallback);
         void EndGetVolumeDBRange(IntPtr aAsyncHandle, out int aMinValue, out int aMaxValue);
-        void SyncGetLoudness(uint aInstanceID, string aChannel, out bool aCurrentLoudness);
-        void BeginGetLoudness(uint aInstanceID, string aChannel, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncGetLoudness(uint aInstanceID, String aChannel, out bool aCurrentLoudness);
+        void BeginGetLoudness(uint aInstanceID, String aChannel, CpProxy.CallbackAsyncComplete aCallback);
         void EndGetLoudness(IntPtr aAsyncHandle, out bool aCurrentLoudness);
-        void SyncSetLoudness(uint aInstanceID, string aChannel, bool aDesiredLoudness);
-        void BeginSetLoudness(uint aInstanceID, string aChannel, bool aDesiredLoudness, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSetLoudness(uint aInstanceID, String aChannel, bool aDesiredLoudness);
+        void BeginSetLoudness(uint aInstanceID, String aChannel, bool aDesiredLoudness, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetLoudness(IntPtr aAsyncHandle);
-        void SyncGetStateVariables(uint aInstanceID, string aStateVariableList, out string aStateVariableValuePairs);
-        void BeginGetStateVariables(uint aInstanceID, string aStateVariableList, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetStateVariables(IntPtr aAsyncHandle, out string aStateVariableValuePairs);
-        void SyncSetStateVariables(uint aInstanceID, string aRenderingControlUDN, string aServiceType, string aServiceId, string aStateVariableValuePairs, out string aStateVariableList);
-        void BeginSetStateVariables(uint aInstanceID, string aRenderingControlUDN, string aServiceType, string aServiceId, string aStateVariableValuePairs, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSetStateVariables(IntPtr aAsyncHandle, out string aStateVariableList);
-
+        void SyncGetStateVariables(uint aInstanceID, String aStateVariableList, out String aStateVariableValuePairs);
+        void BeginGetStateVariables(uint aInstanceID, String aStateVariableList, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetStateVariables(IntPtr aAsyncHandle, out String aStateVariableValuePairs);
+        void SyncSetStateVariables(uint aInstanceID, String aRenderingControlUDN, String aServiceType, String aServiceId, String aStateVariableValuePairs, out String aStateVariableList);
+        void BeginSetStateVariables(uint aInstanceID, String aRenderingControlUDN, String aServiceType, String aServiceId, String aStateVariableValuePairs, CpProxy.CallbackAsyncComplete aCallback);
+        void EndSetStateVariables(IntPtr aAsyncHandle, out String aStateVariableList);
         void SetPropertyLastChangeChanged(CpProxy.CallbackPropertyChanged aLastChangeChanged);
-        void PropertyLastChange(out string aLastChange);
+        String PropertyLastChange();
     }
+
+    internal class SyncListPresetsUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+        private String iCurrentPresetNameList;
+
+        public SyncListPresetsUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String CurrentPresetNameList()
+        {
+            return iCurrentPresetNameList;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndListPresets(aAsyncHandle, out iCurrentPresetNameList);
+        }
+    };
+
+    internal class SyncSelectPresetUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+
+        public SyncSelectPresetUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSelectPreset(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetBrightnessUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+        private uint iCurrentBrightness;
+
+        public SyncGetBrightnessUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint CurrentBrightness()
+        {
+            return iCurrentBrightness;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetBrightness(aAsyncHandle, out iCurrentBrightness);
+        }
+    };
+
+    internal class SyncSetBrightnessUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+
+        public SyncSetBrightnessUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetBrightness(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetContrastUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+        private uint iCurrentContrast;
+
+        public SyncGetContrastUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint CurrentContrast()
+        {
+            return iCurrentContrast;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetContrast(aAsyncHandle, out iCurrentContrast);
+        }
+    };
+
+    internal class SyncSetContrastUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+
+        public SyncSetContrastUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetContrast(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetSharpnessUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+        private uint iCurrentSharpness;
+
+        public SyncGetSharpnessUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint CurrentSharpness()
+        {
+            return iCurrentSharpness;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetSharpness(aAsyncHandle, out iCurrentSharpness);
+        }
+    };
+
+    internal class SyncSetSharpnessUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+
+        public SyncSetSharpnessUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetSharpness(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetRedVideoGainUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+        private uint iCurrentRedVideoGain;
+
+        public SyncGetRedVideoGainUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint CurrentRedVideoGain()
+        {
+            return iCurrentRedVideoGain;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetRedVideoGain(aAsyncHandle, out iCurrentRedVideoGain);
+        }
+    };
+
+    internal class SyncSetRedVideoGainUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+
+        public SyncSetRedVideoGainUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetRedVideoGain(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetGreenVideoGainUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+        private uint iCurrentGreenVideoGain;
+
+        public SyncGetGreenVideoGainUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint CurrentGreenVideoGain()
+        {
+            return iCurrentGreenVideoGain;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetGreenVideoGain(aAsyncHandle, out iCurrentGreenVideoGain);
+        }
+    };
+
+    internal class SyncSetGreenVideoGainUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+
+        public SyncSetGreenVideoGainUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetGreenVideoGain(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetBlueVideoGainUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+        private uint iCurrentBlueVideoGain;
+
+        public SyncGetBlueVideoGainUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint CurrentBlueVideoGain()
+        {
+            return iCurrentBlueVideoGain;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetBlueVideoGain(aAsyncHandle, out iCurrentBlueVideoGain);
+        }
+    };
+
+    internal class SyncSetBlueVideoGainUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+
+        public SyncSetBlueVideoGainUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetBlueVideoGain(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetRedVideoBlackLevelUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+        private uint iCurrentRedVideoBlackLevel;
+
+        public SyncGetRedVideoBlackLevelUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint CurrentRedVideoBlackLevel()
+        {
+            return iCurrentRedVideoBlackLevel;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetRedVideoBlackLevel(aAsyncHandle, out iCurrentRedVideoBlackLevel);
+        }
+    };
+
+    internal class SyncSetRedVideoBlackLevelUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+
+        public SyncSetRedVideoBlackLevelUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetRedVideoBlackLevel(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+        private uint iCurrentGreenVideoBlackLevel;
+
+        public SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint CurrentGreenVideoBlackLevel()
+        {
+            return iCurrentGreenVideoBlackLevel;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetGreenVideoBlackLevel(aAsyncHandle, out iCurrentGreenVideoBlackLevel);
+        }
+    };
+
+    internal class SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+
+        public SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetGreenVideoBlackLevel(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+        private uint iCurrentBlueVideoBlackLevel;
+
+        public SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint CurrentBlueVideoBlackLevel()
+        {
+            return iCurrentBlueVideoBlackLevel;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetBlueVideoBlackLevel(aAsyncHandle, out iCurrentBlueVideoBlackLevel);
+        }
+    };
+
+    internal class SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+
+        public SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetBlueVideoBlackLevel(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetColorTemperatureUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+        private uint iCurrentColorTemperature;
+
+        public SyncGetColorTemperatureUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint CurrentColorTemperature()
+        {
+            return iCurrentColorTemperature;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetColorTemperature(aAsyncHandle, out iCurrentColorTemperature);
+        }
+    };
+
+    internal class SyncSetColorTemperatureUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+
+        public SyncSetColorTemperatureUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetColorTemperature(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetHorizontalKeystoneUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+        private int iCurrentHorizontalKeystone;
+
+        public SyncGetHorizontalKeystoneUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public int CurrentHorizontalKeystone()
+        {
+            return iCurrentHorizontalKeystone;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetHorizontalKeystone(aAsyncHandle, out iCurrentHorizontalKeystone);
+        }
+    };
+
+    internal class SyncSetHorizontalKeystoneUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+
+        public SyncSetHorizontalKeystoneUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetHorizontalKeystone(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetVerticalKeystoneUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+        private int iCurrentVerticalKeystone;
+
+        public SyncGetVerticalKeystoneUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public int CurrentVerticalKeystone()
+        {
+            return iCurrentVerticalKeystone;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetVerticalKeystone(aAsyncHandle, out iCurrentVerticalKeystone);
+        }
+    };
+
+    internal class SyncSetVerticalKeystoneUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+
+        public SyncSetVerticalKeystoneUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetVerticalKeystone(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetMuteUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+        private bool iCurrentMute;
+
+        public SyncGetMuteUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public bool CurrentMute()
+        {
+            return iCurrentMute;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetMute(aAsyncHandle, out iCurrentMute);
+        }
+    };
+
+    internal class SyncSetMuteUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+
+        public SyncSetMuteUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetMute(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetVolumeUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+        private uint iCurrentVolume;
+
+        public SyncGetVolumeUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint CurrentVolume()
+        {
+            return iCurrentVolume;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetVolume(aAsyncHandle, out iCurrentVolume);
+        }
+    };
+
+    internal class SyncSetVolumeUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+
+        public SyncSetVolumeUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetVolume(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetVolumeDBUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+        private int iCurrentVolume;
+
+        public SyncGetVolumeDBUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public int CurrentVolume()
+        {
+            return iCurrentVolume;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetVolumeDB(aAsyncHandle, out iCurrentVolume);
+        }
+    };
+
+    internal class SyncSetVolumeDBUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+
+        public SyncSetVolumeDBUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetVolumeDB(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetVolumeDBRangeUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+        private int iMinValue;
+        private int iMaxValue;
+
+        public SyncGetVolumeDBRangeUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public int MinValue()
+        {
+            return iMinValue;
+        }
+        public int MaxValue()
+        {
+            return iMaxValue;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetVolumeDBRange(aAsyncHandle, out iMinValue, out iMaxValue);
+        }
+    };
+
+    internal class SyncGetLoudnessUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+        private bool iCurrentLoudness;
+
+        public SyncGetLoudnessUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public bool CurrentLoudness()
+        {
+            return iCurrentLoudness;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetLoudness(aAsyncHandle, out iCurrentLoudness);
+        }
+    };
+
+    internal class SyncSetLoudnessUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+
+        public SyncSetLoudnessUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetLoudness(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetStateVariablesUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+        private String iStateVariableValuePairs;
+
+        public SyncGetStateVariablesUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String StateVariableValuePairs()
+        {
+            return iStateVariableValuePairs;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetStateVariables(aAsyncHandle, out iStateVariableValuePairs);
+        }
+    };
+
+    internal class SyncSetStateVariablesUpnpOrgRenderingControl2 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgRenderingControl2 iService;
+        private String iStateVariableList;
+
+        public SyncSetStateVariablesUpnpOrgRenderingControl2(CpProxyUpnpOrgRenderingControl2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String StateVariableList()
+        {
+            return iStateVariableList;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetStateVariables(aAsyncHandle, out iStateVariableList);
+        }
+    };
 
     /// <summary>
     /// Proxy for the upnp.org:RenderingControl:2 UPnP service
     /// </summary>
     public class CpProxyUpnpOrgRenderingControl2 : CpProxy, IDisposable, ICpProxyUpnpOrgRenderingControl2
     {
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern IntPtr CpProxyUpnpOrgRenderingControl2Create(IntPtr aDeviceHandle);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern void CpProxyUpnpOrgRenderingControl2Destroy(IntPtr aHandle);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncListPresets(IntPtr aHandle, uint aInstanceID, char** aCurrentPresetNameList);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginListPresets(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndListPresets(IntPtr aHandle, IntPtr aAsync, char** aCurrentPresetNameList);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSelectPreset(IntPtr aHandle, uint aInstanceID, char* aPresetName);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSelectPreset(IntPtr aHandle, uint aInstanceID, char* aPresetName, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSelectPreset(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetBrightness(IntPtr aHandle, uint aInstanceID, uint* aCurrentBrightness);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetBrightness(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetBrightness(IntPtr aHandle, IntPtr aAsync, uint* aCurrentBrightness);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetBrightness(IntPtr aHandle, uint aInstanceID, uint aDesiredBrightness);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetBrightness(IntPtr aHandle, uint aInstanceID, uint aDesiredBrightness, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetBrightness(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetContrast(IntPtr aHandle, uint aInstanceID, uint* aCurrentContrast);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetContrast(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetContrast(IntPtr aHandle, IntPtr aAsync, uint* aCurrentContrast);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetContrast(IntPtr aHandle, uint aInstanceID, uint aDesiredContrast);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetContrast(IntPtr aHandle, uint aInstanceID, uint aDesiredContrast, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetContrast(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetSharpness(IntPtr aHandle, uint aInstanceID, uint* aCurrentSharpness);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetSharpness(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetSharpness(IntPtr aHandle, IntPtr aAsync, uint* aCurrentSharpness);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetSharpness(IntPtr aHandle, uint aInstanceID, uint aDesiredSharpness);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetSharpness(IntPtr aHandle, uint aInstanceID, uint aDesiredSharpness, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetSharpness(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetRedVideoGain(IntPtr aHandle, uint aInstanceID, uint* aCurrentRedVideoGain);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetRedVideoGain(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetRedVideoGain(IntPtr aHandle, IntPtr aAsync, uint* aCurrentRedVideoGain);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetRedVideoGain(IntPtr aHandle, uint aInstanceID, uint aDesiredRedVideoGain);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetRedVideoGain(IntPtr aHandle, uint aInstanceID, uint aDesiredRedVideoGain, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetRedVideoGain(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetGreenVideoGain(IntPtr aHandle, uint aInstanceID, uint* aCurrentGreenVideoGain);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetGreenVideoGain(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetGreenVideoGain(IntPtr aHandle, IntPtr aAsync, uint* aCurrentGreenVideoGain);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetGreenVideoGain(IntPtr aHandle, uint aInstanceID, uint aDesiredGreenVideoGain);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetGreenVideoGain(IntPtr aHandle, uint aInstanceID, uint aDesiredGreenVideoGain, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetGreenVideoGain(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetBlueVideoGain(IntPtr aHandle, uint aInstanceID, uint* aCurrentBlueVideoGain);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetBlueVideoGain(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetBlueVideoGain(IntPtr aHandle, IntPtr aAsync, uint* aCurrentBlueVideoGain);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetBlueVideoGain(IntPtr aHandle, uint aInstanceID, uint aDesiredBlueVideoGain);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetBlueVideoGain(IntPtr aHandle, uint aInstanceID, uint aDesiredBlueVideoGain, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetBlueVideoGain(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetRedVideoBlackLevel(IntPtr aHandle, uint aInstanceID, uint* aCurrentRedVideoBlackLevel);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetRedVideoBlackLevel(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetRedVideoBlackLevel(IntPtr aHandle, IntPtr aAsync, uint* aCurrentRedVideoBlackLevel);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetRedVideoBlackLevel(IntPtr aHandle, uint aInstanceID, uint aDesiredRedVideoBlackLevel);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetRedVideoBlackLevel(IntPtr aHandle, uint aInstanceID, uint aDesiredRedVideoBlackLevel, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetRedVideoBlackLevel(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetGreenVideoBlackLevel(IntPtr aHandle, uint aInstanceID, uint* aCurrentGreenVideoBlackLevel);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetGreenVideoBlackLevel(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetGreenVideoBlackLevel(IntPtr aHandle, IntPtr aAsync, uint* aCurrentGreenVideoBlackLevel);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetGreenVideoBlackLevel(IntPtr aHandle, uint aInstanceID, uint aDesiredGreenVideoBlackLevel);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetGreenVideoBlackLevel(IntPtr aHandle, uint aInstanceID, uint aDesiredGreenVideoBlackLevel, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetGreenVideoBlackLevel(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetBlueVideoBlackLevel(IntPtr aHandle, uint aInstanceID, uint* aCurrentBlueVideoBlackLevel);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetBlueVideoBlackLevel(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetBlueVideoBlackLevel(IntPtr aHandle, IntPtr aAsync, uint* aCurrentBlueVideoBlackLevel);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetBlueVideoBlackLevel(IntPtr aHandle, uint aInstanceID, uint aDesiredBlueVideoBlackLevel);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetBlueVideoBlackLevel(IntPtr aHandle, uint aInstanceID, uint aDesiredBlueVideoBlackLevel, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetBlueVideoBlackLevel(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetColorTemperature(IntPtr aHandle, uint aInstanceID, uint* aCurrentColorTemperature);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetColorTemperature(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetColorTemperature(IntPtr aHandle, IntPtr aAsync, uint* aCurrentColorTemperature);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetColorTemperature(IntPtr aHandle, uint aInstanceID, uint aDesiredColorTemperature);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetColorTemperature(IntPtr aHandle, uint aInstanceID, uint aDesiredColorTemperature, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetColorTemperature(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetHorizontalKeystone(IntPtr aHandle, uint aInstanceID, int* aCurrentHorizontalKeystone);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetHorizontalKeystone(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetHorizontalKeystone(IntPtr aHandle, IntPtr aAsync, int* aCurrentHorizontalKeystone);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetHorizontalKeystone(IntPtr aHandle, uint aInstanceID, int aDesiredHorizontalKeystone);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetHorizontalKeystone(IntPtr aHandle, uint aInstanceID, int aDesiredHorizontalKeystone, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetHorizontalKeystone(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetVerticalKeystone(IntPtr aHandle, uint aInstanceID, int* aCurrentVerticalKeystone);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetVerticalKeystone(IntPtr aHandle, uint aInstanceID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetVerticalKeystone(IntPtr aHandle, IntPtr aAsync, int* aCurrentVerticalKeystone);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetVerticalKeystone(IntPtr aHandle, uint aInstanceID, int aDesiredVerticalKeystone);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetVerticalKeystone(IntPtr aHandle, uint aInstanceID, int aDesiredVerticalKeystone, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetVerticalKeystone(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetMute(IntPtr aHandle, uint aInstanceID, char* aChannel, uint* aCurrentMute);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetMute(IntPtr aHandle, uint aInstanceID, char* aChannel, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetMute(IntPtr aHandle, IntPtr aAsync, uint* aCurrentMute);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetMute(IntPtr aHandle, uint aInstanceID, char* aChannel, uint aDesiredMute);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetMute(IntPtr aHandle, uint aInstanceID, char* aChannel, uint aDesiredMute, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetMute(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetVolume(IntPtr aHandle, uint aInstanceID, char* aChannel, uint* aCurrentVolume);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetVolume(IntPtr aHandle, uint aInstanceID, char* aChannel, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetVolume(IntPtr aHandle, IntPtr aAsync, uint* aCurrentVolume);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetVolume(IntPtr aHandle, uint aInstanceID, char* aChannel, uint aDesiredVolume);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetVolume(IntPtr aHandle, uint aInstanceID, char* aChannel, uint aDesiredVolume, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetVolume(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetVolumeDB(IntPtr aHandle, uint aInstanceID, char* aChannel, int* aCurrentVolume);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetVolumeDB(IntPtr aHandle, uint aInstanceID, char* aChannel, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetVolumeDB(IntPtr aHandle, IntPtr aAsync, int* aCurrentVolume);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetVolumeDB(IntPtr aHandle, uint aInstanceID, char* aChannel, int aDesiredVolume);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetVolumeDB(IntPtr aHandle, uint aInstanceID, char* aChannel, int aDesiredVolume, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetVolumeDB(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetVolumeDBRange(IntPtr aHandle, uint aInstanceID, char* aChannel, int* aMinValue, int* aMaxValue);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetVolumeDBRange(IntPtr aHandle, uint aInstanceID, char* aChannel, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetVolumeDBRange(IntPtr aHandle, IntPtr aAsync, int* aMinValue, int* aMaxValue);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetLoudness(IntPtr aHandle, uint aInstanceID, char* aChannel, uint* aCurrentLoudness);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetLoudness(IntPtr aHandle, uint aInstanceID, char* aChannel, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetLoudness(IntPtr aHandle, IntPtr aAsync, uint* aCurrentLoudness);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetLoudness(IntPtr aHandle, uint aInstanceID, char* aChannel, uint aDesiredLoudness);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetLoudness(IntPtr aHandle, uint aInstanceID, char* aChannel, uint aDesiredLoudness, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetLoudness(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncGetStateVariables(IntPtr aHandle, uint aInstanceID, char* aStateVariableList, char** aStateVariableValuePairs);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginGetStateVariables(IntPtr aHandle, uint aInstanceID, char* aStateVariableList, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndGetStateVariables(IntPtr aHandle, IntPtr aAsync, char** aStateVariableValuePairs);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2SyncSetStateVariables(IntPtr aHandle, uint aInstanceID, char* aRenderingControlUDN, char* aServiceType, char* aServiceId, char* aStateVariableValuePairs, char** aStateVariableList);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2BeginSetStateVariables(IntPtr aHandle, uint aInstanceID, char* aRenderingControlUDN, char* aServiceType, char* aServiceId, char* aStateVariableValuePairs, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe int CpProxyUpnpOrgRenderingControl2EndSetStateVariables(IntPtr aHandle, IntPtr aAsync, char** aStateVariableList);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern void CpProxyUpnpOrgRenderingControl2SetPropertyLastChangeChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgRenderingControl2")]
-        static extern unsafe void CpProxyUpnpOrgRenderingControl2PropertyLastChange(IntPtr aHandle, char** aLastChange);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private GCHandle iGch;
+        private Zapp.Core.Action iActionListPresets;
+        private Zapp.Core.Action iActionSelectPreset;
+        private Zapp.Core.Action iActionGetBrightness;
+        private Zapp.Core.Action iActionSetBrightness;
+        private Zapp.Core.Action iActionGetContrast;
+        private Zapp.Core.Action iActionSetContrast;
+        private Zapp.Core.Action iActionGetSharpness;
+        private Zapp.Core.Action iActionSetSharpness;
+        private Zapp.Core.Action iActionGetRedVideoGain;
+        private Zapp.Core.Action iActionSetRedVideoGain;
+        private Zapp.Core.Action iActionGetGreenVideoGain;
+        private Zapp.Core.Action iActionSetGreenVideoGain;
+        private Zapp.Core.Action iActionGetBlueVideoGain;
+        private Zapp.Core.Action iActionSetBlueVideoGain;
+        private Zapp.Core.Action iActionGetRedVideoBlackLevel;
+        private Zapp.Core.Action iActionSetRedVideoBlackLevel;
+        private Zapp.Core.Action iActionGetGreenVideoBlackLevel;
+        private Zapp.Core.Action iActionSetGreenVideoBlackLevel;
+        private Zapp.Core.Action iActionGetBlueVideoBlackLevel;
+        private Zapp.Core.Action iActionSetBlueVideoBlackLevel;
+        private Zapp.Core.Action iActionGetColorTemperature;
+        private Zapp.Core.Action iActionSetColorTemperature;
+        private Zapp.Core.Action iActionGetHorizontalKeystone;
+        private Zapp.Core.Action iActionSetHorizontalKeystone;
+        private Zapp.Core.Action iActionGetVerticalKeystone;
+        private Zapp.Core.Action iActionSetVerticalKeystone;
+        private Zapp.Core.Action iActionGetMute;
+        private Zapp.Core.Action iActionSetMute;
+        private Zapp.Core.Action iActionGetVolume;
+        private Zapp.Core.Action iActionSetVolume;
+        private Zapp.Core.Action iActionGetVolumeDB;
+        private Zapp.Core.Action iActionSetVolumeDB;
+        private Zapp.Core.Action iActionGetVolumeDBRange;
+        private Zapp.Core.Action iActionGetLoudness;
+        private Zapp.Core.Action iActionSetLoudness;
+        private Zapp.Core.Action iActionGetStateVariables;
+        private Zapp.Core.Action iActionSetStateVariables;
+        private PropertyString iLastChange;
         private CallbackPropertyChanged iLastChangeChanged;
-        private Callback iCallbackLastChangeChanged;
 
         /// <summary>
         /// Constructor
@@ -371,9 +798,285 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
         /// <param name="aDevice">The device to use</param>
         public CpProxyUpnpOrgRenderingControl2(CpDevice aDevice)
+            : base("schemas-upnp-org", "RenderingControl", 2, aDevice)
         {
-            iHandle = CpProxyUpnpOrgRenderingControl2Create(aDevice.Handle());
-            iGch = GCHandle.Alloc(this);
+            Zapp.Core.Parameter param;
+            List<String> allowedValues = new List<String>();
+
+            iActionListPresets = new Zapp.Core.Action("ListPresets");
+            param = new ParameterUint("InstanceID");
+            iActionListPresets.AddInputParameter(param);
+            param = new ParameterString("CurrentPresetNameList", allowedValues);
+            iActionListPresets.AddOutputParameter(param);
+
+            iActionSelectPreset = new Zapp.Core.Action("SelectPreset");
+            param = new ParameterUint("InstanceID");
+            iActionSelectPreset.AddInputParameter(param);
+            allowedValues.Add("FactoryDefaults");
+            param = new ParameterString("PresetName", allowedValues);
+            iActionSelectPreset.AddInputParameter(param);
+            allowedValues.Clear();
+
+            iActionGetBrightness = new Zapp.Core.Action("GetBrightness");
+            param = new ParameterUint("InstanceID");
+            iActionGetBrightness.AddInputParameter(param);
+            param = new ParameterUint("CurrentBrightness", 0, 0, 1);
+            iActionGetBrightness.AddOutputParameter(param);
+
+            iActionSetBrightness = new Zapp.Core.Action("SetBrightness");
+            param = new ParameterUint("InstanceID");
+            iActionSetBrightness.AddInputParameter(param);
+            param = new ParameterUint("DesiredBrightness", 0, 0, 1);
+            iActionSetBrightness.AddInputParameter(param);
+
+            iActionGetContrast = new Zapp.Core.Action("GetContrast");
+            param = new ParameterUint("InstanceID");
+            iActionGetContrast.AddInputParameter(param);
+            param = new ParameterUint("CurrentContrast", 0, 0, 1);
+            iActionGetContrast.AddOutputParameter(param);
+
+            iActionSetContrast = new Zapp.Core.Action("SetContrast");
+            param = new ParameterUint("InstanceID");
+            iActionSetContrast.AddInputParameter(param);
+            param = new ParameterUint("DesiredContrast", 0, 0, 1);
+            iActionSetContrast.AddInputParameter(param);
+
+            iActionGetSharpness = new Zapp.Core.Action("GetSharpness");
+            param = new ParameterUint("InstanceID");
+            iActionGetSharpness.AddInputParameter(param);
+            param = new ParameterUint("CurrentSharpness", 0, 0, 1);
+            iActionGetSharpness.AddOutputParameter(param);
+
+            iActionSetSharpness = new Zapp.Core.Action("SetSharpness");
+            param = new ParameterUint("InstanceID");
+            iActionSetSharpness.AddInputParameter(param);
+            param = new ParameterUint("DesiredSharpness", 0, 0, 1);
+            iActionSetSharpness.AddInputParameter(param);
+
+            iActionGetRedVideoGain = new Zapp.Core.Action("GetRedVideoGain");
+            param = new ParameterUint("InstanceID");
+            iActionGetRedVideoGain.AddInputParameter(param);
+            param = new ParameterUint("CurrentRedVideoGain", 0, 0, 1);
+            iActionGetRedVideoGain.AddOutputParameter(param);
+
+            iActionSetRedVideoGain = new Zapp.Core.Action("SetRedVideoGain");
+            param = new ParameterUint("InstanceID");
+            iActionSetRedVideoGain.AddInputParameter(param);
+            param = new ParameterUint("DesiredRedVideoGain", 0, 0, 1);
+            iActionSetRedVideoGain.AddInputParameter(param);
+
+            iActionGetGreenVideoGain = new Zapp.Core.Action("GetGreenVideoGain");
+            param = new ParameterUint("InstanceID");
+            iActionGetGreenVideoGain.AddInputParameter(param);
+            param = new ParameterUint("CurrentGreenVideoGain", 0, 0, 1);
+            iActionGetGreenVideoGain.AddOutputParameter(param);
+
+            iActionSetGreenVideoGain = new Zapp.Core.Action("SetGreenVideoGain");
+            param = new ParameterUint("InstanceID");
+            iActionSetGreenVideoGain.AddInputParameter(param);
+            param = new ParameterUint("DesiredGreenVideoGain", 0, 0, 1);
+            iActionSetGreenVideoGain.AddInputParameter(param);
+
+            iActionGetBlueVideoGain = new Zapp.Core.Action("GetBlueVideoGain");
+            param = new ParameterUint("InstanceID");
+            iActionGetBlueVideoGain.AddInputParameter(param);
+            param = new ParameterUint("CurrentBlueVideoGain", 0, 0, 1);
+            iActionGetBlueVideoGain.AddOutputParameter(param);
+
+            iActionSetBlueVideoGain = new Zapp.Core.Action("SetBlueVideoGain");
+            param = new ParameterUint("InstanceID");
+            iActionSetBlueVideoGain.AddInputParameter(param);
+            param = new ParameterUint("DesiredBlueVideoGain", 0, 0, 1);
+            iActionSetBlueVideoGain.AddInputParameter(param);
+
+            iActionGetRedVideoBlackLevel = new Zapp.Core.Action("GetRedVideoBlackLevel");
+            param = new ParameterUint("InstanceID");
+            iActionGetRedVideoBlackLevel.AddInputParameter(param);
+            param = new ParameterUint("CurrentRedVideoBlackLevel", 0, 0, 1);
+            iActionGetRedVideoBlackLevel.AddOutputParameter(param);
+
+            iActionSetRedVideoBlackLevel = new Zapp.Core.Action("SetRedVideoBlackLevel");
+            param = new ParameterUint("InstanceID");
+            iActionSetRedVideoBlackLevel.AddInputParameter(param);
+            param = new ParameterUint("DesiredRedVideoBlackLevel", 0, 0, 1);
+            iActionSetRedVideoBlackLevel.AddInputParameter(param);
+
+            iActionGetGreenVideoBlackLevel = new Zapp.Core.Action("GetGreenVideoBlackLevel");
+            param = new ParameterUint("InstanceID");
+            iActionGetGreenVideoBlackLevel.AddInputParameter(param);
+            param = new ParameterUint("CurrentGreenVideoBlackLevel", 0, 0, 1);
+            iActionGetGreenVideoBlackLevel.AddOutputParameter(param);
+
+            iActionSetGreenVideoBlackLevel = new Zapp.Core.Action("SetGreenVideoBlackLevel");
+            param = new ParameterUint("InstanceID");
+            iActionSetGreenVideoBlackLevel.AddInputParameter(param);
+            param = new ParameterUint("DesiredGreenVideoBlackLevel", 0, 0, 1);
+            iActionSetGreenVideoBlackLevel.AddInputParameter(param);
+
+            iActionGetBlueVideoBlackLevel = new Zapp.Core.Action("GetBlueVideoBlackLevel");
+            param = new ParameterUint("InstanceID");
+            iActionGetBlueVideoBlackLevel.AddInputParameter(param);
+            param = new ParameterUint("CurrentBlueVideoBlackLevel", 0, 0, 1);
+            iActionGetBlueVideoBlackLevel.AddOutputParameter(param);
+
+            iActionSetBlueVideoBlackLevel = new Zapp.Core.Action("SetBlueVideoBlackLevel");
+            param = new ParameterUint("InstanceID");
+            iActionSetBlueVideoBlackLevel.AddInputParameter(param);
+            param = new ParameterUint("DesiredBlueVideoBlackLevel", 0, 0, 1);
+            iActionSetBlueVideoBlackLevel.AddInputParameter(param);
+
+            iActionGetColorTemperature = new Zapp.Core.Action("GetColorTemperature");
+            param = new ParameterUint("InstanceID");
+            iActionGetColorTemperature.AddInputParameter(param);
+            param = new ParameterUint("CurrentColorTemperature", 0, 0, 1);
+            iActionGetColorTemperature.AddOutputParameter(param);
+
+            iActionSetColorTemperature = new Zapp.Core.Action("SetColorTemperature");
+            param = new ParameterUint("InstanceID");
+            iActionSetColorTemperature.AddInputParameter(param);
+            param = new ParameterUint("DesiredColorTemperature", 0, 0, 1);
+            iActionSetColorTemperature.AddInputParameter(param);
+
+            iActionGetHorizontalKeystone = new Zapp.Core.Action("GetHorizontalKeystone");
+            param = new ParameterUint("InstanceID");
+            iActionGetHorizontalKeystone.AddInputParameter(param);
+            param = new ParameterInt("CurrentHorizontalKeystone");
+            iActionGetHorizontalKeystone.AddOutputParameter(param);
+
+            iActionSetHorizontalKeystone = new Zapp.Core.Action("SetHorizontalKeystone");
+            param = new ParameterUint("InstanceID");
+            iActionSetHorizontalKeystone.AddInputParameter(param);
+            param = new ParameterInt("DesiredHorizontalKeystone");
+            iActionSetHorizontalKeystone.AddInputParameter(param);
+
+            iActionGetVerticalKeystone = new Zapp.Core.Action("GetVerticalKeystone");
+            param = new ParameterUint("InstanceID");
+            iActionGetVerticalKeystone.AddInputParameter(param);
+            param = new ParameterInt("CurrentVerticalKeystone");
+            iActionGetVerticalKeystone.AddOutputParameter(param);
+
+            iActionSetVerticalKeystone = new Zapp.Core.Action("SetVerticalKeystone");
+            param = new ParameterUint("InstanceID");
+            iActionSetVerticalKeystone.AddInputParameter(param);
+            param = new ParameterInt("DesiredVerticalKeystone");
+            iActionSetVerticalKeystone.AddInputParameter(param);
+
+            iActionGetMute = new Zapp.Core.Action("GetMute");
+            param = new ParameterUint("InstanceID");
+            iActionGetMute.AddInputParameter(param);
+            allowedValues.Add("Master");
+            param = new ParameterString("Channel", allowedValues);
+            iActionGetMute.AddInputParameter(param);
+            allowedValues.Clear();
+            param = new ParameterBool("CurrentMute");
+            iActionGetMute.AddOutputParameter(param);
+
+            iActionSetMute = new Zapp.Core.Action("SetMute");
+            param = new ParameterUint("InstanceID");
+            iActionSetMute.AddInputParameter(param);
+            allowedValues.Add("Master");
+            param = new ParameterString("Channel", allowedValues);
+            iActionSetMute.AddInputParameter(param);
+            allowedValues.Clear();
+            param = new ParameterBool("DesiredMute");
+            iActionSetMute.AddInputParameter(param);
+
+            iActionGetVolume = new Zapp.Core.Action("GetVolume");
+            param = new ParameterUint("InstanceID");
+            iActionGetVolume.AddInputParameter(param);
+            allowedValues.Add("Master");
+            param = new ParameterString("Channel", allowedValues);
+            iActionGetVolume.AddInputParameter(param);
+            allowedValues.Clear();
+            param = new ParameterUint("CurrentVolume", 0, 0, 1);
+            iActionGetVolume.AddOutputParameter(param);
+
+            iActionSetVolume = new Zapp.Core.Action("SetVolume");
+            param = new ParameterUint("InstanceID");
+            iActionSetVolume.AddInputParameter(param);
+            allowedValues.Add("Master");
+            param = new ParameterString("Channel", allowedValues);
+            iActionSetVolume.AddInputParameter(param);
+            allowedValues.Clear();
+            param = new ParameterUint("DesiredVolume", 0, 0, 1);
+            iActionSetVolume.AddInputParameter(param);
+
+            iActionGetVolumeDB = new Zapp.Core.Action("GetVolumeDB");
+            param = new ParameterUint("InstanceID");
+            iActionGetVolumeDB.AddInputParameter(param);
+            allowedValues.Add("Master");
+            param = new ParameterString("Channel", allowedValues);
+            iActionGetVolumeDB.AddInputParameter(param);
+            allowedValues.Clear();
+            param = new ParameterInt("CurrentVolume");
+            iActionGetVolumeDB.AddOutputParameter(param);
+
+            iActionSetVolumeDB = new Zapp.Core.Action("SetVolumeDB");
+            param = new ParameterUint("InstanceID");
+            iActionSetVolumeDB.AddInputParameter(param);
+            allowedValues.Add("Master");
+            param = new ParameterString("Channel", allowedValues);
+            iActionSetVolumeDB.AddInputParameter(param);
+            allowedValues.Clear();
+            param = new ParameterInt("DesiredVolume");
+            iActionSetVolumeDB.AddInputParameter(param);
+
+            iActionGetVolumeDBRange = new Zapp.Core.Action("GetVolumeDBRange");
+            param = new ParameterUint("InstanceID");
+            iActionGetVolumeDBRange.AddInputParameter(param);
+            allowedValues.Add("Master");
+            param = new ParameterString("Channel", allowedValues);
+            iActionGetVolumeDBRange.AddInputParameter(param);
+            allowedValues.Clear();
+            param = new ParameterInt("MinValue");
+            iActionGetVolumeDBRange.AddOutputParameter(param);
+            param = new ParameterInt("MaxValue");
+            iActionGetVolumeDBRange.AddOutputParameter(param);
+
+            iActionGetLoudness = new Zapp.Core.Action("GetLoudness");
+            param = new ParameterUint("InstanceID");
+            iActionGetLoudness.AddInputParameter(param);
+            allowedValues.Add("Master");
+            param = new ParameterString("Channel", allowedValues);
+            iActionGetLoudness.AddInputParameter(param);
+            allowedValues.Clear();
+            param = new ParameterBool("CurrentLoudness");
+            iActionGetLoudness.AddOutputParameter(param);
+
+            iActionSetLoudness = new Zapp.Core.Action("SetLoudness");
+            param = new ParameterUint("InstanceID");
+            iActionSetLoudness.AddInputParameter(param);
+            allowedValues.Add("Master");
+            param = new ParameterString("Channel", allowedValues);
+            iActionSetLoudness.AddInputParameter(param);
+            allowedValues.Clear();
+            param = new ParameterBool("DesiredLoudness");
+            iActionSetLoudness.AddInputParameter(param);
+
+            iActionGetStateVariables = new Zapp.Core.Action("GetStateVariables");
+            param = new ParameterUint("InstanceID");
+            iActionGetStateVariables.AddInputParameter(param);
+            param = new ParameterString("StateVariableList", allowedValues);
+            iActionGetStateVariables.AddInputParameter(param);
+            param = new ParameterString("StateVariableValuePairs", allowedValues);
+            iActionGetStateVariables.AddOutputParameter(param);
+
+            iActionSetStateVariables = new Zapp.Core.Action("SetStateVariables");
+            param = new ParameterUint("InstanceID");
+            iActionSetStateVariables.AddInputParameter(param);
+            param = new ParameterString("RenderingControlUDN", allowedValues);
+            iActionSetStateVariables.AddInputParameter(param);
+            param = new ParameterString("ServiceType", allowedValues);
+            iActionSetStateVariables.AddInputParameter(param);
+            param = new ParameterString("ServiceId", allowedValues);
+            iActionSetStateVariables.AddInputParameter(param);
+            param = new ParameterString("StateVariableValuePairs", allowedValues);
+            iActionSetStateVariables.AddInputParameter(param);
+            param = new ParameterString("StateVariableList", allowedValues);
+            iActionSetStateVariables.AddOutputParameter(param);
+
+            iLastChange = new PropertyString("LastChange", LastChangePropertyChanged);
+            AddProperty(iLastChange);
         }
 
         /// <summary>
@@ -383,14 +1086,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentPresetNameList"></param>
-        public unsafe void SyncListPresets(uint aInstanceID, out string aCurrentPresetNameList)
+        public void SyncListPresets(uint aInstanceID, out String aCurrentPresetNameList)
         {
-            char* currentPresetNameList;
-            {
-                CpProxyUpnpOrgRenderingControl2SyncListPresets(iHandle, aInstanceID, &currentPresetNameList);
-            }
-            aCurrentPresetNameList = Marshal.PtrToStringAnsi((IntPtr)currentPresetNameList);
-            ZappFree(currentPresetNameList);
+            SyncListPresetsUpnpOrgRenderingControl2 sync = new SyncListPresetsUpnpOrgRenderingControl2(this);
+            BeginListPresets(aInstanceID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aCurrentPresetNameList = sync.CurrentPresetNameList();
         }
 
         /// <summary>
@@ -402,11 +1104,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginListPresets(uint aInstanceID, CallbackAsyncComplete aCallback)
+        public void BeginListPresets(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginListPresets(iHandle, aInstanceID, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionListPresets, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionListPresets.InputParameter(inIndex++), aInstanceID));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionListPresets.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -415,17 +1120,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aCurrentPresetNameList"></param>
-        public unsafe void EndListPresets(IntPtr aAsyncHandle, out string aCurrentPresetNameList)
+        public void EndListPresets(IntPtr aAsyncHandle, out String aCurrentPresetNameList)
         {
-            char* currentPresetNameList;
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndListPresets(iHandle, aAsyncHandle, &currentPresetNameList))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aCurrentPresetNameList = Marshal.PtrToStringAnsi((IntPtr)currentPresetNameList);
-            ZappFree(currentPresetNameList);
+            uint index = 0;
+            aCurrentPresetNameList = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -435,13 +1133,12 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aPresetName"></param>
-        public unsafe void SyncSelectPreset(uint aInstanceID, string aPresetName)
+        public void SyncSelectPreset(uint aInstanceID, String aPresetName)
         {
-            char* presetName = (char*)Marshal.StringToHGlobalAnsi(aPresetName);
-            {
-                CpProxyUpnpOrgRenderingControl2SyncSelectPreset(iHandle, aInstanceID, presetName);
-            }
-            Marshal.FreeHGlobal((IntPtr)presetName);
+            SyncSelectPresetUpnpOrgRenderingControl2 sync = new SyncSelectPresetUpnpOrgRenderingControl2(this);
+            BeginSelectPreset(aInstanceID, aPresetName, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -454,13 +1151,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aPresetName"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSelectPreset(uint aInstanceID, string aPresetName, CallbackAsyncComplete aCallback)
+        public void BeginSelectPreset(uint aInstanceID, String aPresetName, CallbackAsyncComplete aCallback)
         {
-            char* presetName = (char*)Marshal.StringToHGlobalAnsi(aPresetName);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginSelectPreset(iHandle, aInstanceID, presetName, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)presetName);
+            Invocation invocation = iService.Invocation(iActionSelectPreset, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSelectPreset.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSelectPreset.InputParameter(inIndex++), aPresetName));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -468,14 +1165,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSelectPreset(IntPtr aAsyncHandle)
+        public void EndSelectPreset(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndSelectPreset(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -485,12 +1176,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentBrightness"></param>
-        public unsafe void SyncGetBrightness(uint aInstanceID, out uint aCurrentBrightness)
+        public void SyncGetBrightness(uint aInstanceID, out uint aCurrentBrightness)
         {
-            fixed (uint* currentBrightness = &aCurrentBrightness)
-            {
-                CpProxyUpnpOrgRenderingControl2SyncGetBrightness(iHandle, aInstanceID, currentBrightness);
-            }
+            SyncGetBrightnessUpnpOrgRenderingControl2 sync = new SyncGetBrightnessUpnpOrgRenderingControl2(this);
+            BeginGetBrightness(aInstanceID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aCurrentBrightness = sync.CurrentBrightness();
         }
 
         /// <summary>
@@ -502,11 +1194,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetBrightness(uint aInstanceID, CallbackAsyncComplete aCallback)
+        public void BeginGetBrightness(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginGetBrightness(iHandle, aInstanceID, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetBrightness, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetBrightness.InputParameter(inIndex++), aInstanceID));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetBrightness.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -515,15 +1210,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aCurrentBrightness"></param>
-        public unsafe void EndGetBrightness(IntPtr aAsyncHandle, out uint aCurrentBrightness)
+        public void EndGetBrightness(IntPtr aAsyncHandle, out uint aCurrentBrightness)
         {
-            fixed (uint* currentBrightness = &aCurrentBrightness)
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndGetBrightness(iHandle, aAsyncHandle, currentBrightness))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aCurrentBrightness = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -533,11 +1223,12 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredBrightness"></param>
-        public unsafe void SyncSetBrightness(uint aInstanceID, uint aDesiredBrightness)
+        public void SyncSetBrightness(uint aInstanceID, uint aDesiredBrightness)
         {
-            {
-                CpProxyUpnpOrgRenderingControl2SyncSetBrightness(iHandle, aInstanceID, aDesiredBrightness);
-            }
+            SyncSetBrightnessUpnpOrgRenderingControl2 sync = new SyncSetBrightnessUpnpOrgRenderingControl2(this);
+            BeginSetBrightness(aInstanceID, aDesiredBrightness, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -550,11 +1241,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDesiredBrightness"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetBrightness(uint aInstanceID, uint aDesiredBrightness, CallbackAsyncComplete aCallback)
+        public void BeginSetBrightness(uint aInstanceID, uint aDesiredBrightness, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginSetBrightness(iHandle, aInstanceID, aDesiredBrightness, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetBrightness, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetBrightness.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetBrightness.InputParameter(inIndex++), aDesiredBrightness));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -562,14 +1255,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetBrightness(IntPtr aAsyncHandle)
+        public void EndSetBrightness(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndSetBrightness(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -579,12 +1266,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentContrast"></param>
-        public unsafe void SyncGetContrast(uint aInstanceID, out uint aCurrentContrast)
+        public void SyncGetContrast(uint aInstanceID, out uint aCurrentContrast)
         {
-            fixed (uint* currentContrast = &aCurrentContrast)
-            {
-                CpProxyUpnpOrgRenderingControl2SyncGetContrast(iHandle, aInstanceID, currentContrast);
-            }
+            SyncGetContrastUpnpOrgRenderingControl2 sync = new SyncGetContrastUpnpOrgRenderingControl2(this);
+            BeginGetContrast(aInstanceID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aCurrentContrast = sync.CurrentContrast();
         }
 
         /// <summary>
@@ -596,11 +1284,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetContrast(uint aInstanceID, CallbackAsyncComplete aCallback)
+        public void BeginGetContrast(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginGetContrast(iHandle, aInstanceID, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetContrast, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetContrast.InputParameter(inIndex++), aInstanceID));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetContrast.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -609,15 +1300,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aCurrentContrast"></param>
-        public unsafe void EndGetContrast(IntPtr aAsyncHandle, out uint aCurrentContrast)
+        public void EndGetContrast(IntPtr aAsyncHandle, out uint aCurrentContrast)
         {
-            fixed (uint* currentContrast = &aCurrentContrast)
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndGetContrast(iHandle, aAsyncHandle, currentContrast))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aCurrentContrast = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -627,11 +1313,12 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredContrast"></param>
-        public unsafe void SyncSetContrast(uint aInstanceID, uint aDesiredContrast)
+        public void SyncSetContrast(uint aInstanceID, uint aDesiredContrast)
         {
-            {
-                CpProxyUpnpOrgRenderingControl2SyncSetContrast(iHandle, aInstanceID, aDesiredContrast);
-            }
+            SyncSetContrastUpnpOrgRenderingControl2 sync = new SyncSetContrastUpnpOrgRenderingControl2(this);
+            BeginSetContrast(aInstanceID, aDesiredContrast, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -644,11 +1331,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDesiredContrast"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetContrast(uint aInstanceID, uint aDesiredContrast, CallbackAsyncComplete aCallback)
+        public void BeginSetContrast(uint aInstanceID, uint aDesiredContrast, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginSetContrast(iHandle, aInstanceID, aDesiredContrast, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetContrast, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetContrast.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetContrast.InputParameter(inIndex++), aDesiredContrast));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -656,14 +1345,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetContrast(IntPtr aAsyncHandle)
+        public void EndSetContrast(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndSetContrast(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -673,12 +1356,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentSharpness"></param>
-        public unsafe void SyncGetSharpness(uint aInstanceID, out uint aCurrentSharpness)
+        public void SyncGetSharpness(uint aInstanceID, out uint aCurrentSharpness)
         {
-            fixed (uint* currentSharpness = &aCurrentSharpness)
-            {
-                CpProxyUpnpOrgRenderingControl2SyncGetSharpness(iHandle, aInstanceID, currentSharpness);
-            }
+            SyncGetSharpnessUpnpOrgRenderingControl2 sync = new SyncGetSharpnessUpnpOrgRenderingControl2(this);
+            BeginGetSharpness(aInstanceID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aCurrentSharpness = sync.CurrentSharpness();
         }
 
         /// <summary>
@@ -690,11 +1374,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetSharpness(uint aInstanceID, CallbackAsyncComplete aCallback)
+        public void BeginGetSharpness(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginGetSharpness(iHandle, aInstanceID, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetSharpness, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetSharpness.InputParameter(inIndex++), aInstanceID));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetSharpness.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -703,15 +1390,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aCurrentSharpness"></param>
-        public unsafe void EndGetSharpness(IntPtr aAsyncHandle, out uint aCurrentSharpness)
+        public void EndGetSharpness(IntPtr aAsyncHandle, out uint aCurrentSharpness)
         {
-            fixed (uint* currentSharpness = &aCurrentSharpness)
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndGetSharpness(iHandle, aAsyncHandle, currentSharpness))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aCurrentSharpness = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -721,11 +1403,12 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredSharpness"></param>
-        public unsafe void SyncSetSharpness(uint aInstanceID, uint aDesiredSharpness)
+        public void SyncSetSharpness(uint aInstanceID, uint aDesiredSharpness)
         {
-            {
-                CpProxyUpnpOrgRenderingControl2SyncSetSharpness(iHandle, aInstanceID, aDesiredSharpness);
-            }
+            SyncSetSharpnessUpnpOrgRenderingControl2 sync = new SyncSetSharpnessUpnpOrgRenderingControl2(this);
+            BeginSetSharpness(aInstanceID, aDesiredSharpness, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -738,11 +1421,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDesiredSharpness"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetSharpness(uint aInstanceID, uint aDesiredSharpness, CallbackAsyncComplete aCallback)
+        public void BeginSetSharpness(uint aInstanceID, uint aDesiredSharpness, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginSetSharpness(iHandle, aInstanceID, aDesiredSharpness, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetSharpness, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetSharpness.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetSharpness.InputParameter(inIndex++), aDesiredSharpness));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -750,14 +1435,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetSharpness(IntPtr aAsyncHandle)
+        public void EndSetSharpness(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndSetSharpness(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -767,12 +1446,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentRedVideoGain"></param>
-        public unsafe void SyncGetRedVideoGain(uint aInstanceID, out uint aCurrentRedVideoGain)
+        public void SyncGetRedVideoGain(uint aInstanceID, out uint aCurrentRedVideoGain)
         {
-            fixed (uint* currentRedVideoGain = &aCurrentRedVideoGain)
-            {
-                CpProxyUpnpOrgRenderingControl2SyncGetRedVideoGain(iHandle, aInstanceID, currentRedVideoGain);
-            }
+            SyncGetRedVideoGainUpnpOrgRenderingControl2 sync = new SyncGetRedVideoGainUpnpOrgRenderingControl2(this);
+            BeginGetRedVideoGain(aInstanceID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aCurrentRedVideoGain = sync.CurrentRedVideoGain();
         }
 
         /// <summary>
@@ -784,11 +1464,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetRedVideoGain(uint aInstanceID, CallbackAsyncComplete aCallback)
+        public void BeginGetRedVideoGain(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginGetRedVideoGain(iHandle, aInstanceID, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetRedVideoGain, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetRedVideoGain.InputParameter(inIndex++), aInstanceID));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetRedVideoGain.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -797,15 +1480,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aCurrentRedVideoGain"></param>
-        public unsafe void EndGetRedVideoGain(IntPtr aAsyncHandle, out uint aCurrentRedVideoGain)
+        public void EndGetRedVideoGain(IntPtr aAsyncHandle, out uint aCurrentRedVideoGain)
         {
-            fixed (uint* currentRedVideoGain = &aCurrentRedVideoGain)
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndGetRedVideoGain(iHandle, aAsyncHandle, currentRedVideoGain))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aCurrentRedVideoGain = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -815,11 +1493,12 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredRedVideoGain"></param>
-        public unsafe void SyncSetRedVideoGain(uint aInstanceID, uint aDesiredRedVideoGain)
+        public void SyncSetRedVideoGain(uint aInstanceID, uint aDesiredRedVideoGain)
         {
-            {
-                CpProxyUpnpOrgRenderingControl2SyncSetRedVideoGain(iHandle, aInstanceID, aDesiredRedVideoGain);
-            }
+            SyncSetRedVideoGainUpnpOrgRenderingControl2 sync = new SyncSetRedVideoGainUpnpOrgRenderingControl2(this);
+            BeginSetRedVideoGain(aInstanceID, aDesiredRedVideoGain, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -832,11 +1511,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDesiredRedVideoGain"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetRedVideoGain(uint aInstanceID, uint aDesiredRedVideoGain, CallbackAsyncComplete aCallback)
+        public void BeginSetRedVideoGain(uint aInstanceID, uint aDesiredRedVideoGain, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginSetRedVideoGain(iHandle, aInstanceID, aDesiredRedVideoGain, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetRedVideoGain, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetRedVideoGain.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetRedVideoGain.InputParameter(inIndex++), aDesiredRedVideoGain));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -844,14 +1525,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetRedVideoGain(IntPtr aAsyncHandle)
+        public void EndSetRedVideoGain(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndSetRedVideoGain(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -861,12 +1536,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentGreenVideoGain"></param>
-        public unsafe void SyncGetGreenVideoGain(uint aInstanceID, out uint aCurrentGreenVideoGain)
+        public void SyncGetGreenVideoGain(uint aInstanceID, out uint aCurrentGreenVideoGain)
         {
-            fixed (uint* currentGreenVideoGain = &aCurrentGreenVideoGain)
-            {
-                CpProxyUpnpOrgRenderingControl2SyncGetGreenVideoGain(iHandle, aInstanceID, currentGreenVideoGain);
-            }
+            SyncGetGreenVideoGainUpnpOrgRenderingControl2 sync = new SyncGetGreenVideoGainUpnpOrgRenderingControl2(this);
+            BeginGetGreenVideoGain(aInstanceID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aCurrentGreenVideoGain = sync.CurrentGreenVideoGain();
         }
 
         /// <summary>
@@ -878,11 +1554,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetGreenVideoGain(uint aInstanceID, CallbackAsyncComplete aCallback)
+        public void BeginGetGreenVideoGain(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginGetGreenVideoGain(iHandle, aInstanceID, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetGreenVideoGain, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetGreenVideoGain.InputParameter(inIndex++), aInstanceID));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetGreenVideoGain.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -891,15 +1570,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aCurrentGreenVideoGain"></param>
-        public unsafe void EndGetGreenVideoGain(IntPtr aAsyncHandle, out uint aCurrentGreenVideoGain)
+        public void EndGetGreenVideoGain(IntPtr aAsyncHandle, out uint aCurrentGreenVideoGain)
         {
-            fixed (uint* currentGreenVideoGain = &aCurrentGreenVideoGain)
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndGetGreenVideoGain(iHandle, aAsyncHandle, currentGreenVideoGain))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aCurrentGreenVideoGain = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -909,11 +1583,12 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredGreenVideoGain"></param>
-        public unsafe void SyncSetGreenVideoGain(uint aInstanceID, uint aDesiredGreenVideoGain)
+        public void SyncSetGreenVideoGain(uint aInstanceID, uint aDesiredGreenVideoGain)
         {
-            {
-                CpProxyUpnpOrgRenderingControl2SyncSetGreenVideoGain(iHandle, aInstanceID, aDesiredGreenVideoGain);
-            }
+            SyncSetGreenVideoGainUpnpOrgRenderingControl2 sync = new SyncSetGreenVideoGainUpnpOrgRenderingControl2(this);
+            BeginSetGreenVideoGain(aInstanceID, aDesiredGreenVideoGain, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -926,11 +1601,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDesiredGreenVideoGain"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetGreenVideoGain(uint aInstanceID, uint aDesiredGreenVideoGain, CallbackAsyncComplete aCallback)
+        public void BeginSetGreenVideoGain(uint aInstanceID, uint aDesiredGreenVideoGain, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginSetGreenVideoGain(iHandle, aInstanceID, aDesiredGreenVideoGain, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetGreenVideoGain, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetGreenVideoGain.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetGreenVideoGain.InputParameter(inIndex++), aDesiredGreenVideoGain));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -938,14 +1615,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetGreenVideoGain(IntPtr aAsyncHandle)
+        public void EndSetGreenVideoGain(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndSetGreenVideoGain(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -955,12 +1626,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentBlueVideoGain"></param>
-        public unsafe void SyncGetBlueVideoGain(uint aInstanceID, out uint aCurrentBlueVideoGain)
+        public void SyncGetBlueVideoGain(uint aInstanceID, out uint aCurrentBlueVideoGain)
         {
-            fixed (uint* currentBlueVideoGain = &aCurrentBlueVideoGain)
-            {
-                CpProxyUpnpOrgRenderingControl2SyncGetBlueVideoGain(iHandle, aInstanceID, currentBlueVideoGain);
-            }
+            SyncGetBlueVideoGainUpnpOrgRenderingControl2 sync = new SyncGetBlueVideoGainUpnpOrgRenderingControl2(this);
+            BeginGetBlueVideoGain(aInstanceID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aCurrentBlueVideoGain = sync.CurrentBlueVideoGain();
         }
 
         /// <summary>
@@ -972,11 +1644,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetBlueVideoGain(uint aInstanceID, CallbackAsyncComplete aCallback)
+        public void BeginGetBlueVideoGain(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginGetBlueVideoGain(iHandle, aInstanceID, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetBlueVideoGain, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetBlueVideoGain.InputParameter(inIndex++), aInstanceID));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetBlueVideoGain.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -985,15 +1660,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aCurrentBlueVideoGain"></param>
-        public unsafe void EndGetBlueVideoGain(IntPtr aAsyncHandle, out uint aCurrentBlueVideoGain)
+        public void EndGetBlueVideoGain(IntPtr aAsyncHandle, out uint aCurrentBlueVideoGain)
         {
-            fixed (uint* currentBlueVideoGain = &aCurrentBlueVideoGain)
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndGetBlueVideoGain(iHandle, aAsyncHandle, currentBlueVideoGain))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aCurrentBlueVideoGain = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -1003,11 +1673,12 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredBlueVideoGain"></param>
-        public unsafe void SyncSetBlueVideoGain(uint aInstanceID, uint aDesiredBlueVideoGain)
+        public void SyncSetBlueVideoGain(uint aInstanceID, uint aDesiredBlueVideoGain)
         {
-            {
-                CpProxyUpnpOrgRenderingControl2SyncSetBlueVideoGain(iHandle, aInstanceID, aDesiredBlueVideoGain);
-            }
+            SyncSetBlueVideoGainUpnpOrgRenderingControl2 sync = new SyncSetBlueVideoGainUpnpOrgRenderingControl2(this);
+            BeginSetBlueVideoGain(aInstanceID, aDesiredBlueVideoGain, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -1020,11 +1691,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDesiredBlueVideoGain"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetBlueVideoGain(uint aInstanceID, uint aDesiredBlueVideoGain, CallbackAsyncComplete aCallback)
+        public void BeginSetBlueVideoGain(uint aInstanceID, uint aDesiredBlueVideoGain, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginSetBlueVideoGain(iHandle, aInstanceID, aDesiredBlueVideoGain, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetBlueVideoGain, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetBlueVideoGain.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetBlueVideoGain.InputParameter(inIndex++), aDesiredBlueVideoGain));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1032,14 +1705,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetBlueVideoGain(IntPtr aAsyncHandle)
+        public void EndSetBlueVideoGain(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndSetBlueVideoGain(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -1049,12 +1716,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentRedVideoBlackLevel"></param>
-        public unsafe void SyncGetRedVideoBlackLevel(uint aInstanceID, out uint aCurrentRedVideoBlackLevel)
+        public void SyncGetRedVideoBlackLevel(uint aInstanceID, out uint aCurrentRedVideoBlackLevel)
         {
-            fixed (uint* currentRedVideoBlackLevel = &aCurrentRedVideoBlackLevel)
-            {
-                CpProxyUpnpOrgRenderingControl2SyncGetRedVideoBlackLevel(iHandle, aInstanceID, currentRedVideoBlackLevel);
-            }
+            SyncGetRedVideoBlackLevelUpnpOrgRenderingControl2 sync = new SyncGetRedVideoBlackLevelUpnpOrgRenderingControl2(this);
+            BeginGetRedVideoBlackLevel(aInstanceID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aCurrentRedVideoBlackLevel = sync.CurrentRedVideoBlackLevel();
         }
 
         /// <summary>
@@ -1066,11 +1734,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetRedVideoBlackLevel(uint aInstanceID, CallbackAsyncComplete aCallback)
+        public void BeginGetRedVideoBlackLevel(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginGetRedVideoBlackLevel(iHandle, aInstanceID, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetRedVideoBlackLevel, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetRedVideoBlackLevel.InputParameter(inIndex++), aInstanceID));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetRedVideoBlackLevel.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1079,15 +1750,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aCurrentRedVideoBlackLevel"></param>
-        public unsafe void EndGetRedVideoBlackLevel(IntPtr aAsyncHandle, out uint aCurrentRedVideoBlackLevel)
+        public void EndGetRedVideoBlackLevel(IntPtr aAsyncHandle, out uint aCurrentRedVideoBlackLevel)
         {
-            fixed (uint* currentRedVideoBlackLevel = &aCurrentRedVideoBlackLevel)
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndGetRedVideoBlackLevel(iHandle, aAsyncHandle, currentRedVideoBlackLevel))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aCurrentRedVideoBlackLevel = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -1097,11 +1763,12 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredRedVideoBlackLevel"></param>
-        public unsafe void SyncSetRedVideoBlackLevel(uint aInstanceID, uint aDesiredRedVideoBlackLevel)
+        public void SyncSetRedVideoBlackLevel(uint aInstanceID, uint aDesiredRedVideoBlackLevel)
         {
-            {
-                CpProxyUpnpOrgRenderingControl2SyncSetRedVideoBlackLevel(iHandle, aInstanceID, aDesiredRedVideoBlackLevel);
-            }
+            SyncSetRedVideoBlackLevelUpnpOrgRenderingControl2 sync = new SyncSetRedVideoBlackLevelUpnpOrgRenderingControl2(this);
+            BeginSetRedVideoBlackLevel(aInstanceID, aDesiredRedVideoBlackLevel, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -1114,11 +1781,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDesiredRedVideoBlackLevel"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetRedVideoBlackLevel(uint aInstanceID, uint aDesiredRedVideoBlackLevel, CallbackAsyncComplete aCallback)
+        public void BeginSetRedVideoBlackLevel(uint aInstanceID, uint aDesiredRedVideoBlackLevel, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginSetRedVideoBlackLevel(iHandle, aInstanceID, aDesiredRedVideoBlackLevel, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetRedVideoBlackLevel, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetRedVideoBlackLevel.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetRedVideoBlackLevel.InputParameter(inIndex++), aDesiredRedVideoBlackLevel));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1126,14 +1795,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetRedVideoBlackLevel(IntPtr aAsyncHandle)
+        public void EndSetRedVideoBlackLevel(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndSetRedVideoBlackLevel(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -1143,12 +1806,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentGreenVideoBlackLevel"></param>
-        public unsafe void SyncGetGreenVideoBlackLevel(uint aInstanceID, out uint aCurrentGreenVideoBlackLevel)
+        public void SyncGetGreenVideoBlackLevel(uint aInstanceID, out uint aCurrentGreenVideoBlackLevel)
         {
-            fixed (uint* currentGreenVideoBlackLevel = &aCurrentGreenVideoBlackLevel)
-            {
-                CpProxyUpnpOrgRenderingControl2SyncGetGreenVideoBlackLevel(iHandle, aInstanceID, currentGreenVideoBlackLevel);
-            }
+            SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl2 sync = new SyncGetGreenVideoBlackLevelUpnpOrgRenderingControl2(this);
+            BeginGetGreenVideoBlackLevel(aInstanceID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aCurrentGreenVideoBlackLevel = sync.CurrentGreenVideoBlackLevel();
         }
 
         /// <summary>
@@ -1160,11 +1824,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetGreenVideoBlackLevel(uint aInstanceID, CallbackAsyncComplete aCallback)
+        public void BeginGetGreenVideoBlackLevel(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginGetGreenVideoBlackLevel(iHandle, aInstanceID, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetGreenVideoBlackLevel, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetGreenVideoBlackLevel.InputParameter(inIndex++), aInstanceID));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetGreenVideoBlackLevel.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1173,15 +1840,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aCurrentGreenVideoBlackLevel"></param>
-        public unsafe void EndGetGreenVideoBlackLevel(IntPtr aAsyncHandle, out uint aCurrentGreenVideoBlackLevel)
+        public void EndGetGreenVideoBlackLevel(IntPtr aAsyncHandle, out uint aCurrentGreenVideoBlackLevel)
         {
-            fixed (uint* currentGreenVideoBlackLevel = &aCurrentGreenVideoBlackLevel)
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndGetGreenVideoBlackLevel(iHandle, aAsyncHandle, currentGreenVideoBlackLevel))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aCurrentGreenVideoBlackLevel = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -1191,11 +1853,12 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredGreenVideoBlackLevel"></param>
-        public unsafe void SyncSetGreenVideoBlackLevel(uint aInstanceID, uint aDesiredGreenVideoBlackLevel)
+        public void SyncSetGreenVideoBlackLevel(uint aInstanceID, uint aDesiredGreenVideoBlackLevel)
         {
-            {
-                CpProxyUpnpOrgRenderingControl2SyncSetGreenVideoBlackLevel(iHandle, aInstanceID, aDesiredGreenVideoBlackLevel);
-            }
+            SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl2 sync = new SyncSetGreenVideoBlackLevelUpnpOrgRenderingControl2(this);
+            BeginSetGreenVideoBlackLevel(aInstanceID, aDesiredGreenVideoBlackLevel, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -1208,11 +1871,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDesiredGreenVideoBlackLevel"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetGreenVideoBlackLevel(uint aInstanceID, uint aDesiredGreenVideoBlackLevel, CallbackAsyncComplete aCallback)
+        public void BeginSetGreenVideoBlackLevel(uint aInstanceID, uint aDesiredGreenVideoBlackLevel, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginSetGreenVideoBlackLevel(iHandle, aInstanceID, aDesiredGreenVideoBlackLevel, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetGreenVideoBlackLevel, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetGreenVideoBlackLevel.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetGreenVideoBlackLevel.InputParameter(inIndex++), aDesiredGreenVideoBlackLevel));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1220,14 +1885,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetGreenVideoBlackLevel(IntPtr aAsyncHandle)
+        public void EndSetGreenVideoBlackLevel(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndSetGreenVideoBlackLevel(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -1237,12 +1896,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentBlueVideoBlackLevel"></param>
-        public unsafe void SyncGetBlueVideoBlackLevel(uint aInstanceID, out uint aCurrentBlueVideoBlackLevel)
+        public void SyncGetBlueVideoBlackLevel(uint aInstanceID, out uint aCurrentBlueVideoBlackLevel)
         {
-            fixed (uint* currentBlueVideoBlackLevel = &aCurrentBlueVideoBlackLevel)
-            {
-                CpProxyUpnpOrgRenderingControl2SyncGetBlueVideoBlackLevel(iHandle, aInstanceID, currentBlueVideoBlackLevel);
-            }
+            SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl2 sync = new SyncGetBlueVideoBlackLevelUpnpOrgRenderingControl2(this);
+            BeginGetBlueVideoBlackLevel(aInstanceID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aCurrentBlueVideoBlackLevel = sync.CurrentBlueVideoBlackLevel();
         }
 
         /// <summary>
@@ -1254,11 +1914,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetBlueVideoBlackLevel(uint aInstanceID, CallbackAsyncComplete aCallback)
+        public void BeginGetBlueVideoBlackLevel(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginGetBlueVideoBlackLevel(iHandle, aInstanceID, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetBlueVideoBlackLevel, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetBlueVideoBlackLevel.InputParameter(inIndex++), aInstanceID));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetBlueVideoBlackLevel.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1267,15 +1930,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aCurrentBlueVideoBlackLevel"></param>
-        public unsafe void EndGetBlueVideoBlackLevel(IntPtr aAsyncHandle, out uint aCurrentBlueVideoBlackLevel)
+        public void EndGetBlueVideoBlackLevel(IntPtr aAsyncHandle, out uint aCurrentBlueVideoBlackLevel)
         {
-            fixed (uint* currentBlueVideoBlackLevel = &aCurrentBlueVideoBlackLevel)
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndGetBlueVideoBlackLevel(iHandle, aAsyncHandle, currentBlueVideoBlackLevel))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aCurrentBlueVideoBlackLevel = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -1285,11 +1943,12 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredBlueVideoBlackLevel"></param>
-        public unsafe void SyncSetBlueVideoBlackLevel(uint aInstanceID, uint aDesiredBlueVideoBlackLevel)
+        public void SyncSetBlueVideoBlackLevel(uint aInstanceID, uint aDesiredBlueVideoBlackLevel)
         {
-            {
-                CpProxyUpnpOrgRenderingControl2SyncSetBlueVideoBlackLevel(iHandle, aInstanceID, aDesiredBlueVideoBlackLevel);
-            }
+            SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl2 sync = new SyncSetBlueVideoBlackLevelUpnpOrgRenderingControl2(this);
+            BeginSetBlueVideoBlackLevel(aInstanceID, aDesiredBlueVideoBlackLevel, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -1302,11 +1961,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDesiredBlueVideoBlackLevel"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetBlueVideoBlackLevel(uint aInstanceID, uint aDesiredBlueVideoBlackLevel, CallbackAsyncComplete aCallback)
+        public void BeginSetBlueVideoBlackLevel(uint aInstanceID, uint aDesiredBlueVideoBlackLevel, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginSetBlueVideoBlackLevel(iHandle, aInstanceID, aDesiredBlueVideoBlackLevel, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetBlueVideoBlackLevel, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetBlueVideoBlackLevel.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetBlueVideoBlackLevel.InputParameter(inIndex++), aDesiredBlueVideoBlackLevel));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1314,14 +1975,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetBlueVideoBlackLevel(IntPtr aAsyncHandle)
+        public void EndSetBlueVideoBlackLevel(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndSetBlueVideoBlackLevel(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -1331,12 +1986,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentColorTemperature"></param>
-        public unsafe void SyncGetColorTemperature(uint aInstanceID, out uint aCurrentColorTemperature)
+        public void SyncGetColorTemperature(uint aInstanceID, out uint aCurrentColorTemperature)
         {
-            fixed (uint* currentColorTemperature = &aCurrentColorTemperature)
-            {
-                CpProxyUpnpOrgRenderingControl2SyncGetColorTemperature(iHandle, aInstanceID, currentColorTemperature);
-            }
+            SyncGetColorTemperatureUpnpOrgRenderingControl2 sync = new SyncGetColorTemperatureUpnpOrgRenderingControl2(this);
+            BeginGetColorTemperature(aInstanceID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aCurrentColorTemperature = sync.CurrentColorTemperature();
         }
 
         /// <summary>
@@ -1348,11 +2004,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetColorTemperature(uint aInstanceID, CallbackAsyncComplete aCallback)
+        public void BeginGetColorTemperature(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginGetColorTemperature(iHandle, aInstanceID, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetColorTemperature, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetColorTemperature.InputParameter(inIndex++), aInstanceID));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetColorTemperature.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1361,15 +2020,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aCurrentColorTemperature"></param>
-        public unsafe void EndGetColorTemperature(IntPtr aAsyncHandle, out uint aCurrentColorTemperature)
+        public void EndGetColorTemperature(IntPtr aAsyncHandle, out uint aCurrentColorTemperature)
         {
-            fixed (uint* currentColorTemperature = &aCurrentColorTemperature)
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndGetColorTemperature(iHandle, aAsyncHandle, currentColorTemperature))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aCurrentColorTemperature = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -1379,11 +2033,12 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredColorTemperature"></param>
-        public unsafe void SyncSetColorTemperature(uint aInstanceID, uint aDesiredColorTemperature)
+        public void SyncSetColorTemperature(uint aInstanceID, uint aDesiredColorTemperature)
         {
-            {
-                CpProxyUpnpOrgRenderingControl2SyncSetColorTemperature(iHandle, aInstanceID, aDesiredColorTemperature);
-            }
+            SyncSetColorTemperatureUpnpOrgRenderingControl2 sync = new SyncSetColorTemperatureUpnpOrgRenderingControl2(this);
+            BeginSetColorTemperature(aInstanceID, aDesiredColorTemperature, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -1396,11 +2051,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDesiredColorTemperature"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetColorTemperature(uint aInstanceID, uint aDesiredColorTemperature, CallbackAsyncComplete aCallback)
+        public void BeginSetColorTemperature(uint aInstanceID, uint aDesiredColorTemperature, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginSetColorTemperature(iHandle, aInstanceID, aDesiredColorTemperature, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetColorTemperature, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetColorTemperature.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetColorTemperature.InputParameter(inIndex++), aDesiredColorTemperature));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1408,14 +2065,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetColorTemperature(IntPtr aAsyncHandle)
+        public void EndSetColorTemperature(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndSetColorTemperature(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -1425,12 +2076,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentHorizontalKeystone"></param>
-        public unsafe void SyncGetHorizontalKeystone(uint aInstanceID, out int aCurrentHorizontalKeystone)
+        public void SyncGetHorizontalKeystone(uint aInstanceID, out int aCurrentHorizontalKeystone)
         {
-            fixed (int* currentHorizontalKeystone = &aCurrentHorizontalKeystone)
-            {
-                CpProxyUpnpOrgRenderingControl2SyncGetHorizontalKeystone(iHandle, aInstanceID, currentHorizontalKeystone);
-            }
+            SyncGetHorizontalKeystoneUpnpOrgRenderingControl2 sync = new SyncGetHorizontalKeystoneUpnpOrgRenderingControl2(this);
+            BeginGetHorizontalKeystone(aInstanceID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aCurrentHorizontalKeystone = sync.CurrentHorizontalKeystone();
         }
 
         /// <summary>
@@ -1442,11 +2094,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetHorizontalKeystone(uint aInstanceID, CallbackAsyncComplete aCallback)
+        public void BeginGetHorizontalKeystone(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginGetHorizontalKeystone(iHandle, aInstanceID, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetHorizontalKeystone, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetHorizontalKeystone.InputParameter(inIndex++), aInstanceID));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentInt((ParameterInt)iActionGetHorizontalKeystone.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1455,15 +2110,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aCurrentHorizontalKeystone"></param>
-        public unsafe void EndGetHorizontalKeystone(IntPtr aAsyncHandle, out int aCurrentHorizontalKeystone)
+        public void EndGetHorizontalKeystone(IntPtr aAsyncHandle, out int aCurrentHorizontalKeystone)
         {
-            fixed (int* currentHorizontalKeystone = &aCurrentHorizontalKeystone)
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndGetHorizontalKeystone(iHandle, aAsyncHandle, currentHorizontalKeystone))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aCurrentHorizontalKeystone = Invocation.OutputInt(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -1473,11 +2123,12 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredHorizontalKeystone"></param>
-        public unsafe void SyncSetHorizontalKeystone(uint aInstanceID, int aDesiredHorizontalKeystone)
+        public void SyncSetHorizontalKeystone(uint aInstanceID, int aDesiredHorizontalKeystone)
         {
-            {
-                CpProxyUpnpOrgRenderingControl2SyncSetHorizontalKeystone(iHandle, aInstanceID, aDesiredHorizontalKeystone);
-            }
+            SyncSetHorizontalKeystoneUpnpOrgRenderingControl2 sync = new SyncSetHorizontalKeystoneUpnpOrgRenderingControl2(this);
+            BeginSetHorizontalKeystone(aInstanceID, aDesiredHorizontalKeystone, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -1490,11 +2141,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDesiredHorizontalKeystone"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetHorizontalKeystone(uint aInstanceID, int aDesiredHorizontalKeystone, CallbackAsyncComplete aCallback)
+        public void BeginSetHorizontalKeystone(uint aInstanceID, int aDesiredHorizontalKeystone, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginSetHorizontalKeystone(iHandle, aInstanceID, aDesiredHorizontalKeystone, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetHorizontalKeystone, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetHorizontalKeystone.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentInt((ParameterInt)iActionSetHorizontalKeystone.InputParameter(inIndex++), aDesiredHorizontalKeystone));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1502,14 +2155,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetHorizontalKeystone(IntPtr aAsyncHandle)
+        public void EndSetHorizontalKeystone(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndSetHorizontalKeystone(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -1519,12 +2166,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aCurrentVerticalKeystone"></param>
-        public unsafe void SyncGetVerticalKeystone(uint aInstanceID, out int aCurrentVerticalKeystone)
+        public void SyncGetVerticalKeystone(uint aInstanceID, out int aCurrentVerticalKeystone)
         {
-            fixed (int* currentVerticalKeystone = &aCurrentVerticalKeystone)
-            {
-                CpProxyUpnpOrgRenderingControl2SyncGetVerticalKeystone(iHandle, aInstanceID, currentVerticalKeystone);
-            }
+            SyncGetVerticalKeystoneUpnpOrgRenderingControl2 sync = new SyncGetVerticalKeystoneUpnpOrgRenderingControl2(this);
+            BeginGetVerticalKeystone(aInstanceID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aCurrentVerticalKeystone = sync.CurrentVerticalKeystone();
         }
 
         /// <summary>
@@ -1536,11 +2184,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetVerticalKeystone(uint aInstanceID, CallbackAsyncComplete aCallback)
+        public void BeginGetVerticalKeystone(uint aInstanceID, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginGetVerticalKeystone(iHandle, aInstanceID, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetVerticalKeystone, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetVerticalKeystone.InputParameter(inIndex++), aInstanceID));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentInt((ParameterInt)iActionGetVerticalKeystone.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1549,15 +2200,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aCurrentVerticalKeystone"></param>
-        public unsafe void EndGetVerticalKeystone(IntPtr aAsyncHandle, out int aCurrentVerticalKeystone)
+        public void EndGetVerticalKeystone(IntPtr aAsyncHandle, out int aCurrentVerticalKeystone)
         {
-            fixed (int* currentVerticalKeystone = &aCurrentVerticalKeystone)
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndGetVerticalKeystone(iHandle, aAsyncHandle, currentVerticalKeystone))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aCurrentVerticalKeystone = Invocation.OutputInt(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -1567,11 +2213,12 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aInstanceID"></param>
         /// <param name="aDesiredVerticalKeystone"></param>
-        public unsafe void SyncSetVerticalKeystone(uint aInstanceID, int aDesiredVerticalKeystone)
+        public void SyncSetVerticalKeystone(uint aInstanceID, int aDesiredVerticalKeystone)
         {
-            {
-                CpProxyUpnpOrgRenderingControl2SyncSetVerticalKeystone(iHandle, aInstanceID, aDesiredVerticalKeystone);
-            }
+            SyncSetVerticalKeystoneUpnpOrgRenderingControl2 sync = new SyncSetVerticalKeystoneUpnpOrgRenderingControl2(this);
+            BeginSetVerticalKeystone(aInstanceID, aDesiredVerticalKeystone, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -1584,11 +2231,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDesiredVerticalKeystone"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetVerticalKeystone(uint aInstanceID, int aDesiredVerticalKeystone, CallbackAsyncComplete aCallback)
+        public void BeginSetVerticalKeystone(uint aInstanceID, int aDesiredVerticalKeystone, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginSetVerticalKeystone(iHandle, aInstanceID, aDesiredVerticalKeystone, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetVerticalKeystone, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetVerticalKeystone.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentInt((ParameterInt)iActionSetVerticalKeystone.InputParameter(inIndex++), aDesiredVerticalKeystone));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1596,14 +2245,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetVerticalKeystone(IntPtr aAsyncHandle)
+        public void EndSetVerticalKeystone(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndSetVerticalKeystone(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -1614,15 +2257,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aCurrentMute"></param>
-        public unsafe void SyncGetMute(uint aInstanceID, string aChannel, out bool aCurrentMute)
+        public void SyncGetMute(uint aInstanceID, String aChannel, out bool aCurrentMute)
         {
-            char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
-            uint currentMute;
-            {
-                CpProxyUpnpOrgRenderingControl2SyncGetMute(iHandle, aInstanceID, channel, &currentMute);
-            }
-            Marshal.FreeHGlobal((IntPtr)channel);
-            aCurrentMute = (currentMute != 0);
+            SyncGetMuteUpnpOrgRenderingControl2 sync = new SyncGetMuteUpnpOrgRenderingControl2(this);
+            BeginGetMute(aInstanceID, aChannel, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aCurrentMute = sync.CurrentMute();
         }
 
         /// <summary>
@@ -1635,13 +2276,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aChannel"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetMute(uint aInstanceID, string aChannel, CallbackAsyncComplete aCallback)
+        public void BeginGetMute(uint aInstanceID, String aChannel, CallbackAsyncComplete aCallback)
         {
-            char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginGetMute(iHandle, aInstanceID, channel, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)channel);
+            Invocation invocation = iService.Invocation(iActionGetMute, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetMute.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionGetMute.InputParameter(inIndex++), aChannel));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentBool((ParameterBool)iActionGetMute.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1650,16 +2293,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aCurrentMute"></param>
-        public unsafe void EndGetMute(IntPtr aAsyncHandle, out bool aCurrentMute)
+        public void EndGetMute(IntPtr aAsyncHandle, out bool aCurrentMute)
         {
-            uint currentMute;
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndGetMute(iHandle, aAsyncHandle, &currentMute))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aCurrentMute = (currentMute != 0);
+            uint index = 0;
+            aCurrentMute = Invocation.OutputBool(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -1670,14 +2307,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aDesiredMute"></param>
-        public unsafe void SyncSetMute(uint aInstanceID, string aChannel, bool aDesiredMute)
+        public void SyncSetMute(uint aInstanceID, String aChannel, bool aDesiredMute)
         {
-            char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
-            uint desiredMute = (aDesiredMute? 1u : 0u);
-            {
-                CpProxyUpnpOrgRenderingControl2SyncSetMute(iHandle, aInstanceID, channel, desiredMute);
-            }
-            Marshal.FreeHGlobal((IntPtr)channel);
+            SyncSetMuteUpnpOrgRenderingControl2 sync = new SyncSetMuteUpnpOrgRenderingControl2(this);
+            BeginSetMute(aInstanceID, aChannel, aDesiredMute, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -1691,14 +2326,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDesiredMute"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetMute(uint aInstanceID, string aChannel, bool aDesiredMute, CallbackAsyncComplete aCallback)
+        public void BeginSetMute(uint aInstanceID, String aChannel, bool aDesiredMute, CallbackAsyncComplete aCallback)
         {
-            char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
-            uint desiredMute = (aDesiredMute? 1u : 0u);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginSetMute(iHandle, aInstanceID, channel, desiredMute, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)channel);
+            Invocation invocation = iService.Invocation(iActionSetMute, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetMute.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSetMute.InputParameter(inIndex++), aChannel));
+            invocation.AddInput(new ArgumentBool((ParameterBool)iActionSetMute.InputParameter(inIndex++), aDesiredMute));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1706,14 +2341,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetMute(IntPtr aAsyncHandle)
+        public void EndSetMute(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndSetMute(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -1724,14 +2353,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aCurrentVolume"></param>
-        public unsafe void SyncGetVolume(uint aInstanceID, string aChannel, out uint aCurrentVolume)
+        public void SyncGetVolume(uint aInstanceID, String aChannel, out uint aCurrentVolume)
         {
-            char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
-            fixed (uint* currentVolume = &aCurrentVolume)
-            {
-                CpProxyUpnpOrgRenderingControl2SyncGetVolume(iHandle, aInstanceID, channel, currentVolume);
-            }
-            Marshal.FreeHGlobal((IntPtr)channel);
+            SyncGetVolumeUpnpOrgRenderingControl2 sync = new SyncGetVolumeUpnpOrgRenderingControl2(this);
+            BeginGetVolume(aInstanceID, aChannel, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aCurrentVolume = sync.CurrentVolume();
         }
 
         /// <summary>
@@ -1744,13 +2372,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aChannel"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetVolume(uint aInstanceID, string aChannel, CallbackAsyncComplete aCallback)
+        public void BeginGetVolume(uint aInstanceID, String aChannel, CallbackAsyncComplete aCallback)
         {
-            char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginGetVolume(iHandle, aInstanceID, channel, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)channel);
+            Invocation invocation = iService.Invocation(iActionGetVolume, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetVolume.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionGetVolume.InputParameter(inIndex++), aChannel));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetVolume.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1759,15 +2389,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aCurrentVolume"></param>
-        public unsafe void EndGetVolume(IntPtr aAsyncHandle, out uint aCurrentVolume)
+        public void EndGetVolume(IntPtr aAsyncHandle, out uint aCurrentVolume)
         {
-            fixed (uint* currentVolume = &aCurrentVolume)
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndGetVolume(iHandle, aAsyncHandle, currentVolume))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aCurrentVolume = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -1778,13 +2403,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aDesiredVolume"></param>
-        public unsafe void SyncSetVolume(uint aInstanceID, string aChannel, uint aDesiredVolume)
+        public void SyncSetVolume(uint aInstanceID, String aChannel, uint aDesiredVolume)
         {
-            char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
-            {
-                CpProxyUpnpOrgRenderingControl2SyncSetVolume(iHandle, aInstanceID, channel, aDesiredVolume);
-            }
-            Marshal.FreeHGlobal((IntPtr)channel);
+            SyncSetVolumeUpnpOrgRenderingControl2 sync = new SyncSetVolumeUpnpOrgRenderingControl2(this);
+            BeginSetVolume(aInstanceID, aChannel, aDesiredVolume, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -1798,13 +2422,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDesiredVolume"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetVolume(uint aInstanceID, string aChannel, uint aDesiredVolume, CallbackAsyncComplete aCallback)
+        public void BeginSetVolume(uint aInstanceID, String aChannel, uint aDesiredVolume, CallbackAsyncComplete aCallback)
         {
-            char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginSetVolume(iHandle, aInstanceID, channel, aDesiredVolume, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)channel);
+            Invocation invocation = iService.Invocation(iActionSetVolume, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetVolume.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSetVolume.InputParameter(inIndex++), aChannel));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetVolume.InputParameter(inIndex++), aDesiredVolume));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1812,14 +2437,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetVolume(IntPtr aAsyncHandle)
+        public void EndSetVolume(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndSetVolume(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -1830,14 +2449,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aCurrentVolume"></param>
-        public unsafe void SyncGetVolumeDB(uint aInstanceID, string aChannel, out int aCurrentVolume)
+        public void SyncGetVolumeDB(uint aInstanceID, String aChannel, out int aCurrentVolume)
         {
-            char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
-            fixed (int* currentVolume = &aCurrentVolume)
-            {
-                CpProxyUpnpOrgRenderingControl2SyncGetVolumeDB(iHandle, aInstanceID, channel, currentVolume);
-            }
-            Marshal.FreeHGlobal((IntPtr)channel);
+            SyncGetVolumeDBUpnpOrgRenderingControl2 sync = new SyncGetVolumeDBUpnpOrgRenderingControl2(this);
+            BeginGetVolumeDB(aInstanceID, aChannel, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aCurrentVolume = sync.CurrentVolume();
         }
 
         /// <summary>
@@ -1850,13 +2468,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aChannel"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetVolumeDB(uint aInstanceID, string aChannel, CallbackAsyncComplete aCallback)
+        public void BeginGetVolumeDB(uint aInstanceID, String aChannel, CallbackAsyncComplete aCallback)
         {
-            char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginGetVolumeDB(iHandle, aInstanceID, channel, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)channel);
+            Invocation invocation = iService.Invocation(iActionGetVolumeDB, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetVolumeDB.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionGetVolumeDB.InputParameter(inIndex++), aChannel));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentInt((ParameterInt)iActionGetVolumeDB.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1865,15 +2485,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aCurrentVolume"></param>
-        public unsafe void EndGetVolumeDB(IntPtr aAsyncHandle, out int aCurrentVolume)
+        public void EndGetVolumeDB(IntPtr aAsyncHandle, out int aCurrentVolume)
         {
-            fixed (int* currentVolume = &aCurrentVolume)
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndGetVolumeDB(iHandle, aAsyncHandle, currentVolume))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aCurrentVolume = Invocation.OutputInt(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -1884,13 +2499,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aDesiredVolume"></param>
-        public unsafe void SyncSetVolumeDB(uint aInstanceID, string aChannel, int aDesiredVolume)
+        public void SyncSetVolumeDB(uint aInstanceID, String aChannel, int aDesiredVolume)
         {
-            char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
-            {
-                CpProxyUpnpOrgRenderingControl2SyncSetVolumeDB(iHandle, aInstanceID, channel, aDesiredVolume);
-            }
-            Marshal.FreeHGlobal((IntPtr)channel);
+            SyncSetVolumeDBUpnpOrgRenderingControl2 sync = new SyncSetVolumeDBUpnpOrgRenderingControl2(this);
+            BeginSetVolumeDB(aInstanceID, aChannel, aDesiredVolume, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -1904,13 +2518,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDesiredVolume"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetVolumeDB(uint aInstanceID, string aChannel, int aDesiredVolume, CallbackAsyncComplete aCallback)
+        public void BeginSetVolumeDB(uint aInstanceID, String aChannel, int aDesiredVolume, CallbackAsyncComplete aCallback)
         {
-            char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginSetVolumeDB(iHandle, aInstanceID, channel, aDesiredVolume, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)channel);
+            Invocation invocation = iService.Invocation(iActionSetVolumeDB, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetVolumeDB.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSetVolumeDB.InputParameter(inIndex++), aChannel));
+            invocation.AddInput(new ArgumentInt((ParameterInt)iActionSetVolumeDB.InputParameter(inIndex++), aDesiredVolume));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1918,14 +2533,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetVolumeDB(IntPtr aAsyncHandle)
+        public void EndSetVolumeDB(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndSetVolumeDB(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -1937,15 +2546,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aChannel"></param>
         /// <param name="aMinValue"></param>
         /// <param name="aMaxValue"></param>
-        public unsafe void SyncGetVolumeDBRange(uint aInstanceID, string aChannel, out int aMinValue, out int aMaxValue)
+        public void SyncGetVolumeDBRange(uint aInstanceID, String aChannel, out int aMinValue, out int aMaxValue)
         {
-            char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
-            fixed (int* minValue = &aMinValue)
-            fixed (int* maxValue = &aMaxValue)
-            {
-                CpProxyUpnpOrgRenderingControl2SyncGetVolumeDBRange(iHandle, aInstanceID, channel, minValue, maxValue);
-            }
-            Marshal.FreeHGlobal((IntPtr)channel);
+            SyncGetVolumeDBRangeUpnpOrgRenderingControl2 sync = new SyncGetVolumeDBRangeUpnpOrgRenderingControl2(this);
+            BeginGetVolumeDBRange(aInstanceID, aChannel, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aMinValue = sync.MinValue();
+            aMaxValue = sync.MaxValue();
         }
 
         /// <summary>
@@ -1958,13 +2566,16 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aChannel"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetVolumeDBRange(uint aInstanceID, string aChannel, CallbackAsyncComplete aCallback)
+        public void BeginGetVolumeDBRange(uint aInstanceID, String aChannel, CallbackAsyncComplete aCallback)
         {
-            char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginGetVolumeDBRange(iHandle, aInstanceID, channel, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)channel);
+            Invocation invocation = iService.Invocation(iActionGetVolumeDBRange, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetVolumeDBRange.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionGetVolumeDBRange.InputParameter(inIndex++), aChannel));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentInt((ParameterInt)iActionGetVolumeDBRange.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentInt((ParameterInt)iActionGetVolumeDBRange.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1974,16 +2585,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aMinValue"></param>
         /// <param name="aMaxValue"></param>
-        public unsafe void EndGetVolumeDBRange(IntPtr aAsyncHandle, out int aMinValue, out int aMaxValue)
+        public void EndGetVolumeDBRange(IntPtr aAsyncHandle, out int aMinValue, out int aMaxValue)
         {
-            fixed (int* minValue = &aMinValue)
-            fixed (int* maxValue = &aMaxValue)
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndGetVolumeDBRange(iHandle, aAsyncHandle, minValue, maxValue))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aMinValue = Invocation.OutputInt(aAsyncHandle, index++);
+            aMaxValue = Invocation.OutputInt(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -1994,15 +2600,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aCurrentLoudness"></param>
-        public unsafe void SyncGetLoudness(uint aInstanceID, string aChannel, out bool aCurrentLoudness)
+        public void SyncGetLoudness(uint aInstanceID, String aChannel, out bool aCurrentLoudness)
         {
-            char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
-            uint currentLoudness;
-            {
-                CpProxyUpnpOrgRenderingControl2SyncGetLoudness(iHandle, aInstanceID, channel, &currentLoudness);
-            }
-            Marshal.FreeHGlobal((IntPtr)channel);
-            aCurrentLoudness = (currentLoudness != 0);
+            SyncGetLoudnessUpnpOrgRenderingControl2 sync = new SyncGetLoudnessUpnpOrgRenderingControl2(this);
+            BeginGetLoudness(aInstanceID, aChannel, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aCurrentLoudness = sync.CurrentLoudness();
         }
 
         /// <summary>
@@ -2015,13 +2619,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aChannel"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetLoudness(uint aInstanceID, string aChannel, CallbackAsyncComplete aCallback)
+        public void BeginGetLoudness(uint aInstanceID, String aChannel, CallbackAsyncComplete aCallback)
         {
-            char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginGetLoudness(iHandle, aInstanceID, channel, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)channel);
+            Invocation invocation = iService.Invocation(iActionGetLoudness, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetLoudness.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionGetLoudness.InputParameter(inIndex++), aChannel));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentBool((ParameterBool)iActionGetLoudness.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -2030,16 +2636,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aCurrentLoudness"></param>
-        public unsafe void EndGetLoudness(IntPtr aAsyncHandle, out bool aCurrentLoudness)
+        public void EndGetLoudness(IntPtr aAsyncHandle, out bool aCurrentLoudness)
         {
-            uint currentLoudness;
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndGetLoudness(iHandle, aAsyncHandle, &currentLoudness))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aCurrentLoudness = (currentLoudness != 0);
+            uint index = 0;
+            aCurrentLoudness = Invocation.OutputBool(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -2050,14 +2650,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aChannel"></param>
         /// <param name="aDesiredLoudness"></param>
-        public unsafe void SyncSetLoudness(uint aInstanceID, string aChannel, bool aDesiredLoudness)
+        public void SyncSetLoudness(uint aInstanceID, String aChannel, bool aDesiredLoudness)
         {
-            char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
-            uint desiredLoudness = (aDesiredLoudness? 1u : 0u);
-            {
-                CpProxyUpnpOrgRenderingControl2SyncSetLoudness(iHandle, aInstanceID, channel, desiredLoudness);
-            }
-            Marshal.FreeHGlobal((IntPtr)channel);
+            SyncSetLoudnessUpnpOrgRenderingControl2 sync = new SyncSetLoudnessUpnpOrgRenderingControl2(this);
+            BeginSetLoudness(aInstanceID, aChannel, aDesiredLoudness, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -2071,14 +2669,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDesiredLoudness"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetLoudness(uint aInstanceID, string aChannel, bool aDesiredLoudness, CallbackAsyncComplete aCallback)
+        public void BeginSetLoudness(uint aInstanceID, String aChannel, bool aDesiredLoudness, CallbackAsyncComplete aCallback)
         {
-            char* channel = (char*)Marshal.StringToHGlobalAnsi(aChannel);
-            uint desiredLoudness = (aDesiredLoudness? 1u : 0u);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginSetLoudness(iHandle, aInstanceID, channel, desiredLoudness, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)channel);
+            Invocation invocation = iService.Invocation(iActionSetLoudness, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetLoudness.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSetLoudness.InputParameter(inIndex++), aChannel));
+            invocation.AddInput(new ArgumentBool((ParameterBool)iActionSetLoudness.InputParameter(inIndex++), aDesiredLoudness));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -2086,14 +2684,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetLoudness(IntPtr aAsyncHandle)
+        public void EndSetLoudness(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndSetLoudness(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -2104,16 +2696,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aInstanceID"></param>
         /// <param name="aStateVariableList"></param>
         /// <param name="aStateVariableValuePairs"></param>
-        public unsafe void SyncGetStateVariables(uint aInstanceID, string aStateVariableList, out string aStateVariableValuePairs)
+        public void SyncGetStateVariables(uint aInstanceID, String aStateVariableList, out String aStateVariableValuePairs)
         {
-            char* stateVariableList = (char*)Marshal.StringToHGlobalAnsi(aStateVariableList);
-            char* stateVariableValuePairs;
-            {
-                CpProxyUpnpOrgRenderingControl2SyncGetStateVariables(iHandle, aInstanceID, stateVariableList, &stateVariableValuePairs);
-            }
-            Marshal.FreeHGlobal((IntPtr)stateVariableList);
-            aStateVariableValuePairs = Marshal.PtrToStringAnsi((IntPtr)stateVariableValuePairs);
-            ZappFree(stateVariableValuePairs);
+            SyncGetStateVariablesUpnpOrgRenderingControl2 sync = new SyncGetStateVariablesUpnpOrgRenderingControl2(this);
+            BeginGetStateVariables(aInstanceID, aStateVariableList, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aStateVariableValuePairs = sync.StateVariableValuePairs();
         }
 
         /// <summary>
@@ -2126,13 +2715,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStateVariableList"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetStateVariables(uint aInstanceID, string aStateVariableList, CallbackAsyncComplete aCallback)
+        public void BeginGetStateVariables(uint aInstanceID, String aStateVariableList, CallbackAsyncComplete aCallback)
         {
-            char* stateVariableList = (char*)Marshal.StringToHGlobalAnsi(aStateVariableList);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginGetStateVariables(iHandle, aInstanceID, stateVariableList, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)stateVariableList);
+            Invocation invocation = iService.Invocation(iActionGetStateVariables, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionGetStateVariables.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionGetStateVariables.InputParameter(inIndex++), aStateVariableList));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetStateVariables.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -2141,17 +2732,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aStateVariableValuePairs"></param>
-        public unsafe void EndGetStateVariables(IntPtr aAsyncHandle, out string aStateVariableValuePairs)
+        public void EndGetStateVariables(IntPtr aAsyncHandle, out String aStateVariableValuePairs)
         {
-            char* stateVariableValuePairs;
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndGetStateVariables(iHandle, aAsyncHandle, &stateVariableValuePairs))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aStateVariableValuePairs = Marshal.PtrToStringAnsi((IntPtr)stateVariableValuePairs);
-            ZappFree(stateVariableValuePairs);
+            uint index = 0;
+            aStateVariableValuePairs = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -2165,22 +2749,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aServiceId"></param>
         /// <param name="aStateVariableValuePairs"></param>
         /// <param name="aStateVariableList"></param>
-        public unsafe void SyncSetStateVariables(uint aInstanceID, string aRenderingControlUDN, string aServiceType, string aServiceId, string aStateVariableValuePairs, out string aStateVariableList)
+        public void SyncSetStateVariables(uint aInstanceID, String aRenderingControlUDN, String aServiceType, String aServiceId, String aStateVariableValuePairs, out String aStateVariableList)
         {
-            char* renderingControlUDN = (char*)Marshal.StringToHGlobalAnsi(aRenderingControlUDN);
-            char* serviceType = (char*)Marshal.StringToHGlobalAnsi(aServiceType);
-            char* serviceId = (char*)Marshal.StringToHGlobalAnsi(aServiceId);
-            char* stateVariableValuePairs = (char*)Marshal.StringToHGlobalAnsi(aStateVariableValuePairs);
-            char* stateVariableList;
-            {
-                CpProxyUpnpOrgRenderingControl2SyncSetStateVariables(iHandle, aInstanceID, renderingControlUDN, serviceType, serviceId, stateVariableValuePairs, &stateVariableList);
-            }
-            Marshal.FreeHGlobal((IntPtr)renderingControlUDN);
-            Marshal.FreeHGlobal((IntPtr)serviceType);
-            Marshal.FreeHGlobal((IntPtr)serviceId);
-            Marshal.FreeHGlobal((IntPtr)stateVariableValuePairs);
-            aStateVariableList = Marshal.PtrToStringAnsi((IntPtr)stateVariableList);
-            ZappFree(stateVariableList);
+            SyncSetStateVariablesUpnpOrgRenderingControl2 sync = new SyncSetStateVariablesUpnpOrgRenderingControl2(this);
+            BeginSetStateVariables(aInstanceID, aRenderingControlUDN, aServiceType, aServiceId, aStateVariableValuePairs, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aStateVariableList = sync.StateVariableList();
         }
 
         /// <summary>
@@ -2196,19 +2771,18 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aStateVariableValuePairs"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetStateVariables(uint aInstanceID, string aRenderingControlUDN, string aServiceType, string aServiceId, string aStateVariableValuePairs, CallbackAsyncComplete aCallback)
+        public void BeginSetStateVariables(uint aInstanceID, String aRenderingControlUDN, String aServiceType, String aServiceId, String aStateVariableValuePairs, CallbackAsyncComplete aCallback)
         {
-            char* renderingControlUDN = (char*)Marshal.StringToHGlobalAnsi(aRenderingControlUDN);
-            char* serviceType = (char*)Marshal.StringToHGlobalAnsi(aServiceType);
-            char* serviceId = (char*)Marshal.StringToHGlobalAnsi(aServiceId);
-            char* stateVariableValuePairs = (char*)Marshal.StringToHGlobalAnsi(aStateVariableValuePairs);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgRenderingControl2BeginSetStateVariables(iHandle, aInstanceID, renderingControlUDN, serviceType, serviceId, stateVariableValuePairs, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)renderingControlUDN);
-            Marshal.FreeHGlobal((IntPtr)serviceType);
-            Marshal.FreeHGlobal((IntPtr)serviceId);
-            Marshal.FreeHGlobal((IntPtr)stateVariableValuePairs);
+            Invocation invocation = iService.Invocation(iActionSetStateVariables, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetStateVariables.InputParameter(inIndex++), aInstanceID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSetStateVariables.InputParameter(inIndex++), aRenderingControlUDN));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSetStateVariables.InputParameter(inIndex++), aServiceType));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSetStateVariables.InputParameter(inIndex++), aServiceId));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSetStateVariables.InputParameter(inIndex++), aStateVariableValuePairs));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionSetStateVariables.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -2217,17 +2791,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aStateVariableList"></param>
-        public unsafe void EndSetStateVariables(IntPtr aAsyncHandle, out string aStateVariableList)
+        public void EndSetStateVariables(IntPtr aAsyncHandle, out String aStateVariableList)
         {
-            char* stateVariableList;
-            {
-                if (0 != CpProxyUpnpOrgRenderingControl2EndSetStateVariables(iHandle, aAsyncHandle, &stateVariableList))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aStateVariableList = Marshal.PtrToStringAnsi((IntPtr)stateVariableList);
-            ZappFree(stateVariableList);
+            uint index = 0;
+            aStateVariableList = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -2238,17 +2805,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aLastChangeChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyLastChangeChanged(CallbackPropertyChanged aLastChangeChanged)
         {
-            iLastChangeChanged = aLastChangeChanged;
-            iCallbackLastChangeChanged = new Callback(PropertyLastChangeChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyUpnpOrgRenderingControl2SetPropertyLastChangeChanged(iHandle, iCallbackLastChangeChanged, ptr);
+            lock (this)
+            {
+                iLastChangeChanged = aLastChangeChanged;
+            }
         }
 
-        private void PropertyLastChangeChanged(IntPtr aPtr)
+        private void LastChangePropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyUpnpOrgRenderingControl2 self = (CpProxyUpnpOrgRenderingControl2)gch.Target;
-            self.iLastChangeChanged();
+            lock (this)
+            {
+                if (iLastChangeChanged != null)
+                {
+                    iLastChangeChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -2258,12 +2829,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aLastChange">Will be set to the value of the property</param>
-        public unsafe void PropertyLastChange(out string aLastChange)
+        public String PropertyLastChange()
         {
-            char* ptr;
-            CpProxyUpnpOrgRenderingControl2PropertyLastChange(iHandle, &ptr);
-            aLastChange = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iLastChange.Value();
         }
 
         /// <summary>
@@ -2287,17 +2855,49 @@ namespace Zapp.ControlPoint.Proxies
                 {
                     return;
                 }
-                CpProxyUpnpOrgRenderingControl2Destroy(iHandle);
+                DisposeProxy();
                 iHandle = IntPtr.Zero;
+                iActionListPresets.Dispose();
+                iActionSelectPreset.Dispose();
+                iActionGetBrightness.Dispose();
+                iActionSetBrightness.Dispose();
+                iActionGetContrast.Dispose();
+                iActionSetContrast.Dispose();
+                iActionGetSharpness.Dispose();
+                iActionSetSharpness.Dispose();
+                iActionGetRedVideoGain.Dispose();
+                iActionSetRedVideoGain.Dispose();
+                iActionGetGreenVideoGain.Dispose();
+                iActionSetGreenVideoGain.Dispose();
+                iActionGetBlueVideoGain.Dispose();
+                iActionSetBlueVideoGain.Dispose();
+                iActionGetRedVideoBlackLevel.Dispose();
+                iActionSetRedVideoBlackLevel.Dispose();
+                iActionGetGreenVideoBlackLevel.Dispose();
+                iActionSetGreenVideoBlackLevel.Dispose();
+                iActionGetBlueVideoBlackLevel.Dispose();
+                iActionSetBlueVideoBlackLevel.Dispose();
+                iActionGetColorTemperature.Dispose();
+                iActionSetColorTemperature.Dispose();
+                iActionGetHorizontalKeystone.Dispose();
+                iActionSetHorizontalKeystone.Dispose();
+                iActionGetVerticalKeystone.Dispose();
+                iActionSetVerticalKeystone.Dispose();
+                iActionGetMute.Dispose();
+                iActionSetMute.Dispose();
+                iActionGetVolume.Dispose();
+                iActionSetVolume.Dispose();
+                iActionGetVolumeDB.Dispose();
+                iActionSetVolumeDB.Dispose();
+                iActionGetVolumeDBRange.Dispose();
+                iActionGetLoudness.Dispose();
+                iActionSetLoudness.Dispose();
+                iActionGetStateVariables.Dispose();
+                iActionSetStateVariables.Dispose();
             }
-            iGch.Free();
             if (aDisposing)
             {
                 GC.SuppressFinalize(this);
-            }
-            else
-            {
-                DisposeProxy();
             }
         }
     }

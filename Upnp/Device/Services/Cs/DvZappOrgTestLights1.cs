@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -14,51 +15,22 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class DvProviderZappOrgTestLights1 : DvProvider, IDisposable, IDvProviderZappOrgTestLights1
     {
-        [DllImport("DvZappOrgTestLights1")]
-        static extern IntPtr DvProviderZappOrgTestLights1Create(IntPtr aDeviceHandle);
-        [DllImport("DvZappOrgTestLights1")]
-        static extern void DvProviderZappOrgTestLights1Destroy(IntPtr aHandle);
-        [DllImport("DvZappOrgTestLights1")]
-        static extern void DvProviderZappOrgTestLights1EnableActionGetCount(IntPtr aHandle, CallbackGetCount aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestLights1")]
-        static extern void DvProviderZappOrgTestLights1EnableActionGetRoom(IntPtr aHandle, CallbackGetRoom aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestLights1")]
-        static extern void DvProviderZappOrgTestLights1EnableActionGetName(IntPtr aHandle, CallbackGetName aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestLights1")]
-        static extern void DvProviderZappOrgTestLights1EnableActionGetPosition(IntPtr aHandle, CallbackGetPosition aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestLights1")]
-        static extern void DvProviderZappOrgTestLights1EnableActionSetColor(IntPtr aHandle, CallbackSetColor aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestLights1")]
-        static extern void DvProviderZappOrgTestLights1EnableActionGetColor(IntPtr aHandle, CallbackGetColor aCallback, IntPtr aPtr);
-        [DllImport("DvZappOrgTestLights1")]
-        static extern void DvProviderZappOrgTestLights1EnableActionGetColorComponents(IntPtr aHandle, CallbackGetColorComponents aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private unsafe delegate int CallbackGetCount(IntPtr aPtr, uint aVersion, uint* aCount);
-        private unsafe delegate int CallbackGetRoom(IntPtr aPtr, uint aVersion, uint aIndex, char** aRoomName);
-        private unsafe delegate int CallbackGetName(IntPtr aPtr, uint aVersion, uint aIndex, char** aFriendlyName);
-        private unsafe delegate int CallbackGetPosition(IntPtr aPtr, uint aVersion, uint aIndex, uint* aX, uint* aY, uint* aZ);
-        private unsafe delegate int CallbackSetColor(IntPtr aPtr, uint aVersion, uint aIndex, uint aColor);
-        private unsafe delegate int CallbackGetColor(IntPtr aPtr, uint aVersion, uint aIndex, uint* aColor);
-        private unsafe delegate int CallbackGetColorComponents(IntPtr aPtr, uint aVersion, uint aColor, uint* aBrightness, uint* aRed, uint* aGreen, uint* aBlue);
-
         private GCHandle iGch;
-        private CallbackGetCount iCallbackGetCount;
-        private CallbackGetRoom iCallbackGetRoom;
-        private CallbackGetName iCallbackGetName;
-        private CallbackGetPosition iCallbackGetPosition;
-        private CallbackSetColor iCallbackSetColor;
-        private CallbackGetColor iCallbackGetColor;
-        private CallbackGetColorComponents iCallbackGetColorComponents;
+        private ActionDelegate iDelegateGetCount;
+        private ActionDelegate iDelegateGetRoom;
+        private ActionDelegate iDelegateGetName;
+        private ActionDelegate iDelegateGetPosition;
+        private ActionDelegate iDelegateSetColor;
+        private ActionDelegate iDelegateGetColor;
+        private ActionDelegate iDelegateGetColorComponents;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderZappOrgTestLights1(DvDevice aDevice)
+            : base(aDevice, "zapp-org", "TestLights", 1)
         {
-            iHandle = DvProviderZappOrgTestLights1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
         }
 
@@ -69,9 +41,10 @@ namespace Zapp.Device.Providers
         /// DoGetCount must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetCount()
         {
-            iCallbackGetCount = new CallbackGetCount(DoGetCount);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestLights1EnableActionGetCount(iHandle, iCallbackGetCount, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetCount");
+            action.AddOutputParameter(new ParameterUint("Count"));
+            iDelegateGetCount = new ActionDelegate(DoGetCount);
+            EnableAction(action, iDelegateGetCount, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -81,9 +54,12 @@ namespace Zapp.Device.Providers
         /// DoGetRoom must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetRoom()
         {
-            iCallbackGetRoom = new CallbackGetRoom(DoGetRoom);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestLights1EnableActionGetRoom(iHandle, iCallbackGetRoom, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetRoom");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("Index"));
+            action.AddOutputParameter(new ParameterString("RoomName", allowedValues));
+            iDelegateGetRoom = new ActionDelegate(DoGetRoom);
+            EnableAction(action, iDelegateGetRoom, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -93,9 +69,12 @@ namespace Zapp.Device.Providers
         /// DoGetName must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetName()
         {
-            iCallbackGetName = new CallbackGetName(DoGetName);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestLights1EnableActionGetName(iHandle, iCallbackGetName, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetName");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("Index"));
+            action.AddOutputParameter(new ParameterString("FriendlyName", allowedValues));
+            iDelegateGetName = new ActionDelegate(DoGetName);
+            EnableAction(action, iDelegateGetName, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -105,9 +84,13 @@ namespace Zapp.Device.Providers
         /// DoGetPosition must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetPosition()
         {
-            iCallbackGetPosition = new CallbackGetPosition(DoGetPosition);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestLights1EnableActionGetPosition(iHandle, iCallbackGetPosition, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetPosition");
+            action.AddInputParameter(new ParameterUint("Index"));
+            action.AddOutputParameter(new ParameterUint("X"));
+            action.AddOutputParameter(new ParameterUint("Y"));
+            action.AddOutputParameter(new ParameterUint("Z"));
+            iDelegateGetPosition = new ActionDelegate(DoGetPosition);
+            EnableAction(action, iDelegateGetPosition, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -117,9 +100,11 @@ namespace Zapp.Device.Providers
         /// DoSetColor must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetColor()
         {
-            iCallbackSetColor = new CallbackSetColor(DoSetColor);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestLights1EnableActionSetColor(iHandle, iCallbackSetColor, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetColor");
+            action.AddInputParameter(new ParameterUint("Index"));
+            action.AddInputParameter(new ParameterUint("Color"));
+            iDelegateSetColor = new ActionDelegate(DoSetColor);
+            EnableAction(action, iDelegateSetColor, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -129,9 +114,11 @@ namespace Zapp.Device.Providers
         /// DoGetColor must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetColor()
         {
-            iCallbackGetColor = new CallbackGetColor(DoGetColor);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestLights1EnableActionGetColor(iHandle, iCallbackGetColor, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetColor");
+            action.AddInputParameter(new ParameterUint("Index"));
+            action.AddOutputParameter(new ParameterUint("Color"));
+            iDelegateGetColor = new ActionDelegate(DoGetColor);
+            EnableAction(action, iDelegateGetColor, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -141,9 +128,14 @@ namespace Zapp.Device.Providers
         /// DoGetColorComponents must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetColorComponents()
         {
-            iCallbackGetColorComponents = new CallbackGetColorComponents(DoGetColorComponents);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderZappOrgTestLights1EnableActionGetColorComponents(iHandle, iCallbackGetColorComponents, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetColorComponents");
+            action.AddInputParameter(new ParameterUint("Color"));
+            action.AddOutputParameter(new ParameterUint("Brightness"));
+            action.AddOutputParameter(new ParameterUint("Red"));
+            action.AddOutputParameter(new ParameterUint("Green"));
+            action.AddOutputParameter(new ParameterUint("Blue"));
+            iDelegateGetColorComponents = new ActionDelegate(DoGetColorComponents);
+            EnableAction(action, iDelegateGetColorComponents, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -255,81 +247,109 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoGetCount(IntPtr aPtr, uint aVersion, uint* aCount)
+        private static unsafe int DoGetCount(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestLights1 self = (DvProviderZappOrgTestLights1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint count;
             self.GetCount(aVersion, out count);
-            *aCount = count;
+            invocation.WriteStart();
+            invocation.WriteUint("Count", count);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoGetRoom(IntPtr aPtr, uint aVersion, uint aIndex, char** aRoomName)
+        private static unsafe int DoGetRoom(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestLights1 self = (DvProviderZappOrgTestLights1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint index = invocation.ReadUint("Index");
             string roomName;
-            self.GetRoom(aVersion, aIndex, out roomName);
-            *aRoomName = (char*)Marshal.StringToHGlobalAnsi(roomName).ToPointer();
+            self.GetRoom(aVersion, index, out roomName);
+            invocation.WriteStart();
+            invocation.WriteString("RoomName", roomName);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoGetName(IntPtr aPtr, uint aVersion, uint aIndex, char** aFriendlyName)
+        private static unsafe int DoGetName(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestLights1 self = (DvProviderZappOrgTestLights1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint index = invocation.ReadUint("Index");
             string friendlyName;
-            self.GetName(aVersion, aIndex, out friendlyName);
-            *aFriendlyName = (char*)Marshal.StringToHGlobalAnsi(friendlyName).ToPointer();
+            self.GetName(aVersion, index, out friendlyName);
+            invocation.WriteStart();
+            invocation.WriteString("FriendlyName", friendlyName);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoGetPosition(IntPtr aPtr, uint aVersion, uint aIndex, uint* aX, uint* aY, uint* aZ)
+        private static unsafe int DoGetPosition(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestLights1 self = (DvProviderZappOrgTestLights1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint index = invocation.ReadUint("Index");
             uint x;
             uint y;
             uint z;
-            self.GetPosition(aVersion, aIndex, out x, out y, out z);
-            *aX = x;
-            *aY = y;
-            *aZ = z;
+            self.GetPosition(aVersion, index, out x, out y, out z);
+            invocation.WriteStart();
+            invocation.WriteUint("X", x);
+            invocation.WriteUint("Y", y);
+            invocation.WriteUint("Z", z);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetColor(IntPtr aPtr, uint aVersion, uint aIndex, uint aColor)
+        private static unsafe int DoSetColor(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestLights1 self = (DvProviderZappOrgTestLights1)gch.Target;
-            self.SetColor(aVersion, aIndex, aColor);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint index = invocation.ReadUint("Index");
+            uint color = invocation.ReadUint("Color");
+            self.SetColor(aVersion, index, color);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoGetColor(IntPtr aPtr, uint aVersion, uint aIndex, uint* aColor)
+        private static unsafe int DoGetColor(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestLights1 self = (DvProviderZappOrgTestLights1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint index = invocation.ReadUint("Index");
             uint color;
-            self.GetColor(aVersion, aIndex, out color);
-            *aColor = color;
+            self.GetColor(aVersion, index, out color);
+            invocation.WriteStart();
+            invocation.WriteUint("Color", color);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoGetColorComponents(IntPtr aPtr, uint aVersion, uint aColor, uint* aBrightness, uint* aRed, uint* aGreen, uint* aBlue)
+        private static unsafe int DoGetColorComponents(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestLights1 self = (DvProviderZappOrgTestLights1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint color = invocation.ReadUint("Color");
             uint brightness;
             uint red;
             uint green;
             uint blue;
-            self.GetColorComponents(aVersion, aColor, out brightness, out red, out green, out blue);
-            *aBrightness = brightness;
-            *aRed = red;
-            *aGreen = green;
-            *aBlue = blue;
+            self.GetColorComponents(aVersion, color, out brightness, out red, out green, out blue);
+            invocation.WriteStart();
+            invocation.WriteUint("Brightness", brightness);
+            invocation.WriteUint("Red", red);
+            invocation.WriteUint("Green", green);
+            invocation.WriteUint("Blue", blue);
+            invocation.WriteEnd();
             return 0;
         }
 
@@ -349,21 +369,16 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            IntPtr handle;
             lock (this)
             {
                 if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
+                DisposeProvider();
                 iHandle = IntPtr.Zero;
             }
-            DvProviderZappOrgTestLights1Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }

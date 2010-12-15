@@ -1,29 +1,31 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Text;
-using Zapp;
+using Zapp.Core;
+using Zapp.ControlPoint;
 
 namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyLinnCoUkProduct2 : ICpProxy, IDisposable
     {
-        void SyncType(out string aaType);
+        void SyncType(out String aaType);
         void BeginType(CpProxy.CallbackAsyncComplete aCallback);
-        void EndType(IntPtr aAsyncHandle, out string aaType);
-        void SyncModel(out string aaModel);
+        void EndType(IntPtr aAsyncHandle, out String aaType);
+        void SyncModel(out String aaModel);
         void BeginModel(CpProxy.CallbackAsyncComplete aCallback);
-        void EndModel(IntPtr aAsyncHandle, out string aaModel);
-        void SyncName(out string aaName);
+        void EndModel(IntPtr aAsyncHandle, out String aaModel);
+        void SyncName(out String aaName);
         void BeginName(CpProxy.CallbackAsyncComplete aCallback);
-        void EndName(IntPtr aAsyncHandle, out string aaName);
-        void SyncSetName(string aaName);
-        void BeginSetName(string aaName, CpProxy.CallbackAsyncComplete aCallback);
+        void EndName(IntPtr aAsyncHandle, out String aaName);
+        void SyncSetName(String aaName);
+        void BeginSetName(String aaName, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetName(IntPtr aAsyncHandle);
-        void SyncRoom(out string aaRoom);
+        void SyncRoom(out String aaRoom);
         void BeginRoom(CpProxy.CallbackAsyncComplete aCallback);
-        void EndRoom(IntPtr aAsyncHandle, out string aaRoom);
-        void SyncSetRoom(string aaRoom);
-        void BeginSetRoom(string aaRoom, CpProxy.CallbackAsyncComplete aCallback);
+        void EndRoom(IntPtr aAsyncHandle, out String aaRoom);
+        void SyncSetRoom(String aaRoom);
+        void BeginSetRoom(String aaRoom, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetRoom(IntPtr aAsyncHandle);
         void SyncStandby(out bool aaStandby);
         void BeginStandby(CpProxy.CallbackAsyncComplete aCallback);
@@ -40,129 +42,252 @@ namespace Zapp.ControlPoint.Proxies
         void SyncSetSourceIndex(uint aaSourceIndex);
         void BeginSetSourceIndex(uint aaSourceIndex, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetSourceIndex(IntPtr aAsyncHandle);
-        void SyncSourceType(uint aaSourceIndex, out string aaSourceType);
+        void SyncSourceType(uint aaSourceIndex, out String aaSourceType);
         void BeginSourceType(uint aaSourceIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndSourceType(IntPtr aAsyncHandle, out string aaSourceType);
-
+        void EndSourceType(IntPtr aAsyncHandle, out String aaSourceType);
         void SetPropertyProductNameChanged(CpProxy.CallbackPropertyChanged aProductNameChanged);
-        void PropertyProductName(out string aProductName);
+        String PropertyProductName();
         void SetPropertyProductRoomChanged(CpProxy.CallbackPropertyChanged aProductRoomChanged);
-        void PropertyProductRoom(out string aProductRoom);
+        String PropertyProductRoom();
         void SetPropertyProductStandbyChanged(CpProxy.CallbackPropertyChanged aProductStandbyChanged);
-        void PropertyProductStandby(out bool aProductStandby);
+        bool PropertyProductStandby();
         void SetPropertyProductSourceIndexChanged(CpProxy.CallbackPropertyChanged aProductSourceIndexChanged);
-        void PropertyProductSourceIndex(out uint aProductSourceIndex);
+        uint PropertyProductSourceIndex();
     }
+
+    internal class SyncTypeLinnCoUkProduct2 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkProduct2 iService;
+        private String iType;
+
+        public SyncTypeLinnCoUkProduct2(CpProxyLinnCoUkProduct2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Type()
+        {
+            return iType;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndType(aAsyncHandle, out iType);
+        }
+    };
+
+    internal class SyncModelLinnCoUkProduct2 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkProduct2 iService;
+        private String iModel;
+
+        public SyncModelLinnCoUkProduct2(CpProxyLinnCoUkProduct2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Model()
+        {
+            return iModel;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndModel(aAsyncHandle, out iModel);
+        }
+    };
+
+    internal class SyncNameLinnCoUkProduct2 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkProduct2 iService;
+        private String iName;
+
+        public SyncNameLinnCoUkProduct2(CpProxyLinnCoUkProduct2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Name()
+        {
+            return iName;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndName(aAsyncHandle, out iName);
+        }
+    };
+
+    internal class SyncSetNameLinnCoUkProduct2 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkProduct2 iService;
+
+        public SyncSetNameLinnCoUkProduct2(CpProxyLinnCoUkProduct2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetName(aAsyncHandle);
+        }
+    };
+
+    internal class SyncRoomLinnCoUkProduct2 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkProduct2 iService;
+        private String iRoom;
+
+        public SyncRoomLinnCoUkProduct2(CpProxyLinnCoUkProduct2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Room()
+        {
+            return iRoom;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndRoom(aAsyncHandle, out iRoom);
+        }
+    };
+
+    internal class SyncSetRoomLinnCoUkProduct2 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkProduct2 iService;
+
+        public SyncSetRoomLinnCoUkProduct2(CpProxyLinnCoUkProduct2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetRoom(aAsyncHandle);
+        }
+    };
+
+    internal class SyncStandbyLinnCoUkProduct2 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkProduct2 iService;
+        private bool iStandby;
+
+        public SyncStandbyLinnCoUkProduct2(CpProxyLinnCoUkProduct2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public bool Standby()
+        {
+            return iStandby;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndStandby(aAsyncHandle, out iStandby);
+        }
+    };
+
+    internal class SyncSetStandbyLinnCoUkProduct2 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkProduct2 iService;
+
+        public SyncSetStandbyLinnCoUkProduct2(CpProxyLinnCoUkProduct2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetStandby(aAsyncHandle);
+        }
+    };
+
+    internal class SyncSourceCountLinnCoUkProduct2 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkProduct2 iService;
+        private uint iSourceCount;
+
+        public SyncSourceCountLinnCoUkProduct2(CpProxyLinnCoUkProduct2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint SourceCount()
+        {
+            return iSourceCount;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSourceCount(aAsyncHandle, out iSourceCount);
+        }
+    };
+
+    internal class SyncSourceIndexLinnCoUkProduct2 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkProduct2 iService;
+        private uint iSourceIndex;
+
+        public SyncSourceIndexLinnCoUkProduct2(CpProxyLinnCoUkProduct2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint SourceIndex()
+        {
+            return iSourceIndex;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSourceIndex(aAsyncHandle, out iSourceIndex);
+        }
+    };
+
+    internal class SyncSetSourceIndexLinnCoUkProduct2 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkProduct2 iService;
+
+        public SyncSetSourceIndexLinnCoUkProduct2(CpProxyLinnCoUkProduct2 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetSourceIndex(aAsyncHandle);
+        }
+    };
+
+    internal class SyncSourceTypeLinnCoUkProduct2 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkProduct2 iService;
+        private String iSourceType;
+
+        public SyncSourceTypeLinnCoUkProduct2(CpProxyLinnCoUkProduct2 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String SourceType()
+        {
+            return iSourceType;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSourceType(aAsyncHandle, out iSourceType);
+        }
+    };
 
     /// <summary>
     /// Proxy for the linn.co.uk:Product:2 UPnP service
     /// </summary>
     public class CpProxyLinnCoUkProduct2 : CpProxy, IDisposable, ICpProxyLinnCoUkProduct2
     {
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern IntPtr CpProxyLinnCoUkProduct2Create(IntPtr aDeviceHandle);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern void CpProxyLinnCoUkProduct2Destroy(IntPtr aHandle);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2SyncType(IntPtr aHandle, char** aaType);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2BeginType(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe int CpProxyLinnCoUkProduct2EndType(IntPtr aHandle, IntPtr aAsync, char** aaType);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2SyncModel(IntPtr aHandle, char** aaModel);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2BeginModel(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe int CpProxyLinnCoUkProduct2EndModel(IntPtr aHandle, IntPtr aAsync, char** aaModel);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2SyncName(IntPtr aHandle, char** aaName);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2BeginName(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe int CpProxyLinnCoUkProduct2EndName(IntPtr aHandle, IntPtr aAsync, char** aaName);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2SyncSetName(IntPtr aHandle, char* aaName);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2BeginSetName(IntPtr aHandle, char* aaName, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe int CpProxyLinnCoUkProduct2EndSetName(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2SyncRoom(IntPtr aHandle, char** aaRoom);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2BeginRoom(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe int CpProxyLinnCoUkProduct2EndRoom(IntPtr aHandle, IntPtr aAsync, char** aaRoom);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2SyncSetRoom(IntPtr aHandle, char* aaRoom);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2BeginSetRoom(IntPtr aHandle, char* aaRoom, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe int CpProxyLinnCoUkProduct2EndSetRoom(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2SyncStandby(IntPtr aHandle, uint* aaStandby);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2BeginStandby(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe int CpProxyLinnCoUkProduct2EndStandby(IntPtr aHandle, IntPtr aAsync, uint* aaStandby);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2SyncSetStandby(IntPtr aHandle, uint aaStandby);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2BeginSetStandby(IntPtr aHandle, uint aaStandby, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe int CpProxyLinnCoUkProduct2EndSetStandby(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2SyncSourceCount(IntPtr aHandle, uint* aaSourceCount);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2BeginSourceCount(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe int CpProxyLinnCoUkProduct2EndSourceCount(IntPtr aHandle, IntPtr aAsync, uint* aaSourceCount);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2SyncSourceIndex(IntPtr aHandle, uint* aaSourceIndex);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2BeginSourceIndex(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe int CpProxyLinnCoUkProduct2EndSourceIndex(IntPtr aHandle, IntPtr aAsync, uint* aaSourceIndex);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2SyncSetSourceIndex(IntPtr aHandle, uint aaSourceIndex);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2BeginSetSourceIndex(IntPtr aHandle, uint aaSourceIndex, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe int CpProxyLinnCoUkProduct2EndSetSourceIndex(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2SyncSourceType(IntPtr aHandle, uint aaSourceIndex, char** aaSourceType);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2BeginSourceType(IntPtr aHandle, uint aaSourceIndex, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe int CpProxyLinnCoUkProduct2EndSourceType(IntPtr aHandle, IntPtr aAsync, char** aaSourceType);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern void CpProxyLinnCoUkProduct2SetPropertyProductNameChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern void CpProxyLinnCoUkProduct2SetPropertyProductRoomChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern void CpProxyLinnCoUkProduct2SetPropertyProductStandbyChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern void CpProxyLinnCoUkProduct2SetPropertyProductSourceIndexChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2PropertyProductName(IntPtr aHandle, char** aProductName);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2PropertyProductRoom(IntPtr aHandle, char** aProductRoom);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2PropertyProductStandby(IntPtr aHandle, uint* aProductStandby);
-        [DllImport("CpLinnCoUkProduct2")]
-        static extern unsafe void CpProxyLinnCoUkProduct2PropertyProductSourceIndex(IntPtr aHandle, uint* aProductSourceIndex);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private GCHandle iGch;
+        private Zapp.Core.Action iActionType;
+        private Zapp.Core.Action iActionModel;
+        private Zapp.Core.Action iActionName;
+        private Zapp.Core.Action iActionSetName;
+        private Zapp.Core.Action iActionRoom;
+        private Zapp.Core.Action iActionSetRoom;
+        private Zapp.Core.Action iActionStandby;
+        private Zapp.Core.Action iActionSetStandby;
+        private Zapp.Core.Action iActionSourceCount;
+        private Zapp.Core.Action iActionSourceIndex;
+        private Zapp.Core.Action iActionSetSourceIndex;
+        private Zapp.Core.Action iActionSourceType;
+        private PropertyString iProductName;
+        private PropertyString iProductRoom;
+        private PropertyBool iProductStandby;
+        private PropertyUint iProductSourceIndex;
         private CallbackPropertyChanged iProductNameChanged;
         private CallbackPropertyChanged iProductRoomChanged;
         private CallbackPropertyChanged iProductStandbyChanged;
         private CallbackPropertyChanged iProductSourceIndexChanged;
-        private Callback iCallbackProductNameChanged;
-        private Callback iCallbackProductRoomChanged;
-        private Callback iCallbackProductStandbyChanged;
-        private Callback iCallbackProductSourceIndexChanged;
 
         /// <summary>
         /// Constructor
@@ -170,9 +295,69 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
         /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkProduct2(CpDevice aDevice)
+            : base("linn-co-uk", "Product", 2, aDevice)
         {
-            iHandle = CpProxyLinnCoUkProduct2Create(aDevice.Handle());
-            iGch = GCHandle.Alloc(this);
+            Zapp.Core.Parameter param;
+            List<String> allowedValues = new List<String>();
+
+            iActionType = new Zapp.Core.Action("Type");
+            param = new ParameterString("aType", allowedValues);
+            iActionType.AddOutputParameter(param);
+
+            iActionModel = new Zapp.Core.Action("Model");
+            param = new ParameterString("aModel", allowedValues);
+            iActionModel.AddOutputParameter(param);
+
+            iActionName = new Zapp.Core.Action("Name");
+            param = new ParameterString("aName", allowedValues);
+            iActionName.AddOutputParameter(param);
+
+            iActionSetName = new Zapp.Core.Action("SetName");
+            param = new ParameterString("aName", allowedValues);
+            iActionSetName.AddInputParameter(param);
+
+            iActionRoom = new Zapp.Core.Action("Room");
+            param = new ParameterString("aRoom", allowedValues);
+            iActionRoom.AddOutputParameter(param);
+
+            iActionSetRoom = new Zapp.Core.Action("SetRoom");
+            param = new ParameterString("aRoom", allowedValues);
+            iActionSetRoom.AddInputParameter(param);
+
+            iActionStandby = new Zapp.Core.Action("Standby");
+            param = new ParameterBool("aStandby");
+            iActionStandby.AddOutputParameter(param);
+
+            iActionSetStandby = new Zapp.Core.Action("SetStandby");
+            param = new ParameterBool("aStandby");
+            iActionSetStandby.AddInputParameter(param);
+
+            iActionSourceCount = new Zapp.Core.Action("SourceCount");
+            param = new ParameterUint("aSourceCount");
+            iActionSourceCount.AddOutputParameter(param);
+
+            iActionSourceIndex = new Zapp.Core.Action("SourceIndex");
+            param = new ParameterUint("aSourceIndex");
+            iActionSourceIndex.AddOutputParameter(param);
+
+            iActionSetSourceIndex = new Zapp.Core.Action("SetSourceIndex");
+            param = new ParameterUint("aSourceIndex");
+            iActionSetSourceIndex.AddInputParameter(param);
+
+            iActionSourceType = new Zapp.Core.Action("SourceType");
+            param = new ParameterUint("aSourceIndex");
+            iActionSourceType.AddInputParameter(param);
+            param = new ParameterString("aSourceType", allowedValues);
+            iActionSourceType.AddOutputParameter(param);
+
+            iProductName = new PropertyString("ProductName", ProductNamePropertyChanged);
+            AddProperty(iProductName);
+            iProductRoom = new PropertyString("ProductRoom", ProductRoomPropertyChanged);
+            AddProperty(iProductRoom);
+            iProductStandby = new PropertyBool("ProductStandby", ProductStandbyPropertyChanged);
+            AddProperty(iProductStandby);
+            iProductSourceIndex = new PropertyUint("ProductSourceIndex", ProductSourceIndexPropertyChanged);
+            AddProperty(iProductSourceIndex);
         }
 
         /// <summary>
@@ -181,14 +366,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaType"></param>
-        public unsafe void SyncType(out string aaType)
+        public void SyncType(out String aaType)
         {
-            char* aType;
-            {
-                CpProxyLinnCoUkProduct2SyncType(iHandle, &aType);
-            }
-            aaType = Marshal.PtrToStringAnsi((IntPtr)aType);
-            ZappFree(aType);
+            SyncTypeLinnCoUkProduct2 sync = new SyncTypeLinnCoUkProduct2(this);
+            BeginType(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aType = sync.Type();
         }
 
         /// <summary>
@@ -199,11 +383,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndType().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginType(CallbackAsyncComplete aCallback)
+        public void BeginType(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkProduct2BeginType(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionType, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionType.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -212,17 +397,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaType"></param>
-        public unsafe void EndType(IntPtr aAsyncHandle, out string aaType)
+        public void EndType(IntPtr aAsyncHandle, out String aaType)
         {
-            char* aType;
-            {
-                if (0 != CpProxyLinnCoUkProduct2EndType(iHandle, aAsyncHandle, &aType))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaType = Marshal.PtrToStringAnsi((IntPtr)aType);
-            ZappFree(aType);
+            uint index = 0;
+            aType = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -231,14 +409,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaModel"></param>
-        public unsafe void SyncModel(out string aaModel)
+        public void SyncModel(out String aaModel)
         {
-            char* aModel;
-            {
-                CpProxyLinnCoUkProduct2SyncModel(iHandle, &aModel);
-            }
-            aaModel = Marshal.PtrToStringAnsi((IntPtr)aModel);
-            ZappFree(aModel);
+            SyncModelLinnCoUkProduct2 sync = new SyncModelLinnCoUkProduct2(this);
+            BeginModel(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aModel = sync.Model();
         }
 
         /// <summary>
@@ -249,11 +426,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndModel().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginModel(CallbackAsyncComplete aCallback)
+        public void BeginModel(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkProduct2BeginModel(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionModel, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionModel.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -262,17 +440,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaModel"></param>
-        public unsafe void EndModel(IntPtr aAsyncHandle, out string aaModel)
+        public void EndModel(IntPtr aAsyncHandle, out String aaModel)
         {
-            char* aModel;
-            {
-                if (0 != CpProxyLinnCoUkProduct2EndModel(iHandle, aAsyncHandle, &aModel))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaModel = Marshal.PtrToStringAnsi((IntPtr)aModel);
-            ZappFree(aModel);
+            uint index = 0;
+            aModel = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -281,14 +452,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaName"></param>
-        public unsafe void SyncName(out string aaName)
+        public void SyncName(out String aaName)
         {
-            char* aName;
-            {
-                CpProxyLinnCoUkProduct2SyncName(iHandle, &aName);
-            }
-            aaName = Marshal.PtrToStringAnsi((IntPtr)aName);
-            ZappFree(aName);
+            SyncNameLinnCoUkProduct2 sync = new SyncNameLinnCoUkProduct2(this);
+            BeginName(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aName = sync.Name();
         }
 
         /// <summary>
@@ -299,11 +469,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndName().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginName(CallbackAsyncComplete aCallback)
+        public void BeginName(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkProduct2BeginName(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionName, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionName.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -312,17 +483,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaName"></param>
-        public unsafe void EndName(IntPtr aAsyncHandle, out string aaName)
+        public void EndName(IntPtr aAsyncHandle, out String aaName)
         {
-            char* aName;
-            {
-                if (0 != CpProxyLinnCoUkProduct2EndName(iHandle, aAsyncHandle, &aName))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaName = Marshal.PtrToStringAnsi((IntPtr)aName);
-            ZappFree(aName);
+            uint index = 0;
+            aName = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -331,13 +495,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaName"></param>
-        public unsafe void SyncSetName(string aaName)
+        public void SyncSetName(String aaName)
         {
-            char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
-            {
-                CpProxyLinnCoUkProduct2SyncSetName(iHandle, aName);
-            }
-            Marshal.FreeHGlobal((IntPtr)aName);
+            SyncSetNameLinnCoUkProduct2 sync = new SyncSetNameLinnCoUkProduct2(this);
+            BeginSetName(aName, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -349,13 +512,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaName"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetName(string aaName, CallbackAsyncComplete aCallback)
+        public void BeginSetName(String aaName, CallbackAsyncComplete aCallback)
         {
-            char* aName = (char*)Marshal.StringToHGlobalAnsi(aaName);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkProduct2BeginSetName(iHandle, aName, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)aName);
+            Invocation invocation = iService.Invocation(iActionSetName, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSetName.InputParameter(inIndex++), aName));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -363,14 +525,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetName(IntPtr aAsyncHandle)
+        public void EndSetName(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkProduct2EndSetName(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -379,14 +535,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaRoom"></param>
-        public unsafe void SyncRoom(out string aaRoom)
+        public void SyncRoom(out String aaRoom)
         {
-            char* aRoom;
-            {
-                CpProxyLinnCoUkProduct2SyncRoom(iHandle, &aRoom);
-            }
-            aaRoom = Marshal.PtrToStringAnsi((IntPtr)aRoom);
-            ZappFree(aRoom);
+            SyncRoomLinnCoUkProduct2 sync = new SyncRoomLinnCoUkProduct2(this);
+            BeginRoom(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aRoom = sync.Room();
         }
 
         /// <summary>
@@ -397,11 +552,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndRoom().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginRoom(CallbackAsyncComplete aCallback)
+        public void BeginRoom(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkProduct2BeginRoom(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionRoom, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionRoom.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -410,17 +566,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaRoom"></param>
-        public unsafe void EndRoom(IntPtr aAsyncHandle, out string aaRoom)
+        public void EndRoom(IntPtr aAsyncHandle, out String aaRoom)
         {
-            char* aRoom;
-            {
-                if (0 != CpProxyLinnCoUkProduct2EndRoom(iHandle, aAsyncHandle, &aRoom))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaRoom = Marshal.PtrToStringAnsi((IntPtr)aRoom);
-            ZappFree(aRoom);
+            uint index = 0;
+            aRoom = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -429,13 +578,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaRoom"></param>
-        public unsafe void SyncSetRoom(string aaRoom)
+        public void SyncSetRoom(String aaRoom)
         {
-            char* aRoom = (char*)Marshal.StringToHGlobalAnsi(aaRoom);
-            {
-                CpProxyLinnCoUkProduct2SyncSetRoom(iHandle, aRoom);
-            }
-            Marshal.FreeHGlobal((IntPtr)aRoom);
+            SyncSetRoomLinnCoUkProduct2 sync = new SyncSetRoomLinnCoUkProduct2(this);
+            BeginSetRoom(aRoom, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -447,13 +595,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaRoom"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetRoom(string aaRoom, CallbackAsyncComplete aCallback)
+        public void BeginSetRoom(String aaRoom, CallbackAsyncComplete aCallback)
         {
-            char* aRoom = (char*)Marshal.StringToHGlobalAnsi(aaRoom);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkProduct2BeginSetRoom(iHandle, aRoom, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)aRoom);
+            Invocation invocation = iService.Invocation(iActionSetRoom, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSetRoom.InputParameter(inIndex++), aRoom));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -461,14 +608,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetRoom(IntPtr aAsyncHandle)
+        public void EndSetRoom(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkProduct2EndSetRoom(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -477,13 +618,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaStandby"></param>
-        public unsafe void SyncStandby(out bool aaStandby)
+        public void SyncStandby(out bool aaStandby)
         {
-            uint aStandby;
-            {
-                CpProxyLinnCoUkProduct2SyncStandby(iHandle, &aStandby);
-            }
-            aaStandby = (aStandby != 0);
+            SyncStandbyLinnCoUkProduct2 sync = new SyncStandbyLinnCoUkProduct2(this);
+            BeginStandby(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aStandby = sync.Standby();
         }
 
         /// <summary>
@@ -494,11 +635,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndStandby().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginStandby(CallbackAsyncComplete aCallback)
+        public void BeginStandby(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkProduct2BeginStandby(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionStandby, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentBool((ParameterBool)iActionStandby.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -507,16 +649,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaStandby"></param>
-        public unsafe void EndStandby(IntPtr aAsyncHandle, out bool aaStandby)
+        public void EndStandby(IntPtr aAsyncHandle, out bool aaStandby)
         {
-            uint aStandby;
-            {
-                if (0 != CpProxyLinnCoUkProduct2EndStandby(iHandle, aAsyncHandle, &aStandby))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaStandby = (aStandby != 0);
+            uint index = 0;
+            aStandby = Invocation.OutputBool(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -525,12 +661,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaStandby"></param>
-        public unsafe void SyncSetStandby(bool aaStandby)
+        public void SyncSetStandby(bool aaStandby)
         {
-            uint aStandby = (aaStandby? 1u : 0u);
-            {
-                CpProxyLinnCoUkProduct2SyncSetStandby(iHandle, aStandby);
-            }
+            SyncSetStandbyLinnCoUkProduct2 sync = new SyncSetStandbyLinnCoUkProduct2(this);
+            BeginSetStandby(aStandby, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -542,12 +678,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaStandby"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetStandby(bool aaStandby, CallbackAsyncComplete aCallback)
+        public void BeginSetStandby(bool aaStandby, CallbackAsyncComplete aCallback)
         {
-            uint aStandby = (aaStandby? 1u : 0u);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkProduct2BeginSetStandby(iHandle, aStandby, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetStandby, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentBool((ParameterBool)iActionSetStandby.InputParameter(inIndex++), aStandby));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -555,14 +691,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetStandby(IntPtr aAsyncHandle)
+        public void EndSetStandby(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkProduct2EndSetStandby(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -571,12 +701,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaSourceCount"></param>
-        public unsafe void SyncSourceCount(out uint aaSourceCount)
+        public void SyncSourceCount(out uint aaSourceCount)
         {
-            fixed (uint* aSourceCount = &aaSourceCount)
-            {
-                CpProxyLinnCoUkProduct2SyncSourceCount(iHandle, aSourceCount);
-            }
+            SyncSourceCountLinnCoUkProduct2 sync = new SyncSourceCountLinnCoUkProduct2(this);
+            BeginSourceCount(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aSourceCount = sync.SourceCount();
         }
 
         /// <summary>
@@ -587,11 +718,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndSourceCount().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSourceCount(CallbackAsyncComplete aCallback)
+        public void BeginSourceCount(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkProduct2BeginSourceCount(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSourceCount, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionSourceCount.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -600,15 +732,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSourceCount"></param>
-        public unsafe void EndSourceCount(IntPtr aAsyncHandle, out uint aaSourceCount)
+        public void EndSourceCount(IntPtr aAsyncHandle, out uint aaSourceCount)
         {
-            fixed (uint* aSourceCount = &aaSourceCount)
-            {
-                if (0 != CpProxyLinnCoUkProduct2EndSourceCount(iHandle, aAsyncHandle, aSourceCount))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aSourceCount = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -617,12 +744,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaSourceIndex"></param>
-        public unsafe void SyncSourceIndex(out uint aaSourceIndex)
+        public void SyncSourceIndex(out uint aaSourceIndex)
         {
-            fixed (uint* aSourceIndex = &aaSourceIndex)
-            {
-                CpProxyLinnCoUkProduct2SyncSourceIndex(iHandle, aSourceIndex);
-            }
+            SyncSourceIndexLinnCoUkProduct2 sync = new SyncSourceIndexLinnCoUkProduct2(this);
+            BeginSourceIndex(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aSourceIndex = sync.SourceIndex();
         }
 
         /// <summary>
@@ -633,11 +761,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndSourceIndex().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSourceIndex(CallbackAsyncComplete aCallback)
+        public void BeginSourceIndex(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkProduct2BeginSourceIndex(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSourceIndex, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionSourceIndex.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -646,15 +775,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSourceIndex"></param>
-        public unsafe void EndSourceIndex(IntPtr aAsyncHandle, out uint aaSourceIndex)
+        public void EndSourceIndex(IntPtr aAsyncHandle, out uint aaSourceIndex)
         {
-            fixed (uint* aSourceIndex = &aaSourceIndex)
-            {
-                if (0 != CpProxyLinnCoUkProduct2EndSourceIndex(iHandle, aAsyncHandle, aSourceIndex))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aSourceIndex = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -663,11 +787,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaSourceIndex"></param>
-        public unsafe void SyncSetSourceIndex(uint aaSourceIndex)
+        public void SyncSetSourceIndex(uint aaSourceIndex)
         {
-            {
-                CpProxyLinnCoUkProduct2SyncSetSourceIndex(iHandle, aaSourceIndex);
-            }
+            SyncSetSourceIndexLinnCoUkProduct2 sync = new SyncSetSourceIndexLinnCoUkProduct2(this);
+            BeginSetSourceIndex(aSourceIndex, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -679,11 +804,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceIndex"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetSourceIndex(uint aaSourceIndex, CallbackAsyncComplete aCallback)
+        public void BeginSetSourceIndex(uint aaSourceIndex, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkProduct2BeginSetSourceIndex(iHandle, aaSourceIndex, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSetSourceIndex, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSetSourceIndex.InputParameter(inIndex++), aSourceIndex));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -691,14 +817,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetSourceIndex(IntPtr aAsyncHandle)
+        public void EndSetSourceIndex(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkProduct2EndSetSourceIndex(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -708,14 +828,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaSourceIndex"></param>
         /// <param name="aaSourceType"></param>
-        public unsafe void SyncSourceType(uint aaSourceIndex, out string aaSourceType)
+        public void SyncSourceType(uint aaSourceIndex, out String aaSourceType)
         {
-            char* aSourceType;
-            {
-                CpProxyLinnCoUkProduct2SyncSourceType(iHandle, aaSourceIndex, &aSourceType);
-            }
-            aaSourceType = Marshal.PtrToStringAnsi((IntPtr)aSourceType);
-            ZappFree(aSourceType);
+            SyncSourceTypeLinnCoUkProduct2 sync = new SyncSourceTypeLinnCoUkProduct2(this);
+            BeginSourceType(aSourceIndex, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aSourceType = sync.SourceType();
         }
 
         /// <summary>
@@ -727,11 +846,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSourceIndex"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSourceType(uint aaSourceIndex, CallbackAsyncComplete aCallback)
+        public void BeginSourceType(uint aaSourceIndex, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkProduct2BeginSourceType(iHandle, aaSourceIndex, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSourceType, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionSourceType.InputParameter(inIndex++), aSourceIndex));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionSourceType.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -740,17 +862,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSourceType"></param>
-        public unsafe void EndSourceType(IntPtr aAsyncHandle, out string aaSourceType)
+        public void EndSourceType(IntPtr aAsyncHandle, out String aaSourceType)
         {
-            char* aSourceType;
-            {
-                if (0 != CpProxyLinnCoUkProduct2EndSourceType(iHandle, aAsyncHandle, &aSourceType))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaSourceType = Marshal.PtrToStringAnsi((IntPtr)aSourceType);
-            ZappFree(aSourceType);
+            uint index = 0;
+            aSourceType = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -761,17 +876,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductNameChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductNameChanged(CallbackPropertyChanged aProductNameChanged)
         {
-            iProductNameChanged = aProductNameChanged;
-            iCallbackProductNameChanged = new Callback(PropertyProductNameChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkProduct2SetPropertyProductNameChanged(iHandle, iCallbackProductNameChanged, ptr);
+            lock (this)
+            {
+                iProductNameChanged = aProductNameChanged;
+            }
         }
 
-        private void PropertyProductNameChanged(IntPtr aPtr)
+        private void ProductNamePropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkProduct2 self = (CpProxyLinnCoUkProduct2)gch.Target;
-            self.iProductNameChanged();
+            lock (this)
+            {
+                if (iProductNameChanged != null)
+                {
+                    iProductNameChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -782,17 +901,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductRoomChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductRoomChanged(CallbackPropertyChanged aProductRoomChanged)
         {
-            iProductRoomChanged = aProductRoomChanged;
-            iCallbackProductRoomChanged = new Callback(PropertyProductRoomChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkProduct2SetPropertyProductRoomChanged(iHandle, iCallbackProductRoomChanged, ptr);
+            lock (this)
+            {
+                iProductRoomChanged = aProductRoomChanged;
+            }
         }
 
-        private void PropertyProductRoomChanged(IntPtr aPtr)
+        private void ProductRoomPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkProduct2 self = (CpProxyLinnCoUkProduct2)gch.Target;
-            self.iProductRoomChanged();
+            lock (this)
+            {
+                if (iProductRoomChanged != null)
+                {
+                    iProductRoomChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -803,17 +926,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductStandbyChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductStandbyChanged(CallbackPropertyChanged aProductStandbyChanged)
         {
-            iProductStandbyChanged = aProductStandbyChanged;
-            iCallbackProductStandbyChanged = new Callback(PropertyProductStandbyChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkProduct2SetPropertyProductStandbyChanged(iHandle, iCallbackProductStandbyChanged, ptr);
+            lock (this)
+            {
+                iProductStandbyChanged = aProductStandbyChanged;
+            }
         }
 
-        private void PropertyProductStandbyChanged(IntPtr aPtr)
+        private void ProductStandbyPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkProduct2 self = (CpProxyLinnCoUkProduct2)gch.Target;
-            self.iProductStandbyChanged();
+            lock (this)
+            {
+                if (iProductStandbyChanged != null)
+                {
+                    iProductStandbyChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -824,17 +951,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aProductSourceIndexChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyProductSourceIndexChanged(CallbackPropertyChanged aProductSourceIndexChanged)
         {
-            iProductSourceIndexChanged = aProductSourceIndexChanged;
-            iCallbackProductSourceIndexChanged = new Callback(PropertyProductSourceIndexChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkProduct2SetPropertyProductSourceIndexChanged(iHandle, iCallbackProductSourceIndexChanged, ptr);
+            lock (this)
+            {
+                iProductSourceIndexChanged = aProductSourceIndexChanged;
+            }
         }
 
-        private void PropertyProductSourceIndexChanged(IntPtr aPtr)
+        private void ProductSourceIndexPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkProduct2 self = (CpProxyLinnCoUkProduct2)gch.Target;
-            self.iProductSourceIndexChanged();
+            lock (this)
+            {
+                if (iProductSourceIndexChanged != null)
+                {
+                    iProductSourceIndexChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -844,12 +975,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aProductName">Will be set to the value of the property</param>
-        public unsafe void PropertyProductName(out string aProductName)
+        public String PropertyProductName()
         {
-            char* ptr;
-            CpProxyLinnCoUkProduct2PropertyProductName(iHandle, &ptr);
-            aProductName = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iProductName.Value();
         }
 
         /// <summary>
@@ -859,12 +987,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aProductRoom">Will be set to the value of the property</param>
-        public unsafe void PropertyProductRoom(out string aProductRoom)
+        public String PropertyProductRoom()
         {
-            char* ptr;
-            CpProxyLinnCoUkProduct2PropertyProductRoom(iHandle, &ptr);
-            aProductRoom = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iProductRoom.Value();
         }
 
         /// <summary>
@@ -874,11 +999,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aProductStandby">Will be set to the value of the property</param>
-        public unsafe void PropertyProductStandby(out bool aProductStandby)
+        public bool PropertyProductStandby()
         {
-            uint productStandby;
-            CpProxyLinnCoUkProduct2PropertyProductStandby(iHandle, &productStandby);
-            aProductStandby = (productStandby != 0);
+            return iProductStandby.Value();
         }
 
         /// <summary>
@@ -888,12 +1011,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aProductSourceIndex">Will be set to the value of the property</param>
-        public unsafe void PropertyProductSourceIndex(out uint aProductSourceIndex)
+        public uint PropertyProductSourceIndex()
         {
-            fixed (uint* productSourceIndex = &aProductSourceIndex)
-            {
-                CpProxyLinnCoUkProduct2PropertyProductSourceIndex(iHandle, productSourceIndex);
-            }
+            return iProductSourceIndex.Value();
         }
 
         /// <summary>
@@ -917,17 +1037,24 @@ namespace Zapp.ControlPoint.Proxies
                 {
                     return;
                 }
-                CpProxyLinnCoUkProduct2Destroy(iHandle);
+                DisposeProxy();
                 iHandle = IntPtr.Zero;
+                iActionType.Dispose();
+                iActionModel.Dispose();
+                iActionName.Dispose();
+                iActionSetName.Dispose();
+                iActionRoom.Dispose();
+                iActionSetRoom.Dispose();
+                iActionStandby.Dispose();
+                iActionSetStandby.Dispose();
+                iActionSourceCount.Dispose();
+                iActionSourceIndex.Dispose();
+                iActionSetSourceIndex.Dispose();
+                iActionSourceType.Dispose();
             }
-            iGch.Free();
             if (aDisposing)
             {
                 GC.SuppressFinalize(this);
-            }
-            else
-            {
-                DisposeProxy();
             }
         }
     }

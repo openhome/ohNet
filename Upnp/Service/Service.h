@@ -215,7 +215,7 @@ public:
     DllExport PropertyString(const TChar* aName, Functor& aFunctor);
     DllExport PropertyString(Zapp::Parameter* aParameter);
     DllExport ~PropertyString();
-    DllExport const Brx& Value() const;
+    DllExport const Brx& Value() const; // !!!! threadsafe?
     void Process(IOutputProcessor& aProcessor, const Brx& aBuffer);
     TBool SetValue(const Brx& aValue);
     void Write(IPropertyWriter& aWriter);
@@ -266,7 +266,7 @@ public:
     DllExport PropertyBool(const TChar* aName, Functor& aFunctor);
     DllExport PropertyBool(Zapp::Parameter* aParameter);
     DllExport ~PropertyBool();
-    DllExport TBool Value() const;
+    DllExport TBool Value() const; // !!!! threadsafe?
     void Process(IOutputProcessor& aProcessor, const Brx& aBuffer);
     TBool SetValue(TBool aValue);
     void Write(IPropertyWriter& aWriter);

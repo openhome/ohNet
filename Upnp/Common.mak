@@ -25,6 +25,7 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)CpiSubscription.$(objext) \
     		   $(objdir)CpProxy.$(objext) \
     		   $(objdir)CpProxyC.$(objext) \
+    		   $(objdir)CpServiceC.$(objext) \
     		   $(objdir)DvDevice.$(objext) \
     		   $(objdir)DvDeviceStd.$(objext) \
     		   $(objdir)DvDeviceC.$(objext) \
@@ -53,6 +54,7 @@ objects_core = $(objdir)Ascii.$(objext) \
     		   $(objdir)ProtocolUpnp.$(objext) \
     		   $(objdir)Queue.$(objext) \
     		   $(objdir)Service.$(objext) \
+    		   $(objdir)ServiceC.$(objext) \
     		   $(objdir)Ssdp.$(objext) \
     		   $(objdir)SsdpDv.$(objext) \
     		   $(objdir)Stack.$(objext) \
@@ -207,6 +209,8 @@ $(objdir)CpProxy.$(objext) : Public/Cpp/CpProxy.cpp $(headers)
 	$(compiler)CpProxy.$(objext) -c $(cflags) $(includes) Public/Cpp/CpProxy.cpp
 $(objdir)CpProxyC.$(objext) : Public/C/CpProxyC.cpp $(headers)
 	$(compiler)CpProxyC.$(objext) -c $(cflags) $(includes) Public/C/CpProxyC.cpp
+$(objdir)CpServiceC.$(objext) : Public/C/CpServiceC.cpp $(headers)
+	$(compiler)CpServiceC.$(objext) -c $(cflags) $(includes) Public/C/CpServiceC.cpp
 $(objdir)DvDevice.$(objext) : Public/Cpp/Core/DvDevice.cpp $(headers)
 	$(compiler)DvDevice.$(objext) -c $(cflags) $(includes) Public/Cpp/Core/DvDevice.cpp
 $(objdir)DvDeviceStd.$(objext) : Public/Cpp/Std/DvDeviceStd.cpp $(headers)
@@ -263,6 +267,8 @@ $(objdir)Queue.$(objext) : Utils/Queue.cpp $(headers)
 	$(compiler)Queue.$(objext) -c $(cflags) $(includes) Utils/Queue.cpp
 $(objdir)Service.$(objext) : Service/Service.cpp $(headers)
 	$(compiler)Service.$(objext) -c $(cflags) $(includes) Service/Service.cpp
+$(objdir)ServiceC.$(objext) : Public/C/ServiceC.cpp $(headers)
+	$(compiler)ServiceC.$(objext) -c $(cflags) $(includes) Public/C/ServiceC.cpp
 $(objdir)Ssdp.$(objext) : Ssdp/Ssdp.cpp $(headers)
 	$(compiler)Ssdp.$(objext) -c $(cflags) $(includes) Ssdp/Ssdp.cpp
 $(objdir)SsdpDv.$(objext) : Ssdp/SsdpDv.cpp $(headers)
@@ -546,6 +552,8 @@ $(objdir)Zapp.net.dll: \
 	$(publiccsdir)CpDevice.cs \
 	$(publiccsdir)CpDeviceUpnp.cs \
 	$(publiccsdir)CpProxy.cs \
+	$(publiccsdir)CpService.cs \
+	$(publiccsdir)Service.cs \
 	$(publiccsdir)DvDevice.cs \
 	$(publiccsdir)DvProvider.cs \
 	$(publiccsdir)DvProviderErrors.cs \
@@ -556,9 +564,11 @@ $(objdir)Zapp.net.dll: \
 		$(publiccsdir)CpDevice.cs \
 		$(publiccsdir)CpDeviceUpnp.cs \
 		$(publiccsdir)CpProxy.cs \
+		$(publiccsdir)CpService.cs \
 		$(publiccsdir)DvDevice.cs \
 		$(publiccsdir)DvProvider.cs \
 		$(publiccsdir)DvProviderErrors.cs \
+		$(publiccsdir)Service.cs \
 		$(publiccsdir)Zapp.cs \
 		$(publiccsdir)CpDeviceDv.cs
 

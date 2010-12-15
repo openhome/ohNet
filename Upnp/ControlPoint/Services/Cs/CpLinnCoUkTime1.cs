@@ -1,7 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Text;
-using Zapp;
+using Zapp.Core;
+using Zapp.ControlPoint;
 
 namespace Zapp.ControlPoint.Proxies
 {
@@ -10,52 +12,55 @@ namespace Zapp.ControlPoint.Proxies
         void SyncTime(out uint aaTrackCount, out uint aaDuration, out uint aaSeconds);
         void BeginTime(CpProxy.CallbackAsyncComplete aCallback);
         void EndTime(IntPtr aAsyncHandle, out uint aaTrackCount, out uint aaDuration, out uint aaSeconds);
-
         void SetPropertyTrackCountChanged(CpProxy.CallbackPropertyChanged aTrackCountChanged);
-        void PropertyTrackCount(out uint aTrackCount);
+        uint PropertyTrackCount();
         void SetPropertyDurationChanged(CpProxy.CallbackPropertyChanged aDurationChanged);
-        void PropertyDuration(out uint aDuration);
+        uint PropertyDuration();
         void SetPropertySecondsChanged(CpProxy.CallbackPropertyChanged aSecondsChanged);
-        void PropertySeconds(out uint aSeconds);
+        uint PropertySeconds();
     }
+
+    internal class SyncTimeLinnCoUkTime1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkTime1 iService;
+        private uint iTrackCount;
+        private uint iDuration;
+        private uint iSeconds;
+
+        public SyncTimeLinnCoUkTime1(CpProxyLinnCoUkTime1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint TrackCount()
+        {
+            return iTrackCount;
+        }
+        public uint Duration()
+        {
+            return iDuration;
+        }
+        public uint Seconds()
+        {
+            return iSeconds;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndTime(aAsyncHandle, out iTrackCount, out iDuration, out iSeconds);
+        }
+    };
 
     /// <summary>
     /// Proxy for the linn.co.uk:Time:1 UPnP service
     /// </summary>
     public class CpProxyLinnCoUkTime1 : CpProxy, IDisposable, ICpProxyLinnCoUkTime1
     {
-        [DllImport("CpLinnCoUkTime1")]
-        static extern IntPtr CpProxyLinnCoUkTime1Create(IntPtr aDeviceHandle);
-        [DllImport("CpLinnCoUkTime1")]
-        static extern void CpProxyLinnCoUkTime1Destroy(IntPtr aHandle);
-        [DllImport("CpLinnCoUkTime1")]
-        static extern unsafe void CpProxyLinnCoUkTime1SyncTime(IntPtr aHandle, uint* aaTrackCount, uint* aaDuration, uint* aaSeconds);
-        [DllImport("CpLinnCoUkTime1")]
-        static extern unsafe void CpProxyLinnCoUkTime1BeginTime(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkTime1")]
-        static extern unsafe int CpProxyLinnCoUkTime1EndTime(IntPtr aHandle, IntPtr aAsync, uint* aaTrackCount, uint* aaDuration, uint* aaSeconds);
-        [DllImport("CpLinnCoUkTime1")]
-        static extern void CpProxyLinnCoUkTime1SetPropertyTrackCountChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkTime1")]
-        static extern void CpProxyLinnCoUkTime1SetPropertyDurationChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkTime1")]
-        static extern void CpProxyLinnCoUkTime1SetPropertySecondsChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkTime1")]
-        static extern unsafe void CpProxyLinnCoUkTime1PropertyTrackCount(IntPtr aHandle, uint* aTrackCount);
-        [DllImport("CpLinnCoUkTime1")]
-        static extern unsafe void CpProxyLinnCoUkTime1PropertyDuration(IntPtr aHandle, uint* aDuration);
-        [DllImport("CpLinnCoUkTime1")]
-        static extern unsafe void CpProxyLinnCoUkTime1PropertySeconds(IntPtr aHandle, uint* aSeconds);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private GCHandle iGch;
+        private Zapp.Core.Action iActionTime;
+        private PropertyUint iTrackCount;
+        private PropertyUint iDuration;
+        private PropertyUint iSeconds;
         private CallbackPropertyChanged iTrackCountChanged;
         private CallbackPropertyChanged iDurationChanged;
         private CallbackPropertyChanged iSecondsChanged;
-        private Callback iCallbackTrackCountChanged;
-        private Callback iCallbackDurationChanged;
-        private Callback iCallbackSecondsChanged;
 
         /// <summary>
         /// Constructor
@@ -63,9 +68,24 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
         /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkTime1(CpDevice aDevice)
+            : base("linn-co-uk", "Time", 1, aDevice)
         {
-            iHandle = CpProxyLinnCoUkTime1Create(aDevice.Handle());
-            iGch = GCHandle.Alloc(this);
+            Zapp.Core.Parameter param;
+
+            iActionTime = new Zapp.Core.Action("Time");
+            param = new ParameterUint("aTrackCount");
+            iActionTime.AddOutputParameter(param);
+            param = new ParameterUint("aDuration");
+            iActionTime.AddOutputParameter(param);
+            param = new ParameterUint("aSeconds");
+            iActionTime.AddOutputParameter(param);
+
+            iTrackCount = new PropertyUint("TrackCount", TrackCountPropertyChanged);
+            AddProperty(iTrackCount);
+            iDuration = new PropertyUint("Duration", DurationPropertyChanged);
+            AddProperty(iDuration);
+            iSeconds = new PropertyUint("Seconds", SecondsPropertyChanged);
+            AddProperty(iSeconds);
         }
 
         /// <summary>
@@ -76,14 +96,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrackCount"></param>
         /// <param name="aaDuration"></param>
         /// <param name="aaSeconds"></param>
-        public unsafe void SyncTime(out uint aaTrackCount, out uint aaDuration, out uint aaSeconds)
+        public void SyncTime(out uint aaTrackCount, out uint aaDuration, out uint aaSeconds)
         {
-            fixed (uint* aTrackCount = &aaTrackCount)
-            fixed (uint* aDuration = &aaDuration)
-            fixed (uint* aSeconds = &aaSeconds)
-            {
-                CpProxyLinnCoUkTime1SyncTime(iHandle, aTrackCount, aDuration, aSeconds);
-            }
+            SyncTimeLinnCoUkTime1 sync = new SyncTimeLinnCoUkTime1(this);
+            BeginTime(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aTrackCount = sync.TrackCount();
+            aDuration = sync.Duration();
+            aSeconds = sync.Seconds();
         }
 
         /// <summary>
@@ -94,11 +115,14 @@ namespace Zapp.ControlPoint.Proxies
         /// EndTime().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginTime(CallbackAsyncComplete aCallback)
+        public void BeginTime(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkTime1BeginTime(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionTime, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionTime.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionTime.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionTime.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -109,17 +133,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrackCount"></param>
         /// <param name="aaDuration"></param>
         /// <param name="aaSeconds"></param>
-        public unsafe void EndTime(IntPtr aAsyncHandle, out uint aaTrackCount, out uint aaDuration, out uint aaSeconds)
+        public void EndTime(IntPtr aAsyncHandle, out uint aaTrackCount, out uint aaDuration, out uint aaSeconds)
         {
-            fixed (uint* aTrackCount = &aaTrackCount)
-            fixed (uint* aDuration = &aaDuration)
-            fixed (uint* aSeconds = &aaSeconds)
-            {
-                if (0 != CpProxyLinnCoUkTime1EndTime(iHandle, aAsyncHandle, aTrackCount, aDuration, aSeconds))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aTrackCount = Invocation.OutputUint(aAsyncHandle, index++);
+            aDuration = Invocation.OutputUint(aAsyncHandle, index++);
+            aSeconds = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -130,17 +149,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackCountChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackCountChanged(CallbackPropertyChanged aTrackCountChanged)
         {
-            iTrackCountChanged = aTrackCountChanged;
-            iCallbackTrackCountChanged = new Callback(PropertyTrackCountChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkTime1SetPropertyTrackCountChanged(iHandle, iCallbackTrackCountChanged, ptr);
+            lock (this)
+            {
+                iTrackCountChanged = aTrackCountChanged;
+            }
         }
 
-        private void PropertyTrackCountChanged(IntPtr aPtr)
+        private void TrackCountPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkTime1 self = (CpProxyLinnCoUkTime1)gch.Target;
-            self.iTrackCountChanged();
+            lock (this)
+            {
+                if (iTrackCountChanged != null)
+                {
+                    iTrackCountChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -151,17 +174,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDurationChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDurationChanged(CallbackPropertyChanged aDurationChanged)
         {
-            iDurationChanged = aDurationChanged;
-            iCallbackDurationChanged = new Callback(PropertyDurationChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkTime1SetPropertyDurationChanged(iHandle, iCallbackDurationChanged, ptr);
+            lock (this)
+            {
+                iDurationChanged = aDurationChanged;
+            }
         }
 
-        private void PropertyDurationChanged(IntPtr aPtr)
+        private void DurationPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkTime1 self = (CpProxyLinnCoUkTime1)gch.Target;
-            self.iDurationChanged();
+            lock (this)
+            {
+                if (iDurationChanged != null)
+                {
+                    iDurationChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -172,17 +199,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSecondsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertySecondsChanged(CallbackPropertyChanged aSecondsChanged)
         {
-            iSecondsChanged = aSecondsChanged;
-            iCallbackSecondsChanged = new Callback(PropertySecondsChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkTime1SetPropertySecondsChanged(iHandle, iCallbackSecondsChanged, ptr);
+            lock (this)
+            {
+                iSecondsChanged = aSecondsChanged;
+            }
         }
 
-        private void PropertySecondsChanged(IntPtr aPtr)
+        private void SecondsPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkTime1 self = (CpProxyLinnCoUkTime1)gch.Target;
-            self.iSecondsChanged();
+            lock (this)
+            {
+                if (iSecondsChanged != null)
+                {
+                    iSecondsChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -192,12 +223,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aTrackCount">Will be set to the value of the property</param>
-        public unsafe void PropertyTrackCount(out uint aTrackCount)
+        public uint PropertyTrackCount()
         {
-            fixed (uint* trackCount = &aTrackCount)
-            {
-                CpProxyLinnCoUkTime1PropertyTrackCount(iHandle, trackCount);
-            }
+            return iTrackCount.Value();
         }
 
         /// <summary>
@@ -207,12 +235,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aDuration">Will be set to the value of the property</param>
-        public unsafe void PropertyDuration(out uint aDuration)
+        public uint PropertyDuration()
         {
-            fixed (uint* duration = &aDuration)
-            {
-                CpProxyLinnCoUkTime1PropertyDuration(iHandle, duration);
-            }
+            return iDuration.Value();
         }
 
         /// <summary>
@@ -222,12 +247,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aSeconds">Will be set to the value of the property</param>
-        public unsafe void PropertySeconds(out uint aSeconds)
+        public uint PropertySeconds()
         {
-            fixed (uint* seconds = &aSeconds)
-            {
-                CpProxyLinnCoUkTime1PropertySeconds(iHandle, seconds);
-            }
+            return iSeconds.Value();
         }
 
         /// <summary>
@@ -251,17 +273,13 @@ namespace Zapp.ControlPoint.Proxies
                 {
                     return;
                 }
-                CpProxyLinnCoUkTime1Destroy(iHandle);
+                DisposeProxy();
                 iHandle = IntPtr.Zero;
+                iActionTime.Dispose();
             }
-            iGch.Free();
             if (aDisposing)
             {
                 GC.SuppressFinalize(this);
-            }
-            else
-            {
-                DisposeProxy();
             }
         }
     }

@@ -1,198 +1,469 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Text;
-using Zapp;
+using Zapp.Core;
+using Zapp.ControlPoint;
 
 namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyUpnpOrgScheduledRecording1 : ICpProxy, IDisposable
     {
-        void SyncGetSortCapabilities(out string aSortCaps, out uint aSortLevelCap);
+        void SyncGetSortCapabilities(out String aSortCaps, out uint aSortLevelCap);
         void BeginGetSortCapabilities(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetSortCapabilities(IntPtr aAsyncHandle, out string aSortCaps, out uint aSortLevelCap);
-        void SyncGetPropertyList(string aDataTypeID, out string aPropertyList);
-        void BeginGetPropertyList(string aDataTypeID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetPropertyList(IntPtr aAsyncHandle, out string aPropertyList);
-        void SyncGetAllowedValues(string aDataTypeID, string aFilter, out string aPropertyInfo);
-        void BeginGetAllowedValues(string aDataTypeID, string aFilter, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetAllowedValues(IntPtr aAsyncHandle, out string aPropertyInfo);
+        void EndGetSortCapabilities(IntPtr aAsyncHandle, out String aSortCaps, out uint aSortLevelCap);
+        void SyncGetPropertyList(String aDataTypeID, out String aPropertyList);
+        void BeginGetPropertyList(String aDataTypeID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetPropertyList(IntPtr aAsyncHandle, out String aPropertyList);
+        void SyncGetAllowedValues(String aDataTypeID, String aFilter, out String aPropertyInfo);
+        void BeginGetAllowedValues(String aDataTypeID, String aFilter, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetAllowedValues(IntPtr aAsyncHandle, out String aPropertyInfo);
         void SyncGetStateUpdateID(out uint aId);
         void BeginGetStateUpdateID(CpProxy.CallbackAsyncComplete aCallback);
         void EndGetStateUpdateID(IntPtr aAsyncHandle, out uint aId);
-        void SyncBrowseRecordSchedules(string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
-        void BeginBrowseRecordSchedules(string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, CpProxy.CallbackAsyncComplete aCallback);
-        void EndBrowseRecordSchedules(IntPtr aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
-        void SyncBrowseRecordTasks(string aRecordScheduleID, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
-        void BeginBrowseRecordTasks(string aRecordScheduleID, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, CpProxy.CallbackAsyncComplete aCallback);
-        void EndBrowseRecordTasks(IntPtr aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
-        void SyncCreateRecordSchedule(string aElements, out string aRecordScheduleID, out string aResult, out uint aUpdateID);
-        void BeginCreateRecordSchedule(string aElements, CpProxy.CallbackAsyncComplete aCallback);
-        void EndCreateRecordSchedule(IntPtr aAsyncHandle, out string aRecordScheduleID, out string aResult, out uint aUpdateID);
-        void SyncDeleteRecordSchedule(string aRecordScheduleID);
-        void BeginDeleteRecordSchedule(string aRecordScheduleID, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncBrowseRecordSchedules(String aFilter, uint aStartingIndex, uint aRequestedCount, String aSortCriteria, out String aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
+        void BeginBrowseRecordSchedules(String aFilter, uint aStartingIndex, uint aRequestedCount, String aSortCriteria, CpProxy.CallbackAsyncComplete aCallback);
+        void EndBrowseRecordSchedules(IntPtr aAsyncHandle, out String aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
+        void SyncBrowseRecordTasks(String aRecordScheduleID, String aFilter, uint aStartingIndex, uint aRequestedCount, String aSortCriteria, out String aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
+        void BeginBrowseRecordTasks(String aRecordScheduleID, String aFilter, uint aStartingIndex, uint aRequestedCount, String aSortCriteria, CpProxy.CallbackAsyncComplete aCallback);
+        void EndBrowseRecordTasks(IntPtr aAsyncHandle, out String aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID);
+        void SyncCreateRecordSchedule(String aElements, out String aRecordScheduleID, out String aResult, out uint aUpdateID);
+        void BeginCreateRecordSchedule(String aElements, CpProxy.CallbackAsyncComplete aCallback);
+        void EndCreateRecordSchedule(IntPtr aAsyncHandle, out String aRecordScheduleID, out String aResult, out uint aUpdateID);
+        void SyncDeleteRecordSchedule(String aRecordScheduleID);
+        void BeginDeleteRecordSchedule(String aRecordScheduleID, CpProxy.CallbackAsyncComplete aCallback);
         void EndDeleteRecordSchedule(IntPtr aAsyncHandle);
-        void SyncGetRecordSchedule(string aRecordScheduleID, string aFilter, out string aResult, out uint aUpdateID);
-        void BeginGetRecordSchedule(string aRecordScheduleID, string aFilter, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetRecordSchedule(IntPtr aAsyncHandle, out string aResult, out uint aUpdateID);
-        void SyncEnableRecordSchedule(string aRecordScheduleID);
-        void BeginEnableRecordSchedule(string aRecordScheduleID, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncGetRecordSchedule(String aRecordScheduleID, String aFilter, out String aResult, out uint aUpdateID);
+        void BeginGetRecordSchedule(String aRecordScheduleID, String aFilter, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetRecordSchedule(IntPtr aAsyncHandle, out String aResult, out uint aUpdateID);
+        void SyncEnableRecordSchedule(String aRecordScheduleID);
+        void BeginEnableRecordSchedule(String aRecordScheduleID, CpProxy.CallbackAsyncComplete aCallback);
         void EndEnableRecordSchedule(IntPtr aAsyncHandle);
-        void SyncDisableRecordSchedule(string aRecordScheduleID);
-        void BeginDisableRecordSchedule(string aRecordScheduleID, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncDisableRecordSchedule(String aRecordScheduleID);
+        void BeginDisableRecordSchedule(String aRecordScheduleID, CpProxy.CallbackAsyncComplete aCallback);
         void EndDisableRecordSchedule(IntPtr aAsyncHandle);
-        void SyncDeleteRecordTask(string aRecordTaskID);
-        void BeginDeleteRecordTask(string aRecordTaskID, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncDeleteRecordTask(String aRecordTaskID);
+        void BeginDeleteRecordTask(String aRecordTaskID, CpProxy.CallbackAsyncComplete aCallback);
         void EndDeleteRecordTask(IntPtr aAsyncHandle);
-        void SyncGetRecordTask(string aRecordTaskID, string aFilter, out string aResult, out uint aUpdateID);
-        void BeginGetRecordTask(string aRecordTaskID, string aFilter, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetRecordTask(IntPtr aAsyncHandle, out string aResult, out uint aUpdateID);
-        void SyncEnableRecordTask(string aRecordTaskID);
-        void BeginEnableRecordTask(string aRecordTaskID, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncGetRecordTask(String aRecordTaskID, String aFilter, out String aResult, out uint aUpdateID);
+        void BeginGetRecordTask(String aRecordTaskID, String aFilter, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetRecordTask(IntPtr aAsyncHandle, out String aResult, out uint aUpdateID);
+        void SyncEnableRecordTask(String aRecordTaskID);
+        void BeginEnableRecordTask(String aRecordTaskID, CpProxy.CallbackAsyncComplete aCallback);
         void EndEnableRecordTask(IntPtr aAsyncHandle);
-        void SyncDisableRecordTask(string aRecordTaskID);
-        void BeginDisableRecordTask(string aRecordTaskID, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncDisableRecordTask(String aRecordTaskID);
+        void BeginDisableRecordTask(String aRecordTaskID, CpProxy.CallbackAsyncComplete aCallback);
         void EndDisableRecordTask(IntPtr aAsyncHandle);
-        void SyncResetRecordTask(string aRecordTaskID);
-        void BeginResetRecordTask(string aRecordTaskID, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncResetRecordTask(String aRecordTaskID);
+        void BeginResetRecordTask(String aRecordTaskID, CpProxy.CallbackAsyncComplete aCallback);
         void EndResetRecordTask(IntPtr aAsyncHandle);
-        void SyncGetRecordScheduleConflicts(string aRecordScheduleID, out string aRecordScheduleConflictIDList, out uint aUpdateID);
-        void BeginGetRecordScheduleConflicts(string aRecordScheduleID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetRecordScheduleConflicts(IntPtr aAsyncHandle, out string aRecordScheduleConflictIDList, out uint aUpdateID);
-        void SyncGetRecordTaskConflicts(string aRecordTaskID, out string aRecordTaskConflictIDList, out uint aUpdateID);
-        void BeginGetRecordTaskConflicts(string aRecordTaskID, CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetRecordTaskConflicts(IntPtr aAsyncHandle, out string aRecordTaskConflictIDList, out uint aUpdateID);
-
+        void SyncGetRecordScheduleConflicts(String aRecordScheduleID, out String aRecordScheduleConflictIDList, out uint aUpdateID);
+        void BeginGetRecordScheduleConflicts(String aRecordScheduleID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetRecordScheduleConflicts(IntPtr aAsyncHandle, out String aRecordScheduleConflictIDList, out uint aUpdateID);
+        void SyncGetRecordTaskConflicts(String aRecordTaskID, out String aRecordTaskConflictIDList, out uint aUpdateID);
+        void BeginGetRecordTaskConflicts(String aRecordTaskID, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetRecordTaskConflicts(IntPtr aAsyncHandle, out String aRecordTaskConflictIDList, out uint aUpdateID);
         void SetPropertyLastChangeChanged(CpProxy.CallbackPropertyChanged aLastChangeChanged);
-        void PropertyLastChange(out string aLastChange);
+        String PropertyLastChange();
     }
+
+    internal class SyncGetSortCapabilitiesUpnpOrgScheduledRecording1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgScheduledRecording1 iService;
+        private String iSortCaps;
+        private uint iSortLevelCap;
+
+        public SyncGetSortCapabilitiesUpnpOrgScheduledRecording1(CpProxyUpnpOrgScheduledRecording1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String SortCaps()
+        {
+            return iSortCaps;
+        }
+        public uint SortLevelCap()
+        {
+            return iSortLevelCap;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetSortCapabilities(aAsyncHandle, out iSortCaps, out iSortLevelCap);
+        }
+    };
+
+    internal class SyncGetPropertyListUpnpOrgScheduledRecording1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgScheduledRecording1 iService;
+        private String iPropertyList;
+
+        public SyncGetPropertyListUpnpOrgScheduledRecording1(CpProxyUpnpOrgScheduledRecording1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String PropertyList()
+        {
+            return iPropertyList;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetPropertyList(aAsyncHandle, out iPropertyList);
+        }
+    };
+
+    internal class SyncGetAllowedValuesUpnpOrgScheduledRecording1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgScheduledRecording1 iService;
+        private String iPropertyInfo;
+
+        public SyncGetAllowedValuesUpnpOrgScheduledRecording1(CpProxyUpnpOrgScheduledRecording1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String PropertyInfo()
+        {
+            return iPropertyInfo;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetAllowedValues(aAsyncHandle, out iPropertyInfo);
+        }
+    };
+
+    internal class SyncGetStateUpdateIDUpnpOrgScheduledRecording1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgScheduledRecording1 iService;
+        private uint iId;
+
+        public SyncGetStateUpdateIDUpnpOrgScheduledRecording1(CpProxyUpnpOrgScheduledRecording1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint Id()
+        {
+            return iId;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetStateUpdateID(aAsyncHandle, out iId);
+        }
+    };
+
+    internal class SyncBrowseRecordSchedulesUpnpOrgScheduledRecording1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgScheduledRecording1 iService;
+        private String iResult;
+        private uint iNumberReturned;
+        private uint iTotalMatches;
+        private uint iUpdateID;
+
+        public SyncBrowseRecordSchedulesUpnpOrgScheduledRecording1(CpProxyUpnpOrgScheduledRecording1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Result()
+        {
+            return iResult;
+        }
+        public uint NumberReturned()
+        {
+            return iNumberReturned;
+        }
+        public uint TotalMatches()
+        {
+            return iTotalMatches;
+        }
+        public uint UpdateID()
+        {
+            return iUpdateID;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndBrowseRecordSchedules(aAsyncHandle, out iResult, out iNumberReturned, out iTotalMatches, out iUpdateID);
+        }
+    };
+
+    internal class SyncBrowseRecordTasksUpnpOrgScheduledRecording1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgScheduledRecording1 iService;
+        private String iResult;
+        private uint iNumberReturned;
+        private uint iTotalMatches;
+        private uint iUpdateID;
+
+        public SyncBrowseRecordTasksUpnpOrgScheduledRecording1(CpProxyUpnpOrgScheduledRecording1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Result()
+        {
+            return iResult;
+        }
+        public uint NumberReturned()
+        {
+            return iNumberReturned;
+        }
+        public uint TotalMatches()
+        {
+            return iTotalMatches;
+        }
+        public uint UpdateID()
+        {
+            return iUpdateID;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndBrowseRecordTasks(aAsyncHandle, out iResult, out iNumberReturned, out iTotalMatches, out iUpdateID);
+        }
+    };
+
+    internal class SyncCreateRecordScheduleUpnpOrgScheduledRecording1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgScheduledRecording1 iService;
+        private String iRecordScheduleID;
+        private String iResult;
+        private uint iUpdateID;
+
+        public SyncCreateRecordScheduleUpnpOrgScheduledRecording1(CpProxyUpnpOrgScheduledRecording1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String RecordScheduleID()
+        {
+            return iRecordScheduleID;
+        }
+        public String Result()
+        {
+            return iResult;
+        }
+        public uint UpdateID()
+        {
+            return iUpdateID;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndCreateRecordSchedule(aAsyncHandle, out iRecordScheduleID, out iResult, out iUpdateID);
+        }
+    };
+
+    internal class SyncDeleteRecordScheduleUpnpOrgScheduledRecording1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgScheduledRecording1 iService;
+
+        public SyncDeleteRecordScheduleUpnpOrgScheduledRecording1(CpProxyUpnpOrgScheduledRecording1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndDeleteRecordSchedule(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetRecordScheduleUpnpOrgScheduledRecording1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgScheduledRecording1 iService;
+        private String iResult;
+        private uint iUpdateID;
+
+        public SyncGetRecordScheduleUpnpOrgScheduledRecording1(CpProxyUpnpOrgScheduledRecording1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Result()
+        {
+            return iResult;
+        }
+        public uint UpdateID()
+        {
+            return iUpdateID;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetRecordSchedule(aAsyncHandle, out iResult, out iUpdateID);
+        }
+    };
+
+    internal class SyncEnableRecordScheduleUpnpOrgScheduledRecording1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgScheduledRecording1 iService;
+
+        public SyncEnableRecordScheduleUpnpOrgScheduledRecording1(CpProxyUpnpOrgScheduledRecording1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndEnableRecordSchedule(aAsyncHandle);
+        }
+    };
+
+    internal class SyncDisableRecordScheduleUpnpOrgScheduledRecording1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgScheduledRecording1 iService;
+
+        public SyncDisableRecordScheduleUpnpOrgScheduledRecording1(CpProxyUpnpOrgScheduledRecording1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndDisableRecordSchedule(aAsyncHandle);
+        }
+    };
+
+    internal class SyncDeleteRecordTaskUpnpOrgScheduledRecording1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgScheduledRecording1 iService;
+
+        public SyncDeleteRecordTaskUpnpOrgScheduledRecording1(CpProxyUpnpOrgScheduledRecording1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndDeleteRecordTask(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetRecordTaskUpnpOrgScheduledRecording1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgScheduledRecording1 iService;
+        private String iResult;
+        private uint iUpdateID;
+
+        public SyncGetRecordTaskUpnpOrgScheduledRecording1(CpProxyUpnpOrgScheduledRecording1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Result()
+        {
+            return iResult;
+        }
+        public uint UpdateID()
+        {
+            return iUpdateID;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetRecordTask(aAsyncHandle, out iResult, out iUpdateID);
+        }
+    };
+
+    internal class SyncEnableRecordTaskUpnpOrgScheduledRecording1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgScheduledRecording1 iService;
+
+        public SyncEnableRecordTaskUpnpOrgScheduledRecording1(CpProxyUpnpOrgScheduledRecording1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndEnableRecordTask(aAsyncHandle);
+        }
+    };
+
+    internal class SyncDisableRecordTaskUpnpOrgScheduledRecording1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgScheduledRecording1 iService;
+
+        public SyncDisableRecordTaskUpnpOrgScheduledRecording1(CpProxyUpnpOrgScheduledRecording1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndDisableRecordTask(aAsyncHandle);
+        }
+    };
+
+    internal class SyncResetRecordTaskUpnpOrgScheduledRecording1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgScheduledRecording1 iService;
+
+        public SyncResetRecordTaskUpnpOrgScheduledRecording1(CpProxyUpnpOrgScheduledRecording1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndResetRecordTask(aAsyncHandle);
+        }
+    };
+
+    internal class SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgScheduledRecording1 iService;
+        private String iRecordScheduleConflictIDList;
+        private uint iUpdateID;
+
+        public SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording1(CpProxyUpnpOrgScheduledRecording1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String RecordScheduleConflictIDList()
+        {
+            return iRecordScheduleConflictIDList;
+        }
+        public uint UpdateID()
+        {
+            return iUpdateID;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetRecordScheduleConflicts(aAsyncHandle, out iRecordScheduleConflictIDList, out iUpdateID);
+        }
+    };
+
+    internal class SyncGetRecordTaskConflictsUpnpOrgScheduledRecording1 : SyncProxyAction
+    {
+        private CpProxyUpnpOrgScheduledRecording1 iService;
+        private String iRecordTaskConflictIDList;
+        private uint iUpdateID;
+
+        public SyncGetRecordTaskConflictsUpnpOrgScheduledRecording1(CpProxyUpnpOrgScheduledRecording1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String RecordTaskConflictIDList()
+        {
+            return iRecordTaskConflictIDList;
+        }
+        public uint UpdateID()
+        {
+            return iUpdateID;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndGetRecordTaskConflicts(aAsyncHandle, out iRecordTaskConflictIDList, out iUpdateID);
+        }
+    };
 
     /// <summary>
     /// Proxy for the upnp.org:ScheduledRecording:1 UPnP service
     /// </summary>
     public class CpProxyUpnpOrgScheduledRecording1 : CpProxy, IDisposable, ICpProxyUpnpOrgScheduledRecording1
     {
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern IntPtr CpProxyUpnpOrgScheduledRecording1Create(IntPtr aDeviceHandle);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern void CpProxyUpnpOrgScheduledRecording1Destroy(IntPtr aHandle);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetSortCapabilities(IntPtr aHandle, char** aSortCaps, uint* aSortLevelCap);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetSortCapabilities(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetSortCapabilities(IntPtr aHandle, IntPtr aAsync, char** aSortCaps, uint* aSortLevelCap);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetPropertyList(IntPtr aHandle, char* aDataTypeID, char** aPropertyList);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetPropertyList(IntPtr aHandle, char* aDataTypeID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetPropertyList(IntPtr aHandle, IntPtr aAsync, char** aPropertyList);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetAllowedValues(IntPtr aHandle, char* aDataTypeID, char* aFilter, char** aPropertyInfo);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetAllowedValues(IntPtr aHandle, char* aDataTypeID, char* aFilter, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetAllowedValues(IntPtr aHandle, IntPtr aAsync, char** aPropertyInfo);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetStateUpdateID(IntPtr aHandle, uint* aId);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetStateUpdateID(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetStateUpdateID(IntPtr aHandle, IntPtr aAsync, uint* aId);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncBrowseRecordSchedules(IntPtr aHandle, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginBrowseRecordSchedules(IntPtr aHandle, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndBrowseRecordSchedules(IntPtr aHandle, IntPtr aAsync, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncBrowseRecordTasks(IntPtr aHandle, char* aRecordScheduleID, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginBrowseRecordTasks(IntPtr aHandle, char* aRecordScheduleID, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndBrowseRecordTasks(IntPtr aHandle, IntPtr aAsync, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncCreateRecordSchedule(IntPtr aHandle, char* aElements, char** aRecordScheduleID, char** aResult, uint* aUpdateID);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginCreateRecordSchedule(IntPtr aHandle, char* aElements, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndCreateRecordSchedule(IntPtr aHandle, IntPtr aAsync, char** aRecordScheduleID, char** aResult, uint* aUpdateID);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncDeleteRecordSchedule(IntPtr aHandle, char* aRecordScheduleID);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginDeleteRecordSchedule(IntPtr aHandle, char* aRecordScheduleID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndDeleteRecordSchedule(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetRecordSchedule(IntPtr aHandle, char* aRecordScheduleID, char* aFilter, char** aResult, uint* aUpdateID);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetRecordSchedule(IntPtr aHandle, char* aRecordScheduleID, char* aFilter, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetRecordSchedule(IntPtr aHandle, IntPtr aAsync, char** aResult, uint* aUpdateID);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncEnableRecordSchedule(IntPtr aHandle, char* aRecordScheduleID);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginEnableRecordSchedule(IntPtr aHandle, char* aRecordScheduleID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndEnableRecordSchedule(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncDisableRecordSchedule(IntPtr aHandle, char* aRecordScheduleID);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginDisableRecordSchedule(IntPtr aHandle, char* aRecordScheduleID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndDisableRecordSchedule(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncDeleteRecordTask(IntPtr aHandle, char* aRecordTaskID);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginDeleteRecordTask(IntPtr aHandle, char* aRecordTaskID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndDeleteRecordTask(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetRecordTask(IntPtr aHandle, char* aRecordTaskID, char* aFilter, char** aResult, uint* aUpdateID);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetRecordTask(IntPtr aHandle, char* aRecordTaskID, char* aFilter, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetRecordTask(IntPtr aHandle, IntPtr aAsync, char** aResult, uint* aUpdateID);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncEnableRecordTask(IntPtr aHandle, char* aRecordTaskID);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginEnableRecordTask(IntPtr aHandle, char* aRecordTaskID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndEnableRecordTask(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncDisableRecordTask(IntPtr aHandle, char* aRecordTaskID);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginDisableRecordTask(IntPtr aHandle, char* aRecordTaskID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndDisableRecordTask(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncResetRecordTask(IntPtr aHandle, char* aRecordTaskID);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginResetRecordTask(IntPtr aHandle, char* aRecordTaskID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndResetRecordTask(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetRecordScheduleConflicts(IntPtr aHandle, char* aRecordScheduleID, char** aRecordScheduleConflictIDList, uint* aUpdateID);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetRecordScheduleConflicts(IntPtr aHandle, char* aRecordScheduleID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetRecordScheduleConflicts(IntPtr aHandle, IntPtr aAsync, char** aRecordScheduleConflictIDList, uint* aUpdateID);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1SyncGetRecordTaskConflicts(IntPtr aHandle, char* aRecordTaskID, char** aRecordTaskConflictIDList, uint* aUpdateID);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1BeginGetRecordTaskConflicts(IntPtr aHandle, char* aRecordTaskID, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe int CpProxyUpnpOrgScheduledRecording1EndGetRecordTaskConflicts(IntPtr aHandle, IntPtr aAsync, char** aRecordTaskConflictIDList, uint* aUpdateID);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern void CpProxyUpnpOrgScheduledRecording1SetPropertyLastChangeChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpUpnpOrgScheduledRecording1")]
-        static extern unsafe void CpProxyUpnpOrgScheduledRecording1PropertyLastChange(IntPtr aHandle, char** aLastChange);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private GCHandle iGch;
+        private Zapp.Core.Action iActionGetSortCapabilities;
+        private Zapp.Core.Action iActionGetPropertyList;
+        private Zapp.Core.Action iActionGetAllowedValues;
+        private Zapp.Core.Action iActionGetStateUpdateID;
+        private Zapp.Core.Action iActionBrowseRecordSchedules;
+        private Zapp.Core.Action iActionBrowseRecordTasks;
+        private Zapp.Core.Action iActionCreateRecordSchedule;
+        private Zapp.Core.Action iActionDeleteRecordSchedule;
+        private Zapp.Core.Action iActionGetRecordSchedule;
+        private Zapp.Core.Action iActionEnableRecordSchedule;
+        private Zapp.Core.Action iActionDisableRecordSchedule;
+        private Zapp.Core.Action iActionDeleteRecordTask;
+        private Zapp.Core.Action iActionGetRecordTask;
+        private Zapp.Core.Action iActionEnableRecordTask;
+        private Zapp.Core.Action iActionDisableRecordTask;
+        private Zapp.Core.Action iActionResetRecordTask;
+        private Zapp.Core.Action iActionGetRecordScheduleConflicts;
+        private Zapp.Core.Action iActionGetRecordTaskConflicts;
+        private PropertyString iLastChange;
         private CallbackPropertyChanged iLastChangeChanged;
-        private Callback iCallbackLastChangeChanged;
 
         /// <summary>
         /// Constructor
@@ -200,9 +471,157 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
         /// <param name="aDevice">The device to use</param>
         public CpProxyUpnpOrgScheduledRecording1(CpDevice aDevice)
+            : base("schemas-upnp-org", "ScheduledRecording", 1, aDevice)
         {
-            iHandle = CpProxyUpnpOrgScheduledRecording1Create(aDevice.Handle());
-            iGch = GCHandle.Alloc(this);
+            Zapp.Core.Parameter param;
+            List<String> allowedValues = new List<String>();
+
+            iActionGetSortCapabilities = new Zapp.Core.Action("GetSortCapabilities");
+            param = new ParameterString("SortCaps", allowedValues);
+            iActionGetSortCapabilities.AddOutputParameter(param);
+            param = new ParameterUint("SortLevelCap");
+            iActionGetSortCapabilities.AddOutputParameter(param);
+
+            iActionGetPropertyList = new Zapp.Core.Action("GetPropertyList");
+            allowedValues.Add("A_ARG_TYPE_RecordSchedule");
+            allowedValues.Add("A_ARG_TYPE_RecordTask");
+            allowedValues.Add("A_ARG_TYPE_RecordScheduleParts");
+            param = new ParameterString("DataTypeID", allowedValues);
+            iActionGetPropertyList.AddInputParameter(param);
+            allowedValues.Clear();
+            param = new ParameterString("PropertyList", allowedValues);
+            iActionGetPropertyList.AddOutputParameter(param);
+
+            iActionGetAllowedValues = new Zapp.Core.Action("GetAllowedValues");
+            allowedValues.Add("A_ARG_TYPE_RecordSchedule");
+            allowedValues.Add("A_ARG_TYPE_RecordTask");
+            allowedValues.Add("A_ARG_TYPE_RecordScheduleParts");
+            param = new ParameterString("DataTypeID", allowedValues);
+            iActionGetAllowedValues.AddInputParameter(param);
+            allowedValues.Clear();
+            param = new ParameterString("Filter", allowedValues);
+            iActionGetAllowedValues.AddInputParameter(param);
+            param = new ParameterString("PropertyInfo", allowedValues);
+            iActionGetAllowedValues.AddOutputParameter(param);
+
+            iActionGetStateUpdateID = new Zapp.Core.Action("GetStateUpdateID");
+            param = new ParameterUint("Id");
+            iActionGetStateUpdateID.AddOutputParameter(param);
+
+            iActionBrowseRecordSchedules = new Zapp.Core.Action("BrowseRecordSchedules");
+            param = new ParameterString("Filter", allowedValues);
+            iActionBrowseRecordSchedules.AddInputParameter(param);
+            param = new ParameterUint("StartingIndex");
+            iActionBrowseRecordSchedules.AddInputParameter(param);
+            param = new ParameterUint("RequestedCount");
+            iActionBrowseRecordSchedules.AddInputParameter(param);
+            param = new ParameterString("SortCriteria", allowedValues);
+            iActionBrowseRecordSchedules.AddInputParameter(param);
+            param = new ParameterString("Result", allowedValues);
+            iActionBrowseRecordSchedules.AddOutputParameter(param);
+            param = new ParameterUint("NumberReturned");
+            iActionBrowseRecordSchedules.AddOutputParameter(param);
+            param = new ParameterUint("TotalMatches");
+            iActionBrowseRecordSchedules.AddOutputParameter(param);
+            param = new ParameterUint("UpdateID");
+            iActionBrowseRecordSchedules.AddOutputParameter(param);
+
+            iActionBrowseRecordTasks = new Zapp.Core.Action("BrowseRecordTasks");
+            param = new ParameterString("RecordScheduleID", allowedValues);
+            iActionBrowseRecordTasks.AddInputParameter(param);
+            param = new ParameterString("Filter", allowedValues);
+            iActionBrowseRecordTasks.AddInputParameter(param);
+            param = new ParameterUint("StartingIndex");
+            iActionBrowseRecordTasks.AddInputParameter(param);
+            param = new ParameterUint("RequestedCount");
+            iActionBrowseRecordTasks.AddInputParameter(param);
+            param = new ParameterString("SortCriteria", allowedValues);
+            iActionBrowseRecordTasks.AddInputParameter(param);
+            param = new ParameterString("Result", allowedValues);
+            iActionBrowseRecordTasks.AddOutputParameter(param);
+            param = new ParameterUint("NumberReturned");
+            iActionBrowseRecordTasks.AddOutputParameter(param);
+            param = new ParameterUint("TotalMatches");
+            iActionBrowseRecordTasks.AddOutputParameter(param);
+            param = new ParameterUint("UpdateID");
+            iActionBrowseRecordTasks.AddOutputParameter(param);
+
+            iActionCreateRecordSchedule = new Zapp.Core.Action("CreateRecordSchedule");
+            param = new ParameterString("Elements", allowedValues);
+            iActionCreateRecordSchedule.AddInputParameter(param);
+            param = new ParameterString("RecordScheduleID", allowedValues);
+            iActionCreateRecordSchedule.AddOutputParameter(param);
+            param = new ParameterString("Result", allowedValues);
+            iActionCreateRecordSchedule.AddOutputParameter(param);
+            param = new ParameterUint("UpdateID");
+            iActionCreateRecordSchedule.AddOutputParameter(param);
+
+            iActionDeleteRecordSchedule = new Zapp.Core.Action("DeleteRecordSchedule");
+            param = new ParameterString("RecordScheduleID", allowedValues);
+            iActionDeleteRecordSchedule.AddInputParameter(param);
+
+            iActionGetRecordSchedule = new Zapp.Core.Action("GetRecordSchedule");
+            param = new ParameterString("RecordScheduleID", allowedValues);
+            iActionGetRecordSchedule.AddInputParameter(param);
+            param = new ParameterString("Filter", allowedValues);
+            iActionGetRecordSchedule.AddInputParameter(param);
+            param = new ParameterString("Result", allowedValues);
+            iActionGetRecordSchedule.AddOutputParameter(param);
+            param = new ParameterUint("UpdateID");
+            iActionGetRecordSchedule.AddOutputParameter(param);
+
+            iActionEnableRecordSchedule = new Zapp.Core.Action("EnableRecordSchedule");
+            param = new ParameterString("RecordScheduleID", allowedValues);
+            iActionEnableRecordSchedule.AddInputParameter(param);
+
+            iActionDisableRecordSchedule = new Zapp.Core.Action("DisableRecordSchedule");
+            param = new ParameterString("RecordScheduleID", allowedValues);
+            iActionDisableRecordSchedule.AddInputParameter(param);
+
+            iActionDeleteRecordTask = new Zapp.Core.Action("DeleteRecordTask");
+            param = new ParameterString("RecordTaskID", allowedValues);
+            iActionDeleteRecordTask.AddInputParameter(param);
+
+            iActionGetRecordTask = new Zapp.Core.Action("GetRecordTask");
+            param = new ParameterString("RecordTaskID", allowedValues);
+            iActionGetRecordTask.AddInputParameter(param);
+            param = new ParameterString("Filter", allowedValues);
+            iActionGetRecordTask.AddInputParameter(param);
+            param = new ParameterString("Result", allowedValues);
+            iActionGetRecordTask.AddOutputParameter(param);
+            param = new ParameterUint("UpdateID");
+            iActionGetRecordTask.AddOutputParameter(param);
+
+            iActionEnableRecordTask = new Zapp.Core.Action("EnableRecordTask");
+            param = new ParameterString("RecordTaskID", allowedValues);
+            iActionEnableRecordTask.AddInputParameter(param);
+
+            iActionDisableRecordTask = new Zapp.Core.Action("DisableRecordTask");
+            param = new ParameterString("RecordTaskID", allowedValues);
+            iActionDisableRecordTask.AddInputParameter(param);
+
+            iActionResetRecordTask = new Zapp.Core.Action("ResetRecordTask");
+            param = new ParameterString("RecordTaskID", allowedValues);
+            iActionResetRecordTask.AddInputParameter(param);
+
+            iActionGetRecordScheduleConflicts = new Zapp.Core.Action("GetRecordScheduleConflicts");
+            param = new ParameterString("RecordScheduleID", allowedValues);
+            iActionGetRecordScheduleConflicts.AddInputParameter(param);
+            param = new ParameterString("RecordScheduleConflictIDList", allowedValues);
+            iActionGetRecordScheduleConflicts.AddOutputParameter(param);
+            param = new ParameterUint("UpdateID");
+            iActionGetRecordScheduleConflicts.AddOutputParameter(param);
+
+            iActionGetRecordTaskConflicts = new Zapp.Core.Action("GetRecordTaskConflicts");
+            param = new ParameterString("RecordTaskID", allowedValues);
+            iActionGetRecordTaskConflicts.AddInputParameter(param);
+            param = new ParameterString("RecordTaskConflictIDList", allowedValues);
+            iActionGetRecordTaskConflicts.AddOutputParameter(param);
+            param = new ParameterUint("UpdateID");
+            iActionGetRecordTaskConflicts.AddOutputParameter(param);
+
+            iLastChange = new PropertyString("LastChange", LastChangePropertyChanged);
+            AddProperty(iLastChange);
         }
 
         /// <summary>
@@ -212,15 +631,14 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aSortCaps"></param>
         /// <param name="aSortLevelCap"></param>
-        public unsafe void SyncGetSortCapabilities(out string aSortCaps, out uint aSortLevelCap)
+        public void SyncGetSortCapabilities(out String aSortCaps, out uint aSortLevelCap)
         {
-            char* sortCaps;
-            fixed (uint* sortLevelCap = &aSortLevelCap)
-            {
-                CpProxyUpnpOrgScheduledRecording1SyncGetSortCapabilities(iHandle, &sortCaps, sortLevelCap);
-            }
-            aSortCaps = Marshal.PtrToStringAnsi((IntPtr)sortCaps);
-            ZappFree(sortCaps);
+            SyncGetSortCapabilitiesUpnpOrgScheduledRecording1 sync = new SyncGetSortCapabilitiesUpnpOrgScheduledRecording1(this);
+            BeginGetSortCapabilities(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aSortCaps = sync.SortCaps();
+            aSortLevelCap = sync.SortLevelCap();
         }
 
         /// <summary>
@@ -231,11 +649,13 @@ namespace Zapp.ControlPoint.Proxies
         /// EndGetSortCapabilities().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetSortCapabilities(CallbackAsyncComplete aCallback)
+        public void BeginGetSortCapabilities(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgScheduledRecording1BeginGetSortCapabilities(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetSortCapabilities, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetSortCapabilities.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetSortCapabilities.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -245,18 +665,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aSortCaps"></param>
         /// <param name="aSortLevelCap"></param>
-        public unsafe void EndGetSortCapabilities(IntPtr aAsyncHandle, out string aSortCaps, out uint aSortLevelCap)
+        public void EndGetSortCapabilities(IntPtr aAsyncHandle, out String aSortCaps, out uint aSortLevelCap)
         {
-            char* sortCaps;
-            fixed (uint* sortLevelCap = &aSortLevelCap)
-            {
-                if (0 != CpProxyUpnpOrgScheduledRecording1EndGetSortCapabilities(iHandle, aAsyncHandle, &sortCaps, sortLevelCap))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aSortCaps = Marshal.PtrToStringAnsi((IntPtr)sortCaps);
-            ZappFree(sortCaps);
+            uint index = 0;
+            aSortCaps = Invocation.OutputString(aAsyncHandle, index++);
+            aSortLevelCap = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -266,16 +679,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aDataTypeID"></param>
         /// <param name="aPropertyList"></param>
-        public unsafe void SyncGetPropertyList(string aDataTypeID, out string aPropertyList)
+        public void SyncGetPropertyList(String aDataTypeID, out String aPropertyList)
         {
-            char* dataTypeID = (char*)Marshal.StringToHGlobalAnsi(aDataTypeID);
-            char* propertyList;
-            {
-                CpProxyUpnpOrgScheduledRecording1SyncGetPropertyList(iHandle, dataTypeID, &propertyList);
-            }
-            Marshal.FreeHGlobal((IntPtr)dataTypeID);
-            aPropertyList = Marshal.PtrToStringAnsi((IntPtr)propertyList);
-            ZappFree(propertyList);
+            SyncGetPropertyListUpnpOrgScheduledRecording1 sync = new SyncGetPropertyListUpnpOrgScheduledRecording1(this);
+            BeginGetPropertyList(aDataTypeID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aPropertyList = sync.PropertyList();
         }
 
         /// <summary>
@@ -287,13 +697,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDataTypeID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetPropertyList(string aDataTypeID, CallbackAsyncComplete aCallback)
+        public void BeginGetPropertyList(String aDataTypeID, CallbackAsyncComplete aCallback)
         {
-            char* dataTypeID = (char*)Marshal.StringToHGlobalAnsi(aDataTypeID);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgScheduledRecording1BeginGetPropertyList(iHandle, dataTypeID, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)dataTypeID);
+            Invocation invocation = iService.Invocation(iActionGetPropertyList, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionGetPropertyList.InputParameter(inIndex++), aDataTypeID));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetPropertyList.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -302,17 +713,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aPropertyList"></param>
-        public unsafe void EndGetPropertyList(IntPtr aAsyncHandle, out string aPropertyList)
+        public void EndGetPropertyList(IntPtr aAsyncHandle, out String aPropertyList)
         {
-            char* propertyList;
-            {
-                if (0 != CpProxyUpnpOrgScheduledRecording1EndGetPropertyList(iHandle, aAsyncHandle, &propertyList))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aPropertyList = Marshal.PtrToStringAnsi((IntPtr)propertyList);
-            ZappFree(propertyList);
+            uint index = 0;
+            aPropertyList = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -323,18 +727,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDataTypeID"></param>
         /// <param name="aFilter"></param>
         /// <param name="aPropertyInfo"></param>
-        public unsafe void SyncGetAllowedValues(string aDataTypeID, string aFilter, out string aPropertyInfo)
+        public void SyncGetAllowedValues(String aDataTypeID, String aFilter, out String aPropertyInfo)
         {
-            char* dataTypeID = (char*)Marshal.StringToHGlobalAnsi(aDataTypeID);
-            char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
-            char* propertyInfo;
-            {
-                CpProxyUpnpOrgScheduledRecording1SyncGetAllowedValues(iHandle, dataTypeID, filter, &propertyInfo);
-            }
-            Marshal.FreeHGlobal((IntPtr)dataTypeID);
-            Marshal.FreeHGlobal((IntPtr)filter);
-            aPropertyInfo = Marshal.PtrToStringAnsi((IntPtr)propertyInfo);
-            ZappFree(propertyInfo);
+            SyncGetAllowedValuesUpnpOrgScheduledRecording1 sync = new SyncGetAllowedValuesUpnpOrgScheduledRecording1(this);
+            BeginGetAllowedValues(aDataTypeID, aFilter, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aPropertyInfo = sync.PropertyInfo();
         }
 
         /// <summary>
@@ -347,15 +746,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aFilter"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetAllowedValues(string aDataTypeID, string aFilter, CallbackAsyncComplete aCallback)
+        public void BeginGetAllowedValues(String aDataTypeID, String aFilter, CallbackAsyncComplete aCallback)
         {
-            char* dataTypeID = (char*)Marshal.StringToHGlobalAnsi(aDataTypeID);
-            char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgScheduledRecording1BeginGetAllowedValues(iHandle, dataTypeID, filter, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)dataTypeID);
-            Marshal.FreeHGlobal((IntPtr)filter);
+            Invocation invocation = iService.Invocation(iActionGetAllowedValues, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionGetAllowedValues.InputParameter(inIndex++), aDataTypeID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionGetAllowedValues.InputParameter(inIndex++), aFilter));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetAllowedValues.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -364,17 +763,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aPropertyInfo"></param>
-        public unsafe void EndGetAllowedValues(IntPtr aAsyncHandle, out string aPropertyInfo)
+        public void EndGetAllowedValues(IntPtr aAsyncHandle, out String aPropertyInfo)
         {
-            char* propertyInfo;
-            {
-                if (0 != CpProxyUpnpOrgScheduledRecording1EndGetAllowedValues(iHandle, aAsyncHandle, &propertyInfo))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aPropertyInfo = Marshal.PtrToStringAnsi((IntPtr)propertyInfo);
-            ZappFree(propertyInfo);
+            uint index = 0;
+            aPropertyInfo = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -383,12 +775,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aId"></param>
-        public unsafe void SyncGetStateUpdateID(out uint aId)
+        public void SyncGetStateUpdateID(out uint aId)
         {
-            fixed (uint* id = &aId)
-            {
-                CpProxyUpnpOrgScheduledRecording1SyncGetStateUpdateID(iHandle, id);
-            }
+            SyncGetStateUpdateIDUpnpOrgScheduledRecording1 sync = new SyncGetStateUpdateIDUpnpOrgScheduledRecording1(this);
+            BeginGetStateUpdateID(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aId = sync.Id();
         }
 
         /// <summary>
@@ -399,11 +792,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndGetStateUpdateID().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetStateUpdateID(CallbackAsyncComplete aCallback)
+        public void BeginGetStateUpdateID(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgScheduledRecording1BeginGetStateUpdateID(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionGetStateUpdateID, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetStateUpdateID.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -412,15 +806,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aId"></param>
-        public unsafe void EndGetStateUpdateID(IntPtr aAsyncHandle, out uint aId)
+        public void EndGetStateUpdateID(IntPtr aAsyncHandle, out uint aId)
         {
-            fixed (uint* id = &aId)
-            {
-                if (0 != CpProxyUpnpOrgScheduledRecording1EndGetStateUpdateID(iHandle, aAsyncHandle, id))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aId = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -436,21 +825,16 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aNumberReturned"></param>
         /// <param name="aTotalMatches"></param>
         /// <param name="aUpdateID"></param>
-        public unsafe void SyncBrowseRecordSchedules(string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
+        public void SyncBrowseRecordSchedules(String aFilter, uint aStartingIndex, uint aRequestedCount, String aSortCriteria, out String aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
-            char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
-            char* sortCriteria = (char*)Marshal.StringToHGlobalAnsi(aSortCriteria);
-            char* result;
-            fixed (uint* numberReturned = &aNumberReturned)
-            fixed (uint* totalMatches = &aTotalMatches)
-            fixed (uint* updateID = &aUpdateID)
-            {
-                CpProxyUpnpOrgScheduledRecording1SyncBrowseRecordSchedules(iHandle, filter, aStartingIndex, aRequestedCount, sortCriteria, &result, numberReturned, totalMatches, updateID);
-            }
-            Marshal.FreeHGlobal((IntPtr)filter);
-            Marshal.FreeHGlobal((IntPtr)sortCriteria);
-            aResult = Marshal.PtrToStringAnsi((IntPtr)result);
-            ZappFree(result);
+            SyncBrowseRecordSchedulesUpnpOrgScheduledRecording1 sync = new SyncBrowseRecordSchedulesUpnpOrgScheduledRecording1(this);
+            BeginBrowseRecordSchedules(aFilter, aStartingIndex, aRequestedCount, aSortCriteria, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aResult = sync.Result();
+            aNumberReturned = sync.NumberReturned();
+            aTotalMatches = sync.TotalMatches();
+            aUpdateID = sync.UpdateID();
         }
 
         /// <summary>
@@ -465,15 +849,20 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSortCriteria"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginBrowseRecordSchedules(string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, CallbackAsyncComplete aCallback)
+        public void BeginBrowseRecordSchedules(String aFilter, uint aStartingIndex, uint aRequestedCount, String aSortCriteria, CallbackAsyncComplete aCallback)
         {
-            char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
-            char* sortCriteria = (char*)Marshal.StringToHGlobalAnsi(aSortCriteria);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgScheduledRecording1BeginBrowseRecordSchedules(iHandle, filter, aStartingIndex, aRequestedCount, sortCriteria, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)filter);
-            Marshal.FreeHGlobal((IntPtr)sortCriteria);
+            Invocation invocation = iService.Invocation(iActionBrowseRecordSchedules, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionBrowseRecordSchedules.InputParameter(inIndex++), aFilter));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionBrowseRecordSchedules.InputParameter(inIndex++), aStartingIndex));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionBrowseRecordSchedules.InputParameter(inIndex++), aRequestedCount));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionBrowseRecordSchedules.InputParameter(inIndex++), aSortCriteria));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionBrowseRecordSchedules.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionBrowseRecordSchedules.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionBrowseRecordSchedules.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionBrowseRecordSchedules.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -485,20 +874,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aNumberReturned"></param>
         /// <param name="aTotalMatches"></param>
         /// <param name="aUpdateID"></param>
-        public unsafe void EndBrowseRecordSchedules(IntPtr aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
+        public void EndBrowseRecordSchedules(IntPtr aAsyncHandle, out String aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
-            char* result;
-            fixed (uint* numberReturned = &aNumberReturned)
-            fixed (uint* totalMatches = &aTotalMatches)
-            fixed (uint* updateID = &aUpdateID)
-            {
-                if (0 != CpProxyUpnpOrgScheduledRecording1EndBrowseRecordSchedules(iHandle, aAsyncHandle, &result, numberReturned, totalMatches, updateID))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aResult = Marshal.PtrToStringAnsi((IntPtr)result);
-            ZappFree(result);
+            uint index = 0;
+            aResult = Invocation.OutputString(aAsyncHandle, index++);
+            aNumberReturned = Invocation.OutputUint(aAsyncHandle, index++);
+            aTotalMatches = Invocation.OutputUint(aAsyncHandle, index++);
+            aUpdateID = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -515,23 +897,16 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aNumberReturned"></param>
         /// <param name="aTotalMatches"></param>
         /// <param name="aUpdateID"></param>
-        public unsafe void SyncBrowseRecordTasks(string aRecordScheduleID, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
+        public void SyncBrowseRecordTasks(String aRecordScheduleID, String aFilter, uint aStartingIndex, uint aRequestedCount, String aSortCriteria, out String aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
-            char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
-            char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
-            char* sortCriteria = (char*)Marshal.StringToHGlobalAnsi(aSortCriteria);
-            char* result;
-            fixed (uint* numberReturned = &aNumberReturned)
-            fixed (uint* totalMatches = &aTotalMatches)
-            fixed (uint* updateID = &aUpdateID)
-            {
-                CpProxyUpnpOrgScheduledRecording1SyncBrowseRecordTasks(iHandle, recordScheduleID, filter, aStartingIndex, aRequestedCount, sortCriteria, &result, numberReturned, totalMatches, updateID);
-            }
-            Marshal.FreeHGlobal((IntPtr)recordScheduleID);
-            Marshal.FreeHGlobal((IntPtr)filter);
-            Marshal.FreeHGlobal((IntPtr)sortCriteria);
-            aResult = Marshal.PtrToStringAnsi((IntPtr)result);
-            ZappFree(result);
+            SyncBrowseRecordTasksUpnpOrgScheduledRecording1 sync = new SyncBrowseRecordTasksUpnpOrgScheduledRecording1(this);
+            BeginBrowseRecordTasks(aRecordScheduleID, aFilter, aStartingIndex, aRequestedCount, aSortCriteria, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aResult = sync.Result();
+            aNumberReturned = sync.NumberReturned();
+            aTotalMatches = sync.TotalMatches();
+            aUpdateID = sync.UpdateID();
         }
 
         /// <summary>
@@ -547,17 +922,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSortCriteria"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginBrowseRecordTasks(string aRecordScheduleID, string aFilter, uint aStartingIndex, uint aRequestedCount, string aSortCriteria, CallbackAsyncComplete aCallback)
+        public void BeginBrowseRecordTasks(String aRecordScheduleID, String aFilter, uint aStartingIndex, uint aRequestedCount, String aSortCriteria, CallbackAsyncComplete aCallback)
         {
-            char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
-            char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
-            char* sortCriteria = (char*)Marshal.StringToHGlobalAnsi(aSortCriteria);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgScheduledRecording1BeginBrowseRecordTasks(iHandle, recordScheduleID, filter, aStartingIndex, aRequestedCount, sortCriteria, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)recordScheduleID);
-            Marshal.FreeHGlobal((IntPtr)filter);
-            Marshal.FreeHGlobal((IntPtr)sortCriteria);
+            Invocation invocation = iService.Invocation(iActionBrowseRecordTasks, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionBrowseRecordTasks.InputParameter(inIndex++), aRecordScheduleID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionBrowseRecordTasks.InputParameter(inIndex++), aFilter));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionBrowseRecordTasks.InputParameter(inIndex++), aStartingIndex));
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionBrowseRecordTasks.InputParameter(inIndex++), aRequestedCount));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionBrowseRecordTasks.InputParameter(inIndex++), aSortCriteria));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionBrowseRecordTasks.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionBrowseRecordTasks.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionBrowseRecordTasks.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionBrowseRecordTasks.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -569,20 +948,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aNumberReturned"></param>
         /// <param name="aTotalMatches"></param>
         /// <param name="aUpdateID"></param>
-        public unsafe void EndBrowseRecordTasks(IntPtr aAsyncHandle, out string aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
+        public void EndBrowseRecordTasks(IntPtr aAsyncHandle, out String aResult, out uint aNumberReturned, out uint aTotalMatches, out uint aUpdateID)
         {
-            char* result;
-            fixed (uint* numberReturned = &aNumberReturned)
-            fixed (uint* totalMatches = &aTotalMatches)
-            fixed (uint* updateID = &aUpdateID)
-            {
-                if (0 != CpProxyUpnpOrgScheduledRecording1EndBrowseRecordTasks(iHandle, aAsyncHandle, &result, numberReturned, totalMatches, updateID))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aResult = Marshal.PtrToStringAnsi((IntPtr)result);
-            ZappFree(result);
+            uint index = 0;
+            aResult = Invocation.OutputString(aAsyncHandle, index++);
+            aNumberReturned = Invocation.OutputUint(aAsyncHandle, index++);
+            aTotalMatches = Invocation.OutputUint(aAsyncHandle, index++);
+            aUpdateID = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -594,20 +966,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRecordScheduleID"></param>
         /// <param name="aResult"></param>
         /// <param name="aUpdateID"></param>
-        public unsafe void SyncCreateRecordSchedule(string aElements, out string aRecordScheduleID, out string aResult, out uint aUpdateID)
+        public void SyncCreateRecordSchedule(String aElements, out String aRecordScheduleID, out String aResult, out uint aUpdateID)
         {
-            char* elements = (char*)Marshal.StringToHGlobalAnsi(aElements);
-            char* recordScheduleID;
-            char* result;
-            fixed (uint* updateID = &aUpdateID)
-            {
-                CpProxyUpnpOrgScheduledRecording1SyncCreateRecordSchedule(iHandle, elements, &recordScheduleID, &result, updateID);
-            }
-            Marshal.FreeHGlobal((IntPtr)elements);
-            aRecordScheduleID = Marshal.PtrToStringAnsi((IntPtr)recordScheduleID);
-            ZappFree(recordScheduleID);
-            aResult = Marshal.PtrToStringAnsi((IntPtr)result);
-            ZappFree(result);
+            SyncCreateRecordScheduleUpnpOrgScheduledRecording1 sync = new SyncCreateRecordScheduleUpnpOrgScheduledRecording1(this);
+            BeginCreateRecordSchedule(aElements, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aRecordScheduleID = sync.RecordScheduleID();
+            aResult = sync.Result();
+            aUpdateID = sync.UpdateID();
         }
 
         /// <summary>
@@ -619,13 +986,16 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aElements"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginCreateRecordSchedule(string aElements, CallbackAsyncComplete aCallback)
+        public void BeginCreateRecordSchedule(String aElements, CallbackAsyncComplete aCallback)
         {
-            char* elements = (char*)Marshal.StringToHGlobalAnsi(aElements);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgScheduledRecording1BeginCreateRecordSchedule(iHandle, elements, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)elements);
+            Invocation invocation = iService.Invocation(iActionCreateRecordSchedule, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionCreateRecordSchedule.InputParameter(inIndex++), aElements));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionCreateRecordSchedule.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionCreateRecordSchedule.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionCreateRecordSchedule.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -636,21 +1006,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRecordScheduleID"></param>
         /// <param name="aResult"></param>
         /// <param name="aUpdateID"></param>
-        public unsafe void EndCreateRecordSchedule(IntPtr aAsyncHandle, out string aRecordScheduleID, out string aResult, out uint aUpdateID)
+        public void EndCreateRecordSchedule(IntPtr aAsyncHandle, out String aRecordScheduleID, out String aResult, out uint aUpdateID)
         {
-            char* recordScheduleID;
-            char* result;
-            fixed (uint* updateID = &aUpdateID)
-            {
-                if (0 != CpProxyUpnpOrgScheduledRecording1EndCreateRecordSchedule(iHandle, aAsyncHandle, &recordScheduleID, &result, updateID))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aRecordScheduleID = Marshal.PtrToStringAnsi((IntPtr)recordScheduleID);
-            ZappFree(recordScheduleID);
-            aResult = Marshal.PtrToStringAnsi((IntPtr)result);
-            ZappFree(result);
+            uint index = 0;
+            aRecordScheduleID = Invocation.OutputString(aAsyncHandle, index++);
+            aResult = Invocation.OutputString(aAsyncHandle, index++);
+            aUpdateID = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -659,13 +1020,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aRecordScheduleID"></param>
-        public unsafe void SyncDeleteRecordSchedule(string aRecordScheduleID)
+        public void SyncDeleteRecordSchedule(String aRecordScheduleID)
         {
-            char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
-            {
-                CpProxyUpnpOrgScheduledRecording1SyncDeleteRecordSchedule(iHandle, recordScheduleID);
-            }
-            Marshal.FreeHGlobal((IntPtr)recordScheduleID);
+            SyncDeleteRecordScheduleUpnpOrgScheduledRecording1 sync = new SyncDeleteRecordScheduleUpnpOrgScheduledRecording1(this);
+            BeginDeleteRecordSchedule(aRecordScheduleID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -677,13 +1037,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRecordScheduleID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginDeleteRecordSchedule(string aRecordScheduleID, CallbackAsyncComplete aCallback)
+        public void BeginDeleteRecordSchedule(String aRecordScheduleID, CallbackAsyncComplete aCallback)
         {
-            char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgScheduledRecording1BeginDeleteRecordSchedule(iHandle, recordScheduleID, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)recordScheduleID);
+            Invocation invocation = iService.Invocation(iActionDeleteRecordSchedule, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionDeleteRecordSchedule.InputParameter(inIndex++), aRecordScheduleID));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -691,14 +1050,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndDeleteRecordSchedule(IntPtr aAsyncHandle)
+        public void EndDeleteRecordSchedule(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgScheduledRecording1EndDeleteRecordSchedule(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -710,19 +1063,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aFilter"></param>
         /// <param name="aResult"></param>
         /// <param name="aUpdateID"></param>
-        public unsafe void SyncGetRecordSchedule(string aRecordScheduleID, string aFilter, out string aResult, out uint aUpdateID)
+        public void SyncGetRecordSchedule(String aRecordScheduleID, String aFilter, out String aResult, out uint aUpdateID)
         {
-            char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
-            char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
-            char* result;
-            fixed (uint* updateID = &aUpdateID)
-            {
-                CpProxyUpnpOrgScheduledRecording1SyncGetRecordSchedule(iHandle, recordScheduleID, filter, &result, updateID);
-            }
-            Marshal.FreeHGlobal((IntPtr)recordScheduleID);
-            Marshal.FreeHGlobal((IntPtr)filter);
-            aResult = Marshal.PtrToStringAnsi((IntPtr)result);
-            ZappFree(result);
+            SyncGetRecordScheduleUpnpOrgScheduledRecording1 sync = new SyncGetRecordScheduleUpnpOrgScheduledRecording1(this);
+            BeginGetRecordSchedule(aRecordScheduleID, aFilter, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aResult = sync.Result();
+            aUpdateID = sync.UpdateID();
         }
 
         /// <summary>
@@ -735,15 +1083,16 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aFilter"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetRecordSchedule(string aRecordScheduleID, string aFilter, CallbackAsyncComplete aCallback)
+        public void BeginGetRecordSchedule(String aRecordScheduleID, String aFilter, CallbackAsyncComplete aCallback)
         {
-            char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
-            char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgScheduledRecording1BeginGetRecordSchedule(iHandle, recordScheduleID, filter, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)recordScheduleID);
-            Marshal.FreeHGlobal((IntPtr)filter);
+            Invocation invocation = iService.Invocation(iActionGetRecordSchedule, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionGetRecordSchedule.InputParameter(inIndex++), aRecordScheduleID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionGetRecordSchedule.InputParameter(inIndex++), aFilter));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetRecordSchedule.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetRecordSchedule.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -753,18 +1102,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aResult"></param>
         /// <param name="aUpdateID"></param>
-        public unsafe void EndGetRecordSchedule(IntPtr aAsyncHandle, out string aResult, out uint aUpdateID)
+        public void EndGetRecordSchedule(IntPtr aAsyncHandle, out String aResult, out uint aUpdateID)
         {
-            char* result;
-            fixed (uint* updateID = &aUpdateID)
-            {
-                if (0 != CpProxyUpnpOrgScheduledRecording1EndGetRecordSchedule(iHandle, aAsyncHandle, &result, updateID))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aResult = Marshal.PtrToStringAnsi((IntPtr)result);
-            ZappFree(result);
+            uint index = 0;
+            aResult = Invocation.OutputString(aAsyncHandle, index++);
+            aUpdateID = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -773,13 +1115,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aRecordScheduleID"></param>
-        public unsafe void SyncEnableRecordSchedule(string aRecordScheduleID)
+        public void SyncEnableRecordSchedule(String aRecordScheduleID)
         {
-            char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
-            {
-                CpProxyUpnpOrgScheduledRecording1SyncEnableRecordSchedule(iHandle, recordScheduleID);
-            }
-            Marshal.FreeHGlobal((IntPtr)recordScheduleID);
+            SyncEnableRecordScheduleUpnpOrgScheduledRecording1 sync = new SyncEnableRecordScheduleUpnpOrgScheduledRecording1(this);
+            BeginEnableRecordSchedule(aRecordScheduleID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -791,13 +1132,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRecordScheduleID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginEnableRecordSchedule(string aRecordScheduleID, CallbackAsyncComplete aCallback)
+        public void BeginEnableRecordSchedule(String aRecordScheduleID, CallbackAsyncComplete aCallback)
         {
-            char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgScheduledRecording1BeginEnableRecordSchedule(iHandle, recordScheduleID, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)recordScheduleID);
+            Invocation invocation = iService.Invocation(iActionEnableRecordSchedule, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionEnableRecordSchedule.InputParameter(inIndex++), aRecordScheduleID));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -805,14 +1145,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndEnableRecordSchedule(IntPtr aAsyncHandle)
+        public void EndEnableRecordSchedule(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgScheduledRecording1EndEnableRecordSchedule(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -821,13 +1155,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aRecordScheduleID"></param>
-        public unsafe void SyncDisableRecordSchedule(string aRecordScheduleID)
+        public void SyncDisableRecordSchedule(String aRecordScheduleID)
         {
-            char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
-            {
-                CpProxyUpnpOrgScheduledRecording1SyncDisableRecordSchedule(iHandle, recordScheduleID);
-            }
-            Marshal.FreeHGlobal((IntPtr)recordScheduleID);
+            SyncDisableRecordScheduleUpnpOrgScheduledRecording1 sync = new SyncDisableRecordScheduleUpnpOrgScheduledRecording1(this);
+            BeginDisableRecordSchedule(aRecordScheduleID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -839,13 +1172,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRecordScheduleID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginDisableRecordSchedule(string aRecordScheduleID, CallbackAsyncComplete aCallback)
+        public void BeginDisableRecordSchedule(String aRecordScheduleID, CallbackAsyncComplete aCallback)
         {
-            char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgScheduledRecording1BeginDisableRecordSchedule(iHandle, recordScheduleID, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)recordScheduleID);
+            Invocation invocation = iService.Invocation(iActionDisableRecordSchedule, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionDisableRecordSchedule.InputParameter(inIndex++), aRecordScheduleID));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -853,14 +1185,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndDisableRecordSchedule(IntPtr aAsyncHandle)
+        public void EndDisableRecordSchedule(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgScheduledRecording1EndDisableRecordSchedule(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -869,13 +1195,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aRecordTaskID"></param>
-        public unsafe void SyncDeleteRecordTask(string aRecordTaskID)
+        public void SyncDeleteRecordTask(String aRecordTaskID)
         {
-            char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
-            {
-                CpProxyUpnpOrgScheduledRecording1SyncDeleteRecordTask(iHandle, recordTaskID);
-            }
-            Marshal.FreeHGlobal((IntPtr)recordTaskID);
+            SyncDeleteRecordTaskUpnpOrgScheduledRecording1 sync = new SyncDeleteRecordTaskUpnpOrgScheduledRecording1(this);
+            BeginDeleteRecordTask(aRecordTaskID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -887,13 +1212,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRecordTaskID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginDeleteRecordTask(string aRecordTaskID, CallbackAsyncComplete aCallback)
+        public void BeginDeleteRecordTask(String aRecordTaskID, CallbackAsyncComplete aCallback)
         {
-            char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgScheduledRecording1BeginDeleteRecordTask(iHandle, recordTaskID, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)recordTaskID);
+            Invocation invocation = iService.Invocation(iActionDeleteRecordTask, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionDeleteRecordTask.InputParameter(inIndex++), aRecordTaskID));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -901,14 +1225,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndDeleteRecordTask(IntPtr aAsyncHandle)
+        public void EndDeleteRecordTask(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgScheduledRecording1EndDeleteRecordTask(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -920,19 +1238,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aFilter"></param>
         /// <param name="aResult"></param>
         /// <param name="aUpdateID"></param>
-        public unsafe void SyncGetRecordTask(string aRecordTaskID, string aFilter, out string aResult, out uint aUpdateID)
+        public void SyncGetRecordTask(String aRecordTaskID, String aFilter, out String aResult, out uint aUpdateID)
         {
-            char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
-            char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
-            char* result;
-            fixed (uint* updateID = &aUpdateID)
-            {
-                CpProxyUpnpOrgScheduledRecording1SyncGetRecordTask(iHandle, recordTaskID, filter, &result, updateID);
-            }
-            Marshal.FreeHGlobal((IntPtr)recordTaskID);
-            Marshal.FreeHGlobal((IntPtr)filter);
-            aResult = Marshal.PtrToStringAnsi((IntPtr)result);
-            ZappFree(result);
+            SyncGetRecordTaskUpnpOrgScheduledRecording1 sync = new SyncGetRecordTaskUpnpOrgScheduledRecording1(this);
+            BeginGetRecordTask(aRecordTaskID, aFilter, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aResult = sync.Result();
+            aUpdateID = sync.UpdateID();
         }
 
         /// <summary>
@@ -945,15 +1258,16 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aFilter"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetRecordTask(string aRecordTaskID, string aFilter, CallbackAsyncComplete aCallback)
+        public void BeginGetRecordTask(String aRecordTaskID, String aFilter, CallbackAsyncComplete aCallback)
         {
-            char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
-            char* filter = (char*)Marshal.StringToHGlobalAnsi(aFilter);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgScheduledRecording1BeginGetRecordTask(iHandle, recordTaskID, filter, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)recordTaskID);
-            Marshal.FreeHGlobal((IntPtr)filter);
+            Invocation invocation = iService.Invocation(iActionGetRecordTask, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionGetRecordTask.InputParameter(inIndex++), aRecordTaskID));
+            invocation.AddInput(new ArgumentString((ParameterString)iActionGetRecordTask.InputParameter(inIndex++), aFilter));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetRecordTask.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetRecordTask.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -963,18 +1277,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aResult"></param>
         /// <param name="aUpdateID"></param>
-        public unsafe void EndGetRecordTask(IntPtr aAsyncHandle, out string aResult, out uint aUpdateID)
+        public void EndGetRecordTask(IntPtr aAsyncHandle, out String aResult, out uint aUpdateID)
         {
-            char* result;
-            fixed (uint* updateID = &aUpdateID)
-            {
-                if (0 != CpProxyUpnpOrgScheduledRecording1EndGetRecordTask(iHandle, aAsyncHandle, &result, updateID))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aResult = Marshal.PtrToStringAnsi((IntPtr)result);
-            ZappFree(result);
+            uint index = 0;
+            aResult = Invocation.OutputString(aAsyncHandle, index++);
+            aUpdateID = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -983,13 +1290,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aRecordTaskID"></param>
-        public unsafe void SyncEnableRecordTask(string aRecordTaskID)
+        public void SyncEnableRecordTask(String aRecordTaskID)
         {
-            char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
-            {
-                CpProxyUpnpOrgScheduledRecording1SyncEnableRecordTask(iHandle, recordTaskID);
-            }
-            Marshal.FreeHGlobal((IntPtr)recordTaskID);
+            SyncEnableRecordTaskUpnpOrgScheduledRecording1 sync = new SyncEnableRecordTaskUpnpOrgScheduledRecording1(this);
+            BeginEnableRecordTask(aRecordTaskID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -1001,13 +1307,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRecordTaskID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginEnableRecordTask(string aRecordTaskID, CallbackAsyncComplete aCallback)
+        public void BeginEnableRecordTask(String aRecordTaskID, CallbackAsyncComplete aCallback)
         {
-            char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgScheduledRecording1BeginEnableRecordTask(iHandle, recordTaskID, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)recordTaskID);
+            Invocation invocation = iService.Invocation(iActionEnableRecordTask, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionEnableRecordTask.InputParameter(inIndex++), aRecordTaskID));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1015,14 +1320,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndEnableRecordTask(IntPtr aAsyncHandle)
+        public void EndEnableRecordTask(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgScheduledRecording1EndEnableRecordTask(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -1031,13 +1330,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aRecordTaskID"></param>
-        public unsafe void SyncDisableRecordTask(string aRecordTaskID)
+        public void SyncDisableRecordTask(String aRecordTaskID)
         {
-            char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
-            {
-                CpProxyUpnpOrgScheduledRecording1SyncDisableRecordTask(iHandle, recordTaskID);
-            }
-            Marshal.FreeHGlobal((IntPtr)recordTaskID);
+            SyncDisableRecordTaskUpnpOrgScheduledRecording1 sync = new SyncDisableRecordTaskUpnpOrgScheduledRecording1(this);
+            BeginDisableRecordTask(aRecordTaskID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -1049,13 +1347,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRecordTaskID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginDisableRecordTask(string aRecordTaskID, CallbackAsyncComplete aCallback)
+        public void BeginDisableRecordTask(String aRecordTaskID, CallbackAsyncComplete aCallback)
         {
-            char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgScheduledRecording1BeginDisableRecordTask(iHandle, recordTaskID, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)recordTaskID);
+            Invocation invocation = iService.Invocation(iActionDisableRecordTask, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionDisableRecordTask.InputParameter(inIndex++), aRecordTaskID));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1063,14 +1360,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndDisableRecordTask(IntPtr aAsyncHandle)
+        public void EndDisableRecordTask(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgScheduledRecording1EndDisableRecordTask(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -1079,13 +1370,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aRecordTaskID"></param>
-        public unsafe void SyncResetRecordTask(string aRecordTaskID)
+        public void SyncResetRecordTask(String aRecordTaskID)
         {
-            char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
-            {
-                CpProxyUpnpOrgScheduledRecording1SyncResetRecordTask(iHandle, recordTaskID);
-            }
-            Marshal.FreeHGlobal((IntPtr)recordTaskID);
+            SyncResetRecordTaskUpnpOrgScheduledRecording1 sync = new SyncResetRecordTaskUpnpOrgScheduledRecording1(this);
+            BeginResetRecordTask(aRecordTaskID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -1097,13 +1387,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRecordTaskID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginResetRecordTask(string aRecordTaskID, CallbackAsyncComplete aCallback)
+        public void BeginResetRecordTask(String aRecordTaskID, CallbackAsyncComplete aCallback)
         {
-            char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgScheduledRecording1BeginResetRecordTask(iHandle, recordTaskID, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)recordTaskID);
+            Invocation invocation = iService.Invocation(iActionResetRecordTask, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionResetRecordTask.InputParameter(inIndex++), aRecordTaskID));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1111,14 +1400,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndResetRecordTask(IntPtr aAsyncHandle)
+        public void EndResetRecordTask(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyUpnpOrgScheduledRecording1EndResetRecordTask(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -1129,17 +1412,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRecordScheduleID"></param>
         /// <param name="aRecordScheduleConflictIDList"></param>
         /// <param name="aUpdateID"></param>
-        public unsafe void SyncGetRecordScheduleConflicts(string aRecordScheduleID, out string aRecordScheduleConflictIDList, out uint aUpdateID)
+        public void SyncGetRecordScheduleConflicts(String aRecordScheduleID, out String aRecordScheduleConflictIDList, out uint aUpdateID)
         {
-            char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
-            char* recordScheduleConflictIDList;
-            fixed (uint* updateID = &aUpdateID)
-            {
-                CpProxyUpnpOrgScheduledRecording1SyncGetRecordScheduleConflicts(iHandle, recordScheduleID, &recordScheduleConflictIDList, updateID);
-            }
-            Marshal.FreeHGlobal((IntPtr)recordScheduleID);
-            aRecordScheduleConflictIDList = Marshal.PtrToStringAnsi((IntPtr)recordScheduleConflictIDList);
-            ZappFree(recordScheduleConflictIDList);
+            SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording1 sync = new SyncGetRecordScheduleConflictsUpnpOrgScheduledRecording1(this);
+            BeginGetRecordScheduleConflicts(aRecordScheduleID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aRecordScheduleConflictIDList = sync.RecordScheduleConflictIDList();
+            aUpdateID = sync.UpdateID();
         }
 
         /// <summary>
@@ -1151,13 +1431,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRecordScheduleID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetRecordScheduleConflicts(string aRecordScheduleID, CallbackAsyncComplete aCallback)
+        public void BeginGetRecordScheduleConflicts(String aRecordScheduleID, CallbackAsyncComplete aCallback)
         {
-            char* recordScheduleID = (char*)Marshal.StringToHGlobalAnsi(aRecordScheduleID);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgScheduledRecording1BeginGetRecordScheduleConflicts(iHandle, recordScheduleID, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)recordScheduleID);
+            Invocation invocation = iService.Invocation(iActionGetRecordScheduleConflicts, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionGetRecordScheduleConflicts.InputParameter(inIndex++), aRecordScheduleID));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetRecordScheduleConflicts.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetRecordScheduleConflicts.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1167,18 +1449,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aRecordScheduleConflictIDList"></param>
         /// <param name="aUpdateID"></param>
-        public unsafe void EndGetRecordScheduleConflicts(IntPtr aAsyncHandle, out string aRecordScheduleConflictIDList, out uint aUpdateID)
+        public void EndGetRecordScheduleConflicts(IntPtr aAsyncHandle, out String aRecordScheduleConflictIDList, out uint aUpdateID)
         {
-            char* recordScheduleConflictIDList;
-            fixed (uint* updateID = &aUpdateID)
-            {
-                if (0 != CpProxyUpnpOrgScheduledRecording1EndGetRecordScheduleConflicts(iHandle, aAsyncHandle, &recordScheduleConflictIDList, updateID))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aRecordScheduleConflictIDList = Marshal.PtrToStringAnsi((IntPtr)recordScheduleConflictIDList);
-            ZappFree(recordScheduleConflictIDList);
+            uint index = 0;
+            aRecordScheduleConflictIDList = Invocation.OutputString(aAsyncHandle, index++);
+            aUpdateID = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -1189,17 +1464,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRecordTaskID"></param>
         /// <param name="aRecordTaskConflictIDList"></param>
         /// <param name="aUpdateID"></param>
-        public unsafe void SyncGetRecordTaskConflicts(string aRecordTaskID, out string aRecordTaskConflictIDList, out uint aUpdateID)
+        public void SyncGetRecordTaskConflicts(String aRecordTaskID, out String aRecordTaskConflictIDList, out uint aUpdateID)
         {
-            char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
-            char* recordTaskConflictIDList;
-            fixed (uint* updateID = &aUpdateID)
-            {
-                CpProxyUpnpOrgScheduledRecording1SyncGetRecordTaskConflicts(iHandle, recordTaskID, &recordTaskConflictIDList, updateID);
-            }
-            Marshal.FreeHGlobal((IntPtr)recordTaskID);
-            aRecordTaskConflictIDList = Marshal.PtrToStringAnsi((IntPtr)recordTaskConflictIDList);
-            ZappFree(recordTaskConflictIDList);
+            SyncGetRecordTaskConflictsUpnpOrgScheduledRecording1 sync = new SyncGetRecordTaskConflictsUpnpOrgScheduledRecording1(this);
+            BeginGetRecordTaskConflicts(aRecordTaskID, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aRecordTaskConflictIDList = sync.RecordTaskConflictIDList();
+            aUpdateID = sync.UpdateID();
         }
 
         /// <summary>
@@ -1211,13 +1483,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aRecordTaskID"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginGetRecordTaskConflicts(string aRecordTaskID, CallbackAsyncComplete aCallback)
+        public void BeginGetRecordTaskConflicts(String aRecordTaskID, CallbackAsyncComplete aCallback)
         {
-            char* recordTaskID = (char*)Marshal.StringToHGlobalAnsi(aRecordTaskID);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyUpnpOrgScheduledRecording1BeginGetRecordTaskConflicts(iHandle, recordTaskID, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)recordTaskID);
+            Invocation invocation = iService.Invocation(iActionGetRecordTaskConflicts, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionGetRecordTaskConflicts.InputParameter(inIndex++), aRecordTaskID));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionGetRecordTaskConflicts.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionGetRecordTaskConflicts.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -1227,18 +1501,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aRecordTaskConflictIDList"></param>
         /// <param name="aUpdateID"></param>
-        public unsafe void EndGetRecordTaskConflicts(IntPtr aAsyncHandle, out string aRecordTaskConflictIDList, out uint aUpdateID)
+        public void EndGetRecordTaskConflicts(IntPtr aAsyncHandle, out String aRecordTaskConflictIDList, out uint aUpdateID)
         {
-            char* recordTaskConflictIDList;
-            fixed (uint* updateID = &aUpdateID)
-            {
-                if (0 != CpProxyUpnpOrgScheduledRecording1EndGetRecordTaskConflicts(iHandle, aAsyncHandle, &recordTaskConflictIDList, updateID))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aRecordTaskConflictIDList = Marshal.PtrToStringAnsi((IntPtr)recordTaskConflictIDList);
-            ZappFree(recordTaskConflictIDList);
+            uint index = 0;
+            aRecordTaskConflictIDList = Invocation.OutputString(aAsyncHandle, index++);
+            aUpdateID = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -1249,17 +1516,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aLastChangeChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyLastChangeChanged(CallbackPropertyChanged aLastChangeChanged)
         {
-            iLastChangeChanged = aLastChangeChanged;
-            iCallbackLastChangeChanged = new Callback(PropertyLastChangeChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyUpnpOrgScheduledRecording1SetPropertyLastChangeChanged(iHandle, iCallbackLastChangeChanged, ptr);
+            lock (this)
+            {
+                iLastChangeChanged = aLastChangeChanged;
+            }
         }
 
-        private void PropertyLastChangeChanged(IntPtr aPtr)
+        private void LastChangePropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyUpnpOrgScheduledRecording1 self = (CpProxyUpnpOrgScheduledRecording1)gch.Target;
-            self.iLastChangeChanged();
+            lock (this)
+            {
+                if (iLastChangeChanged != null)
+                {
+                    iLastChangeChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -1269,12 +1540,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aLastChange">Will be set to the value of the property</param>
-        public unsafe void PropertyLastChange(out string aLastChange)
+        public String PropertyLastChange()
         {
-            char* ptr;
-            CpProxyUpnpOrgScheduledRecording1PropertyLastChange(iHandle, &ptr);
-            aLastChange = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iLastChange.Value();
         }
 
         /// <summary>
@@ -1298,17 +1566,30 @@ namespace Zapp.ControlPoint.Proxies
                 {
                     return;
                 }
-                CpProxyUpnpOrgScheduledRecording1Destroy(iHandle);
+                DisposeProxy();
                 iHandle = IntPtr.Zero;
+                iActionGetSortCapabilities.Dispose();
+                iActionGetPropertyList.Dispose();
+                iActionGetAllowedValues.Dispose();
+                iActionGetStateUpdateID.Dispose();
+                iActionBrowseRecordSchedules.Dispose();
+                iActionBrowseRecordTasks.Dispose();
+                iActionCreateRecordSchedule.Dispose();
+                iActionDeleteRecordSchedule.Dispose();
+                iActionGetRecordSchedule.Dispose();
+                iActionEnableRecordSchedule.Dispose();
+                iActionDisableRecordSchedule.Dispose();
+                iActionDeleteRecordTask.Dispose();
+                iActionGetRecordTask.Dispose();
+                iActionEnableRecordTask.Dispose();
+                iActionDisableRecordTask.Dispose();
+                iActionResetRecordTask.Dispose();
+                iActionGetRecordScheduleConflicts.Dispose();
+                iActionGetRecordTaskConflicts.Dispose();
             }
-            iGch.Free();
             if (aDisposing)
             {
                 GC.SuppressFinalize(this);
-            }
-            else
-            {
-                DisposeProxy();
             }
         }
     }

@@ -70,7 +70,7 @@ namespace Zapp
 
         protected override void GetUint(uint aVersion, out uint aValueUint)
         {
-            GetPropertyVarUint(out aValueUint);
+            aValueUint = PropertyVarUint();
         }
 
         protected override void SetInt(uint aVersion, int aValueInt)
@@ -80,7 +80,7 @@ namespace Zapp
 
         protected override void GetInt(uint aVersion, out int aValueInt)
         {
-            GetPropertyVarInt(out aValueInt);
+            aValueInt = PropertyVarInt();
         }
 
         protected override void SetBool(uint aVersion, bool aValueBool)
@@ -90,7 +90,7 @@ namespace Zapp
 
         protected override void GetBool(uint aVersion, out bool aValueBool)
         {
-            GetPropertyVarBool(out aValueBool);
+            aValueBool = PropertyVarBool();
         }
 
         protected override void SetString(uint aVersion, string aValueStr)
@@ -100,7 +100,7 @@ namespace Zapp
 
         protected override void GetString(uint aVersion, out string aValueStr)
         {
-            GetPropertyVarStr(out aValueStr);
+            aValueStr = PropertyVarStr();
         }
 
         protected override void SetBinary(uint aVersion, string aValueBin)
@@ -110,7 +110,7 @@ namespace Zapp
 
         protected override void GetBinary(uint aVersion, out string aValueBin)
         {
-            GetPropertyVarBin(out aValueBin);
+            aValueBin = PropertyVarBin();
         }
 
         protected override void SetMultiple(uint aVersion, uint aValueUint, int aValueInt, bool aValueBool)

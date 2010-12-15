@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -19,7 +20,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the LastChange property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyLastChange(out string aValue);
+        string PropertyLastChange();
         
     }
     /// <summary>
@@ -27,100 +28,38 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class DvProviderUpnpOrgScheduledRecording1 : DvProvider, IDisposable, IDvProviderUpnpOrgScheduledRecording1
     {
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern IntPtr DvProviderUpnpOrgScheduledRecording1Create(IntPtr aDeviceHandle);
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern void DvProviderUpnpOrgScheduledRecording1Destroy(IntPtr aHandle);
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern unsafe int DvProviderUpnpOrgScheduledRecording1SetPropertyLastChange(IntPtr aHandle, char* aValue, uint* aChanged);
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern unsafe void DvProviderUpnpOrgScheduledRecording1GetPropertyLastChange(IntPtr aHandle, char** aValue);
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern void DvProviderUpnpOrgScheduledRecording1EnableActionGetSortCapabilities(IntPtr aHandle, CallbackGetSortCapabilities aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern void DvProviderUpnpOrgScheduledRecording1EnableActionGetPropertyList(IntPtr aHandle, CallbackGetPropertyList aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern void DvProviderUpnpOrgScheduledRecording1EnableActionGetAllowedValues(IntPtr aHandle, CallbackGetAllowedValues aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern void DvProviderUpnpOrgScheduledRecording1EnableActionGetStateUpdateID(IntPtr aHandle, CallbackGetStateUpdateID aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern void DvProviderUpnpOrgScheduledRecording1EnableActionBrowseRecordSchedules(IntPtr aHandle, CallbackBrowseRecordSchedules aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern void DvProviderUpnpOrgScheduledRecording1EnableActionBrowseRecordTasks(IntPtr aHandle, CallbackBrowseRecordTasks aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern void DvProviderUpnpOrgScheduledRecording1EnableActionCreateRecordSchedule(IntPtr aHandle, CallbackCreateRecordSchedule aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern void DvProviderUpnpOrgScheduledRecording1EnableActionDeleteRecordSchedule(IntPtr aHandle, CallbackDeleteRecordSchedule aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern void DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordSchedule(IntPtr aHandle, CallbackGetRecordSchedule aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern void DvProviderUpnpOrgScheduledRecording1EnableActionEnableRecordSchedule(IntPtr aHandle, CallbackEnableRecordSchedule aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern void DvProviderUpnpOrgScheduledRecording1EnableActionDisableRecordSchedule(IntPtr aHandle, CallbackDisableRecordSchedule aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern void DvProviderUpnpOrgScheduledRecording1EnableActionDeleteRecordTask(IntPtr aHandle, CallbackDeleteRecordTask aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern void DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordTask(IntPtr aHandle, CallbackGetRecordTask aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern void DvProviderUpnpOrgScheduledRecording1EnableActionEnableRecordTask(IntPtr aHandle, CallbackEnableRecordTask aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern void DvProviderUpnpOrgScheduledRecording1EnableActionDisableRecordTask(IntPtr aHandle, CallbackDisableRecordTask aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern void DvProviderUpnpOrgScheduledRecording1EnableActionResetRecordTask(IntPtr aHandle, CallbackResetRecordTask aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern void DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordScheduleConflicts(IntPtr aHandle, CallbackGetRecordScheduleConflicts aCallback, IntPtr aPtr);
-        [DllImport("DvUpnpOrgScheduledRecording1")]
-        static extern void DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordTaskConflicts(IntPtr aHandle, CallbackGetRecordTaskConflicts aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private unsafe delegate int CallbackGetSortCapabilities(IntPtr aPtr, uint aVersion, char** aSortCaps, uint* aSortLevelCap);
-        private unsafe delegate int CallbackGetPropertyList(IntPtr aPtr, uint aVersion, char* aDataTypeID, char** aPropertyList);
-        private unsafe delegate int CallbackGetAllowedValues(IntPtr aPtr, uint aVersion, char* aDataTypeID, char* aFilter, char** aPropertyInfo);
-        private unsafe delegate int CallbackGetStateUpdateID(IntPtr aPtr, uint aVersion, uint* aId);
-        private unsafe delegate int CallbackBrowseRecordSchedules(IntPtr aPtr, uint aVersion, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
-        private unsafe delegate int CallbackBrowseRecordTasks(IntPtr aPtr, uint aVersion, char* aRecordScheduleID, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID);
-        private unsafe delegate int CallbackCreateRecordSchedule(IntPtr aPtr, uint aVersion, char* aElements, char** aRecordScheduleID, char** aResult, uint* aUpdateID);
-        private unsafe delegate int CallbackDeleteRecordSchedule(IntPtr aPtr, uint aVersion, char* aRecordScheduleID);
-        private unsafe delegate int CallbackGetRecordSchedule(IntPtr aPtr, uint aVersion, char* aRecordScheduleID, char* aFilter, char** aResult, uint* aUpdateID);
-        private unsafe delegate int CallbackEnableRecordSchedule(IntPtr aPtr, uint aVersion, char* aRecordScheduleID);
-        private unsafe delegate int CallbackDisableRecordSchedule(IntPtr aPtr, uint aVersion, char* aRecordScheduleID);
-        private unsafe delegate int CallbackDeleteRecordTask(IntPtr aPtr, uint aVersion, char* aRecordTaskID);
-        private unsafe delegate int CallbackGetRecordTask(IntPtr aPtr, uint aVersion, char* aRecordTaskID, char* aFilter, char** aResult, uint* aUpdateID);
-        private unsafe delegate int CallbackEnableRecordTask(IntPtr aPtr, uint aVersion, char* aRecordTaskID);
-        private unsafe delegate int CallbackDisableRecordTask(IntPtr aPtr, uint aVersion, char* aRecordTaskID);
-        private unsafe delegate int CallbackResetRecordTask(IntPtr aPtr, uint aVersion, char* aRecordTaskID);
-        private unsafe delegate int CallbackGetRecordScheduleConflicts(IntPtr aPtr, uint aVersion, char* aRecordScheduleID, char** aRecordScheduleConflictIDList, uint* aUpdateID);
-        private unsafe delegate int CallbackGetRecordTaskConflicts(IntPtr aPtr, uint aVersion, char* aRecordTaskID, char** aRecordTaskConflictIDList, uint* aUpdateID);
-
         private GCHandle iGch;
-        private CallbackGetSortCapabilities iCallbackGetSortCapabilities;
-        private CallbackGetPropertyList iCallbackGetPropertyList;
-        private CallbackGetAllowedValues iCallbackGetAllowedValues;
-        private CallbackGetStateUpdateID iCallbackGetStateUpdateID;
-        private CallbackBrowseRecordSchedules iCallbackBrowseRecordSchedules;
-        private CallbackBrowseRecordTasks iCallbackBrowseRecordTasks;
-        private CallbackCreateRecordSchedule iCallbackCreateRecordSchedule;
-        private CallbackDeleteRecordSchedule iCallbackDeleteRecordSchedule;
-        private CallbackGetRecordSchedule iCallbackGetRecordSchedule;
-        private CallbackEnableRecordSchedule iCallbackEnableRecordSchedule;
-        private CallbackDisableRecordSchedule iCallbackDisableRecordSchedule;
-        private CallbackDeleteRecordTask iCallbackDeleteRecordTask;
-        private CallbackGetRecordTask iCallbackGetRecordTask;
-        private CallbackEnableRecordTask iCallbackEnableRecordTask;
-        private CallbackDisableRecordTask iCallbackDisableRecordTask;
-        private CallbackResetRecordTask iCallbackResetRecordTask;
-        private CallbackGetRecordScheduleConflicts iCallbackGetRecordScheduleConflicts;
-        private CallbackGetRecordTaskConflicts iCallbackGetRecordTaskConflicts;
+        private ActionDelegate iDelegateGetSortCapabilities;
+        private ActionDelegate iDelegateGetPropertyList;
+        private ActionDelegate iDelegateGetAllowedValues;
+        private ActionDelegate iDelegateGetStateUpdateID;
+        private ActionDelegate iDelegateBrowseRecordSchedules;
+        private ActionDelegate iDelegateBrowseRecordTasks;
+        private ActionDelegate iDelegateCreateRecordSchedule;
+        private ActionDelegate iDelegateDeleteRecordSchedule;
+        private ActionDelegate iDelegateGetRecordSchedule;
+        private ActionDelegate iDelegateEnableRecordSchedule;
+        private ActionDelegate iDelegateDisableRecordSchedule;
+        private ActionDelegate iDelegateDeleteRecordTask;
+        private ActionDelegate iDelegateGetRecordTask;
+        private ActionDelegate iDelegateEnableRecordTask;
+        private ActionDelegate iDelegateDisableRecordTask;
+        private ActionDelegate iDelegateResetRecordTask;
+        private ActionDelegate iDelegateGetRecordScheduleConflicts;
+        private ActionDelegate iDelegateGetRecordTaskConflicts;
+        private PropertyString iPropertyLastChange;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderUpnpOrgScheduledRecording1(DvDevice aDevice)
+            : base(aDevice, "schemas-upnp-org", "ScheduledRecording", 1)
         {
-            iHandle = DvProviderUpnpOrgScheduledRecording1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
+            List<String> allowedValues = new List<String>();
+            iPropertyLastChange = new PropertyString(new ParameterString("LastChange", allowedValues));
+            AddProperty(iPropertyLastChange);
         }
 
         /// <summary>
@@ -128,29 +67,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyLastChange(string aValue)
+        public bool SetPropertyLastChange(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderUpnpOrgScheduledRecording1SetPropertyLastChange(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyString(iPropertyLastChange, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the LastChange property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyLastChange(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyLastChange()
         {
-            char* value;
-            DvProviderUpnpOrgScheduledRecording1GetPropertyLastChange(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
+            return iPropertyLastChange.Value();
         }
 
         /// <summary>
@@ -160,9 +88,12 @@ namespace Zapp.Device.Providers
         /// DoGetSortCapabilities must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetSortCapabilities()
         {
-            iCallbackGetSortCapabilities = new CallbackGetSortCapabilities(DoGetSortCapabilities);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgScheduledRecording1EnableActionGetSortCapabilities(iHandle, iCallbackGetSortCapabilities, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetSortCapabilities");
+            List<String> allowedValues = new List<String>();
+            action.AddOutputParameter(new ParameterString("SortCaps", allowedValues));
+            action.AddOutputParameter(new ParameterUint("SortLevelCap"));
+            iDelegateGetSortCapabilities = new ActionDelegate(DoGetSortCapabilities);
+            EnableAction(action, iDelegateGetSortCapabilities, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -172,9 +103,16 @@ namespace Zapp.Device.Providers
         /// DoGetPropertyList must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetPropertyList()
         {
-            iCallbackGetPropertyList = new CallbackGetPropertyList(DoGetPropertyList);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgScheduledRecording1EnableActionGetPropertyList(iHandle, iCallbackGetPropertyList, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetPropertyList");
+            List<String> allowedValues = new List<String>();
+            allowedValues.Add("A_ARG_TYPE_RecordSchedule");
+            allowedValues.Add("A_ARG_TYPE_RecordTask");
+            allowedValues.Add("A_ARG_TYPE_RecordScheduleParts");
+            action.AddInputParameter(new ParameterString("DataTypeID", allowedValues));
+            allowedValues.Clear();
+            action.AddOutputParameter(new ParameterString("PropertyList", allowedValues));
+            iDelegateGetPropertyList = new ActionDelegate(DoGetPropertyList);
+            EnableAction(action, iDelegateGetPropertyList, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -184,9 +122,17 @@ namespace Zapp.Device.Providers
         /// DoGetAllowedValues must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetAllowedValues()
         {
-            iCallbackGetAllowedValues = new CallbackGetAllowedValues(DoGetAllowedValues);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgScheduledRecording1EnableActionGetAllowedValues(iHandle, iCallbackGetAllowedValues, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetAllowedValues");
+            List<String> allowedValues = new List<String>();
+            allowedValues.Add("A_ARG_TYPE_RecordSchedule");
+            allowedValues.Add("A_ARG_TYPE_RecordTask");
+            allowedValues.Add("A_ARG_TYPE_RecordScheduleParts");
+            action.AddInputParameter(new ParameterString("DataTypeID", allowedValues));
+            allowedValues.Clear();
+            action.AddInputParameter(new ParameterString("Filter", allowedValues));
+            action.AddOutputParameter(new ParameterString("PropertyInfo", allowedValues));
+            iDelegateGetAllowedValues = new ActionDelegate(DoGetAllowedValues);
+            EnableAction(action, iDelegateGetAllowedValues, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -196,9 +142,10 @@ namespace Zapp.Device.Providers
         /// DoGetStateUpdateID must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetStateUpdateID()
         {
-            iCallbackGetStateUpdateID = new CallbackGetStateUpdateID(DoGetStateUpdateID);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgScheduledRecording1EnableActionGetStateUpdateID(iHandle, iCallbackGetStateUpdateID, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetStateUpdateID");
+            action.AddOutputParameter(new ParameterUint("Id"));
+            iDelegateGetStateUpdateID = new ActionDelegate(DoGetStateUpdateID);
+            EnableAction(action, iDelegateGetStateUpdateID, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -208,9 +155,18 @@ namespace Zapp.Device.Providers
         /// DoBrowseRecordSchedules must be overridden if this is called.</remarks>
         protected unsafe void EnableActionBrowseRecordSchedules()
         {
-            iCallbackBrowseRecordSchedules = new CallbackBrowseRecordSchedules(DoBrowseRecordSchedules);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgScheduledRecording1EnableActionBrowseRecordSchedules(iHandle, iCallbackBrowseRecordSchedules, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("BrowseRecordSchedules");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterString("Filter", allowedValues));
+            action.AddInputParameter(new ParameterUint("StartingIndex"));
+            action.AddInputParameter(new ParameterUint("RequestedCount"));
+            action.AddInputParameter(new ParameterString("SortCriteria", allowedValues));
+            action.AddOutputParameter(new ParameterString("Result", allowedValues));
+            action.AddOutputParameter(new ParameterUint("NumberReturned"));
+            action.AddOutputParameter(new ParameterUint("TotalMatches"));
+            action.AddOutputParameter(new ParameterUint("UpdateID"));
+            iDelegateBrowseRecordSchedules = new ActionDelegate(DoBrowseRecordSchedules);
+            EnableAction(action, iDelegateBrowseRecordSchedules, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -220,9 +176,19 @@ namespace Zapp.Device.Providers
         /// DoBrowseRecordTasks must be overridden if this is called.</remarks>
         protected unsafe void EnableActionBrowseRecordTasks()
         {
-            iCallbackBrowseRecordTasks = new CallbackBrowseRecordTasks(DoBrowseRecordTasks);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgScheduledRecording1EnableActionBrowseRecordTasks(iHandle, iCallbackBrowseRecordTasks, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("BrowseRecordTasks");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterString("RecordScheduleID", allowedValues));
+            action.AddInputParameter(new ParameterString("Filter", allowedValues));
+            action.AddInputParameter(new ParameterUint("StartingIndex"));
+            action.AddInputParameter(new ParameterUint("RequestedCount"));
+            action.AddInputParameter(new ParameterString("SortCriteria", allowedValues));
+            action.AddOutputParameter(new ParameterString("Result", allowedValues));
+            action.AddOutputParameter(new ParameterUint("NumberReturned"));
+            action.AddOutputParameter(new ParameterUint("TotalMatches"));
+            action.AddOutputParameter(new ParameterUint("UpdateID"));
+            iDelegateBrowseRecordTasks = new ActionDelegate(DoBrowseRecordTasks);
+            EnableAction(action, iDelegateBrowseRecordTasks, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -232,9 +198,14 @@ namespace Zapp.Device.Providers
         /// DoCreateRecordSchedule must be overridden if this is called.</remarks>
         protected unsafe void EnableActionCreateRecordSchedule()
         {
-            iCallbackCreateRecordSchedule = new CallbackCreateRecordSchedule(DoCreateRecordSchedule);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgScheduledRecording1EnableActionCreateRecordSchedule(iHandle, iCallbackCreateRecordSchedule, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("CreateRecordSchedule");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterString("Elements", allowedValues));
+            action.AddOutputParameter(new ParameterString("RecordScheduleID", allowedValues));
+            action.AddOutputParameter(new ParameterString("Result", allowedValues));
+            action.AddOutputParameter(new ParameterUint("UpdateID"));
+            iDelegateCreateRecordSchedule = new ActionDelegate(DoCreateRecordSchedule);
+            EnableAction(action, iDelegateCreateRecordSchedule, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -244,9 +215,11 @@ namespace Zapp.Device.Providers
         /// DoDeleteRecordSchedule must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDeleteRecordSchedule()
         {
-            iCallbackDeleteRecordSchedule = new CallbackDeleteRecordSchedule(DoDeleteRecordSchedule);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgScheduledRecording1EnableActionDeleteRecordSchedule(iHandle, iCallbackDeleteRecordSchedule, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DeleteRecordSchedule");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterString("RecordScheduleID", allowedValues));
+            iDelegateDeleteRecordSchedule = new ActionDelegate(DoDeleteRecordSchedule);
+            EnableAction(action, iDelegateDeleteRecordSchedule, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -256,9 +229,14 @@ namespace Zapp.Device.Providers
         /// DoGetRecordSchedule must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetRecordSchedule()
         {
-            iCallbackGetRecordSchedule = new CallbackGetRecordSchedule(DoGetRecordSchedule);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordSchedule(iHandle, iCallbackGetRecordSchedule, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetRecordSchedule");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterString("RecordScheduleID", allowedValues));
+            action.AddInputParameter(new ParameterString("Filter", allowedValues));
+            action.AddOutputParameter(new ParameterString("Result", allowedValues));
+            action.AddOutputParameter(new ParameterUint("UpdateID"));
+            iDelegateGetRecordSchedule = new ActionDelegate(DoGetRecordSchedule);
+            EnableAction(action, iDelegateGetRecordSchedule, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -268,9 +246,11 @@ namespace Zapp.Device.Providers
         /// DoEnableRecordSchedule must be overridden if this is called.</remarks>
         protected unsafe void EnableActionEnableRecordSchedule()
         {
-            iCallbackEnableRecordSchedule = new CallbackEnableRecordSchedule(DoEnableRecordSchedule);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgScheduledRecording1EnableActionEnableRecordSchedule(iHandle, iCallbackEnableRecordSchedule, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("EnableRecordSchedule");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterString("RecordScheduleID", allowedValues));
+            iDelegateEnableRecordSchedule = new ActionDelegate(DoEnableRecordSchedule);
+            EnableAction(action, iDelegateEnableRecordSchedule, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -280,9 +260,11 @@ namespace Zapp.Device.Providers
         /// DoDisableRecordSchedule must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisableRecordSchedule()
         {
-            iCallbackDisableRecordSchedule = new CallbackDisableRecordSchedule(DoDisableRecordSchedule);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgScheduledRecording1EnableActionDisableRecordSchedule(iHandle, iCallbackDisableRecordSchedule, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DisableRecordSchedule");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterString("RecordScheduleID", allowedValues));
+            iDelegateDisableRecordSchedule = new ActionDelegate(DoDisableRecordSchedule);
+            EnableAction(action, iDelegateDisableRecordSchedule, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -292,9 +274,11 @@ namespace Zapp.Device.Providers
         /// DoDeleteRecordTask must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDeleteRecordTask()
         {
-            iCallbackDeleteRecordTask = new CallbackDeleteRecordTask(DoDeleteRecordTask);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgScheduledRecording1EnableActionDeleteRecordTask(iHandle, iCallbackDeleteRecordTask, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DeleteRecordTask");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterString("RecordTaskID", allowedValues));
+            iDelegateDeleteRecordTask = new ActionDelegate(DoDeleteRecordTask);
+            EnableAction(action, iDelegateDeleteRecordTask, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -304,9 +288,14 @@ namespace Zapp.Device.Providers
         /// DoGetRecordTask must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetRecordTask()
         {
-            iCallbackGetRecordTask = new CallbackGetRecordTask(DoGetRecordTask);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordTask(iHandle, iCallbackGetRecordTask, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetRecordTask");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterString("RecordTaskID", allowedValues));
+            action.AddInputParameter(new ParameterString("Filter", allowedValues));
+            action.AddOutputParameter(new ParameterString("Result", allowedValues));
+            action.AddOutputParameter(new ParameterUint("UpdateID"));
+            iDelegateGetRecordTask = new ActionDelegate(DoGetRecordTask);
+            EnableAction(action, iDelegateGetRecordTask, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -316,9 +305,11 @@ namespace Zapp.Device.Providers
         /// DoEnableRecordTask must be overridden if this is called.</remarks>
         protected unsafe void EnableActionEnableRecordTask()
         {
-            iCallbackEnableRecordTask = new CallbackEnableRecordTask(DoEnableRecordTask);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgScheduledRecording1EnableActionEnableRecordTask(iHandle, iCallbackEnableRecordTask, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("EnableRecordTask");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterString("RecordTaskID", allowedValues));
+            iDelegateEnableRecordTask = new ActionDelegate(DoEnableRecordTask);
+            EnableAction(action, iDelegateEnableRecordTask, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -328,9 +319,11 @@ namespace Zapp.Device.Providers
         /// DoDisableRecordTask must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDisableRecordTask()
         {
-            iCallbackDisableRecordTask = new CallbackDisableRecordTask(DoDisableRecordTask);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgScheduledRecording1EnableActionDisableRecordTask(iHandle, iCallbackDisableRecordTask, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DisableRecordTask");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterString("RecordTaskID", allowedValues));
+            iDelegateDisableRecordTask = new ActionDelegate(DoDisableRecordTask);
+            EnableAction(action, iDelegateDisableRecordTask, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -340,9 +333,11 @@ namespace Zapp.Device.Providers
         /// DoResetRecordTask must be overridden if this is called.</remarks>
         protected unsafe void EnableActionResetRecordTask()
         {
-            iCallbackResetRecordTask = new CallbackResetRecordTask(DoResetRecordTask);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgScheduledRecording1EnableActionResetRecordTask(iHandle, iCallbackResetRecordTask, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("ResetRecordTask");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterString("RecordTaskID", allowedValues));
+            iDelegateResetRecordTask = new ActionDelegate(DoResetRecordTask);
+            EnableAction(action, iDelegateResetRecordTask, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -352,9 +347,13 @@ namespace Zapp.Device.Providers
         /// DoGetRecordScheduleConflicts must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetRecordScheduleConflicts()
         {
-            iCallbackGetRecordScheduleConflicts = new CallbackGetRecordScheduleConflicts(DoGetRecordScheduleConflicts);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordScheduleConflicts(iHandle, iCallbackGetRecordScheduleConflicts, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetRecordScheduleConflicts");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterString("RecordScheduleID", allowedValues));
+            action.AddOutputParameter(new ParameterString("RecordScheduleConflictIDList", allowedValues));
+            action.AddOutputParameter(new ParameterUint("UpdateID"));
+            iDelegateGetRecordScheduleConflicts = new ActionDelegate(DoGetRecordScheduleConflicts);
+            EnableAction(action, iDelegateGetRecordScheduleConflicts, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -364,9 +363,13 @@ namespace Zapp.Device.Providers
         /// DoGetRecordTaskConflicts must be overridden if this is called.</remarks>
         protected unsafe void EnableActionGetRecordTaskConflicts()
         {
-            iCallbackGetRecordTaskConflicts = new CallbackGetRecordTaskConflicts(DoGetRecordTaskConflicts);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderUpnpOrgScheduledRecording1EnableActionGetRecordTaskConflicts(iHandle, iCallbackGetRecordTaskConflicts, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("GetRecordTaskConflicts");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterString("RecordTaskID", allowedValues));
+            action.AddOutputParameter(new ParameterString("RecordTaskConflictIDList", allowedValues));
+            action.AddOutputParameter(new ParameterUint("UpdateID"));
+            iDelegateGetRecordTaskConflicts = new ActionDelegate(DoGetRecordTaskConflicts);
+            EnableAction(action, iDelegateGetRecordTaskConflicts, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -653,217 +656,275 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoGetSortCapabilities(IntPtr aPtr, uint aVersion, char** aSortCaps, uint* aSortLevelCap)
+        private static unsafe int DoGetSortCapabilities(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string sortCaps;
             uint sortLevelCap;
             self.GetSortCapabilities(aVersion, out sortCaps, out sortLevelCap);
-            *aSortCaps = (char*)Marshal.StringToHGlobalAnsi(sortCaps).ToPointer();
-            *aSortLevelCap = sortLevelCap;
+            invocation.WriteStart();
+            invocation.WriteString("SortCaps", sortCaps);
+            invocation.WriteUint("SortLevelCap", sortLevelCap);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoGetPropertyList(IntPtr aPtr, uint aVersion, char* aDataTypeID, char** aPropertyList)
+        private static unsafe int DoGetPropertyList(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
-            string dataTypeID = Marshal.PtrToStringAnsi((IntPtr)aDataTypeID);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string dataTypeID = invocation.ReadString("DataTypeID");
             string propertyList;
             self.GetPropertyList(aVersion, dataTypeID, out propertyList);
-            *aPropertyList = (char*)Marshal.StringToHGlobalAnsi(propertyList).ToPointer();
+            invocation.WriteStart();
+            invocation.WriteString("PropertyList", propertyList);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoGetAllowedValues(IntPtr aPtr, uint aVersion, char* aDataTypeID, char* aFilter, char** aPropertyInfo)
+        private static unsafe int DoGetAllowedValues(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
-            string dataTypeID = Marshal.PtrToStringAnsi((IntPtr)aDataTypeID);
-            string filter = Marshal.PtrToStringAnsi((IntPtr)aFilter);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string dataTypeID = invocation.ReadString("DataTypeID");
+            string filter = invocation.ReadString("Filter");
             string propertyInfo;
             self.GetAllowedValues(aVersion, dataTypeID, filter, out propertyInfo);
-            *aPropertyInfo = (char*)Marshal.StringToHGlobalAnsi(propertyInfo).ToPointer();
+            invocation.WriteStart();
+            invocation.WriteString("PropertyInfo", propertyInfo);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoGetStateUpdateID(IntPtr aPtr, uint aVersion, uint* aId)
+        private static unsafe int DoGetStateUpdateID(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint id;
             self.GetStateUpdateID(aVersion, out id);
-            *aId = id;
+            invocation.WriteStart();
+            invocation.WriteUint("Id", id);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoBrowseRecordSchedules(IntPtr aPtr, uint aVersion, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID)
+        private static unsafe int DoBrowseRecordSchedules(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
-            string filter = Marshal.PtrToStringAnsi((IntPtr)aFilter);
-            string sortCriteria = Marshal.PtrToStringAnsi((IntPtr)aSortCriteria);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string filter = invocation.ReadString("Filter");
+            uint startingIndex = invocation.ReadUint("StartingIndex");
+            uint requestedCount = invocation.ReadUint("RequestedCount");
+            string sortCriteria = invocation.ReadString("SortCriteria");
             string result;
             uint numberReturned;
             uint totalMatches;
             uint updateID;
-            self.BrowseRecordSchedules(aVersion, filter, aStartingIndex, aRequestedCount, sortCriteria, out result, out numberReturned, out totalMatches, out updateID);
-            *aResult = (char*)Marshal.StringToHGlobalAnsi(result).ToPointer();
-            *aNumberReturned = numberReturned;
-            *aTotalMatches = totalMatches;
-            *aUpdateID = updateID;
+            self.BrowseRecordSchedules(aVersion, filter, startingIndex, requestedCount, sortCriteria, out result, out numberReturned, out totalMatches, out updateID);
+            invocation.WriteStart();
+            invocation.WriteString("Result", result);
+            invocation.WriteUint("NumberReturned", numberReturned);
+            invocation.WriteUint("TotalMatches", totalMatches);
+            invocation.WriteUint("UpdateID", updateID);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoBrowseRecordTasks(IntPtr aPtr, uint aVersion, char* aRecordScheduleID, char* aFilter, uint aStartingIndex, uint aRequestedCount, char* aSortCriteria, char** aResult, uint* aNumberReturned, uint* aTotalMatches, uint* aUpdateID)
+        private static unsafe int DoBrowseRecordTasks(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
-            string recordScheduleID = Marshal.PtrToStringAnsi((IntPtr)aRecordScheduleID);
-            string filter = Marshal.PtrToStringAnsi((IntPtr)aFilter);
-            string sortCriteria = Marshal.PtrToStringAnsi((IntPtr)aSortCriteria);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string recordScheduleID = invocation.ReadString("RecordScheduleID");
+            string filter = invocation.ReadString("Filter");
+            uint startingIndex = invocation.ReadUint("StartingIndex");
+            uint requestedCount = invocation.ReadUint("RequestedCount");
+            string sortCriteria = invocation.ReadString("SortCriteria");
             string result;
             uint numberReturned;
             uint totalMatches;
             uint updateID;
-            self.BrowseRecordTasks(aVersion, recordScheduleID, filter, aStartingIndex, aRequestedCount, sortCriteria, out result, out numberReturned, out totalMatches, out updateID);
-            *aResult = (char*)Marshal.StringToHGlobalAnsi(result).ToPointer();
-            *aNumberReturned = numberReturned;
-            *aTotalMatches = totalMatches;
-            *aUpdateID = updateID;
+            self.BrowseRecordTasks(aVersion, recordScheduleID, filter, startingIndex, requestedCount, sortCriteria, out result, out numberReturned, out totalMatches, out updateID);
+            invocation.WriteStart();
+            invocation.WriteString("Result", result);
+            invocation.WriteUint("NumberReturned", numberReturned);
+            invocation.WriteUint("TotalMatches", totalMatches);
+            invocation.WriteUint("UpdateID", updateID);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoCreateRecordSchedule(IntPtr aPtr, uint aVersion, char* aElements, char** aRecordScheduleID, char** aResult, uint* aUpdateID)
+        private static unsafe int DoCreateRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
-            string elements = Marshal.PtrToStringAnsi((IntPtr)aElements);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string elements = invocation.ReadString("Elements");
             string recordScheduleID;
             string result;
             uint updateID;
             self.CreateRecordSchedule(aVersion, elements, out recordScheduleID, out result, out updateID);
-            *aRecordScheduleID = (char*)Marshal.StringToHGlobalAnsi(recordScheduleID).ToPointer();
-            *aResult = (char*)Marshal.StringToHGlobalAnsi(result).ToPointer();
-            *aUpdateID = updateID;
+            invocation.WriteStart();
+            invocation.WriteString("RecordScheduleID", recordScheduleID);
+            invocation.WriteString("Result", result);
+            invocation.WriteUint("UpdateID", updateID);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoDeleteRecordSchedule(IntPtr aPtr, uint aVersion, char* aRecordScheduleID)
+        private static unsafe int DoDeleteRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
-            string recordScheduleID = Marshal.PtrToStringAnsi((IntPtr)aRecordScheduleID);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string recordScheduleID = invocation.ReadString("RecordScheduleID");
             self.DeleteRecordSchedule(aVersion, recordScheduleID);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoGetRecordSchedule(IntPtr aPtr, uint aVersion, char* aRecordScheduleID, char* aFilter, char** aResult, uint* aUpdateID)
+        private static unsafe int DoGetRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
-            string recordScheduleID = Marshal.PtrToStringAnsi((IntPtr)aRecordScheduleID);
-            string filter = Marshal.PtrToStringAnsi((IntPtr)aFilter);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string recordScheduleID = invocation.ReadString("RecordScheduleID");
+            string filter = invocation.ReadString("Filter");
             string result;
             uint updateID;
             self.GetRecordSchedule(aVersion, recordScheduleID, filter, out result, out updateID);
-            *aResult = (char*)Marshal.StringToHGlobalAnsi(result).ToPointer();
-            *aUpdateID = updateID;
+            invocation.WriteStart();
+            invocation.WriteString("Result", result);
+            invocation.WriteUint("UpdateID", updateID);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoEnableRecordSchedule(IntPtr aPtr, uint aVersion, char* aRecordScheduleID)
+        private static unsafe int DoEnableRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
-            string recordScheduleID = Marshal.PtrToStringAnsi((IntPtr)aRecordScheduleID);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string recordScheduleID = invocation.ReadString("RecordScheduleID");
             self.EnableRecordSchedule(aVersion, recordScheduleID);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoDisableRecordSchedule(IntPtr aPtr, uint aVersion, char* aRecordScheduleID)
+        private static unsafe int DoDisableRecordSchedule(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
-            string recordScheduleID = Marshal.PtrToStringAnsi((IntPtr)aRecordScheduleID);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string recordScheduleID = invocation.ReadString("RecordScheduleID");
             self.DisableRecordSchedule(aVersion, recordScheduleID);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoDeleteRecordTask(IntPtr aPtr, uint aVersion, char* aRecordTaskID)
+        private static unsafe int DoDeleteRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
-            string recordTaskID = Marshal.PtrToStringAnsi((IntPtr)aRecordTaskID);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string recordTaskID = invocation.ReadString("RecordTaskID");
             self.DeleteRecordTask(aVersion, recordTaskID);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoGetRecordTask(IntPtr aPtr, uint aVersion, char* aRecordTaskID, char* aFilter, char** aResult, uint* aUpdateID)
+        private static unsafe int DoGetRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
-            string recordTaskID = Marshal.PtrToStringAnsi((IntPtr)aRecordTaskID);
-            string filter = Marshal.PtrToStringAnsi((IntPtr)aFilter);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string recordTaskID = invocation.ReadString("RecordTaskID");
+            string filter = invocation.ReadString("Filter");
             string result;
             uint updateID;
             self.GetRecordTask(aVersion, recordTaskID, filter, out result, out updateID);
-            *aResult = (char*)Marshal.StringToHGlobalAnsi(result).ToPointer();
-            *aUpdateID = updateID;
+            invocation.WriteStart();
+            invocation.WriteString("Result", result);
+            invocation.WriteUint("UpdateID", updateID);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoEnableRecordTask(IntPtr aPtr, uint aVersion, char* aRecordTaskID)
+        private static unsafe int DoEnableRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
-            string recordTaskID = Marshal.PtrToStringAnsi((IntPtr)aRecordTaskID);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string recordTaskID = invocation.ReadString("RecordTaskID");
             self.EnableRecordTask(aVersion, recordTaskID);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoDisableRecordTask(IntPtr aPtr, uint aVersion, char* aRecordTaskID)
+        private static unsafe int DoDisableRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
-            string recordTaskID = Marshal.PtrToStringAnsi((IntPtr)aRecordTaskID);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string recordTaskID = invocation.ReadString("RecordTaskID");
             self.DisableRecordTask(aVersion, recordTaskID);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoResetRecordTask(IntPtr aPtr, uint aVersion, char* aRecordTaskID)
+        private static unsafe int DoResetRecordTask(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
-            string recordTaskID = Marshal.PtrToStringAnsi((IntPtr)aRecordTaskID);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string recordTaskID = invocation.ReadString("RecordTaskID");
             self.ResetRecordTask(aVersion, recordTaskID);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoGetRecordScheduleConflicts(IntPtr aPtr, uint aVersion, char* aRecordScheduleID, char** aRecordScheduleConflictIDList, uint* aUpdateID)
+        private static unsafe int DoGetRecordScheduleConflicts(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
-            string recordScheduleID = Marshal.PtrToStringAnsi((IntPtr)aRecordScheduleID);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string recordScheduleID = invocation.ReadString("RecordScheduleID");
             string recordScheduleConflictIDList;
             uint updateID;
             self.GetRecordScheduleConflicts(aVersion, recordScheduleID, out recordScheduleConflictIDList, out updateID);
-            *aRecordScheduleConflictIDList = (char*)Marshal.StringToHGlobalAnsi(recordScheduleConflictIDList).ToPointer();
-            *aUpdateID = updateID;
+            invocation.WriteStart();
+            invocation.WriteString("RecordScheduleConflictIDList", recordScheduleConflictIDList);
+            invocation.WriteUint("UpdateID", updateID);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoGetRecordTaskConflicts(IntPtr aPtr, uint aVersion, char* aRecordTaskID, char** aRecordTaskConflictIDList, uint* aUpdateID)
+        private static unsafe int DoGetRecordTaskConflicts(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording1 self = (DvProviderUpnpOrgScheduledRecording1)gch.Target;
-            string recordTaskID = Marshal.PtrToStringAnsi((IntPtr)aRecordTaskID);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string recordTaskID = invocation.ReadString("RecordTaskID");
             string recordTaskConflictIDList;
             uint updateID;
             self.GetRecordTaskConflicts(aVersion, recordTaskID, out recordTaskConflictIDList, out updateID);
-            *aRecordTaskConflictIDList = (char*)Marshal.StringToHGlobalAnsi(recordTaskConflictIDList).ToPointer();
-            *aUpdateID = updateID;
+            invocation.WriteStart();
+            invocation.WriteString("RecordTaskConflictIDList", recordTaskConflictIDList);
+            invocation.WriteUint("UpdateID", updateID);
+            invocation.WriteEnd();
             return 0;
         }
 
@@ -883,21 +944,16 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            IntPtr handle;
             lock (this)
             {
                 if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
+                DisposeProvider();
                 iHandle = IntPtr.Zero;
             }
-            DvProviderUpnpOrgScheduledRecording1Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }

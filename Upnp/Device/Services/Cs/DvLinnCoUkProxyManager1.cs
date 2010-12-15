@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -19,7 +20,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the KontrolProductConnected property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyKontrolProductConnected(out string aValue);
+        string PropertyKontrolProductConnected();
 
         /// <summary>
         /// Set the value of the KontrolProductComPort property
@@ -32,7 +33,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the KontrolProductComPort property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyKontrolProductComPort(out uint aValue);
+        uint PropertyKontrolProductComPort();
 
         /// <summary>
         /// Set the value of the DiscPlayerConnected property
@@ -45,7 +46,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the DiscPlayerConnected property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyDiscPlayerConnected(out string aValue);
+        string PropertyDiscPlayerConnected();
 
         /// <summary>
         /// Set the value of the DiscPlayerComPort property
@@ -58,7 +59,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the DiscPlayerComPort property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyDiscPlayerComPort(out uint aValue);
+        uint PropertyDiscPlayerComPort();
         
     }
     /// <summary>
@@ -66,80 +67,61 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class DvProviderLinnCoUkProxyManager1 : DvProvider, IDisposable, IDvProviderLinnCoUkProxyManager1
     {
-        [DllImport("DvLinnCoUkProxyManager1")]
-        static extern IntPtr DvProviderLinnCoUkProxyManager1Create(IntPtr aDeviceHandle);
-        [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvProviderLinnCoUkProxyManager1Destroy(IntPtr aHandle);
-        [DllImport("DvLinnCoUkProxyManager1")]
-        static extern unsafe int DvProviderLinnCoUkProxyManager1SetPropertyKontrolProductConnected(IntPtr aHandle, char* aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkProxyManager1")]
-        static extern unsafe void DvProviderLinnCoUkProxyManager1GetPropertyKontrolProductConnected(IntPtr aHandle, char** aValue);
-        [DllImport("DvLinnCoUkProxyManager1")]
-        static extern unsafe int DvProviderLinnCoUkProxyManager1SetPropertyKontrolProductComPort(IntPtr aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkProxyManager1")]
-        static extern unsafe void DvProviderLinnCoUkProxyManager1GetPropertyKontrolProductComPort(IntPtr aHandle, uint* aValue);
-        [DllImport("DvLinnCoUkProxyManager1")]
-        static extern unsafe int DvProviderLinnCoUkProxyManager1SetPropertyDiscPlayerConnected(IntPtr aHandle, char* aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkProxyManager1")]
-        static extern unsafe void DvProviderLinnCoUkProxyManager1GetPropertyDiscPlayerConnected(IntPtr aHandle, char** aValue);
-        [DllImport("DvLinnCoUkProxyManager1")]
-        static extern unsafe int DvProviderLinnCoUkProxyManager1SetPropertyDiscPlayerComPort(IntPtr aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkProxyManager1")]
-        static extern unsafe void DvProviderLinnCoUkProxyManager1GetPropertyDiscPlayerComPort(IntPtr aHandle, uint* aValue);
-        [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvProviderLinnCoUkProxyManager1EnableActionKontrolProductConnected(IntPtr aHandle, CallbackKontrolProductConnected aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvProviderLinnCoUkProxyManager1EnableActionSetKontrolProductConnected(IntPtr aHandle, CallbackSetKontrolProductConnected aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvProviderLinnCoUkProxyManager1EnableActionKontrolProductComPort(IntPtr aHandle, CallbackKontrolProductComPort aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvProviderLinnCoUkProxyManager1EnableActionSetKontrolProductComPort(IntPtr aHandle, CallbackSetKontrolProductComPort aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvProviderLinnCoUkProxyManager1EnableActionDiscPlayerConnected(IntPtr aHandle, CallbackDiscPlayerConnected aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvProviderLinnCoUkProxyManager1EnableActionSetDiscPlayerConnected(IntPtr aHandle, CallbackSetDiscPlayerConnected aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvProviderLinnCoUkProxyManager1EnableActionDiscPlayerComPort(IntPtr aHandle, CallbackDiscPlayerComPort aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvProviderLinnCoUkProxyManager1EnableActionSetDiscPlayerComPort(IntPtr aHandle, CallbackSetDiscPlayerComPort aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvProviderLinnCoUkProxyManager1EnableActionTestKontrolProductConnection(IntPtr aHandle, CallbackTestKontrolProductConnection aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkProxyManager1")]
-        static extern void DvProviderLinnCoUkProxyManager1EnableActionTestDiscPlayerConnection(IntPtr aHandle, CallbackTestDiscPlayerConnection aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private unsafe delegate int CallbackKontrolProductConnected(IntPtr aPtr, uint aVersion, char** aaConnected);
-        private unsafe delegate int CallbackSetKontrolProductConnected(IntPtr aPtr, uint aVersion, char* aaConnected);
-        private unsafe delegate int CallbackKontrolProductComPort(IntPtr aPtr, uint aVersion, uint* aaPort);
-        private unsafe delegate int CallbackSetKontrolProductComPort(IntPtr aPtr, uint aVersion, uint aaConnected);
-        private unsafe delegate int CallbackDiscPlayerConnected(IntPtr aPtr, uint aVersion, char** aaConnected);
-        private unsafe delegate int CallbackSetDiscPlayerConnected(IntPtr aPtr, uint aVersion, char* aaConnected);
-        private unsafe delegate int CallbackDiscPlayerComPort(IntPtr aPtr, uint aVersion, uint* aaPort);
-        private unsafe delegate int CallbackSetDiscPlayerComPort(IntPtr aPtr, uint aVersion, uint aaConnected);
-        private unsafe delegate int CallbackTestKontrolProductConnection(IntPtr aPtr, uint aVersion, int* aaResult);
-        private unsafe delegate int CallbackTestDiscPlayerConnection(IntPtr aPtr, uint aVersion, int* aaResult);
-
         private GCHandle iGch;
-        private CallbackKontrolProductConnected iCallbackKontrolProductConnected;
-        private CallbackSetKontrolProductConnected iCallbackSetKontrolProductConnected;
-        private CallbackKontrolProductComPort iCallbackKontrolProductComPort;
-        private CallbackSetKontrolProductComPort iCallbackSetKontrolProductComPort;
-        private CallbackDiscPlayerConnected iCallbackDiscPlayerConnected;
-        private CallbackSetDiscPlayerConnected iCallbackSetDiscPlayerConnected;
-        private CallbackDiscPlayerComPort iCallbackDiscPlayerComPort;
-        private CallbackSetDiscPlayerComPort iCallbackSetDiscPlayerComPort;
-        private CallbackTestKontrolProductConnection iCallbackTestKontrolProductConnection;
-        private CallbackTestDiscPlayerConnection iCallbackTestDiscPlayerConnection;
+        private ActionDelegate iDelegateKontrolProductConnected;
+        private ActionDelegate iDelegateSetKontrolProductConnected;
+        private ActionDelegate iDelegateKontrolProductComPort;
+        private ActionDelegate iDelegateSetKontrolProductComPort;
+        private ActionDelegate iDelegateDiscPlayerConnected;
+        private ActionDelegate iDelegateSetDiscPlayerConnected;
+        private ActionDelegate iDelegateDiscPlayerComPort;
+        private ActionDelegate iDelegateSetDiscPlayerComPort;
+        private ActionDelegate iDelegateTestKontrolProductConnection;
+        private ActionDelegate iDelegateTestDiscPlayerConnection;
+        private PropertyString iPropertyKontrolProductConnected;
+        private PropertyUint iPropertyKontrolProductComPort;
+        private PropertyString iPropertyDiscPlayerConnected;
+        private PropertyUint iPropertyDiscPlayerComPort;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderLinnCoUkProxyManager1(DvDevice aDevice)
+            : base(aDevice, "linn-co-uk", "ProxyManager", 1)
         {
-            iHandle = DvProviderLinnCoUkProxyManager1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
+            List<String> allowedValues = new List<String>();
+            allowedValues.Add("None");
+            allowedValues.Add("Klimax Kontrol");
+            allowedValues.Add("Akurate Kontrol");
+            allowedValues.Add("Kisto");
+            allowedValues.Add("Kinos");
+            allowedValues.Add("Majik Kontrol");
+            allowedValues.Add("Majik-I");
+            allowedValues.Add("Unidisk SC");
+            allowedValues.Add("Classik Movie");
+            allowedValues.Add("Classik Music");
+            allowedValues.Add("Roomamp 2");
+            iPropertyKontrolProductConnected = new PropertyString(new ParameterString("KontrolProductConnected", allowedValues));
+            AddProperty(iPropertyKontrolProductConnected);
+            allowedValues.Clear();
+            iPropertyKontrolProductComPort = new PropertyUint(new ParameterUint("KontrolProductComPort"));
+            AddProperty(iPropertyKontrolProductComPort);
+            allowedValues.Add("None");
+            allowedValues.Add("CD12");
+            allowedValues.Add("Akurate CD");
+            allowedValues.Add("Unidisk 1.1");
+            allowedValues.Add("Unidisk 2.1");
+            allowedValues.Add("Majik CD");
+            allowedValues.Add("Unidisk SC");
+            allowedValues.Add("Classik Movie");
+            allowedValues.Add("Classik Music");
+            iPropertyDiscPlayerConnected = new PropertyString(new ParameterString("DiscPlayerConnected", allowedValues));
+            AddProperty(iPropertyDiscPlayerConnected);
+            allowedValues.Clear();
+            iPropertyDiscPlayerComPort = new PropertyUint(new ParameterUint("DiscPlayerComPort"));
+            AddProperty(iPropertyDiscPlayerComPort);
         }
 
         /// <summary>
@@ -147,29 +129,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyKontrolProductConnected(string aValue)
+        public bool SetPropertyKontrolProductConnected(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderLinnCoUkProxyManager1SetPropertyKontrolProductConnected(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyString(iPropertyKontrolProductConnected, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the KontrolProductConnected property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyKontrolProductConnected(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyKontrolProductConnected()
         {
-            char* value;
-            DvProviderLinnCoUkProxyManager1GetPropertyKontrolProductConnected(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
+            return iPropertyKontrolProductConnected.Value();
         }
 
         /// <summary>
@@ -177,26 +148,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyKontrolProductComPort(uint aValue)
+        public bool SetPropertyKontrolProductComPort(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderLinnCoUkProxyManager1SetPropertyKontrolProductComPort(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyKontrolProductComPort, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the KontrolProductComPort property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyKontrolProductComPort(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyKontrolProductComPort()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderLinnCoUkProxyManager1GetPropertyKontrolProductComPort(iHandle, value);
-            }
+            return iPropertyKontrolProductComPort.Value();
         }
 
         /// <summary>
@@ -204,29 +167,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyDiscPlayerConnected(string aValue)
+        public bool SetPropertyDiscPlayerConnected(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderLinnCoUkProxyManager1SetPropertyDiscPlayerConnected(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyString(iPropertyDiscPlayerConnected, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the DiscPlayerConnected property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyDiscPlayerConnected(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyDiscPlayerConnected()
         {
-            char* value;
-            DvProviderLinnCoUkProxyManager1GetPropertyDiscPlayerConnected(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
+            return iPropertyDiscPlayerConnected.Value();
         }
 
         /// <summary>
@@ -234,26 +186,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyDiscPlayerComPort(uint aValue)
+        public bool SetPropertyDiscPlayerComPort(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderLinnCoUkProxyManager1SetPropertyDiscPlayerComPort(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyDiscPlayerComPort, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the DiscPlayerComPort property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyDiscPlayerComPort(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyDiscPlayerComPort()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderLinnCoUkProxyManager1GetPropertyDiscPlayerComPort(iHandle, value);
-            }
+            return iPropertyDiscPlayerComPort.Value();
         }
 
         /// <summary>
@@ -263,9 +207,11 @@ namespace Zapp.Device.Providers
         /// DoKontrolProductConnected must be overridden if this is called.</remarks>
         protected unsafe void EnableActionKontrolProductConnected()
         {
-            iCallbackKontrolProductConnected = new CallbackKontrolProductConnected(DoKontrolProductConnected);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkProxyManager1EnableActionKontrolProductConnected(iHandle, iCallbackKontrolProductConnected, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("KontrolProductConnected");
+            List<String> allowedValues = new List<String>();
+            action.AddOutputParameter(new ParameterRelated("aConnected", iPropertyKontrolProductConnected));
+            iDelegateKontrolProductConnected = new ActionDelegate(DoKontrolProductConnected);
+            EnableAction(action, iDelegateKontrolProductConnected, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -275,9 +221,11 @@ namespace Zapp.Device.Providers
         /// DoSetKontrolProductConnected must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetKontrolProductConnected()
         {
-            iCallbackSetKontrolProductConnected = new CallbackSetKontrolProductConnected(DoSetKontrolProductConnected);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkProxyManager1EnableActionSetKontrolProductConnected(iHandle, iCallbackSetKontrolProductConnected, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetKontrolProductConnected");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterRelated("aConnected", iPropertyKontrolProductConnected));
+            iDelegateSetKontrolProductConnected = new ActionDelegate(DoSetKontrolProductConnected);
+            EnableAction(action, iDelegateSetKontrolProductConnected, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -287,9 +235,10 @@ namespace Zapp.Device.Providers
         /// DoKontrolProductComPort must be overridden if this is called.</remarks>
         protected unsafe void EnableActionKontrolProductComPort()
         {
-            iCallbackKontrolProductComPort = new CallbackKontrolProductComPort(DoKontrolProductComPort);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkProxyManager1EnableActionKontrolProductComPort(iHandle, iCallbackKontrolProductComPort, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("KontrolProductComPort");
+            action.AddOutputParameter(new ParameterRelated("aPort", iPropertyKontrolProductComPort));
+            iDelegateKontrolProductComPort = new ActionDelegate(DoKontrolProductComPort);
+            EnableAction(action, iDelegateKontrolProductComPort, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -299,9 +248,10 @@ namespace Zapp.Device.Providers
         /// DoSetKontrolProductComPort must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetKontrolProductComPort()
         {
-            iCallbackSetKontrolProductComPort = new CallbackSetKontrolProductComPort(DoSetKontrolProductComPort);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkProxyManager1EnableActionSetKontrolProductComPort(iHandle, iCallbackSetKontrolProductComPort, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetKontrolProductComPort");
+            action.AddInputParameter(new ParameterRelated("aConnected", iPropertyKontrolProductComPort));
+            iDelegateSetKontrolProductComPort = new ActionDelegate(DoSetKontrolProductComPort);
+            EnableAction(action, iDelegateSetKontrolProductComPort, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -311,9 +261,11 @@ namespace Zapp.Device.Providers
         /// DoDiscPlayerConnected must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDiscPlayerConnected()
         {
-            iCallbackDiscPlayerConnected = new CallbackDiscPlayerConnected(DoDiscPlayerConnected);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkProxyManager1EnableActionDiscPlayerConnected(iHandle, iCallbackDiscPlayerConnected, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DiscPlayerConnected");
+            List<String> allowedValues = new List<String>();
+            action.AddOutputParameter(new ParameterRelated("aConnected", iPropertyDiscPlayerConnected));
+            iDelegateDiscPlayerConnected = new ActionDelegate(DoDiscPlayerConnected);
+            EnableAction(action, iDelegateDiscPlayerConnected, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -323,9 +275,11 @@ namespace Zapp.Device.Providers
         /// DoSetDiscPlayerConnected must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetDiscPlayerConnected()
         {
-            iCallbackSetDiscPlayerConnected = new CallbackSetDiscPlayerConnected(DoSetDiscPlayerConnected);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkProxyManager1EnableActionSetDiscPlayerConnected(iHandle, iCallbackSetDiscPlayerConnected, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetDiscPlayerConnected");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterRelated("aConnected", iPropertyDiscPlayerConnected));
+            iDelegateSetDiscPlayerConnected = new ActionDelegate(DoSetDiscPlayerConnected);
+            EnableAction(action, iDelegateSetDiscPlayerConnected, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -335,9 +289,10 @@ namespace Zapp.Device.Providers
         /// DoDiscPlayerComPort must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDiscPlayerComPort()
         {
-            iCallbackDiscPlayerComPort = new CallbackDiscPlayerComPort(DoDiscPlayerComPort);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkProxyManager1EnableActionDiscPlayerComPort(iHandle, iCallbackDiscPlayerComPort, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DiscPlayerComPort");
+            action.AddOutputParameter(new ParameterRelated("aPort", iPropertyDiscPlayerComPort));
+            iDelegateDiscPlayerComPort = new ActionDelegate(DoDiscPlayerComPort);
+            EnableAction(action, iDelegateDiscPlayerComPort, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -347,9 +302,10 @@ namespace Zapp.Device.Providers
         /// DoSetDiscPlayerComPort must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetDiscPlayerComPort()
         {
-            iCallbackSetDiscPlayerComPort = new CallbackSetDiscPlayerComPort(DoSetDiscPlayerComPort);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkProxyManager1EnableActionSetDiscPlayerComPort(iHandle, iCallbackSetDiscPlayerComPort, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetDiscPlayerComPort");
+            action.AddInputParameter(new ParameterRelated("aConnected", iPropertyDiscPlayerComPort));
+            iDelegateSetDiscPlayerComPort = new ActionDelegate(DoSetDiscPlayerComPort);
+            EnableAction(action, iDelegateSetDiscPlayerComPort, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -359,9 +315,10 @@ namespace Zapp.Device.Providers
         /// DoTestKontrolProductConnection must be overridden if this is called.</remarks>
         protected unsafe void EnableActionTestKontrolProductConnection()
         {
-            iCallbackTestKontrolProductConnection = new CallbackTestKontrolProductConnection(DoTestKontrolProductConnection);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkProxyManager1EnableActionTestKontrolProductConnection(iHandle, iCallbackTestKontrolProductConnection, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("TestKontrolProductConnection");
+            action.AddOutputParameter(new ParameterBool("aResult"));
+            iDelegateTestKontrolProductConnection = new ActionDelegate(DoTestKontrolProductConnection);
+            EnableAction(action, iDelegateTestKontrolProductConnection, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -371,9 +328,10 @@ namespace Zapp.Device.Providers
         /// DoTestDiscPlayerConnection must be overridden if this is called.</remarks>
         protected unsafe void EnableActionTestDiscPlayerConnection()
         {
-            iCallbackTestDiscPlayerConnection = new CallbackTestDiscPlayerConnection(DoTestDiscPlayerConnection);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkProxyManager1EnableActionTestDiscPlayerConnection(iHandle, iCallbackTestDiscPlayerConnection, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("TestDiscPlayerConnection");
+            action.AddOutputParameter(new ParameterBool("aResult"));
+            iDelegateTestDiscPlayerConnection = new ActionDelegate(DoTestDiscPlayerConnection);
+            EnableAction(action, iDelegateTestDiscPlayerConnection, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -516,97 +474,129 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoKontrolProductConnected(IntPtr aPtr, uint aVersion, char** aaConnected)
+        private static unsafe int DoKontrolProductConnected(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aConnected;
             self.KontrolProductConnected(aVersion, out aConnected);
-            *aaConnected = (char*)Marshal.StringToHGlobalAnsi(aConnected).ToPointer();
+            invocation.WriteStart();
+            invocation.WriteString("aConnected", aConnected);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetKontrolProductConnected(IntPtr aPtr, uint aVersion, char* aaConnected)
+        private static unsafe int DoSetKontrolProductConnected(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
-            string aConnected = Marshal.PtrToStringAnsi((IntPtr)aaConnected);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string aConnected = invocation.ReadString("aConnected");
             self.SetKontrolProductConnected(aVersion, aConnected);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoKontrolProductComPort(IntPtr aPtr, uint aVersion, uint* aaPort)
+        private static unsafe int DoKontrolProductComPort(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint aPort;
             self.KontrolProductComPort(aVersion, out aPort);
-            *aaPort = aPort;
+            invocation.WriteStart();
+            invocation.WriteUint("aPort", aPort);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetKontrolProductComPort(IntPtr aPtr, uint aVersion, uint aaConnected)
+        private static unsafe int DoSetKontrolProductComPort(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
-            self.SetKontrolProductComPort(aVersion, aaConnected);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aConnected = invocation.ReadUint("aConnected");
+            self.SetKontrolProductComPort(aVersion, aConnected);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoDiscPlayerConnected(IntPtr aPtr, uint aVersion, char** aaConnected)
+        private static unsafe int DoDiscPlayerConnected(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aConnected;
             self.DiscPlayerConnected(aVersion, out aConnected);
-            *aaConnected = (char*)Marshal.StringToHGlobalAnsi(aConnected).ToPointer();
+            invocation.WriteStart();
+            invocation.WriteString("aConnected", aConnected);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetDiscPlayerConnected(IntPtr aPtr, uint aVersion, char* aaConnected)
+        private static unsafe int DoSetDiscPlayerConnected(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
-            string aConnected = Marshal.PtrToStringAnsi((IntPtr)aaConnected);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string aConnected = invocation.ReadString("aConnected");
             self.SetDiscPlayerConnected(aVersion, aConnected);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoDiscPlayerComPort(IntPtr aPtr, uint aVersion, uint* aaPort)
+        private static unsafe int DoDiscPlayerComPort(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint aPort;
             self.DiscPlayerComPort(aVersion, out aPort);
-            *aaPort = aPort;
+            invocation.WriteStart();
+            invocation.WriteUint("aPort", aPort);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetDiscPlayerComPort(IntPtr aPtr, uint aVersion, uint aaConnected)
+        private static unsafe int DoSetDiscPlayerComPort(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
-            self.SetDiscPlayerComPort(aVersion, aaConnected);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aConnected = invocation.ReadUint("aConnected");
+            self.SetDiscPlayerComPort(aVersion, aConnected);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoTestKontrolProductConnection(IntPtr aPtr, uint aVersion, int* aaResult)
+        private static unsafe int DoTestKontrolProductConnection(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             bool aResult;
             self.TestKontrolProductConnection(aVersion, out aResult);
-            *aaResult = (aResult ? 1 : 0);
+            invocation.WriteStart();
+            invocation.WriteBool("aResult", aResult);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoTestDiscPlayerConnection(IntPtr aPtr, uint aVersion, int* aaResult)
+        private static unsafe int DoTestDiscPlayerConnection(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             bool aResult;
             self.TestDiscPlayerConnection(aVersion, out aResult);
-            *aaResult = (aResult ? 1 : 0);
+            invocation.WriteStart();
+            invocation.WriteBool("aResult", aResult);
+            invocation.WriteEnd();
             return 0;
         }
 
@@ -626,21 +616,16 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            IntPtr handle;
             lock (this)
             {
                 if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
+                DisposeProvider();
                 iHandle = IntPtr.Zero;
             }
-            DvProviderLinnCoUkProxyManager1Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }

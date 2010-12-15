@@ -1,7 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Text;
-using Zapp;
+using Zapp.Core;
+using Zapp.ControlPoint;
 
 namespace Zapp.ControlPoint.Proxies
 {
@@ -10,127 +12,178 @@ namespace Zapp.ControlPoint.Proxies
         void SyncCounters(out uint aaTrackCount, out uint aaDetailsCount, out uint aaMetatextCount);
         void BeginCounters(CpProxy.CallbackAsyncComplete aCallback);
         void EndCounters(IntPtr aAsyncHandle, out uint aaTrackCount, out uint aaDetailsCount, out uint aaMetatextCount);
-        void SyncTrack(out string aaUri, out string aaMetadata);
+        void SyncTrack(out String aaUri, out String aaMetadata);
         void BeginTrack(CpProxy.CallbackAsyncComplete aCallback);
-        void EndTrack(IntPtr aAsyncHandle, out string aaUri, out string aaMetadata);
-        void SyncDetails(out uint aaDuration, out uint aaBitRate, out uint aaBitDepth, out uint aaSampleRate, out bool aaLossless, out string aaCodecName);
+        void EndTrack(IntPtr aAsyncHandle, out String aaUri, out String aaMetadata);
+        void SyncDetails(out uint aaDuration, out uint aaBitRate, out uint aaBitDepth, out uint aaSampleRate, out bool aaLossless, out String aaCodecName);
         void BeginDetails(CpProxy.CallbackAsyncComplete aCallback);
-        void EndDetails(IntPtr aAsyncHandle, out uint aaDuration, out uint aaBitRate, out uint aaBitDepth, out uint aaSampleRate, out bool aaLossless, out string aaCodecName);
-        void SyncMetatext(out string aaMetatext);
+        void EndDetails(IntPtr aAsyncHandle, out uint aaDuration, out uint aaBitRate, out uint aaBitDepth, out uint aaSampleRate, out bool aaLossless, out String aaCodecName);
+        void SyncMetatext(out String aaMetatext);
         void BeginMetatext(CpProxy.CallbackAsyncComplete aCallback);
-        void EndMetatext(IntPtr aAsyncHandle, out string aaMetatext);
-
+        void EndMetatext(IntPtr aAsyncHandle, out String aaMetatext);
         void SetPropertyTrackCountChanged(CpProxy.CallbackPropertyChanged aTrackCountChanged);
-        void PropertyTrackCount(out uint aTrackCount);
+        uint PropertyTrackCount();
         void SetPropertyDetailsCountChanged(CpProxy.CallbackPropertyChanged aDetailsCountChanged);
-        void PropertyDetailsCount(out uint aDetailsCount);
+        uint PropertyDetailsCount();
         void SetPropertyMetatextCountChanged(CpProxy.CallbackPropertyChanged aMetatextCountChanged);
-        void PropertyMetatextCount(out uint aMetatextCount);
+        uint PropertyMetatextCount();
         void SetPropertyUriChanged(CpProxy.CallbackPropertyChanged aUriChanged);
-        void PropertyUri(out string aUri);
+        String PropertyUri();
         void SetPropertyMetadataChanged(CpProxy.CallbackPropertyChanged aMetadataChanged);
-        void PropertyMetadata(out string aMetadata);
+        String PropertyMetadata();
         void SetPropertyDurationChanged(CpProxy.CallbackPropertyChanged aDurationChanged);
-        void PropertyDuration(out uint aDuration);
+        uint PropertyDuration();
         void SetPropertyBitRateChanged(CpProxy.CallbackPropertyChanged aBitRateChanged);
-        void PropertyBitRate(out uint aBitRate);
+        uint PropertyBitRate();
         void SetPropertyBitDepthChanged(CpProxy.CallbackPropertyChanged aBitDepthChanged);
-        void PropertyBitDepth(out uint aBitDepth);
+        uint PropertyBitDepth();
         void SetPropertySampleRateChanged(CpProxy.CallbackPropertyChanged aSampleRateChanged);
-        void PropertySampleRate(out uint aSampleRate);
+        uint PropertySampleRate();
         void SetPropertyLosslessChanged(CpProxy.CallbackPropertyChanged aLosslessChanged);
-        void PropertyLossless(out bool aLossless);
+        bool PropertyLossless();
         void SetPropertyCodecNameChanged(CpProxy.CallbackPropertyChanged aCodecNameChanged);
-        void PropertyCodecName(out string aCodecName);
+        String PropertyCodecName();
         void SetPropertyMetatextChanged(CpProxy.CallbackPropertyChanged aMetatextChanged);
-        void PropertyMetatext(out string aMetatext);
+        String PropertyMetatext();
     }
+
+    internal class SyncCountersLinnCoUkInfo1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkInfo1 iService;
+        private uint iTrackCount;
+        private uint iDetailsCount;
+        private uint iMetatextCount;
+
+        public SyncCountersLinnCoUkInfo1(CpProxyLinnCoUkInfo1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint TrackCount()
+        {
+            return iTrackCount;
+        }
+        public uint DetailsCount()
+        {
+            return iDetailsCount;
+        }
+        public uint MetatextCount()
+        {
+            return iMetatextCount;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndCounters(aAsyncHandle, out iTrackCount, out iDetailsCount, out iMetatextCount);
+        }
+    };
+
+    internal class SyncTrackLinnCoUkInfo1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkInfo1 iService;
+        private String iUri;
+        private String iMetadata;
+
+        public SyncTrackLinnCoUkInfo1(CpProxyLinnCoUkInfo1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Uri()
+        {
+            return iUri;
+        }
+        public String Metadata()
+        {
+            return iMetadata;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndTrack(aAsyncHandle, out iUri, out iMetadata);
+        }
+    };
+
+    internal class SyncDetailsLinnCoUkInfo1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkInfo1 iService;
+        private uint iDuration;
+        private uint iBitRate;
+        private uint iBitDepth;
+        private uint iSampleRate;
+        private bool iLossless;
+        private String iCodecName;
+
+        public SyncDetailsLinnCoUkInfo1(CpProxyLinnCoUkInfo1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint Duration()
+        {
+            return iDuration;
+        }
+        public uint BitRate()
+        {
+            return iBitRate;
+        }
+        public uint BitDepth()
+        {
+            return iBitDepth;
+        }
+        public uint SampleRate()
+        {
+            return iSampleRate;
+        }
+        public bool Lossless()
+        {
+            return iLossless;
+        }
+        public String CodecName()
+        {
+            return iCodecName;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndDetails(aAsyncHandle, out iDuration, out iBitRate, out iBitDepth, out iSampleRate, out iLossless, out iCodecName);
+        }
+    };
+
+    internal class SyncMetatextLinnCoUkInfo1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkInfo1 iService;
+        private String iMetatext;
+
+        public SyncMetatextLinnCoUkInfo1(CpProxyLinnCoUkInfo1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Metatext()
+        {
+            return iMetatext;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndMetatext(aAsyncHandle, out iMetatext);
+        }
+    };
 
     /// <summary>
     /// Proxy for the linn.co.uk:Info:1 UPnP service
     /// </summary>
     public class CpProxyLinnCoUkInfo1 : CpProxy, IDisposable, ICpProxyLinnCoUkInfo1
     {
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern IntPtr CpProxyLinnCoUkInfo1Create(IntPtr aDeviceHandle);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1Destroy(IntPtr aHandle);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1SyncCounters(IntPtr aHandle, uint* aaTrackCount, uint* aaDetailsCount, uint* aaMetatextCount);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1BeginCounters(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe int CpProxyLinnCoUkInfo1EndCounters(IntPtr aHandle, IntPtr aAsync, uint* aaTrackCount, uint* aaDetailsCount, uint* aaMetatextCount);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1SyncTrack(IntPtr aHandle, char** aaUri, char** aaMetadata);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1BeginTrack(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe int CpProxyLinnCoUkInfo1EndTrack(IntPtr aHandle, IntPtr aAsync, char** aaUri, char** aaMetadata);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1SyncDetails(IntPtr aHandle, uint* aaDuration, uint* aaBitRate, uint* aaBitDepth, uint* aaSampleRate, uint* aaLossless, char** aaCodecName);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1BeginDetails(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe int CpProxyLinnCoUkInfo1EndDetails(IntPtr aHandle, IntPtr aAsync, uint* aaDuration, uint* aaBitRate, uint* aaBitDepth, uint* aaSampleRate, uint* aaLossless, char** aaCodecName);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1SyncMetatext(IntPtr aHandle, char** aaMetatext);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1BeginMetatext(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe int CpProxyLinnCoUkInfo1EndMetatext(IntPtr aHandle, IntPtr aAsync, char** aaMetatext);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyTrackCountChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyDetailsCountChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyMetatextCountChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyUriChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyMetadataChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyDurationChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyBitRateChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyBitDepthChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertySampleRateChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyLosslessChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyCodecNameChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern void CpProxyLinnCoUkInfo1SetPropertyMetatextChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyTrackCount(IntPtr aHandle, uint* aTrackCount);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyDetailsCount(IntPtr aHandle, uint* aDetailsCount);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyMetatextCount(IntPtr aHandle, uint* aMetatextCount);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyUri(IntPtr aHandle, char** aUri);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyMetadata(IntPtr aHandle, char** aMetadata);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyDuration(IntPtr aHandle, uint* aDuration);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyBitRate(IntPtr aHandle, uint* aBitRate);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyBitDepth(IntPtr aHandle, uint* aBitDepth);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertySampleRate(IntPtr aHandle, uint* aSampleRate);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyLossless(IntPtr aHandle, uint* aLossless);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyCodecName(IntPtr aHandle, char** aCodecName);
-        [DllImport("CpLinnCoUkInfo1")]
-        static extern unsafe void CpProxyLinnCoUkInfo1PropertyMetatext(IntPtr aHandle, char** aMetatext);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private GCHandle iGch;
+        private Zapp.Core.Action iActionCounters;
+        private Zapp.Core.Action iActionTrack;
+        private Zapp.Core.Action iActionDetails;
+        private Zapp.Core.Action iActionMetatext;
+        private PropertyUint iTrackCount;
+        private PropertyUint iDetailsCount;
+        private PropertyUint iMetatextCount;
+        private PropertyString iUri;
+        private PropertyString iMetadata;
+        private PropertyUint iDuration;
+        private PropertyUint iBitRate;
+        private PropertyUint iBitDepth;
+        private PropertyUint iSampleRate;
+        private PropertyBool iLossless;
+        private PropertyString iCodecName;
+        private PropertyString iMetatext;
         private CallbackPropertyChanged iTrackCountChanged;
         private CallbackPropertyChanged iDetailsCountChanged;
         private CallbackPropertyChanged iMetatextCountChanged;
@@ -143,18 +196,6 @@ namespace Zapp.ControlPoint.Proxies
         private CallbackPropertyChanged iLosslessChanged;
         private CallbackPropertyChanged iCodecNameChanged;
         private CallbackPropertyChanged iMetatextChanged;
-        private Callback iCallbackTrackCountChanged;
-        private Callback iCallbackDetailsCountChanged;
-        private Callback iCallbackMetatextCountChanged;
-        private Callback iCallbackUriChanged;
-        private Callback iCallbackMetadataChanged;
-        private Callback iCallbackDurationChanged;
-        private Callback iCallbackBitRateChanged;
-        private Callback iCallbackBitDepthChanged;
-        private Callback iCallbackSampleRateChanged;
-        private Callback iCallbackLosslessChanged;
-        private Callback iCallbackCodecNameChanged;
-        private Callback iCallbackMetatextChanged;
 
         /// <summary>
         /// Constructor
@@ -162,9 +203,67 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
         /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkInfo1(CpDevice aDevice)
+            : base("linn-co-uk", "Info", 1, aDevice)
         {
-            iHandle = CpProxyLinnCoUkInfo1Create(aDevice.Handle());
-            iGch = GCHandle.Alloc(this);
+            Zapp.Core.Parameter param;
+            List<String> allowedValues = new List<String>();
+
+            iActionCounters = new Zapp.Core.Action("Counters");
+            param = new ParameterUint("aTrackCount");
+            iActionCounters.AddOutputParameter(param);
+            param = new ParameterUint("aDetailsCount");
+            iActionCounters.AddOutputParameter(param);
+            param = new ParameterUint("aMetatextCount");
+            iActionCounters.AddOutputParameter(param);
+
+            iActionTrack = new Zapp.Core.Action("Track");
+            param = new ParameterString("aUri", allowedValues);
+            iActionTrack.AddOutputParameter(param);
+            param = new ParameterString("aMetadata", allowedValues);
+            iActionTrack.AddOutputParameter(param);
+
+            iActionDetails = new Zapp.Core.Action("Details");
+            param = new ParameterUint("aDuration");
+            iActionDetails.AddOutputParameter(param);
+            param = new ParameterUint("aBitRate");
+            iActionDetails.AddOutputParameter(param);
+            param = new ParameterUint("aBitDepth");
+            iActionDetails.AddOutputParameter(param);
+            param = new ParameterUint("aSampleRate");
+            iActionDetails.AddOutputParameter(param);
+            param = new ParameterBool("aLossless");
+            iActionDetails.AddOutputParameter(param);
+            param = new ParameterString("aCodecName", allowedValues);
+            iActionDetails.AddOutputParameter(param);
+
+            iActionMetatext = new Zapp.Core.Action("Metatext");
+            param = new ParameterString("aMetatext", allowedValues);
+            iActionMetatext.AddOutputParameter(param);
+
+            iTrackCount = new PropertyUint("TrackCount", TrackCountPropertyChanged);
+            AddProperty(iTrackCount);
+            iDetailsCount = new PropertyUint("DetailsCount", DetailsCountPropertyChanged);
+            AddProperty(iDetailsCount);
+            iMetatextCount = new PropertyUint("MetatextCount", MetatextCountPropertyChanged);
+            AddProperty(iMetatextCount);
+            iUri = new PropertyString("Uri", UriPropertyChanged);
+            AddProperty(iUri);
+            iMetadata = new PropertyString("Metadata", MetadataPropertyChanged);
+            AddProperty(iMetadata);
+            iDuration = new PropertyUint("Duration", DurationPropertyChanged);
+            AddProperty(iDuration);
+            iBitRate = new PropertyUint("BitRate", BitRatePropertyChanged);
+            AddProperty(iBitRate);
+            iBitDepth = new PropertyUint("BitDepth", BitDepthPropertyChanged);
+            AddProperty(iBitDepth);
+            iSampleRate = new PropertyUint("SampleRate", SampleRatePropertyChanged);
+            AddProperty(iSampleRate);
+            iLossless = new PropertyBool("Lossless", LosslessPropertyChanged);
+            AddProperty(iLossless);
+            iCodecName = new PropertyString("CodecName", CodecNamePropertyChanged);
+            AddProperty(iCodecName);
+            iMetatext = new PropertyString("Metatext", MetatextPropertyChanged);
+            AddProperty(iMetatext);
         }
 
         /// <summary>
@@ -175,14 +274,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrackCount"></param>
         /// <param name="aaDetailsCount"></param>
         /// <param name="aaMetatextCount"></param>
-        public unsafe void SyncCounters(out uint aaTrackCount, out uint aaDetailsCount, out uint aaMetatextCount)
+        public void SyncCounters(out uint aaTrackCount, out uint aaDetailsCount, out uint aaMetatextCount)
         {
-            fixed (uint* aTrackCount = &aaTrackCount)
-            fixed (uint* aDetailsCount = &aaDetailsCount)
-            fixed (uint* aMetatextCount = &aaMetatextCount)
-            {
-                CpProxyLinnCoUkInfo1SyncCounters(iHandle, aTrackCount, aDetailsCount, aMetatextCount);
-            }
+            SyncCountersLinnCoUkInfo1 sync = new SyncCountersLinnCoUkInfo1(this);
+            BeginCounters(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aTrackCount = sync.TrackCount();
+            aDetailsCount = sync.DetailsCount();
+            aMetatextCount = sync.MetatextCount();
         }
 
         /// <summary>
@@ -193,11 +293,14 @@ namespace Zapp.ControlPoint.Proxies
         /// EndCounters().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginCounters(CallbackAsyncComplete aCallback)
+        public void BeginCounters(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkInfo1BeginCounters(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionCounters, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionCounters.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionCounters.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionCounters.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -208,17 +311,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrackCount"></param>
         /// <param name="aaDetailsCount"></param>
         /// <param name="aaMetatextCount"></param>
-        public unsafe void EndCounters(IntPtr aAsyncHandle, out uint aaTrackCount, out uint aaDetailsCount, out uint aaMetatextCount)
+        public void EndCounters(IntPtr aAsyncHandle, out uint aaTrackCount, out uint aaDetailsCount, out uint aaMetatextCount)
         {
-            fixed (uint* aTrackCount = &aaTrackCount)
-            fixed (uint* aDetailsCount = &aaDetailsCount)
-            fixed (uint* aMetatextCount = &aaMetatextCount)
-            {
-                if (0 != CpProxyLinnCoUkInfo1EndCounters(iHandle, aAsyncHandle, aTrackCount, aDetailsCount, aMetatextCount))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aTrackCount = Invocation.OutputUint(aAsyncHandle, index++);
+            aDetailsCount = Invocation.OutputUint(aAsyncHandle, index++);
+            aMetatextCount = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -228,17 +326,14 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaUri"></param>
         /// <param name="aaMetadata"></param>
-        public unsafe void SyncTrack(out string aaUri, out string aaMetadata)
+        public void SyncTrack(out String aaUri, out String aaMetadata)
         {
-            char* aUri;
-            char* aMetadata;
-            {
-                CpProxyLinnCoUkInfo1SyncTrack(iHandle, &aUri, &aMetadata);
-            }
-            aaUri = Marshal.PtrToStringAnsi((IntPtr)aUri);
-            ZappFree(aUri);
-            aaMetadata = Marshal.PtrToStringAnsi((IntPtr)aMetadata);
-            ZappFree(aMetadata);
+            SyncTrackLinnCoUkInfo1 sync = new SyncTrackLinnCoUkInfo1(this);
+            BeginTrack(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aUri = sync.Uri();
+            aMetadata = sync.Metadata();
         }
 
         /// <summary>
@@ -249,11 +344,13 @@ namespace Zapp.ControlPoint.Proxies
         /// EndTrack().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginTrack(CallbackAsyncComplete aCallback)
+        public void BeginTrack(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkInfo1BeginTrack(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionTrack, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionTrack.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionTrack.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -263,20 +360,11 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaUri"></param>
         /// <param name="aaMetadata"></param>
-        public unsafe void EndTrack(IntPtr aAsyncHandle, out string aaUri, out string aaMetadata)
+        public void EndTrack(IntPtr aAsyncHandle, out String aaUri, out String aaMetadata)
         {
-            char* aUri;
-            char* aMetadata;
-            {
-                if (0 != CpProxyLinnCoUkInfo1EndTrack(iHandle, aAsyncHandle, &aUri, &aMetadata))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaUri = Marshal.PtrToStringAnsi((IntPtr)aUri);
-            ZappFree(aUri);
-            aaMetadata = Marshal.PtrToStringAnsi((IntPtr)aMetadata);
-            ZappFree(aMetadata);
+            uint index = 0;
+            aUri = Invocation.OutputString(aAsyncHandle, index++);
+            aMetadata = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -290,20 +378,18 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSampleRate"></param>
         /// <param name="aaLossless"></param>
         /// <param name="aaCodecName"></param>
-        public unsafe void SyncDetails(out uint aaDuration, out uint aaBitRate, out uint aaBitDepth, out uint aaSampleRate, out bool aaLossless, out string aaCodecName)
+        public void SyncDetails(out uint aaDuration, out uint aaBitRate, out uint aaBitDepth, out uint aaSampleRate, out bool aaLossless, out String aaCodecName)
         {
-            uint aLossless;
-            char* aCodecName;
-            fixed (uint* aDuration = &aaDuration)
-            fixed (uint* aBitRate = &aaBitRate)
-            fixed (uint* aBitDepth = &aaBitDepth)
-            fixed (uint* aSampleRate = &aaSampleRate)
-            {
-                CpProxyLinnCoUkInfo1SyncDetails(iHandle, aDuration, aBitRate, aBitDepth, aSampleRate, &aLossless, &aCodecName);
-            }
-            aaLossless = (aLossless != 0);
-            aaCodecName = Marshal.PtrToStringAnsi((IntPtr)aCodecName);
-            ZappFree(aCodecName);
+            SyncDetailsLinnCoUkInfo1 sync = new SyncDetailsLinnCoUkInfo1(this);
+            BeginDetails(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aDuration = sync.Duration();
+            aBitRate = sync.BitRate();
+            aBitDepth = sync.BitDepth();
+            aSampleRate = sync.SampleRate();
+            aLossless = sync.Lossless();
+            aCodecName = sync.CodecName();
         }
 
         /// <summary>
@@ -314,11 +400,17 @@ namespace Zapp.ControlPoint.Proxies
         /// EndDetails().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginDetails(CallbackAsyncComplete aCallback)
+        public void BeginDetails(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkInfo1BeginDetails(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionDetails, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionDetails.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionDetails.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionDetails.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionDetails.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentBool((ParameterBool)iActionDetails.OutputParameter(outIndex++)));
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionDetails.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -332,23 +424,15 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSampleRate"></param>
         /// <param name="aaLossless"></param>
         /// <param name="aaCodecName"></param>
-        public unsafe void EndDetails(IntPtr aAsyncHandle, out uint aaDuration, out uint aaBitRate, out uint aaBitDepth, out uint aaSampleRate, out bool aaLossless, out string aaCodecName)
+        public void EndDetails(IntPtr aAsyncHandle, out uint aaDuration, out uint aaBitRate, out uint aaBitDepth, out uint aaSampleRate, out bool aaLossless, out String aaCodecName)
         {
-            uint aLossless;
-            char* aCodecName;
-            fixed (uint* aDuration = &aaDuration)
-            fixed (uint* aBitRate = &aaBitRate)
-            fixed (uint* aBitDepth = &aaBitDepth)
-            fixed (uint* aSampleRate = &aaSampleRate)
-            {
-                if (0 != CpProxyLinnCoUkInfo1EndDetails(iHandle, aAsyncHandle, aDuration, aBitRate, aBitDepth, aSampleRate, &aLossless, &aCodecName))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaLossless = (aLossless != 0);
-            aaCodecName = Marshal.PtrToStringAnsi((IntPtr)aCodecName);
-            ZappFree(aCodecName);
+            uint index = 0;
+            aDuration = Invocation.OutputUint(aAsyncHandle, index++);
+            aBitRate = Invocation.OutputUint(aAsyncHandle, index++);
+            aBitDepth = Invocation.OutputUint(aAsyncHandle, index++);
+            aSampleRate = Invocation.OutputUint(aAsyncHandle, index++);
+            aLossless = Invocation.OutputBool(aAsyncHandle, index++);
+            aCodecName = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -357,14 +441,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaMetatext"></param>
-        public unsafe void SyncMetatext(out string aaMetatext)
+        public void SyncMetatext(out String aaMetatext)
         {
-            char* aMetatext;
-            {
-                CpProxyLinnCoUkInfo1SyncMetatext(iHandle, &aMetatext);
-            }
-            aaMetatext = Marshal.PtrToStringAnsi((IntPtr)aMetatext);
-            ZappFree(aMetatext);
+            SyncMetatextLinnCoUkInfo1 sync = new SyncMetatextLinnCoUkInfo1(this);
+            BeginMetatext(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aMetatext = sync.Metatext();
         }
 
         /// <summary>
@@ -375,11 +458,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndMetatext().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginMetatext(CallbackAsyncComplete aCallback)
+        public void BeginMetatext(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkInfo1BeginMetatext(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionMetatext, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionMetatext.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -388,17 +472,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaMetatext"></param>
-        public unsafe void EndMetatext(IntPtr aAsyncHandle, out string aaMetatext)
+        public void EndMetatext(IntPtr aAsyncHandle, out String aaMetatext)
         {
-            char* aMetatext;
-            {
-                if (0 != CpProxyLinnCoUkInfo1EndMetatext(iHandle, aAsyncHandle, &aMetatext))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaMetatext = Marshal.PtrToStringAnsi((IntPtr)aMetatext);
-            ZappFree(aMetatext);
+            uint index = 0;
+            aMetatext = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -409,17 +486,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aTrackCountChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyTrackCountChanged(CallbackPropertyChanged aTrackCountChanged)
         {
-            iTrackCountChanged = aTrackCountChanged;
-            iCallbackTrackCountChanged = new Callback(PropertyTrackCountChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkInfo1SetPropertyTrackCountChanged(iHandle, iCallbackTrackCountChanged, ptr);
+            lock (this)
+            {
+                iTrackCountChanged = aTrackCountChanged;
+            }
         }
 
-        private void PropertyTrackCountChanged(IntPtr aPtr)
+        private void TrackCountPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkInfo1 self = (CpProxyLinnCoUkInfo1)gch.Target;
-            self.iTrackCountChanged();
+            lock (this)
+            {
+                if (iTrackCountChanged != null)
+                {
+                    iTrackCountChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -430,17 +511,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDetailsCountChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDetailsCountChanged(CallbackPropertyChanged aDetailsCountChanged)
         {
-            iDetailsCountChanged = aDetailsCountChanged;
-            iCallbackDetailsCountChanged = new Callback(PropertyDetailsCountChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkInfo1SetPropertyDetailsCountChanged(iHandle, iCallbackDetailsCountChanged, ptr);
+            lock (this)
+            {
+                iDetailsCountChanged = aDetailsCountChanged;
+            }
         }
 
-        private void PropertyDetailsCountChanged(IntPtr aPtr)
+        private void DetailsCountPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkInfo1 self = (CpProxyLinnCoUkInfo1)gch.Target;
-            self.iDetailsCountChanged();
+            lock (this)
+            {
+                if (iDetailsCountChanged != null)
+                {
+                    iDetailsCountChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -451,17 +536,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aMetatextCountChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyMetatextCountChanged(CallbackPropertyChanged aMetatextCountChanged)
         {
-            iMetatextCountChanged = aMetatextCountChanged;
-            iCallbackMetatextCountChanged = new Callback(PropertyMetatextCountChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkInfo1SetPropertyMetatextCountChanged(iHandle, iCallbackMetatextCountChanged, ptr);
+            lock (this)
+            {
+                iMetatextCountChanged = aMetatextCountChanged;
+            }
         }
 
-        private void PropertyMetatextCountChanged(IntPtr aPtr)
+        private void MetatextCountPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkInfo1 self = (CpProxyLinnCoUkInfo1)gch.Target;
-            self.iMetatextCountChanged();
+            lock (this)
+            {
+                if (iMetatextCountChanged != null)
+                {
+                    iMetatextCountChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -472,17 +561,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aUriChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyUriChanged(CallbackPropertyChanged aUriChanged)
         {
-            iUriChanged = aUriChanged;
-            iCallbackUriChanged = new Callback(PropertyUriChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkInfo1SetPropertyUriChanged(iHandle, iCallbackUriChanged, ptr);
+            lock (this)
+            {
+                iUriChanged = aUriChanged;
+            }
         }
 
-        private void PropertyUriChanged(IntPtr aPtr)
+        private void UriPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkInfo1 self = (CpProxyLinnCoUkInfo1)gch.Target;
-            self.iUriChanged();
+            lock (this)
+            {
+                if (iUriChanged != null)
+                {
+                    iUriChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -493,17 +586,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aMetadataChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyMetadataChanged(CallbackPropertyChanged aMetadataChanged)
         {
-            iMetadataChanged = aMetadataChanged;
-            iCallbackMetadataChanged = new Callback(PropertyMetadataChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkInfo1SetPropertyMetadataChanged(iHandle, iCallbackMetadataChanged, ptr);
+            lock (this)
+            {
+                iMetadataChanged = aMetadataChanged;
+            }
         }
 
-        private void PropertyMetadataChanged(IntPtr aPtr)
+        private void MetadataPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkInfo1 self = (CpProxyLinnCoUkInfo1)gch.Target;
-            self.iMetadataChanged();
+            lock (this)
+            {
+                if (iMetadataChanged != null)
+                {
+                    iMetadataChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -514,17 +611,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aDurationChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyDurationChanged(CallbackPropertyChanged aDurationChanged)
         {
-            iDurationChanged = aDurationChanged;
-            iCallbackDurationChanged = new Callback(PropertyDurationChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkInfo1SetPropertyDurationChanged(iHandle, iCallbackDurationChanged, ptr);
+            lock (this)
+            {
+                iDurationChanged = aDurationChanged;
+            }
         }
 
-        private void PropertyDurationChanged(IntPtr aPtr)
+        private void DurationPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkInfo1 self = (CpProxyLinnCoUkInfo1)gch.Target;
-            self.iDurationChanged();
+            lock (this)
+            {
+                if (iDurationChanged != null)
+                {
+                    iDurationChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -535,17 +636,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aBitRateChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyBitRateChanged(CallbackPropertyChanged aBitRateChanged)
         {
-            iBitRateChanged = aBitRateChanged;
-            iCallbackBitRateChanged = new Callback(PropertyBitRateChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkInfo1SetPropertyBitRateChanged(iHandle, iCallbackBitRateChanged, ptr);
+            lock (this)
+            {
+                iBitRateChanged = aBitRateChanged;
+            }
         }
 
-        private void PropertyBitRateChanged(IntPtr aPtr)
+        private void BitRatePropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkInfo1 self = (CpProxyLinnCoUkInfo1)gch.Target;
-            self.iBitRateChanged();
+            lock (this)
+            {
+                if (iBitRateChanged != null)
+                {
+                    iBitRateChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -556,17 +661,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aBitDepthChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyBitDepthChanged(CallbackPropertyChanged aBitDepthChanged)
         {
-            iBitDepthChanged = aBitDepthChanged;
-            iCallbackBitDepthChanged = new Callback(PropertyBitDepthChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkInfo1SetPropertyBitDepthChanged(iHandle, iCallbackBitDepthChanged, ptr);
+            lock (this)
+            {
+                iBitDepthChanged = aBitDepthChanged;
+            }
         }
 
-        private void PropertyBitDepthChanged(IntPtr aPtr)
+        private void BitDepthPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkInfo1 self = (CpProxyLinnCoUkInfo1)gch.Target;
-            self.iBitDepthChanged();
+            lock (this)
+            {
+                if (iBitDepthChanged != null)
+                {
+                    iBitDepthChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -577,17 +686,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSampleRateChanged">The delegate to run when the state variable changes</param>
         public void SetPropertySampleRateChanged(CallbackPropertyChanged aSampleRateChanged)
         {
-            iSampleRateChanged = aSampleRateChanged;
-            iCallbackSampleRateChanged = new Callback(PropertySampleRateChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkInfo1SetPropertySampleRateChanged(iHandle, iCallbackSampleRateChanged, ptr);
+            lock (this)
+            {
+                iSampleRateChanged = aSampleRateChanged;
+            }
         }
 
-        private void PropertySampleRateChanged(IntPtr aPtr)
+        private void SampleRatePropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkInfo1 self = (CpProxyLinnCoUkInfo1)gch.Target;
-            self.iSampleRateChanged();
+            lock (this)
+            {
+                if (iSampleRateChanged != null)
+                {
+                    iSampleRateChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -598,17 +711,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aLosslessChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyLosslessChanged(CallbackPropertyChanged aLosslessChanged)
         {
-            iLosslessChanged = aLosslessChanged;
-            iCallbackLosslessChanged = new Callback(PropertyLosslessChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkInfo1SetPropertyLosslessChanged(iHandle, iCallbackLosslessChanged, ptr);
+            lock (this)
+            {
+                iLosslessChanged = aLosslessChanged;
+            }
         }
 
-        private void PropertyLosslessChanged(IntPtr aPtr)
+        private void LosslessPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkInfo1 self = (CpProxyLinnCoUkInfo1)gch.Target;
-            self.iLosslessChanged();
+            lock (this)
+            {
+                if (iLosslessChanged != null)
+                {
+                    iLosslessChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -619,17 +736,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aCodecNameChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyCodecNameChanged(CallbackPropertyChanged aCodecNameChanged)
         {
-            iCodecNameChanged = aCodecNameChanged;
-            iCallbackCodecNameChanged = new Callback(PropertyCodecNameChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkInfo1SetPropertyCodecNameChanged(iHandle, iCallbackCodecNameChanged, ptr);
+            lock (this)
+            {
+                iCodecNameChanged = aCodecNameChanged;
+            }
         }
 
-        private void PropertyCodecNameChanged(IntPtr aPtr)
+        private void CodecNamePropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkInfo1 self = (CpProxyLinnCoUkInfo1)gch.Target;
-            self.iCodecNameChanged();
+            lock (this)
+            {
+                if (iCodecNameChanged != null)
+                {
+                    iCodecNameChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -640,17 +761,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aMetatextChanged">The delegate to run when the state variable changes</param>
         public void SetPropertyMetatextChanged(CallbackPropertyChanged aMetatextChanged)
         {
-            iMetatextChanged = aMetatextChanged;
-            iCallbackMetatextChanged = new Callback(PropertyMetatextChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkInfo1SetPropertyMetatextChanged(iHandle, iCallbackMetatextChanged, ptr);
+            lock (this)
+            {
+                iMetatextChanged = aMetatextChanged;
+            }
         }
 
-        private void PropertyMetatextChanged(IntPtr aPtr)
+        private void MetatextPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkInfo1 self = (CpProxyLinnCoUkInfo1)gch.Target;
-            self.iMetatextChanged();
+            lock (this)
+            {
+                if (iMetatextChanged != null)
+                {
+                    iMetatextChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -660,12 +785,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aTrackCount">Will be set to the value of the property</param>
-        public unsafe void PropertyTrackCount(out uint aTrackCount)
+        public uint PropertyTrackCount()
         {
-            fixed (uint* trackCount = &aTrackCount)
-            {
-                CpProxyLinnCoUkInfo1PropertyTrackCount(iHandle, trackCount);
-            }
+            return iTrackCount.Value();
         }
 
         /// <summary>
@@ -675,12 +797,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aDetailsCount">Will be set to the value of the property</param>
-        public unsafe void PropertyDetailsCount(out uint aDetailsCount)
+        public uint PropertyDetailsCount()
         {
-            fixed (uint* detailsCount = &aDetailsCount)
-            {
-                CpProxyLinnCoUkInfo1PropertyDetailsCount(iHandle, detailsCount);
-            }
+            return iDetailsCount.Value();
         }
 
         /// <summary>
@@ -690,12 +809,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aMetatextCount">Will be set to the value of the property</param>
-        public unsafe void PropertyMetatextCount(out uint aMetatextCount)
+        public uint PropertyMetatextCount()
         {
-            fixed (uint* metatextCount = &aMetatextCount)
-            {
-                CpProxyLinnCoUkInfo1PropertyMetatextCount(iHandle, metatextCount);
-            }
+            return iMetatextCount.Value();
         }
 
         /// <summary>
@@ -705,12 +821,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aUri">Will be set to the value of the property</param>
-        public unsafe void PropertyUri(out string aUri)
+        public String PropertyUri()
         {
-            char* ptr;
-            CpProxyLinnCoUkInfo1PropertyUri(iHandle, &ptr);
-            aUri = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iUri.Value();
         }
 
         /// <summary>
@@ -720,12 +833,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aMetadata">Will be set to the value of the property</param>
-        public unsafe void PropertyMetadata(out string aMetadata)
+        public String PropertyMetadata()
         {
-            char* ptr;
-            CpProxyLinnCoUkInfo1PropertyMetadata(iHandle, &ptr);
-            aMetadata = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iMetadata.Value();
         }
 
         /// <summary>
@@ -735,12 +845,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aDuration">Will be set to the value of the property</param>
-        public unsafe void PropertyDuration(out uint aDuration)
+        public uint PropertyDuration()
         {
-            fixed (uint* duration = &aDuration)
-            {
-                CpProxyLinnCoUkInfo1PropertyDuration(iHandle, duration);
-            }
+            return iDuration.Value();
         }
 
         /// <summary>
@@ -750,12 +857,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aBitRate">Will be set to the value of the property</param>
-        public unsafe void PropertyBitRate(out uint aBitRate)
+        public uint PropertyBitRate()
         {
-            fixed (uint* bitRate = &aBitRate)
-            {
-                CpProxyLinnCoUkInfo1PropertyBitRate(iHandle, bitRate);
-            }
+            return iBitRate.Value();
         }
 
         /// <summary>
@@ -765,12 +869,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aBitDepth">Will be set to the value of the property</param>
-        public unsafe void PropertyBitDepth(out uint aBitDepth)
+        public uint PropertyBitDepth()
         {
-            fixed (uint* bitDepth = &aBitDepth)
-            {
-                CpProxyLinnCoUkInfo1PropertyBitDepth(iHandle, bitDepth);
-            }
+            return iBitDepth.Value();
         }
 
         /// <summary>
@@ -780,12 +881,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aSampleRate">Will be set to the value of the property</param>
-        public unsafe void PropertySampleRate(out uint aSampleRate)
+        public uint PropertySampleRate()
         {
-            fixed (uint* sampleRate = &aSampleRate)
-            {
-                CpProxyLinnCoUkInfo1PropertySampleRate(iHandle, sampleRate);
-            }
+            return iSampleRate.Value();
         }
 
         /// <summary>
@@ -795,11 +893,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aLossless">Will be set to the value of the property</param>
-        public unsafe void PropertyLossless(out bool aLossless)
+        public bool PropertyLossless()
         {
-            uint lossless;
-            CpProxyLinnCoUkInfo1PropertyLossless(iHandle, &lossless);
-            aLossless = (lossless != 0);
+            return iLossless.Value();
         }
 
         /// <summary>
@@ -809,12 +905,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aCodecName">Will be set to the value of the property</param>
-        public unsafe void PropertyCodecName(out string aCodecName)
+        public String PropertyCodecName()
         {
-            char* ptr;
-            CpProxyLinnCoUkInfo1PropertyCodecName(iHandle, &ptr);
-            aCodecName = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iCodecName.Value();
         }
 
         /// <summary>
@@ -824,12 +917,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aMetatext">Will be set to the value of the property</param>
-        public unsafe void PropertyMetatext(out string aMetatext)
+        public String PropertyMetatext()
         {
-            char* ptr;
-            CpProxyLinnCoUkInfo1PropertyMetatext(iHandle, &ptr);
-            aMetatext = Marshal.PtrToStringAnsi((IntPtr)ptr);
-            ZappFree(ptr);
+            return iMetatext.Value();
         }
 
         /// <summary>
@@ -853,17 +943,16 @@ namespace Zapp.ControlPoint.Proxies
                 {
                     return;
                 }
-                CpProxyLinnCoUkInfo1Destroy(iHandle);
+                DisposeProxy();
                 iHandle = IntPtr.Zero;
+                iActionCounters.Dispose();
+                iActionTrack.Dispose();
+                iActionDetails.Dispose();
+                iActionMetatext.Dispose();
             }
-            iGch.Free();
             if (aDisposing)
             {
                 GC.SuppressFinalize(this);
-            }
-            else
-            {
-                DisposeProxy();
             }
         }
     }

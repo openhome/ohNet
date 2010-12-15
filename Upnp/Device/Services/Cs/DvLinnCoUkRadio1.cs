@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -19,7 +20,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the ChannelUri property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyChannelUri(out string aValue);
+        string PropertyChannelUri();
 
         /// <summary>
         /// Set the value of the ChannelMetadata property
@@ -32,7 +33,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the ChannelMetadata property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyChannelMetadata(out string aValue);
+        string PropertyChannelMetadata();
 
         /// <summary>
         /// Set the value of the TransportState property
@@ -45,7 +46,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the TransportState property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyTransportState(out string aValue);
+        string PropertyTransportState();
 
         /// <summary>
         /// Set the value of the ProtocolInfo property
@@ -58,7 +59,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the ProtocolInfo property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyProtocolInfo(out string aValue);
+        string PropertyProtocolInfo();
 
         /// <summary>
         /// Set the value of the Id property
@@ -71,7 +72,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the Id property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyId(out uint aValue);
+        uint PropertyId();
 
         /// <summary>
         /// Set the value of the IdArray property
@@ -84,7 +85,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the IdArray property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyIdArray(out string aValue);
+        string PropertyIdArray();
 
         /// <summary>
         /// Set the value of the IdsMax property
@@ -97,7 +98,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the IdsMax property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyIdsMax(out uint aValue);
+        uint PropertyIdsMax();
         
     }
     /// <summary>
@@ -105,116 +106,59 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class DvProviderLinnCoUkRadio1 : DvProvider, IDisposable, IDvProviderLinnCoUkRadio1
     {
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern IntPtr DvProviderLinnCoUkRadio1Create(IntPtr aDeviceHandle);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvProviderLinnCoUkRadio1Destroy(IntPtr aHandle);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe int DvProviderLinnCoUkRadio1SetPropertyChannelUri(IntPtr aHandle, char* aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe void DvProviderLinnCoUkRadio1GetPropertyChannelUri(IntPtr aHandle, char** aValue);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe int DvProviderLinnCoUkRadio1SetPropertyChannelMetadata(IntPtr aHandle, char* aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe void DvProviderLinnCoUkRadio1GetPropertyChannelMetadata(IntPtr aHandle, char** aValue);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe int DvProviderLinnCoUkRadio1SetPropertyTransportState(IntPtr aHandle, char* aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe void DvProviderLinnCoUkRadio1GetPropertyTransportState(IntPtr aHandle, char** aValue);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe int DvProviderLinnCoUkRadio1SetPropertyProtocolInfo(IntPtr aHandle, char* aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe void DvProviderLinnCoUkRadio1GetPropertyProtocolInfo(IntPtr aHandle, char** aValue);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe int DvProviderLinnCoUkRadio1SetPropertyId(IntPtr aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe void DvProviderLinnCoUkRadio1GetPropertyId(IntPtr aHandle, uint* aValue);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe int DvProviderLinnCoUkRadio1SetPropertyIdArray(IntPtr aHandle, char* aValue, int aValueLen, uint* aChanged);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe void DvProviderLinnCoUkRadio1GetPropertyIdArray(IntPtr aHandle, char** aValue, int* aValueLen);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe int DvProviderLinnCoUkRadio1SetPropertyIdsMax(IntPtr aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern unsafe void DvProviderLinnCoUkRadio1GetPropertyIdsMax(IntPtr aHandle, uint* aValue);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvProviderLinnCoUkRadio1EnableActionPlay(IntPtr aHandle, CallbackPlay aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvProviderLinnCoUkRadio1EnableActionPause(IntPtr aHandle, CallbackPause aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvProviderLinnCoUkRadio1EnableActionStop(IntPtr aHandle, CallbackStop aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvProviderLinnCoUkRadio1EnableActionSeekSecondAbsolute(IntPtr aHandle, CallbackSeekSecondAbsolute aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvProviderLinnCoUkRadio1EnableActionSeekSecondRelative(IntPtr aHandle, CallbackSeekSecondRelative aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvProviderLinnCoUkRadio1EnableActionChannel(IntPtr aHandle, CallbackChannel aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvProviderLinnCoUkRadio1EnableActionSetChannel(IntPtr aHandle, CallbackSetChannel aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvProviderLinnCoUkRadio1EnableActionProtocolInfo(IntPtr aHandle, CallbackProtocolInfo aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvProviderLinnCoUkRadio1EnableActionTransportState(IntPtr aHandle, CallbackTransportState aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvProviderLinnCoUkRadio1EnableActionId(IntPtr aHandle, CallbackId aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvProviderLinnCoUkRadio1EnableActionSetId(IntPtr aHandle, CallbackSetId aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvProviderLinnCoUkRadio1EnableActionRead(IntPtr aHandle, CallbackRead aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvProviderLinnCoUkRadio1EnableActionReadList(IntPtr aHandle, CallbackReadList aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvProviderLinnCoUkRadio1EnableActionIdArray(IntPtr aHandle, CallbackIdArray aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvProviderLinnCoUkRadio1EnableActionIdArrayChanged(IntPtr aHandle, CallbackIdArrayChanged aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkRadio1")]
-        static extern void DvProviderLinnCoUkRadio1EnableActionIdsMax(IntPtr aHandle, CallbackIdsMax aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private unsafe delegate int CallbackPlay(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackPause(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackStop(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackSeekSecondAbsolute(IntPtr aPtr, uint aVersion, uint aaSecond);
-        private unsafe delegate int CallbackSeekSecondRelative(IntPtr aPtr, uint aVersion, int aaSecond);
-        private unsafe delegate int CallbackChannel(IntPtr aPtr, uint aVersion, char** aaUri, char** aaMetadata);
-        private unsafe delegate int CallbackSetChannel(IntPtr aPtr, uint aVersion, char* aaUri, char* aaMetadata);
-        private unsafe delegate int CallbackProtocolInfo(IntPtr aPtr, uint aVersion, char** aaInfo);
-        private unsafe delegate int CallbackTransportState(IntPtr aPtr, uint aVersion, char** aaState);
-        private unsafe delegate int CallbackId(IntPtr aPtr, uint aVersion, uint* aaId);
-        private unsafe delegate int CallbackSetId(IntPtr aPtr, uint aVersion, uint aaId, char* aaUri);
-        private unsafe delegate int CallbackRead(IntPtr aPtr, uint aVersion, uint aaId, char** aaMetadata);
-        private unsafe delegate int CallbackReadList(IntPtr aPtr, uint aVersion, char* aaIdList, char** aaMetadataList);
-        private unsafe delegate int CallbackIdArray(IntPtr aPtr, uint aVersion, uint* aaIdArrayToken, char** aaIdArray, int* aaIdArrayLen);
-        private unsafe delegate int CallbackIdArrayChanged(IntPtr aPtr, uint aVersion, uint aaIdArrayToken, int* aaIdArrayChanged);
-        private unsafe delegate int CallbackIdsMax(IntPtr aPtr, uint aVersion, uint* aaIdsMax);
-
         private GCHandle iGch;
-        private CallbackPlay iCallbackPlay;
-        private CallbackPause iCallbackPause;
-        private CallbackStop iCallbackStop;
-        private CallbackSeekSecondAbsolute iCallbackSeekSecondAbsolute;
-        private CallbackSeekSecondRelative iCallbackSeekSecondRelative;
-        private CallbackChannel iCallbackChannel;
-        private CallbackSetChannel iCallbackSetChannel;
-        private CallbackProtocolInfo iCallbackProtocolInfo;
-        private CallbackTransportState iCallbackTransportState;
-        private CallbackId iCallbackId;
-        private CallbackSetId iCallbackSetId;
-        private CallbackRead iCallbackRead;
-        private CallbackReadList iCallbackReadList;
-        private CallbackIdArray iCallbackIdArray;
-        private CallbackIdArrayChanged iCallbackIdArrayChanged;
-        private CallbackIdsMax iCallbackIdsMax;
+        private ActionDelegate iDelegatePlay;
+        private ActionDelegate iDelegatePause;
+        private ActionDelegate iDelegateStop;
+        private ActionDelegate iDelegateSeekSecondAbsolute;
+        private ActionDelegate iDelegateSeekSecondRelative;
+        private ActionDelegate iDelegateChannel;
+        private ActionDelegate iDelegateSetChannel;
+        private ActionDelegate iDelegateProtocolInfo;
+        private ActionDelegate iDelegateTransportState;
+        private ActionDelegate iDelegateId;
+        private ActionDelegate iDelegateSetId;
+        private ActionDelegate iDelegateRead;
+        private ActionDelegate iDelegateReadList;
+        private ActionDelegate iDelegateIdArray;
+        private ActionDelegate iDelegateIdArrayChanged;
+        private ActionDelegate iDelegateIdsMax;
+        private PropertyString iPropertyChannelUri;
+        private PropertyString iPropertyChannelMetadata;
+        private PropertyString iPropertyTransportState;
+        private PropertyString iPropertyProtocolInfo;
+        private PropertyUint iPropertyId;
+        private PropertyBinary iPropertyIdArray;
+        private PropertyUint iPropertyIdsMax;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderLinnCoUkRadio1(DvDevice aDevice)
+            : base(aDevice, "linn-co-uk", "Radio", 1)
         {
-            iHandle = DvProviderLinnCoUkRadio1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
+            List<String> allowedValues = new List<String>();
+            iPropertyChannelUri = new PropertyString(new ParameterString("ChannelUri", allowedValues));
+            AddProperty(iPropertyChannelUri);
+            iPropertyChannelMetadata = new PropertyString(new ParameterString("ChannelMetadata", allowedValues));
+            AddProperty(iPropertyChannelMetadata);
+            allowedValues.Add("Stopped");
+            allowedValues.Add("Playing");
+            allowedValues.Add("Paused");
+            allowedValues.Add("Buffering");
+            iPropertyTransportState = new PropertyString(new ParameterString("TransportState", allowedValues));
+            AddProperty(iPropertyTransportState);
+            allowedValues.Clear();
+            iPropertyProtocolInfo = new PropertyString(new ParameterString("ProtocolInfo", allowedValues));
+            AddProperty(iPropertyProtocolInfo);
+            iPropertyId = new PropertyUint(new ParameterUint("Id"));
+            AddProperty(iPropertyId);
+            iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"));
+            AddProperty(iPropertyIdArray);
+            iPropertyIdsMax = new PropertyUint(new ParameterUint("IdsMax"));
+            AddProperty(iPropertyIdsMax);
         }
 
         /// <summary>
@@ -222,29 +166,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyChannelUri(string aValue)
+        public bool SetPropertyChannelUri(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderLinnCoUkRadio1SetPropertyChannelUri(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyString(iPropertyChannelUri, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the ChannelUri property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyChannelUri(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyChannelUri()
         {
-            char* value;
-            DvProviderLinnCoUkRadio1GetPropertyChannelUri(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
+            return iPropertyChannelUri.Value();
         }
 
         /// <summary>
@@ -252,29 +185,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyChannelMetadata(string aValue)
+        public bool SetPropertyChannelMetadata(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderLinnCoUkRadio1SetPropertyChannelMetadata(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyString(iPropertyChannelMetadata, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the ChannelMetadata property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyChannelMetadata(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyChannelMetadata()
         {
-            char* value;
-            DvProviderLinnCoUkRadio1GetPropertyChannelMetadata(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
+            return iPropertyChannelMetadata.Value();
         }
 
         /// <summary>
@@ -282,29 +204,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyTransportState(string aValue)
+        public bool SetPropertyTransportState(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderLinnCoUkRadio1SetPropertyTransportState(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyString(iPropertyTransportState, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the TransportState property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyTransportState(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyTransportState()
         {
-            char* value;
-            DvProviderLinnCoUkRadio1GetPropertyTransportState(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
+            return iPropertyTransportState.Value();
         }
 
         /// <summary>
@@ -312,29 +223,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyProtocolInfo(string aValue)
+        public bool SetPropertyProtocolInfo(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int err = DvProviderLinnCoUkRadio1SetPropertyProtocolInfo(iHandle, value, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyString(iPropertyProtocolInfo, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the ProtocolInfo property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyProtocolInfo(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyProtocolInfo()
         {
-            char* value;
-            DvProviderLinnCoUkRadio1GetPropertyProtocolInfo(iHandle, &value);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value);
-            ZappFree(value);
+            return iPropertyProtocolInfo.Value();
         }
 
         /// <summary>
@@ -342,26 +242,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyId(uint aValue)
+        public bool SetPropertyId(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderLinnCoUkRadio1SetPropertyId(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyId, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Id property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyId(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyId()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderLinnCoUkRadio1GetPropertyId(iHandle, value);
-            }
+            return iPropertyId.Value();
         }
 
         /// <summary>
@@ -369,31 +261,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyIdArray(string aValue)
+        public bool SetPropertyIdArray(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int valueLen = aValue.Length;
-            int err = DvProviderLinnCoUkRadio1SetPropertyIdArray(iHandle, value, valueLen, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBinary(iPropertyIdArray, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the IdArray property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyIdArray(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyIdArray()
         {
-            char* value;
-            int valueLen;
-             DvProviderLinnCoUkRadio1GetPropertyIdArray(iHandle, &value, &valueLen);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value, valueLen);
-            ZappFree(value);
+            return iPropertyIdArray.Value();
         }
 
         /// <summary>
@@ -401,26 +280,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyIdsMax(uint aValue)
+        public bool SetPropertyIdsMax(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderLinnCoUkRadio1SetPropertyIdsMax(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyIdsMax, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the IdsMax property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyIdsMax(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyIdsMax()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderLinnCoUkRadio1GetPropertyIdsMax(iHandle, value);
-            }
+            return iPropertyIdsMax.Value();
         }
 
         /// <summary>
@@ -430,9 +301,9 @@ namespace Zapp.Device.Providers
         /// DoPlay must be overridden if this is called.</remarks>
         protected unsafe void EnableActionPlay()
         {
-            iCallbackPlay = new CallbackPlay(DoPlay);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkRadio1EnableActionPlay(iHandle, iCallbackPlay, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Play");
+            iDelegatePlay = new ActionDelegate(DoPlay);
+            EnableAction(action, iDelegatePlay, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -442,9 +313,9 @@ namespace Zapp.Device.Providers
         /// DoPause must be overridden if this is called.</remarks>
         protected unsafe void EnableActionPause()
         {
-            iCallbackPause = new CallbackPause(DoPause);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkRadio1EnableActionPause(iHandle, iCallbackPause, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Pause");
+            iDelegatePause = new ActionDelegate(DoPause);
+            EnableAction(action, iDelegatePause, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -454,9 +325,9 @@ namespace Zapp.Device.Providers
         /// DoStop must be overridden if this is called.</remarks>
         protected unsafe void EnableActionStop()
         {
-            iCallbackStop = new CallbackStop(DoStop);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkRadio1EnableActionStop(iHandle, iCallbackStop, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Stop");
+            iDelegateStop = new ActionDelegate(DoStop);
+            EnableAction(action, iDelegateStop, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -466,9 +337,10 @@ namespace Zapp.Device.Providers
         /// DoSeekSecondAbsolute must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSeekSecondAbsolute()
         {
-            iCallbackSeekSecondAbsolute = new CallbackSeekSecondAbsolute(DoSeekSecondAbsolute);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkRadio1EnableActionSeekSecondAbsolute(iHandle, iCallbackSeekSecondAbsolute, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SeekSecondAbsolute");
+            action.AddInputParameter(new ParameterUint("aSecond"));
+            iDelegateSeekSecondAbsolute = new ActionDelegate(DoSeekSecondAbsolute);
+            EnableAction(action, iDelegateSeekSecondAbsolute, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -478,9 +350,10 @@ namespace Zapp.Device.Providers
         /// DoSeekSecondRelative must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSeekSecondRelative()
         {
-            iCallbackSeekSecondRelative = new CallbackSeekSecondRelative(DoSeekSecondRelative);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkRadio1EnableActionSeekSecondRelative(iHandle, iCallbackSeekSecondRelative, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SeekSecondRelative");
+            action.AddInputParameter(new ParameterInt("aSecond"));
+            iDelegateSeekSecondRelative = new ActionDelegate(DoSeekSecondRelative);
+            EnableAction(action, iDelegateSeekSecondRelative, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -490,9 +363,12 @@ namespace Zapp.Device.Providers
         /// DoChannel must be overridden if this is called.</remarks>
         protected unsafe void EnableActionChannel()
         {
-            iCallbackChannel = new CallbackChannel(DoChannel);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkRadio1EnableActionChannel(iHandle, iCallbackChannel, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Channel");
+            List<String> allowedValues = new List<String>();
+            action.AddOutputParameter(new ParameterRelated("aUri", iPropertyChannelUri));
+            action.AddOutputParameter(new ParameterRelated("aMetadata", iPropertyChannelMetadata));
+            iDelegateChannel = new ActionDelegate(DoChannel);
+            EnableAction(action, iDelegateChannel, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -502,9 +378,12 @@ namespace Zapp.Device.Providers
         /// DoSetChannel must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetChannel()
         {
-            iCallbackSetChannel = new CallbackSetChannel(DoSetChannel);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkRadio1EnableActionSetChannel(iHandle, iCallbackSetChannel, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetChannel");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterRelated("aUri", iPropertyChannelUri));
+            action.AddInputParameter(new ParameterRelated("aMetadata", iPropertyChannelMetadata));
+            iDelegateSetChannel = new ActionDelegate(DoSetChannel);
+            EnableAction(action, iDelegateSetChannel, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -514,9 +393,11 @@ namespace Zapp.Device.Providers
         /// DoProtocolInfo must be overridden if this is called.</remarks>
         protected unsafe void EnableActionProtocolInfo()
         {
-            iCallbackProtocolInfo = new CallbackProtocolInfo(DoProtocolInfo);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkRadio1EnableActionProtocolInfo(iHandle, iCallbackProtocolInfo, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("ProtocolInfo");
+            List<String> allowedValues = new List<String>();
+            action.AddOutputParameter(new ParameterRelated("aInfo", iPropertyProtocolInfo));
+            iDelegateProtocolInfo = new ActionDelegate(DoProtocolInfo);
+            EnableAction(action, iDelegateProtocolInfo, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -526,9 +407,11 @@ namespace Zapp.Device.Providers
         /// DoTransportState must be overridden if this is called.</remarks>
         protected unsafe void EnableActionTransportState()
         {
-            iCallbackTransportState = new CallbackTransportState(DoTransportState);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkRadio1EnableActionTransportState(iHandle, iCallbackTransportState, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("TransportState");
+            List<String> allowedValues = new List<String>();
+            action.AddOutputParameter(new ParameterRelated("aState", iPropertyTransportState));
+            iDelegateTransportState = new ActionDelegate(DoTransportState);
+            EnableAction(action, iDelegateTransportState, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -538,9 +421,10 @@ namespace Zapp.Device.Providers
         /// DoId must be overridden if this is called.</remarks>
         protected unsafe void EnableActionId()
         {
-            iCallbackId = new CallbackId(DoId);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkRadio1EnableActionId(iHandle, iCallbackId, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Id");
+            action.AddOutputParameter(new ParameterRelated("aId", iPropertyId));
+            iDelegateId = new ActionDelegate(DoId);
+            EnableAction(action, iDelegateId, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -550,9 +434,12 @@ namespace Zapp.Device.Providers
         /// DoSetId must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetId()
         {
-            iCallbackSetId = new CallbackSetId(DoSetId);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkRadio1EnableActionSetId(iHandle, iCallbackSetId, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetId");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterRelated("aId", iPropertyId));
+            action.AddInputParameter(new ParameterRelated("aUri", iPropertyChannelUri));
+            iDelegateSetId = new ActionDelegate(DoSetId);
+            EnableAction(action, iDelegateSetId, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -562,9 +449,12 @@ namespace Zapp.Device.Providers
         /// DoRead must be overridden if this is called.</remarks>
         protected unsafe void EnableActionRead()
         {
-            iCallbackRead = new CallbackRead(DoRead);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkRadio1EnableActionRead(iHandle, iCallbackRead, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Read");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterRelated("aId", iPropertyId));
+            action.AddOutputParameter(new ParameterRelated("aMetadata", iPropertyChannelMetadata));
+            iDelegateRead = new ActionDelegate(DoRead);
+            EnableAction(action, iDelegateRead, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -574,9 +464,12 @@ namespace Zapp.Device.Providers
         /// DoReadList must be overridden if this is called.</remarks>
         protected unsafe void EnableActionReadList()
         {
-            iCallbackReadList = new CallbackReadList(DoReadList);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkRadio1EnableActionReadList(iHandle, iCallbackReadList, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("ReadList");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterString("aIdList", allowedValues));
+            action.AddOutputParameter(new ParameterString("aMetadataList", allowedValues));
+            iDelegateReadList = new ActionDelegate(DoReadList);
+            EnableAction(action, iDelegateReadList, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -586,9 +479,11 @@ namespace Zapp.Device.Providers
         /// DoIdArray must be overridden if this is called.</remarks>
         protected unsafe void EnableActionIdArray()
         {
-            iCallbackIdArray = new CallbackIdArray(DoIdArray);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkRadio1EnableActionIdArray(iHandle, iCallbackIdArray, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("IdArray");
+            action.AddOutputParameter(new ParameterUint("aIdArrayToken"));
+            action.AddOutputParameter(new ParameterRelated("aIdArray", iPropertyIdArray));
+            iDelegateIdArray = new ActionDelegate(DoIdArray);
+            EnableAction(action, iDelegateIdArray, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -598,9 +493,11 @@ namespace Zapp.Device.Providers
         /// DoIdArrayChanged must be overridden if this is called.</remarks>
         protected unsafe void EnableActionIdArrayChanged()
         {
-            iCallbackIdArrayChanged = new CallbackIdArrayChanged(DoIdArrayChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkRadio1EnableActionIdArrayChanged(iHandle, iCallbackIdArrayChanged, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("IdArrayChanged");
+            action.AddInputParameter(new ParameterUint("aIdArrayToken"));
+            action.AddOutputParameter(new ParameterBool("aIdArrayChanged"));
+            iDelegateIdArrayChanged = new ActionDelegate(DoIdArrayChanged);
+            EnableAction(action, iDelegateIdArrayChanged, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -610,9 +507,10 @@ namespace Zapp.Device.Providers
         /// DoIdsMax must be overridden if this is called.</remarks>
         protected unsafe void EnableActionIdsMax()
         {
-            iCallbackIdsMax = new CallbackIdsMax(DoIdsMax);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkRadio1EnableActionIdsMax(iHandle, iCallbackIdsMax, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("IdsMax");
+            action.AddOutputParameter(new ParameterRelated("aIdsMax", iPropertyIdsMax));
+            iDelegateIdsMax = new ActionDelegate(DoIdsMax);
+            EnableAction(action, iDelegateIdsMax, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -843,158 +741,210 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoPlay(IntPtr aPtr, uint aVersion)
+        private static unsafe int DoPlay(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             self.Play(aVersion);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoPause(IntPtr aPtr, uint aVersion)
+        private static unsafe int DoPause(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             self.Pause(aVersion);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoStop(IntPtr aPtr, uint aVersion)
+        private static unsafe int DoStop(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             self.Stop(aVersion);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSeekSecondAbsolute(IntPtr aPtr, uint aVersion, uint aaSecond)
+        private static unsafe int DoSeekSecondAbsolute(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
-            self.SeekSecondAbsolute(aVersion, aaSecond);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aSecond = invocation.ReadUint("aSecond");
+            self.SeekSecondAbsolute(aVersion, aSecond);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSeekSecondRelative(IntPtr aPtr, uint aVersion, int aaSecond)
+        private static unsafe int DoSeekSecondRelative(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
-            self.SeekSecondRelative(aVersion, aaSecond);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            int aSecond = invocation.ReadInt("aSecond");
+            self.SeekSecondRelative(aVersion, aSecond);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoChannel(IntPtr aPtr, uint aVersion, char** aaUri, char** aaMetadata)
+        private static unsafe int DoChannel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aUri;
             string aMetadata;
             self.Channel(aVersion, out aUri, out aMetadata);
-            *aaUri = (char*)Marshal.StringToHGlobalAnsi(aUri).ToPointer();
-            *aaMetadata = (char*)Marshal.StringToHGlobalAnsi(aMetadata).ToPointer();
+            invocation.WriteStart();
+            invocation.WriteString("aUri", aUri);
+            invocation.WriteString("aMetadata", aMetadata);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetChannel(IntPtr aPtr, uint aVersion, char* aaUri, char* aaMetadata)
+        private static unsafe int DoSetChannel(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
-            string aUri = Marshal.PtrToStringAnsi((IntPtr)aaUri);
-            string aMetadata = Marshal.PtrToStringAnsi((IntPtr)aaMetadata);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string aUri = invocation.ReadString("aUri");
+            string aMetadata = invocation.ReadString("aMetadata");
             self.SetChannel(aVersion, aUri, aMetadata);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoProtocolInfo(IntPtr aPtr, uint aVersion, char** aaInfo)
+        private static unsafe int DoProtocolInfo(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aInfo;
             self.ProtocolInfo(aVersion, out aInfo);
-            *aaInfo = (char*)Marshal.StringToHGlobalAnsi(aInfo).ToPointer();
+            invocation.WriteStart();
+            invocation.WriteString("aInfo", aInfo);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoTransportState(IntPtr aPtr, uint aVersion, char** aaState)
+        private static unsafe int DoTransportState(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             string aState;
             self.TransportState(aVersion, out aState);
-            *aaState = (char*)Marshal.StringToHGlobalAnsi(aState).ToPointer();
+            invocation.WriteStart();
+            invocation.WriteString("aState", aState);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoId(IntPtr aPtr, uint aVersion, uint* aaId)
+        private static unsafe int DoId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint aId;
             self.Id(aVersion, out aId);
-            *aaId = aId;
+            invocation.WriteStart();
+            invocation.WriteUint("aId", aId);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetId(IntPtr aPtr, uint aVersion, uint aaId, char* aaUri)
+        private static unsafe int DoSetId(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
-            string aUri = Marshal.PtrToStringAnsi((IntPtr)aaUri);
-            self.SetId(aVersion, aaId, aUri);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aId = invocation.ReadUint("aId");
+            string aUri = invocation.ReadString("aUri");
+            self.SetId(aVersion, aId, aUri);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoRead(IntPtr aPtr, uint aVersion, uint aaId, char** aaMetadata)
+        private static unsafe int DoRead(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aId = invocation.ReadUint("aId");
             string aMetadata;
-            self.Read(aVersion, aaId, out aMetadata);
-            *aaMetadata = (char*)Marshal.StringToHGlobalAnsi(aMetadata).ToPointer();
+            self.Read(aVersion, aId, out aMetadata);
+            invocation.WriteStart();
+            invocation.WriteString("aMetadata", aMetadata);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoReadList(IntPtr aPtr, uint aVersion, char* aaIdList, char** aaMetadataList)
+        private static unsafe int DoReadList(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
-            string aIdList = Marshal.PtrToStringAnsi((IntPtr)aaIdList);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string aIdList = invocation.ReadString("aIdList");
             string aMetadataList;
             self.ReadList(aVersion, aIdList, out aMetadataList);
-            *aaMetadataList = (char*)Marshal.StringToHGlobalAnsi(aMetadataList).ToPointer();
+            invocation.WriteStart();
+            invocation.WriteString("aMetadataList", aMetadataList);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoIdArray(IntPtr aPtr, uint aVersion, uint* aaIdArrayToken, char** aaIdArray, int* aaIdArrayLen)
+        private static unsafe int DoIdArray(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint aIdArrayToken;
             string aIdArray;
             self.IdArray(aVersion, out aIdArrayToken, out aIdArray);
-            *aaIdArrayToken = aIdArrayToken;
-            *aaIdArray = (char*)Marshal.StringToHGlobalAnsi(aIdArray).ToPointer();
-            *aaIdArrayLen = aIdArray.Length;
+            invocation.WriteStart();
+            invocation.WriteUint("aIdArrayToken", aIdArrayToken);
+            invocation.WriteBinary("aIdArray", aIdArray);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoIdArrayChanged(IntPtr aPtr, uint aVersion, uint aaIdArrayToken, int* aaIdArrayChanged)
+        private static unsafe int DoIdArrayChanged(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aIdArrayToken = invocation.ReadUint("aIdArrayToken");
             bool aIdArrayChanged;
-            self.IdArrayChanged(aVersion, aaIdArrayToken, out aIdArrayChanged);
-            *aaIdArrayChanged = (aIdArrayChanged ? 1 : 0);
+            self.IdArrayChanged(aVersion, aIdArrayToken, out aIdArrayChanged);
+            invocation.WriteStart();
+            invocation.WriteBool("aIdArrayChanged", aIdArrayChanged);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoIdsMax(IntPtr aPtr, uint aVersion, uint* aaIdsMax)
+        private static unsafe int DoIdsMax(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint aIdsMax;
             self.IdsMax(aVersion, out aIdsMax);
-            *aaIdsMax = aIdsMax;
+            invocation.WriteStart();
+            invocation.WriteUint("aIdsMax", aIdsMax);
+            invocation.WriteEnd();
             return 0;
         }
 
@@ -1014,21 +964,16 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            IntPtr handle;
             lock (this)
             {
                 if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
+                DisposeProvider();
                 iHandle = IntPtr.Zero;
             }
-            DvProviderLinnCoUkRadio1Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }

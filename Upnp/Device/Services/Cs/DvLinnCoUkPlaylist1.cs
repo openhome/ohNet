@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using Zapp;
+using System.Collections.Generic;
+using Zapp.Core;
 
 namespace Zapp.Device.Providers
 {
@@ -19,7 +20,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the IdArray property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyIdArray(out string aValue);
+        string PropertyIdArray();
 
         /// <summary>
         /// Set the value of the Repeat property
@@ -32,7 +33,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the Repeat property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyRepeat(out bool aValue);
+        bool PropertyRepeat();
 
         /// <summary>
         /// Set the value of the Shuffle property
@@ -45,7 +46,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the Shuffle property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyShuffle(out bool aValue);
+        bool PropertyShuffle();
 
         /// <summary>
         /// Set the value of the TracksMax property
@@ -58,7 +59,7 @@ namespace Zapp.Device.Providers
         /// Get a copy of the value of the TracksMax property
         /// </summary>
         /// <param name="aValue">Property's value will be copied here</param>
-        void GetPropertyTracksMax(out uint aValue);
+        uint PropertyTracksMax();
         
     }
     /// <summary>
@@ -66,88 +67,40 @@ namespace Zapp.Device.Providers
     /// </summary>
     public class DvProviderLinnCoUkPlaylist1 : DvProvider, IDisposable, IDvProviderLinnCoUkPlaylist1
     {
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern IntPtr DvProviderLinnCoUkPlaylist1Create(IntPtr aDeviceHandle);
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1Destroy(IntPtr aHandle);
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern unsafe int DvProviderLinnCoUkPlaylist1SetPropertyIdArray(IntPtr aHandle, char* aValue, int aValueLen, uint* aChanged);
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern unsafe void DvProviderLinnCoUkPlaylist1GetPropertyIdArray(IntPtr aHandle, char** aValue, int* aValueLen);
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern unsafe int DvProviderLinnCoUkPlaylist1SetPropertyRepeat(IntPtr aHandle, int aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern unsafe void DvProviderLinnCoUkPlaylist1GetPropertyRepeat(IntPtr aHandle, int* aValue);
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern unsafe int DvProviderLinnCoUkPlaylist1SetPropertyShuffle(IntPtr aHandle, int aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern unsafe void DvProviderLinnCoUkPlaylist1GetPropertyShuffle(IntPtr aHandle, int* aValue);
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern unsafe int DvProviderLinnCoUkPlaylist1SetPropertyTracksMax(IntPtr aHandle, uint aValue, uint* aChanged);
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern unsafe void DvProviderLinnCoUkPlaylist1GetPropertyTracksMax(IntPtr aHandle, uint* aValue);
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionRead(IntPtr aHandle, CallbackRead aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionReadList(IntPtr aHandle, CallbackReadList aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionInsert(IntPtr aHandle, CallbackInsert aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionDelete(IntPtr aHandle, CallbackDelete aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionDeleteAll(IntPtr aHandle, CallbackDeleteAll aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionSetRepeat(IntPtr aHandle, CallbackSetRepeat aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionRepeat(IntPtr aHandle, CallbackRepeat aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionSetShuffle(IntPtr aHandle, CallbackSetShuffle aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionShuffle(IntPtr aHandle, CallbackShuffle aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionTracksMax(IntPtr aHandle, CallbackTracksMax aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionIdArray(IntPtr aHandle, CallbackIdArray aCallback, IntPtr aPtr);
-        [DllImport("DvLinnCoUkPlaylist1")]
-        static extern void DvProviderLinnCoUkPlaylist1EnableActionIdArrayChanged(IntPtr aHandle, CallbackIdArrayChanged aCallback, IntPtr aPtr);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private unsafe delegate int CallbackRead(IntPtr aPtr, uint aVersion, uint aaId, char** aaUri, char** aaMetaData);
-        private unsafe delegate int CallbackReadList(IntPtr aPtr, uint aVersion, char* aaIdList, char** aaMetaDataList);
-        private unsafe delegate int CallbackInsert(IntPtr aPtr, uint aVersion, uint aaAfterId, char* aaUri, char* aaMetaData, uint* aaNewId);
-        private unsafe delegate int CallbackDelete(IntPtr aPtr, uint aVersion, uint aaId);
-        private unsafe delegate int CallbackDeleteAll(IntPtr aPtr, uint aVersion);
-        private unsafe delegate int CallbackSetRepeat(IntPtr aPtr, uint aVersion, int aaRepeat);
-        private unsafe delegate int CallbackRepeat(IntPtr aPtr, uint aVersion, int* aaRepeat);
-        private unsafe delegate int CallbackSetShuffle(IntPtr aPtr, uint aVersion, int aaShuffle);
-        private unsafe delegate int CallbackShuffle(IntPtr aPtr, uint aVersion, int* aaShuffle);
-        private unsafe delegate int CallbackTracksMax(IntPtr aPtr, uint aVersion, uint* aaTracksMax);
-        private unsafe delegate int CallbackIdArray(IntPtr aPtr, uint aVersion, uint* aaIdArrayToken, char** aaIdArray, int* aaIdArrayLen);
-        private unsafe delegate int CallbackIdArrayChanged(IntPtr aPtr, uint aVersion, uint aaIdArrayToken, int* aaIdArrayChanged);
-
         private GCHandle iGch;
-        private CallbackRead iCallbackRead;
-        private CallbackReadList iCallbackReadList;
-        private CallbackInsert iCallbackInsert;
-        private CallbackDelete iCallbackDelete;
-        private CallbackDeleteAll iCallbackDeleteAll;
-        private CallbackSetRepeat iCallbackSetRepeat;
-        private CallbackRepeat iCallbackRepeat;
-        private CallbackSetShuffle iCallbackSetShuffle;
-        private CallbackShuffle iCallbackShuffle;
-        private CallbackTracksMax iCallbackTracksMax;
-        private CallbackIdArray iCallbackIdArray;
-        private CallbackIdArrayChanged iCallbackIdArrayChanged;
+        private ActionDelegate iDelegateRead;
+        private ActionDelegate iDelegateReadList;
+        private ActionDelegate iDelegateInsert;
+        private ActionDelegate iDelegateDelete;
+        private ActionDelegate iDelegateDeleteAll;
+        private ActionDelegate iDelegateSetRepeat;
+        private ActionDelegate iDelegateRepeat;
+        private ActionDelegate iDelegateSetShuffle;
+        private ActionDelegate iDelegateShuffle;
+        private ActionDelegate iDelegateTracksMax;
+        private ActionDelegate iDelegateIdArray;
+        private ActionDelegate iDelegateIdArrayChanged;
+        private PropertyBinary iPropertyIdArray;
+        private PropertyBool iPropertyRepeat;
+        private PropertyBool iPropertyShuffle;
+        private PropertyUint iPropertyTracksMax;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="aDevice">Device which owns this provider</param>
         protected DvProviderLinnCoUkPlaylist1(DvDevice aDevice)
+            : base(aDevice, "linn-co-uk", "Playlist", 1)
         {
-            iHandle = DvProviderLinnCoUkPlaylist1Create(aDevice.Handle()); 
             iGch = GCHandle.Alloc(this);
+            iPropertyIdArray = new PropertyBinary(new ParameterBinary("IdArray"));
+            AddProperty(iPropertyIdArray);
+            iPropertyRepeat = new PropertyBool(new ParameterBool("Repeat"));
+            AddProperty(iPropertyRepeat);
+            iPropertyShuffle = new PropertyBool(new ParameterBool("Shuffle"));
+            AddProperty(iPropertyShuffle);
+            iPropertyTracksMax = new PropertyUint(new ParameterUint("TracksMax"));
+            AddProperty(iPropertyTracksMax);
         }
 
         /// <summary>
@@ -155,31 +108,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyIdArray(string aValue)
+        public bool SetPropertyIdArray(string aValue)
         {
-            uint changed;
-            char* value = (char*)Marshal.StringToHGlobalAnsi(aValue).ToPointer();
-            int valueLen = aValue.Length;
-            int err = DvProviderLinnCoUkPlaylist1SetPropertyIdArray(iHandle, value, valueLen, &changed);
-            Marshal.FreeHGlobal((IntPtr)value);
-            if (err != 0)
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBinary(iPropertyIdArray, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the IdArray property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyIdArray(out string aValue)
+        /// <returns>The value of the property</returns>
+        public string PropertyIdArray()
         {
-            char* value;
-            int valueLen;
-             DvProviderLinnCoUkPlaylist1GetPropertyIdArray(iHandle, &value, &valueLen);
-            aValue = Marshal.PtrToStringAnsi((IntPtr)value, valueLen);
-            ZappFree(value);
+            return iPropertyIdArray.Value();
         }
 
         /// <summary>
@@ -187,26 +127,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyRepeat(bool aValue)
+        public bool SetPropertyRepeat(bool aValue)
         {
-            uint changed;
-            int value = (aValue ? 1 : 0);
-            if (0 != DvProviderLinnCoUkPlaylist1SetPropertyRepeat(iHandle, value, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBool(iPropertyRepeat, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Repeat property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyRepeat(out bool aValue)
+        /// <returns>The value of the property</returns>
+        public bool PropertyRepeat()
         {
-            int value;
-            DvProviderLinnCoUkPlaylist1GetPropertyRepeat(iHandle, &value);
-            aValue = (value != 0);
+            return iPropertyRepeat.Value();
         }
 
         /// <summary>
@@ -214,26 +146,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyShuffle(bool aValue)
+        public bool SetPropertyShuffle(bool aValue)
         {
-            uint changed;
-            int value = (aValue ? 1 : 0);
-            if (0 != DvProviderLinnCoUkPlaylist1SetPropertyShuffle(iHandle, value, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyBool(iPropertyShuffle, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the Shuffle property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyShuffle(out bool aValue)
+        /// <returns>The value of the property</returns>
+        public bool PropertyShuffle()
         {
-            int value;
-            DvProviderLinnCoUkPlaylist1GetPropertyShuffle(iHandle, &value);
-            aValue = (value != 0);
+            return iPropertyShuffle.Value();
         }
 
         /// <summary>
@@ -241,26 +165,18 @@ namespace Zapp.Device.Providers
         /// </summary>
         /// <param name="aValue">New value for the property</param>
         /// <returns>true if the value has been updated; false if aValue was the same as the previous value</returns>
-        public unsafe bool SetPropertyTracksMax(uint aValue)
+        public bool SetPropertyTracksMax(uint aValue)
         {
-            uint changed;
-            if (0 != DvProviderLinnCoUkPlaylist1SetPropertyTracksMax(iHandle, aValue, &changed))
-            {
-                throw(new PropertyUpdateError());
-            }
-            return (changed != 0);
+            return SetPropertyUint(iPropertyTracksMax, aValue);
         }
 
         /// <summary>
         /// Get a copy of the value of the TracksMax property
         /// </summary>
-        /// <param name="aValue">Property's value will be copied here</param>
-        public unsafe void GetPropertyTracksMax(out uint aValue)
+        /// <returns>The value of the property</returns>
+        public uint PropertyTracksMax()
         {
-            fixed (uint* value = &aValue)
-            {
-                DvProviderLinnCoUkPlaylist1GetPropertyTracksMax(iHandle, value);
-            }
+            return iPropertyTracksMax.Value();
         }
 
         /// <summary>
@@ -270,9 +186,13 @@ namespace Zapp.Device.Providers
         /// DoRead must be overridden if this is called.</remarks>
         protected unsafe void EnableActionRead()
         {
-            iCallbackRead = new CallbackRead(DoRead);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPlaylist1EnableActionRead(iHandle, iCallbackRead, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Read");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("aId"));
+            action.AddOutputParameter(new ParameterString("aUri", allowedValues));
+            action.AddOutputParameter(new ParameterString("aMetaData", allowedValues));
+            iDelegateRead = new ActionDelegate(DoRead);
+            EnableAction(action, iDelegateRead, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -282,9 +202,12 @@ namespace Zapp.Device.Providers
         /// DoReadList must be overridden if this is called.</remarks>
         protected unsafe void EnableActionReadList()
         {
-            iCallbackReadList = new CallbackReadList(DoReadList);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPlaylist1EnableActionReadList(iHandle, iCallbackReadList, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("ReadList");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterString("aIdList", allowedValues));
+            action.AddOutputParameter(new ParameterString("aMetaDataList", allowedValues));
+            iDelegateReadList = new ActionDelegate(DoReadList);
+            EnableAction(action, iDelegateReadList, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -294,9 +217,14 @@ namespace Zapp.Device.Providers
         /// DoInsert must be overridden if this is called.</remarks>
         protected unsafe void EnableActionInsert()
         {
-            iCallbackInsert = new CallbackInsert(DoInsert);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPlaylist1EnableActionInsert(iHandle, iCallbackInsert, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Insert");
+            List<String> allowedValues = new List<String>();
+            action.AddInputParameter(new ParameterUint("aAfterId"));
+            action.AddInputParameter(new ParameterString("aUri", allowedValues));
+            action.AddInputParameter(new ParameterString("aMetaData", allowedValues));
+            action.AddOutputParameter(new ParameterUint("aNewId"));
+            iDelegateInsert = new ActionDelegate(DoInsert);
+            EnableAction(action, iDelegateInsert, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -306,9 +234,10 @@ namespace Zapp.Device.Providers
         /// DoDelete must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDelete()
         {
-            iCallbackDelete = new CallbackDelete(DoDelete);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPlaylist1EnableActionDelete(iHandle, iCallbackDelete, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Delete");
+            action.AddInputParameter(new ParameterUint("aId"));
+            iDelegateDelete = new ActionDelegate(DoDelete);
+            EnableAction(action, iDelegateDelete, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -318,9 +247,9 @@ namespace Zapp.Device.Providers
         /// DoDeleteAll must be overridden if this is called.</remarks>
         protected unsafe void EnableActionDeleteAll()
         {
-            iCallbackDeleteAll = new CallbackDeleteAll(DoDeleteAll);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPlaylist1EnableActionDeleteAll(iHandle, iCallbackDeleteAll, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("DeleteAll");
+            iDelegateDeleteAll = new ActionDelegate(DoDeleteAll);
+            EnableAction(action, iDelegateDeleteAll, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -330,9 +259,10 @@ namespace Zapp.Device.Providers
         /// DoSetRepeat must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetRepeat()
         {
-            iCallbackSetRepeat = new CallbackSetRepeat(DoSetRepeat);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPlaylist1EnableActionSetRepeat(iHandle, iCallbackSetRepeat, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetRepeat");
+            action.AddInputParameter(new ParameterRelated("aRepeat", iPropertyRepeat));
+            iDelegateSetRepeat = new ActionDelegate(DoSetRepeat);
+            EnableAction(action, iDelegateSetRepeat, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -342,9 +272,10 @@ namespace Zapp.Device.Providers
         /// DoRepeat must be overridden if this is called.</remarks>
         protected unsafe void EnableActionRepeat()
         {
-            iCallbackRepeat = new CallbackRepeat(DoRepeat);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPlaylist1EnableActionRepeat(iHandle, iCallbackRepeat, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Repeat");
+            action.AddOutputParameter(new ParameterRelated("aRepeat", iPropertyRepeat));
+            iDelegateRepeat = new ActionDelegate(DoRepeat);
+            EnableAction(action, iDelegateRepeat, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -354,9 +285,10 @@ namespace Zapp.Device.Providers
         /// DoSetShuffle must be overridden if this is called.</remarks>
         protected unsafe void EnableActionSetShuffle()
         {
-            iCallbackSetShuffle = new CallbackSetShuffle(DoSetShuffle);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPlaylist1EnableActionSetShuffle(iHandle, iCallbackSetShuffle, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("SetShuffle");
+            action.AddInputParameter(new ParameterRelated("aShuffle", iPropertyShuffle));
+            iDelegateSetShuffle = new ActionDelegate(DoSetShuffle);
+            EnableAction(action, iDelegateSetShuffle, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -366,9 +298,10 @@ namespace Zapp.Device.Providers
         /// DoShuffle must be overridden if this is called.</remarks>
         protected unsafe void EnableActionShuffle()
         {
-            iCallbackShuffle = new CallbackShuffle(DoShuffle);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPlaylist1EnableActionShuffle(iHandle, iCallbackShuffle, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("Shuffle");
+            action.AddOutputParameter(new ParameterRelated("aShuffle", iPropertyShuffle));
+            iDelegateShuffle = new ActionDelegate(DoShuffle);
+            EnableAction(action, iDelegateShuffle, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -378,9 +311,10 @@ namespace Zapp.Device.Providers
         /// DoTracksMax must be overridden if this is called.</remarks>
         protected unsafe void EnableActionTracksMax()
         {
-            iCallbackTracksMax = new CallbackTracksMax(DoTracksMax);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPlaylist1EnableActionTracksMax(iHandle, iCallbackTracksMax, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("TracksMax");
+            action.AddOutputParameter(new ParameterRelated("aTracksMax", iPropertyTracksMax));
+            iDelegateTracksMax = new ActionDelegate(DoTracksMax);
+            EnableAction(action, iDelegateTracksMax, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -390,9 +324,11 @@ namespace Zapp.Device.Providers
         /// DoIdArray must be overridden if this is called.</remarks>
         protected unsafe void EnableActionIdArray()
         {
-            iCallbackIdArray = new CallbackIdArray(DoIdArray);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPlaylist1EnableActionIdArray(iHandle, iCallbackIdArray, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("IdArray");
+            action.AddOutputParameter(new ParameterUint("aIdArrayToken"));
+            action.AddOutputParameter(new ParameterRelated("aIdArray", iPropertyIdArray));
+            iDelegateIdArray = new ActionDelegate(DoIdArray);
+            EnableAction(action, iDelegateIdArray, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -402,9 +338,11 @@ namespace Zapp.Device.Providers
         /// DoIdArrayChanged must be overridden if this is called.</remarks>
         protected unsafe void EnableActionIdArrayChanged()
         {
-            iCallbackIdArrayChanged = new CallbackIdArrayChanged(DoIdArrayChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            DvProviderLinnCoUkPlaylist1EnableActionIdArrayChanged(iHandle, iCallbackIdArrayChanged, ptr);
+            Zapp.Core.Action action = new Zapp.Core.Action("IdArrayChanged");
+            action.AddInputParameter(new ParameterUint("aIdArrayToken"));
+            action.AddOutputParameter(new ParameterBool("aIdArrayChanged"));
+            iDelegateIdArrayChanged = new ActionDelegate(DoIdArrayChanged);
+            EnableAction(action, iDelegateIdArrayChanged, GCHandle.ToIntPtr(iGch));
         }
 
         /// <summary>
@@ -582,125 +520,164 @@ namespace Zapp.Device.Providers
             throw (new ActionDisabledError());
         }
 
-        private static unsafe int DoRead(IntPtr aPtr, uint aVersion, uint aaId, char** aaUri, char** aaMetaData)
+        private static unsafe int DoRead(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aId = invocation.ReadUint("aId");
             string aUri;
             string aMetaData;
-            self.Read(aVersion, aaId, out aUri, out aMetaData);
-            *aaUri = (char*)Marshal.StringToHGlobalAnsi(aUri).ToPointer();
-            *aaMetaData = (char*)Marshal.StringToHGlobalAnsi(aMetaData).ToPointer();
+            self.Read(aVersion, aId, out aUri, out aMetaData);
+            invocation.WriteStart();
+            invocation.WriteString("aUri", aUri);
+            invocation.WriteString("aMetaData", aMetaData);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoReadList(IntPtr aPtr, uint aVersion, char* aaIdList, char** aaMetaDataList)
+        private static unsafe int DoReadList(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
-            string aIdList = Marshal.PtrToStringAnsi((IntPtr)aaIdList);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            string aIdList = invocation.ReadString("aIdList");
             string aMetaDataList;
             self.ReadList(aVersion, aIdList, out aMetaDataList);
-            *aaMetaDataList = (char*)Marshal.StringToHGlobalAnsi(aMetaDataList).ToPointer();
+            invocation.WriteStart();
+            invocation.WriteString("aMetaDataList", aMetaDataList);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoInsert(IntPtr aPtr, uint aVersion, uint aaAfterId, char* aaUri, char* aaMetaData, uint* aaNewId)
+        private static unsafe int DoInsert(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
-            string aUri = Marshal.PtrToStringAnsi((IntPtr)aaUri);
-            string aMetaData = Marshal.PtrToStringAnsi((IntPtr)aaMetaData);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aAfterId = invocation.ReadUint("aAfterId");
+            string aUri = invocation.ReadString("aUri");
+            string aMetaData = invocation.ReadString("aMetaData");
             uint aNewId;
-            self.Insert(aVersion, aaAfterId, aUri, aMetaData, out aNewId);
-            *aaNewId = aNewId;
+            self.Insert(aVersion, aAfterId, aUri, aMetaData, out aNewId);
+            invocation.WriteStart();
+            invocation.WriteUint("aNewId", aNewId);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoDelete(IntPtr aPtr, uint aVersion, uint aaId)
+        private static unsafe int DoDelete(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
-            self.Delete(aVersion, aaId);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aId = invocation.ReadUint("aId");
+            self.Delete(aVersion, aId);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoDeleteAll(IntPtr aPtr, uint aVersion)
+        private static unsafe int DoDeleteAll(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             self.DeleteAll(aVersion);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetRepeat(IntPtr aPtr, uint aVersion, int aaRepeat)
+        private static unsafe int DoSetRepeat(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
-            bool aRepeat = (aaRepeat != 0);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool aRepeat = invocation.ReadBool("aRepeat");
             self.SetRepeat(aVersion, aRepeat);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoRepeat(IntPtr aPtr, uint aVersion, int* aaRepeat)
+        private static unsafe int DoRepeat(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             bool aRepeat;
             self.Repeat(aVersion, out aRepeat);
-            *aaRepeat = (aRepeat ? 1 : 0);
+            invocation.WriteStart();
+            invocation.WriteBool("aRepeat", aRepeat);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoSetShuffle(IntPtr aPtr, uint aVersion, int aaShuffle)
+        private static unsafe int DoSetShuffle(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
-            bool aShuffle = (aaShuffle != 0);
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            bool aShuffle = invocation.ReadBool("aShuffle");
             self.SetShuffle(aVersion, aShuffle);
+            invocation.WriteStart();
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoShuffle(IntPtr aPtr, uint aVersion, int* aaShuffle)
+        private static unsafe int DoShuffle(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             bool aShuffle;
             self.Shuffle(aVersion, out aShuffle);
-            *aaShuffle = (aShuffle ? 1 : 0);
+            invocation.WriteStart();
+            invocation.WriteBool("aShuffle", aShuffle);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoTracksMax(IntPtr aPtr, uint aVersion, uint* aaTracksMax)
+        private static unsafe int DoTracksMax(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint aTracksMax;
             self.TracksMax(aVersion, out aTracksMax);
-            *aaTracksMax = aTracksMax;
+            invocation.WriteStart();
+            invocation.WriteUint("aTracksMax", aTracksMax);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoIdArray(IntPtr aPtr, uint aVersion, uint* aaIdArrayToken, char** aaIdArray, int* aaIdArrayLen)
+        private static unsafe int DoIdArray(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
             uint aIdArrayToken;
             string aIdArray;
             self.IdArray(aVersion, out aIdArrayToken, out aIdArray);
-            *aaIdArrayToken = aIdArrayToken;
-            *aaIdArray = (char*)Marshal.StringToHGlobalAnsi(aIdArray).ToPointer();
-            *aaIdArrayLen = aIdArray.Length;
+            invocation.WriteStart();
+            invocation.WriteUint("aIdArrayToken", aIdArrayToken);
+            invocation.WriteBinary("aIdArray", aIdArray);
+            invocation.WriteEnd();
             return 0;
         }
 
-        private static unsafe int DoIdArrayChanged(IntPtr aPtr, uint aVersion, uint aaIdArrayToken, int* aaIdArrayChanged)
+        private static unsafe int DoIdArrayChanged(IntPtr aPtr, IntPtr aInvocation, uint aVersion)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
+            DvInvocation invocation = new DvInvocation(aInvocation);
+            uint aIdArrayToken = invocation.ReadUint("aIdArrayToken");
             bool aIdArrayChanged;
-            self.IdArrayChanged(aVersion, aaIdArrayToken, out aIdArrayChanged);
-            *aaIdArrayChanged = (aIdArrayChanged ? 1 : 0);
+            self.IdArrayChanged(aVersion, aIdArrayToken, out aIdArrayChanged);
+            invocation.WriteStart();
+            invocation.WriteBool("aIdArrayChanged", aIdArrayChanged);
+            invocation.WriteEnd();
             return 0;
         }
 
@@ -720,21 +697,16 @@ namespace Zapp.Device.Providers
 
         private void DoDispose()
         {
-            IntPtr handle;
             lock (this)
             {
                 if (iHandle == IntPtr.Zero)
                 {
                     return;
                 }
-                handle = iHandle;
+                DisposeProvider();
                 iHandle = IntPtr.Zero;
             }
-            DvProviderLinnCoUkPlaylist1Destroy(handle);
-            if (iGch.IsAllocated)
-            {
-                iGch.Free();
-            }
+            iGch.Free();
         }
     }
 }

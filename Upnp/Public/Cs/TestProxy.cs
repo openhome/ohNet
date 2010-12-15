@@ -13,7 +13,7 @@ namespace Zapp
             Core.Library lib = new Core.Library();
             lib.Initialise(ref initParams);
             lib.StartCp();
-            new Runner();
+            new Runner(initParams.MsearchTimeSecs());
             lib.Close();
         }
     }
@@ -32,7 +32,7 @@ namespace Zapp
         private const uint kDevicePollMs = 1000;
         private const uint kDevicePollSecs = 1;
 
-        public Runner()
+        public Runner(int aMsearchTimeSecs)
         {
             iListFrozen = false;
             iDeviceList = new List<ControlPoint.CpDevice>();
@@ -41,7 +41,7 @@ namespace Zapp
             ControlPoint.CpDeviceListUpnpServiceType list = new ControlPoint.CpDeviceListUpnpServiceType("upnp.org", "ConnectionManager", 1, added, removed);
             //CpDeviceListUpnpUuid list = new CpDeviceListUpnpUuid("896659847466-a4badbeaacbc-737837", added, removed);
             Semaphore sem = new Semaphore(0, 1);
-            sem.WaitOne(6000);
+            sem.WaitOne(aMsearchTimeSecs * 1000);
             iListFrozen = true;
             
             InvokeSync();

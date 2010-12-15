@@ -1,7 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Text;
-using Zapp;
+using Zapp.Core;
+using Zapp.ControlPoint;
 
 namespace Zapp.ControlPoint.Proxies
 {
@@ -16,40 +18,63 @@ namespace Zapp.ControlPoint.Proxies
         void SyncLedsOff();
         void BeginLedsOff(CpProxy.CallbackAsyncComplete aCallback);
         void EndLedsOff(IntPtr aAsyncHandle);
-
     }
+
+    internal class SyncTestComPortLinnCoUkPtest1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkPtest1 iService;
+        private bool iResult;
+
+        public SyncTestComPortLinnCoUkPtest1(CpProxyLinnCoUkPtest1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public bool Result()
+        {
+            return iResult;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndTestComPort(aAsyncHandle, out iResult);
+        }
+    };
+
+    internal class SyncLedsOnLinnCoUkPtest1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkPtest1 iService;
+
+        public SyncLedsOnLinnCoUkPtest1(CpProxyLinnCoUkPtest1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndLedsOn(aAsyncHandle);
+        }
+    };
+
+    internal class SyncLedsOffLinnCoUkPtest1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkPtest1 iService;
+
+        public SyncLedsOffLinnCoUkPtest1(CpProxyLinnCoUkPtest1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndLedsOff(aAsyncHandle);
+        }
+    };
 
     /// <summary>
     /// Proxy for the linn.co.uk:Ptest:1 UPnP service
     /// </summary>
     public class CpProxyLinnCoUkPtest1 : CpProxy, IDisposable, ICpProxyLinnCoUkPtest1
     {
-        [DllImport("CpLinnCoUkPtest1")]
-        static extern IntPtr CpProxyLinnCoUkPtest1Create(IntPtr aDeviceHandle);
-        [DllImport("CpLinnCoUkPtest1")]
-        static extern void CpProxyLinnCoUkPtest1Destroy(IntPtr aHandle);
-        [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe void CpProxyLinnCoUkPtest1SyncTestComPort(IntPtr aHandle, uint aaPort, uint* aaResult);
-        [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe void CpProxyLinnCoUkPtest1BeginTestComPort(IntPtr aHandle, uint aaPort, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe int CpProxyLinnCoUkPtest1EndTestComPort(IntPtr aHandle, IntPtr aAsync, uint* aaResult);
-        [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe void CpProxyLinnCoUkPtest1SyncLedsOn(IntPtr aHandle);
-        [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe void CpProxyLinnCoUkPtest1BeginLedsOn(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe int CpProxyLinnCoUkPtest1EndLedsOn(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe void CpProxyLinnCoUkPtest1SyncLedsOff(IntPtr aHandle);
-        [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe void CpProxyLinnCoUkPtest1BeginLedsOff(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkPtest1")]
-        static extern unsafe int CpProxyLinnCoUkPtest1EndLedsOff(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private GCHandle iGch;
+        private Zapp.Core.Action iActionTestComPort;
+        private Zapp.Core.Action iActionLedsOn;
+        private Zapp.Core.Action iActionLedsOff;
 
         /// <summary>
         /// Constructor
@@ -57,9 +82,19 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
         /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkPtest1(CpDevice aDevice)
+            : base("linn-co-uk", "Ptest", 1, aDevice)
         {
-            iHandle = CpProxyLinnCoUkPtest1Create(aDevice.Handle());
-            iGch = GCHandle.Alloc(this);
+            Zapp.Core.Parameter param;
+
+            iActionTestComPort = new Zapp.Core.Action("TestComPort");
+            param = new ParameterUint("aPort");
+            iActionTestComPort.AddInputParameter(param);
+            param = new ParameterBool("aResult");
+            iActionTestComPort.AddOutputParameter(param);
+
+            iActionLedsOn = new Zapp.Core.Action("LedsOn");
+
+            iActionLedsOff = new Zapp.Core.Action("LedsOff");
         }
 
         /// <summary>
@@ -69,13 +104,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaPort"></param>
         /// <param name="aaResult"></param>
-        public unsafe void SyncTestComPort(uint aaPort, out bool aaResult)
+        public void SyncTestComPort(uint aaPort, out bool aaResult)
         {
-            uint aResult;
-            {
-                CpProxyLinnCoUkPtest1SyncTestComPort(iHandle, aaPort, &aResult);
-            }
-            aaResult = (aResult != 0);
+            SyncTestComPortLinnCoUkPtest1 sync = new SyncTestComPortLinnCoUkPtest1(this);
+            BeginTestComPort(aPort, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aResult = sync.Result();
         }
 
         /// <summary>
@@ -87,11 +122,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaPort"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginTestComPort(uint aaPort, CallbackAsyncComplete aCallback)
+        public void BeginTestComPort(uint aaPort, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkPtest1BeginTestComPort(iHandle, aaPort, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionTestComPort, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionTestComPort.InputParameter(inIndex++), aPort));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentBool((ParameterBool)iActionTestComPort.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -100,16 +138,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaResult"></param>
-        public unsafe void EndTestComPort(IntPtr aAsyncHandle, out bool aaResult)
+        public void EndTestComPort(IntPtr aAsyncHandle, out bool aaResult)
         {
-            uint aResult;
-            {
-                if (0 != CpProxyLinnCoUkPtest1EndTestComPort(iHandle, aAsyncHandle, &aResult))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaResult = (aResult != 0);
+            uint index = 0;
+            aResult = Invocation.OutputBool(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -117,11 +149,12 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        public unsafe void SyncLedsOn()
+        public void SyncLedsOn()
         {
-            {
-                CpProxyLinnCoUkPtest1SyncLedsOn(iHandle);
-            }
+            SyncLedsOnLinnCoUkPtest1 sync = new SyncLedsOnLinnCoUkPtest1(this);
+            BeginLedsOn(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -132,11 +165,10 @@ namespace Zapp.ControlPoint.Proxies
         /// EndLedsOn().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginLedsOn(CallbackAsyncComplete aCallback)
+        public void BeginLedsOn(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkPtest1BeginLedsOn(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionLedsOn, aCallback);
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -144,14 +176,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndLedsOn(IntPtr aAsyncHandle)
+        public void EndLedsOn(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkPtest1EndLedsOn(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -159,11 +185,12 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        public unsafe void SyncLedsOff()
+        public void SyncLedsOff()
         {
-            {
-                CpProxyLinnCoUkPtest1SyncLedsOff(iHandle);
-            }
+            SyncLedsOffLinnCoUkPtest1 sync = new SyncLedsOffLinnCoUkPtest1(this);
+            BeginLedsOff(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -174,11 +201,10 @@ namespace Zapp.ControlPoint.Proxies
         /// EndLedsOff().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginLedsOff(CallbackAsyncComplete aCallback)
+        public void BeginLedsOff(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkPtest1BeginLedsOff(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionLedsOff, aCallback);
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -186,14 +212,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndLedsOff(IntPtr aAsyncHandle)
+        public void EndLedsOff(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkPtest1EndLedsOff(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -217,17 +237,15 @@ namespace Zapp.ControlPoint.Proxies
                 {
                     return;
                 }
-                CpProxyLinnCoUkPtest1Destroy(iHandle);
+                DisposeProxy();
                 iHandle = IntPtr.Zero;
+                iActionTestComPort.Dispose();
+                iActionLedsOn.Dispose();
+                iActionLedsOff.Dispose();
             }
-            iGch.Free();
             if (aDisposing)
             {
                 GC.SuppressFinalize(this);
-            }
-            else
-            {
-                DisposeProxy();
             }
         }
     }

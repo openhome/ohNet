@@ -1,7 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Text;
-using Zapp;
+using Zapp.Core;
+using Zapp.ControlPoint;
 
 namespace Zapp.ControlPoint.Proxies
 {
@@ -10,118 +12,253 @@ namespace Zapp.ControlPoint.Proxies
         void SyncReboot();
         void BeginReboot(CpProxy.CallbackAsyncComplete aCallback);
         void EndReboot(IntPtr aAsyncHandle);
-        void SyncBootMode(out string aaMode);
+        void SyncBootMode(out String aaMode);
         void BeginBootMode(CpProxy.CallbackAsyncComplete aCallback);
-        void EndBootMode(IntPtr aAsyncHandle, out string aaMode);
-        void SyncSetBootMode(string aaMode);
-        void BeginSetBootMode(string aaMode, CpProxy.CallbackAsyncComplete aCallback);
+        void EndBootMode(IntPtr aAsyncHandle, out String aaMode);
+        void SyncSetBootMode(String aaMode);
+        void BeginSetBootMode(String aaMode, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetBootMode(IntPtr aAsyncHandle);
-        void SyncBspType(out string aaBspType);
+        void SyncBspType(out String aaBspType);
         void BeginBspType(CpProxy.CallbackAsyncComplete aCallback);
-        void EndBspType(IntPtr aAsyncHandle, out string aaBspType);
-        void SyncUglyName(out string aaUglyName);
+        void EndBspType(IntPtr aAsyncHandle, out String aaBspType);
+        void SyncUglyName(out String aaUglyName);
         void BeginUglyName(CpProxy.CallbackAsyncComplete aCallback);
-        void EndUglyName(IntPtr aAsyncHandle, out string aaUglyName);
-        void SyncMacAddress(out string aaMacAddress);
+        void EndUglyName(IntPtr aAsyncHandle, out String aaUglyName);
+        void SyncMacAddress(out String aaMacAddress);
         void BeginMacAddress(CpProxy.CallbackAsyncComplete aCallback);
-        void EndMacAddress(IntPtr aAsyncHandle, out string aaMacAddress);
-        void SyncProductId(out string aaProductNumber);
+        void EndMacAddress(IntPtr aAsyncHandle, out String aaMacAddress);
+        void SyncProductId(out String aaProductNumber);
         void BeginProductId(CpProxy.CallbackAsyncComplete aCallback);
-        void EndProductId(IntPtr aAsyncHandle, out string aaProductNumber);
-        void SyncBoardId(uint aaIndex, out string aaBoardNumber);
+        void EndProductId(IntPtr aAsyncHandle, out String aaProductNumber);
+        void SyncBoardId(uint aaIndex, out String aaBoardNumber);
         void BeginBoardId(uint aaIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndBoardId(IntPtr aAsyncHandle, out string aaBoardNumber);
-        void SyncBoardType(uint aaIndex, out string aaBoardNumber);
+        void EndBoardId(IntPtr aAsyncHandle, out String aaBoardNumber);
+        void SyncBoardType(uint aaIndex, out String aaBoardNumber);
         void BeginBoardType(uint aaIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndBoardType(IntPtr aAsyncHandle, out string aaBoardNumber);
+        void EndBoardType(IntPtr aAsyncHandle, out String aaBoardNumber);
         void SyncMaxBoards(out uint aaMaxBoards);
         void BeginMaxBoards(CpProxy.CallbackAsyncComplete aCallback);
         void EndMaxBoards(IntPtr aAsyncHandle, out uint aaMaxBoards);
-        void SyncSoftwareVersion(out string aaSoftwareVersion);
+        void SyncSoftwareVersion(out String aaSoftwareVersion);
         void BeginSoftwareVersion(CpProxy.CallbackAsyncComplete aCallback);
-        void EndSoftwareVersion(IntPtr aAsyncHandle, out string aaSoftwareVersion);
-
+        void EndSoftwareVersion(IntPtr aAsyncHandle, out String aaSoftwareVersion);
     }
+
+    internal class SyncRebootLinnCoUkVolkano1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkVolkano1 iService;
+
+        public SyncRebootLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndReboot(aAsyncHandle);
+        }
+    };
+
+    internal class SyncBootModeLinnCoUkVolkano1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkVolkano1 iService;
+        private String iMode;
+
+        public SyncBootModeLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String Mode()
+        {
+            return iMode;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndBootMode(aAsyncHandle, out iMode);
+        }
+    };
+
+    internal class SyncSetBootModeLinnCoUkVolkano1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkVolkano1 iService;
+
+        public SyncSetBootModeLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1 aProxy)
+        {
+            iService = aProxy;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSetBootMode(aAsyncHandle);
+        }
+    };
+
+    internal class SyncBspTypeLinnCoUkVolkano1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkVolkano1 iService;
+        private String iBspType;
+
+        public SyncBspTypeLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String BspType()
+        {
+            return iBspType;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndBspType(aAsyncHandle, out iBspType);
+        }
+    };
+
+    internal class SyncUglyNameLinnCoUkVolkano1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkVolkano1 iService;
+        private String iUglyName;
+
+        public SyncUglyNameLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String UglyName()
+        {
+            return iUglyName;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndUglyName(aAsyncHandle, out iUglyName);
+        }
+    };
+
+    internal class SyncMacAddressLinnCoUkVolkano1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkVolkano1 iService;
+        private String iMacAddress;
+
+        public SyncMacAddressLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String MacAddress()
+        {
+            return iMacAddress;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndMacAddress(aAsyncHandle, out iMacAddress);
+        }
+    };
+
+    internal class SyncProductIdLinnCoUkVolkano1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkVolkano1 iService;
+        private String iProductNumber;
+
+        public SyncProductIdLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String ProductNumber()
+        {
+            return iProductNumber;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndProductId(aAsyncHandle, out iProductNumber);
+        }
+    };
+
+    internal class SyncBoardIdLinnCoUkVolkano1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkVolkano1 iService;
+        private String iBoardNumber;
+
+        public SyncBoardIdLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String BoardNumber()
+        {
+            return iBoardNumber;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndBoardId(aAsyncHandle, out iBoardNumber);
+        }
+    };
+
+    internal class SyncBoardTypeLinnCoUkVolkano1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkVolkano1 iService;
+        private String iBoardNumber;
+
+        public SyncBoardTypeLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String BoardNumber()
+        {
+            return iBoardNumber;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndBoardType(aAsyncHandle, out iBoardNumber);
+        }
+    };
+
+    internal class SyncMaxBoardsLinnCoUkVolkano1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkVolkano1 iService;
+        private uint iMaxBoards;
+
+        public SyncMaxBoardsLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint MaxBoards()
+        {
+            return iMaxBoards;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndMaxBoards(aAsyncHandle, out iMaxBoards);
+        }
+    };
+
+    internal class SyncSoftwareVersionLinnCoUkVolkano1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkVolkano1 iService;
+        private String iSoftwareVersion;
+
+        public SyncSoftwareVersionLinnCoUkVolkano1(CpProxyLinnCoUkVolkano1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public String SoftwareVersion()
+        {
+            return iSoftwareVersion;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSoftwareVersion(aAsyncHandle, out iSoftwareVersion);
+        }
+    };
 
     /// <summary>
     /// Proxy for the linn.co.uk:Volkano:1 UPnP service
     /// </summary>
     public class CpProxyLinnCoUkVolkano1 : CpProxy, IDisposable, ICpProxyLinnCoUkVolkano1
     {
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern IntPtr CpProxyLinnCoUkVolkano1Create(IntPtr aDeviceHandle);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern void CpProxyLinnCoUkVolkano1Destroy(IntPtr aHandle);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncReboot(IntPtr aHandle);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginReboot(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndReboot(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncBootMode(IntPtr aHandle, char** aaMode);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginBootMode(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndBootMode(IntPtr aHandle, IntPtr aAsync, char** aaMode);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncSetBootMode(IntPtr aHandle, char* aaMode);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginSetBootMode(IntPtr aHandle, char* aaMode, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndSetBootMode(IntPtr aHandle, IntPtr aAsync);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncBspType(IntPtr aHandle, char** aaBspType);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginBspType(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndBspType(IntPtr aHandle, IntPtr aAsync, char** aaBspType);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncUglyName(IntPtr aHandle, char** aaUglyName);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginUglyName(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndUglyName(IntPtr aHandle, IntPtr aAsync, char** aaUglyName);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncMacAddress(IntPtr aHandle, char** aaMacAddress);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginMacAddress(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndMacAddress(IntPtr aHandle, IntPtr aAsync, char** aaMacAddress);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncProductId(IntPtr aHandle, char** aaProductNumber);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginProductId(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndProductId(IntPtr aHandle, IntPtr aAsync, char** aaProductNumber);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncBoardId(IntPtr aHandle, uint aaIndex, char** aaBoardNumber);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginBoardId(IntPtr aHandle, uint aaIndex, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndBoardId(IntPtr aHandle, IntPtr aAsync, char** aaBoardNumber);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncBoardType(IntPtr aHandle, uint aaIndex, char** aaBoardNumber);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginBoardType(IntPtr aHandle, uint aaIndex, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndBoardType(IntPtr aHandle, IntPtr aAsync, char** aaBoardNumber);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncMaxBoards(IntPtr aHandle, uint* aaMaxBoards);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginMaxBoards(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndMaxBoards(IntPtr aHandle, IntPtr aAsync, uint* aaMaxBoards);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1SyncSoftwareVersion(IntPtr aHandle, char** aaSoftwareVersion);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe void CpProxyLinnCoUkVolkano1BeginSoftwareVersion(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkVolkano1")]
-        static extern unsafe int CpProxyLinnCoUkVolkano1EndSoftwareVersion(IntPtr aHandle, IntPtr aAsync, char** aaSoftwareVersion);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private GCHandle iGch;
+        private Zapp.Core.Action iActionReboot;
+        private Zapp.Core.Action iActionBootMode;
+        private Zapp.Core.Action iActionSetBootMode;
+        private Zapp.Core.Action iActionBspType;
+        private Zapp.Core.Action iActionUglyName;
+        private Zapp.Core.Action iActionMacAddress;
+        private Zapp.Core.Action iActionProductId;
+        private Zapp.Core.Action iActionBoardId;
+        private Zapp.Core.Action iActionBoardType;
+        private Zapp.Core.Action iActionMaxBoards;
+        private Zapp.Core.Action iActionSoftwareVersion;
 
         /// <summary>
         /// Constructor
@@ -129,9 +266,63 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
         /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkVolkano1(CpDevice aDevice)
+            : base("linn-co-uk", "Volkano", 1, aDevice)
         {
-            iHandle = CpProxyLinnCoUkVolkano1Create(aDevice.Handle());
-            iGch = GCHandle.Alloc(this);
+            Zapp.Core.Parameter param;
+            List<String> allowedValues = new List<String>();
+
+            iActionReboot = new Zapp.Core.Action("Reboot");
+
+            iActionBootMode = new Zapp.Core.Action("BootMode");
+            allowedValues.Add("Main");
+            allowedValues.Add("Fallback");
+            allowedValues.Add("Ram");
+            param = new ParameterString("aMode", allowedValues);
+            iActionBootMode.AddOutputParameter(param);
+            allowedValues.Clear();
+
+            iActionSetBootMode = new Zapp.Core.Action("SetBootMode");
+            allowedValues.Add("Main");
+            allowedValues.Add("Fallback");
+            param = new ParameterString("aMode", allowedValues);
+            iActionSetBootMode.AddInputParameter(param);
+            allowedValues.Clear();
+
+            iActionBspType = new Zapp.Core.Action("BspType");
+            param = new ParameterString("aBspType", allowedValues);
+            iActionBspType.AddOutputParameter(param);
+
+            iActionUglyName = new Zapp.Core.Action("UglyName");
+            param = new ParameterString("aUglyName", allowedValues);
+            iActionUglyName.AddOutputParameter(param);
+
+            iActionMacAddress = new Zapp.Core.Action("MacAddress");
+            param = new ParameterString("aMacAddress", allowedValues);
+            iActionMacAddress.AddOutputParameter(param);
+
+            iActionProductId = new Zapp.Core.Action("ProductId");
+            param = new ParameterString("aProductNumber", allowedValues);
+            iActionProductId.AddOutputParameter(param);
+
+            iActionBoardId = new Zapp.Core.Action("BoardId");
+            param = new ParameterUint("aIndex");
+            iActionBoardId.AddInputParameter(param);
+            param = new ParameterString("aBoardNumber", allowedValues);
+            iActionBoardId.AddOutputParameter(param);
+
+            iActionBoardType = new Zapp.Core.Action("BoardType");
+            param = new ParameterUint("aIndex");
+            iActionBoardType.AddInputParameter(param);
+            param = new ParameterString("aBoardNumber", allowedValues);
+            iActionBoardType.AddOutputParameter(param);
+
+            iActionMaxBoards = new Zapp.Core.Action("MaxBoards");
+            param = new ParameterUint("aMaxBoards");
+            iActionMaxBoards.AddOutputParameter(param);
+
+            iActionSoftwareVersion = new Zapp.Core.Action("SoftwareVersion");
+            param = new ParameterString("aSoftwareVersion", allowedValues);
+            iActionSoftwareVersion.AddOutputParameter(param);
         }
 
         /// <summary>
@@ -139,11 +330,12 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
-        public unsafe void SyncReboot()
+        public void SyncReboot()
         {
-            {
-                CpProxyLinnCoUkVolkano1SyncReboot(iHandle);
-            }
+            SyncRebootLinnCoUkVolkano1 sync = new SyncRebootLinnCoUkVolkano1(this);
+            BeginReboot(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -154,11 +346,10 @@ namespace Zapp.ControlPoint.Proxies
         /// EndReboot().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginReboot(CallbackAsyncComplete aCallback)
+        public void BeginReboot(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkVolkano1BeginReboot(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionReboot, aCallback);
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -166,14 +357,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndReboot(IntPtr aAsyncHandle)
+        public void EndReboot(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkVolkano1EndReboot(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -182,14 +367,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaMode"></param>
-        public unsafe void SyncBootMode(out string aaMode)
+        public void SyncBootMode(out String aaMode)
         {
-            char* aMode;
-            {
-                CpProxyLinnCoUkVolkano1SyncBootMode(iHandle, &aMode);
-            }
-            aaMode = Marshal.PtrToStringAnsi((IntPtr)aMode);
-            ZappFree(aMode);
+            SyncBootModeLinnCoUkVolkano1 sync = new SyncBootModeLinnCoUkVolkano1(this);
+            BeginBootMode(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aMode = sync.Mode();
         }
 
         /// <summary>
@@ -200,11 +384,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndBootMode().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginBootMode(CallbackAsyncComplete aCallback)
+        public void BeginBootMode(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkVolkano1BeginBootMode(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionBootMode, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionBootMode.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -213,17 +398,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaMode"></param>
-        public unsafe void EndBootMode(IntPtr aAsyncHandle, out string aaMode)
+        public void EndBootMode(IntPtr aAsyncHandle, out String aaMode)
         {
-            char* aMode;
-            {
-                if (0 != CpProxyLinnCoUkVolkano1EndBootMode(iHandle, aAsyncHandle, &aMode))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaMode = Marshal.PtrToStringAnsi((IntPtr)aMode);
-            ZappFree(aMode);
+            uint index = 0;
+            aMode = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -232,13 +410,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaMode"></param>
-        public unsafe void SyncSetBootMode(string aaMode)
+        public void SyncSetBootMode(String aaMode)
         {
-            char* aMode = (char*)Marshal.StringToHGlobalAnsi(aaMode);
-            {
-                CpProxyLinnCoUkVolkano1SyncSetBootMode(iHandle, aMode);
-            }
-            Marshal.FreeHGlobal((IntPtr)aMode);
+            SyncSetBootModeLinnCoUkVolkano1 sync = new SyncSetBootModeLinnCoUkVolkano1(this);
+            BeginSetBootMode(aMode, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
         }
 
         /// <summary>
@@ -250,13 +427,12 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMode"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSetBootMode(string aaMode, CallbackAsyncComplete aCallback)
+        public void BeginSetBootMode(String aaMode, CallbackAsyncComplete aCallback)
         {
-            char* aMode = (char*)Marshal.StringToHGlobalAnsi(aaMode);
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkVolkano1BeginSetBootMode(iHandle, aMode, iActionComplete, ptr);
-            Marshal.FreeHGlobal((IntPtr)aMode);
+            Invocation invocation = iService.Invocation(iActionSetBootMode, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentString((ParameterString)iActionSetBootMode.InputParameter(inIndex++), aMode));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -264,14 +440,8 @@ namespace Zapp.ControlPoint.Proxies
         /// </summary>
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
-        public unsafe void EndSetBootMode(IntPtr aAsyncHandle)
+        public void EndSetBootMode(IntPtr aAsyncHandle)
         {
-            {
-                if (0 != CpProxyLinnCoUkVolkano1EndSetBootMode(iHandle, aAsyncHandle))
-                {
-                    throw(new ProxyError());
-                }
-            }
         }
 
         /// <summary>
@@ -280,14 +450,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaBspType"></param>
-        public unsafe void SyncBspType(out string aaBspType)
+        public void SyncBspType(out String aaBspType)
         {
-            char* aBspType;
-            {
-                CpProxyLinnCoUkVolkano1SyncBspType(iHandle, &aBspType);
-            }
-            aaBspType = Marshal.PtrToStringAnsi((IntPtr)aBspType);
-            ZappFree(aBspType);
+            SyncBspTypeLinnCoUkVolkano1 sync = new SyncBspTypeLinnCoUkVolkano1(this);
+            BeginBspType(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aBspType = sync.BspType();
         }
 
         /// <summary>
@@ -298,11 +467,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndBspType().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginBspType(CallbackAsyncComplete aCallback)
+        public void BeginBspType(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkVolkano1BeginBspType(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionBspType, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionBspType.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -311,17 +481,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaBspType"></param>
-        public unsafe void EndBspType(IntPtr aAsyncHandle, out string aaBspType)
+        public void EndBspType(IntPtr aAsyncHandle, out String aaBspType)
         {
-            char* aBspType;
-            {
-                if (0 != CpProxyLinnCoUkVolkano1EndBspType(iHandle, aAsyncHandle, &aBspType))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaBspType = Marshal.PtrToStringAnsi((IntPtr)aBspType);
-            ZappFree(aBspType);
+            uint index = 0;
+            aBspType = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -330,14 +493,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaUglyName"></param>
-        public unsafe void SyncUglyName(out string aaUglyName)
+        public void SyncUglyName(out String aaUglyName)
         {
-            char* aUglyName;
-            {
-                CpProxyLinnCoUkVolkano1SyncUglyName(iHandle, &aUglyName);
-            }
-            aaUglyName = Marshal.PtrToStringAnsi((IntPtr)aUglyName);
-            ZappFree(aUglyName);
+            SyncUglyNameLinnCoUkVolkano1 sync = new SyncUglyNameLinnCoUkVolkano1(this);
+            BeginUglyName(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aUglyName = sync.UglyName();
         }
 
         /// <summary>
@@ -348,11 +510,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndUglyName().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginUglyName(CallbackAsyncComplete aCallback)
+        public void BeginUglyName(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkVolkano1BeginUglyName(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionUglyName, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionUglyName.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -361,17 +524,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaUglyName"></param>
-        public unsafe void EndUglyName(IntPtr aAsyncHandle, out string aaUglyName)
+        public void EndUglyName(IntPtr aAsyncHandle, out String aaUglyName)
         {
-            char* aUglyName;
-            {
-                if (0 != CpProxyLinnCoUkVolkano1EndUglyName(iHandle, aAsyncHandle, &aUglyName))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaUglyName = Marshal.PtrToStringAnsi((IntPtr)aUglyName);
-            ZappFree(aUglyName);
+            uint index = 0;
+            aUglyName = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -380,14 +536,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaMacAddress"></param>
-        public unsafe void SyncMacAddress(out string aaMacAddress)
+        public void SyncMacAddress(out String aaMacAddress)
         {
-            char* aMacAddress;
-            {
-                CpProxyLinnCoUkVolkano1SyncMacAddress(iHandle, &aMacAddress);
-            }
-            aaMacAddress = Marshal.PtrToStringAnsi((IntPtr)aMacAddress);
-            ZappFree(aMacAddress);
+            SyncMacAddressLinnCoUkVolkano1 sync = new SyncMacAddressLinnCoUkVolkano1(this);
+            BeginMacAddress(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aMacAddress = sync.MacAddress();
         }
 
         /// <summary>
@@ -398,11 +553,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndMacAddress().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginMacAddress(CallbackAsyncComplete aCallback)
+        public void BeginMacAddress(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkVolkano1BeginMacAddress(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionMacAddress, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionMacAddress.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -411,17 +567,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaMacAddress"></param>
-        public unsafe void EndMacAddress(IntPtr aAsyncHandle, out string aaMacAddress)
+        public void EndMacAddress(IntPtr aAsyncHandle, out String aaMacAddress)
         {
-            char* aMacAddress;
-            {
-                if (0 != CpProxyLinnCoUkVolkano1EndMacAddress(iHandle, aAsyncHandle, &aMacAddress))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaMacAddress = Marshal.PtrToStringAnsi((IntPtr)aMacAddress);
-            ZappFree(aMacAddress);
+            uint index = 0;
+            aMacAddress = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -430,14 +579,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaProductNumber"></param>
-        public unsafe void SyncProductId(out string aaProductNumber)
+        public void SyncProductId(out String aaProductNumber)
         {
-            char* aProductNumber;
-            {
-                CpProxyLinnCoUkVolkano1SyncProductId(iHandle, &aProductNumber);
-            }
-            aaProductNumber = Marshal.PtrToStringAnsi((IntPtr)aProductNumber);
-            ZappFree(aProductNumber);
+            SyncProductIdLinnCoUkVolkano1 sync = new SyncProductIdLinnCoUkVolkano1(this);
+            BeginProductId(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aProductNumber = sync.ProductNumber();
         }
 
         /// <summary>
@@ -448,11 +596,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndProductId().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginProductId(CallbackAsyncComplete aCallback)
+        public void BeginProductId(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkVolkano1BeginProductId(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionProductId, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionProductId.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -461,17 +610,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaProductNumber"></param>
-        public unsafe void EndProductId(IntPtr aAsyncHandle, out string aaProductNumber)
+        public void EndProductId(IntPtr aAsyncHandle, out String aaProductNumber)
         {
-            char* aProductNumber;
-            {
-                if (0 != CpProxyLinnCoUkVolkano1EndProductId(iHandle, aAsyncHandle, &aProductNumber))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaProductNumber = Marshal.PtrToStringAnsi((IntPtr)aProductNumber);
-            ZappFree(aProductNumber);
+            uint index = 0;
+            aProductNumber = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -481,14 +623,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIndex"></param>
         /// <param name="aaBoardNumber"></param>
-        public unsafe void SyncBoardId(uint aaIndex, out string aaBoardNumber)
+        public void SyncBoardId(uint aaIndex, out String aaBoardNumber)
         {
-            char* aBoardNumber;
-            {
-                CpProxyLinnCoUkVolkano1SyncBoardId(iHandle, aaIndex, &aBoardNumber);
-            }
-            aaBoardNumber = Marshal.PtrToStringAnsi((IntPtr)aBoardNumber);
-            ZappFree(aBoardNumber);
+            SyncBoardIdLinnCoUkVolkano1 sync = new SyncBoardIdLinnCoUkVolkano1(this);
+            BeginBoardId(aIndex, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aBoardNumber = sync.BoardNumber();
         }
 
         /// <summary>
@@ -500,11 +641,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaIndex"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginBoardId(uint aaIndex, CallbackAsyncComplete aCallback)
+        public void BeginBoardId(uint aaIndex, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkVolkano1BeginBoardId(iHandle, aaIndex, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionBoardId, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionBoardId.InputParameter(inIndex++), aIndex));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionBoardId.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -513,17 +657,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaBoardNumber"></param>
-        public unsafe void EndBoardId(IntPtr aAsyncHandle, out string aaBoardNumber)
+        public void EndBoardId(IntPtr aAsyncHandle, out String aaBoardNumber)
         {
-            char* aBoardNumber;
-            {
-                if (0 != CpProxyLinnCoUkVolkano1EndBoardId(iHandle, aAsyncHandle, &aBoardNumber))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaBoardNumber = Marshal.PtrToStringAnsi((IntPtr)aBoardNumber);
-            ZappFree(aBoardNumber);
+            uint index = 0;
+            aBoardNumber = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -533,14 +670,13 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIndex"></param>
         /// <param name="aaBoardNumber"></param>
-        public unsafe void SyncBoardType(uint aaIndex, out string aaBoardNumber)
+        public void SyncBoardType(uint aaIndex, out String aaBoardNumber)
         {
-            char* aBoardNumber;
-            {
-                CpProxyLinnCoUkVolkano1SyncBoardType(iHandle, aaIndex, &aBoardNumber);
-            }
-            aaBoardNumber = Marshal.PtrToStringAnsi((IntPtr)aBoardNumber);
-            ZappFree(aBoardNumber);
+            SyncBoardTypeLinnCoUkVolkano1 sync = new SyncBoardTypeLinnCoUkVolkano1(this);
+            BeginBoardType(aIndex, sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aBoardNumber = sync.BoardNumber();
         }
 
         /// <summary>
@@ -552,11 +688,14 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaIndex"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginBoardType(uint aaIndex, CallbackAsyncComplete aCallback)
+        public void BeginBoardType(uint aaIndex, CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkVolkano1BeginBoardType(iHandle, aaIndex, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionBoardType, aCallback);
+            int inIndex = 0;
+            invocation.AddInput(new ArgumentUint((ParameterUint)iActionBoardType.InputParameter(inIndex++), aIndex));
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionBoardType.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -565,17 +704,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaBoardNumber"></param>
-        public unsafe void EndBoardType(IntPtr aAsyncHandle, out string aaBoardNumber)
+        public void EndBoardType(IntPtr aAsyncHandle, out String aaBoardNumber)
         {
-            char* aBoardNumber;
-            {
-                if (0 != CpProxyLinnCoUkVolkano1EndBoardType(iHandle, aAsyncHandle, &aBoardNumber))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaBoardNumber = Marshal.PtrToStringAnsi((IntPtr)aBoardNumber);
-            ZappFree(aBoardNumber);
+            uint index = 0;
+            aBoardNumber = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -584,12 +716,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaMaxBoards"></param>
-        public unsafe void SyncMaxBoards(out uint aaMaxBoards)
+        public void SyncMaxBoards(out uint aaMaxBoards)
         {
-            fixed (uint* aMaxBoards = &aaMaxBoards)
-            {
-                CpProxyLinnCoUkVolkano1SyncMaxBoards(iHandle, aMaxBoards);
-            }
+            SyncMaxBoardsLinnCoUkVolkano1 sync = new SyncMaxBoardsLinnCoUkVolkano1(this);
+            BeginMaxBoards(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aMaxBoards = sync.MaxBoards();
         }
 
         /// <summary>
@@ -600,11 +733,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndMaxBoards().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginMaxBoards(CallbackAsyncComplete aCallback)
+        public void BeginMaxBoards(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkVolkano1BeginMaxBoards(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionMaxBoards, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionMaxBoards.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -613,15 +747,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaMaxBoards"></param>
-        public unsafe void EndMaxBoards(IntPtr aAsyncHandle, out uint aaMaxBoards)
+        public void EndMaxBoards(IntPtr aAsyncHandle, out uint aaMaxBoards)
         {
-            fixed (uint* aMaxBoards = &aaMaxBoards)
-            {
-                if (0 != CpProxyLinnCoUkVolkano1EndMaxBoards(iHandle, aAsyncHandle, aMaxBoards))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aMaxBoards = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -630,14 +759,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaSoftwareVersion"></param>
-        public unsafe void SyncSoftwareVersion(out string aaSoftwareVersion)
+        public void SyncSoftwareVersion(out String aaSoftwareVersion)
         {
-            char* aSoftwareVersion;
-            {
-                CpProxyLinnCoUkVolkano1SyncSoftwareVersion(iHandle, &aSoftwareVersion);
-            }
-            aaSoftwareVersion = Marshal.PtrToStringAnsi((IntPtr)aSoftwareVersion);
-            ZappFree(aSoftwareVersion);
+            SyncSoftwareVersionLinnCoUkVolkano1 sync = new SyncSoftwareVersionLinnCoUkVolkano1(this);
+            BeginSoftwareVersion(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aSoftwareVersion = sync.SoftwareVersion();
         }
 
         /// <summary>
@@ -648,11 +776,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndSoftwareVersion().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSoftwareVersion(CallbackAsyncComplete aCallback)
+        public void BeginSoftwareVersion(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkVolkano1BeginSoftwareVersion(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSoftwareVersion, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentString((ParameterString)iActionSoftwareVersion.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -661,17 +790,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSoftwareVersion"></param>
-        public unsafe void EndSoftwareVersion(IntPtr aAsyncHandle, out string aaSoftwareVersion)
+        public void EndSoftwareVersion(IntPtr aAsyncHandle, out String aaSoftwareVersion)
         {
-            char* aSoftwareVersion;
-            {
-                if (0 != CpProxyLinnCoUkVolkano1EndSoftwareVersion(iHandle, aAsyncHandle, &aSoftwareVersion))
-                {
-                    throw(new ProxyError());
-                }
-            }
-            aaSoftwareVersion = Marshal.PtrToStringAnsi((IntPtr)aSoftwareVersion);
-            ZappFree(aSoftwareVersion);
+            uint index = 0;
+            aSoftwareVersion = Invocation.OutputString(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -695,17 +817,23 @@ namespace Zapp.ControlPoint.Proxies
                 {
                     return;
                 }
-                CpProxyLinnCoUkVolkano1Destroy(iHandle);
+                DisposeProxy();
                 iHandle = IntPtr.Zero;
+                iActionReboot.Dispose();
+                iActionBootMode.Dispose();
+                iActionSetBootMode.Dispose();
+                iActionBspType.Dispose();
+                iActionUglyName.Dispose();
+                iActionMacAddress.Dispose();
+                iActionProductId.Dispose();
+                iActionBoardId.Dispose();
+                iActionBoardType.Dispose();
+                iActionMaxBoards.Dispose();
+                iActionSoftwareVersion.Dispose();
             }
-            iGch.Free();
             if (aDisposing)
             {
                 GC.SuppressFinalize(this);
-            }
-            else
-            {
-                DisposeProxy();
             }
         }
     }

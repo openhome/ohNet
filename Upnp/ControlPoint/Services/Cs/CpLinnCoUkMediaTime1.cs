@@ -1,7 +1,9 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Text;
-using Zapp;
+using Zapp.Core;
+using Zapp.ControlPoint;
 
 namespace Zapp.ControlPoint.Proxies
 {
@@ -10,36 +12,37 @@ namespace Zapp.ControlPoint.Proxies
         void SyncSeconds(out uint aaSeconds);
         void BeginSeconds(CpProxy.CallbackAsyncComplete aCallback);
         void EndSeconds(IntPtr aAsyncHandle, out uint aaSeconds);
-
         void SetPropertySecondsChanged(CpProxy.CallbackPropertyChanged aSecondsChanged);
-        void PropertySeconds(out uint aSeconds);
+        uint PropertySeconds();
     }
+
+    internal class SyncSecondsLinnCoUkMediaTime1 : SyncProxyAction
+    {
+        private CpProxyLinnCoUkMediaTime1 iService;
+        private uint iSeconds;
+
+        public SyncSecondsLinnCoUkMediaTime1(CpProxyLinnCoUkMediaTime1 aProxy)
+        {
+            iService = aProxy;
+        }
+        public uint Seconds()
+        {
+            return iSeconds;
+        }
+        protected override void CompleteRequest(IntPtr aAsyncHandle)
+        {
+            iService.EndSeconds(aAsyncHandle, out iSeconds);
+        }
+    };
 
     /// <summary>
     /// Proxy for the linn.co.uk:MediaTime:1 UPnP service
     /// </summary>
     public class CpProxyLinnCoUkMediaTime1 : CpProxy, IDisposable, ICpProxyLinnCoUkMediaTime1
     {
-        [DllImport("CpLinnCoUkMediaTime1")]
-        static extern IntPtr CpProxyLinnCoUkMediaTime1Create(IntPtr aDeviceHandle);
-        [DllImport("CpLinnCoUkMediaTime1")]
-        static extern void CpProxyLinnCoUkMediaTime1Destroy(IntPtr aHandle);
-        [DllImport("CpLinnCoUkMediaTime1")]
-        static extern unsafe void CpProxyLinnCoUkMediaTime1SyncSeconds(IntPtr aHandle, uint* aaSeconds);
-        [DllImport("CpLinnCoUkMediaTime1")]
-        static extern unsafe void CpProxyLinnCoUkMediaTime1BeginSeconds(IntPtr aHandle, CallbackActionComplete aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkMediaTime1")]
-        static extern unsafe int CpProxyLinnCoUkMediaTime1EndSeconds(IntPtr aHandle, IntPtr aAsync, uint* aaSeconds);
-        [DllImport("CpLinnCoUkMediaTime1")]
-        static extern void CpProxyLinnCoUkMediaTime1SetPropertySecondsChanged(IntPtr aHandle, Callback aCallback, IntPtr aPtr);
-        [DllImport("CpLinnCoUkMediaTime1")]
-        static extern unsafe void CpProxyLinnCoUkMediaTime1PropertySeconds(IntPtr aHandle, uint* aSeconds);
-        [DllImport("ZappUpnp")]
-        static extern unsafe void ZappFree(void* aPtr);
-
-        private GCHandle iGch;
+        private Zapp.Core.Action iActionSeconds;
+        private PropertyUint iSeconds;
         private CallbackPropertyChanged iSecondsChanged;
-        private Callback iCallbackSecondsChanged;
 
         /// <summary>
         /// Constructor
@@ -47,9 +50,16 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Use CpProxy::[Un]Subscribe() to enable/disable querying of state variable and reporting of their changes.</remarks>
         /// <param name="aDevice">The device to use</param>
         public CpProxyLinnCoUkMediaTime1(CpDevice aDevice)
+            : base("linn-co-uk", "MediaTime", 1, aDevice)
         {
-            iHandle = CpProxyLinnCoUkMediaTime1Create(aDevice.Handle());
-            iGch = GCHandle.Alloc(this);
+            Zapp.Core.Parameter param;
+
+            iActionSeconds = new Zapp.Core.Action("Seconds");
+            param = new ParameterUint("aSeconds");
+            iActionSeconds.AddOutputParameter(param);
+
+            iSeconds = new PropertyUint("Seconds", SecondsPropertyChanged);
+            AddProperty(iSeconds);
         }
 
         /// <summary>
@@ -58,12 +68,13 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaSeconds"></param>
-        public unsafe void SyncSeconds(out uint aaSeconds)
+        public void SyncSeconds(out uint aaSeconds)
         {
-            fixed (uint* aSeconds = &aaSeconds)
-            {
-                CpProxyLinnCoUkMediaTime1SyncSeconds(iHandle, aSeconds);
-            }
+            SyncSecondsLinnCoUkMediaTime1 sync = new SyncSecondsLinnCoUkMediaTime1(this);
+            BeginSeconds(sync.AsyncComplete());
+            sync.Wait();
+            sync.ReportError();
+            aSeconds = sync.Seconds();
         }
 
         /// <summary>
@@ -74,11 +85,12 @@ namespace Zapp.ControlPoint.Proxies
         /// EndSeconds().</remarks>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public unsafe void BeginSeconds(CallbackAsyncComplete aCallback)
+        public void BeginSeconds(CallbackAsyncComplete aCallback)
         {
-            GCHandle gch = GCHandle.Alloc(aCallback);
-            IntPtr ptr = GCHandle.ToIntPtr(gch);
-            CpProxyLinnCoUkMediaTime1BeginSeconds(iHandle, iActionComplete, ptr);
+            Invocation invocation = iService.Invocation(iActionSeconds, aCallback);
+            int outIndex = 0;
+            invocation.AddOutput(new ArgumentUint((ParameterUint)iActionSeconds.OutputParameter(outIndex++)));
+            iService.InvokeAction(invocation);
         }
 
         /// <summary>
@@ -87,15 +99,10 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSeconds"></param>
-        public unsafe void EndSeconds(IntPtr aAsyncHandle, out uint aaSeconds)
+        public void EndSeconds(IntPtr aAsyncHandle, out uint aaSeconds)
         {
-            fixed (uint* aSeconds = &aaSeconds)
-            {
-                if (0 != CpProxyLinnCoUkMediaTime1EndSeconds(iHandle, aAsyncHandle, aSeconds))
-                {
-                    throw(new ProxyError());
-                }
-            }
+            uint index = 0;
+            aSeconds = Invocation.OutputUint(aAsyncHandle, index++);
         }
 
         /// <summary>
@@ -106,17 +113,21 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aSecondsChanged">The delegate to run when the state variable changes</param>
         public void SetPropertySecondsChanged(CallbackPropertyChanged aSecondsChanged)
         {
-            iSecondsChanged = aSecondsChanged;
-            iCallbackSecondsChanged = new Callback(PropertySecondsChanged);
-            IntPtr ptr = GCHandle.ToIntPtr(iGch);
-            CpProxyLinnCoUkMediaTime1SetPropertySecondsChanged(iHandle, iCallbackSecondsChanged, ptr);
+            lock (this)
+            {
+                iSecondsChanged = aSecondsChanged;
+            }
         }
 
-        private void PropertySecondsChanged(IntPtr aPtr)
+        private void SecondsPropertyChanged()
         {
-            GCHandle gch = GCHandle.FromIntPtr(aPtr);
-            CpProxyLinnCoUkMediaTime1 self = (CpProxyLinnCoUkMediaTime1)gch.Target;
-            self.iSecondsChanged();
+            lock (this)
+            {
+                if (iSecondsChanged != null)
+                {
+                    iSecondsChanged();
+                }
+            }
         }
 
         /// <summary>
@@ -126,12 +137,9 @@ namespace Zapp.ControlPoint.Proxies
         /// called and a first eventing callback received more recently than any call
         /// to Unsubscribe().</remarks>
         /// <param name="aSeconds">Will be set to the value of the property</param>
-        public unsafe void PropertySeconds(out uint aSeconds)
+        public uint PropertySeconds()
         {
-            fixed (uint* seconds = &aSeconds)
-            {
-                CpProxyLinnCoUkMediaTime1PropertySeconds(iHandle, seconds);
-            }
+            return iSeconds.Value();
         }
 
         /// <summary>
@@ -155,17 +163,13 @@ namespace Zapp.ControlPoint.Proxies
                 {
                     return;
                 }
-                CpProxyLinnCoUkMediaTime1Destroy(iHandle);
+                DisposeProxy();
                 iHandle = IntPtr.Zero;
+                iActionSeconds.Dispose();
             }
-            iGch.Free();
             if (aDisposing)
             {
                 GC.SuppressFinalize(this);
-            }
-            else
-            {
-                DisposeProxy();
             }
         }
     }

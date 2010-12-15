@@ -98,6 +98,11 @@ public:
      * If this returns true, invocations will probably complete quickly but with an error.
      */
     TBool Interrupt() const;
+
+    /**
+     * Return the device this service operates on.
+     */
+    CpiDevice& Device();
 private:
     void Renew();
 private:

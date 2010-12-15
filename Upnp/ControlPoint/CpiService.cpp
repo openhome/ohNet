@@ -88,6 +88,11 @@ TBool CpiService::Interrupt() const
     return iInterrupt;
 }
 
+CpiDevice& CpiService::Device()
+{
+    return iDevice;
+}
+
 
 // Argument
 
