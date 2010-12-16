@@ -151,7 +151,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgSwitchPower1 self = (DvProviderUpnpOrgSwitchPower1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             bool newTargetValue = invocation.ReadBool("newTargetValue");
+            invocation.ReadEnd();
             self.SetTarget(aVersion, newTargetValue);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -163,6 +165,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgSwitchPower1 self = (DvProviderUpnpOrgSwitchPower1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             bool retTargetValue;
             self.GetTarget(aVersion, out retTargetValue);
             invocation.WriteStart();
@@ -176,6 +180,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgSwitchPower1 self = (DvProviderUpnpOrgSwitchPower1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             bool resultStatus;
             self.GetStatus(aVersion, out resultStatus);
             invocation.WriteStart();

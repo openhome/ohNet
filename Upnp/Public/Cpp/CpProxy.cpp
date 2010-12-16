@@ -32,6 +32,7 @@ CpProxy::CpProxy(const TChar* aDomain, const TChar* aName, TUint aVersion, CpiDe
 
 CpProxy::~CpProxy()
 {
+    delete iService;
     delete iLock;
     delete iPropertyLock;
 	PropertyMap::iterator it = iProperties.begin();
@@ -51,6 +52,7 @@ void CpProxy::AddProperty(Property* aProperty)
 void CpProxy::DestroyService()
 {
     delete iService;
+    iService = NULL;
 }
 
 void CpProxy::SetPropertyChanged(Functor& aFunctor)

@@ -300,6 +300,7 @@ namespace Zapp.ControlPoint.Proxies
                 iActionSetTarget.Dispose();
                 iActionGetTarget.Dispose();
                 iActionGetStatus.Dispose();
+                iStatus.Dispose();
             }
             if (aDisposing)
             {

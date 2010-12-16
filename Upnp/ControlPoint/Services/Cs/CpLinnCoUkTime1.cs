@@ -276,6 +276,9 @@ namespace Zapp.ControlPoint.Proxies
                 DisposeProxy();
                 iHandle = IntPtr.Zero;
                 iActionTime.Dispose();
+                iTrackCount.Dispose();
+                iDuration.Dispose();
+                iSeconds.Dispose();
             }
             if (aDisposing)
             {

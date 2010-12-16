@@ -732,6 +732,9 @@ namespace Zapp.ControlPoint.Proxies
                 iActionCurrentPreset.Dispose();
                 iActionPresetMetaData.Dispose();
                 iActionLoadManifest.Dispose();
+                iCurrentPreset.Dispose();
+                iPresetPrefix.Dispose();
+                iAlbumArtFileName.Dispose();
             }
             if (aDisposing)
             {

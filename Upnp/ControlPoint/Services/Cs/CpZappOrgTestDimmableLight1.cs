@@ -229,6 +229,7 @@ namespace Zapp.ControlPoint.Proxies
                 iHandle = IntPtr.Zero;
                 iActionGetLevel.Dispose();
                 iActionSetLevel.Dispose();
+                iA_ARG_Level.Dispose();
             }
             if (aDisposing)
             {

@@ -2715,6 +2715,7 @@ namespace Zapp.ControlPoint.Proxies
                 iActionGetVolumeDBRange.Dispose();
                 iActionGetLoudness.Dispose();
                 iActionSetLoudness.Dispose();
+                iLastChange.Dispose();
             }
             if (aDisposing)
             {

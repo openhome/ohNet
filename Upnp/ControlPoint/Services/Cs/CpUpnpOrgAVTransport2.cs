@@ -2042,6 +2042,8 @@ namespace Zapp.ControlPoint.Proxies
                 iActionGetDRMState.Dispose();
                 iActionGetStateVariables.Dispose();
                 iActionSetStateVariables.Dispose();
+                iLastChange.Dispose();
+                iDRMState.Dispose();
             }
             if (aDisposing)
             {

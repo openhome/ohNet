@@ -947,6 +947,10 @@ namespace Zapp.ControlPoint.Proxies
                 iActionSetDiscPlayerComPort.Dispose();
                 iActionTestKontrolProductConnection.Dispose();
                 iActionTestDiscPlayerConnection.Dispose();
+                iKontrolProductConnected.Dispose();
+                iKontrolProductComPort.Dispose();
+                iDiscPlayerConnected.Dispose();
+                iDiscPlayerComPort.Dispose();
             }
             if (aDisposing)
             {

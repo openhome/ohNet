@@ -322,6 +322,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager2 self = (DvProviderUpnpOrgConnectionManager2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string source;
             string sink;
             self.GetProtocolInfo(aVersion, out source, out sink);
@@ -337,10 +339,12 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager2 self = (DvProviderUpnpOrgConnectionManager2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string remoteProtocolInfo = invocation.ReadString("RemoteProtocolInfo");
             string peerConnectionManager = invocation.ReadString("PeerConnectionManager");
             int peerConnectionID = invocation.ReadInt("PeerConnectionID");
             string direction = invocation.ReadString("Direction");
+            invocation.ReadEnd();
             int connectionID;
             int aVTransportID;
             int rcsID;
@@ -358,7 +362,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager2 self = (DvProviderUpnpOrgConnectionManager2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             int connectionID = invocation.ReadInt("ConnectionID");
+            invocation.ReadEnd();
             self.ConnectionComplete(aVersion, connectionID);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -370,6 +376,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager2 self = (DvProviderUpnpOrgConnectionManager2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string connectionIDs;
             self.GetCurrentConnectionIDs(aVersion, out connectionIDs);
             invocation.WriteStart();
@@ -383,7 +391,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager2 self = (DvProviderUpnpOrgConnectionManager2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             int connectionID = invocation.ReadInt("ConnectionID");
+            invocation.ReadEnd();
             int rcsID;
             int aVTransportID;
             string protocolInfo;

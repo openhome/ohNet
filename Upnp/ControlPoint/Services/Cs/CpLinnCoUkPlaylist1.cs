@@ -1097,6 +1097,10 @@ namespace Zapp.ControlPoint.Proxies
                 iActionTracksMax.Dispose();
                 iActionIdArray.Dispose();
                 iActionIdArrayChanged.Dispose();
+                iIdArray.Dispose();
+                iRepeat.Dispose();
+                iShuffle.Dispose();
+                iTracksMax.Dispose();
             }
             if (aDisposing)
             {

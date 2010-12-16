@@ -354,6 +354,8 @@ namespace Zapp.ControlPoint.Proxies
                 iActionConfigurationXml.Dispose();
                 iActionParameterXml.Dispose();
                 iActionSetParameter.Dispose();
+                iConfigurationXml.Dispose();
+                iParameterXml.Dispose();
             }
             if (aDisposing)
             {

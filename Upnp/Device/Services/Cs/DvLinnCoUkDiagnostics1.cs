@@ -438,7 +438,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string aIn = invocation.ReadString("aIn");
+            invocation.ReadEnd();
             string aOut;
             self.Echo(aVersion, aIn, out aOut);
             invocation.WriteStart();
@@ -452,6 +454,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aElfFile;
             self.ElfFile(aVersion, out aElfFile);
             invocation.WriteStart();
@@ -465,6 +469,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aElfFileFingerprint;
             self.ElfFingerprint(aVersion, out aElfFileFingerprint);
             invocation.WriteStart();
@@ -478,6 +484,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aCrashDataStatus;
             self.CrashDataStatus(aVersion, out aCrashDataStatus);
             invocation.WriteStart();
@@ -491,6 +499,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aCrashData;
             self.CrashDataFetch(aVersion, out aCrashData);
             invocation.WriteStart();
@@ -504,6 +514,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.CrashDataClear(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -515,6 +527,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aSysLog;
             self.SysLog(aVersion, out aSysLog);
             invocation.WriteStart();
@@ -528,7 +542,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string aDiagnosticType = invocation.ReadString("aDiagnosticType");
+            invocation.ReadEnd();
             string aDiagnosticInfo;
             self.Diagnostic(aVersion, aDiagnosticType, out aDiagnosticInfo);
             invocation.WriteStart();
@@ -542,6 +558,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint aStateVariable;
             self.StateVariable(aVersion, out aStateVariable);
             invocation.WriteStart();
@@ -555,7 +573,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aStateVariable = invocation.ReadUint("aStateVariable");
+            invocation.ReadEnd();
             self.SetStateVariable(aVersion, aStateVariable);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -567,6 +587,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint aPeriod;
             self.StateVariablePeriod(aVersion, out aPeriod);
             invocation.WriteStart();
@@ -580,7 +602,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aPeriod = invocation.ReadUint("aPeriod");
+            invocation.ReadEnd();
             self.SetStateVariablePeriod(aVersion, aPeriod);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -592,7 +616,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDiagnostics1 self = (DvProviderLinnCoUkDiagnostics1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aDelay = invocation.ReadUint("aDelay");
+            invocation.ReadEnd();
             self.Reboot(aVersion, aDelay);
             invocation.WriteStart();
             invocation.WriteEnd();

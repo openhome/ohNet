@@ -993,6 +993,7 @@ namespace Zapp.ControlPoint.Proxies
                 iActionStateVariablePeriod.Dispose();
                 iActionSetStateVariablePeriod.Dispose();
                 iActionReboot.Dispose();
+                iaStateVariable.Dispose();
             }
             if (aDisposing)
             {

@@ -2894,6 +2894,7 @@ namespace Zapp.ControlPoint.Proxies
                 iActionSetLoudness.Dispose();
                 iActionGetStateVariables.Dispose();
                 iActionSetStateVariables.Dispose();
+                iLastChange.Dispose();
             }
             if (aDisposing)
             {

@@ -363,6 +363,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aPresetXml;
             self.PresetXml(aVersion, out aPresetXml);
             invocation.WriteStart();
@@ -376,6 +378,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint aIndex;
             self.PresetIndex(aVersion, out aIndex);
             invocation.WriteStart();
@@ -389,7 +393,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aIndex = invocation.ReadUint("aIndex");
+            invocation.ReadEnd();
             self.SetPresetIndex(aVersion, aIndex);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -401,8 +407,10 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aIndex = invocation.ReadUint("aIndex");
             uint aDelay = invocation.ReadUint("aDelay");
+            invocation.ReadEnd();
             self.SetPresetDelay(aVersion, aIndex, aDelay);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -414,8 +422,10 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aIndex = invocation.ReadUint("aIndex");
             bool aVisible = invocation.ReadBool("aVisible");
+            invocation.ReadEnd();
             self.SetPresetVisible(aVersion, aIndex, aVisible);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -427,8 +437,10 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aIndex = invocation.ReadUint("aIndex");
             string aName = invocation.ReadString("aName");
+            invocation.ReadEnd();
             self.SetPresetName(aVersion, aIndex, aName);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -440,6 +452,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint aDelay;
             self.DelayMinimum(aVersion, out aDelay);
             invocation.WriteStart();
@@ -453,6 +467,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint aDelay;
             self.DelayMaximum(aVersion, out aDelay);
             invocation.WriteStart();
@@ -466,6 +482,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDelay1 self = (DvProviderLinnCoUkDelay1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint aCount;
             self.PresetCount(aVersion, out aCount);
             invocation.WriteStart();

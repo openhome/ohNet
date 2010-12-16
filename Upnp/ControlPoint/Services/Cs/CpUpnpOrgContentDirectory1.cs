@@ -1382,6 +1382,9 @@ namespace Zapp.ControlPoint.Proxies
                 iActionGetTransferProgress.Dispose();
                 iActionDeleteResource.Dispose();
                 iActionCreateReference.Dispose();
+                iTransferIDs.Dispose();
+                iSystemUpdateID.Dispose();
+                iContainerUpdateIDs.Dispose();
             }
             if (aDisposing)
             {

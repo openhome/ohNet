@@ -326,7 +326,7 @@ namespace Zapp.ControlPoint
             iInputArgs = new List<Argument>();
             iOutputArgs = new List<Argument>();
             GCHandle gch = GCHandle.Alloc(this); /* no need to store gch as a member as AsyncComplete is guaranteed
-                                           to be called, even in error cases */
+                                                    to be called, even in error cases */
             iAsyncComplete = aCallback;
             iCallbackAsyncComplete = new CpProxy.CallbackActionComplete(AsyncComplete);
             IntPtr ptr = GCHandle.ToIntPtr(gch);
@@ -414,6 +414,10 @@ namespace Zapp.ControlPoint
         public static unsafe String OutputString(IntPtr aHandle, uint aIndex)
         {
             char* cStr = CpInvocationOutputString(aHandle, aIndex);
+            if (cStr == null)
+            {
+                return null;
+            }
             String str = Marshal.PtrToStringAnsi((IntPtr)cStr);
             ZappFree((IntPtr)cStr);
             return str;
@@ -431,11 +435,15 @@ namespace Zapp.ControlPoint
         /// <returns>Value of the string output argument</returns>
         public static unsafe String OutputBinary(IntPtr aHandle, uint aIndex)
         {
-            char* cStr;
+            char* data;
             uint len;
-            CpInvocationGetOutputBinary(aHandle, aIndex, &cStr, &len);
-            String bin = Marshal.PtrToStringAnsi((IntPtr)cStr, (int)len);
-            ZappFree((IntPtr)cStr);
+            CpInvocationGetOutputBinary(aHandle, aIndex, &data, &len);
+            if (data == null)
+            {
+                return null;
+            }
+            String bin = Marshal.PtrToStringAnsi((IntPtr)data, (int)len);
+            ZappFree((IntPtr)data);
             return bin;
         }
 
@@ -463,7 +471,7 @@ namespace Zapp.ControlPoint
     /// <summary>
     /// Used by CpProxy to represent a service offered by a remote device.  Only intended for use by auto-generated proxies.
     /// </summary>
-    public class CpService : IDisposable
+    public class CpService
     {
         [DllImport("ZappUpnp")]
         static extern unsafe IntPtr CpServiceCreate(char* aDomain, char* aName, uint aVersion, IntPtr aDevice);
@@ -529,28 +537,6 @@ namespace Zapp.ControlPoint
         internal IntPtr Handle()
         {
             return iHandle;
-        }
-        
-        public void Dispose()
-        {
-            DoDispose();
-        }
-
-        ~CpService()
-        {
-            DoDispose();
-        }
-
-        private void DoDispose()
-        {
-            lock (this)
-            {
-                if (iHandle == IntPtr.Zero)
-                {
-                    return;
-                }
-                iHandle = IntPtr.Zero;
-            }
         }
     }
 }

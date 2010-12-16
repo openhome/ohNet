@@ -2118,6 +2118,17 @@ namespace Zapp.ControlPoint.Proxies
                 iActionDisplaySleep.Dispose();
                 iActionSetDisplayLedOff.Dispose();
                 iActionDisplayLedOff.Dispose();
+                iDisplayBrightness.Dispose();
+                iDisplayBrightnessAuto.Dispose();
+                iInfraredCommands.Dispose();
+                iInfraredTerminalCommands.Dispose();
+                iDisplayUpsideDown.Dispose();
+                iDisplayScrollText.Dispose();
+                iDisplaySleep.Dispose();
+                iDisplayLedOff.Dispose();
+                iTerminalInputCode.Dispose();
+                iTerminalInputName.Dispose();
+                iDisplayPixels.Dispose();
             }
             if (aDisposing)
             {

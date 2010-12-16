@@ -407,6 +407,8 @@ namespace Zapp.ControlPoint.Proxies
                 iActionSetRoom.Dispose();
                 iActionStandby.Dispose();
                 iActionSetStandby.Dispose();
+                iRoom.Dispose();
+                iStandby.Dispose();
             }
             if (aDisposing)
             {

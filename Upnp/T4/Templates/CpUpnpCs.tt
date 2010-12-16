@@ -332,6 +332,10 @@ namespace Zapp.ControlPoint.Proxies
 <#  { #>
                 iAction<#=a.name#>.Dispose();
 <#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+                i<#=s.name#>.Dispose();
+<#  } #>
             }
             if (aDisposing)
             {

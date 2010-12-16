@@ -1100,7 +1100,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             int aTestPattern = invocation.ReadInt("aTestPattern");
+            invocation.ReadEnd();
             self.DisplayTestPattern(aVersion, aTestPattern);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -1112,6 +1114,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.DisplayFill(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -1123,6 +1127,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.DisplayClear(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -1134,7 +1140,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             bool aEnabled = invocation.ReadBool("aEnabled");
+            invocation.ReadEnd();
             self.SetTestModeEnabled(aVersion, aEnabled);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -1146,7 +1154,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aCode = invocation.ReadUint("aCode");
+            invocation.ReadEnd();
             self.SimulateInfraredInput(aVersion, aCode);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -1158,7 +1168,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aCode = invocation.ReadUint("aCode");
+            invocation.ReadEnd();
             self.SimulateButtonInput(aVersion, aCode);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -1170,7 +1182,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aLightLevel = invocation.ReadUint("aLightLevel");
+            invocation.ReadEnd();
             self.SimulateLightSensor(aVersion, aLightLevel);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -1182,6 +1196,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint aLightLevel;
             self.GetLightSensorData(aVersion, out aLightLevel);
             invocation.WriteStart();
@@ -1195,7 +1211,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aBrightness = invocation.ReadUint("aBrightness");
+            invocation.ReadEnd();
             self.SetDisplayBrightness(aVersion, aBrightness);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -1207,7 +1225,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             bool aBrightnessAuto = invocation.ReadBool("aBrightnessAuto");
+            invocation.ReadEnd();
             self.SetDisplayBrightnessAuto(aVersion, aBrightnessAuto);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -1219,7 +1239,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string aCommands = invocation.ReadString("aCommands");
+            invocation.ReadEnd();
             self.SetInfraredCommands(aVersion, aCommands);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -1231,6 +1253,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aCommands;
             self.InfraredCommands(aVersion, out aCommands);
             invocation.WriteStart();
@@ -1244,7 +1268,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string aCommands = invocation.ReadString("aCommands");
+            invocation.ReadEnd();
             self.SetInfraredTerminalCommands(aVersion, aCommands);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -1256,6 +1282,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aCommands;
             self.InfraredTerminalCommands(aVersion, out aCommands);
             invocation.WriteStart();
@@ -1269,6 +1297,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint aBrightness;
             self.DisplayBrightness(aVersion, out aBrightness);
             invocation.WriteStart();
@@ -1282,6 +1312,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             bool aBrightnessAuto;
             self.DisplayBrightnessAuto(aVersion, out aBrightnessAuto);
             invocation.WriteStart();
@@ -1295,6 +1327,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             bool aUpsideDown;
             self.DisplayUpsideDown(aVersion, out aUpsideDown);
             invocation.WriteStart();
@@ -1308,7 +1342,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             bool aUpsideDown = invocation.ReadBool("aUpsideDown");
+            invocation.ReadEnd();
             self.SetDisplayUpsideDown(aVersion, aUpsideDown);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -1320,7 +1356,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             bool aDisplayScrollText = invocation.ReadBool("aDisplayScrollText");
+            invocation.ReadEnd();
             self.SetDisplayScrollText(aVersion, aDisplayScrollText);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -1332,6 +1370,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             bool aDisplayScrollTextEnabled;
             self.DisplayScrollText(aVersion, out aDisplayScrollTextEnabled);
             invocation.WriteStart();
@@ -1345,7 +1385,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             bool aEnabled = invocation.ReadBool("aEnabled");
+            invocation.ReadEnd();
             self.SetDisplaySleep(aVersion, aEnabled);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -1357,6 +1399,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             bool aEnabled;
             self.DisplaySleep(aVersion, out aEnabled);
             invocation.WriteStart();
@@ -1370,7 +1414,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             bool aOff = invocation.ReadBool("aOff");
+            invocation.ReadEnd();
             self.SetDisplayLedOff(aVersion, aOff);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -1382,6 +1428,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkUi2 self = (DvProviderLinnCoUkUi2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             bool aOff;
             self.DisplayLedOff(aVersion, out aOff);
             invocation.WriteStart();

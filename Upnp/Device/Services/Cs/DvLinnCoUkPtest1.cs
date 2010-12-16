@@ -114,7 +114,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPtest1 self = (DvProviderLinnCoUkPtest1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aPort = invocation.ReadUint("aPort");
+            invocation.ReadEnd();
             bool aResult;
             self.TestComPort(aVersion, aPort, out aResult);
             invocation.WriteStart();
@@ -128,6 +130,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPtest1 self = (DvProviderLinnCoUkPtest1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.LedsOn(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -139,6 +143,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPtest1 self = (DvProviderLinnCoUkPtest1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.LedsOff(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();

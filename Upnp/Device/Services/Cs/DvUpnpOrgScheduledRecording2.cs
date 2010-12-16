@@ -661,6 +661,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string sortCaps;
             uint sortLevelCap;
             self.GetSortCapabilities(aVersion, out sortCaps, out sortLevelCap);
@@ -676,7 +678,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string dataTypeID = invocation.ReadString("DataTypeID");
+            invocation.ReadEnd();
             string propertyList;
             self.GetPropertyList(aVersion, dataTypeID, out propertyList);
             invocation.WriteStart();
@@ -690,8 +694,10 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string dataTypeID = invocation.ReadString("DataTypeID");
             string filter = invocation.ReadString("Filter");
+            invocation.ReadEnd();
             string propertyInfo;
             self.GetAllowedValues(aVersion, dataTypeID, filter, out propertyInfo);
             invocation.WriteStart();
@@ -705,6 +711,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint id;
             self.GetStateUpdateID(aVersion, out id);
             invocation.WriteStart();
@@ -718,10 +726,12 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string filter = invocation.ReadString("Filter");
             uint startingIndex = invocation.ReadUint("StartingIndex");
             uint requestedCount = invocation.ReadUint("RequestedCount");
             string sortCriteria = invocation.ReadString("SortCriteria");
+            invocation.ReadEnd();
             string result;
             uint numberReturned;
             uint totalMatches;
@@ -741,11 +751,13 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string recordScheduleID = invocation.ReadString("RecordScheduleID");
             string filter = invocation.ReadString("Filter");
             uint startingIndex = invocation.ReadUint("StartingIndex");
             uint requestedCount = invocation.ReadUint("RequestedCount");
             string sortCriteria = invocation.ReadString("SortCriteria");
+            invocation.ReadEnd();
             string result;
             uint numberReturned;
             uint totalMatches;
@@ -765,7 +777,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string elements = invocation.ReadString("Elements");
+            invocation.ReadEnd();
             string recordScheduleID;
             string result;
             uint updateID;
@@ -783,7 +797,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string recordScheduleID = invocation.ReadString("RecordScheduleID");
+            invocation.ReadEnd();
             self.DeleteRecordSchedule(aVersion, recordScheduleID);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -795,8 +811,10 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string recordScheduleID = invocation.ReadString("RecordScheduleID");
             string filter = invocation.ReadString("Filter");
+            invocation.ReadEnd();
             string result;
             uint updateID;
             self.GetRecordSchedule(aVersion, recordScheduleID, filter, out result, out updateID);
@@ -812,7 +830,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string recordScheduleID = invocation.ReadString("RecordScheduleID");
+            invocation.ReadEnd();
             self.EnableRecordSchedule(aVersion, recordScheduleID);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -824,7 +844,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string recordScheduleID = invocation.ReadString("RecordScheduleID");
+            invocation.ReadEnd();
             self.DisableRecordSchedule(aVersion, recordScheduleID);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -836,7 +858,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string recordTaskID = invocation.ReadString("RecordTaskID");
+            invocation.ReadEnd();
             self.DeleteRecordTask(aVersion, recordTaskID);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -848,8 +872,10 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string recordTaskID = invocation.ReadString("RecordTaskID");
             string filter = invocation.ReadString("Filter");
+            invocation.ReadEnd();
             string result;
             uint updateID;
             self.GetRecordTask(aVersion, recordTaskID, filter, out result, out updateID);
@@ -865,7 +891,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string recordTaskID = invocation.ReadString("RecordTaskID");
+            invocation.ReadEnd();
             self.EnableRecordTask(aVersion, recordTaskID);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -877,7 +905,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string recordTaskID = invocation.ReadString("RecordTaskID");
+            invocation.ReadEnd();
             self.DisableRecordTask(aVersion, recordTaskID);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -889,7 +919,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string recordTaskID = invocation.ReadString("RecordTaskID");
+            invocation.ReadEnd();
             self.ResetRecordTask(aVersion, recordTaskID);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -901,7 +933,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string recordScheduleID = invocation.ReadString("RecordScheduleID");
+            invocation.ReadEnd();
             string recordScheduleConflictIDList;
             uint updateID;
             self.GetRecordScheduleConflicts(aVersion, recordScheduleID, out recordScheduleConflictIDList, out updateID);
@@ -917,7 +951,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string recordTaskID = invocation.ReadString("RecordTaskID");
+            invocation.ReadEnd();
             string recordTaskConflictIDList;
             uint updateID;
             self.GetRecordTaskConflicts(aVersion, recordTaskID, out recordTaskConflictIDList, out updateID);

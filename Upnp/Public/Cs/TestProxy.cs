@@ -118,7 +118,10 @@ namespace Zapp
                 iActionPollStop.WaitOne();
                 Console.Write("    " + (iActionCount - countBefore) + "\n");
                 iConnMgr.Dispose();
-                iExpectedSink = null;
+                lock (this)
+                {
+                    iExpectedSink = null;
+                }
             }
         }
 
@@ -161,35 +164,38 @@ namespace Zapp
 
         private void GetProtocolInfoComplete(IntPtr aAsyncHandle)
         {
-            if (DateTime.Now >= iActionPollStopTime)
+            lock (this)
             {
-                return;
-            }
-            iConnMgr.BeginGetProtocolInfo(GetProtocolInfoComplete);
+                if (DateTime.Now >= iActionPollStopTime)
+                {
+                    return;
+                }
+                iConnMgr.BeginGetProtocolInfo(GetProtocolInfoComplete);
 
-            try
-            {
-                string source;
-                string sink;
-                iConnMgr.EndGetProtocolInfo(aAsyncHandle, out source, out sink);
-                iActionCount++;
-                if (sink == null && iExpectedSink != null)
+                try
                 {
-                    throw (new Exception());
-                }
-                else
-                {
-                    if (iExpectedSink == null)
+                    string source;
+                    string sink;
+                    iConnMgr.EndGetProtocolInfo(aAsyncHandle, out source, out sink);
+                    iActionCount++;
+                    if (sink == null && iExpectedSink != null)
                     {
-                        iExpectedSink = sink;
+                        Console.Write("Expected " + iExpectedSink + "\n...got (null)\n");
                     }
-                    else if (sink != iExpectedSink)
+                    else
                     {
-                        Console.Write("Expected " + iExpectedSink + "\n...got " + sink + "\n");
+                        if (iExpectedSink == null)
+                        {
+                            iExpectedSink = sink;
+                        }
+                        else if (sink != iExpectedSink)
+                        {
+                            Console.Write("Expected " + iExpectedSink + "\n...got " + sink + "\n");
+                        }
                     }
                 }
+                catch (ControlPoint.ProxyError) { }
             }
-            catch (ControlPoint.ProxyError) { }
         }
 
         private void PropertyChanged()

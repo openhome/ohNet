@@ -1638,6 +1638,11 @@ namespace Zapp.ControlPoint.Proxies
                 iActionGetIsRamping.Dispose();
                 iActionGetRampPaused.Dispose();
                 iActionGetRampTime.Dispose();
+                iLoadLevelStatus.Dispose();
+                iStepDelta.Dispose();
+                iRampRate.Dispose();
+                iIsRamping.Dispose();
+                iRampPaused.Dispose();
             }
             if (aDisposing)
             {

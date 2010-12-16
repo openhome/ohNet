@@ -1473,6 +1473,13 @@ namespace Zapp.ControlPoint.Proxies
                 iActionIdArray.Dispose();
                 iActionIdArrayChanged.Dispose();
                 iActionIdsMax.Dispose();
+                iChannelUri.Dispose();
+                iChannelMetadata.Dispose();
+                iTransportState.Dispose();
+                iProtocolInfo.Dispose();
+                iId.Dispose();
+                iIdArray.Dispose();
+                iIdsMax.Dispose();
             }
             if (aDisposing)
             {

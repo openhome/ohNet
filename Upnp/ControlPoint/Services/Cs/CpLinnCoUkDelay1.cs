@@ -761,6 +761,8 @@ namespace Zapp.ControlPoint.Proxies
                 iActionDelayMinimum.Dispose();
                 iActionDelayMaximum.Dispose();
                 iActionPresetCount.Dispose();
+                iPresetXml.Dispose();
+                iPresetIndex.Dispose();
             }
             if (aDisposing)
             {

@@ -525,7 +525,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aId = invocation.ReadUint("aId");
+            invocation.ReadEnd();
             string aUri;
             string aMetaData;
             self.Read(aVersion, aId, out aUri, out aMetaData);
@@ -541,7 +543,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string aIdList = invocation.ReadString("aIdList");
+            invocation.ReadEnd();
             string aMetaDataList;
             self.ReadList(aVersion, aIdList, out aMetaDataList);
             invocation.WriteStart();
@@ -555,9 +559,11 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aAfterId = invocation.ReadUint("aAfterId");
             string aUri = invocation.ReadString("aUri");
             string aMetaData = invocation.ReadString("aMetaData");
+            invocation.ReadEnd();
             uint aNewId;
             self.Insert(aVersion, aAfterId, aUri, aMetaData, out aNewId);
             invocation.WriteStart();
@@ -571,7 +577,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aId = invocation.ReadUint("aId");
+            invocation.ReadEnd();
             self.Delete(aVersion, aId);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -583,6 +591,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.DeleteAll(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -594,7 +604,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             bool aRepeat = invocation.ReadBool("aRepeat");
+            invocation.ReadEnd();
             self.SetRepeat(aVersion, aRepeat);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -606,6 +618,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             bool aRepeat;
             self.Repeat(aVersion, out aRepeat);
             invocation.WriteStart();
@@ -619,7 +633,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             bool aShuffle = invocation.ReadBool("aShuffle");
+            invocation.ReadEnd();
             self.SetShuffle(aVersion, aShuffle);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -631,6 +647,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             bool aShuffle;
             self.Shuffle(aVersion, out aShuffle);
             invocation.WriteStart();
@@ -644,6 +662,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint aTracksMax;
             self.TracksMax(aVersion, out aTracksMax);
             invocation.WriteStart();
@@ -657,6 +677,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint aIdArrayToken;
             string aIdArray;
             self.IdArray(aVersion, out aIdArrayToken, out aIdArray);
@@ -672,7 +694,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkPlaylist1 self = (DvProviderLinnCoUkPlaylist1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aIdArrayToken = invocation.ReadUint("aIdArrayToken");
+            invocation.ReadEnd();
             bool aIdArrayChanged;
             self.IdArrayChanged(aVersion, aIdArrayToken, out aIdArrayChanged);
             invocation.WriteStart();

@@ -746,6 +746,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.Play(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -757,6 +759,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.Pause(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -768,6 +772,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.Stop(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -779,7 +785,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aSecond = invocation.ReadUint("aSecond");
+            invocation.ReadEnd();
             self.SeekSecondAbsolute(aVersion, aSecond);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -791,7 +799,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             int aSecond = invocation.ReadInt("aSecond");
+            invocation.ReadEnd();
             self.SeekSecondRelative(aVersion, aSecond);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -803,6 +813,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aUri;
             string aMetadata;
             self.Channel(aVersion, out aUri, out aMetadata);
@@ -818,8 +830,10 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string aUri = invocation.ReadString("aUri");
             string aMetadata = invocation.ReadString("aMetadata");
+            invocation.ReadEnd();
             self.SetChannel(aVersion, aUri, aMetadata);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -831,6 +845,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aInfo;
             self.ProtocolInfo(aVersion, out aInfo);
             invocation.WriteStart();
@@ -844,6 +860,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aState;
             self.TransportState(aVersion, out aState);
             invocation.WriteStart();
@@ -857,6 +875,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint aId;
             self.Id(aVersion, out aId);
             invocation.WriteStart();
@@ -870,8 +890,10 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aId = invocation.ReadUint("aId");
             string aUri = invocation.ReadString("aUri");
+            invocation.ReadEnd();
             self.SetId(aVersion, aId, aUri);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -883,7 +905,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aId = invocation.ReadUint("aId");
+            invocation.ReadEnd();
             string aMetadata;
             self.Read(aVersion, aId, out aMetadata);
             invocation.WriteStart();
@@ -897,7 +921,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string aIdList = invocation.ReadString("aIdList");
+            invocation.ReadEnd();
             string aMetadataList;
             self.ReadList(aVersion, aIdList, out aMetadataList);
             invocation.WriteStart();
@@ -911,6 +937,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint aIdArrayToken;
             string aIdArray;
             self.IdArray(aVersion, out aIdArrayToken, out aIdArray);
@@ -926,7 +954,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aIdArrayToken = invocation.ReadUint("aIdArrayToken");
+            invocation.ReadEnd();
             bool aIdArrayChanged;
             self.IdArrayChanged(aVersion, aIdArrayToken, out aIdArrayChanged);
             invocation.WriteStart();
@@ -940,6 +970,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkRadio1 self = (DvProviderLinnCoUkRadio1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint aIdsMax;
             self.IdsMax(aVersion, out aIdsMax);
             invocation.WriteStart();

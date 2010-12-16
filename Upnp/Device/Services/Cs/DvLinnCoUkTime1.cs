@@ -169,6 +169,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkTime1 self = (DvProviderLinnCoUkTime1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint aTrackCount;
             uint aDuration;
             uint aSeconds;

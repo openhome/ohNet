@@ -642,9 +642,11 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint instanceID = invocation.ReadUint("InstanceID");
             string currentURI = invocation.ReadString("CurrentURI");
             string currentURIMetaData = invocation.ReadString("CurrentURIMetaData");
+            invocation.ReadEnd();
             self.SetAVTransportURI(aVersion, instanceID, currentURI, currentURIMetaData);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -656,9 +658,11 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint instanceID = invocation.ReadUint("InstanceID");
             string nextURI = invocation.ReadString("NextURI");
             string nextURIMetaData = invocation.ReadString("NextURIMetaData");
+            invocation.ReadEnd();
             self.SetNextAVTransportURI(aVersion, instanceID, nextURI, nextURIMetaData);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -670,7 +674,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint instanceID = invocation.ReadUint("InstanceID");
+            invocation.ReadEnd();
             uint nrTracks;
             string mediaDuration;
             string currentURI;
@@ -700,7 +706,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint instanceID = invocation.ReadUint("InstanceID");
+            invocation.ReadEnd();
             string currentTransportState;
             string currentTransportStatus;
             string currentSpeed;
@@ -718,7 +726,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint instanceID = invocation.ReadUint("InstanceID");
+            invocation.ReadEnd();
             uint track;
             string trackDuration;
             string trackMetaData;
@@ -746,7 +756,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint instanceID = invocation.ReadUint("InstanceID");
+            invocation.ReadEnd();
             string playMedia;
             string recMedia;
             string recQualityModes;
@@ -764,7 +776,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint instanceID = invocation.ReadUint("InstanceID");
+            invocation.ReadEnd();
             string playMode;
             string recQualityMode;
             self.GetTransportSettings(aVersion, instanceID, out playMode, out recQualityMode);
@@ -780,7 +794,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint instanceID = invocation.ReadUint("InstanceID");
+            invocation.ReadEnd();
             self.Stop(aVersion, instanceID);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -792,8 +808,10 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint instanceID = invocation.ReadUint("InstanceID");
             string speed = invocation.ReadString("Speed");
+            invocation.ReadEnd();
             self.Play(aVersion, instanceID, speed);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -805,7 +823,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint instanceID = invocation.ReadUint("InstanceID");
+            invocation.ReadEnd();
             self.Pause(aVersion, instanceID);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -817,7 +837,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint instanceID = invocation.ReadUint("InstanceID");
+            invocation.ReadEnd();
             self.Record(aVersion, instanceID);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -829,9 +851,11 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint instanceID = invocation.ReadUint("InstanceID");
             string unit = invocation.ReadString("Unit");
             string target = invocation.ReadString("Target");
+            invocation.ReadEnd();
             self.Seek(aVersion, instanceID, unit, target);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -843,7 +867,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint instanceID = invocation.ReadUint("InstanceID");
+            invocation.ReadEnd();
             self.Next(aVersion, instanceID);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -855,7 +881,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint instanceID = invocation.ReadUint("InstanceID");
+            invocation.ReadEnd();
             self.Previous(aVersion, instanceID);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -867,8 +895,10 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint instanceID = invocation.ReadUint("InstanceID");
             string newPlayMode = invocation.ReadString("NewPlayMode");
+            invocation.ReadEnd();
             self.SetPlayMode(aVersion, instanceID, newPlayMode);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -880,8 +910,10 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint instanceID = invocation.ReadUint("InstanceID");
             string newRecordQualityMode = invocation.ReadString("NewRecordQualityMode");
+            invocation.ReadEnd();
             self.SetRecordQualityMode(aVersion, instanceID, newRecordQualityMode);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -893,7 +925,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgAVTransport1 self = (DvProviderUpnpOrgAVTransport1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint instanceID = invocation.ReadUint("InstanceID");
+            invocation.ReadEnd();
             string actions;
             self.GetCurrentTransportActions(aVersion, instanceID, out actions);
             invocation.WriteStart();

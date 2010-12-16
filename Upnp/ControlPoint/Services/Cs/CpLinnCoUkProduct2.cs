@@ -1051,6 +1051,10 @@ namespace Zapp.ControlPoint.Proxies
                 iActionSourceIndex.Dispose();
                 iActionSetSourceIndex.Dispose();
                 iActionSourceType.Dispose();
+                iProductName.Dispose();
+                iProductRoom.Dispose();
+                iProductStandby.Dispose();
+                iProductSourceIndex.Dispose();
             }
             if (aDisposing)
             {

@@ -1586,6 +1586,7 @@ namespace Zapp.ControlPoint.Proxies
                 iActionResetRecordTask.Dispose();
                 iActionGetRecordScheduleConflicts.Dispose();
                 iActionGetRecordTaskConflicts.Dispose();
+                iLastChange.Dispose();
             }
             if (aDisposing)
             {

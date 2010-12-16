@@ -1157,6 +1157,15 @@ namespace Zapp.ControlPoint.Proxies
                 iActionSeekTrackRelative.Dispose();
                 iActionState.Dispose();
                 iActionProtocolInfo.Dispose();
+                iSupportedProtocols.Dispose();
+                iTrackDuration.Dispose();
+                iTrackBitRate.Dispose();
+                iTrackLossless.Dispose();
+                iTrackBitDepth.Dispose();
+                iTrackSampleRate.Dispose();
+                iTrackCodecName.Dispose();
+                iTrackId.Dispose();
+                iTransportState.Dispose();
             }
             if (aDisposing)
             {

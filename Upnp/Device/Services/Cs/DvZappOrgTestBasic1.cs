@@ -756,7 +756,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint value = invocation.ReadUint("Value");
+            invocation.ReadEnd();
             uint result;
             self.Increment(aVersion, value, out result);
             invocation.WriteStart();
@@ -770,7 +772,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             int value = invocation.ReadInt("Value");
+            invocation.ReadEnd();
             int result;
             self.Decrement(aVersion, value, out result);
             invocation.WriteStart();
@@ -784,7 +788,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             bool value = invocation.ReadBool("Value");
+            invocation.ReadEnd();
             bool result;
             self.Toggle(aVersion, value, out result);
             invocation.WriteStart();
@@ -798,7 +804,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string value = invocation.ReadString("Value");
+            invocation.ReadEnd();
             string result;
             self.EchoString(aVersion, value, out result);
             invocation.WriteStart();
@@ -812,7 +820,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string value = invocation.ReadBinary("Value");
+            invocation.ReadEnd();
             string result;
             self.EchoBinary(aVersion, value, out result);
             invocation.WriteStart();
@@ -826,7 +836,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint valueUint = invocation.ReadUint("ValueUint");
+            invocation.ReadEnd();
             self.SetUint(aVersion, valueUint);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -838,6 +850,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint valueUint;
             self.GetUint(aVersion, out valueUint);
             invocation.WriteStart();
@@ -851,7 +865,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             int valueInt = invocation.ReadInt("ValueInt");
+            invocation.ReadEnd();
             self.SetInt(aVersion, valueInt);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -863,6 +879,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             int valueInt;
             self.GetInt(aVersion, out valueInt);
             invocation.WriteStart();
@@ -876,7 +894,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             bool valueBool = invocation.ReadBool("ValueBool");
+            invocation.ReadEnd();
             self.SetBool(aVersion, valueBool);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -888,6 +908,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             bool valueBool;
             self.GetBool(aVersion, out valueBool);
             invocation.WriteStart();
@@ -901,9 +923,11 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint valueUint = invocation.ReadUint("ValueUint");
             int valueInt = invocation.ReadInt("ValueInt");
             bool valueBool = invocation.ReadBool("ValueBool");
+            invocation.ReadEnd();
             self.SetMultiple(aVersion, valueUint, valueInt, valueBool);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -915,7 +939,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string valueStr = invocation.ReadString("ValueStr");
+            invocation.ReadEnd();
             self.SetString(aVersion, valueStr);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -927,6 +953,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string valueStr;
             self.GetString(aVersion, out valueStr);
             invocation.WriteStart();
@@ -940,7 +968,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string valueBin = invocation.ReadBinary("ValueBin");
+            invocation.ReadEnd();
             self.SetBinary(aVersion, valueBin);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -952,6 +982,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string valueBin;
             self.GetBinary(aVersion, out valueBin);
             invocation.WriteStart();
@@ -965,6 +997,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.ToggleBool(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -976,8 +1010,10 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string data = invocation.ReadString("Data");
             string fileFullName = invocation.ReadString("FileFullName");
+            invocation.ReadEnd();
             self.WriteFile(aVersion, data, fileFullName);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -989,6 +1025,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestBasic1 self = (DvProviderZappOrgTestBasic1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.Shutdown(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();

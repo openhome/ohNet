@@ -535,6 +535,14 @@ namespace Zapp.ControlPoint.Proxies
                 iHandle = IntPtr.Zero;
                 iActionSetReadWriteRegister.Dispose();
                 iActionGetWidgetClass.Dispose();
+                iReadWriteRegister0.Dispose();
+                iReadWriteRegister1.Dispose();
+                iReadWriteRegister2.Dispose();
+                iReadWriteRegister3.Dispose();
+                iReadOnlyRegister4.Dispose();
+                iReadOnlyRegister5.Dispose();
+                iReadOnlyRegister6.Dispose();
+                iReadOnlyRegister7.Dispose();
             }
             if (aDisposing)
             {

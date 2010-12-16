@@ -194,6 +194,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkConfiguration1 self = (DvProviderLinnCoUkConfiguration1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aConfigurationXml;
             self.ConfigurationXml(aVersion, out aConfigurationXml);
             invocation.WriteStart();
@@ -207,6 +209,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkConfiguration1 self = (DvProviderLinnCoUkConfiguration1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aParameterXml;
             self.ParameterXml(aVersion, out aParameterXml);
             invocation.WriteStart();
@@ -220,9 +224,11 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkConfiguration1 self = (DvProviderLinnCoUkConfiguration1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string aTarget = invocation.ReadString("aTarget");
             string aName = invocation.ReadString("aName");
             string aValue = invocation.ReadString("aValue");
+            invocation.ReadEnd();
             self.SetParameter(aVersion, aTarget, aName, aValue);
             invocation.WriteStart();
             invocation.WriteEnd();

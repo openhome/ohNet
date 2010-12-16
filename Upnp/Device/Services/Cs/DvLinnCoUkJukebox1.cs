@@ -369,7 +369,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string aUri = invocation.ReadString("aUri");
+            invocation.ReadEnd();
             self.SetPresetPrefix(aVersion, aUri);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -381,6 +383,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aUri;
             self.PresetPrefix(aVersion, out aUri);
             invocation.WriteStart();
@@ -394,7 +398,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string aName = invocation.ReadString("aName");
+            invocation.ReadEnd();
             self.SetAlbumArtFileName(aVersion, aName);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -406,6 +412,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aName;
             self.AlbumArtFileName(aVersion, out aName);
             invocation.WriteStart();
@@ -419,7 +427,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aPreset = invocation.ReadUint("aPreset");
+            invocation.ReadEnd();
             self.SetCurrentPreset(aVersion, aPreset);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -431,6 +441,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint aPreset;
             self.CurrentPreset(aVersion, out aPreset);
             invocation.WriteStart();
@@ -444,7 +456,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aPreset = invocation.ReadUint("aPreset");
+            invocation.ReadEnd();
             string aMetaData;
             self.PresetMetaData(aVersion, aPreset, out aMetaData);
             invocation.WriteStart();
@@ -458,6 +472,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkJukebox1 self = (DvProviderLinnCoUkJukebox1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint aTotalPresets;
             self.LoadManifest(aVersion, out aTotalPresets);
             invocation.WriteStart();

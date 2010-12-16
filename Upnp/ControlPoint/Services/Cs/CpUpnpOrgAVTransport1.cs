@@ -1552,6 +1552,7 @@ namespace Zapp.ControlPoint.Proxies
                 iActionSetPlayMode.Dispose();
                 iActionSetRecordQualityMode.Dispose();
                 iActionGetCurrentTransportActions.Dispose();
+                iLastChange.Dispose();
             }
             if (aDisposing)
             {

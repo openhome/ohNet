@@ -518,6 +518,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aType;
             self.Type(aVersion, out aType);
             invocation.WriteStart();
@@ -531,6 +533,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aModel;
             self.Model(aVersion, out aModel);
             invocation.WriteStart();
@@ -544,6 +548,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aName;
             self.Name(aVersion, out aName);
             invocation.WriteStart();
@@ -557,7 +563,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string aName = invocation.ReadString("aName");
+            invocation.ReadEnd();
             self.SetName(aVersion, aName);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -569,6 +577,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aRoom;
             self.Room(aVersion, out aRoom);
             invocation.WriteStart();
@@ -582,7 +592,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string aRoom = invocation.ReadString("aRoom");
+            invocation.ReadEnd();
             self.SetRoom(aVersion, aRoom);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -594,6 +606,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             bool aStandby;
             self.Standby(aVersion, out aStandby);
             invocation.WriteStart();
@@ -607,7 +621,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             bool aStandby = invocation.ReadBool("aStandby");
+            invocation.ReadEnd();
             self.SetStandby(aVersion, aStandby);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -619,6 +635,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint aSourceCount;
             self.SourceCount(aVersion, out aSourceCount);
             invocation.WriteStart();
@@ -632,6 +650,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint aSourceIndex;
             self.SourceIndex(aVersion, out aSourceIndex);
             invocation.WriteStart();
@@ -645,7 +665,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aSourceIndex = invocation.ReadUint("aSourceIndex");
+            invocation.ReadEnd();
             self.SetSourceIndex(aVersion, aSourceIndex);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -657,7 +679,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct2 self = (DvProviderLinnCoUkProduct2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aSourceIndex = invocation.ReadUint("aSourceIndex");
+            invocation.ReadEnd();
             string aSourceType;
             self.SourceType(aVersion, aSourceIndex, out aSourceType);
             invocation.WriteStart();

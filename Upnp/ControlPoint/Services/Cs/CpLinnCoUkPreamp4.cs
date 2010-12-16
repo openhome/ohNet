@@ -1228,6 +1228,12 @@ namespace Zapp.ControlPoint.Proxies
                 iActionStartupVolume.Dispose();
                 iActionSetStartupVolumeEnabled.Dispose();
                 iActionStartupVolumeEnabled.Dispose();
+                iVolume.Dispose();
+                iMute.Dispose();
+                iBalance.Dispose();
+                iVolumeLimit.Dispose();
+                iStartupVolume.Dispose();
+                iStartupVolumeEnabled.Dispose();
             }
             if (aDisposing)
             {

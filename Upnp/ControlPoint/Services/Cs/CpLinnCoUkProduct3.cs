@@ -2270,6 +2270,19 @@ namespace Zapp.ControlPoint.Proxies
                 iActionSourceType.Dispose();
                 iActionSourceVisible.Dispose();
                 iActionSetSourceVisible.Dispose();
+                iProductType.Dispose();
+                iProductModel.Dispose();
+                iProductName.Dispose();
+                iProductRoom.Dispose();
+                iProductStandby.Dispose();
+                iProductSourceIndex.Dispose();
+                iProductSourceCount.Dispose();
+                iProductSourceXml.Dispose();
+                iStartupSourceIndex.Dispose();
+                iStartupSourceEnabled.Dispose();
+                iProductAnySourceName.Dispose();
+                iProductAnySourceVisible.Dispose();
+                iProductAnySourceType.Dispose();
             }
             if (aDisposing)
             {

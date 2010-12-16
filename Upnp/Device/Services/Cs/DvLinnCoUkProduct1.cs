@@ -217,6 +217,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct1 self = (DvProviderLinnCoUkProduct1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aRoom;
             self.Room(aVersion, out aRoom);
             invocation.WriteStart();
@@ -230,7 +232,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct1 self = (DvProviderLinnCoUkProduct1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string aRoom = invocation.ReadString("aRoom");
+            invocation.ReadEnd();
             self.SetRoom(aVersion, aRoom);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -242,6 +246,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct1 self = (DvProviderLinnCoUkProduct1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             bool aStandby;
             self.Standby(aVersion, out aStandby);
             invocation.WriteStart();
@@ -255,7 +261,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct1 self = (DvProviderLinnCoUkProduct1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             bool aStandby = invocation.ReadBool("aStandby");
+            invocation.ReadEnd();
             self.SetStandby(aVersion, aStandby);
             invocation.WriteStart();
             invocation.WriteEnd();

@@ -370,8 +370,10 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestWidget1 self = (DvProviderZappOrgTestWidget1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint registerIndex = invocation.ReadUint("RegisterIndex");
             uint registerValue = invocation.ReadUint("RegisterValue");
+            invocation.ReadEnd();
             self.SetReadWriteRegister(aVersion, registerIndex, registerValue);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -383,6 +385,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestWidget1 self = (DvProviderZappOrgTestWidget1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint widgetClass;
             self.GetWidgetClass(aVersion, out widgetClass);
             invocation.WriteStart();

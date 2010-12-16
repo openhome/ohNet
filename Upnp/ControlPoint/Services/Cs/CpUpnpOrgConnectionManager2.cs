@@ -676,6 +676,9 @@ namespace Zapp.ControlPoint.Proxies
                 iActionConnectionComplete.Dispose();
                 iActionGetCurrentConnectionIDs.Dispose();
                 iActionGetCurrentConnectionInfo.Dispose();
+                iSourceProtocolInfo.Dispose();
+                iSinkProtocolInfo.Dispose();
+                iCurrentConnectionIDs.Dispose();
             }
             if (aDisposing)
             {

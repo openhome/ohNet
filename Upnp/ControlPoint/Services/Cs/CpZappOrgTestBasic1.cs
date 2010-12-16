@@ -1578,6 +1578,11 @@ namespace Zapp.ControlPoint.Proxies
                 iActionToggleBool.Dispose();
                 iActionWriteFile.Dispose();
                 iActionShutdown.Dispose();
+                iVarUint.Dispose();
+                iVarInt.Dispose();
+                iVarBool.Dispose();
+                iVarStr.Dispose();
+                iVarBin.Dispose();
             }
             if (aDisposing)
             {

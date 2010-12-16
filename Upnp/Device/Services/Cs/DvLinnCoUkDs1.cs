@@ -643,6 +643,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.Play(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -654,6 +656,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.Pause(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -665,6 +669,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.Stop(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -676,7 +682,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aSecond = invocation.ReadUint("aSecond");
+            invocation.ReadEnd();
             self.SeekSecondAbsolute(aVersion, aSecond);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -688,7 +696,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             int aSecond = invocation.ReadInt("aSecond");
+            invocation.ReadEnd();
             self.SeekSecondRelative(aVersion, aSecond);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -700,7 +710,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aTrackId = invocation.ReadUint("aTrackId");
+            invocation.ReadEnd();
             self.SeekTrackId(aVersion, aTrackId);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -712,7 +724,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint aTrack = invocation.ReadUint("aTrack");
+            invocation.ReadEnd();
             self.SeekTrackAbsolute(aVersion, aTrack);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -724,7 +738,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             int aTrack = invocation.ReadInt("aTrack");
+            invocation.ReadEnd();
             self.SeekTrackRelative(aVersion, aTrack);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -736,6 +752,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aTransportState;
             uint aTrackDuration;
             uint aTrackBitRate;
@@ -763,6 +781,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aSupportedProtocols;
             self.ProtocolInfo(aVersion, out aSupportedProtocols);
             invocation.WriteStart();

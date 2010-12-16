@@ -949,6 +949,18 @@ namespace Zapp.ControlPoint.Proxies
                 iActionTrack.Dispose();
                 iActionDetails.Dispose();
                 iActionMetatext.Dispose();
+                iTrackCount.Dispose();
+                iDetailsCount.Dispose();
+                iMetatextCount.Dispose();
+                iUri.Dispose();
+                iMetadata.Dispose();
+                iDuration.Dispose();
+                iBitRate.Dispose();
+                iBitDepth.Dispose();
+                iSampleRate.Dispose();
+                iLossless.Dispose();
+                iCodecName.Dispose();
+                iMetatext.Dispose();
             }
             if (aDisposing)
             {

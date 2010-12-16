@@ -20,6 +20,7 @@ CpProxyC::CpProxyC(const TChar* aDomain, const TChar* aName, TUint aVersion, Cpi
 
 CpProxyC::~CpProxyC()
 {
+    iProxy->DestroyService();
     delete iProxy;
     if (iDevice != NULL) {
         iDevice->RemoveRef();

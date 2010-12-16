@@ -158,8 +158,10 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestWidgetController1 self = (DvProviderZappOrgTestWidgetController1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string widgetUdn = invocation.ReadString("WidgetUdn");
             uint widgetClass = invocation.ReadUint("WidgetClass");
+            invocation.ReadEnd();
             self.CreateWidget(aVersion, widgetUdn, widgetClass);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -171,7 +173,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestWidgetController1 self = (DvProviderZappOrgTestWidgetController1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string widgetUdn = invocation.ReadString("WidgetUdn");
+            invocation.ReadEnd();
             self.RemoveWidget(aVersion, widgetUdn);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -183,9 +187,11 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestWidgetController1 self = (DvProviderZappOrgTestWidgetController1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string widgetUdn = invocation.ReadString("WidgetUdn");
             uint registerIndex = invocation.ReadUint("RegisterIndex");
             uint registerValue = invocation.ReadUint("RegisterValue");
+            invocation.ReadEnd();
             self.SetWidgetRegister(aVersion, widgetUdn, registerIndex, registerValue);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -197,8 +203,10 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestWidgetController1 self = (DvProviderZappOrgTestWidgetController1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string widgetUdn = invocation.ReadString("WidgetUdn");
             uint registerIndex = invocation.ReadUint("RegisterIndex");
+            invocation.ReadEnd();
             uint registerValue;
             self.GetWidgetRegister(aVersion, widgetUdn, registerIndex, out registerValue);
             invocation.WriteStart();

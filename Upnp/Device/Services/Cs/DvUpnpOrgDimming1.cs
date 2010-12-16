@@ -795,7 +795,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint newLoadlevelTarget = invocation.ReadUint("newLoadlevelTarget");
+            invocation.ReadEnd();
             self.SetLoadLevelTarget(aVersion, newLoadlevelTarget);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -807,6 +809,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint getLoadlevelTarget;
             self.GetLoadLevelTarget(aVersion, out getLoadlevelTarget);
             invocation.WriteStart();
@@ -820,6 +824,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint retLoadlevelStatus;
             self.GetLoadLevelStatus(aVersion, out retLoadlevelStatus);
             invocation.WriteStart();
@@ -833,7 +839,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint newOnEffectLevel = invocation.ReadUint("newOnEffectLevel");
+            invocation.ReadEnd();
             self.SetOnEffectLevel(aVersion, newOnEffectLevel);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -845,7 +853,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string newOnEffect = invocation.ReadString("newOnEffect");
+            invocation.ReadEnd();
             self.SetOnEffect(aVersion, newOnEffect);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -857,6 +867,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string retOnEffect;
             uint retOnEffectLevel;
             self.GetOnEffectParameters(aVersion, out retOnEffect, out retOnEffectLevel);
@@ -872,6 +884,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.StepUp(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -883,6 +897,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.StepDown(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -894,6 +910,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.StartRampUp(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -905,6 +923,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.StartRampDown(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -916,6 +936,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.StopRamp(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -927,8 +949,10 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint newLoadLevelTarget = invocation.ReadUint("newLoadLevelTarget");
             uint newRampTime = invocation.ReadUint("newRampTime");
+            invocation.ReadEnd();
             self.StartRampToLevel(aVersion, newLoadLevelTarget, newRampTime);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -940,7 +964,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint newStepDelta = invocation.ReadUint("newStepDelta");
+            invocation.ReadEnd();
             self.SetStepDelta(aVersion, newStepDelta);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -952,6 +978,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint retStepDelta;
             self.GetStepDelta(aVersion, out retStepDelta);
             invocation.WriteStart();
@@ -965,7 +993,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             uint newRampRate = invocation.ReadUint("newRampRate");
+            invocation.ReadEnd();
             self.SetRampRate(aVersion, newRampRate);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -977,6 +1007,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint retRampRate;
             self.GetRampRate(aVersion, out retRampRate);
             invocation.WriteStart();
@@ -990,6 +1022,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.PauseRamp(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -1001,6 +1035,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.ResumeRamp(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -1012,6 +1048,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             bool retIsRamping;
             self.GetIsRamping(aVersion, out retIsRamping);
             invocation.WriteStart();
@@ -1025,6 +1063,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             bool retRampPaused;
             self.GetRampPaused(aVersion, out retRampPaused);
             invocation.WriteStart();
@@ -1038,6 +1078,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgDimming1 self = (DvProviderUpnpOrgDimming1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint retRampTime;
             self.GetRampTime(aVersion, out retRampTime);
             invocation.WriteStart();

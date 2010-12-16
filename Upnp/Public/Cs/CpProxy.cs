@@ -118,11 +118,6 @@ namespace Zapp.ControlPoint
             CpProxyAddProperty(iHandle, aProperty.Handle());
         }
         
-        protected void DestroyService()
-        {
-            iService.Dispose();
-        }
-        
         protected void ActionComplete(IntPtr aPtr, IntPtr aAsyncHandle)
         {
             GCHandle gch = GCHandle.FromIntPtr(aPtr);

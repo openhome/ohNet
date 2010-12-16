@@ -486,6 +486,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             bool aEnabled;
             self.AmplifierEnabled(aVersion, out aEnabled);
             invocation.WriteStart();
@@ -499,7 +501,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             bool aEnabled = invocation.ReadBool("aEnabled");
+            invocation.ReadEnd();
             self.SetAmplifierEnabled(aVersion, aEnabled);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -511,6 +515,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aAttenuation;
             self.AmplifierAttenuation(aVersion, out aAttenuation);
             invocation.WriteStart();
@@ -524,7 +530,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             string aAttenuation = invocation.ReadString("aAttenuation");
+            invocation.ReadEnd();
             self.SetAmplifierAttenuation(aVersion, aAttenuation);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -536,7 +544,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             bool aEnabled = invocation.ReadBool("aEnabled");
+            invocation.ReadEnd();
             self.SetVolumeControlEnabled(aVersion, aEnabled);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -548,6 +558,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             bool aEnabled;
             self.VolumeControlEnabled(aVersion, out aEnabled);
             invocation.WriteStart();
@@ -561,7 +573,9 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
             bool aRaw = invocation.ReadBool("aRaw");
+            invocation.ReadEnd();
             self.SetDigitalAudioOutputRaw(aVersion, aRaw);
             invocation.WriteStart();
             invocation.WriteEnd();
@@ -573,6 +587,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             bool aRaw;
             self.DigitalAudioOutputRaw(aVersion, out aRaw);
             invocation.WriteStart();
@@ -586,6 +602,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             bool aOverTemperature;
             self.AmplifierOverTemperature(aVersion, out aOverTemperature);
             invocation.WriteStart();
@@ -599,6 +617,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             bool aLinkConnected;
             self.EthernetLinkConnected(aVersion, out aLinkConnected);
             invocation.WriteStart();
@@ -612,6 +632,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             self.Locate(aVersion);
             invocation.WriteStart();
             invocation.WriteEnd();

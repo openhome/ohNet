@@ -1890,6 +1890,10 @@ namespace Zapp.ControlPoint.Proxies
                 iActionCreateReference.Dispose();
                 iActionFreeFormQuery.Dispose();
                 iActionGetFreeFormQueryCapabilities.Dispose();
+                iSystemUpdateID.Dispose();
+                iContainerUpdateIDs.Dispose();
+                iLastChange.Dispose();
+                iTransferIDs.Dispose();
             }
             if (aDisposing)
             {

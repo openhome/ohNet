@@ -584,6 +584,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkInfo1 self = (DvProviderLinnCoUkInfo1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint aTrackCount;
             uint aDetailsCount;
             uint aMetatextCount;
@@ -601,6 +603,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkInfo1 self = (DvProviderLinnCoUkInfo1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aUri;
             string aMetadata;
             self.Track(aVersion, out aUri, out aMetadata);
@@ -616,6 +620,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkInfo1 self = (DvProviderLinnCoUkInfo1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             uint aDuration;
             uint aBitRate;
             uint aBitDepth;
@@ -639,6 +645,8 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkInfo1 self = (DvProviderLinnCoUkInfo1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
+            invocation.ReadStart();
+            invocation.ReadEnd();
             string aMetatext;
             self.Metatext(aVersion, out aMetatext);
             invocation.WriteStart();

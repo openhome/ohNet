@@ -970,6 +970,10 @@ namespace Zapp.ControlPoint.Proxies
                 iActionAmplifierOverTemperature.Dispose();
                 iActionEthernetLinkConnected.Dispose();
                 iActionLocate.Dispose();
+                iAmplifierEnabled.Dispose();
+                iAmplifierAttenuation.Dispose();
+                iVolumeControlEnabled.Dispose();
+                iDigitalAudioOutputRaw.Dispose();
             }
             if (aDisposing)
             {
