@@ -149,7 +149,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionSetPresetPrefix()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetPresetPrefix");
-            List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterRelated("aUri", iPropertyPresetPrefix));
             iDelegateSetPresetPrefix = new ActionDelegate(DoSetPresetPrefix);
             EnableAction(action, iDelegateSetPresetPrefix, GCHandle.ToIntPtr(iGch));
@@ -163,7 +162,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionPresetPrefix()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("PresetPrefix");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aUri", iPropertyPresetPrefix));
             iDelegatePresetPrefix = new ActionDelegate(DoPresetPrefix);
             EnableAction(action, iDelegatePresetPrefix, GCHandle.ToIntPtr(iGch));
@@ -177,7 +175,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionSetAlbumArtFileName()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetAlbumArtFileName");
-            List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterRelated("aName", iPropertyAlbumArtFileName));
             iDelegateSetAlbumArtFileName = new ActionDelegate(DoSetAlbumArtFileName);
             EnableAction(action, iDelegateSetAlbumArtFileName, GCHandle.ToIntPtr(iGch));
@@ -191,7 +188,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionAlbumArtFileName()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("AlbumArtFileName");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aName", iPropertyAlbumArtFileName));
             iDelegateAlbumArtFileName = new ActionDelegate(DoAlbumArtFileName);
             EnableAction(action, iDelegateAlbumArtFileName, GCHandle.ToIntPtr(iGch));

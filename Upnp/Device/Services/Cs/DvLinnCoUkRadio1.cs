@@ -364,7 +364,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionChannel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Channel");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aUri", iPropertyChannelUri));
             action.AddOutputParameter(new ParameterRelated("aMetadata", iPropertyChannelMetadata));
             iDelegateChannel = new ActionDelegate(DoChannel);
@@ -379,7 +378,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionSetChannel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetChannel");
-            List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterRelated("aUri", iPropertyChannelUri));
             action.AddInputParameter(new ParameterRelated("aMetadata", iPropertyChannelMetadata));
             iDelegateSetChannel = new ActionDelegate(DoSetChannel);
@@ -394,7 +392,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionProtocolInfo()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ProtocolInfo");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aInfo", iPropertyProtocolInfo));
             iDelegateProtocolInfo = new ActionDelegate(DoProtocolInfo);
             EnableAction(action, iDelegateProtocolInfo, GCHandle.ToIntPtr(iGch));
@@ -408,7 +405,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionTransportState()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("TransportState");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aState", iPropertyTransportState));
             iDelegateTransportState = new ActionDelegate(DoTransportState);
             EnableAction(action, iDelegateTransportState, GCHandle.ToIntPtr(iGch));
@@ -435,7 +431,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionSetId()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetId");
-            List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterRelated("aId", iPropertyId));
             action.AddInputParameter(new ParameterRelated("aUri", iPropertyChannelUri));
             iDelegateSetId = new ActionDelegate(DoSetId);
@@ -450,7 +445,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionRead()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Read");
-            List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterRelated("aId", iPropertyId));
             action.AddOutputParameter(new ParameterRelated("aMetadata", iPropertyChannelMetadata));
             iDelegateRead = new ActionDelegate(DoRead);

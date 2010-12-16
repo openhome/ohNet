@@ -467,7 +467,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionState()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("State");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aTransportState", iPropertyTransportState));
             action.AddOutputParameter(new ParameterRelated("aTrackDuration", iPropertyTrackDuration));
             action.AddOutputParameter(new ParameterRelated("aTrackBitRate", iPropertyTrackBitRate));
@@ -488,7 +487,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionProtocolInfo()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ProtocolInfo");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aSupportedProtocols", iPropertySupportedProtocols));
             iDelegateProtocolInfo = new ActionDelegate(DoProtocolInfo);
             EnableAction(action, iDelegateProtocolInfo, GCHandle.ToIntPtr(iGch));

@@ -109,7 +109,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionConfigurationXml()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ConfigurationXml");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aConfigurationXml", iPropertyConfigurationXml));
             iDelegateConfigurationXml = new ActionDelegate(DoConfigurationXml);
             EnableAction(action, iDelegateConfigurationXml, GCHandle.ToIntPtr(iGch));
@@ -123,7 +122,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionParameterXml()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("ParameterXml");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aParameterXml", iPropertyParameterXml));
             iDelegateParameterXml = new ActionDelegate(DoParameterXml);
             EnableAction(action, iDelegateParameterXml, GCHandle.ToIntPtr(iGch));

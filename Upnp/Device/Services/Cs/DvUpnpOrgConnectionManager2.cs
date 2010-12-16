@@ -146,7 +146,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionGetProtocolInfo()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetProtocolInfo");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("Source", iPropertySourceProtocolInfo));
             action.AddOutputParameter(new ParameterRelated("Sink", iPropertySinkProtocolInfo));
             iDelegateGetProtocolInfo = new ActionDelegate(DoGetProtocolInfo);
@@ -197,7 +196,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionGetCurrentConnectionIDs()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetCurrentConnectionIDs");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("ConnectionIDs", iPropertyCurrentConnectionIDs));
             iDelegateGetCurrentConnectionIDs = new ActionDelegate(DoGetCurrentConnectionIDs);
             EnableAction(action, iDelegateGetCurrentConnectionIDs, GCHandle.ToIntPtr(iGch));

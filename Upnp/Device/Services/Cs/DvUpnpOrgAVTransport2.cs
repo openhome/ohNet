@@ -441,7 +441,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionGetDRMState()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetDRMState");
-            List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterUint("InstanceID"));
             action.AddOutputParameter(new ParameterRelated("CurrentDRMState", iPropertyDRMState));
             iDelegateGetDRMState = new ActionDelegate(DoGetDRMState);

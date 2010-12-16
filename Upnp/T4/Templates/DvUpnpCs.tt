@@ -403,14 +403,14 @@ string DeclareAllowedValuesForMethod(Method a)
 {
     foreach (Argument i in a.inargs)
     {
-        if (i.variable.type == "string" || i.variable.type == "uri")
+        if (!i.variable.evented && (i.variable.type == "string" || i.variable.type == "uri"))
         {
             return DeclareAllowedValues();
         }
     }
     foreach (Argument o in a.outargs)
     {
-        if (o.variable.type == "string" || o.variable.type == "uri")
+        if (!o.variable.evented && (o.variable.type == "string" || o.variable.type == "uri"))
         {
             return DeclareAllowedValues();
         }

@@ -115,7 +115,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionPresetXml()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("PresetXml");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aPresetXml", iPropertyPresetXml));
             iDelegatePresetXml = new ActionDelegate(DoPresetXml);
             EnableAction(action, iDelegatePresetXml, GCHandle.ToIntPtr(iGch));

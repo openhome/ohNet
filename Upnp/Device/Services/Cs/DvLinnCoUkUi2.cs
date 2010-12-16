@@ -583,7 +583,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionSetInfraredCommands()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetInfraredCommands");
-            List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterRelated("aCommands", iPropertyInfraredCommands));
             iDelegateSetInfraredCommands = new ActionDelegate(DoSetInfraredCommands);
             EnableAction(action, iDelegateSetInfraredCommands, GCHandle.ToIntPtr(iGch));
@@ -597,7 +596,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionInfraredCommands()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("InfraredCommands");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aCommands", iPropertyInfraredCommands));
             iDelegateInfraredCommands = new ActionDelegate(DoInfraredCommands);
             EnableAction(action, iDelegateInfraredCommands, GCHandle.ToIntPtr(iGch));
@@ -611,7 +609,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionSetInfraredTerminalCommands()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetInfraredTerminalCommands");
-            List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterRelated("aCommands", iPropertyInfraredTerminalCommands));
             iDelegateSetInfraredTerminalCommands = new ActionDelegate(DoSetInfraredTerminalCommands);
             EnableAction(action, iDelegateSetInfraredTerminalCommands, GCHandle.ToIntPtr(iGch));
@@ -625,7 +622,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionInfraredTerminalCommands()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("InfraredTerminalCommands");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aCommands", iPropertyInfraredTerminalCommands));
             iDelegateInfraredTerminalCommands = new ActionDelegate(DoInfraredTerminalCommands);
             EnableAction(action, iDelegateInfraredTerminalCommands, GCHandle.ToIntPtr(iGch));

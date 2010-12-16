@@ -515,7 +515,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionType()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Type");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aType", iPropertyProductType));
             iDelegateType = new ActionDelegate(DoType);
             EnableAction(action, iDelegateType, GCHandle.ToIntPtr(iGch));
@@ -529,7 +528,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionModel()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Model");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aModel", iPropertyProductModel));
             iDelegateModel = new ActionDelegate(DoModel);
             EnableAction(action, iDelegateModel, GCHandle.ToIntPtr(iGch));
@@ -543,7 +541,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionName()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Name");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aName", iPropertyProductName));
             iDelegateName = new ActionDelegate(DoName);
             EnableAction(action, iDelegateName, GCHandle.ToIntPtr(iGch));
@@ -557,7 +554,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionSetName()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetName");
-            List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterRelated("aName", iPropertyProductName));
             iDelegateSetName = new ActionDelegate(DoSetName);
             EnableAction(action, iDelegateSetName, GCHandle.ToIntPtr(iGch));
@@ -571,7 +567,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionRoom()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Room");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aRoom", iPropertyProductRoom));
             iDelegateRoom = new ActionDelegate(DoRoom);
             EnableAction(action, iDelegateRoom, GCHandle.ToIntPtr(iGch));
@@ -585,7 +580,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionSetRoom()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetRoom");
-            List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterRelated("aRoom", iPropertyProductRoom));
             iDelegateSetRoom = new ActionDelegate(DoSetRoom);
             EnableAction(action, iDelegateSetRoom, GCHandle.ToIntPtr(iGch));
@@ -638,7 +632,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionSourceXml()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SourceXml");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aSourceXml", iPropertyProductSourceXml));
             iDelegateSourceXml = new ActionDelegate(DoSourceXml);
             EnableAction(action, iDelegateSourceXml, GCHandle.ToIntPtr(iGch));

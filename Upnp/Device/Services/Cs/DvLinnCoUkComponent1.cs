@@ -218,7 +218,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionAmplifierAttenuation()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("AmplifierAttenuation");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aAttenuation", iPropertyAmplifierAttenuation));
             iDelegateAmplifierAttenuation = new ActionDelegate(DoAmplifierAttenuation);
             EnableAction(action, iDelegateAmplifierAttenuation, GCHandle.ToIntPtr(iGch));
@@ -232,7 +231,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionSetAmplifierAttenuation()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetAmplifierAttenuation");
-            List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterRelated("aAttenuation", iPropertyAmplifierAttenuation));
             iDelegateSetAmplifierAttenuation = new ActionDelegate(DoSetAmplifierAttenuation);
             EnableAction(action, iDelegateSetAmplifierAttenuation, GCHandle.ToIntPtr(iGch));

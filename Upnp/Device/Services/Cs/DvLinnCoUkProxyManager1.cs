@@ -208,7 +208,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionKontrolProductConnected()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("KontrolProductConnected");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aConnected", iPropertyKontrolProductConnected));
             iDelegateKontrolProductConnected = new ActionDelegate(DoKontrolProductConnected);
             EnableAction(action, iDelegateKontrolProductConnected, GCHandle.ToIntPtr(iGch));
@@ -222,7 +221,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionSetKontrolProductConnected()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetKontrolProductConnected");
-            List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterRelated("aConnected", iPropertyKontrolProductConnected));
             iDelegateSetKontrolProductConnected = new ActionDelegate(DoSetKontrolProductConnected);
             EnableAction(action, iDelegateSetKontrolProductConnected, GCHandle.ToIntPtr(iGch));
@@ -262,7 +260,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionDiscPlayerConnected()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("DiscPlayerConnected");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aConnected", iPropertyDiscPlayerConnected));
             iDelegateDiscPlayerConnected = new ActionDelegate(DoDiscPlayerConnected);
             EnableAction(action, iDelegateDiscPlayerConnected, GCHandle.ToIntPtr(iGch));
@@ -276,7 +273,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionSetDiscPlayerConnected()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetDiscPlayerConnected");
-            List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterRelated("aConnected", iPropertyDiscPlayerConnected));
             iDelegateSetDiscPlayerConnected = new ActionDelegate(DoSetDiscPlayerConnected);
             EnableAction(action, iDelegateSetDiscPlayerConnected, GCHandle.ToIntPtr(iGch));

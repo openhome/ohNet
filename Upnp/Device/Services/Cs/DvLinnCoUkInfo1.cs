@@ -475,7 +475,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionTrack()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Track");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aUri", iPropertyUri));
             action.AddOutputParameter(new ParameterRelated("aMetadata", iPropertyMetadata));
             iDelegateTrack = new ActionDelegate(DoTrack);
@@ -490,7 +489,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionDetails()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Details");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aDuration", iPropertyDuration));
             action.AddOutputParameter(new ParameterRelated("aBitRate", iPropertyBitRate));
             action.AddOutputParameter(new ParameterRelated("aBitDepth", iPropertyBitDepth));
@@ -509,7 +507,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionMetatext()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("Metatext");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("aMetatext", iPropertyMetatext));
             iDelegateMetatext = new ActionDelegate(DoMetatext);
             EnableAction(action, iDelegateMetatext, GCHandle.ToIntPtr(iGch));

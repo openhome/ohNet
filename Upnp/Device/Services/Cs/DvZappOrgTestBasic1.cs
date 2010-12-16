@@ -394,7 +394,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionSetString()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("SetString");
-            List<String> allowedValues = new List<String>();
             action.AddInputParameter(new ParameterRelated("ValueStr", iPropertyVarStr));
             iDelegateSetString = new ActionDelegate(DoSetString);
             EnableAction(action, iDelegateSetString, GCHandle.ToIntPtr(iGch));
@@ -408,7 +407,6 @@ namespace Zapp.Device.Providers
         protected unsafe void EnableActionGetString()
         {
             Zapp.Core.Action action = new Zapp.Core.Action("GetString");
-            List<String> allowedValues = new List<String>();
             action.AddOutputParameter(new ParameterRelated("ValueStr", iPropertyVarStr));
             iDelegateGetString = new ActionDelegate(DoGetString);
             EnableAction(action, iDelegateGetString, GCHandle.ToIntPtr(iGch));
