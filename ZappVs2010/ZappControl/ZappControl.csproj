@@ -82,6 +82,12 @@ copy /B Build\Obj\Windows\ZappUpnp.dll $(TargetDir)</PreBuildEvent>
     <Compile Include="..\..\Upnp\Public\Cs\CpProxy.cs">
       <Link>CpProxy.cs</Link>
     </Compile>
+    <Compile Include="..\..\Upnp\Public\Cs\CpService.cs">
+      <Link>CpService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Upnp\Public\Cs\Service.cs">
+      <Link>Service.cs</Link>
+    </Compile>
     <Compile Include="..\..\Upnp\Public\Cs\Zapp.cs">
       <Link>Zapp.cs</Link>
     </Compile>
