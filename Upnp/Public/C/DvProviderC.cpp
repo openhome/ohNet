@@ -243,7 +243,7 @@ int32_t DvInvocationWriteStart(DvInvocationC aInvocation)
     try {
         invocation->InvocationWriteStart();
     }
-    catch (InvocationError&) {
+    catch (WriterError&) {
         return -1;
     }
     return 0;
@@ -255,7 +255,7 @@ int32_t DvInvocationWriteInt(DvInvocationC aInvocation, const char* aName, int32
     try {
         invocation->InvocationWriteInt(aName, aValue);
     }
-    catch (InvocationError&) {
+    catch (WriterError&) {
         return -1;
     }
     return 0;
@@ -267,7 +267,7 @@ int32_t DvInvocationWriteUint(DvInvocationC aInvocation, const char* aName, uint
     try {
         invocation->InvocationWriteUint(aName, aValue);
     }
-    catch (InvocationError&) {
+    catch (WriterError&) {
         return -1;
     }
     return 0;
@@ -280,7 +280,7 @@ int32_t DvInvocationWriteBool(DvInvocationC aInvocation, const char* aName, uint
         TBool value = (aValue != 0);
         invocation->InvocationWriteBool(aName, value);
     }
-    catch (InvocationError&) {
+    catch (WriterError&) {
         return -1;
     }
     return 0;
@@ -292,7 +292,7 @@ int32_t DvInvocationWriteStringStart(DvInvocationC aInvocation, const char* aNam
     try {
         invocation->InvocationWriteStringStart(aName);
     }
-    catch (InvocationError&) {
+    catch (WriterError&) {
         return -1;
     }
     return 0;
@@ -305,7 +305,7 @@ int32_t DvInvocationWriteString(DvInvocationC aInvocation, const char* aValue)
         Brn value(aValue);
         invocation->InvocationWriteString(value);
     }
-    catch (InvocationError&) {
+    catch (WriterError&) {
         return -1;
     }
     return 0;
@@ -317,7 +317,7 @@ int32_t DvInvocationWriteStringEnd(DvInvocationC aInvocation, const char* aName)
     try {
         invocation->InvocationWriteStringEnd(aName);
     }
-    catch (InvocationError&) {
+    catch (WriterError&) {
         return -1;
     }
     return 0;
@@ -329,7 +329,7 @@ int32_t DvInvocationWriteBinaryStart(DvInvocationC aInvocation, const char* aNam
     try {
         invocation->InvocationWriteBinaryStart(aName);
     }
-    catch (InvocationError&) {
+    catch (WriterError&) {
         return -1;
     }
     return 0;
@@ -342,7 +342,7 @@ int32_t DvInvocationWriteBinary(DvInvocationC aInvocation, const uint8_t* aData,
         Brn data(aData, aLen);
         invocation->InvocationWriteBinary(data);
     }
-    catch (InvocationError&) {
+    catch (WriterError&) {
         return -1;
     }
     return 0;
@@ -354,7 +354,7 @@ int32_t DvInvocationWriteBinaryEnd(DvInvocationC aInvocation, const char* aName)
     try {
         invocation->InvocationWriteBinaryEnd(aName);
     }
-    catch (InvocationError&) {
+    catch (WriterError&) {
         return -1;
     }
     return 0;
@@ -366,7 +366,7 @@ int32_t DvInvocationWriteEnd(DvInvocationC aInvocation)
     try {
         invocation->InvocationWriteEnd();
     }
-    catch (InvocationError&) {
+    catch (WriterError&) {
         return -1;
     }
     return 0;
