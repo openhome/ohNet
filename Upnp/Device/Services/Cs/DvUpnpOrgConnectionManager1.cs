@@ -320,22 +320,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager1 self = (DvProviderUpnpOrgConnectionManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string source;
+            string sink;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                string source;
-                string sink;
                 self.GetProtocolInfo(aVersion, out source, out sink);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("Source", source);
                 invocation.WriteString("Sink", sink);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -347,17 +362,40 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager1 self = (DvProviderUpnpOrgConnectionManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string remoteProtocolInfo;
+            string peerConnectionManager;
+            int peerConnectionID;
+            string direction;
+            int connectionID;
+            int aVTransportID;
+            int rcsID;
+            try
+            {
                 invocation.ReadStart();
-                string remoteProtocolInfo = invocation.ReadString("RemoteProtocolInfo");
-                string peerConnectionManager = invocation.ReadString("PeerConnectionManager");
-                int peerConnectionID = invocation.ReadInt("PeerConnectionID");
-                string direction = invocation.ReadString("Direction");
+                remoteProtocolInfo = invocation.ReadString("RemoteProtocolInfo");
+                peerConnectionManager = invocation.ReadString("PeerConnectionManager");
+                peerConnectionID = invocation.ReadInt("PeerConnectionID");
+                direction = invocation.ReadString("Direction");
                 invocation.ReadEnd();
-                int connectionID;
-                int aVTransportID;
-                int rcsID;
                 self.PrepareForConnection(aVersion, remoteProtocolInfo, peerConnectionManager, peerConnectionID, direction, out connectionID, out aVTransportID, out rcsID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteInt("ConnectionID", connectionID);
                 invocation.WriteInt("AVTransportID", aVTransportID);
@@ -365,10 +403,6 @@ namespace Zapp.Device.Providers
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -380,19 +414,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager1 self = (DvProviderUpnpOrgConnectionManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            int connectionID;
+            try
+            {
                 invocation.ReadStart();
-                int connectionID = invocation.ReadInt("ConnectionID");
+                connectionID = invocation.ReadInt("ConnectionID");
                 invocation.ReadEnd();
                 self.ConnectionComplete(aVersion, connectionID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -404,20 +454,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager1 self = (DvProviderUpnpOrgConnectionManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string connectionIDs;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                string connectionIDs;
                 self.GetCurrentConnectionIDs(aVersion, out connectionIDs);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("ConnectionIDs", connectionIDs);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -429,18 +494,38 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager1 self = (DvProviderUpnpOrgConnectionManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            int connectionID;
+            int rcsID;
+            int aVTransportID;
+            string protocolInfo;
+            string peerConnectionManager;
+            int peerConnectionID;
+            string direction;
+            string status;
+            try
+            {
                 invocation.ReadStart();
-                int connectionID = invocation.ReadInt("ConnectionID");
+                connectionID = invocation.ReadInt("ConnectionID");
                 invocation.ReadEnd();
-                int rcsID;
-                int aVTransportID;
-                string protocolInfo;
-                string peerConnectionManager;
-                int peerConnectionID;
-                string direction;
-                string status;
                 self.GetCurrentConnectionInfo(aVersion, connectionID, out rcsID, out aVTransportID, out protocolInfo, out peerConnectionManager, out peerConnectionID, out direction, out status);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteInt("RcsID", rcsID);
                 invocation.WriteInt("AVTransportID", aVTransportID);
@@ -452,10 +537,6 @@ namespace Zapp.Device.Providers
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }

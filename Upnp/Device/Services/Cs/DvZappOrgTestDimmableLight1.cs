@@ -123,20 +123,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestDimmableLight1 self = (DvProviderZappOrgTestDimmableLight1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint level;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                uint level;
                 self.GetLevel(aVersion, out level);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteUint("Level", level);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -148,19 +163,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestDimmableLight1 self = (DvProviderZappOrgTestDimmableLight1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint level;
+            try
+            {
                 invocation.ReadStart();
-                uint level = invocation.ReadUint("Level");
+                level = invocation.ReadUint("Level");
                 invocation.ReadEnd();
                 self.SetLevel(aVersion, level);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }

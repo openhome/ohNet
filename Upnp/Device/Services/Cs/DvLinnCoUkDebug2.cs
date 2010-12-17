@@ -118,19 +118,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDebug2 self = (DvProviderLinnCoUkDebug2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint aDebugLevel;
+            try
+            {
                 invocation.ReadStart();
-                uint aDebugLevel = invocation.ReadUint("aDebugLevel");
+                aDebugLevel = invocation.ReadUint("aDebugLevel");
                 invocation.ReadEnd();
                 self.SetDebugLevel(aVersion, aDebugLevel);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -142,20 +158,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDebug2 self = (DvProviderLinnCoUkDebug2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint aDebugLevel;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                uint aDebugLevel;
                 self.DebugLevel(aVersion, out aDebugLevel);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteUint("aDebugLevel", aDebugLevel);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -167,20 +198,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDebug2 self = (DvProviderLinnCoUkDebug2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint aMemAddress;
+            string aMemData;
+            try
+            {
                 invocation.ReadStart();
-                uint aMemAddress = invocation.ReadUint("aMemAddress");
-                string aMemData = invocation.ReadBinary("aMemData");
+                aMemAddress = invocation.ReadUint("aMemAddress");
+                aMemData = invocation.ReadBinary("aMemData");
                 invocation.ReadEnd();
                 self.MemWrite(aVersion, aMemAddress, aMemData);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }

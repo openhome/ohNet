@@ -484,20 +484,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            bool aEnabled;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                bool aEnabled;
                 self.AmplifierEnabled(aVersion, out aEnabled);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteBool("aEnabled", aEnabled);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -509,19 +524,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            bool aEnabled;
+            try
+            {
                 invocation.ReadStart();
-                bool aEnabled = invocation.ReadBool("aEnabled");
+                aEnabled = invocation.ReadBool("aEnabled");
                 invocation.ReadEnd();
                 self.SetAmplifierEnabled(aVersion, aEnabled);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -533,20 +564,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string aAttenuation;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                string aAttenuation;
                 self.AmplifierAttenuation(aVersion, out aAttenuation);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("aAttenuation", aAttenuation);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -558,19 +604,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string aAttenuation;
+            try
+            {
                 invocation.ReadStart();
-                string aAttenuation = invocation.ReadString("aAttenuation");
+                aAttenuation = invocation.ReadString("aAttenuation");
                 invocation.ReadEnd();
                 self.SetAmplifierAttenuation(aVersion, aAttenuation);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -582,19 +644,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            bool aEnabled;
+            try
+            {
                 invocation.ReadStart();
-                bool aEnabled = invocation.ReadBool("aEnabled");
+                aEnabled = invocation.ReadBool("aEnabled");
                 invocation.ReadEnd();
                 self.SetVolumeControlEnabled(aVersion, aEnabled);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -606,20 +684,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            bool aEnabled;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                bool aEnabled;
                 self.VolumeControlEnabled(aVersion, out aEnabled);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteBool("aEnabled", aEnabled);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -631,19 +724,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            bool aRaw;
+            try
+            {
                 invocation.ReadStart();
-                bool aRaw = invocation.ReadBool("aRaw");
+                aRaw = invocation.ReadBool("aRaw");
                 invocation.ReadEnd();
                 self.SetDigitalAudioOutputRaw(aVersion, aRaw);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -655,20 +764,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            bool aRaw;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                bool aRaw;
                 self.DigitalAudioOutputRaw(aVersion, out aRaw);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteBool("aRaw", aRaw);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -680,20 +804,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            bool aOverTemperature;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                bool aOverTemperature;
                 self.AmplifierOverTemperature(aVersion, out aOverTemperature);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteBool("aOverTemperature", aOverTemperature);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -705,20 +844,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            bool aLinkConnected;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                bool aLinkConnected;
                 self.EthernetLinkConnected(aVersion, out aLinkConnected);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteBool("aLinkConnected", aLinkConnected);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -730,18 +884,33 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
                 self.Locate(aVersion);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }

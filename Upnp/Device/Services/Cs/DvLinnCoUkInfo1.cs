@@ -581,13 +581,32 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkInfo1 self = (DvProviderLinnCoUkInfo1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint aTrackCount;
+            uint aDetailsCount;
+            uint aMetatextCount;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                uint aTrackCount;
-                uint aDetailsCount;
-                uint aMetatextCount;
                 self.Counters(aVersion, out aTrackCount, out aDetailsCount, out aMetatextCount);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteUint("aTrackCount", aTrackCount);
                 invocation.WriteUint("aDetailsCount", aDetailsCount);
@@ -595,10 +614,6 @@ namespace Zapp.Device.Providers
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -610,22 +625,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkInfo1 self = (DvProviderLinnCoUkInfo1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string aUri;
+            string aMetadata;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                string aUri;
-                string aMetadata;
                 self.Track(aVersion, out aUri, out aMetadata);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("aUri", aUri);
                 invocation.WriteString("aMetadata", aMetadata);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -637,16 +667,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkInfo1 self = (DvProviderLinnCoUkInfo1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint aDuration;
+            uint aBitRate;
+            uint aBitDepth;
+            uint aSampleRate;
+            bool aLossless;
+            string aCodecName;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                uint aDuration;
-                uint aBitRate;
-                uint aBitDepth;
-                uint aSampleRate;
-                bool aLossless;
-                string aCodecName;
                 self.Details(aVersion, out aDuration, out aBitRate, out aBitDepth, out aSampleRate, out aLossless, out aCodecName);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteUint("aDuration", aDuration);
                 invocation.WriteUint("aBitRate", aBitRate);
@@ -660,10 +709,6 @@ namespace Zapp.Device.Providers
             {
                 return -1;
             }
-            catch (PropertyUpdateError)
-            {
-                return -1;
-            }
             return 0;
         }
 
@@ -672,20 +717,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkInfo1 self = (DvProviderLinnCoUkInfo1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string aMetatext;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                string aMetatext;
                 self.Metatext(aVersion, out aMetatext);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("aMetatext", aMetatext);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }

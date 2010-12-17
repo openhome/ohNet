@@ -158,20 +158,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestWidgetController1 self = (DvProviderZappOrgTestWidgetController1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string widgetUdn;
+            uint widgetClass;
+            try
+            {
                 invocation.ReadStart();
-                string widgetUdn = invocation.ReadString("WidgetUdn");
-                uint widgetClass = invocation.ReadUint("WidgetClass");
+                widgetUdn = invocation.ReadString("WidgetUdn");
+                widgetClass = invocation.ReadUint("WidgetClass");
                 invocation.ReadEnd();
                 self.CreateWidget(aVersion, widgetUdn, widgetClass);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -183,19 +200,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestWidgetController1 self = (DvProviderZappOrgTestWidgetController1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string widgetUdn;
+            try
+            {
                 invocation.ReadStart();
-                string widgetUdn = invocation.ReadString("WidgetUdn");
+                widgetUdn = invocation.ReadString("WidgetUdn");
                 invocation.ReadEnd();
                 self.RemoveWidget(aVersion, widgetUdn);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -207,21 +240,39 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestWidgetController1 self = (DvProviderZappOrgTestWidgetController1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string widgetUdn;
+            uint registerIndex;
+            uint registerValue;
+            try
+            {
                 invocation.ReadStart();
-                string widgetUdn = invocation.ReadString("WidgetUdn");
-                uint registerIndex = invocation.ReadUint("RegisterIndex");
-                uint registerValue = invocation.ReadUint("RegisterValue");
+                widgetUdn = invocation.ReadString("WidgetUdn");
+                registerIndex = invocation.ReadUint("RegisterIndex");
+                registerValue = invocation.ReadUint("RegisterValue");
                 invocation.ReadEnd();
                 self.SetWidgetRegister(aVersion, widgetUdn, registerIndex, registerValue);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -233,22 +284,39 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestWidgetController1 self = (DvProviderZappOrgTestWidgetController1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string widgetUdn;
+            uint registerIndex;
+            uint registerValue;
+            try
+            {
                 invocation.ReadStart();
-                string widgetUdn = invocation.ReadString("WidgetUdn");
-                uint registerIndex = invocation.ReadUint("RegisterIndex");
+                widgetUdn = invocation.ReadString("WidgetUdn");
+                registerIndex = invocation.ReadUint("RegisterIndex");
                 invocation.ReadEnd();
-                uint registerValue;
                 self.GetWidgetRegister(aVersion, widgetUdn, registerIndex, out registerValue);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteUint("RegisterValue", registerValue);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }

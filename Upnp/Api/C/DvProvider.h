@@ -275,6 +275,20 @@ DllExport int32_t DvInvocationReadBinary(DvInvocationC aInvocation, const char* 
 DllExport int32_t DvInvocationReadEnd(DvInvocationC aInvocation);
 
 /**
+ * Report an error reading or writing an invocation
+ *
+ * Must be called if DvInvocationReadEnd() isn't reached.
+ * May be called if DvInvocationWriteStart() or later have been called.
+ *
+ * @param[in]  aInvocation  Invocation handle.  Passed to ZappCallbackDvInvocation
+ * @param[in]  aCode        Error code
+ * @param[in]  aDescription Error description
+ *
+ * @return  0 on success; non-zero on error
+ */
+DllExport int32_t DvInvocationReportError(DvInvocationC aInvocation, uint32_t aCode, const char* aDescription);
+
+/**
  * Begin reading (output arguments for) an invocation
  *
  * Must be called before the values of any output arguments are written.

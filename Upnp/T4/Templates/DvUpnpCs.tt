@@ -229,18 +229,41 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             <#=className#> self = (<#=className#>)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+            <#=argtype[i.variable.type]#> <#=ArgNameLocal(i.name)#>;
+<#      } #>
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+            <#=argtype[o.variable.type]#> <#=ArgNameLocal(o.name)#>;
+<#      } #>
+            try
+            {
                 invocation.ReadStart();
 <#      foreach (Argument i in a.inargs) #>
 <#      { #>
-                <#=argtype[i.variable.type]#> <#=ArgNameLocal(i.name)#> = invocation.<#=invocationReader[i.variable.type]#>("<#=i.name#>");
+                <#=ArgNameLocal(i.name)#> = invocation.<#=invocationReader[i.variable.type]#>("<#=i.name#>");
 <#      } #>
                 invocation.ReadEnd();
-<#      foreach (Argument o in a.outargs) #>
-<#      { #>
-                <#=argtype[o.variable.type]#> <#=ArgNameLocal(o.name)#>;
-<#      } #>
                 self.<#=a.name#>(aVersion<#=ArgNames(a)#>);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
@@ -249,10 +272,6 @@ namespace Zapp.Device.Providers
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }

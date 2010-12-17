@@ -169,13 +169,32 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkTime1 self = (DvProviderLinnCoUkTime1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint aTrackCount;
+            uint aDuration;
+            uint aSeconds;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                uint aTrackCount;
-                uint aDuration;
-                uint aSeconds;
                 self.Time(aVersion, out aTrackCount, out aDuration, out aSeconds);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteUint("aTrackCount", aTrackCount);
                 invocation.WriteUint("aDuration", aDuration);
@@ -183,10 +202,6 @@ namespace Zapp.Device.Providers
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }

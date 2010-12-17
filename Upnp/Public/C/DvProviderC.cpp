@@ -237,6 +237,19 @@ int32_t DvInvocationReadEnd(DvInvocationC aInvocation)
     return 0;
 }
 
+int32_t DvInvocationReportError(DvInvocationC aInvocation, uint32_t aCode, const char* aDescription)
+{
+    IDviInvocation* invocation = InvocationFromHandle(aInvocation);
+    try {
+        Brn desc(aDescription);
+        invocation->InvocationReportError(aCode, desc);
+    }
+    catch (WriterError&) {
+        return -1;
+    }
+    return 0;
+}
+
 int32_t DvInvocationWriteStart(DvInvocationC aInvocation)
 {
     IDviInvocation* invocation = InvocationFromHandle(aInvocation);

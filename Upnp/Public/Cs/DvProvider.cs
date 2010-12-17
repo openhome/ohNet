@@ -255,6 +255,8 @@ namespace Zapp.Device
         [DllImport("ZappUpnp")]
         static extern int DvInvocationReadEnd(IntPtr aInvocation);
         [DllImport("ZappUpnp")]
+        static extern unsafe int DvInvocationReportError(IntPtr aInvocation, uint aCode, char* aDescription);
+        [DllImport("ZappUpnp")]
         static extern int DvInvocationWriteStart(IntPtr aInvocation);
         [DllImport("ZappUpnp")]
         static extern unsafe int DvInvocationWriteInt(IntPtr aInvocation, char* aName, int aValue);
@@ -382,6 +384,20 @@ namespace Zapp.Device
         {
             int err = DvInvocationReadEnd(iHandle);
             CheckError(err);
+        }
+        /// <summary>
+        /// Report an error reading or writing an invocation
+        /// </summary>
+        /// <remarks>Must be called if ReadEnd() isn't reached.
+        /// May be called if WriteStart() or later have been called.</remarks>
+        /// <param name="aCode">Error code</param>
+        /// <param name="aDescription">Error description</param>
+        public unsafe void ReportError(uint aCode, String aDescription)
+        {
+            char* desc = (char*)Marshal.StringToHGlobalAnsi(aDescription);
+            // no point in propogating any error - client code can't cope with error reporting failing
+            DvInvocationReportError(iHandle, aCode, desc);
+            Marshal.FreeHGlobal((IntPtr)desc);
         }
         /// <summary>
         /// Begin reading (output arguments for) an invocation

@@ -661,22 +661,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string sortCaps;
+            uint sortLevelCap;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                string sortCaps;
-                uint sortLevelCap;
                 self.GetSortCapabilities(aVersion, out sortCaps, out sortLevelCap);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("SortCaps", sortCaps);
                 invocation.WriteUint("SortLevelCap", sortLevelCap);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -688,21 +703,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string dataTypeID;
+            string propertyList;
+            try
+            {
                 invocation.ReadStart();
-                string dataTypeID = invocation.ReadString("DataTypeID");
+                dataTypeID = invocation.ReadString("DataTypeID");
                 invocation.ReadEnd();
-                string propertyList;
                 self.GetPropertyList(aVersion, dataTypeID, out propertyList);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("PropertyList", propertyList);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -714,22 +745,39 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string dataTypeID;
+            string filter;
+            string propertyInfo;
+            try
+            {
                 invocation.ReadStart();
-                string dataTypeID = invocation.ReadString("DataTypeID");
-                string filter = invocation.ReadString("Filter");
+                dataTypeID = invocation.ReadString("DataTypeID");
+                filter = invocation.ReadString("Filter");
                 invocation.ReadEnd();
-                string propertyInfo;
                 self.GetAllowedValues(aVersion, dataTypeID, filter, out propertyInfo);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("PropertyInfo", propertyInfo);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -741,20 +789,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint id;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                uint id;
                 self.GetStateUpdateID(aVersion, out id);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteUint("Id", id);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -766,18 +829,41 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string filter;
+            uint startingIndex;
+            uint requestedCount;
+            string sortCriteria;
+            string result;
+            uint numberReturned;
+            uint totalMatches;
+            uint updateID;
+            try
+            {
                 invocation.ReadStart();
-                string filter = invocation.ReadString("Filter");
-                uint startingIndex = invocation.ReadUint("StartingIndex");
-                uint requestedCount = invocation.ReadUint("RequestedCount");
-                string sortCriteria = invocation.ReadString("SortCriteria");
+                filter = invocation.ReadString("Filter");
+                startingIndex = invocation.ReadUint("StartingIndex");
+                requestedCount = invocation.ReadUint("RequestedCount");
+                sortCriteria = invocation.ReadString("SortCriteria");
                 invocation.ReadEnd();
-                string result;
-                uint numberReturned;
-                uint totalMatches;
-                uint updateID;
                 self.BrowseRecordSchedules(aVersion, filter, startingIndex, requestedCount, sortCriteria, out result, out numberReturned, out totalMatches, out updateID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("Result", result);
                 invocation.WriteUint("NumberReturned", numberReturned);
@@ -786,10 +872,6 @@ namespace Zapp.Device.Providers
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -801,19 +883,43 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string recordScheduleID;
+            string filter;
+            uint startingIndex;
+            uint requestedCount;
+            string sortCriteria;
+            string result;
+            uint numberReturned;
+            uint totalMatches;
+            uint updateID;
+            try
+            {
                 invocation.ReadStart();
-                string recordScheduleID = invocation.ReadString("RecordScheduleID");
-                string filter = invocation.ReadString("Filter");
-                uint startingIndex = invocation.ReadUint("StartingIndex");
-                uint requestedCount = invocation.ReadUint("RequestedCount");
-                string sortCriteria = invocation.ReadString("SortCriteria");
+                recordScheduleID = invocation.ReadString("RecordScheduleID");
+                filter = invocation.ReadString("Filter");
+                startingIndex = invocation.ReadUint("StartingIndex");
+                requestedCount = invocation.ReadUint("RequestedCount");
+                sortCriteria = invocation.ReadString("SortCriteria");
                 invocation.ReadEnd();
-                string result;
-                uint numberReturned;
-                uint totalMatches;
-                uint updateID;
                 self.BrowseRecordTasks(aVersion, recordScheduleID, filter, startingIndex, requestedCount, sortCriteria, out result, out numberReturned, out totalMatches, out updateID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("Result", result);
                 invocation.WriteUint("NumberReturned", numberReturned);
@@ -825,10 +931,6 @@ namespace Zapp.Device.Providers
             {
                 return -1;
             }
-            catch (PropertyUpdateError)
-            {
-                return -1;
-            }
             return 0;
         }
 
@@ -837,14 +939,34 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string elements;
+            string recordScheduleID;
+            string result;
+            uint updateID;
+            try
+            {
                 invocation.ReadStart();
-                string elements = invocation.ReadString("Elements");
+                elements = invocation.ReadString("Elements");
                 invocation.ReadEnd();
-                string recordScheduleID;
-                string result;
-                uint updateID;
                 self.CreateRecordSchedule(aVersion, elements, out recordScheduleID, out result, out updateID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("RecordScheduleID", recordScheduleID);
                 invocation.WriteString("Result", result);
@@ -852,10 +974,6 @@ namespace Zapp.Device.Providers
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -867,19 +985,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string recordScheduleID;
+            try
+            {
                 invocation.ReadStart();
-                string recordScheduleID = invocation.ReadString("RecordScheduleID");
+                recordScheduleID = invocation.ReadString("RecordScheduleID");
                 invocation.ReadEnd();
                 self.DeleteRecordSchedule(aVersion, recordScheduleID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -891,24 +1025,41 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string recordScheduleID;
+            string filter;
+            string result;
+            uint updateID;
+            try
+            {
                 invocation.ReadStart();
-                string recordScheduleID = invocation.ReadString("RecordScheduleID");
-                string filter = invocation.ReadString("Filter");
+                recordScheduleID = invocation.ReadString("RecordScheduleID");
+                filter = invocation.ReadString("Filter");
                 invocation.ReadEnd();
-                string result;
-                uint updateID;
                 self.GetRecordSchedule(aVersion, recordScheduleID, filter, out result, out updateID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("Result", result);
                 invocation.WriteUint("UpdateID", updateID);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -920,19 +1071,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string recordScheduleID;
+            try
+            {
                 invocation.ReadStart();
-                string recordScheduleID = invocation.ReadString("RecordScheduleID");
+                recordScheduleID = invocation.ReadString("RecordScheduleID");
                 invocation.ReadEnd();
                 self.EnableRecordSchedule(aVersion, recordScheduleID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -944,19 +1111,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string recordScheduleID;
+            try
+            {
                 invocation.ReadStart();
-                string recordScheduleID = invocation.ReadString("RecordScheduleID");
+                recordScheduleID = invocation.ReadString("RecordScheduleID");
                 invocation.ReadEnd();
                 self.DisableRecordSchedule(aVersion, recordScheduleID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -968,19 +1151,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string recordTaskID;
+            try
+            {
                 invocation.ReadStart();
-                string recordTaskID = invocation.ReadString("RecordTaskID");
+                recordTaskID = invocation.ReadString("RecordTaskID");
                 invocation.ReadEnd();
                 self.DeleteRecordTask(aVersion, recordTaskID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -992,24 +1191,41 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string recordTaskID;
+            string filter;
+            string result;
+            uint updateID;
+            try
+            {
                 invocation.ReadStart();
-                string recordTaskID = invocation.ReadString("RecordTaskID");
-                string filter = invocation.ReadString("Filter");
+                recordTaskID = invocation.ReadString("RecordTaskID");
+                filter = invocation.ReadString("Filter");
                 invocation.ReadEnd();
-                string result;
-                uint updateID;
                 self.GetRecordTask(aVersion, recordTaskID, filter, out result, out updateID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("Result", result);
                 invocation.WriteUint("UpdateID", updateID);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1021,19 +1237,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string recordTaskID;
+            try
+            {
                 invocation.ReadStart();
-                string recordTaskID = invocation.ReadString("RecordTaskID");
+                recordTaskID = invocation.ReadString("RecordTaskID");
                 invocation.ReadEnd();
                 self.EnableRecordTask(aVersion, recordTaskID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1045,19 +1277,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string recordTaskID;
+            try
+            {
                 invocation.ReadStart();
-                string recordTaskID = invocation.ReadString("RecordTaskID");
+                recordTaskID = invocation.ReadString("RecordTaskID");
                 invocation.ReadEnd();
                 self.DisableRecordTask(aVersion, recordTaskID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1069,19 +1317,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string recordTaskID;
+            try
+            {
                 invocation.ReadStart();
-                string recordTaskID = invocation.ReadString("RecordTaskID");
+                recordTaskID = invocation.ReadString("RecordTaskID");
                 invocation.ReadEnd();
                 self.ResetRecordTask(aVersion, recordTaskID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1093,23 +1357,39 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string recordScheduleID;
+            string recordScheduleConflictIDList;
+            uint updateID;
+            try
+            {
                 invocation.ReadStart();
-                string recordScheduleID = invocation.ReadString("RecordScheduleID");
+                recordScheduleID = invocation.ReadString("RecordScheduleID");
                 invocation.ReadEnd();
-                string recordScheduleConflictIDList;
-                uint updateID;
                 self.GetRecordScheduleConflicts(aVersion, recordScheduleID, out recordScheduleConflictIDList, out updateID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("RecordScheduleConflictIDList", recordScheduleConflictIDList);
                 invocation.WriteUint("UpdateID", updateID);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1121,23 +1401,39 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgScheduledRecording2 self = (DvProviderUpnpOrgScheduledRecording2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string recordTaskID;
+            string recordTaskConflictIDList;
+            uint updateID;
+            try
+            {
                 invocation.ReadStart();
-                string recordTaskID = invocation.ReadString("RecordTaskID");
+                recordTaskID = invocation.ReadString("RecordTaskID");
                 invocation.ReadEnd();
-                string recordTaskConflictIDList;
-                uint updateID;
                 self.GetRecordTaskConflicts(aVersion, recordTaskID, out recordTaskConflictIDList, out updateID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("RecordTaskConflictIDList", recordTaskConflictIDList);
                 invocation.WriteUint("UpdateID", updateID);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }

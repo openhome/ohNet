@@ -705,20 +705,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string searchCaps;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                string searchCaps;
                 self.GetSearchCapabilities(aVersion, out searchCaps);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("SearchCaps", searchCaps);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -730,20 +745,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string sortCaps;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                string sortCaps;
                 self.GetSortCapabilities(aVersion, out sortCaps);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("SortCaps", sortCaps);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -755,20 +785,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string sortExtensionCaps;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                string sortExtensionCaps;
                 self.GetSortExtensionCapabilities(aVersion, out sortExtensionCaps);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("SortExtensionCaps", sortExtensionCaps);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -780,20 +825,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string featureList;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                string featureList;
                 self.GetFeatureList(aVersion, out featureList);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("FeatureList", featureList);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -805,20 +865,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint id;
+            try
+            {
                 invocation.ReadStart();
                 invocation.ReadEnd();
-                uint id;
                 self.GetSystemUpdateID(aVersion, out id);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteUint("Id", id);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -830,20 +905,45 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string objectID;
+            string browseFlag;
+            string filter;
+            uint startingIndex;
+            uint requestedCount;
+            string sortCriteria;
+            string result;
+            uint numberReturned;
+            uint totalMatches;
+            uint updateID;
+            try
+            {
                 invocation.ReadStart();
-                string objectID = invocation.ReadString("ObjectID");
-                string browseFlag = invocation.ReadString("BrowseFlag");
-                string filter = invocation.ReadString("Filter");
-                uint startingIndex = invocation.ReadUint("StartingIndex");
-                uint requestedCount = invocation.ReadUint("RequestedCount");
-                string sortCriteria = invocation.ReadString("SortCriteria");
+                objectID = invocation.ReadString("ObjectID");
+                browseFlag = invocation.ReadString("BrowseFlag");
+                filter = invocation.ReadString("Filter");
+                startingIndex = invocation.ReadUint("StartingIndex");
+                requestedCount = invocation.ReadUint("RequestedCount");
+                sortCriteria = invocation.ReadString("SortCriteria");
                 invocation.ReadEnd();
-                string result;
-                uint numberReturned;
-                uint totalMatches;
-                uint updateID;
                 self.Browse(aVersion, objectID, browseFlag, filter, startingIndex, requestedCount, sortCriteria, out result, out numberReturned, out totalMatches, out updateID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("Result", result);
                 invocation.WriteUint("NumberReturned", numberReturned);
@@ -852,10 +952,6 @@ namespace Zapp.Device.Providers
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -867,20 +963,45 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string containerID;
+            string searchCriteria;
+            string filter;
+            uint startingIndex;
+            uint requestedCount;
+            string sortCriteria;
+            string result;
+            uint numberReturned;
+            uint totalMatches;
+            uint updateID;
+            try
+            {
                 invocation.ReadStart();
-                string containerID = invocation.ReadString("ContainerID");
-                string searchCriteria = invocation.ReadString("SearchCriteria");
-                string filter = invocation.ReadString("Filter");
-                uint startingIndex = invocation.ReadUint("StartingIndex");
-                uint requestedCount = invocation.ReadUint("RequestedCount");
-                string sortCriteria = invocation.ReadString("SortCriteria");
+                containerID = invocation.ReadString("ContainerID");
+                searchCriteria = invocation.ReadString("SearchCriteria");
+                filter = invocation.ReadString("Filter");
+                startingIndex = invocation.ReadUint("StartingIndex");
+                requestedCount = invocation.ReadUint("RequestedCount");
+                sortCriteria = invocation.ReadString("SortCriteria");
                 invocation.ReadEnd();
-                string result;
-                uint numberReturned;
-                uint totalMatches;
-                uint updateID;
                 self.Search(aVersion, containerID, searchCriteria, filter, startingIndex, requestedCount, sortCriteria, out result, out numberReturned, out totalMatches, out updateID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("Result", result);
                 invocation.WriteUint("NumberReturned", numberReturned);
@@ -892,10 +1013,6 @@ namespace Zapp.Device.Providers
             {
                 return -1;
             }
-            catch (PropertyUpdateError)
-            {
-                return -1;
-            }
             return 0;
         }
 
@@ -904,24 +1021,41 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string containerID;
+            string elements;
+            string objectID;
+            string result;
+            try
+            {
                 invocation.ReadStart();
-                string containerID = invocation.ReadString("ContainerID");
-                string elements = invocation.ReadString("Elements");
+                containerID = invocation.ReadString("ContainerID");
+                elements = invocation.ReadString("Elements");
                 invocation.ReadEnd();
-                string objectID;
-                string result;
                 self.CreateObject(aVersion, containerID, elements, out objectID, out result);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("ObjectID", objectID);
                 invocation.WriteString("Result", result);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -933,19 +1067,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string objectID;
+            try
+            {
                 invocation.ReadStart();
-                string objectID = invocation.ReadString("ObjectID");
+                objectID = invocation.ReadString("ObjectID");
                 invocation.ReadEnd();
                 self.DestroyObject(aVersion, objectID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -957,21 +1107,39 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string objectID;
+            string currentTagValue;
+            string newTagValue;
+            try
+            {
                 invocation.ReadStart();
-                string objectID = invocation.ReadString("ObjectID");
-                string currentTagValue = invocation.ReadString("CurrentTagValue");
-                string newTagValue = invocation.ReadString("NewTagValue");
+                objectID = invocation.ReadString("ObjectID");
+                currentTagValue = invocation.ReadString("CurrentTagValue");
+                newTagValue = invocation.ReadString("NewTagValue");
                 invocation.ReadEnd();
                 self.UpdateObject(aVersion, objectID, currentTagValue, newTagValue);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -983,22 +1151,39 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string objectID;
+            string newParentID;
+            string newObjectID;
+            try
+            {
                 invocation.ReadStart();
-                string objectID = invocation.ReadString("ObjectID");
-                string newParentID = invocation.ReadString("NewParentID");
+                objectID = invocation.ReadString("ObjectID");
+                newParentID = invocation.ReadString("NewParentID");
                 invocation.ReadEnd();
-                string newObjectID;
                 self.MoveObject(aVersion, objectID, newParentID, out newObjectID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("NewObjectID", newObjectID);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1010,22 +1195,39 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string sourceURI;
+            string destinationURI;
+            uint transferID;
+            try
+            {
                 invocation.ReadStart();
-                string sourceURI = invocation.ReadString("SourceURI");
-                string destinationURI = invocation.ReadString("DestinationURI");
+                sourceURI = invocation.ReadString("SourceURI");
+                destinationURI = invocation.ReadString("DestinationURI");
                 invocation.ReadEnd();
-                uint transferID;
                 self.ImportResource(aVersion, sourceURI, destinationURI, out transferID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteUint("TransferID", transferID);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1037,22 +1239,39 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string sourceURI;
+            string destinationURI;
+            uint transferID;
+            try
+            {
                 invocation.ReadStart();
-                string sourceURI = invocation.ReadString("SourceURI");
-                string destinationURI = invocation.ReadString("DestinationURI");
+                sourceURI = invocation.ReadString("SourceURI");
+                destinationURI = invocation.ReadString("DestinationURI");
                 invocation.ReadEnd();
-                uint transferID;
                 self.ExportResource(aVersion, sourceURI, destinationURI, out transferID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteUint("TransferID", transferID);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1064,19 +1283,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string resourceURI;
+            try
+            {
                 invocation.ReadStart();
-                string resourceURI = invocation.ReadString("ResourceURI");
+                resourceURI = invocation.ReadString("ResourceURI");
                 invocation.ReadEnd();
                 self.DeleteResource(aVersion, resourceURI);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1088,19 +1323,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint transferID;
+            try
+            {
                 invocation.ReadStart();
-                uint transferID = invocation.ReadUint("TransferID");
+                transferID = invocation.ReadUint("TransferID");
                 invocation.ReadEnd();
                 self.StopTransferResource(aVersion, transferID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1112,14 +1363,34 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint transferID;
+            string transferStatus;
+            string transferLength;
+            string transferTotal;
+            try
+            {
                 invocation.ReadStart();
-                uint transferID = invocation.ReadUint("TransferID");
+                transferID = invocation.ReadUint("TransferID");
                 invocation.ReadEnd();
-                string transferStatus;
-                string transferLength;
-                string transferTotal;
                 self.GetTransferProgress(aVersion, transferID, out transferStatus, out transferLength, out transferTotal);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("TransferStatus", transferStatus);
                 invocation.WriteString("TransferLength", transferLength);
@@ -1127,10 +1398,6 @@ namespace Zapp.Device.Providers
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1142,22 +1409,39 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory2 self = (DvProviderUpnpOrgContentDirectory2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            string containerID;
+            string objectID;
+            string newID;
+            try
+            {
                 invocation.ReadStart();
-                string containerID = invocation.ReadString("ContainerID");
-                string objectID = invocation.ReadString("ObjectID");
+                containerID = invocation.ReadString("ContainerID");
+                objectID = invocation.ReadString("ObjectID");
                 invocation.ReadEnd();
-                string newID;
                 self.CreateReference(aVersion, containerID, objectID, out newID);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("NewID", newID);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }

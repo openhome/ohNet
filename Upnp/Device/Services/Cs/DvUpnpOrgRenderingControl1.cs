@@ -1169,21 +1169,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            string currentPresetNameList;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
+                instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                string currentPresetNameList;
                 self.ListPresets(aVersion, instanceID, out currentPresetNameList);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteString("CurrentPresetNameList", currentPresetNameList);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1195,20 +1211,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            string presetName;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                string presetName = invocation.ReadString("PresetName");
+                instanceID = invocation.ReadUint("InstanceID");
+                presetName = invocation.ReadString("PresetName");
                 invocation.ReadEnd();
                 self.SelectPreset(aVersion, instanceID, presetName);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1220,21 +1253,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            uint currentBrightness;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
+                instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                uint currentBrightness;
                 self.GetBrightness(aVersion, instanceID, out currentBrightness);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteUint("CurrentBrightness", currentBrightness);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1246,20 +1295,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            uint desiredBrightness;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                uint desiredBrightness = invocation.ReadUint("DesiredBrightness");
+                instanceID = invocation.ReadUint("InstanceID");
+                desiredBrightness = invocation.ReadUint("DesiredBrightness");
                 invocation.ReadEnd();
                 self.SetBrightness(aVersion, instanceID, desiredBrightness);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1271,21 +1337,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            uint currentContrast;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
+                instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                uint currentContrast;
                 self.GetContrast(aVersion, instanceID, out currentContrast);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteUint("CurrentContrast", currentContrast);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1297,20 +1379,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            uint desiredContrast;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                uint desiredContrast = invocation.ReadUint("DesiredContrast");
+                instanceID = invocation.ReadUint("InstanceID");
+                desiredContrast = invocation.ReadUint("DesiredContrast");
                 invocation.ReadEnd();
                 self.SetContrast(aVersion, instanceID, desiredContrast);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1322,21 +1421,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            uint currentSharpness;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
+                instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                uint currentSharpness;
                 self.GetSharpness(aVersion, instanceID, out currentSharpness);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteUint("CurrentSharpness", currentSharpness);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1348,20 +1463,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            uint desiredSharpness;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                uint desiredSharpness = invocation.ReadUint("DesiredSharpness");
+                instanceID = invocation.ReadUint("InstanceID");
+                desiredSharpness = invocation.ReadUint("DesiredSharpness");
                 invocation.ReadEnd();
                 self.SetSharpness(aVersion, instanceID, desiredSharpness);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1373,21 +1505,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            uint currentRedVideoGain;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
+                instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                uint currentRedVideoGain;
                 self.GetRedVideoGain(aVersion, instanceID, out currentRedVideoGain);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteUint("CurrentRedVideoGain", currentRedVideoGain);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1399,20 +1547,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            uint desiredRedVideoGain;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                uint desiredRedVideoGain = invocation.ReadUint("DesiredRedVideoGain");
+                instanceID = invocation.ReadUint("InstanceID");
+                desiredRedVideoGain = invocation.ReadUint("DesiredRedVideoGain");
                 invocation.ReadEnd();
                 self.SetRedVideoGain(aVersion, instanceID, desiredRedVideoGain);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1424,21 +1589,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            uint currentGreenVideoGain;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
+                instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                uint currentGreenVideoGain;
                 self.GetGreenVideoGain(aVersion, instanceID, out currentGreenVideoGain);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteUint("CurrentGreenVideoGain", currentGreenVideoGain);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1450,20 +1631,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            uint desiredGreenVideoGain;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                uint desiredGreenVideoGain = invocation.ReadUint("DesiredGreenVideoGain");
+                instanceID = invocation.ReadUint("InstanceID");
+                desiredGreenVideoGain = invocation.ReadUint("DesiredGreenVideoGain");
                 invocation.ReadEnd();
                 self.SetGreenVideoGain(aVersion, instanceID, desiredGreenVideoGain);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1475,21 +1673,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            uint currentBlueVideoGain;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
+                instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                uint currentBlueVideoGain;
                 self.GetBlueVideoGain(aVersion, instanceID, out currentBlueVideoGain);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteUint("CurrentBlueVideoGain", currentBlueVideoGain);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1501,20 +1715,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            uint desiredBlueVideoGain;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                uint desiredBlueVideoGain = invocation.ReadUint("DesiredBlueVideoGain");
+                instanceID = invocation.ReadUint("InstanceID");
+                desiredBlueVideoGain = invocation.ReadUint("DesiredBlueVideoGain");
                 invocation.ReadEnd();
                 self.SetBlueVideoGain(aVersion, instanceID, desiredBlueVideoGain);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1526,21 +1757,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            uint currentRedVideoBlackLevel;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
+                instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                uint currentRedVideoBlackLevel;
                 self.GetRedVideoBlackLevel(aVersion, instanceID, out currentRedVideoBlackLevel);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteUint("CurrentRedVideoBlackLevel", currentRedVideoBlackLevel);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1552,20 +1799,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            uint desiredRedVideoBlackLevel;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                uint desiredRedVideoBlackLevel = invocation.ReadUint("DesiredRedVideoBlackLevel");
+                instanceID = invocation.ReadUint("InstanceID");
+                desiredRedVideoBlackLevel = invocation.ReadUint("DesiredRedVideoBlackLevel");
                 invocation.ReadEnd();
                 self.SetRedVideoBlackLevel(aVersion, instanceID, desiredRedVideoBlackLevel);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1577,21 +1841,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            uint currentGreenVideoBlackLevel;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
+                instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                uint currentGreenVideoBlackLevel;
                 self.GetGreenVideoBlackLevel(aVersion, instanceID, out currentGreenVideoBlackLevel);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteUint("CurrentGreenVideoBlackLevel", currentGreenVideoBlackLevel);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1603,20 +1883,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            uint desiredGreenVideoBlackLevel;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                uint desiredGreenVideoBlackLevel = invocation.ReadUint("DesiredGreenVideoBlackLevel");
+                instanceID = invocation.ReadUint("InstanceID");
+                desiredGreenVideoBlackLevel = invocation.ReadUint("DesiredGreenVideoBlackLevel");
                 invocation.ReadEnd();
                 self.SetGreenVideoBlackLevel(aVersion, instanceID, desiredGreenVideoBlackLevel);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1628,21 +1925,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            uint currentBlueVideoBlackLevel;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
+                instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                uint currentBlueVideoBlackLevel;
                 self.GetBlueVideoBlackLevel(aVersion, instanceID, out currentBlueVideoBlackLevel);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteUint("CurrentBlueVideoBlackLevel", currentBlueVideoBlackLevel);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1654,20 +1967,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            uint desiredBlueVideoBlackLevel;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                uint desiredBlueVideoBlackLevel = invocation.ReadUint("DesiredBlueVideoBlackLevel");
+                instanceID = invocation.ReadUint("InstanceID");
+                desiredBlueVideoBlackLevel = invocation.ReadUint("DesiredBlueVideoBlackLevel");
                 invocation.ReadEnd();
                 self.SetBlueVideoBlackLevel(aVersion, instanceID, desiredBlueVideoBlackLevel);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1679,21 +2009,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            uint currentColorTemperature;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
+                instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                uint currentColorTemperature;
                 self.GetColorTemperature(aVersion, instanceID, out currentColorTemperature);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteUint("CurrentColorTemperature", currentColorTemperature);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1705,20 +2051,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            uint desiredColorTemperature;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                uint desiredColorTemperature = invocation.ReadUint("DesiredColorTemperature");
+                instanceID = invocation.ReadUint("InstanceID");
+                desiredColorTemperature = invocation.ReadUint("DesiredColorTemperature");
                 invocation.ReadEnd();
                 self.SetColorTemperature(aVersion, instanceID, desiredColorTemperature);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1730,21 +2093,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            int currentHorizontalKeystone;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
+                instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                int currentHorizontalKeystone;
                 self.GetHorizontalKeystone(aVersion, instanceID, out currentHorizontalKeystone);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteInt("CurrentHorizontalKeystone", currentHorizontalKeystone);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1756,20 +2135,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            int desiredHorizontalKeystone;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                int desiredHorizontalKeystone = invocation.ReadInt("DesiredHorizontalKeystone");
+                instanceID = invocation.ReadUint("InstanceID");
+                desiredHorizontalKeystone = invocation.ReadInt("DesiredHorizontalKeystone");
                 invocation.ReadEnd();
                 self.SetHorizontalKeystone(aVersion, instanceID, desiredHorizontalKeystone);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1781,21 +2177,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            int currentVerticalKeystone;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
+                instanceID = invocation.ReadUint("InstanceID");
                 invocation.ReadEnd();
-                int currentVerticalKeystone;
                 self.GetVerticalKeystone(aVersion, instanceID, out currentVerticalKeystone);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteInt("CurrentVerticalKeystone", currentVerticalKeystone);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1807,20 +2219,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            int desiredVerticalKeystone;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                int desiredVerticalKeystone = invocation.ReadInt("DesiredVerticalKeystone");
+                instanceID = invocation.ReadUint("InstanceID");
+                desiredVerticalKeystone = invocation.ReadInt("DesiredVerticalKeystone");
                 invocation.ReadEnd();
                 self.SetVerticalKeystone(aVersion, instanceID, desiredVerticalKeystone);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1832,22 +2261,39 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            string channel;
+            bool currentMute;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                string channel = invocation.ReadString("Channel");
+                instanceID = invocation.ReadUint("InstanceID");
+                channel = invocation.ReadString("Channel");
                 invocation.ReadEnd();
-                bool currentMute;
                 self.GetMute(aVersion, instanceID, channel, out currentMute);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteBool("CurrentMute", currentMute);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1859,21 +2305,39 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            string channel;
+            bool desiredMute;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                string channel = invocation.ReadString("Channel");
-                bool desiredMute = invocation.ReadBool("DesiredMute");
+                instanceID = invocation.ReadUint("InstanceID");
+                channel = invocation.ReadString("Channel");
+                desiredMute = invocation.ReadBool("DesiredMute");
                 invocation.ReadEnd();
                 self.SetMute(aVersion, instanceID, channel, desiredMute);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1885,22 +2349,39 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            string channel;
+            uint currentVolume;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                string channel = invocation.ReadString("Channel");
+                instanceID = invocation.ReadUint("InstanceID");
+                channel = invocation.ReadString("Channel");
                 invocation.ReadEnd();
-                uint currentVolume;
                 self.GetVolume(aVersion, instanceID, channel, out currentVolume);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteUint("CurrentVolume", currentVolume);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1912,21 +2393,39 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            string channel;
+            uint desiredVolume;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                string channel = invocation.ReadString("Channel");
-                uint desiredVolume = invocation.ReadUint("DesiredVolume");
+                instanceID = invocation.ReadUint("InstanceID");
+                channel = invocation.ReadString("Channel");
+                desiredVolume = invocation.ReadUint("DesiredVolume");
                 invocation.ReadEnd();
                 self.SetVolume(aVersion, instanceID, channel, desiredVolume);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1938,22 +2437,39 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            string channel;
+            int currentVolume;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                string channel = invocation.ReadString("Channel");
+                instanceID = invocation.ReadUint("InstanceID");
+                channel = invocation.ReadString("Channel");
                 invocation.ReadEnd();
-                int currentVolume;
                 self.GetVolumeDB(aVersion, instanceID, channel, out currentVolume);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteInt("CurrentVolume", currentVolume);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1965,21 +2481,39 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            string channel;
+            int desiredVolume;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                string channel = invocation.ReadString("Channel");
-                int desiredVolume = invocation.ReadInt("DesiredVolume");
+                instanceID = invocation.ReadUint("InstanceID");
+                channel = invocation.ReadString("Channel");
+                desiredVolume = invocation.ReadInt("DesiredVolume");
                 invocation.ReadEnd();
                 self.SetVolumeDB(aVersion, instanceID, channel, desiredVolume);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -1991,24 +2525,41 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            string channel;
+            int minValue;
+            int maxValue;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                string channel = invocation.ReadString("Channel");
+                instanceID = invocation.ReadUint("InstanceID");
+                channel = invocation.ReadString("Channel");
                 invocation.ReadEnd();
-                int minValue;
-                int maxValue;
                 self.GetVolumeDBRange(aVersion, instanceID, channel, out minValue, out maxValue);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteInt("MinValue", minValue);
                 invocation.WriteInt("MaxValue", maxValue);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -2020,22 +2571,39 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            string channel;
+            bool currentLoudness;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                string channel = invocation.ReadString("Channel");
+                instanceID = invocation.ReadUint("InstanceID");
+                channel = invocation.ReadString("Channel");
                 invocation.ReadEnd();
-                bool currentLoudness;
                 self.GetLoudness(aVersion, instanceID, channel, out currentLoudness);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteBool("CurrentLoudness", currentLoudness);
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
@@ -2047,21 +2615,39 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            try {
+            uint instanceID;
+            string channel;
+            bool desiredLoudness;
+            try
+            {
                 invocation.ReadStart();
-                uint instanceID = invocation.ReadUint("InstanceID");
-                string channel = invocation.ReadString("Channel");
-                bool desiredLoudness = invocation.ReadBool("DesiredLoudness");
+                instanceID = invocation.ReadUint("InstanceID");
+                channel = invocation.ReadString("Channel");
+                desiredLoudness = invocation.ReadBool("DesiredLoudness");
                 invocation.ReadEnd();
                 self.SetLoudness(aVersion, instanceID, channel, desiredLoudness);
+            }
+            catch (ActionError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            catch (ActionDisabledError)
+            {
+                invocation.ReportError(501, "Action not implemented"); ;
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                invocation.ReportError(501, "Invalid XML"); ;
+                return -1;
+            }
+            try
+            {
                 invocation.WriteStart();
                 invocation.WriteEnd();
             }
             catch (ActionError)
-            {
-                return -1;
-            }
-            catch (PropertyUpdateError)
             {
                 return -1;
             }
