@@ -475,13 +475,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            string aConnected;
-            self.KontrolProductConnected(aVersion, out aConnected);
-            invocation.WriteStart();
-            invocation.WriteString("aConnected", aConnected);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                string aConnected;
+                self.KontrolProductConnected(aVersion, out aConnected);
+                invocation.WriteStart();
+                invocation.WriteString("aConnected", aConnected);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -490,12 +500,22 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            string aConnected = invocation.ReadString("aConnected");
-            invocation.ReadEnd();
-            self.SetKontrolProductConnected(aVersion, aConnected);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                string aConnected = invocation.ReadString("aConnected");
+                invocation.ReadEnd();
+                self.SetKontrolProductConnected(aVersion, aConnected);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -504,13 +524,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            uint aPort;
-            self.KontrolProductComPort(aVersion, out aPort);
-            invocation.WriteStart();
-            invocation.WriteUint("aPort", aPort);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                uint aPort;
+                self.KontrolProductComPort(aVersion, out aPort);
+                invocation.WriteStart();
+                invocation.WriteUint("aPort", aPort);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -519,12 +549,22 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint aConnected = invocation.ReadUint("aConnected");
-            invocation.ReadEnd();
-            self.SetKontrolProductComPort(aVersion, aConnected);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint aConnected = invocation.ReadUint("aConnected");
+                invocation.ReadEnd();
+                self.SetKontrolProductComPort(aVersion, aConnected);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -533,13 +573,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            string aConnected;
-            self.DiscPlayerConnected(aVersion, out aConnected);
-            invocation.WriteStart();
-            invocation.WriteString("aConnected", aConnected);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                string aConnected;
+                self.DiscPlayerConnected(aVersion, out aConnected);
+                invocation.WriteStart();
+                invocation.WriteString("aConnected", aConnected);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -548,12 +598,22 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            string aConnected = invocation.ReadString("aConnected");
-            invocation.ReadEnd();
-            self.SetDiscPlayerConnected(aVersion, aConnected);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                string aConnected = invocation.ReadString("aConnected");
+                invocation.ReadEnd();
+                self.SetDiscPlayerConnected(aVersion, aConnected);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -562,13 +622,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            uint aPort;
-            self.DiscPlayerComPort(aVersion, out aPort);
-            invocation.WriteStart();
-            invocation.WriteUint("aPort", aPort);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                uint aPort;
+                self.DiscPlayerComPort(aVersion, out aPort);
+                invocation.WriteStart();
+                invocation.WriteUint("aPort", aPort);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -577,12 +647,22 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint aConnected = invocation.ReadUint("aConnected");
-            invocation.ReadEnd();
-            self.SetDiscPlayerComPort(aVersion, aConnected);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint aConnected = invocation.ReadUint("aConnected");
+                invocation.ReadEnd();
+                self.SetDiscPlayerComPort(aVersion, aConnected);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -591,13 +671,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            bool aResult;
-            self.TestKontrolProductConnection(aVersion, out aResult);
-            invocation.WriteStart();
-            invocation.WriteBool("aResult", aResult);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                bool aResult;
+                self.TestKontrolProductConnection(aVersion, out aResult);
+                invocation.WriteStart();
+                invocation.WriteBool("aResult", aResult);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -606,13 +696,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProxyManager1 self = (DvProviderLinnCoUkProxyManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            bool aResult;
-            self.TestDiscPlayerConnection(aVersion, out aResult);
-            invocation.WriteStart();
-            invocation.WriteBool("aResult", aResult);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                bool aResult;
+                self.TestDiscPlayerConnection(aVersion, out aResult);
+                invocation.WriteStart();
+                invocation.WriteBool("aResult", aResult);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 

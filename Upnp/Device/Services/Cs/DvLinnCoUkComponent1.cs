@@ -484,13 +484,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            bool aEnabled;
-            self.AmplifierEnabled(aVersion, out aEnabled);
-            invocation.WriteStart();
-            invocation.WriteBool("aEnabled", aEnabled);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                bool aEnabled;
+                self.AmplifierEnabled(aVersion, out aEnabled);
+                invocation.WriteStart();
+                invocation.WriteBool("aEnabled", aEnabled);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -499,12 +509,22 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            bool aEnabled = invocation.ReadBool("aEnabled");
-            invocation.ReadEnd();
-            self.SetAmplifierEnabled(aVersion, aEnabled);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                bool aEnabled = invocation.ReadBool("aEnabled");
+                invocation.ReadEnd();
+                self.SetAmplifierEnabled(aVersion, aEnabled);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -513,13 +533,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            string aAttenuation;
-            self.AmplifierAttenuation(aVersion, out aAttenuation);
-            invocation.WriteStart();
-            invocation.WriteString("aAttenuation", aAttenuation);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                string aAttenuation;
+                self.AmplifierAttenuation(aVersion, out aAttenuation);
+                invocation.WriteStart();
+                invocation.WriteString("aAttenuation", aAttenuation);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -528,12 +558,22 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            string aAttenuation = invocation.ReadString("aAttenuation");
-            invocation.ReadEnd();
-            self.SetAmplifierAttenuation(aVersion, aAttenuation);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                string aAttenuation = invocation.ReadString("aAttenuation");
+                invocation.ReadEnd();
+                self.SetAmplifierAttenuation(aVersion, aAttenuation);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -542,12 +582,22 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            bool aEnabled = invocation.ReadBool("aEnabled");
-            invocation.ReadEnd();
-            self.SetVolumeControlEnabled(aVersion, aEnabled);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                bool aEnabled = invocation.ReadBool("aEnabled");
+                invocation.ReadEnd();
+                self.SetVolumeControlEnabled(aVersion, aEnabled);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -556,13 +606,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            bool aEnabled;
-            self.VolumeControlEnabled(aVersion, out aEnabled);
-            invocation.WriteStart();
-            invocation.WriteBool("aEnabled", aEnabled);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                bool aEnabled;
+                self.VolumeControlEnabled(aVersion, out aEnabled);
+                invocation.WriteStart();
+                invocation.WriteBool("aEnabled", aEnabled);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -571,12 +631,22 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            bool aRaw = invocation.ReadBool("aRaw");
-            invocation.ReadEnd();
-            self.SetDigitalAudioOutputRaw(aVersion, aRaw);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                bool aRaw = invocation.ReadBool("aRaw");
+                invocation.ReadEnd();
+                self.SetDigitalAudioOutputRaw(aVersion, aRaw);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -585,13 +655,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            bool aRaw;
-            self.DigitalAudioOutputRaw(aVersion, out aRaw);
-            invocation.WriteStart();
-            invocation.WriteBool("aRaw", aRaw);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                bool aRaw;
+                self.DigitalAudioOutputRaw(aVersion, out aRaw);
+                invocation.WriteStart();
+                invocation.WriteBool("aRaw", aRaw);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -600,13 +680,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            bool aOverTemperature;
-            self.AmplifierOverTemperature(aVersion, out aOverTemperature);
-            invocation.WriteStart();
-            invocation.WriteBool("aOverTemperature", aOverTemperature);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                bool aOverTemperature;
+                self.AmplifierOverTemperature(aVersion, out aOverTemperature);
+                invocation.WriteStart();
+                invocation.WriteBool("aOverTemperature", aOverTemperature);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -615,13 +705,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            bool aLinkConnected;
-            self.EthernetLinkConnected(aVersion, out aLinkConnected);
-            invocation.WriteStart();
-            invocation.WriteBool("aLinkConnected", aLinkConnected);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                bool aLinkConnected;
+                self.EthernetLinkConnected(aVersion, out aLinkConnected);
+                invocation.WriteStart();
+                invocation.WriteBool("aLinkConnected", aLinkConnected);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -630,11 +730,21 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkComponent1 self = (DvProviderLinnCoUkComponent1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            self.Locate(aVersion);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.Locate(aVersion);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 

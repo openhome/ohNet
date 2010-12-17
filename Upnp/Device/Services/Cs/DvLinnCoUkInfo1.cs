@@ -581,17 +581,27 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkInfo1 self = (DvProviderLinnCoUkInfo1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            uint aTrackCount;
-            uint aDetailsCount;
-            uint aMetatextCount;
-            self.Counters(aVersion, out aTrackCount, out aDetailsCount, out aMetatextCount);
-            invocation.WriteStart();
-            invocation.WriteUint("aTrackCount", aTrackCount);
-            invocation.WriteUint("aDetailsCount", aDetailsCount);
-            invocation.WriteUint("aMetatextCount", aMetatextCount);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                uint aTrackCount;
+                uint aDetailsCount;
+                uint aMetatextCount;
+                self.Counters(aVersion, out aTrackCount, out aDetailsCount, out aMetatextCount);
+                invocation.WriteStart();
+                invocation.WriteUint("aTrackCount", aTrackCount);
+                invocation.WriteUint("aDetailsCount", aDetailsCount);
+                invocation.WriteUint("aMetatextCount", aMetatextCount);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -600,15 +610,25 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkInfo1 self = (DvProviderLinnCoUkInfo1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            string aUri;
-            string aMetadata;
-            self.Track(aVersion, out aUri, out aMetadata);
-            invocation.WriteStart();
-            invocation.WriteString("aUri", aUri);
-            invocation.WriteString("aMetadata", aMetadata);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                string aUri;
+                string aMetadata;
+                self.Track(aVersion, out aUri, out aMetadata);
+                invocation.WriteStart();
+                invocation.WriteString("aUri", aUri);
+                invocation.WriteString("aMetadata", aMetadata);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -617,23 +637,33 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkInfo1 self = (DvProviderLinnCoUkInfo1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            uint aDuration;
-            uint aBitRate;
-            uint aBitDepth;
-            uint aSampleRate;
-            bool aLossless;
-            string aCodecName;
-            self.Details(aVersion, out aDuration, out aBitRate, out aBitDepth, out aSampleRate, out aLossless, out aCodecName);
-            invocation.WriteStart();
-            invocation.WriteUint("aDuration", aDuration);
-            invocation.WriteUint("aBitRate", aBitRate);
-            invocation.WriteUint("aBitDepth", aBitDepth);
-            invocation.WriteUint("aSampleRate", aSampleRate);
-            invocation.WriteBool("aLossless", aLossless);
-            invocation.WriteString("aCodecName", aCodecName);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                uint aDuration;
+                uint aBitRate;
+                uint aBitDepth;
+                uint aSampleRate;
+                bool aLossless;
+                string aCodecName;
+                self.Details(aVersion, out aDuration, out aBitRate, out aBitDepth, out aSampleRate, out aLossless, out aCodecName);
+                invocation.WriteStart();
+                invocation.WriteUint("aDuration", aDuration);
+                invocation.WriteUint("aBitRate", aBitRate);
+                invocation.WriteUint("aBitDepth", aBitDepth);
+                invocation.WriteUint("aSampleRate", aSampleRate);
+                invocation.WriteBool("aLossless", aLossless);
+                invocation.WriteString("aCodecName", aCodecName);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -642,13 +672,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkInfo1 self = (DvProviderLinnCoUkInfo1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            string aMetatext;
-            self.Metatext(aVersion, out aMetatext);
-            invocation.WriteStart();
-            invocation.WriteString("aMetatext", aMetatext);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                string aMetatext;
+                self.Metatext(aVersion, out aMetatext);
+                invocation.WriteStart();
+                invocation.WriteString("aMetatext", aMetatext);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 

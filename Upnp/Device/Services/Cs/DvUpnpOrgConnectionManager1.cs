@@ -320,15 +320,25 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager1 self = (DvProviderUpnpOrgConnectionManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            string source;
-            string sink;
-            self.GetProtocolInfo(aVersion, out source, out sink);
-            invocation.WriteStart();
-            invocation.WriteString("Source", source);
-            invocation.WriteString("Sink", sink);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                string source;
+                string sink;
+                self.GetProtocolInfo(aVersion, out source, out sink);
+                invocation.WriteStart();
+                invocation.WriteString("Source", source);
+                invocation.WriteString("Sink", sink);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -337,21 +347,31 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager1 self = (DvProviderUpnpOrgConnectionManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            string remoteProtocolInfo = invocation.ReadString("RemoteProtocolInfo");
-            string peerConnectionManager = invocation.ReadString("PeerConnectionManager");
-            int peerConnectionID = invocation.ReadInt("PeerConnectionID");
-            string direction = invocation.ReadString("Direction");
-            invocation.ReadEnd();
-            int connectionID;
-            int aVTransportID;
-            int rcsID;
-            self.PrepareForConnection(aVersion, remoteProtocolInfo, peerConnectionManager, peerConnectionID, direction, out connectionID, out aVTransportID, out rcsID);
-            invocation.WriteStart();
-            invocation.WriteInt("ConnectionID", connectionID);
-            invocation.WriteInt("AVTransportID", aVTransportID);
-            invocation.WriteInt("RcsID", rcsID);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                string remoteProtocolInfo = invocation.ReadString("RemoteProtocolInfo");
+                string peerConnectionManager = invocation.ReadString("PeerConnectionManager");
+                int peerConnectionID = invocation.ReadInt("PeerConnectionID");
+                string direction = invocation.ReadString("Direction");
+                invocation.ReadEnd();
+                int connectionID;
+                int aVTransportID;
+                int rcsID;
+                self.PrepareForConnection(aVersion, remoteProtocolInfo, peerConnectionManager, peerConnectionID, direction, out connectionID, out aVTransportID, out rcsID);
+                invocation.WriteStart();
+                invocation.WriteInt("ConnectionID", connectionID);
+                invocation.WriteInt("AVTransportID", aVTransportID);
+                invocation.WriteInt("RcsID", rcsID);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -360,12 +380,22 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager1 self = (DvProviderUpnpOrgConnectionManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            int connectionID = invocation.ReadInt("ConnectionID");
-            invocation.ReadEnd();
-            self.ConnectionComplete(aVersion, connectionID);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                int connectionID = invocation.ReadInt("ConnectionID");
+                invocation.ReadEnd();
+                self.ConnectionComplete(aVersion, connectionID);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -374,13 +404,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager1 self = (DvProviderUpnpOrgConnectionManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            string connectionIDs;
-            self.GetCurrentConnectionIDs(aVersion, out connectionIDs);
-            invocation.WriteStart();
-            invocation.WriteString("ConnectionIDs", connectionIDs);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                string connectionIDs;
+                self.GetCurrentConnectionIDs(aVersion, out connectionIDs);
+                invocation.WriteStart();
+                invocation.WriteString("ConnectionIDs", connectionIDs);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -389,26 +429,36 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgConnectionManager1 self = (DvProviderUpnpOrgConnectionManager1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            int connectionID = invocation.ReadInt("ConnectionID");
-            invocation.ReadEnd();
-            int rcsID;
-            int aVTransportID;
-            string protocolInfo;
-            string peerConnectionManager;
-            int peerConnectionID;
-            string direction;
-            string status;
-            self.GetCurrentConnectionInfo(aVersion, connectionID, out rcsID, out aVTransportID, out protocolInfo, out peerConnectionManager, out peerConnectionID, out direction, out status);
-            invocation.WriteStart();
-            invocation.WriteInt("RcsID", rcsID);
-            invocation.WriteInt("AVTransportID", aVTransportID);
-            invocation.WriteString("ProtocolInfo", protocolInfo);
-            invocation.WriteString("PeerConnectionManager", peerConnectionManager);
-            invocation.WriteInt("PeerConnectionID", peerConnectionID);
-            invocation.WriteString("Direction", direction);
-            invocation.WriteString("Status", status);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                int connectionID = invocation.ReadInt("ConnectionID");
+                invocation.ReadEnd();
+                int rcsID;
+                int aVTransportID;
+                string protocolInfo;
+                string peerConnectionManager;
+                int peerConnectionID;
+                string direction;
+                string status;
+                self.GetCurrentConnectionInfo(aVersion, connectionID, out rcsID, out aVTransportID, out protocolInfo, out peerConnectionManager, out peerConnectionID, out direction, out status);
+                invocation.WriteStart();
+                invocation.WriteInt("RcsID", rcsID);
+                invocation.WriteInt("AVTransportID", aVTransportID);
+                invocation.WriteString("ProtocolInfo", protocolInfo);
+                invocation.WriteString("PeerConnectionManager", peerConnectionManager);
+                invocation.WriteInt("PeerConnectionID", peerConnectionID);
+                invocation.WriteString("Direction", direction);
+                invocation.WriteString("Status", status);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 

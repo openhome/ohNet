@@ -835,13 +835,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            string searchCaps;
-            self.GetSearchCapabilities(aVersion, out searchCaps);
-            invocation.WriteStart();
-            invocation.WriteString("SearchCaps", searchCaps);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                string searchCaps;
+                self.GetSearchCapabilities(aVersion, out searchCaps);
+                invocation.WriteStart();
+                invocation.WriteString("SearchCaps", searchCaps);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -850,13 +860,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            string sortCaps;
-            self.GetSortCapabilities(aVersion, out sortCaps);
-            invocation.WriteStart();
-            invocation.WriteString("SortCaps", sortCaps);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                string sortCaps;
+                self.GetSortCapabilities(aVersion, out sortCaps);
+                invocation.WriteStart();
+                invocation.WriteString("SortCaps", sortCaps);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -865,13 +885,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            string sortExtensionCaps;
-            self.GetSortExtensionCapabilities(aVersion, out sortExtensionCaps);
-            invocation.WriteStart();
-            invocation.WriteString("SortExtensionCaps", sortExtensionCaps);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                string sortExtensionCaps;
+                self.GetSortExtensionCapabilities(aVersion, out sortExtensionCaps);
+                invocation.WriteStart();
+                invocation.WriteString("SortExtensionCaps", sortExtensionCaps);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -880,13 +910,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            string featureList;
-            self.GetFeatureList(aVersion, out featureList);
-            invocation.WriteStart();
-            invocation.WriteString("FeatureList", featureList);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                string featureList;
+                self.GetFeatureList(aVersion, out featureList);
+                invocation.WriteStart();
+                invocation.WriteString("FeatureList", featureList);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -895,13 +935,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            uint id;
-            self.GetSystemUpdateID(aVersion, out id);
-            invocation.WriteStart();
-            invocation.WriteUint("Id", id);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                uint id;
+                self.GetSystemUpdateID(aVersion, out id);
+                invocation.WriteStart();
+                invocation.WriteUint("Id", id);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -910,13 +960,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            string resetToken;
-            self.GetServiceResetToken(aVersion, out resetToken);
-            invocation.WriteStart();
-            invocation.WriteString("ResetToken", resetToken);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                string resetToken;
+                self.GetServiceResetToken(aVersion, out resetToken);
+                invocation.WriteStart();
+                invocation.WriteString("ResetToken", resetToken);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -925,25 +985,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            string objectID = invocation.ReadString("ObjectID");
-            string browseFlag = invocation.ReadString("BrowseFlag");
-            string filter = invocation.ReadString("Filter");
-            uint startingIndex = invocation.ReadUint("StartingIndex");
-            uint requestedCount = invocation.ReadUint("RequestedCount");
-            string sortCriteria = invocation.ReadString("SortCriteria");
-            invocation.ReadEnd();
-            string result;
-            uint numberReturned;
-            uint totalMatches;
-            uint updateID;
-            self.Browse(aVersion, objectID, browseFlag, filter, startingIndex, requestedCount, sortCriteria, out result, out numberReturned, out totalMatches, out updateID);
-            invocation.WriteStart();
-            invocation.WriteString("Result", result);
-            invocation.WriteUint("NumberReturned", numberReturned);
-            invocation.WriteUint("TotalMatches", totalMatches);
-            invocation.WriteUint("UpdateID", updateID);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                string objectID = invocation.ReadString("ObjectID");
+                string browseFlag = invocation.ReadString("BrowseFlag");
+                string filter = invocation.ReadString("Filter");
+                uint startingIndex = invocation.ReadUint("StartingIndex");
+                uint requestedCount = invocation.ReadUint("RequestedCount");
+                string sortCriteria = invocation.ReadString("SortCriteria");
+                invocation.ReadEnd();
+                string result;
+                uint numberReturned;
+                uint totalMatches;
+                uint updateID;
+                self.Browse(aVersion, objectID, browseFlag, filter, startingIndex, requestedCount, sortCriteria, out result, out numberReturned, out totalMatches, out updateID);
+                invocation.WriteStart();
+                invocation.WriteString("Result", result);
+                invocation.WriteUint("NumberReturned", numberReturned);
+                invocation.WriteUint("TotalMatches", totalMatches);
+                invocation.WriteUint("UpdateID", updateID);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -952,25 +1022,35 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            string containerID = invocation.ReadString("ContainerID");
-            string searchCriteria = invocation.ReadString("SearchCriteria");
-            string filter = invocation.ReadString("Filter");
-            uint startingIndex = invocation.ReadUint("StartingIndex");
-            uint requestedCount = invocation.ReadUint("RequestedCount");
-            string sortCriteria = invocation.ReadString("SortCriteria");
-            invocation.ReadEnd();
-            string result;
-            uint numberReturned;
-            uint totalMatches;
-            uint updateID;
-            self.Search(aVersion, containerID, searchCriteria, filter, startingIndex, requestedCount, sortCriteria, out result, out numberReturned, out totalMatches, out updateID);
-            invocation.WriteStart();
-            invocation.WriteString("Result", result);
-            invocation.WriteUint("NumberReturned", numberReturned);
-            invocation.WriteUint("TotalMatches", totalMatches);
-            invocation.WriteUint("UpdateID", updateID);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                string containerID = invocation.ReadString("ContainerID");
+                string searchCriteria = invocation.ReadString("SearchCriteria");
+                string filter = invocation.ReadString("Filter");
+                uint startingIndex = invocation.ReadUint("StartingIndex");
+                uint requestedCount = invocation.ReadUint("RequestedCount");
+                string sortCriteria = invocation.ReadString("SortCriteria");
+                invocation.ReadEnd();
+                string result;
+                uint numberReturned;
+                uint totalMatches;
+                uint updateID;
+                self.Search(aVersion, containerID, searchCriteria, filter, startingIndex, requestedCount, sortCriteria, out result, out numberReturned, out totalMatches, out updateID);
+                invocation.WriteStart();
+                invocation.WriteString("Result", result);
+                invocation.WriteUint("NumberReturned", numberReturned);
+                invocation.WriteUint("TotalMatches", totalMatches);
+                invocation.WriteUint("UpdateID", updateID);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -979,17 +1059,27 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            string containerID = invocation.ReadString("ContainerID");
-            string elements = invocation.ReadString("Elements");
-            invocation.ReadEnd();
-            string objectID;
-            string result;
-            self.CreateObject(aVersion, containerID, elements, out objectID, out result);
-            invocation.WriteStart();
-            invocation.WriteString("ObjectID", objectID);
-            invocation.WriteString("Result", result);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                string containerID = invocation.ReadString("ContainerID");
+                string elements = invocation.ReadString("Elements");
+                invocation.ReadEnd();
+                string objectID;
+                string result;
+                self.CreateObject(aVersion, containerID, elements, out objectID, out result);
+                invocation.WriteStart();
+                invocation.WriteString("ObjectID", objectID);
+                invocation.WriteString("Result", result);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -998,12 +1088,22 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            string objectID = invocation.ReadString("ObjectID");
-            invocation.ReadEnd();
-            self.DestroyObject(aVersion, objectID);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                string objectID = invocation.ReadString("ObjectID");
+                invocation.ReadEnd();
+                self.DestroyObject(aVersion, objectID);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1012,14 +1112,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            string objectID = invocation.ReadString("ObjectID");
-            string currentTagValue = invocation.ReadString("CurrentTagValue");
-            string newTagValue = invocation.ReadString("NewTagValue");
-            invocation.ReadEnd();
-            self.UpdateObject(aVersion, objectID, currentTagValue, newTagValue);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                string objectID = invocation.ReadString("ObjectID");
+                string currentTagValue = invocation.ReadString("CurrentTagValue");
+                string newTagValue = invocation.ReadString("NewTagValue");
+                invocation.ReadEnd();
+                self.UpdateObject(aVersion, objectID, currentTagValue, newTagValue);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1028,15 +1138,25 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            string objectID = invocation.ReadString("ObjectID");
-            string newParentID = invocation.ReadString("NewParentID");
-            invocation.ReadEnd();
-            string newObjectID;
-            self.MoveObject(aVersion, objectID, newParentID, out newObjectID);
-            invocation.WriteStart();
-            invocation.WriteString("NewObjectID", newObjectID);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                string objectID = invocation.ReadString("ObjectID");
+                string newParentID = invocation.ReadString("NewParentID");
+                invocation.ReadEnd();
+                string newObjectID;
+                self.MoveObject(aVersion, objectID, newParentID, out newObjectID);
+                invocation.WriteStart();
+                invocation.WriteString("NewObjectID", newObjectID);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1045,15 +1165,25 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            string sourceURI = invocation.ReadString("SourceURI");
-            string destinationURI = invocation.ReadString("DestinationURI");
-            invocation.ReadEnd();
-            uint transferID;
-            self.ImportResource(aVersion, sourceURI, destinationURI, out transferID);
-            invocation.WriteStart();
-            invocation.WriteUint("TransferID", transferID);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                string sourceURI = invocation.ReadString("SourceURI");
+                string destinationURI = invocation.ReadString("DestinationURI");
+                invocation.ReadEnd();
+                uint transferID;
+                self.ImportResource(aVersion, sourceURI, destinationURI, out transferID);
+                invocation.WriteStart();
+                invocation.WriteUint("TransferID", transferID);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1062,15 +1192,25 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            string sourceURI = invocation.ReadString("SourceURI");
-            string destinationURI = invocation.ReadString("DestinationURI");
-            invocation.ReadEnd();
-            uint transferID;
-            self.ExportResource(aVersion, sourceURI, destinationURI, out transferID);
-            invocation.WriteStart();
-            invocation.WriteUint("TransferID", transferID);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                string sourceURI = invocation.ReadString("SourceURI");
+                string destinationURI = invocation.ReadString("DestinationURI");
+                invocation.ReadEnd();
+                uint transferID;
+                self.ExportResource(aVersion, sourceURI, destinationURI, out transferID);
+                invocation.WriteStart();
+                invocation.WriteUint("TransferID", transferID);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1079,12 +1219,22 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            string resourceURI = invocation.ReadString("ResourceURI");
-            invocation.ReadEnd();
-            self.DeleteResource(aVersion, resourceURI);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                string resourceURI = invocation.ReadString("ResourceURI");
+                invocation.ReadEnd();
+                self.DeleteResource(aVersion, resourceURI);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1093,12 +1243,22 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint transferID = invocation.ReadUint("TransferID");
-            invocation.ReadEnd();
-            self.StopTransferResource(aVersion, transferID);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint transferID = invocation.ReadUint("TransferID");
+                invocation.ReadEnd();
+                self.StopTransferResource(aVersion, transferID);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1107,18 +1267,28 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint transferID = invocation.ReadUint("TransferID");
-            invocation.ReadEnd();
-            string transferStatus;
-            string transferLength;
-            string transferTotal;
-            self.GetTransferProgress(aVersion, transferID, out transferStatus, out transferLength, out transferTotal);
-            invocation.WriteStart();
-            invocation.WriteString("TransferStatus", transferStatus);
-            invocation.WriteString("TransferLength", transferLength);
-            invocation.WriteString("TransferTotal", transferTotal);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint transferID = invocation.ReadUint("TransferID");
+                invocation.ReadEnd();
+                string transferStatus;
+                string transferLength;
+                string transferTotal;
+                self.GetTransferProgress(aVersion, transferID, out transferStatus, out transferLength, out transferTotal);
+                invocation.WriteStart();
+                invocation.WriteString("TransferStatus", transferStatus);
+                invocation.WriteString("TransferLength", transferLength);
+                invocation.WriteString("TransferTotal", transferTotal);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1127,15 +1297,25 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            string containerID = invocation.ReadString("ContainerID");
-            string objectID = invocation.ReadString("ObjectID");
-            invocation.ReadEnd();
-            string newID;
-            self.CreateReference(aVersion, containerID, objectID, out newID);
-            invocation.WriteStart();
-            invocation.WriteString("NewID", newID);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                string containerID = invocation.ReadString("ContainerID");
+                string objectID = invocation.ReadString("ObjectID");
+                invocation.ReadEnd();
+                string newID;
+                self.CreateReference(aVersion, containerID, objectID, out newID);
+                invocation.WriteStart();
+                invocation.WriteString("NewID", newID);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1144,18 +1324,28 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            string containerID = invocation.ReadString("ContainerID");
-            uint cDSView = invocation.ReadUint("CDSView");
-            string queryRequest = invocation.ReadString("QueryRequest");
-            invocation.ReadEnd();
-            string queryResult;
-            uint updateID;
-            self.FreeFormQuery(aVersion, containerID, cDSView, queryRequest, out queryResult, out updateID);
-            invocation.WriteStart();
-            invocation.WriteString("QueryResult", queryResult);
-            invocation.WriteUint("UpdateID", updateID);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                string containerID = invocation.ReadString("ContainerID");
+                uint cDSView = invocation.ReadUint("CDSView");
+                string queryRequest = invocation.ReadString("QueryRequest");
+                invocation.ReadEnd();
+                string queryResult;
+                uint updateID;
+                self.FreeFormQuery(aVersion, containerID, cDSView, queryRequest, out queryResult, out updateID);
+                invocation.WriteStart();
+                invocation.WriteString("QueryResult", queryResult);
+                invocation.WriteUint("UpdateID", updateID);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1164,13 +1354,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgContentDirectory3 self = (DvProviderUpnpOrgContentDirectory3)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            string fFQCapabilities;
-            self.GetFreeFormQueryCapabilities(aVersion, out fFQCapabilities);
-            invocation.WriteStart();
-            invocation.WriteString("FFQCapabilities", fFQCapabilities);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                string fFQCapabilities;
+                self.GetFreeFormQueryCapabilities(aVersion, out fFQCapabilities);
+                invocation.WriteStart();
+                invocation.WriteString("FFQCapabilities", fFQCapabilities);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 

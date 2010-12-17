@@ -215,13 +215,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct1 self = (DvProviderLinnCoUkProduct1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            string aRoom;
-            self.Room(aVersion, out aRoom);
-            invocation.WriteStart();
-            invocation.WriteString("aRoom", aRoom);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                string aRoom;
+                self.Room(aVersion, out aRoom);
+                invocation.WriteStart();
+                invocation.WriteString("aRoom", aRoom);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -230,12 +240,22 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct1 self = (DvProviderLinnCoUkProduct1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            string aRoom = invocation.ReadString("aRoom");
-            invocation.ReadEnd();
-            self.SetRoom(aVersion, aRoom);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                string aRoom = invocation.ReadString("aRoom");
+                invocation.ReadEnd();
+                self.SetRoom(aVersion, aRoom);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -244,13 +264,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct1 self = (DvProviderLinnCoUkProduct1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            bool aStandby;
-            self.Standby(aVersion, out aStandby);
-            invocation.WriteStart();
-            invocation.WriteBool("aStandby", aStandby);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                bool aStandby;
+                self.Standby(aVersion, out aStandby);
+                invocation.WriteStart();
+                invocation.WriteBool("aStandby", aStandby);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -259,12 +289,22 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkProduct1 self = (DvProviderLinnCoUkProduct1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            bool aStandby = invocation.ReadBool("aStandby");
-            invocation.ReadEnd();
-            self.SetStandby(aVersion, aStandby);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                bool aStandby = invocation.ReadBool("aStandby");
+                invocation.ReadEnd();
+                self.SetStandby(aVersion, aStandby);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 

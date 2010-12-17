@@ -169,17 +169,27 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkTime1 self = (DvProviderLinnCoUkTime1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            uint aTrackCount;
-            uint aDuration;
-            uint aSeconds;
-            self.Time(aVersion, out aTrackCount, out aDuration, out aSeconds);
-            invocation.WriteStart();
-            invocation.WriteUint("aTrackCount", aTrackCount);
-            invocation.WriteUint("aDuration", aDuration);
-            invocation.WriteUint("aSeconds", aSeconds);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                uint aTrackCount;
+                uint aDuration;
+                uint aSeconds;
+                self.Time(aVersion, out aTrackCount, out aDuration, out aSeconds);
+                invocation.WriteStart();
+                invocation.WriteUint("aTrackCount", aTrackCount);
+                invocation.WriteUint("aDuration", aDuration);
+                invocation.WriteUint("aSeconds", aSeconds);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 

@@ -118,12 +118,22 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDebug2 self = (DvProviderLinnCoUkDebug2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint aDebugLevel = invocation.ReadUint("aDebugLevel");
-            invocation.ReadEnd();
-            self.SetDebugLevel(aVersion, aDebugLevel);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint aDebugLevel = invocation.ReadUint("aDebugLevel");
+                invocation.ReadEnd();
+                self.SetDebugLevel(aVersion, aDebugLevel);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -132,13 +142,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDebug2 self = (DvProviderLinnCoUkDebug2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            uint aDebugLevel;
-            self.DebugLevel(aVersion, out aDebugLevel);
-            invocation.WriteStart();
-            invocation.WriteUint("aDebugLevel", aDebugLevel);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                uint aDebugLevel;
+                self.DebugLevel(aVersion, out aDebugLevel);
+                invocation.WriteStart();
+                invocation.WriteUint("aDebugLevel", aDebugLevel);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -147,13 +167,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDebug2 self = (DvProviderLinnCoUkDebug2)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint aMemAddress = invocation.ReadUint("aMemAddress");
-            string aMemData = invocation.ReadBinary("aMemData");
-            invocation.ReadEnd();
-            self.MemWrite(aVersion, aMemAddress, aMemData);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint aMemAddress = invocation.ReadUint("aMemAddress");
+                string aMemData = invocation.ReadBinary("aMemData");
+                invocation.ReadEnd();
+                self.MemWrite(aVersion, aMemAddress, aMemData);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 

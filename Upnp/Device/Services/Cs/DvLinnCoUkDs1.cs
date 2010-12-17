@@ -641,11 +641,21 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            self.Play(aVersion);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.Play(aVersion);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -654,11 +664,21 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            self.Pause(aVersion);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.Pause(aVersion);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -667,11 +687,21 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            self.Stop(aVersion);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                self.Stop(aVersion);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -680,12 +710,22 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint aSecond = invocation.ReadUint("aSecond");
-            invocation.ReadEnd();
-            self.SeekSecondAbsolute(aVersion, aSecond);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint aSecond = invocation.ReadUint("aSecond");
+                invocation.ReadEnd();
+                self.SeekSecondAbsolute(aVersion, aSecond);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -694,12 +734,22 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            int aSecond = invocation.ReadInt("aSecond");
-            invocation.ReadEnd();
-            self.SeekSecondRelative(aVersion, aSecond);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                int aSecond = invocation.ReadInt("aSecond");
+                invocation.ReadEnd();
+                self.SeekSecondRelative(aVersion, aSecond);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -708,12 +758,22 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint aTrackId = invocation.ReadUint("aTrackId");
-            invocation.ReadEnd();
-            self.SeekTrackId(aVersion, aTrackId);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint aTrackId = invocation.ReadUint("aTrackId");
+                invocation.ReadEnd();
+                self.SeekTrackId(aVersion, aTrackId);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -722,12 +782,22 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint aTrack = invocation.ReadUint("aTrack");
-            invocation.ReadEnd();
-            self.SeekTrackAbsolute(aVersion, aTrack);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint aTrack = invocation.ReadUint("aTrack");
+                invocation.ReadEnd();
+                self.SeekTrackAbsolute(aVersion, aTrack);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -736,12 +806,22 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            int aTrack = invocation.ReadInt("aTrack");
-            invocation.ReadEnd();
-            self.SeekTrackRelative(aVersion, aTrack);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                int aTrack = invocation.ReadInt("aTrack");
+                invocation.ReadEnd();
+                self.SeekTrackRelative(aVersion, aTrack);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -750,27 +830,37 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            string aTransportState;
-            uint aTrackDuration;
-            uint aTrackBitRate;
-            bool aTrackLossless;
-            uint aTrackBitDepth;
-            uint aTrackSampleRate;
-            string aTrackCodecName;
-            uint aTrackId;
-            self.State(aVersion, out aTransportState, out aTrackDuration, out aTrackBitRate, out aTrackLossless, out aTrackBitDepth, out aTrackSampleRate, out aTrackCodecName, out aTrackId);
-            invocation.WriteStart();
-            invocation.WriteString("aTransportState", aTransportState);
-            invocation.WriteUint("aTrackDuration", aTrackDuration);
-            invocation.WriteUint("aTrackBitRate", aTrackBitRate);
-            invocation.WriteBool("aTrackLossless", aTrackLossless);
-            invocation.WriteUint("aTrackBitDepth", aTrackBitDepth);
-            invocation.WriteUint("aTrackSampleRate", aTrackSampleRate);
-            invocation.WriteString("aTrackCodecName", aTrackCodecName);
-            invocation.WriteUint("aTrackId", aTrackId);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                string aTransportState;
+                uint aTrackDuration;
+                uint aTrackBitRate;
+                bool aTrackLossless;
+                uint aTrackBitDepth;
+                uint aTrackSampleRate;
+                string aTrackCodecName;
+                uint aTrackId;
+                self.State(aVersion, out aTransportState, out aTrackDuration, out aTrackBitRate, out aTrackLossless, out aTrackBitDepth, out aTrackSampleRate, out aTrackCodecName, out aTrackId);
+                invocation.WriteStart();
+                invocation.WriteString("aTransportState", aTransportState);
+                invocation.WriteUint("aTrackDuration", aTrackDuration);
+                invocation.WriteUint("aTrackBitRate", aTrackBitRate);
+                invocation.WriteBool("aTrackLossless", aTrackLossless);
+                invocation.WriteUint("aTrackBitDepth", aTrackBitDepth);
+                invocation.WriteUint("aTrackSampleRate", aTrackSampleRate);
+                invocation.WriteString("aTrackCodecName", aTrackCodecName);
+                invocation.WriteUint("aTrackId", aTrackId);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -779,13 +869,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderLinnCoUkDs1 self = (DvProviderLinnCoUkDs1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            string aSupportedProtocols;
-            self.ProtocolInfo(aVersion, out aSupportedProtocols);
-            invocation.WriteStart();
-            invocation.WriteString("aSupportedProtocols", aSupportedProtocols);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                string aSupportedProtocols;
+                self.ProtocolInfo(aVersion, out aSupportedProtocols);
+                invocation.WriteStart();
+                invocation.WriteString("aSupportedProtocols", aSupportedProtocols);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 

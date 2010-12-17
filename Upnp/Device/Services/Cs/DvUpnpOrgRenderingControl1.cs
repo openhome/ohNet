@@ -1169,14 +1169,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            invocation.ReadEnd();
-            string currentPresetNameList;
-            self.ListPresets(aVersion, instanceID, out currentPresetNameList);
-            invocation.WriteStart();
-            invocation.WriteString("CurrentPresetNameList", currentPresetNameList);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                string currentPresetNameList;
+                self.ListPresets(aVersion, instanceID, out currentPresetNameList);
+                invocation.WriteStart();
+                invocation.WriteString("CurrentPresetNameList", currentPresetNameList);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1185,13 +1195,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            string presetName = invocation.ReadString("PresetName");
-            invocation.ReadEnd();
-            self.SelectPreset(aVersion, instanceID, presetName);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                string presetName = invocation.ReadString("PresetName");
+                invocation.ReadEnd();
+                self.SelectPreset(aVersion, instanceID, presetName);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1200,14 +1220,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            invocation.ReadEnd();
-            uint currentBrightness;
-            self.GetBrightness(aVersion, instanceID, out currentBrightness);
-            invocation.WriteStart();
-            invocation.WriteUint("CurrentBrightness", currentBrightness);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                uint currentBrightness;
+                self.GetBrightness(aVersion, instanceID, out currentBrightness);
+                invocation.WriteStart();
+                invocation.WriteUint("CurrentBrightness", currentBrightness);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1216,13 +1246,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            uint desiredBrightness = invocation.ReadUint("DesiredBrightness");
-            invocation.ReadEnd();
-            self.SetBrightness(aVersion, instanceID, desiredBrightness);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                uint desiredBrightness = invocation.ReadUint("DesiredBrightness");
+                invocation.ReadEnd();
+                self.SetBrightness(aVersion, instanceID, desiredBrightness);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1231,14 +1271,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            invocation.ReadEnd();
-            uint currentContrast;
-            self.GetContrast(aVersion, instanceID, out currentContrast);
-            invocation.WriteStart();
-            invocation.WriteUint("CurrentContrast", currentContrast);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                uint currentContrast;
+                self.GetContrast(aVersion, instanceID, out currentContrast);
+                invocation.WriteStart();
+                invocation.WriteUint("CurrentContrast", currentContrast);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1247,13 +1297,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            uint desiredContrast = invocation.ReadUint("DesiredContrast");
-            invocation.ReadEnd();
-            self.SetContrast(aVersion, instanceID, desiredContrast);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                uint desiredContrast = invocation.ReadUint("DesiredContrast");
+                invocation.ReadEnd();
+                self.SetContrast(aVersion, instanceID, desiredContrast);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1262,14 +1322,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            invocation.ReadEnd();
-            uint currentSharpness;
-            self.GetSharpness(aVersion, instanceID, out currentSharpness);
-            invocation.WriteStart();
-            invocation.WriteUint("CurrentSharpness", currentSharpness);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                uint currentSharpness;
+                self.GetSharpness(aVersion, instanceID, out currentSharpness);
+                invocation.WriteStart();
+                invocation.WriteUint("CurrentSharpness", currentSharpness);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1278,13 +1348,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            uint desiredSharpness = invocation.ReadUint("DesiredSharpness");
-            invocation.ReadEnd();
-            self.SetSharpness(aVersion, instanceID, desiredSharpness);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                uint desiredSharpness = invocation.ReadUint("DesiredSharpness");
+                invocation.ReadEnd();
+                self.SetSharpness(aVersion, instanceID, desiredSharpness);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1293,14 +1373,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            invocation.ReadEnd();
-            uint currentRedVideoGain;
-            self.GetRedVideoGain(aVersion, instanceID, out currentRedVideoGain);
-            invocation.WriteStart();
-            invocation.WriteUint("CurrentRedVideoGain", currentRedVideoGain);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                uint currentRedVideoGain;
+                self.GetRedVideoGain(aVersion, instanceID, out currentRedVideoGain);
+                invocation.WriteStart();
+                invocation.WriteUint("CurrentRedVideoGain", currentRedVideoGain);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1309,13 +1399,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            uint desiredRedVideoGain = invocation.ReadUint("DesiredRedVideoGain");
-            invocation.ReadEnd();
-            self.SetRedVideoGain(aVersion, instanceID, desiredRedVideoGain);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                uint desiredRedVideoGain = invocation.ReadUint("DesiredRedVideoGain");
+                invocation.ReadEnd();
+                self.SetRedVideoGain(aVersion, instanceID, desiredRedVideoGain);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1324,14 +1424,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            invocation.ReadEnd();
-            uint currentGreenVideoGain;
-            self.GetGreenVideoGain(aVersion, instanceID, out currentGreenVideoGain);
-            invocation.WriteStart();
-            invocation.WriteUint("CurrentGreenVideoGain", currentGreenVideoGain);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                uint currentGreenVideoGain;
+                self.GetGreenVideoGain(aVersion, instanceID, out currentGreenVideoGain);
+                invocation.WriteStart();
+                invocation.WriteUint("CurrentGreenVideoGain", currentGreenVideoGain);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1340,13 +1450,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            uint desiredGreenVideoGain = invocation.ReadUint("DesiredGreenVideoGain");
-            invocation.ReadEnd();
-            self.SetGreenVideoGain(aVersion, instanceID, desiredGreenVideoGain);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                uint desiredGreenVideoGain = invocation.ReadUint("DesiredGreenVideoGain");
+                invocation.ReadEnd();
+                self.SetGreenVideoGain(aVersion, instanceID, desiredGreenVideoGain);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1355,14 +1475,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            invocation.ReadEnd();
-            uint currentBlueVideoGain;
-            self.GetBlueVideoGain(aVersion, instanceID, out currentBlueVideoGain);
-            invocation.WriteStart();
-            invocation.WriteUint("CurrentBlueVideoGain", currentBlueVideoGain);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                uint currentBlueVideoGain;
+                self.GetBlueVideoGain(aVersion, instanceID, out currentBlueVideoGain);
+                invocation.WriteStart();
+                invocation.WriteUint("CurrentBlueVideoGain", currentBlueVideoGain);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1371,13 +1501,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            uint desiredBlueVideoGain = invocation.ReadUint("DesiredBlueVideoGain");
-            invocation.ReadEnd();
-            self.SetBlueVideoGain(aVersion, instanceID, desiredBlueVideoGain);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                uint desiredBlueVideoGain = invocation.ReadUint("DesiredBlueVideoGain");
+                invocation.ReadEnd();
+                self.SetBlueVideoGain(aVersion, instanceID, desiredBlueVideoGain);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1386,14 +1526,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            invocation.ReadEnd();
-            uint currentRedVideoBlackLevel;
-            self.GetRedVideoBlackLevel(aVersion, instanceID, out currentRedVideoBlackLevel);
-            invocation.WriteStart();
-            invocation.WriteUint("CurrentRedVideoBlackLevel", currentRedVideoBlackLevel);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                uint currentRedVideoBlackLevel;
+                self.GetRedVideoBlackLevel(aVersion, instanceID, out currentRedVideoBlackLevel);
+                invocation.WriteStart();
+                invocation.WriteUint("CurrentRedVideoBlackLevel", currentRedVideoBlackLevel);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1402,13 +1552,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            uint desiredRedVideoBlackLevel = invocation.ReadUint("DesiredRedVideoBlackLevel");
-            invocation.ReadEnd();
-            self.SetRedVideoBlackLevel(aVersion, instanceID, desiredRedVideoBlackLevel);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                uint desiredRedVideoBlackLevel = invocation.ReadUint("DesiredRedVideoBlackLevel");
+                invocation.ReadEnd();
+                self.SetRedVideoBlackLevel(aVersion, instanceID, desiredRedVideoBlackLevel);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1417,14 +1577,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            invocation.ReadEnd();
-            uint currentGreenVideoBlackLevel;
-            self.GetGreenVideoBlackLevel(aVersion, instanceID, out currentGreenVideoBlackLevel);
-            invocation.WriteStart();
-            invocation.WriteUint("CurrentGreenVideoBlackLevel", currentGreenVideoBlackLevel);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                uint currentGreenVideoBlackLevel;
+                self.GetGreenVideoBlackLevel(aVersion, instanceID, out currentGreenVideoBlackLevel);
+                invocation.WriteStart();
+                invocation.WriteUint("CurrentGreenVideoBlackLevel", currentGreenVideoBlackLevel);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1433,13 +1603,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            uint desiredGreenVideoBlackLevel = invocation.ReadUint("DesiredGreenVideoBlackLevel");
-            invocation.ReadEnd();
-            self.SetGreenVideoBlackLevel(aVersion, instanceID, desiredGreenVideoBlackLevel);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                uint desiredGreenVideoBlackLevel = invocation.ReadUint("DesiredGreenVideoBlackLevel");
+                invocation.ReadEnd();
+                self.SetGreenVideoBlackLevel(aVersion, instanceID, desiredGreenVideoBlackLevel);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1448,14 +1628,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            invocation.ReadEnd();
-            uint currentBlueVideoBlackLevel;
-            self.GetBlueVideoBlackLevel(aVersion, instanceID, out currentBlueVideoBlackLevel);
-            invocation.WriteStart();
-            invocation.WriteUint("CurrentBlueVideoBlackLevel", currentBlueVideoBlackLevel);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                uint currentBlueVideoBlackLevel;
+                self.GetBlueVideoBlackLevel(aVersion, instanceID, out currentBlueVideoBlackLevel);
+                invocation.WriteStart();
+                invocation.WriteUint("CurrentBlueVideoBlackLevel", currentBlueVideoBlackLevel);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1464,13 +1654,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            uint desiredBlueVideoBlackLevel = invocation.ReadUint("DesiredBlueVideoBlackLevel");
-            invocation.ReadEnd();
-            self.SetBlueVideoBlackLevel(aVersion, instanceID, desiredBlueVideoBlackLevel);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                uint desiredBlueVideoBlackLevel = invocation.ReadUint("DesiredBlueVideoBlackLevel");
+                invocation.ReadEnd();
+                self.SetBlueVideoBlackLevel(aVersion, instanceID, desiredBlueVideoBlackLevel);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1479,14 +1679,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            invocation.ReadEnd();
-            uint currentColorTemperature;
-            self.GetColorTemperature(aVersion, instanceID, out currentColorTemperature);
-            invocation.WriteStart();
-            invocation.WriteUint("CurrentColorTemperature", currentColorTemperature);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                uint currentColorTemperature;
+                self.GetColorTemperature(aVersion, instanceID, out currentColorTemperature);
+                invocation.WriteStart();
+                invocation.WriteUint("CurrentColorTemperature", currentColorTemperature);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1495,13 +1705,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            uint desiredColorTemperature = invocation.ReadUint("DesiredColorTemperature");
-            invocation.ReadEnd();
-            self.SetColorTemperature(aVersion, instanceID, desiredColorTemperature);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                uint desiredColorTemperature = invocation.ReadUint("DesiredColorTemperature");
+                invocation.ReadEnd();
+                self.SetColorTemperature(aVersion, instanceID, desiredColorTemperature);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1510,14 +1730,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            invocation.ReadEnd();
-            int currentHorizontalKeystone;
-            self.GetHorizontalKeystone(aVersion, instanceID, out currentHorizontalKeystone);
-            invocation.WriteStart();
-            invocation.WriteInt("CurrentHorizontalKeystone", currentHorizontalKeystone);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                int currentHorizontalKeystone;
+                self.GetHorizontalKeystone(aVersion, instanceID, out currentHorizontalKeystone);
+                invocation.WriteStart();
+                invocation.WriteInt("CurrentHorizontalKeystone", currentHorizontalKeystone);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1526,13 +1756,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            int desiredHorizontalKeystone = invocation.ReadInt("DesiredHorizontalKeystone");
-            invocation.ReadEnd();
-            self.SetHorizontalKeystone(aVersion, instanceID, desiredHorizontalKeystone);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                int desiredHorizontalKeystone = invocation.ReadInt("DesiredHorizontalKeystone");
+                invocation.ReadEnd();
+                self.SetHorizontalKeystone(aVersion, instanceID, desiredHorizontalKeystone);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1541,14 +1781,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            invocation.ReadEnd();
-            int currentVerticalKeystone;
-            self.GetVerticalKeystone(aVersion, instanceID, out currentVerticalKeystone);
-            invocation.WriteStart();
-            invocation.WriteInt("CurrentVerticalKeystone", currentVerticalKeystone);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                invocation.ReadEnd();
+                int currentVerticalKeystone;
+                self.GetVerticalKeystone(aVersion, instanceID, out currentVerticalKeystone);
+                invocation.WriteStart();
+                invocation.WriteInt("CurrentVerticalKeystone", currentVerticalKeystone);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1557,13 +1807,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            int desiredVerticalKeystone = invocation.ReadInt("DesiredVerticalKeystone");
-            invocation.ReadEnd();
-            self.SetVerticalKeystone(aVersion, instanceID, desiredVerticalKeystone);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                int desiredVerticalKeystone = invocation.ReadInt("DesiredVerticalKeystone");
+                invocation.ReadEnd();
+                self.SetVerticalKeystone(aVersion, instanceID, desiredVerticalKeystone);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1572,15 +1832,25 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            string channel = invocation.ReadString("Channel");
-            invocation.ReadEnd();
-            bool currentMute;
-            self.GetMute(aVersion, instanceID, channel, out currentMute);
-            invocation.WriteStart();
-            invocation.WriteBool("CurrentMute", currentMute);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                string channel = invocation.ReadString("Channel");
+                invocation.ReadEnd();
+                bool currentMute;
+                self.GetMute(aVersion, instanceID, channel, out currentMute);
+                invocation.WriteStart();
+                invocation.WriteBool("CurrentMute", currentMute);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1589,14 +1859,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            string channel = invocation.ReadString("Channel");
-            bool desiredMute = invocation.ReadBool("DesiredMute");
-            invocation.ReadEnd();
-            self.SetMute(aVersion, instanceID, channel, desiredMute);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                string channel = invocation.ReadString("Channel");
+                bool desiredMute = invocation.ReadBool("DesiredMute");
+                invocation.ReadEnd();
+                self.SetMute(aVersion, instanceID, channel, desiredMute);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1605,15 +1885,25 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            string channel = invocation.ReadString("Channel");
-            invocation.ReadEnd();
-            uint currentVolume;
-            self.GetVolume(aVersion, instanceID, channel, out currentVolume);
-            invocation.WriteStart();
-            invocation.WriteUint("CurrentVolume", currentVolume);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                string channel = invocation.ReadString("Channel");
+                invocation.ReadEnd();
+                uint currentVolume;
+                self.GetVolume(aVersion, instanceID, channel, out currentVolume);
+                invocation.WriteStart();
+                invocation.WriteUint("CurrentVolume", currentVolume);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1622,14 +1912,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            string channel = invocation.ReadString("Channel");
-            uint desiredVolume = invocation.ReadUint("DesiredVolume");
-            invocation.ReadEnd();
-            self.SetVolume(aVersion, instanceID, channel, desiredVolume);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                string channel = invocation.ReadString("Channel");
+                uint desiredVolume = invocation.ReadUint("DesiredVolume");
+                invocation.ReadEnd();
+                self.SetVolume(aVersion, instanceID, channel, desiredVolume);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1638,15 +1938,25 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            string channel = invocation.ReadString("Channel");
-            invocation.ReadEnd();
-            int currentVolume;
-            self.GetVolumeDB(aVersion, instanceID, channel, out currentVolume);
-            invocation.WriteStart();
-            invocation.WriteInt("CurrentVolume", currentVolume);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                string channel = invocation.ReadString("Channel");
+                invocation.ReadEnd();
+                int currentVolume;
+                self.GetVolumeDB(aVersion, instanceID, channel, out currentVolume);
+                invocation.WriteStart();
+                invocation.WriteInt("CurrentVolume", currentVolume);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1655,14 +1965,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            string channel = invocation.ReadString("Channel");
-            int desiredVolume = invocation.ReadInt("DesiredVolume");
-            invocation.ReadEnd();
-            self.SetVolumeDB(aVersion, instanceID, channel, desiredVolume);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                string channel = invocation.ReadString("Channel");
+                int desiredVolume = invocation.ReadInt("DesiredVolume");
+                invocation.ReadEnd();
+                self.SetVolumeDB(aVersion, instanceID, channel, desiredVolume);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1671,17 +1991,27 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            string channel = invocation.ReadString("Channel");
-            invocation.ReadEnd();
-            int minValue;
-            int maxValue;
-            self.GetVolumeDBRange(aVersion, instanceID, channel, out minValue, out maxValue);
-            invocation.WriteStart();
-            invocation.WriteInt("MinValue", minValue);
-            invocation.WriteInt("MaxValue", maxValue);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                string channel = invocation.ReadString("Channel");
+                invocation.ReadEnd();
+                int minValue;
+                int maxValue;
+                self.GetVolumeDBRange(aVersion, instanceID, channel, out minValue, out maxValue);
+                invocation.WriteStart();
+                invocation.WriteInt("MinValue", minValue);
+                invocation.WriteInt("MaxValue", maxValue);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1690,15 +2020,25 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            string channel = invocation.ReadString("Channel");
-            invocation.ReadEnd();
-            bool currentLoudness;
-            self.GetLoudness(aVersion, instanceID, channel, out currentLoudness);
-            invocation.WriteStart();
-            invocation.WriteBool("CurrentLoudness", currentLoudness);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                string channel = invocation.ReadString("Channel");
+                invocation.ReadEnd();
+                bool currentLoudness;
+                self.GetLoudness(aVersion, instanceID, channel, out currentLoudness);
+                invocation.WriteStart();
+                invocation.WriteBool("CurrentLoudness", currentLoudness);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -1707,14 +2047,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderUpnpOrgRenderingControl1 self = (DvProviderUpnpOrgRenderingControl1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint instanceID = invocation.ReadUint("InstanceID");
-            string channel = invocation.ReadString("Channel");
-            bool desiredLoudness = invocation.ReadBool("DesiredLoudness");
-            invocation.ReadEnd();
-            self.SetLoudness(aVersion, instanceID, channel, desiredLoudness);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint instanceID = invocation.ReadUint("InstanceID");
+                string channel = invocation.ReadString("Channel");
+                bool desiredLoudness = invocation.ReadBool("DesiredLoudness");
+                invocation.ReadEnd();
+                self.SetLoudness(aVersion, instanceID, channel, desiredLoudness);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 

@@ -252,13 +252,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestLights1 self = (DvProviderZappOrgTestLights1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            invocation.ReadEnd();
-            uint count;
-            self.GetCount(aVersion, out count);
-            invocation.WriteStart();
-            invocation.WriteUint("Count", count);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                invocation.ReadEnd();
+                uint count;
+                self.GetCount(aVersion, out count);
+                invocation.WriteStart();
+                invocation.WriteUint("Count", count);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -267,14 +277,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestLights1 self = (DvProviderZappOrgTestLights1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint index = invocation.ReadUint("Index");
-            invocation.ReadEnd();
-            string roomName;
-            self.GetRoom(aVersion, index, out roomName);
-            invocation.WriteStart();
-            invocation.WriteString("RoomName", roomName);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint index = invocation.ReadUint("Index");
+                invocation.ReadEnd();
+                string roomName;
+                self.GetRoom(aVersion, index, out roomName);
+                invocation.WriteStart();
+                invocation.WriteString("RoomName", roomName);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -283,14 +303,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestLights1 self = (DvProviderZappOrgTestLights1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint index = invocation.ReadUint("Index");
-            invocation.ReadEnd();
-            string friendlyName;
-            self.GetName(aVersion, index, out friendlyName);
-            invocation.WriteStart();
-            invocation.WriteString("FriendlyName", friendlyName);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint index = invocation.ReadUint("Index");
+                invocation.ReadEnd();
+                string friendlyName;
+                self.GetName(aVersion, index, out friendlyName);
+                invocation.WriteStart();
+                invocation.WriteString("FriendlyName", friendlyName);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -299,18 +329,28 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestLights1 self = (DvProviderZappOrgTestLights1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint index = invocation.ReadUint("Index");
-            invocation.ReadEnd();
-            uint x;
-            uint y;
-            uint z;
-            self.GetPosition(aVersion, index, out x, out y, out z);
-            invocation.WriteStart();
-            invocation.WriteUint("X", x);
-            invocation.WriteUint("Y", y);
-            invocation.WriteUint("Z", z);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint index = invocation.ReadUint("Index");
+                invocation.ReadEnd();
+                uint x;
+                uint y;
+                uint z;
+                self.GetPosition(aVersion, index, out x, out y, out z);
+                invocation.WriteStart();
+                invocation.WriteUint("X", x);
+                invocation.WriteUint("Y", y);
+                invocation.WriteUint("Z", z);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -319,13 +359,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestLights1 self = (DvProviderZappOrgTestLights1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint index = invocation.ReadUint("Index");
-            uint color = invocation.ReadUint("Color");
-            invocation.ReadEnd();
-            self.SetColor(aVersion, index, color);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint index = invocation.ReadUint("Index");
+                uint color = invocation.ReadUint("Color");
+                invocation.ReadEnd();
+                self.SetColor(aVersion, index, color);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -334,14 +384,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestLights1 self = (DvProviderZappOrgTestLights1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint index = invocation.ReadUint("Index");
-            invocation.ReadEnd();
-            uint color;
-            self.GetColor(aVersion, index, out color);
-            invocation.WriteStart();
-            invocation.WriteUint("Color", color);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint index = invocation.ReadUint("Index");
+                invocation.ReadEnd();
+                uint color;
+                self.GetColor(aVersion, index, out color);
+                invocation.WriteStart();
+                invocation.WriteUint("Color", color);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -350,20 +410,30 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestLights1 self = (DvProviderZappOrgTestLights1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            uint color = invocation.ReadUint("Color");
-            invocation.ReadEnd();
-            uint brightness;
-            uint red;
-            uint green;
-            uint blue;
-            self.GetColorComponents(aVersion, color, out brightness, out red, out green, out blue);
-            invocation.WriteStart();
-            invocation.WriteUint("Brightness", brightness);
-            invocation.WriteUint("Red", red);
-            invocation.WriteUint("Green", green);
-            invocation.WriteUint("Blue", blue);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                uint color = invocation.ReadUint("Color");
+                invocation.ReadEnd();
+                uint brightness;
+                uint red;
+                uint green;
+                uint blue;
+                self.GetColorComponents(aVersion, color, out brightness, out red, out green, out blue);
+                invocation.WriteStart();
+                invocation.WriteUint("Brightness", brightness);
+                invocation.WriteUint("Red", red);
+                invocation.WriteUint("Green", green);
+                invocation.WriteUint("Blue", blue);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 

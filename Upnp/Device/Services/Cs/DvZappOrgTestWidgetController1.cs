@@ -158,13 +158,23 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestWidgetController1 self = (DvProviderZappOrgTestWidgetController1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            string widgetUdn = invocation.ReadString("WidgetUdn");
-            uint widgetClass = invocation.ReadUint("WidgetClass");
-            invocation.ReadEnd();
-            self.CreateWidget(aVersion, widgetUdn, widgetClass);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                string widgetUdn = invocation.ReadString("WidgetUdn");
+                uint widgetClass = invocation.ReadUint("WidgetClass");
+                invocation.ReadEnd();
+                self.CreateWidget(aVersion, widgetUdn, widgetClass);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -173,12 +183,22 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestWidgetController1 self = (DvProviderZappOrgTestWidgetController1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            string widgetUdn = invocation.ReadString("WidgetUdn");
-            invocation.ReadEnd();
-            self.RemoveWidget(aVersion, widgetUdn);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                string widgetUdn = invocation.ReadString("WidgetUdn");
+                invocation.ReadEnd();
+                self.RemoveWidget(aVersion, widgetUdn);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -187,14 +207,24 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestWidgetController1 self = (DvProviderZappOrgTestWidgetController1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            string widgetUdn = invocation.ReadString("WidgetUdn");
-            uint registerIndex = invocation.ReadUint("RegisterIndex");
-            uint registerValue = invocation.ReadUint("RegisterValue");
-            invocation.ReadEnd();
-            self.SetWidgetRegister(aVersion, widgetUdn, registerIndex, registerValue);
-            invocation.WriteStart();
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                string widgetUdn = invocation.ReadString("WidgetUdn");
+                uint registerIndex = invocation.ReadUint("RegisterIndex");
+                uint registerValue = invocation.ReadUint("RegisterValue");
+                invocation.ReadEnd();
+                self.SetWidgetRegister(aVersion, widgetUdn, registerIndex, registerValue);
+                invocation.WriteStart();
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
@@ -203,15 +233,25 @@ namespace Zapp.Device.Providers
             GCHandle gch = GCHandle.FromIntPtr(aPtr);
             DvProviderZappOrgTestWidgetController1 self = (DvProviderZappOrgTestWidgetController1)gch.Target;
             DvInvocation invocation = new DvInvocation(aInvocation);
-            invocation.ReadStart();
-            string widgetUdn = invocation.ReadString("WidgetUdn");
-            uint registerIndex = invocation.ReadUint("RegisterIndex");
-            invocation.ReadEnd();
-            uint registerValue;
-            self.GetWidgetRegister(aVersion, widgetUdn, registerIndex, out registerValue);
-            invocation.WriteStart();
-            invocation.WriteUint("RegisterValue", registerValue);
-            invocation.WriteEnd();
+            try {
+                invocation.ReadStart();
+                string widgetUdn = invocation.ReadString("WidgetUdn");
+                uint registerIndex = invocation.ReadUint("RegisterIndex");
+                invocation.ReadEnd();
+                uint registerValue;
+                self.GetWidgetRegister(aVersion, widgetUdn, registerIndex, out registerValue);
+                invocation.WriteStart();
+                invocation.WriteUint("RegisterValue", registerValue);
+                invocation.WriteEnd();
+            }
+            catch (ActionError)
+            {
+                return -1;
+            }
+            catch (PropertyUpdateError)
+            {
+                return -1;
+            }
             return 0;
         }
 
