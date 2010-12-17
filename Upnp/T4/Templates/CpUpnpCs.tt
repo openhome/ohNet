@@ -426,7 +426,7 @@ string InArgsFull(Method a, bool aTrailingComma)
         
         result += argtype[i.variable.type];
         result += " ";
-        result += "a" + i.name;
+        result += "a" + ArgName(i);
     }
     if (aTrailingComma && result.Length > 0)
     {
@@ -450,7 +450,7 @@ string OutArgsFull(Method a, bool aLeadingComma)
         result += "out ";
         result += argtype[o.variable.type];
         result += " ";
-        result += "a" + o.name;
+        result += "a" + ArgName(o);
     }
     if (aLeadingComma && result.Length > 0)
     {

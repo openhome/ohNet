@@ -12,36 +12,36 @@ namespace Zapp.ControlPoint.Proxies
         void SyncReboot();
         void BeginReboot(CpProxy.CallbackAsyncComplete aCallback);
         void EndReboot(IntPtr aAsyncHandle);
-        void SyncBootMode(out String aaMode);
+        void SyncBootMode(out String aMode);
         void BeginBootMode(CpProxy.CallbackAsyncComplete aCallback);
-        void EndBootMode(IntPtr aAsyncHandle, out String aaMode);
-        void SyncSetBootMode(String aaMode);
-        void BeginSetBootMode(String aaMode, CpProxy.CallbackAsyncComplete aCallback);
+        void EndBootMode(IntPtr aAsyncHandle, out String aMode);
+        void SyncSetBootMode(String aMode);
+        void BeginSetBootMode(String aMode, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetBootMode(IntPtr aAsyncHandle);
-        void SyncBspType(out String aaBspType);
+        void SyncBspType(out String aBspType);
         void BeginBspType(CpProxy.CallbackAsyncComplete aCallback);
-        void EndBspType(IntPtr aAsyncHandle, out String aaBspType);
-        void SyncUglyName(out String aaUglyName);
+        void EndBspType(IntPtr aAsyncHandle, out String aBspType);
+        void SyncUglyName(out String aUglyName);
         void BeginUglyName(CpProxy.CallbackAsyncComplete aCallback);
-        void EndUglyName(IntPtr aAsyncHandle, out String aaUglyName);
-        void SyncMacAddress(out String aaMacAddress);
+        void EndUglyName(IntPtr aAsyncHandle, out String aUglyName);
+        void SyncMacAddress(out String aMacAddress);
         void BeginMacAddress(CpProxy.CallbackAsyncComplete aCallback);
-        void EndMacAddress(IntPtr aAsyncHandle, out String aaMacAddress);
-        void SyncProductId(out String aaProductNumber);
+        void EndMacAddress(IntPtr aAsyncHandle, out String aMacAddress);
+        void SyncProductId(out String aProductNumber);
         void BeginProductId(CpProxy.CallbackAsyncComplete aCallback);
-        void EndProductId(IntPtr aAsyncHandle, out String aaProductNumber);
-        void SyncBoardId(uint aaIndex, out String aaBoardNumber);
-        void BeginBoardId(uint aaIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndBoardId(IntPtr aAsyncHandle, out String aaBoardNumber);
-        void SyncBoardType(uint aaIndex, out String aaBoardNumber);
-        void BeginBoardType(uint aaIndex, CpProxy.CallbackAsyncComplete aCallback);
-        void EndBoardType(IntPtr aAsyncHandle, out String aaBoardNumber);
-        void SyncMaxBoards(out uint aaMaxBoards);
+        void EndProductId(IntPtr aAsyncHandle, out String aProductNumber);
+        void SyncBoardId(uint aIndex, out String aBoardNumber);
+        void BeginBoardId(uint aIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndBoardId(IntPtr aAsyncHandle, out String aBoardNumber);
+        void SyncBoardType(uint aIndex, out String aBoardNumber);
+        void BeginBoardType(uint aIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndBoardType(IntPtr aAsyncHandle, out String aBoardNumber);
+        void SyncMaxBoards(out uint aMaxBoards);
         void BeginMaxBoards(CpProxy.CallbackAsyncComplete aCallback);
-        void EndMaxBoards(IntPtr aAsyncHandle, out uint aaMaxBoards);
-        void SyncSoftwareVersion(out String aaSoftwareVersion);
+        void EndMaxBoards(IntPtr aAsyncHandle, out uint aMaxBoards);
+        void SyncSoftwareVersion(out String aSoftwareVersion);
         void BeginSoftwareVersion(CpProxy.CallbackAsyncComplete aCallback);
-        void EndSoftwareVersion(IntPtr aAsyncHandle, out String aaSoftwareVersion);
+        void EndSoftwareVersion(IntPtr aAsyncHandle, out String aSoftwareVersion);
     }
 
     internal class SyncRebootLinnCoUkVolkano1 : SyncProxyAction
@@ -367,7 +367,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaMode"></param>
-        public void SyncBootMode(out String aaMode)
+        public void SyncBootMode(out String aMode)
         {
             SyncBootModeLinnCoUkVolkano1 sync = new SyncBootModeLinnCoUkVolkano1(this);
             BeginBootMode(sync.AsyncComplete());
@@ -398,7 +398,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaMode"></param>
-        public void EndBootMode(IntPtr aAsyncHandle, out String aaMode)
+        public void EndBootMode(IntPtr aAsyncHandle, out String aMode)
         {
             uint index = 0;
             aMode = Invocation.OutputString(aAsyncHandle, index++);
@@ -410,7 +410,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaMode"></param>
-        public void SyncSetBootMode(String aaMode)
+        public void SyncSetBootMode(String aMode)
         {
             SyncSetBootModeLinnCoUkVolkano1 sync = new SyncSetBootModeLinnCoUkVolkano1(this);
             BeginSetBootMode(aMode, sync.AsyncComplete());
@@ -427,7 +427,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMode"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetBootMode(String aaMode, CallbackAsyncComplete aCallback)
+        public void BeginSetBootMode(String aMode, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetBootMode, aCallback);
             int inIndex = 0;
@@ -450,7 +450,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaBspType"></param>
-        public void SyncBspType(out String aaBspType)
+        public void SyncBspType(out String aBspType)
         {
             SyncBspTypeLinnCoUkVolkano1 sync = new SyncBspTypeLinnCoUkVolkano1(this);
             BeginBspType(sync.AsyncComplete());
@@ -481,7 +481,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaBspType"></param>
-        public void EndBspType(IntPtr aAsyncHandle, out String aaBspType)
+        public void EndBspType(IntPtr aAsyncHandle, out String aBspType)
         {
             uint index = 0;
             aBspType = Invocation.OutputString(aAsyncHandle, index++);
@@ -493,7 +493,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaUglyName"></param>
-        public void SyncUglyName(out String aaUglyName)
+        public void SyncUglyName(out String aUglyName)
         {
             SyncUglyNameLinnCoUkVolkano1 sync = new SyncUglyNameLinnCoUkVolkano1(this);
             BeginUglyName(sync.AsyncComplete());
@@ -524,7 +524,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaUglyName"></param>
-        public void EndUglyName(IntPtr aAsyncHandle, out String aaUglyName)
+        public void EndUglyName(IntPtr aAsyncHandle, out String aUglyName)
         {
             uint index = 0;
             aUglyName = Invocation.OutputString(aAsyncHandle, index++);
@@ -536,7 +536,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaMacAddress"></param>
-        public void SyncMacAddress(out String aaMacAddress)
+        public void SyncMacAddress(out String aMacAddress)
         {
             SyncMacAddressLinnCoUkVolkano1 sync = new SyncMacAddressLinnCoUkVolkano1(this);
             BeginMacAddress(sync.AsyncComplete());
@@ -567,7 +567,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaMacAddress"></param>
-        public void EndMacAddress(IntPtr aAsyncHandle, out String aaMacAddress)
+        public void EndMacAddress(IntPtr aAsyncHandle, out String aMacAddress)
         {
             uint index = 0;
             aMacAddress = Invocation.OutputString(aAsyncHandle, index++);
@@ -579,7 +579,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaProductNumber"></param>
-        public void SyncProductId(out String aaProductNumber)
+        public void SyncProductId(out String aProductNumber)
         {
             SyncProductIdLinnCoUkVolkano1 sync = new SyncProductIdLinnCoUkVolkano1(this);
             BeginProductId(sync.AsyncComplete());
@@ -610,7 +610,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaProductNumber"></param>
-        public void EndProductId(IntPtr aAsyncHandle, out String aaProductNumber)
+        public void EndProductId(IntPtr aAsyncHandle, out String aProductNumber)
         {
             uint index = 0;
             aProductNumber = Invocation.OutputString(aAsyncHandle, index++);
@@ -623,7 +623,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIndex"></param>
         /// <param name="aaBoardNumber"></param>
-        public void SyncBoardId(uint aaIndex, out String aaBoardNumber)
+        public void SyncBoardId(uint aIndex, out String aBoardNumber)
         {
             SyncBoardIdLinnCoUkVolkano1 sync = new SyncBoardIdLinnCoUkVolkano1(this);
             BeginBoardId(aIndex, sync.AsyncComplete());
@@ -641,7 +641,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaIndex"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginBoardId(uint aaIndex, CallbackAsyncComplete aCallback)
+        public void BeginBoardId(uint aIndex, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionBoardId, aCallback);
             int inIndex = 0;
@@ -657,7 +657,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaBoardNumber"></param>
-        public void EndBoardId(IntPtr aAsyncHandle, out String aaBoardNumber)
+        public void EndBoardId(IntPtr aAsyncHandle, out String aBoardNumber)
         {
             uint index = 0;
             aBoardNumber = Invocation.OutputString(aAsyncHandle, index++);
@@ -670,7 +670,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIndex"></param>
         /// <param name="aaBoardNumber"></param>
-        public void SyncBoardType(uint aaIndex, out String aaBoardNumber)
+        public void SyncBoardType(uint aIndex, out String aBoardNumber)
         {
             SyncBoardTypeLinnCoUkVolkano1 sync = new SyncBoardTypeLinnCoUkVolkano1(this);
             BeginBoardType(aIndex, sync.AsyncComplete());
@@ -688,7 +688,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaIndex"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginBoardType(uint aaIndex, CallbackAsyncComplete aCallback)
+        public void BeginBoardType(uint aIndex, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionBoardType, aCallback);
             int inIndex = 0;
@@ -704,7 +704,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaBoardNumber"></param>
-        public void EndBoardType(IntPtr aAsyncHandle, out String aaBoardNumber)
+        public void EndBoardType(IntPtr aAsyncHandle, out String aBoardNumber)
         {
             uint index = 0;
             aBoardNumber = Invocation.OutputString(aAsyncHandle, index++);
@@ -716,7 +716,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaMaxBoards"></param>
-        public void SyncMaxBoards(out uint aaMaxBoards)
+        public void SyncMaxBoards(out uint aMaxBoards)
         {
             SyncMaxBoardsLinnCoUkVolkano1 sync = new SyncMaxBoardsLinnCoUkVolkano1(this);
             BeginMaxBoards(sync.AsyncComplete());
@@ -747,7 +747,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaMaxBoards"></param>
-        public void EndMaxBoards(IntPtr aAsyncHandle, out uint aaMaxBoards)
+        public void EndMaxBoards(IntPtr aAsyncHandle, out uint aMaxBoards)
         {
             uint index = 0;
             aMaxBoards = Invocation.OutputUint(aAsyncHandle, index++);
@@ -759,7 +759,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaSoftwareVersion"></param>
-        public void SyncSoftwareVersion(out String aaSoftwareVersion)
+        public void SyncSoftwareVersion(out String aSoftwareVersion)
         {
             SyncSoftwareVersionLinnCoUkVolkano1 sync = new SyncSoftwareVersionLinnCoUkVolkano1(this);
             BeginSoftwareVersion(sync.AsyncComplete());
@@ -790,7 +790,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSoftwareVersion"></param>
-        public void EndSoftwareVersion(IntPtr aAsyncHandle, out String aaSoftwareVersion)
+        public void EndSoftwareVersion(IntPtr aAsyncHandle, out String aSoftwareVersion)
         {
             uint index = 0;
             aSoftwareVersion = Invocation.OutputString(aAsyncHandle, index++);

@@ -9,18 +9,18 @@ namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyLinnCoUkInfo1 : ICpProxy, IDisposable
     {
-        void SyncCounters(out uint aaTrackCount, out uint aaDetailsCount, out uint aaMetatextCount);
+        void SyncCounters(out uint aTrackCount, out uint aDetailsCount, out uint aMetatextCount);
         void BeginCounters(CpProxy.CallbackAsyncComplete aCallback);
-        void EndCounters(IntPtr aAsyncHandle, out uint aaTrackCount, out uint aaDetailsCount, out uint aaMetatextCount);
-        void SyncTrack(out String aaUri, out String aaMetadata);
+        void EndCounters(IntPtr aAsyncHandle, out uint aTrackCount, out uint aDetailsCount, out uint aMetatextCount);
+        void SyncTrack(out String aUri, out String aMetadata);
         void BeginTrack(CpProxy.CallbackAsyncComplete aCallback);
-        void EndTrack(IntPtr aAsyncHandle, out String aaUri, out String aaMetadata);
-        void SyncDetails(out uint aaDuration, out uint aaBitRate, out uint aaBitDepth, out uint aaSampleRate, out bool aaLossless, out String aaCodecName);
+        void EndTrack(IntPtr aAsyncHandle, out String aUri, out String aMetadata);
+        void SyncDetails(out uint aDuration, out uint aBitRate, out uint aBitDepth, out uint aSampleRate, out bool aLossless, out String aCodecName);
         void BeginDetails(CpProxy.CallbackAsyncComplete aCallback);
-        void EndDetails(IntPtr aAsyncHandle, out uint aaDuration, out uint aaBitRate, out uint aaBitDepth, out uint aaSampleRate, out bool aaLossless, out String aaCodecName);
-        void SyncMetatext(out String aaMetatext);
+        void EndDetails(IntPtr aAsyncHandle, out uint aDuration, out uint aBitRate, out uint aBitDepth, out uint aSampleRate, out bool aLossless, out String aCodecName);
+        void SyncMetatext(out String aMetatext);
         void BeginMetatext(CpProxy.CallbackAsyncComplete aCallback);
-        void EndMetatext(IntPtr aAsyncHandle, out String aaMetatext);
+        void EndMetatext(IntPtr aAsyncHandle, out String aMetatext);
         void SetPropertyTrackCountChanged(CpProxy.CallbackPropertyChanged aTrackCountChanged);
         uint PropertyTrackCount();
         void SetPropertyDetailsCountChanged(CpProxy.CallbackPropertyChanged aDetailsCountChanged);
@@ -274,7 +274,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrackCount"></param>
         /// <param name="aaDetailsCount"></param>
         /// <param name="aaMetatextCount"></param>
-        public void SyncCounters(out uint aaTrackCount, out uint aaDetailsCount, out uint aaMetatextCount)
+        public void SyncCounters(out uint aTrackCount, out uint aDetailsCount, out uint aMetatextCount)
         {
             SyncCountersLinnCoUkInfo1 sync = new SyncCountersLinnCoUkInfo1(this);
             BeginCounters(sync.AsyncComplete());
@@ -311,7 +311,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrackCount"></param>
         /// <param name="aaDetailsCount"></param>
         /// <param name="aaMetatextCount"></param>
-        public void EndCounters(IntPtr aAsyncHandle, out uint aaTrackCount, out uint aaDetailsCount, out uint aaMetatextCount)
+        public void EndCounters(IntPtr aAsyncHandle, out uint aTrackCount, out uint aDetailsCount, out uint aMetatextCount)
         {
             uint index = 0;
             aTrackCount = Invocation.OutputUint(aAsyncHandle, index++);
@@ -326,7 +326,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaUri"></param>
         /// <param name="aaMetadata"></param>
-        public void SyncTrack(out String aaUri, out String aaMetadata)
+        public void SyncTrack(out String aUri, out String aMetadata)
         {
             SyncTrackLinnCoUkInfo1 sync = new SyncTrackLinnCoUkInfo1(this);
             BeginTrack(sync.AsyncComplete());
@@ -360,7 +360,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaUri"></param>
         /// <param name="aaMetadata"></param>
-        public void EndTrack(IntPtr aAsyncHandle, out String aaUri, out String aaMetadata)
+        public void EndTrack(IntPtr aAsyncHandle, out String aUri, out String aMetadata)
         {
             uint index = 0;
             aUri = Invocation.OutputString(aAsyncHandle, index++);
@@ -378,7 +378,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSampleRate"></param>
         /// <param name="aaLossless"></param>
         /// <param name="aaCodecName"></param>
-        public void SyncDetails(out uint aaDuration, out uint aaBitRate, out uint aaBitDepth, out uint aaSampleRate, out bool aaLossless, out String aaCodecName)
+        public void SyncDetails(out uint aDuration, out uint aBitRate, out uint aBitDepth, out uint aSampleRate, out bool aLossless, out String aCodecName)
         {
             SyncDetailsLinnCoUkInfo1 sync = new SyncDetailsLinnCoUkInfo1(this);
             BeginDetails(sync.AsyncComplete());
@@ -424,7 +424,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSampleRate"></param>
         /// <param name="aaLossless"></param>
         /// <param name="aaCodecName"></param>
-        public void EndDetails(IntPtr aAsyncHandle, out uint aaDuration, out uint aaBitRate, out uint aaBitDepth, out uint aaSampleRate, out bool aaLossless, out String aaCodecName)
+        public void EndDetails(IntPtr aAsyncHandle, out uint aDuration, out uint aBitRate, out uint aBitDepth, out uint aSampleRate, out bool aLossless, out String aCodecName)
         {
             uint index = 0;
             aDuration = Invocation.OutputUint(aAsyncHandle, index++);
@@ -441,7 +441,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaMetatext"></param>
-        public void SyncMetatext(out String aaMetatext)
+        public void SyncMetatext(out String aMetatext)
         {
             SyncMetatextLinnCoUkInfo1 sync = new SyncMetatextLinnCoUkInfo1(this);
             BeginMetatext(sync.AsyncComplete());
@@ -472,7 +472,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaMetatext"></param>
-        public void EndMetatext(IntPtr aAsyncHandle, out String aaMetatext)
+        public void EndMetatext(IntPtr aAsyncHandle, out String aMetatext)
         {
             uint index = 0;
             aMetatext = Invocation.OutputString(aAsyncHandle, index++);

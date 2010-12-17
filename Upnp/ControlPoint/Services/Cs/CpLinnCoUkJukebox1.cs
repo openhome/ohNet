@@ -9,30 +9,30 @@ namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyLinnCoUkJukebox1 : ICpProxy, IDisposable
     {
-        void SyncSetPresetPrefix(String aaUri);
-        void BeginSetPresetPrefix(String aaUri, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSetPresetPrefix(String aUri);
+        void BeginSetPresetPrefix(String aUri, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetPresetPrefix(IntPtr aAsyncHandle);
-        void SyncPresetPrefix(out String aaUri);
+        void SyncPresetPrefix(out String aUri);
         void BeginPresetPrefix(CpProxy.CallbackAsyncComplete aCallback);
-        void EndPresetPrefix(IntPtr aAsyncHandle, out String aaUri);
-        void SyncSetAlbumArtFileName(String aaName);
-        void BeginSetAlbumArtFileName(String aaName, CpProxy.CallbackAsyncComplete aCallback);
+        void EndPresetPrefix(IntPtr aAsyncHandle, out String aUri);
+        void SyncSetAlbumArtFileName(String aName);
+        void BeginSetAlbumArtFileName(String aName, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetAlbumArtFileName(IntPtr aAsyncHandle);
-        void SyncAlbumArtFileName(out String aaName);
+        void SyncAlbumArtFileName(out String aName);
         void BeginAlbumArtFileName(CpProxy.CallbackAsyncComplete aCallback);
-        void EndAlbumArtFileName(IntPtr aAsyncHandle, out String aaName);
-        void SyncSetCurrentPreset(uint aaPreset);
-        void BeginSetCurrentPreset(uint aaPreset, CpProxy.CallbackAsyncComplete aCallback);
+        void EndAlbumArtFileName(IntPtr aAsyncHandle, out String aName);
+        void SyncSetCurrentPreset(uint aPreset);
+        void BeginSetCurrentPreset(uint aPreset, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetCurrentPreset(IntPtr aAsyncHandle);
-        void SyncCurrentPreset(out uint aaPreset);
+        void SyncCurrentPreset(out uint aPreset);
         void BeginCurrentPreset(CpProxy.CallbackAsyncComplete aCallback);
-        void EndCurrentPreset(IntPtr aAsyncHandle, out uint aaPreset);
-        void SyncPresetMetaData(uint aaPreset, out String aaMetaData);
-        void BeginPresetMetaData(uint aaPreset, CpProxy.CallbackAsyncComplete aCallback);
-        void EndPresetMetaData(IntPtr aAsyncHandle, out String aaMetaData);
-        void SyncLoadManifest(out uint aaTotalPresets);
+        void EndCurrentPreset(IntPtr aAsyncHandle, out uint aPreset);
+        void SyncPresetMetaData(uint aPreset, out String aMetaData);
+        void BeginPresetMetaData(uint aPreset, CpProxy.CallbackAsyncComplete aCallback);
+        void EndPresetMetaData(IntPtr aAsyncHandle, out String aMetaData);
+        void SyncLoadManifest(out uint aTotalPresets);
         void BeginLoadManifest(CpProxy.CallbackAsyncComplete aCallback);
-        void EndLoadManifest(IntPtr aAsyncHandle, out uint aaTotalPresets);
+        void EndLoadManifest(IntPtr aAsyncHandle, out uint aTotalPresets);
         void SetPropertyCurrentPresetChanged(CpProxy.CallbackPropertyChanged aCurrentPresetChanged);
         uint PropertyCurrentPreset();
         void SetPropertyPresetPrefixChanged(CpProxy.CallbackPropertyChanged aPresetPrefixChanged);
@@ -257,7 +257,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaUri"></param>
-        public void SyncSetPresetPrefix(String aaUri)
+        public void SyncSetPresetPrefix(String aUri)
         {
             SyncSetPresetPrefixLinnCoUkJukebox1 sync = new SyncSetPresetPrefixLinnCoUkJukebox1(this);
             BeginSetPresetPrefix(aUri, sync.AsyncComplete());
@@ -274,7 +274,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaUri"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetPresetPrefix(String aaUri, CallbackAsyncComplete aCallback)
+        public void BeginSetPresetPrefix(String aUri, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetPresetPrefix, aCallback);
             int inIndex = 0;
@@ -297,7 +297,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaUri"></param>
-        public void SyncPresetPrefix(out String aaUri)
+        public void SyncPresetPrefix(out String aUri)
         {
             SyncPresetPrefixLinnCoUkJukebox1 sync = new SyncPresetPrefixLinnCoUkJukebox1(this);
             BeginPresetPrefix(sync.AsyncComplete());
@@ -328,7 +328,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaUri"></param>
-        public void EndPresetPrefix(IntPtr aAsyncHandle, out String aaUri)
+        public void EndPresetPrefix(IntPtr aAsyncHandle, out String aUri)
         {
             uint index = 0;
             aUri = Invocation.OutputString(aAsyncHandle, index++);
@@ -340,7 +340,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaName"></param>
-        public void SyncSetAlbumArtFileName(String aaName)
+        public void SyncSetAlbumArtFileName(String aName)
         {
             SyncSetAlbumArtFileNameLinnCoUkJukebox1 sync = new SyncSetAlbumArtFileNameLinnCoUkJukebox1(this);
             BeginSetAlbumArtFileName(aName, sync.AsyncComplete());
@@ -357,7 +357,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaName"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetAlbumArtFileName(String aaName, CallbackAsyncComplete aCallback)
+        public void BeginSetAlbumArtFileName(String aName, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetAlbumArtFileName, aCallback);
             int inIndex = 0;
@@ -380,7 +380,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaName"></param>
-        public void SyncAlbumArtFileName(out String aaName)
+        public void SyncAlbumArtFileName(out String aName)
         {
             SyncAlbumArtFileNameLinnCoUkJukebox1 sync = new SyncAlbumArtFileNameLinnCoUkJukebox1(this);
             BeginAlbumArtFileName(sync.AsyncComplete());
@@ -411,7 +411,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaName"></param>
-        public void EndAlbumArtFileName(IntPtr aAsyncHandle, out String aaName)
+        public void EndAlbumArtFileName(IntPtr aAsyncHandle, out String aName)
         {
             uint index = 0;
             aName = Invocation.OutputString(aAsyncHandle, index++);
@@ -423,7 +423,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaPreset"></param>
-        public void SyncSetCurrentPreset(uint aaPreset)
+        public void SyncSetCurrentPreset(uint aPreset)
         {
             SyncSetCurrentPresetLinnCoUkJukebox1 sync = new SyncSetCurrentPresetLinnCoUkJukebox1(this);
             BeginSetCurrentPreset(aPreset, sync.AsyncComplete());
@@ -440,7 +440,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaPreset"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetCurrentPreset(uint aaPreset, CallbackAsyncComplete aCallback)
+        public void BeginSetCurrentPreset(uint aPreset, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetCurrentPreset, aCallback);
             int inIndex = 0;
@@ -463,7 +463,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaPreset"></param>
-        public void SyncCurrentPreset(out uint aaPreset)
+        public void SyncCurrentPreset(out uint aPreset)
         {
             SyncCurrentPresetLinnCoUkJukebox1 sync = new SyncCurrentPresetLinnCoUkJukebox1(this);
             BeginCurrentPreset(sync.AsyncComplete());
@@ -494,7 +494,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaPreset"></param>
-        public void EndCurrentPreset(IntPtr aAsyncHandle, out uint aaPreset)
+        public void EndCurrentPreset(IntPtr aAsyncHandle, out uint aPreset)
         {
             uint index = 0;
             aPreset = Invocation.OutputUint(aAsyncHandle, index++);
@@ -507,7 +507,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaPreset"></param>
         /// <param name="aaMetaData"></param>
-        public void SyncPresetMetaData(uint aaPreset, out String aaMetaData)
+        public void SyncPresetMetaData(uint aPreset, out String aMetaData)
         {
             SyncPresetMetaDataLinnCoUkJukebox1 sync = new SyncPresetMetaDataLinnCoUkJukebox1(this);
             BeginPresetMetaData(aPreset, sync.AsyncComplete());
@@ -525,7 +525,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaPreset"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginPresetMetaData(uint aaPreset, CallbackAsyncComplete aCallback)
+        public void BeginPresetMetaData(uint aPreset, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionPresetMetaData, aCallback);
             int inIndex = 0;
@@ -541,7 +541,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaMetaData"></param>
-        public void EndPresetMetaData(IntPtr aAsyncHandle, out String aaMetaData)
+        public void EndPresetMetaData(IntPtr aAsyncHandle, out String aMetaData)
         {
             uint index = 0;
             aMetaData = Invocation.OutputString(aAsyncHandle, index++);
@@ -553,7 +553,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaTotalPresets"></param>
-        public void SyncLoadManifest(out uint aaTotalPresets)
+        public void SyncLoadManifest(out uint aTotalPresets)
         {
             SyncLoadManifestLinnCoUkJukebox1 sync = new SyncLoadManifestLinnCoUkJukebox1(this);
             BeginLoadManifest(sync.AsyncComplete());
@@ -584,7 +584,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaTotalPresets"></param>
-        public void EndLoadManifest(IntPtr aAsyncHandle, out uint aaTotalPresets)
+        public void EndLoadManifest(IntPtr aAsyncHandle, out uint aTotalPresets)
         {
             uint index = 0;
             aTotalPresets = Invocation.OutputUint(aAsyncHandle, index++);

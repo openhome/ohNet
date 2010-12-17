@@ -9,36 +9,36 @@ namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyLinnCoUkProxyManager1 : ICpProxy, IDisposable
     {
-        void SyncKontrolProductConnected(out String aaConnected);
+        void SyncKontrolProductConnected(out String aConnected);
         void BeginKontrolProductConnected(CpProxy.CallbackAsyncComplete aCallback);
-        void EndKontrolProductConnected(IntPtr aAsyncHandle, out String aaConnected);
-        void SyncSetKontrolProductConnected(String aaConnected);
-        void BeginSetKontrolProductConnected(String aaConnected, CpProxy.CallbackAsyncComplete aCallback);
+        void EndKontrolProductConnected(IntPtr aAsyncHandle, out String aConnected);
+        void SyncSetKontrolProductConnected(String aConnected);
+        void BeginSetKontrolProductConnected(String aConnected, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetKontrolProductConnected(IntPtr aAsyncHandle);
-        void SyncKontrolProductComPort(out uint aaPort);
+        void SyncKontrolProductComPort(out uint aPort);
         void BeginKontrolProductComPort(CpProxy.CallbackAsyncComplete aCallback);
-        void EndKontrolProductComPort(IntPtr aAsyncHandle, out uint aaPort);
-        void SyncSetKontrolProductComPort(uint aaConnected);
-        void BeginSetKontrolProductComPort(uint aaConnected, CpProxy.CallbackAsyncComplete aCallback);
+        void EndKontrolProductComPort(IntPtr aAsyncHandle, out uint aPort);
+        void SyncSetKontrolProductComPort(uint aConnected);
+        void BeginSetKontrolProductComPort(uint aConnected, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetKontrolProductComPort(IntPtr aAsyncHandle);
-        void SyncDiscPlayerConnected(out String aaConnected);
+        void SyncDiscPlayerConnected(out String aConnected);
         void BeginDiscPlayerConnected(CpProxy.CallbackAsyncComplete aCallback);
-        void EndDiscPlayerConnected(IntPtr aAsyncHandle, out String aaConnected);
-        void SyncSetDiscPlayerConnected(String aaConnected);
-        void BeginSetDiscPlayerConnected(String aaConnected, CpProxy.CallbackAsyncComplete aCallback);
+        void EndDiscPlayerConnected(IntPtr aAsyncHandle, out String aConnected);
+        void SyncSetDiscPlayerConnected(String aConnected);
+        void BeginSetDiscPlayerConnected(String aConnected, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetDiscPlayerConnected(IntPtr aAsyncHandle);
-        void SyncDiscPlayerComPort(out uint aaPort);
+        void SyncDiscPlayerComPort(out uint aPort);
         void BeginDiscPlayerComPort(CpProxy.CallbackAsyncComplete aCallback);
-        void EndDiscPlayerComPort(IntPtr aAsyncHandle, out uint aaPort);
-        void SyncSetDiscPlayerComPort(uint aaConnected);
-        void BeginSetDiscPlayerComPort(uint aaConnected, CpProxy.CallbackAsyncComplete aCallback);
+        void EndDiscPlayerComPort(IntPtr aAsyncHandle, out uint aPort);
+        void SyncSetDiscPlayerComPort(uint aConnected);
+        void BeginSetDiscPlayerComPort(uint aConnected, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetDiscPlayerComPort(IntPtr aAsyncHandle);
-        void SyncTestKontrolProductConnection(out bool aaResult);
+        void SyncTestKontrolProductConnection(out bool aResult);
         void BeginTestKontrolProductConnection(CpProxy.CallbackAsyncComplete aCallback);
-        void EndTestKontrolProductConnection(IntPtr aAsyncHandle, out bool aaResult);
-        void SyncTestDiscPlayerConnection(out bool aaResult);
+        void EndTestKontrolProductConnection(IntPtr aAsyncHandle, out bool aResult);
+        void SyncTestDiscPlayerConnection(out bool aResult);
         void BeginTestDiscPlayerConnection(CpProxy.CallbackAsyncComplete aCallback);
-        void EndTestDiscPlayerConnection(IntPtr aAsyncHandle, out bool aaResult);
+        void EndTestDiscPlayerConnection(IntPtr aAsyncHandle, out bool aResult);
         void SetPropertyKontrolProductConnectedChanged(CpProxy.CallbackPropertyChanged aKontrolProductConnectedChanged);
         String PropertyKontrolProductConnected();
         void SetPropertyKontrolProductComPortChanged(CpProxy.CallbackPropertyChanged aKontrolProductComPortChanged);
@@ -354,7 +354,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaConnected"></param>
-        public void SyncKontrolProductConnected(out String aaConnected)
+        public void SyncKontrolProductConnected(out String aConnected)
         {
             SyncKontrolProductConnectedLinnCoUkProxyManager1 sync = new SyncKontrolProductConnectedLinnCoUkProxyManager1(this);
             BeginKontrolProductConnected(sync.AsyncComplete());
@@ -385,7 +385,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaConnected"></param>
-        public void EndKontrolProductConnected(IntPtr aAsyncHandle, out String aaConnected)
+        public void EndKontrolProductConnected(IntPtr aAsyncHandle, out String aConnected)
         {
             uint index = 0;
             aConnected = Invocation.OutputString(aAsyncHandle, index++);
@@ -397,7 +397,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaConnected"></param>
-        public void SyncSetKontrolProductConnected(String aaConnected)
+        public void SyncSetKontrolProductConnected(String aConnected)
         {
             SyncSetKontrolProductConnectedLinnCoUkProxyManager1 sync = new SyncSetKontrolProductConnectedLinnCoUkProxyManager1(this);
             BeginSetKontrolProductConnected(aConnected, sync.AsyncComplete());
@@ -414,7 +414,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaConnected"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetKontrolProductConnected(String aaConnected, CallbackAsyncComplete aCallback)
+        public void BeginSetKontrolProductConnected(String aConnected, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetKontrolProductConnected, aCallback);
             int inIndex = 0;
@@ -437,7 +437,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaPort"></param>
-        public void SyncKontrolProductComPort(out uint aaPort)
+        public void SyncKontrolProductComPort(out uint aPort)
         {
             SyncKontrolProductComPortLinnCoUkProxyManager1 sync = new SyncKontrolProductComPortLinnCoUkProxyManager1(this);
             BeginKontrolProductComPort(sync.AsyncComplete());
@@ -468,7 +468,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaPort"></param>
-        public void EndKontrolProductComPort(IntPtr aAsyncHandle, out uint aaPort)
+        public void EndKontrolProductComPort(IntPtr aAsyncHandle, out uint aPort)
         {
             uint index = 0;
             aPort = Invocation.OutputUint(aAsyncHandle, index++);
@@ -480,7 +480,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaConnected"></param>
-        public void SyncSetKontrolProductComPort(uint aaConnected)
+        public void SyncSetKontrolProductComPort(uint aConnected)
         {
             SyncSetKontrolProductComPortLinnCoUkProxyManager1 sync = new SyncSetKontrolProductComPortLinnCoUkProxyManager1(this);
             BeginSetKontrolProductComPort(aConnected, sync.AsyncComplete());
@@ -497,7 +497,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaConnected"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetKontrolProductComPort(uint aaConnected, CallbackAsyncComplete aCallback)
+        public void BeginSetKontrolProductComPort(uint aConnected, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetKontrolProductComPort, aCallback);
             int inIndex = 0;
@@ -520,7 +520,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaConnected"></param>
-        public void SyncDiscPlayerConnected(out String aaConnected)
+        public void SyncDiscPlayerConnected(out String aConnected)
         {
             SyncDiscPlayerConnectedLinnCoUkProxyManager1 sync = new SyncDiscPlayerConnectedLinnCoUkProxyManager1(this);
             BeginDiscPlayerConnected(sync.AsyncComplete());
@@ -551,7 +551,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaConnected"></param>
-        public void EndDiscPlayerConnected(IntPtr aAsyncHandle, out String aaConnected)
+        public void EndDiscPlayerConnected(IntPtr aAsyncHandle, out String aConnected)
         {
             uint index = 0;
             aConnected = Invocation.OutputString(aAsyncHandle, index++);
@@ -563,7 +563,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaConnected"></param>
-        public void SyncSetDiscPlayerConnected(String aaConnected)
+        public void SyncSetDiscPlayerConnected(String aConnected)
         {
             SyncSetDiscPlayerConnectedLinnCoUkProxyManager1 sync = new SyncSetDiscPlayerConnectedLinnCoUkProxyManager1(this);
             BeginSetDiscPlayerConnected(aConnected, sync.AsyncComplete());
@@ -580,7 +580,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaConnected"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetDiscPlayerConnected(String aaConnected, CallbackAsyncComplete aCallback)
+        public void BeginSetDiscPlayerConnected(String aConnected, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetDiscPlayerConnected, aCallback);
             int inIndex = 0;
@@ -603,7 +603,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaPort"></param>
-        public void SyncDiscPlayerComPort(out uint aaPort)
+        public void SyncDiscPlayerComPort(out uint aPort)
         {
             SyncDiscPlayerComPortLinnCoUkProxyManager1 sync = new SyncDiscPlayerComPortLinnCoUkProxyManager1(this);
             BeginDiscPlayerComPort(sync.AsyncComplete());
@@ -634,7 +634,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaPort"></param>
-        public void EndDiscPlayerComPort(IntPtr aAsyncHandle, out uint aaPort)
+        public void EndDiscPlayerComPort(IntPtr aAsyncHandle, out uint aPort)
         {
             uint index = 0;
             aPort = Invocation.OutputUint(aAsyncHandle, index++);
@@ -646,7 +646,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaConnected"></param>
-        public void SyncSetDiscPlayerComPort(uint aaConnected)
+        public void SyncSetDiscPlayerComPort(uint aConnected)
         {
             SyncSetDiscPlayerComPortLinnCoUkProxyManager1 sync = new SyncSetDiscPlayerComPortLinnCoUkProxyManager1(this);
             BeginSetDiscPlayerComPort(aConnected, sync.AsyncComplete());
@@ -663,7 +663,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaConnected"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetDiscPlayerComPort(uint aaConnected, CallbackAsyncComplete aCallback)
+        public void BeginSetDiscPlayerComPort(uint aConnected, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetDiscPlayerComPort, aCallback);
             int inIndex = 0;
@@ -686,7 +686,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaResult"></param>
-        public void SyncTestKontrolProductConnection(out bool aaResult)
+        public void SyncTestKontrolProductConnection(out bool aResult)
         {
             SyncTestKontrolProductConnectionLinnCoUkProxyManager1 sync = new SyncTestKontrolProductConnectionLinnCoUkProxyManager1(this);
             BeginTestKontrolProductConnection(sync.AsyncComplete());
@@ -717,7 +717,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaResult"></param>
-        public void EndTestKontrolProductConnection(IntPtr aAsyncHandle, out bool aaResult)
+        public void EndTestKontrolProductConnection(IntPtr aAsyncHandle, out bool aResult)
         {
             uint index = 0;
             aResult = Invocation.OutputBool(aAsyncHandle, index++);
@@ -729,7 +729,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaResult"></param>
-        public void SyncTestDiscPlayerConnection(out bool aaResult)
+        public void SyncTestDiscPlayerConnection(out bool aResult)
         {
             SyncTestDiscPlayerConnectionLinnCoUkProxyManager1 sync = new SyncTestDiscPlayerConnectionLinnCoUkProxyManager1(this);
             BeginTestDiscPlayerConnection(sync.AsyncComplete());
@@ -760,7 +760,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaResult"></param>
-        public void EndTestDiscPlayerConnection(IntPtr aAsyncHandle, out bool aaResult)
+        public void EndTestDiscPlayerConnection(IntPtr aAsyncHandle, out bool aResult)
         {
             uint index = 0;
             aResult = Invocation.OutputBool(aAsyncHandle, index++);

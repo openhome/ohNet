@@ -9,9 +9,9 @@ namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyLinnCoUkMediaTime1 : ICpProxy, IDisposable
     {
-        void SyncSeconds(out uint aaSeconds);
+        void SyncSeconds(out uint aSeconds);
         void BeginSeconds(CpProxy.CallbackAsyncComplete aCallback);
-        void EndSeconds(IntPtr aAsyncHandle, out uint aaSeconds);
+        void EndSeconds(IntPtr aAsyncHandle, out uint aSeconds);
         void SetPropertySecondsChanged(CpProxy.CallbackPropertyChanged aSecondsChanged);
         uint PropertySeconds();
     }
@@ -68,7 +68,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaSeconds"></param>
-        public void SyncSeconds(out uint aaSeconds)
+        public void SyncSeconds(out uint aSeconds)
         {
             SyncSecondsLinnCoUkMediaTime1 sync = new SyncSecondsLinnCoUkMediaTime1(this);
             BeginSeconds(sync.AsyncComplete());
@@ -99,7 +99,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSeconds"></param>
-        public void EndSeconds(IntPtr aAsyncHandle, out uint aaSeconds)
+        public void EndSeconds(IntPtr aAsyncHandle, out uint aSeconds)
         {
             uint index = 0;
             aSeconds = Invocation.OutputUint(aAsyncHandle, index++);

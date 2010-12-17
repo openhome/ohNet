@@ -9,17 +9,17 @@ namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyLinnCoUkProduct1 : ICpProxy, IDisposable
     {
-        void SyncRoom(out String aaRoom);
+        void SyncRoom(out String aRoom);
         void BeginRoom(CpProxy.CallbackAsyncComplete aCallback);
-        void EndRoom(IntPtr aAsyncHandle, out String aaRoom);
-        void SyncSetRoom(String aaRoom);
-        void BeginSetRoom(String aaRoom, CpProxy.CallbackAsyncComplete aCallback);
+        void EndRoom(IntPtr aAsyncHandle, out String aRoom);
+        void SyncSetRoom(String aRoom);
+        void BeginSetRoom(String aRoom, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetRoom(IntPtr aAsyncHandle);
-        void SyncStandby(out bool aaStandby);
+        void SyncStandby(out bool aStandby);
         void BeginStandby(CpProxy.CallbackAsyncComplete aCallback);
-        void EndStandby(IntPtr aAsyncHandle, out bool aaStandby);
-        void SyncSetStandby(bool aaStandby);
-        void BeginSetStandby(bool aaStandby, CpProxy.CallbackAsyncComplete aCallback);
+        void EndStandby(IntPtr aAsyncHandle, out bool aStandby);
+        void SyncSetStandby(bool aStandby);
+        void BeginSetStandby(bool aStandby, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetStandby(IntPtr aAsyncHandle);
         void SetPropertyRoomChanged(CpProxy.CallbackPropertyChanged aRoomChanged);
         String PropertyRoom();
@@ -146,7 +146,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaRoom"></param>
-        public void SyncRoom(out String aaRoom)
+        public void SyncRoom(out String aRoom)
         {
             SyncRoomLinnCoUkProduct1 sync = new SyncRoomLinnCoUkProduct1(this);
             BeginRoom(sync.AsyncComplete());
@@ -177,7 +177,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaRoom"></param>
-        public void EndRoom(IntPtr aAsyncHandle, out String aaRoom)
+        public void EndRoom(IntPtr aAsyncHandle, out String aRoom)
         {
             uint index = 0;
             aRoom = Invocation.OutputString(aAsyncHandle, index++);
@@ -189,7 +189,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaRoom"></param>
-        public void SyncSetRoom(String aaRoom)
+        public void SyncSetRoom(String aRoom)
         {
             SyncSetRoomLinnCoUkProduct1 sync = new SyncSetRoomLinnCoUkProduct1(this);
             BeginSetRoom(aRoom, sync.AsyncComplete());
@@ -206,7 +206,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaRoom"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetRoom(String aaRoom, CallbackAsyncComplete aCallback)
+        public void BeginSetRoom(String aRoom, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetRoom, aCallback);
             int inIndex = 0;
@@ -229,7 +229,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaStandby"></param>
-        public void SyncStandby(out bool aaStandby)
+        public void SyncStandby(out bool aStandby)
         {
             SyncStandbyLinnCoUkProduct1 sync = new SyncStandbyLinnCoUkProduct1(this);
             BeginStandby(sync.AsyncComplete());
@@ -260,7 +260,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaStandby"></param>
-        public void EndStandby(IntPtr aAsyncHandle, out bool aaStandby)
+        public void EndStandby(IntPtr aAsyncHandle, out bool aStandby)
         {
             uint index = 0;
             aStandby = Invocation.OutputBool(aAsyncHandle, index++);
@@ -272,7 +272,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaStandby"></param>
-        public void SyncSetStandby(bool aaStandby)
+        public void SyncSetStandby(bool aStandby)
         {
             SyncSetStandbyLinnCoUkProduct1 sync = new SyncSetStandbyLinnCoUkProduct1(this);
             BeginSetStandby(aStandby, sync.AsyncComplete());
@@ -289,7 +289,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaStandby"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetStandby(bool aaStandby, CallbackAsyncComplete aCallback)
+        public void BeginSetStandby(bool aStandby, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetStandby, aCallback);
             int inIndex = 0;

@@ -9,36 +9,36 @@ namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyLinnCoUkComponent1 : ICpProxy, IDisposable
     {
-        void SyncAmplifierEnabled(out bool aaEnabled);
+        void SyncAmplifierEnabled(out bool aEnabled);
         void BeginAmplifierEnabled(CpProxy.CallbackAsyncComplete aCallback);
-        void EndAmplifierEnabled(IntPtr aAsyncHandle, out bool aaEnabled);
-        void SyncSetAmplifierEnabled(bool aaEnabled);
-        void BeginSetAmplifierEnabled(bool aaEnabled, CpProxy.CallbackAsyncComplete aCallback);
+        void EndAmplifierEnabled(IntPtr aAsyncHandle, out bool aEnabled);
+        void SyncSetAmplifierEnabled(bool aEnabled);
+        void BeginSetAmplifierEnabled(bool aEnabled, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetAmplifierEnabled(IntPtr aAsyncHandle);
-        void SyncAmplifierAttenuation(out String aaAttenuation);
+        void SyncAmplifierAttenuation(out String aAttenuation);
         void BeginAmplifierAttenuation(CpProxy.CallbackAsyncComplete aCallback);
-        void EndAmplifierAttenuation(IntPtr aAsyncHandle, out String aaAttenuation);
-        void SyncSetAmplifierAttenuation(String aaAttenuation);
-        void BeginSetAmplifierAttenuation(String aaAttenuation, CpProxy.CallbackAsyncComplete aCallback);
+        void EndAmplifierAttenuation(IntPtr aAsyncHandle, out String aAttenuation);
+        void SyncSetAmplifierAttenuation(String aAttenuation);
+        void BeginSetAmplifierAttenuation(String aAttenuation, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetAmplifierAttenuation(IntPtr aAsyncHandle);
-        void SyncSetVolumeControlEnabled(bool aaEnabled);
-        void BeginSetVolumeControlEnabled(bool aaEnabled, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSetVolumeControlEnabled(bool aEnabled);
+        void BeginSetVolumeControlEnabled(bool aEnabled, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetVolumeControlEnabled(IntPtr aAsyncHandle);
-        void SyncVolumeControlEnabled(out bool aaEnabled);
+        void SyncVolumeControlEnabled(out bool aEnabled);
         void BeginVolumeControlEnabled(CpProxy.CallbackAsyncComplete aCallback);
-        void EndVolumeControlEnabled(IntPtr aAsyncHandle, out bool aaEnabled);
-        void SyncSetDigitalAudioOutputRaw(bool aaRaw);
-        void BeginSetDigitalAudioOutputRaw(bool aaRaw, CpProxy.CallbackAsyncComplete aCallback);
+        void EndVolumeControlEnabled(IntPtr aAsyncHandle, out bool aEnabled);
+        void SyncSetDigitalAudioOutputRaw(bool aRaw);
+        void BeginSetDigitalAudioOutputRaw(bool aRaw, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetDigitalAudioOutputRaw(IntPtr aAsyncHandle);
-        void SyncDigitalAudioOutputRaw(out bool aaRaw);
+        void SyncDigitalAudioOutputRaw(out bool aRaw);
         void BeginDigitalAudioOutputRaw(CpProxy.CallbackAsyncComplete aCallback);
-        void EndDigitalAudioOutputRaw(IntPtr aAsyncHandle, out bool aaRaw);
-        void SyncAmplifierOverTemperature(out bool aaOverTemperature);
+        void EndDigitalAudioOutputRaw(IntPtr aAsyncHandle, out bool aRaw);
+        void SyncAmplifierOverTemperature(out bool aOverTemperature);
         void BeginAmplifierOverTemperature(CpProxy.CallbackAsyncComplete aCallback);
-        void EndAmplifierOverTemperature(IntPtr aAsyncHandle, out bool aaOverTemperature);
-        void SyncEthernetLinkConnected(out bool aaLinkConnected);
+        void EndAmplifierOverTemperature(IntPtr aAsyncHandle, out bool aOverTemperature);
+        void SyncEthernetLinkConnected(out bool aLinkConnected);
         void BeginEthernetLinkConnected(CpProxy.CallbackAsyncComplete aCallback);
-        void EndEthernetLinkConnected(IntPtr aAsyncHandle, out bool aaLinkConnected);
+        void EndEthernetLinkConnected(IntPtr aAsyncHandle, out bool aLinkConnected);
         void SyncLocate();
         void BeginLocate(CpProxy.CallbackAsyncComplete aCallback);
         void EndLocate(IntPtr aAsyncHandle);
@@ -340,7 +340,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaEnabled"></param>
-        public void SyncAmplifierEnabled(out bool aaEnabled)
+        public void SyncAmplifierEnabled(out bool aEnabled)
         {
             SyncAmplifierEnabledLinnCoUkComponent1 sync = new SyncAmplifierEnabledLinnCoUkComponent1(this);
             BeginAmplifierEnabled(sync.AsyncComplete());
@@ -371,7 +371,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaEnabled"></param>
-        public void EndAmplifierEnabled(IntPtr aAsyncHandle, out bool aaEnabled)
+        public void EndAmplifierEnabled(IntPtr aAsyncHandle, out bool aEnabled)
         {
             uint index = 0;
             aEnabled = Invocation.OutputBool(aAsyncHandle, index++);
@@ -383,7 +383,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaEnabled"></param>
-        public void SyncSetAmplifierEnabled(bool aaEnabled)
+        public void SyncSetAmplifierEnabled(bool aEnabled)
         {
             SyncSetAmplifierEnabledLinnCoUkComponent1 sync = new SyncSetAmplifierEnabledLinnCoUkComponent1(this);
             BeginSetAmplifierEnabled(aEnabled, sync.AsyncComplete());
@@ -400,7 +400,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaEnabled"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetAmplifierEnabled(bool aaEnabled, CallbackAsyncComplete aCallback)
+        public void BeginSetAmplifierEnabled(bool aEnabled, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetAmplifierEnabled, aCallback);
             int inIndex = 0;
@@ -423,7 +423,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaAttenuation"></param>
-        public void SyncAmplifierAttenuation(out String aaAttenuation)
+        public void SyncAmplifierAttenuation(out String aAttenuation)
         {
             SyncAmplifierAttenuationLinnCoUkComponent1 sync = new SyncAmplifierAttenuationLinnCoUkComponent1(this);
             BeginAmplifierAttenuation(sync.AsyncComplete());
@@ -454,7 +454,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaAttenuation"></param>
-        public void EndAmplifierAttenuation(IntPtr aAsyncHandle, out String aaAttenuation)
+        public void EndAmplifierAttenuation(IntPtr aAsyncHandle, out String aAttenuation)
         {
             uint index = 0;
             aAttenuation = Invocation.OutputString(aAsyncHandle, index++);
@@ -466,7 +466,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaAttenuation"></param>
-        public void SyncSetAmplifierAttenuation(String aaAttenuation)
+        public void SyncSetAmplifierAttenuation(String aAttenuation)
         {
             SyncSetAmplifierAttenuationLinnCoUkComponent1 sync = new SyncSetAmplifierAttenuationLinnCoUkComponent1(this);
             BeginSetAmplifierAttenuation(aAttenuation, sync.AsyncComplete());
@@ -483,7 +483,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaAttenuation"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetAmplifierAttenuation(String aaAttenuation, CallbackAsyncComplete aCallback)
+        public void BeginSetAmplifierAttenuation(String aAttenuation, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetAmplifierAttenuation, aCallback);
             int inIndex = 0;
@@ -506,7 +506,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaEnabled"></param>
-        public void SyncSetVolumeControlEnabled(bool aaEnabled)
+        public void SyncSetVolumeControlEnabled(bool aEnabled)
         {
             SyncSetVolumeControlEnabledLinnCoUkComponent1 sync = new SyncSetVolumeControlEnabledLinnCoUkComponent1(this);
             BeginSetVolumeControlEnabled(aEnabled, sync.AsyncComplete());
@@ -523,7 +523,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaEnabled"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetVolumeControlEnabled(bool aaEnabled, CallbackAsyncComplete aCallback)
+        public void BeginSetVolumeControlEnabled(bool aEnabled, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetVolumeControlEnabled, aCallback);
             int inIndex = 0;
@@ -546,7 +546,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaEnabled"></param>
-        public void SyncVolumeControlEnabled(out bool aaEnabled)
+        public void SyncVolumeControlEnabled(out bool aEnabled)
         {
             SyncVolumeControlEnabledLinnCoUkComponent1 sync = new SyncVolumeControlEnabledLinnCoUkComponent1(this);
             BeginVolumeControlEnabled(sync.AsyncComplete());
@@ -577,7 +577,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaEnabled"></param>
-        public void EndVolumeControlEnabled(IntPtr aAsyncHandle, out bool aaEnabled)
+        public void EndVolumeControlEnabled(IntPtr aAsyncHandle, out bool aEnabled)
         {
             uint index = 0;
             aEnabled = Invocation.OutputBool(aAsyncHandle, index++);
@@ -589,7 +589,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaRaw"></param>
-        public void SyncSetDigitalAudioOutputRaw(bool aaRaw)
+        public void SyncSetDigitalAudioOutputRaw(bool aRaw)
         {
             SyncSetDigitalAudioOutputRawLinnCoUkComponent1 sync = new SyncSetDigitalAudioOutputRawLinnCoUkComponent1(this);
             BeginSetDigitalAudioOutputRaw(aRaw, sync.AsyncComplete());
@@ -606,7 +606,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaRaw"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetDigitalAudioOutputRaw(bool aaRaw, CallbackAsyncComplete aCallback)
+        public void BeginSetDigitalAudioOutputRaw(bool aRaw, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetDigitalAudioOutputRaw, aCallback);
             int inIndex = 0;
@@ -629,7 +629,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaRaw"></param>
-        public void SyncDigitalAudioOutputRaw(out bool aaRaw)
+        public void SyncDigitalAudioOutputRaw(out bool aRaw)
         {
             SyncDigitalAudioOutputRawLinnCoUkComponent1 sync = new SyncDigitalAudioOutputRawLinnCoUkComponent1(this);
             BeginDigitalAudioOutputRaw(sync.AsyncComplete());
@@ -660,7 +660,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaRaw"></param>
-        public void EndDigitalAudioOutputRaw(IntPtr aAsyncHandle, out bool aaRaw)
+        public void EndDigitalAudioOutputRaw(IntPtr aAsyncHandle, out bool aRaw)
         {
             uint index = 0;
             aRaw = Invocation.OutputBool(aAsyncHandle, index++);
@@ -672,7 +672,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaOverTemperature"></param>
-        public void SyncAmplifierOverTemperature(out bool aaOverTemperature)
+        public void SyncAmplifierOverTemperature(out bool aOverTemperature)
         {
             SyncAmplifierOverTemperatureLinnCoUkComponent1 sync = new SyncAmplifierOverTemperatureLinnCoUkComponent1(this);
             BeginAmplifierOverTemperature(sync.AsyncComplete());
@@ -703,7 +703,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaOverTemperature"></param>
-        public void EndAmplifierOverTemperature(IntPtr aAsyncHandle, out bool aaOverTemperature)
+        public void EndAmplifierOverTemperature(IntPtr aAsyncHandle, out bool aOverTemperature)
         {
             uint index = 0;
             aOverTemperature = Invocation.OutputBool(aAsyncHandle, index++);
@@ -715,7 +715,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaLinkConnected"></param>
-        public void SyncEthernetLinkConnected(out bool aaLinkConnected)
+        public void SyncEthernetLinkConnected(out bool aLinkConnected)
         {
             SyncEthernetLinkConnectedLinnCoUkComponent1 sync = new SyncEthernetLinkConnectedLinnCoUkComponent1(this);
             BeginEthernetLinkConnected(sync.AsyncComplete());
@@ -746,7 +746,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaLinkConnected"></param>
-        public void EndEthernetLinkConnected(IntPtr aAsyncHandle, out bool aaLinkConnected)
+        public void EndEthernetLinkConnected(IntPtr aAsyncHandle, out bool aLinkConnected)
         {
             uint index = 0;
             aLinkConnected = Invocation.OutputBool(aAsyncHandle, index++);

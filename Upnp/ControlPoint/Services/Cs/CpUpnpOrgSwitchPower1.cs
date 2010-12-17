@@ -9,8 +9,8 @@ namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyUpnpOrgSwitchPower1 : ICpProxy, IDisposable
     {
-        void SyncSetTarget(bool anewTargetValue);
-        void BeginSetTarget(bool anewTargetValue, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSetTarget(bool aNewTargetValue);
+        void BeginSetTarget(bool aNewTargetValue, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetTarget(IntPtr aAsyncHandle);
         void SyncGetTarget(out bool aRetTargetValue);
         void BeginGetTarget(CpProxy.CallbackAsyncComplete aCallback);
@@ -117,7 +117,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="anewTargetValue"></param>
-        public void SyncSetTarget(bool anewTargetValue)
+        public void SyncSetTarget(bool aNewTargetValue)
         {
             SyncSetTargetUpnpOrgSwitchPower1 sync = new SyncSetTargetUpnpOrgSwitchPower1(this);
             BeginSetTarget(aNewTargetValue, sync.AsyncComplete());
@@ -134,7 +134,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="anewTargetValue"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetTarget(bool anewTargetValue, CallbackAsyncComplete aCallback)
+        public void BeginSetTarget(bool aNewTargetValue, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetTarget, aCallback);
             int inIndex = 0;

@@ -9,14 +9,14 @@ namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyLinnCoUkConfiguration1 : ICpProxy, IDisposable
     {
-        void SyncConfigurationXml(out String aaConfigurationXml);
+        void SyncConfigurationXml(out String aConfigurationXml);
         void BeginConfigurationXml(CpProxy.CallbackAsyncComplete aCallback);
-        void EndConfigurationXml(IntPtr aAsyncHandle, out String aaConfigurationXml);
-        void SyncParameterXml(out String aaParameterXml);
+        void EndConfigurationXml(IntPtr aAsyncHandle, out String aConfigurationXml);
+        void SyncParameterXml(out String aParameterXml);
         void BeginParameterXml(CpProxy.CallbackAsyncComplete aCallback);
-        void EndParameterXml(IntPtr aAsyncHandle, out String aaParameterXml);
-        void SyncSetParameter(String aaTarget, String aaName, String aaValue);
-        void BeginSetParameter(String aaTarget, String aaName, String aaValue, CpProxy.CallbackAsyncComplete aCallback);
+        void EndParameterXml(IntPtr aAsyncHandle, out String aParameterXml);
+        void SyncSetParameter(String aTarget, String aName, String aValue);
+        void BeginSetParameter(String aTarget, String aName, String aValue, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetParameter(IntPtr aAsyncHandle);
         void SetPropertyConfigurationXmlChanged(CpProxy.CallbackPropertyChanged aConfigurationXmlChanged);
         String PropertyConfigurationXml();
@@ -128,7 +128,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaConfigurationXml"></param>
-        public void SyncConfigurationXml(out String aaConfigurationXml)
+        public void SyncConfigurationXml(out String aConfigurationXml)
         {
             SyncConfigurationXmlLinnCoUkConfiguration1 sync = new SyncConfigurationXmlLinnCoUkConfiguration1(this);
             BeginConfigurationXml(sync.AsyncComplete());
@@ -159,7 +159,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaConfigurationXml"></param>
-        public void EndConfigurationXml(IntPtr aAsyncHandle, out String aaConfigurationXml)
+        public void EndConfigurationXml(IntPtr aAsyncHandle, out String aConfigurationXml)
         {
             uint index = 0;
             aConfigurationXml = Invocation.OutputString(aAsyncHandle, index++);
@@ -171,7 +171,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaParameterXml"></param>
-        public void SyncParameterXml(out String aaParameterXml)
+        public void SyncParameterXml(out String aParameterXml)
         {
             SyncParameterXmlLinnCoUkConfiguration1 sync = new SyncParameterXmlLinnCoUkConfiguration1(this);
             BeginParameterXml(sync.AsyncComplete());
@@ -202,7 +202,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaParameterXml"></param>
-        public void EndParameterXml(IntPtr aAsyncHandle, out String aaParameterXml)
+        public void EndParameterXml(IntPtr aAsyncHandle, out String aParameterXml)
         {
             uint index = 0;
             aParameterXml = Invocation.OutputString(aAsyncHandle, index++);
@@ -216,7 +216,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTarget"></param>
         /// <param name="aaName"></param>
         /// <param name="aaValue"></param>
-        public void SyncSetParameter(String aaTarget, String aaName, String aaValue)
+        public void SyncSetParameter(String aTarget, String aName, String aValue)
         {
             SyncSetParameterLinnCoUkConfiguration1 sync = new SyncSetParameterLinnCoUkConfiguration1(this);
             BeginSetParameter(aTarget, aName, aValue, sync.AsyncComplete());
@@ -235,7 +235,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaValue"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetParameter(String aaTarget, String aaName, String aaValue, CallbackAsyncComplete aCallback)
+        public void BeginSetParameter(String aTarget, String aName, String aValue, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetParameter, aCallback);
             int inIndex = 0;

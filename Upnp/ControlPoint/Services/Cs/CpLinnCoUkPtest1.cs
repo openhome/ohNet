@@ -9,9 +9,9 @@ namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyLinnCoUkPtest1 : ICpProxy, IDisposable
     {
-        void SyncTestComPort(uint aaPort, out bool aaResult);
-        void BeginTestComPort(uint aaPort, CpProxy.CallbackAsyncComplete aCallback);
-        void EndTestComPort(IntPtr aAsyncHandle, out bool aaResult);
+        void SyncTestComPort(uint aPort, out bool aResult);
+        void BeginTestComPort(uint aPort, CpProxy.CallbackAsyncComplete aCallback);
+        void EndTestComPort(IntPtr aAsyncHandle, out bool aResult);
         void SyncLedsOn();
         void BeginLedsOn(CpProxy.CallbackAsyncComplete aCallback);
         void EndLedsOn(IntPtr aAsyncHandle);
@@ -104,7 +104,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaPort"></param>
         /// <param name="aaResult"></param>
-        public void SyncTestComPort(uint aaPort, out bool aaResult)
+        public void SyncTestComPort(uint aPort, out bool aResult)
         {
             SyncTestComPortLinnCoUkPtest1 sync = new SyncTestComPortLinnCoUkPtest1(this);
             BeginTestComPort(aPort, sync.AsyncComplete());
@@ -122,7 +122,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaPort"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginTestComPort(uint aaPort, CallbackAsyncComplete aCallback)
+        public void BeginTestComPort(uint aPort, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionTestComPort, aCallback);
             int inIndex = 0;
@@ -138,7 +138,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaResult"></param>
-        public void EndTestComPort(IntPtr aAsyncHandle, out bool aaResult)
+        public void EndTestComPort(IntPtr aAsyncHandle, out bool aResult)
         {
             uint index = 0;
             aResult = Invocation.OutputBool(aAsyncHandle, index++);

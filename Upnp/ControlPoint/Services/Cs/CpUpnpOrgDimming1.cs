@@ -9,24 +9,24 @@ namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyUpnpOrgDimming1 : ICpProxy, IDisposable
     {
-        void SyncSetLoadLevelTarget(uint anewLoadlevelTarget);
-        void BeginSetLoadLevelTarget(uint anewLoadlevelTarget, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSetLoadLevelTarget(uint aNewLoadlevelTarget);
+        void BeginSetLoadLevelTarget(uint aNewLoadlevelTarget, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetLoadLevelTarget(IntPtr aAsyncHandle);
         void SyncGetLoadLevelTarget(out uint aGetLoadlevelTarget);
         void BeginGetLoadLevelTarget(CpProxy.CallbackAsyncComplete aCallback);
         void EndGetLoadLevelTarget(IntPtr aAsyncHandle, out uint aGetLoadlevelTarget);
-        void SyncGetLoadLevelStatus(out uint aretLoadlevelStatus);
+        void SyncGetLoadLevelStatus(out uint aRetLoadlevelStatus);
         void BeginGetLoadLevelStatus(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetLoadLevelStatus(IntPtr aAsyncHandle, out uint aretLoadlevelStatus);
-        void SyncSetOnEffectLevel(uint anewOnEffectLevel);
-        void BeginSetOnEffectLevel(uint anewOnEffectLevel, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetLoadLevelStatus(IntPtr aAsyncHandle, out uint aRetLoadlevelStatus);
+        void SyncSetOnEffectLevel(uint aNewOnEffectLevel);
+        void BeginSetOnEffectLevel(uint aNewOnEffectLevel, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetOnEffectLevel(IntPtr aAsyncHandle);
-        void SyncSetOnEffect(String anewOnEffect);
-        void BeginSetOnEffect(String anewOnEffect, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSetOnEffect(String aNewOnEffect);
+        void BeginSetOnEffect(String aNewOnEffect, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetOnEffect(IntPtr aAsyncHandle);
-        void SyncGetOnEffectParameters(out String aretOnEffect, out uint aretOnEffectLevel);
+        void SyncGetOnEffectParameters(out String aRetOnEffect, out uint aRetOnEffectLevel);
         void BeginGetOnEffectParameters(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetOnEffectParameters(IntPtr aAsyncHandle, out String aretOnEffect, out uint aretOnEffectLevel);
+        void EndGetOnEffectParameters(IntPtr aAsyncHandle, out String aRetOnEffect, out uint aRetOnEffectLevel);
         void SyncStepUp();
         void BeginStepUp(CpProxy.CallbackAsyncComplete aCallback);
         void EndStepUp(IntPtr aAsyncHandle);
@@ -42,36 +42,36 @@ namespace Zapp.ControlPoint.Proxies
         void SyncStopRamp();
         void BeginStopRamp(CpProxy.CallbackAsyncComplete aCallback);
         void EndStopRamp(IntPtr aAsyncHandle);
-        void SyncStartRampToLevel(uint anewLoadLevelTarget, uint anewRampTime);
-        void BeginStartRampToLevel(uint anewLoadLevelTarget, uint anewRampTime, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncStartRampToLevel(uint aNewLoadLevelTarget, uint aNewRampTime);
+        void BeginStartRampToLevel(uint aNewLoadLevelTarget, uint aNewRampTime, CpProxy.CallbackAsyncComplete aCallback);
         void EndStartRampToLevel(IntPtr aAsyncHandle);
-        void SyncSetStepDelta(uint anewStepDelta);
-        void BeginSetStepDelta(uint anewStepDelta, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSetStepDelta(uint aNewStepDelta);
+        void BeginSetStepDelta(uint aNewStepDelta, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetStepDelta(IntPtr aAsyncHandle);
-        void SyncGetStepDelta(out uint aretStepDelta);
+        void SyncGetStepDelta(out uint aRetStepDelta);
         void BeginGetStepDelta(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetStepDelta(IntPtr aAsyncHandle, out uint aretStepDelta);
-        void SyncSetRampRate(uint anewRampRate);
-        void BeginSetRampRate(uint anewRampRate, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetStepDelta(IntPtr aAsyncHandle, out uint aRetStepDelta);
+        void SyncSetRampRate(uint aNewRampRate);
+        void BeginSetRampRate(uint aNewRampRate, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetRampRate(IntPtr aAsyncHandle);
-        void SyncGetRampRate(out uint aretRampRate);
+        void SyncGetRampRate(out uint aRetRampRate);
         void BeginGetRampRate(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetRampRate(IntPtr aAsyncHandle, out uint aretRampRate);
+        void EndGetRampRate(IntPtr aAsyncHandle, out uint aRetRampRate);
         void SyncPauseRamp();
         void BeginPauseRamp(CpProxy.CallbackAsyncComplete aCallback);
         void EndPauseRamp(IntPtr aAsyncHandle);
         void SyncResumeRamp();
         void BeginResumeRamp(CpProxy.CallbackAsyncComplete aCallback);
         void EndResumeRamp(IntPtr aAsyncHandle);
-        void SyncGetIsRamping(out bool aretIsRamping);
+        void SyncGetIsRamping(out bool aRetIsRamping);
         void BeginGetIsRamping(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetIsRamping(IntPtr aAsyncHandle, out bool aretIsRamping);
-        void SyncGetRampPaused(out bool aretRampPaused);
+        void EndGetIsRamping(IntPtr aAsyncHandle, out bool aRetIsRamping);
+        void SyncGetRampPaused(out bool aRetRampPaused);
         void BeginGetRampPaused(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetRampPaused(IntPtr aAsyncHandle, out bool aretRampPaused);
-        void SyncGetRampTime(out uint aretRampTime);
+        void EndGetRampPaused(IntPtr aAsyncHandle, out bool aRetRampPaused);
+        void SyncGetRampTime(out uint aRetRampTime);
         void BeginGetRampTime(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetRampTime(IntPtr aAsyncHandle, out uint aretRampTime);
+        void EndGetRampTime(IntPtr aAsyncHandle, out uint aRetRampTime);
         void SetPropertyLoadLevelStatusChanged(CpProxy.CallbackPropertyChanged aLoadLevelStatusChanged);
         uint PropertyLoadLevelStatus();
         void SetPropertyStepDeltaChanged(CpProxy.CallbackPropertyChanged aStepDeltaChanged);
@@ -571,7 +571,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="anewLoadlevelTarget"></param>
-        public void SyncSetLoadLevelTarget(uint anewLoadlevelTarget)
+        public void SyncSetLoadLevelTarget(uint aNewLoadlevelTarget)
         {
             SyncSetLoadLevelTargetUpnpOrgDimming1 sync = new SyncSetLoadLevelTargetUpnpOrgDimming1(this);
             BeginSetLoadLevelTarget(aNewLoadlevelTarget, sync.AsyncComplete());
@@ -588,7 +588,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="anewLoadlevelTarget"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetLoadLevelTarget(uint anewLoadlevelTarget, CallbackAsyncComplete aCallback)
+        public void BeginSetLoadLevelTarget(uint aNewLoadlevelTarget, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetLoadLevelTarget, aCallback);
             int inIndex = 0;
@@ -654,7 +654,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aretLoadlevelStatus"></param>
-        public void SyncGetLoadLevelStatus(out uint aretLoadlevelStatus)
+        public void SyncGetLoadLevelStatus(out uint aRetLoadlevelStatus)
         {
             SyncGetLoadLevelStatusUpnpOrgDimming1 sync = new SyncGetLoadLevelStatusUpnpOrgDimming1(this);
             BeginGetLoadLevelStatus(sync.AsyncComplete());
@@ -685,7 +685,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aretLoadlevelStatus"></param>
-        public void EndGetLoadLevelStatus(IntPtr aAsyncHandle, out uint aretLoadlevelStatus)
+        public void EndGetLoadLevelStatus(IntPtr aAsyncHandle, out uint aRetLoadlevelStatus)
         {
             uint index = 0;
             aRetLoadlevelStatus = Invocation.OutputUint(aAsyncHandle, index++);
@@ -697,7 +697,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="anewOnEffectLevel"></param>
-        public void SyncSetOnEffectLevel(uint anewOnEffectLevel)
+        public void SyncSetOnEffectLevel(uint aNewOnEffectLevel)
         {
             SyncSetOnEffectLevelUpnpOrgDimming1 sync = new SyncSetOnEffectLevelUpnpOrgDimming1(this);
             BeginSetOnEffectLevel(aNewOnEffectLevel, sync.AsyncComplete());
@@ -714,7 +714,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="anewOnEffectLevel"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetOnEffectLevel(uint anewOnEffectLevel, CallbackAsyncComplete aCallback)
+        public void BeginSetOnEffectLevel(uint aNewOnEffectLevel, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetOnEffectLevel, aCallback);
             int inIndex = 0;
@@ -737,7 +737,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="anewOnEffect"></param>
-        public void SyncSetOnEffect(String anewOnEffect)
+        public void SyncSetOnEffect(String aNewOnEffect)
         {
             SyncSetOnEffectUpnpOrgDimming1 sync = new SyncSetOnEffectUpnpOrgDimming1(this);
             BeginSetOnEffect(aNewOnEffect, sync.AsyncComplete());
@@ -754,7 +754,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="anewOnEffect"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetOnEffect(String anewOnEffect, CallbackAsyncComplete aCallback)
+        public void BeginSetOnEffect(String aNewOnEffect, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetOnEffect, aCallback);
             int inIndex = 0;
@@ -778,7 +778,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aretOnEffect"></param>
         /// <param name="aretOnEffectLevel"></param>
-        public void SyncGetOnEffectParameters(out String aretOnEffect, out uint aretOnEffectLevel)
+        public void SyncGetOnEffectParameters(out String aRetOnEffect, out uint aRetOnEffectLevel)
         {
             SyncGetOnEffectParametersUpnpOrgDimming1 sync = new SyncGetOnEffectParametersUpnpOrgDimming1(this);
             BeginGetOnEffectParameters(sync.AsyncComplete());
@@ -812,7 +812,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aretOnEffect"></param>
         /// <param name="aretOnEffectLevel"></param>
-        public void EndGetOnEffectParameters(IntPtr aAsyncHandle, out String aretOnEffect, out uint aretOnEffectLevel)
+        public void EndGetOnEffectParameters(IntPtr aAsyncHandle, out String aRetOnEffect, out uint aRetOnEffectLevel)
         {
             uint index = 0;
             aRetOnEffect = Invocation.OutputString(aAsyncHandle, index++);
@@ -1006,7 +1006,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="anewLoadLevelTarget"></param>
         /// <param name="anewRampTime"></param>
-        public void SyncStartRampToLevel(uint anewLoadLevelTarget, uint anewRampTime)
+        public void SyncStartRampToLevel(uint aNewLoadLevelTarget, uint aNewRampTime)
         {
             SyncStartRampToLevelUpnpOrgDimming1 sync = new SyncStartRampToLevelUpnpOrgDimming1(this);
             BeginStartRampToLevel(aNewLoadLevelTarget, aNewRampTime, sync.AsyncComplete());
@@ -1024,7 +1024,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="anewRampTime"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginStartRampToLevel(uint anewLoadLevelTarget, uint anewRampTime, CallbackAsyncComplete aCallback)
+        public void BeginStartRampToLevel(uint aNewLoadLevelTarget, uint aNewRampTime, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionStartRampToLevel, aCallback);
             int inIndex = 0;
@@ -1048,7 +1048,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="anewStepDelta"></param>
-        public void SyncSetStepDelta(uint anewStepDelta)
+        public void SyncSetStepDelta(uint aNewStepDelta)
         {
             SyncSetStepDeltaUpnpOrgDimming1 sync = new SyncSetStepDeltaUpnpOrgDimming1(this);
             BeginSetStepDelta(aNewStepDelta, sync.AsyncComplete());
@@ -1065,7 +1065,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="anewStepDelta"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetStepDelta(uint anewStepDelta, CallbackAsyncComplete aCallback)
+        public void BeginSetStepDelta(uint aNewStepDelta, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetStepDelta, aCallback);
             int inIndex = 0;
@@ -1088,7 +1088,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aretStepDelta"></param>
-        public void SyncGetStepDelta(out uint aretStepDelta)
+        public void SyncGetStepDelta(out uint aRetStepDelta)
         {
             SyncGetStepDeltaUpnpOrgDimming1 sync = new SyncGetStepDeltaUpnpOrgDimming1(this);
             BeginGetStepDelta(sync.AsyncComplete());
@@ -1119,7 +1119,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aretStepDelta"></param>
-        public void EndGetStepDelta(IntPtr aAsyncHandle, out uint aretStepDelta)
+        public void EndGetStepDelta(IntPtr aAsyncHandle, out uint aRetStepDelta)
         {
             uint index = 0;
             aRetStepDelta = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1131,7 +1131,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="anewRampRate"></param>
-        public void SyncSetRampRate(uint anewRampRate)
+        public void SyncSetRampRate(uint aNewRampRate)
         {
             SyncSetRampRateUpnpOrgDimming1 sync = new SyncSetRampRateUpnpOrgDimming1(this);
             BeginSetRampRate(aNewRampRate, sync.AsyncComplete());
@@ -1148,7 +1148,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="anewRampRate"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetRampRate(uint anewRampRate, CallbackAsyncComplete aCallback)
+        public void BeginSetRampRate(uint aNewRampRate, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetRampRate, aCallback);
             int inIndex = 0;
@@ -1171,7 +1171,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aretRampRate"></param>
-        public void SyncGetRampRate(out uint aretRampRate)
+        public void SyncGetRampRate(out uint aRetRampRate)
         {
             SyncGetRampRateUpnpOrgDimming1 sync = new SyncGetRampRateUpnpOrgDimming1(this);
             BeginGetRampRate(sync.AsyncComplete());
@@ -1202,7 +1202,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aretRampRate"></param>
-        public void EndGetRampRate(IntPtr aAsyncHandle, out uint aretRampRate)
+        public void EndGetRampRate(IntPtr aAsyncHandle, out uint aRetRampRate)
         {
             uint index = 0;
             aRetRampRate = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1286,7 +1286,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aretIsRamping"></param>
-        public void SyncGetIsRamping(out bool aretIsRamping)
+        public void SyncGetIsRamping(out bool aRetIsRamping)
         {
             SyncGetIsRampingUpnpOrgDimming1 sync = new SyncGetIsRampingUpnpOrgDimming1(this);
             BeginGetIsRamping(sync.AsyncComplete());
@@ -1317,7 +1317,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aretIsRamping"></param>
-        public void EndGetIsRamping(IntPtr aAsyncHandle, out bool aretIsRamping)
+        public void EndGetIsRamping(IntPtr aAsyncHandle, out bool aRetIsRamping)
         {
             uint index = 0;
             aRetIsRamping = Invocation.OutputBool(aAsyncHandle, index++);
@@ -1329,7 +1329,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aretRampPaused"></param>
-        public void SyncGetRampPaused(out bool aretRampPaused)
+        public void SyncGetRampPaused(out bool aRetRampPaused)
         {
             SyncGetRampPausedUpnpOrgDimming1 sync = new SyncGetRampPausedUpnpOrgDimming1(this);
             BeginGetRampPaused(sync.AsyncComplete());
@@ -1360,7 +1360,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aretRampPaused"></param>
-        public void EndGetRampPaused(IntPtr aAsyncHandle, out bool aretRampPaused)
+        public void EndGetRampPaused(IntPtr aAsyncHandle, out bool aRetRampPaused)
         {
             uint index = 0;
             aRetRampPaused = Invocation.OutputBool(aAsyncHandle, index++);
@@ -1372,7 +1372,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aretRampTime"></param>
-        public void SyncGetRampTime(out uint aretRampTime)
+        public void SyncGetRampTime(out uint aRetRampTime)
         {
             SyncGetRampTimeUpnpOrgDimming1 sync = new SyncGetRampTimeUpnpOrgDimming1(this);
             BeginGetRampTime(sync.AsyncComplete());
@@ -1403,7 +1403,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aretRampTime"></param>
-        public void EndGetRampTime(IntPtr aAsyncHandle, out uint aretRampTime)
+        public void EndGetRampTime(IntPtr aAsyncHandle, out uint aRetRampTime)
         {
             uint index = 0;
             aRetRampTime = Invocation.OutputUint(aAsyncHandle, index++);

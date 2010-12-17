@@ -9,42 +9,42 @@ namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyLinnCoUkPlaylist1 : ICpProxy, IDisposable
     {
-        void SyncRead(uint aaId, out String aaUri, out String aaMetaData);
-        void BeginRead(uint aaId, CpProxy.CallbackAsyncComplete aCallback);
-        void EndRead(IntPtr aAsyncHandle, out String aaUri, out String aaMetaData);
-        void SyncReadList(String aaIdList, out String aaMetaDataList);
-        void BeginReadList(String aaIdList, CpProxy.CallbackAsyncComplete aCallback);
-        void EndReadList(IntPtr aAsyncHandle, out String aaMetaDataList);
-        void SyncInsert(uint aaAfterId, String aaUri, String aaMetaData, out uint aaNewId);
-        void BeginInsert(uint aaAfterId, String aaUri, String aaMetaData, CpProxy.CallbackAsyncComplete aCallback);
-        void EndInsert(IntPtr aAsyncHandle, out uint aaNewId);
-        void SyncDelete(uint aaId);
-        void BeginDelete(uint aaId, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncRead(uint aId, out String aUri, out String aMetaData);
+        void BeginRead(uint aId, CpProxy.CallbackAsyncComplete aCallback);
+        void EndRead(IntPtr aAsyncHandle, out String aUri, out String aMetaData);
+        void SyncReadList(String aIdList, out String aMetaDataList);
+        void BeginReadList(String aIdList, CpProxy.CallbackAsyncComplete aCallback);
+        void EndReadList(IntPtr aAsyncHandle, out String aMetaDataList);
+        void SyncInsert(uint aAfterId, String aUri, String aMetaData, out uint aNewId);
+        void BeginInsert(uint aAfterId, String aUri, String aMetaData, CpProxy.CallbackAsyncComplete aCallback);
+        void EndInsert(IntPtr aAsyncHandle, out uint aNewId);
+        void SyncDelete(uint aId);
+        void BeginDelete(uint aId, CpProxy.CallbackAsyncComplete aCallback);
         void EndDelete(IntPtr aAsyncHandle);
         void SyncDeleteAll();
         void BeginDeleteAll(CpProxy.CallbackAsyncComplete aCallback);
         void EndDeleteAll(IntPtr aAsyncHandle);
-        void SyncSetRepeat(bool aaRepeat);
-        void BeginSetRepeat(bool aaRepeat, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSetRepeat(bool aRepeat);
+        void BeginSetRepeat(bool aRepeat, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetRepeat(IntPtr aAsyncHandle);
-        void SyncRepeat(out bool aaRepeat);
+        void SyncRepeat(out bool aRepeat);
         void BeginRepeat(CpProxy.CallbackAsyncComplete aCallback);
-        void EndRepeat(IntPtr aAsyncHandle, out bool aaRepeat);
-        void SyncSetShuffle(bool aaShuffle);
-        void BeginSetShuffle(bool aaShuffle, CpProxy.CallbackAsyncComplete aCallback);
+        void EndRepeat(IntPtr aAsyncHandle, out bool aRepeat);
+        void SyncSetShuffle(bool aShuffle);
+        void BeginSetShuffle(bool aShuffle, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetShuffle(IntPtr aAsyncHandle);
-        void SyncShuffle(out bool aaShuffle);
+        void SyncShuffle(out bool aShuffle);
         void BeginShuffle(CpProxy.CallbackAsyncComplete aCallback);
-        void EndShuffle(IntPtr aAsyncHandle, out bool aaShuffle);
-        void SyncTracksMax(out uint aaTracksMax);
+        void EndShuffle(IntPtr aAsyncHandle, out bool aShuffle);
+        void SyncTracksMax(out uint aTracksMax);
         void BeginTracksMax(CpProxy.CallbackAsyncComplete aCallback);
-        void EndTracksMax(IntPtr aAsyncHandle, out uint aaTracksMax);
-        void SyncIdArray(out uint aaIdArrayToken, out String aaIdArray);
+        void EndTracksMax(IntPtr aAsyncHandle, out uint aTracksMax);
+        void SyncIdArray(out uint aIdArrayToken, out String aIdArray);
         void BeginIdArray(CpProxy.CallbackAsyncComplete aCallback);
-        void EndIdArray(IntPtr aAsyncHandle, out uint aaIdArrayToken, out String aaIdArray);
-        void SyncIdArrayChanged(uint aaIdArrayToken, out bool aaIdArrayChanged);
-        void BeginIdArrayChanged(uint aaIdArrayToken, CpProxy.CallbackAsyncComplete aCallback);
-        void EndIdArrayChanged(IntPtr aAsyncHandle, out bool aaIdArrayChanged);
+        void EndIdArray(IntPtr aAsyncHandle, out uint aIdArrayToken, out String aIdArray);
+        void SyncIdArrayChanged(uint aIdArrayToken, out bool aIdArrayChanged);
+        void BeginIdArrayChanged(uint aIdArrayToken, CpProxy.CallbackAsyncComplete aCallback);
+        void EndIdArrayChanged(IntPtr aAsyncHandle, out bool aIdArrayChanged);
         void SetPropertyIdArrayChanged(CpProxy.CallbackPropertyChanged aIdArrayChanged);
         String PropertyIdArray();
         void SetPropertyRepeatChanged(CpProxy.CallbackPropertyChanged aRepeatChanged);
@@ -390,7 +390,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaId"></param>
         /// <param name="aaUri"></param>
         /// <param name="aaMetaData"></param>
-        public void SyncRead(uint aaId, out String aaUri, out String aaMetaData)
+        public void SyncRead(uint aId, out String aUri, out String aMetaData)
         {
             SyncReadLinnCoUkPlaylist1 sync = new SyncReadLinnCoUkPlaylist1(this);
             BeginRead(aId, sync.AsyncComplete());
@@ -409,7 +409,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaId"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginRead(uint aaId, CallbackAsyncComplete aCallback)
+        public void BeginRead(uint aId, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionRead, aCallback);
             int inIndex = 0;
@@ -427,7 +427,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaUri"></param>
         /// <param name="aaMetaData"></param>
-        public void EndRead(IntPtr aAsyncHandle, out String aaUri, out String aaMetaData)
+        public void EndRead(IntPtr aAsyncHandle, out String aUri, out String aMetaData)
         {
             uint index = 0;
             aUri = Invocation.OutputString(aAsyncHandle, index++);
@@ -441,7 +441,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIdList"></param>
         /// <param name="aaMetaDataList"></param>
-        public void SyncReadList(String aaIdList, out String aaMetaDataList)
+        public void SyncReadList(String aIdList, out String aMetaDataList)
         {
             SyncReadListLinnCoUkPlaylist1 sync = new SyncReadListLinnCoUkPlaylist1(this);
             BeginReadList(aIdList, sync.AsyncComplete());
@@ -459,7 +459,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaIdList"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginReadList(String aaIdList, CallbackAsyncComplete aCallback)
+        public void BeginReadList(String aIdList, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionReadList, aCallback);
             int inIndex = 0;
@@ -475,7 +475,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaMetaDataList"></param>
-        public void EndReadList(IntPtr aAsyncHandle, out String aaMetaDataList)
+        public void EndReadList(IntPtr aAsyncHandle, out String aMetaDataList)
         {
             uint index = 0;
             aMetaDataList = Invocation.OutputString(aAsyncHandle, index++);
@@ -490,7 +490,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaUri"></param>
         /// <param name="aaMetaData"></param>
         /// <param name="aaNewId"></param>
-        public void SyncInsert(uint aaAfterId, String aaUri, String aaMetaData, out uint aaNewId)
+        public void SyncInsert(uint aAfterId, String aUri, String aMetaData, out uint aNewId)
         {
             SyncInsertLinnCoUkPlaylist1 sync = new SyncInsertLinnCoUkPlaylist1(this);
             BeginInsert(aAfterId, aUri, aMetaData, sync.AsyncComplete());
@@ -510,7 +510,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetaData"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginInsert(uint aaAfterId, String aaUri, String aaMetaData, CallbackAsyncComplete aCallback)
+        public void BeginInsert(uint aAfterId, String aUri, String aMetaData, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionInsert, aCallback);
             int inIndex = 0;
@@ -528,7 +528,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaNewId"></param>
-        public void EndInsert(IntPtr aAsyncHandle, out uint aaNewId)
+        public void EndInsert(IntPtr aAsyncHandle, out uint aNewId)
         {
             uint index = 0;
             aNewId = Invocation.OutputUint(aAsyncHandle, index++);
@@ -540,7 +540,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaId"></param>
-        public void SyncDelete(uint aaId)
+        public void SyncDelete(uint aId)
         {
             SyncDeleteLinnCoUkPlaylist1 sync = new SyncDeleteLinnCoUkPlaylist1(this);
             BeginDelete(aId, sync.AsyncComplete());
@@ -557,7 +557,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaId"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginDelete(uint aaId, CallbackAsyncComplete aCallback)
+        public void BeginDelete(uint aId, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionDelete, aCallback);
             int inIndex = 0;
@@ -616,7 +616,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaRepeat"></param>
-        public void SyncSetRepeat(bool aaRepeat)
+        public void SyncSetRepeat(bool aRepeat)
         {
             SyncSetRepeatLinnCoUkPlaylist1 sync = new SyncSetRepeatLinnCoUkPlaylist1(this);
             BeginSetRepeat(aRepeat, sync.AsyncComplete());
@@ -633,7 +633,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaRepeat"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetRepeat(bool aaRepeat, CallbackAsyncComplete aCallback)
+        public void BeginSetRepeat(bool aRepeat, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetRepeat, aCallback);
             int inIndex = 0;
@@ -656,7 +656,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaRepeat"></param>
-        public void SyncRepeat(out bool aaRepeat)
+        public void SyncRepeat(out bool aRepeat)
         {
             SyncRepeatLinnCoUkPlaylist1 sync = new SyncRepeatLinnCoUkPlaylist1(this);
             BeginRepeat(sync.AsyncComplete());
@@ -687,7 +687,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaRepeat"></param>
-        public void EndRepeat(IntPtr aAsyncHandle, out bool aaRepeat)
+        public void EndRepeat(IntPtr aAsyncHandle, out bool aRepeat)
         {
             uint index = 0;
             aRepeat = Invocation.OutputBool(aAsyncHandle, index++);
@@ -699,7 +699,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaShuffle"></param>
-        public void SyncSetShuffle(bool aaShuffle)
+        public void SyncSetShuffle(bool aShuffle)
         {
             SyncSetShuffleLinnCoUkPlaylist1 sync = new SyncSetShuffleLinnCoUkPlaylist1(this);
             BeginSetShuffle(aShuffle, sync.AsyncComplete());
@@ -716,7 +716,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaShuffle"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetShuffle(bool aaShuffle, CallbackAsyncComplete aCallback)
+        public void BeginSetShuffle(bool aShuffle, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetShuffle, aCallback);
             int inIndex = 0;
@@ -739,7 +739,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaShuffle"></param>
-        public void SyncShuffle(out bool aaShuffle)
+        public void SyncShuffle(out bool aShuffle)
         {
             SyncShuffleLinnCoUkPlaylist1 sync = new SyncShuffleLinnCoUkPlaylist1(this);
             BeginShuffle(sync.AsyncComplete());
@@ -770,7 +770,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaShuffle"></param>
-        public void EndShuffle(IntPtr aAsyncHandle, out bool aaShuffle)
+        public void EndShuffle(IntPtr aAsyncHandle, out bool aShuffle)
         {
             uint index = 0;
             aShuffle = Invocation.OutputBool(aAsyncHandle, index++);
@@ -782,7 +782,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaTracksMax"></param>
-        public void SyncTracksMax(out uint aaTracksMax)
+        public void SyncTracksMax(out uint aTracksMax)
         {
             SyncTracksMaxLinnCoUkPlaylist1 sync = new SyncTracksMaxLinnCoUkPlaylist1(this);
             BeginTracksMax(sync.AsyncComplete());
@@ -813,7 +813,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaTracksMax"></param>
-        public void EndTracksMax(IntPtr aAsyncHandle, out uint aaTracksMax)
+        public void EndTracksMax(IntPtr aAsyncHandle, out uint aTracksMax)
         {
             uint index = 0;
             aTracksMax = Invocation.OutputUint(aAsyncHandle, index++);
@@ -826,7 +826,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIdArrayToken"></param>
         /// <param name="aaIdArray"></param>
-        public void SyncIdArray(out uint aaIdArrayToken, out String aaIdArray)
+        public void SyncIdArray(out uint aIdArrayToken, out String aIdArray)
         {
             SyncIdArrayLinnCoUkPlaylist1 sync = new SyncIdArrayLinnCoUkPlaylist1(this);
             BeginIdArray(sync.AsyncComplete());
@@ -860,7 +860,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaIdArrayToken"></param>
         /// <param name="aaIdArray"></param>
-        public void EndIdArray(IntPtr aAsyncHandle, out uint aaIdArrayToken, out String aaIdArray)
+        public void EndIdArray(IntPtr aAsyncHandle, out uint aIdArrayToken, out String aIdArray)
         {
             uint index = 0;
             aIdArrayToken = Invocation.OutputUint(aAsyncHandle, index++);
@@ -874,7 +874,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIdArrayToken"></param>
         /// <param name="aaIdArrayChanged"></param>
-        public void SyncIdArrayChanged(uint aaIdArrayToken, out bool aaIdArrayChanged)
+        public void SyncIdArrayChanged(uint aIdArrayToken, out bool aIdArrayChanged)
         {
             SyncIdArrayChangedLinnCoUkPlaylist1 sync = new SyncIdArrayChangedLinnCoUkPlaylist1(this);
             BeginIdArrayChanged(aIdArrayToken, sync.AsyncComplete());
@@ -892,7 +892,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaIdArrayToken"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginIdArrayChanged(uint aaIdArrayToken, CallbackAsyncComplete aCallback)
+        public void BeginIdArrayChanged(uint aIdArrayToken, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionIdArrayChanged, aCallback);
             int inIndex = 0;
@@ -908,7 +908,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaIdArrayChanged"></param>
-        public void EndIdArrayChanged(IntPtr aAsyncHandle, out bool aaIdArrayChanged)
+        public void EndIdArrayChanged(IntPtr aAsyncHandle, out bool aIdArrayChanged)
         {
             uint index = 0;
             aIdArrayChanged = Invocation.OutputBool(aAsyncHandle, index++);

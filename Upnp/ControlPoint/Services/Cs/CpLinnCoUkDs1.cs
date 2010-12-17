@@ -18,27 +18,27 @@ namespace Zapp.ControlPoint.Proxies
         void SyncStop();
         void BeginStop(CpProxy.CallbackAsyncComplete aCallback);
         void EndStop(IntPtr aAsyncHandle);
-        void SyncSeekSecondAbsolute(uint aaSecond);
-        void BeginSeekSecondAbsolute(uint aaSecond, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSeekSecondAbsolute(uint aSecond);
+        void BeginSeekSecondAbsolute(uint aSecond, CpProxy.CallbackAsyncComplete aCallback);
         void EndSeekSecondAbsolute(IntPtr aAsyncHandle);
-        void SyncSeekSecondRelative(int aaSecond);
-        void BeginSeekSecondRelative(int aaSecond, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSeekSecondRelative(int aSecond);
+        void BeginSeekSecondRelative(int aSecond, CpProxy.CallbackAsyncComplete aCallback);
         void EndSeekSecondRelative(IntPtr aAsyncHandle);
-        void SyncSeekTrackId(uint aaTrackId);
-        void BeginSeekTrackId(uint aaTrackId, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSeekTrackId(uint aTrackId);
+        void BeginSeekTrackId(uint aTrackId, CpProxy.CallbackAsyncComplete aCallback);
         void EndSeekTrackId(IntPtr aAsyncHandle);
-        void SyncSeekTrackAbsolute(uint aaTrack);
-        void BeginSeekTrackAbsolute(uint aaTrack, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSeekTrackAbsolute(uint aTrack);
+        void BeginSeekTrackAbsolute(uint aTrack, CpProxy.CallbackAsyncComplete aCallback);
         void EndSeekTrackAbsolute(IntPtr aAsyncHandle);
-        void SyncSeekTrackRelative(int aaTrack);
-        void BeginSeekTrackRelative(int aaTrack, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSeekTrackRelative(int aTrack);
+        void BeginSeekTrackRelative(int aTrack, CpProxy.CallbackAsyncComplete aCallback);
         void EndSeekTrackRelative(IntPtr aAsyncHandle);
-        void SyncState(out String aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out String aaTrackCodecName, out uint aaTrackId);
+        void SyncState(out String aTransportState, out uint aTrackDuration, out uint aTrackBitRate, out bool aTrackLossless, out uint aTrackBitDepth, out uint aTrackSampleRate, out String aTrackCodecName, out uint aTrackId);
         void BeginState(CpProxy.CallbackAsyncComplete aCallback);
-        void EndState(IntPtr aAsyncHandle, out String aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out String aaTrackCodecName, out uint aaTrackId);
-        void SyncProtocolInfo(out String aaSupportedProtocols);
+        void EndState(IntPtr aAsyncHandle, out String aTransportState, out uint aTrackDuration, out uint aTrackBitRate, out bool aTrackLossless, out uint aTrackBitDepth, out uint aTrackSampleRate, out String aTrackCodecName, out uint aTrackId);
+        void SyncProtocolInfo(out String aSupportedProtocols);
         void BeginProtocolInfo(CpProxy.CallbackAsyncComplete aCallback);
-        void EndProtocolInfo(IntPtr aAsyncHandle, out String aaSupportedProtocols);
+        void EndProtocolInfo(IntPtr aAsyncHandle, out String aSupportedProtocols);
         void SetPropertySupportedProtocolsChanged(CpProxy.CallbackPropertyChanged aSupportedProtocolsChanged);
         String PropertySupportedProtocols();
         void SetPropertyTrackDurationChanged(CpProxy.CallbackPropertyChanged aTrackDurationChanged);
@@ -476,7 +476,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaSecond"></param>
-        public void SyncSeekSecondAbsolute(uint aaSecond)
+        public void SyncSeekSecondAbsolute(uint aSecond)
         {
             SyncSeekSecondAbsoluteLinnCoUkDs1 sync = new SyncSeekSecondAbsoluteLinnCoUkDs1(this);
             BeginSeekSecondAbsolute(aSecond, sync.AsyncComplete());
@@ -493,7 +493,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSecond"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSeekSecondAbsolute(uint aaSecond, CallbackAsyncComplete aCallback)
+        public void BeginSeekSecondAbsolute(uint aSecond, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSeekSecondAbsolute, aCallback);
             int inIndex = 0;
@@ -516,7 +516,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaSecond"></param>
-        public void SyncSeekSecondRelative(int aaSecond)
+        public void SyncSeekSecondRelative(int aSecond)
         {
             SyncSeekSecondRelativeLinnCoUkDs1 sync = new SyncSeekSecondRelativeLinnCoUkDs1(this);
             BeginSeekSecondRelative(aSecond, sync.AsyncComplete());
@@ -533,7 +533,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSecond"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSeekSecondRelative(int aaSecond, CallbackAsyncComplete aCallback)
+        public void BeginSeekSecondRelative(int aSecond, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSeekSecondRelative, aCallback);
             int inIndex = 0;
@@ -556,7 +556,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaTrackId"></param>
-        public void SyncSeekTrackId(uint aaTrackId)
+        public void SyncSeekTrackId(uint aTrackId)
         {
             SyncSeekTrackIdLinnCoUkDs1 sync = new SyncSeekTrackIdLinnCoUkDs1(this);
             BeginSeekTrackId(aTrackId, sync.AsyncComplete());
@@ -573,7 +573,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrackId"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSeekTrackId(uint aaTrackId, CallbackAsyncComplete aCallback)
+        public void BeginSeekTrackId(uint aTrackId, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSeekTrackId, aCallback);
             int inIndex = 0;
@@ -596,7 +596,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaTrack"></param>
-        public void SyncSeekTrackAbsolute(uint aaTrack)
+        public void SyncSeekTrackAbsolute(uint aTrack)
         {
             SyncSeekTrackAbsoluteLinnCoUkDs1 sync = new SyncSeekTrackAbsoluteLinnCoUkDs1(this);
             BeginSeekTrackAbsolute(aTrack, sync.AsyncComplete());
@@ -613,7 +613,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrack"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSeekTrackAbsolute(uint aaTrack, CallbackAsyncComplete aCallback)
+        public void BeginSeekTrackAbsolute(uint aTrack, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSeekTrackAbsolute, aCallback);
             int inIndex = 0;
@@ -636,7 +636,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaTrack"></param>
-        public void SyncSeekTrackRelative(int aaTrack)
+        public void SyncSeekTrackRelative(int aTrack)
         {
             SyncSeekTrackRelativeLinnCoUkDs1 sync = new SyncSeekTrackRelativeLinnCoUkDs1(this);
             BeginSeekTrackRelative(aTrack, sync.AsyncComplete());
@@ -653,7 +653,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrack"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSeekTrackRelative(int aaTrack, CallbackAsyncComplete aCallback)
+        public void BeginSeekTrackRelative(int aTrack, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSeekTrackRelative, aCallback);
             int inIndex = 0;
@@ -683,7 +683,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrackSampleRate"></param>
         /// <param name="aaTrackCodecName"></param>
         /// <param name="aaTrackId"></param>
-        public void SyncState(out String aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out String aaTrackCodecName, out uint aaTrackId)
+        public void SyncState(out String aTransportState, out uint aTrackDuration, out uint aTrackBitRate, out bool aTrackLossless, out uint aTrackBitDepth, out uint aTrackSampleRate, out String aTrackCodecName, out uint aTrackId)
         {
             SyncStateLinnCoUkDs1 sync = new SyncStateLinnCoUkDs1(this);
             BeginState(sync.AsyncComplete());
@@ -735,7 +735,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrackSampleRate"></param>
         /// <param name="aaTrackCodecName"></param>
         /// <param name="aaTrackId"></param>
-        public void EndState(IntPtr aAsyncHandle, out String aaTransportState, out uint aaTrackDuration, out uint aaTrackBitRate, out bool aaTrackLossless, out uint aaTrackBitDepth, out uint aaTrackSampleRate, out String aaTrackCodecName, out uint aaTrackId)
+        public void EndState(IntPtr aAsyncHandle, out String aTransportState, out uint aTrackDuration, out uint aTrackBitRate, out bool aTrackLossless, out uint aTrackBitDepth, out uint aTrackSampleRate, out String aTrackCodecName, out uint aTrackId)
         {
             uint index = 0;
             aTransportState = Invocation.OutputString(aAsyncHandle, index++);
@@ -754,7 +754,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaSupportedProtocols"></param>
-        public void SyncProtocolInfo(out String aaSupportedProtocols)
+        public void SyncProtocolInfo(out String aSupportedProtocols)
         {
             SyncProtocolInfoLinnCoUkDs1 sync = new SyncProtocolInfoLinnCoUkDs1(this);
             BeginProtocolInfo(sync.AsyncComplete());
@@ -785,7 +785,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSupportedProtocols"></param>
-        public void EndProtocolInfo(IntPtr aAsyncHandle, out String aaSupportedProtocols)
+        public void EndProtocolInfo(IntPtr aAsyncHandle, out String aSupportedProtocols)
         {
             uint index = 0;
             aSupportedProtocols = Invocation.OutputString(aAsyncHandle, index++);

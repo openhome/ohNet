@@ -9,33 +9,33 @@ namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyLinnCoUkDelay1 : ICpProxy, IDisposable
     {
-        void SyncPresetXml(out String aaPresetXml);
+        void SyncPresetXml(out String aPresetXml);
         void BeginPresetXml(CpProxy.CallbackAsyncComplete aCallback);
-        void EndPresetXml(IntPtr aAsyncHandle, out String aaPresetXml);
-        void SyncPresetIndex(out uint aaIndex);
+        void EndPresetXml(IntPtr aAsyncHandle, out String aPresetXml);
+        void SyncPresetIndex(out uint aIndex);
         void BeginPresetIndex(CpProxy.CallbackAsyncComplete aCallback);
-        void EndPresetIndex(IntPtr aAsyncHandle, out uint aaIndex);
-        void SyncSetPresetIndex(uint aaIndex);
-        void BeginSetPresetIndex(uint aaIndex, CpProxy.CallbackAsyncComplete aCallback);
+        void EndPresetIndex(IntPtr aAsyncHandle, out uint aIndex);
+        void SyncSetPresetIndex(uint aIndex);
+        void BeginSetPresetIndex(uint aIndex, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetPresetIndex(IntPtr aAsyncHandle);
-        void SyncSetPresetDelay(uint aaIndex, uint aaDelay);
-        void BeginSetPresetDelay(uint aaIndex, uint aaDelay, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSetPresetDelay(uint aIndex, uint aDelay);
+        void BeginSetPresetDelay(uint aIndex, uint aDelay, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetPresetDelay(IntPtr aAsyncHandle);
-        void SyncSetPresetVisible(uint aaIndex, bool aaVisible);
-        void BeginSetPresetVisible(uint aaIndex, bool aaVisible, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSetPresetVisible(uint aIndex, bool aVisible);
+        void BeginSetPresetVisible(uint aIndex, bool aVisible, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetPresetVisible(IntPtr aAsyncHandle);
-        void SyncSetPresetName(uint aaIndex, String aaName);
-        void BeginSetPresetName(uint aaIndex, String aaName, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSetPresetName(uint aIndex, String aName);
+        void BeginSetPresetName(uint aIndex, String aName, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetPresetName(IntPtr aAsyncHandle);
-        void SyncDelayMinimum(out uint aaDelay);
+        void SyncDelayMinimum(out uint aDelay);
         void BeginDelayMinimum(CpProxy.CallbackAsyncComplete aCallback);
-        void EndDelayMinimum(IntPtr aAsyncHandle, out uint aaDelay);
-        void SyncDelayMaximum(out uint aaDelay);
+        void EndDelayMinimum(IntPtr aAsyncHandle, out uint aDelay);
+        void SyncDelayMaximum(out uint aDelay);
         void BeginDelayMaximum(CpProxy.CallbackAsyncComplete aCallback);
-        void EndDelayMaximum(IntPtr aAsyncHandle, out uint aaDelay);
-        void SyncPresetCount(out uint aaCount);
+        void EndDelayMaximum(IntPtr aAsyncHandle, out uint aDelay);
+        void SyncPresetCount(out uint aCount);
         void BeginPresetCount(CpProxy.CallbackAsyncComplete aCallback);
-        void EndPresetCount(IntPtr aAsyncHandle, out uint aaCount);
+        void EndPresetCount(IntPtr aAsyncHandle, out uint aCount);
         void SetPropertyPresetXmlChanged(CpProxy.CallbackPropertyChanged aPresetXmlChanged);
         String PropertyPresetXml();
         void SetPropertyPresetIndexChanged(CpProxy.CallbackPropertyChanged aPresetIndexChanged);
@@ -277,7 +277,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaPresetXml"></param>
-        public void SyncPresetXml(out String aaPresetXml)
+        public void SyncPresetXml(out String aPresetXml)
         {
             SyncPresetXmlLinnCoUkDelay1 sync = new SyncPresetXmlLinnCoUkDelay1(this);
             BeginPresetXml(sync.AsyncComplete());
@@ -308,7 +308,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaPresetXml"></param>
-        public void EndPresetXml(IntPtr aAsyncHandle, out String aaPresetXml)
+        public void EndPresetXml(IntPtr aAsyncHandle, out String aPresetXml)
         {
             uint index = 0;
             aPresetXml = Invocation.OutputString(aAsyncHandle, index++);
@@ -320,7 +320,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIndex"></param>
-        public void SyncPresetIndex(out uint aaIndex)
+        public void SyncPresetIndex(out uint aIndex)
         {
             SyncPresetIndexLinnCoUkDelay1 sync = new SyncPresetIndexLinnCoUkDelay1(this);
             BeginPresetIndex(sync.AsyncComplete());
@@ -351,7 +351,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaIndex"></param>
-        public void EndPresetIndex(IntPtr aAsyncHandle, out uint aaIndex)
+        public void EndPresetIndex(IntPtr aAsyncHandle, out uint aIndex)
         {
             uint index = 0;
             aIndex = Invocation.OutputUint(aAsyncHandle, index++);
@@ -363,7 +363,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIndex"></param>
-        public void SyncSetPresetIndex(uint aaIndex)
+        public void SyncSetPresetIndex(uint aIndex)
         {
             SyncSetPresetIndexLinnCoUkDelay1 sync = new SyncSetPresetIndexLinnCoUkDelay1(this);
             BeginSetPresetIndex(aIndex, sync.AsyncComplete());
@@ -380,7 +380,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaIndex"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetPresetIndex(uint aaIndex, CallbackAsyncComplete aCallback)
+        public void BeginSetPresetIndex(uint aIndex, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetPresetIndex, aCallback);
             int inIndex = 0;
@@ -404,7 +404,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIndex"></param>
         /// <param name="aaDelay"></param>
-        public void SyncSetPresetDelay(uint aaIndex, uint aaDelay)
+        public void SyncSetPresetDelay(uint aIndex, uint aDelay)
         {
             SyncSetPresetDelayLinnCoUkDelay1 sync = new SyncSetPresetDelayLinnCoUkDelay1(this);
             BeginSetPresetDelay(aIndex, aDelay, sync.AsyncComplete());
@@ -422,7 +422,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaDelay"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetPresetDelay(uint aaIndex, uint aaDelay, CallbackAsyncComplete aCallback)
+        public void BeginSetPresetDelay(uint aIndex, uint aDelay, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetPresetDelay, aCallback);
             int inIndex = 0;
@@ -447,7 +447,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIndex"></param>
         /// <param name="aaVisible"></param>
-        public void SyncSetPresetVisible(uint aaIndex, bool aaVisible)
+        public void SyncSetPresetVisible(uint aIndex, bool aVisible)
         {
             SyncSetPresetVisibleLinnCoUkDelay1 sync = new SyncSetPresetVisibleLinnCoUkDelay1(this);
             BeginSetPresetVisible(aIndex, aVisible, sync.AsyncComplete());
@@ -465,7 +465,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaVisible"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetPresetVisible(uint aaIndex, bool aaVisible, CallbackAsyncComplete aCallback)
+        public void BeginSetPresetVisible(uint aIndex, bool aVisible, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetPresetVisible, aCallback);
             int inIndex = 0;
@@ -490,7 +490,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIndex"></param>
         /// <param name="aaName"></param>
-        public void SyncSetPresetName(uint aaIndex, String aaName)
+        public void SyncSetPresetName(uint aIndex, String aName)
         {
             SyncSetPresetNameLinnCoUkDelay1 sync = new SyncSetPresetNameLinnCoUkDelay1(this);
             BeginSetPresetName(aIndex, aName, sync.AsyncComplete());
@@ -508,7 +508,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaName"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetPresetName(uint aaIndex, String aaName, CallbackAsyncComplete aCallback)
+        public void BeginSetPresetName(uint aIndex, String aName, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetPresetName, aCallback);
             int inIndex = 0;
@@ -532,7 +532,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaDelay"></param>
-        public void SyncDelayMinimum(out uint aaDelay)
+        public void SyncDelayMinimum(out uint aDelay)
         {
             SyncDelayMinimumLinnCoUkDelay1 sync = new SyncDelayMinimumLinnCoUkDelay1(this);
             BeginDelayMinimum(sync.AsyncComplete());
@@ -563,7 +563,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaDelay"></param>
-        public void EndDelayMinimum(IntPtr aAsyncHandle, out uint aaDelay)
+        public void EndDelayMinimum(IntPtr aAsyncHandle, out uint aDelay)
         {
             uint index = 0;
             aDelay = Invocation.OutputUint(aAsyncHandle, index++);
@@ -575,7 +575,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaDelay"></param>
-        public void SyncDelayMaximum(out uint aaDelay)
+        public void SyncDelayMaximum(out uint aDelay)
         {
             SyncDelayMaximumLinnCoUkDelay1 sync = new SyncDelayMaximumLinnCoUkDelay1(this);
             BeginDelayMaximum(sync.AsyncComplete());
@@ -606,7 +606,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaDelay"></param>
-        public void EndDelayMaximum(IntPtr aAsyncHandle, out uint aaDelay)
+        public void EndDelayMaximum(IntPtr aAsyncHandle, out uint aDelay)
         {
             uint index = 0;
             aDelay = Invocation.OutputUint(aAsyncHandle, index++);
@@ -618,7 +618,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaCount"></param>
-        public void SyncPresetCount(out uint aaCount)
+        public void SyncPresetCount(out uint aCount)
         {
             SyncPresetCountLinnCoUkDelay1 sync = new SyncPresetCountLinnCoUkDelay1(this);
             BeginPresetCount(sync.AsyncComplete());
@@ -649,7 +649,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaCount"></param>
-        public void EndPresetCount(IntPtr aAsyncHandle, out uint aaCount)
+        public void EndPresetCount(IntPtr aAsyncHandle, out uint aCount)
         {
             uint index = 0;
             aCount = Invocation.OutputUint(aAsyncHandle, index++);

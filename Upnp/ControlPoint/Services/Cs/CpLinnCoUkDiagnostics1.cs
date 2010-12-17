@@ -9,44 +9,44 @@ namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyLinnCoUkDiagnostics1 : ICpProxy, IDisposable
     {
-        void SyncEcho(String aaIn, out String aaOut);
-        void BeginEcho(String aaIn, CpProxy.CallbackAsyncComplete aCallback);
-        void EndEcho(IntPtr aAsyncHandle, out String aaOut);
-        void SyncElfFile(out String aaElfFile);
+        void SyncEcho(String aIn, out String aOut);
+        void BeginEcho(String aIn, CpProxy.CallbackAsyncComplete aCallback);
+        void EndEcho(IntPtr aAsyncHandle, out String aOut);
+        void SyncElfFile(out String aElfFile);
         void BeginElfFile(CpProxy.CallbackAsyncComplete aCallback);
-        void EndElfFile(IntPtr aAsyncHandle, out String aaElfFile);
-        void SyncElfFingerprint(out String aaElfFileFingerprint);
+        void EndElfFile(IntPtr aAsyncHandle, out String aElfFile);
+        void SyncElfFingerprint(out String aElfFileFingerprint);
         void BeginElfFingerprint(CpProxy.CallbackAsyncComplete aCallback);
-        void EndElfFingerprint(IntPtr aAsyncHandle, out String aaElfFileFingerprint);
-        void SyncCrashDataStatus(out String aaCrashDataStatus);
+        void EndElfFingerprint(IntPtr aAsyncHandle, out String aElfFileFingerprint);
+        void SyncCrashDataStatus(out String aCrashDataStatus);
         void BeginCrashDataStatus(CpProxy.CallbackAsyncComplete aCallback);
-        void EndCrashDataStatus(IntPtr aAsyncHandle, out String aaCrashDataStatus);
-        void SyncCrashDataFetch(out String aaCrashData);
+        void EndCrashDataStatus(IntPtr aAsyncHandle, out String aCrashDataStatus);
+        void SyncCrashDataFetch(out String aCrashData);
         void BeginCrashDataFetch(CpProxy.CallbackAsyncComplete aCallback);
-        void EndCrashDataFetch(IntPtr aAsyncHandle, out String aaCrashData);
+        void EndCrashDataFetch(IntPtr aAsyncHandle, out String aCrashData);
         void SyncCrashDataClear();
         void BeginCrashDataClear(CpProxy.CallbackAsyncComplete aCallback);
         void EndCrashDataClear(IntPtr aAsyncHandle);
-        void SyncSysLog(out String aaSysLog);
+        void SyncSysLog(out String aSysLog);
         void BeginSysLog(CpProxy.CallbackAsyncComplete aCallback);
-        void EndSysLog(IntPtr aAsyncHandle, out String aaSysLog);
-        void SyncDiagnostic(String aaDiagnosticType, out String aaDiagnosticInfo);
-        void BeginDiagnostic(String aaDiagnosticType, CpProxy.CallbackAsyncComplete aCallback);
-        void EndDiagnostic(IntPtr aAsyncHandle, out String aaDiagnosticInfo);
-        void SyncStateVariable(out uint aaStateVariable);
+        void EndSysLog(IntPtr aAsyncHandle, out String aSysLog);
+        void SyncDiagnostic(String aDiagnosticType, out String aDiagnosticInfo);
+        void BeginDiagnostic(String aDiagnosticType, CpProxy.CallbackAsyncComplete aCallback);
+        void EndDiagnostic(IntPtr aAsyncHandle, out String aDiagnosticInfo);
+        void SyncStateVariable(out uint aStateVariable);
         void BeginStateVariable(CpProxy.CallbackAsyncComplete aCallback);
-        void EndStateVariable(IntPtr aAsyncHandle, out uint aaStateVariable);
-        void SyncSetStateVariable(uint aaStateVariable);
-        void BeginSetStateVariable(uint aaStateVariable, CpProxy.CallbackAsyncComplete aCallback);
+        void EndStateVariable(IntPtr aAsyncHandle, out uint aStateVariable);
+        void SyncSetStateVariable(uint aStateVariable);
+        void BeginSetStateVariable(uint aStateVariable, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetStateVariable(IntPtr aAsyncHandle);
-        void SyncStateVariablePeriod(out uint aaPeriod);
+        void SyncStateVariablePeriod(out uint aPeriod);
         void BeginStateVariablePeriod(CpProxy.CallbackAsyncComplete aCallback);
-        void EndStateVariablePeriod(IntPtr aAsyncHandle, out uint aaPeriod);
-        void SyncSetStateVariablePeriod(uint aaPeriod);
-        void BeginSetStateVariablePeriod(uint aaPeriod, CpProxy.CallbackAsyncComplete aCallback);
+        void EndStateVariablePeriod(IntPtr aAsyncHandle, out uint aPeriod);
+        void SyncSetStateVariablePeriod(uint aPeriod);
+        void BeginSetStateVariablePeriod(uint aPeriod, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetStateVariablePeriod(IntPtr aAsyncHandle);
-        void SyncReboot(uint aaDelay);
-        void BeginReboot(uint aaDelay, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncReboot(uint aDelay);
+        void BeginReboot(uint aDelay, CpProxy.CallbackAsyncComplete aCallback);
         void EndReboot(IntPtr aAsyncHandle);
         void SetPropertyaStateVariableChanged(CpProxy.CallbackPropertyChanged aaStateVariableChanged);
         uint PropertyaStateVariable();
@@ -376,7 +376,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIn"></param>
         /// <param name="aaOut"></param>
-        public void SyncEcho(String aaIn, out String aaOut)
+        public void SyncEcho(String aIn, out String aOut)
         {
             SyncEchoLinnCoUkDiagnostics1 sync = new SyncEchoLinnCoUkDiagnostics1(this);
             BeginEcho(aIn, sync.AsyncComplete());
@@ -394,7 +394,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaIn"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginEcho(String aaIn, CallbackAsyncComplete aCallback)
+        public void BeginEcho(String aIn, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionEcho, aCallback);
             int inIndex = 0;
@@ -410,7 +410,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaOut"></param>
-        public void EndEcho(IntPtr aAsyncHandle, out String aaOut)
+        public void EndEcho(IntPtr aAsyncHandle, out String aOut)
         {
             uint index = 0;
             aOut = Invocation.OutputString(aAsyncHandle, index++);
@@ -422,7 +422,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaElfFile"></param>
-        public void SyncElfFile(out String aaElfFile)
+        public void SyncElfFile(out String aElfFile)
         {
             SyncElfFileLinnCoUkDiagnostics1 sync = new SyncElfFileLinnCoUkDiagnostics1(this);
             BeginElfFile(sync.AsyncComplete());
@@ -453,7 +453,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaElfFile"></param>
-        public void EndElfFile(IntPtr aAsyncHandle, out String aaElfFile)
+        public void EndElfFile(IntPtr aAsyncHandle, out String aElfFile)
         {
             uint index = 0;
             aElfFile = Invocation.OutputString(aAsyncHandle, index++);
@@ -465,7 +465,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaElfFileFingerprint"></param>
-        public void SyncElfFingerprint(out String aaElfFileFingerprint)
+        public void SyncElfFingerprint(out String aElfFileFingerprint)
         {
             SyncElfFingerprintLinnCoUkDiagnostics1 sync = new SyncElfFingerprintLinnCoUkDiagnostics1(this);
             BeginElfFingerprint(sync.AsyncComplete());
@@ -496,7 +496,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaElfFileFingerprint"></param>
-        public void EndElfFingerprint(IntPtr aAsyncHandle, out String aaElfFileFingerprint)
+        public void EndElfFingerprint(IntPtr aAsyncHandle, out String aElfFileFingerprint)
         {
             uint index = 0;
             aElfFileFingerprint = Invocation.OutputString(aAsyncHandle, index++);
@@ -508,7 +508,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaCrashDataStatus"></param>
-        public void SyncCrashDataStatus(out String aaCrashDataStatus)
+        public void SyncCrashDataStatus(out String aCrashDataStatus)
         {
             SyncCrashDataStatusLinnCoUkDiagnostics1 sync = new SyncCrashDataStatusLinnCoUkDiagnostics1(this);
             BeginCrashDataStatus(sync.AsyncComplete());
@@ -539,7 +539,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaCrashDataStatus"></param>
-        public void EndCrashDataStatus(IntPtr aAsyncHandle, out String aaCrashDataStatus)
+        public void EndCrashDataStatus(IntPtr aAsyncHandle, out String aCrashDataStatus)
         {
             uint index = 0;
             aCrashDataStatus = Invocation.OutputString(aAsyncHandle, index++);
@@ -551,7 +551,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaCrashData"></param>
-        public void SyncCrashDataFetch(out String aaCrashData)
+        public void SyncCrashDataFetch(out String aCrashData)
         {
             SyncCrashDataFetchLinnCoUkDiagnostics1 sync = new SyncCrashDataFetchLinnCoUkDiagnostics1(this);
             BeginCrashDataFetch(sync.AsyncComplete());
@@ -582,7 +582,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaCrashData"></param>
-        public void EndCrashDataFetch(IntPtr aAsyncHandle, out String aaCrashData)
+        public void EndCrashDataFetch(IntPtr aAsyncHandle, out String aCrashData)
         {
             uint index = 0;
             aCrashData = Invocation.OutputBinary(aAsyncHandle, index++);
@@ -630,7 +630,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaSysLog"></param>
-        public void SyncSysLog(out String aaSysLog)
+        public void SyncSysLog(out String aSysLog)
         {
             SyncSysLogLinnCoUkDiagnostics1 sync = new SyncSysLogLinnCoUkDiagnostics1(this);
             BeginSysLog(sync.AsyncComplete());
@@ -661,7 +661,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaSysLog"></param>
-        public void EndSysLog(IntPtr aAsyncHandle, out String aaSysLog)
+        public void EndSysLog(IntPtr aAsyncHandle, out String aSysLog)
         {
             uint index = 0;
             aSysLog = Invocation.OutputBinary(aAsyncHandle, index++);
@@ -674,7 +674,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaDiagnosticType"></param>
         /// <param name="aaDiagnosticInfo"></param>
-        public void SyncDiagnostic(String aaDiagnosticType, out String aaDiagnosticInfo)
+        public void SyncDiagnostic(String aDiagnosticType, out String aDiagnosticInfo)
         {
             SyncDiagnosticLinnCoUkDiagnostics1 sync = new SyncDiagnosticLinnCoUkDiagnostics1(this);
             BeginDiagnostic(aDiagnosticType, sync.AsyncComplete());
@@ -692,7 +692,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaDiagnosticType"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginDiagnostic(String aaDiagnosticType, CallbackAsyncComplete aCallback)
+        public void BeginDiagnostic(String aDiagnosticType, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionDiagnostic, aCallback);
             int inIndex = 0;
@@ -708,7 +708,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaDiagnosticInfo"></param>
-        public void EndDiagnostic(IntPtr aAsyncHandle, out String aaDiagnosticInfo)
+        public void EndDiagnostic(IntPtr aAsyncHandle, out String aDiagnosticInfo)
         {
             uint index = 0;
             aDiagnosticInfo = Invocation.OutputString(aAsyncHandle, index++);
@@ -720,7 +720,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaStateVariable"></param>
-        public void SyncStateVariable(out uint aaStateVariable)
+        public void SyncStateVariable(out uint aStateVariable)
         {
             SyncStateVariableLinnCoUkDiagnostics1 sync = new SyncStateVariableLinnCoUkDiagnostics1(this);
             BeginStateVariable(sync.AsyncComplete());
@@ -751,7 +751,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaStateVariable"></param>
-        public void EndStateVariable(IntPtr aAsyncHandle, out uint aaStateVariable)
+        public void EndStateVariable(IntPtr aAsyncHandle, out uint aStateVariable)
         {
             uint index = 0;
             aStateVariable = Invocation.OutputUint(aAsyncHandle, index++);
@@ -763,7 +763,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaStateVariable"></param>
-        public void SyncSetStateVariable(uint aaStateVariable)
+        public void SyncSetStateVariable(uint aStateVariable)
         {
             SyncSetStateVariableLinnCoUkDiagnostics1 sync = new SyncSetStateVariableLinnCoUkDiagnostics1(this);
             BeginSetStateVariable(aStateVariable, sync.AsyncComplete());
@@ -780,7 +780,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaStateVariable"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetStateVariable(uint aaStateVariable, CallbackAsyncComplete aCallback)
+        public void BeginSetStateVariable(uint aStateVariable, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetStateVariable, aCallback);
             int inIndex = 0;
@@ -803,7 +803,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaPeriod"></param>
-        public void SyncStateVariablePeriod(out uint aaPeriod)
+        public void SyncStateVariablePeriod(out uint aPeriod)
         {
             SyncStateVariablePeriodLinnCoUkDiagnostics1 sync = new SyncStateVariablePeriodLinnCoUkDiagnostics1(this);
             BeginStateVariablePeriod(sync.AsyncComplete());
@@ -834,7 +834,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaPeriod"></param>
-        public void EndStateVariablePeriod(IntPtr aAsyncHandle, out uint aaPeriod)
+        public void EndStateVariablePeriod(IntPtr aAsyncHandle, out uint aPeriod)
         {
             uint index = 0;
             aPeriod = Invocation.OutputUint(aAsyncHandle, index++);
@@ -846,7 +846,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaPeriod"></param>
-        public void SyncSetStateVariablePeriod(uint aaPeriod)
+        public void SyncSetStateVariablePeriod(uint aPeriod)
         {
             SyncSetStateVariablePeriodLinnCoUkDiagnostics1 sync = new SyncSetStateVariablePeriodLinnCoUkDiagnostics1(this);
             BeginSetStateVariablePeriod(aPeriod, sync.AsyncComplete());
@@ -863,7 +863,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaPeriod"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetStateVariablePeriod(uint aaPeriod, CallbackAsyncComplete aCallback)
+        public void BeginSetStateVariablePeriod(uint aPeriod, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetStateVariablePeriod, aCallback);
             int inIndex = 0;
@@ -886,7 +886,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaDelay"></param>
-        public void SyncReboot(uint aaDelay)
+        public void SyncReboot(uint aDelay)
         {
             SyncRebootLinnCoUkDiagnostics1 sync = new SyncRebootLinnCoUkDiagnostics1(this);
             BeginReboot(aDelay, sync.AsyncComplete());
@@ -903,7 +903,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaDelay"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginReboot(uint aaDelay, CallbackAsyncComplete aCallback)
+        public void BeginReboot(uint aDelay, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionReboot, aCallback);
             int inIndex = 0;

@@ -18,45 +18,45 @@ namespace Zapp.ControlPoint.Proxies
         void SyncStop();
         void BeginStop(CpProxy.CallbackAsyncComplete aCallback);
         void EndStop(IntPtr aAsyncHandle);
-        void SyncSeekSecondAbsolute(uint aaSecond);
-        void BeginSeekSecondAbsolute(uint aaSecond, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSeekSecondAbsolute(uint aSecond);
+        void BeginSeekSecondAbsolute(uint aSecond, CpProxy.CallbackAsyncComplete aCallback);
         void EndSeekSecondAbsolute(IntPtr aAsyncHandle);
-        void SyncSeekSecondRelative(int aaSecond);
-        void BeginSeekSecondRelative(int aaSecond, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSeekSecondRelative(int aSecond);
+        void BeginSeekSecondRelative(int aSecond, CpProxy.CallbackAsyncComplete aCallback);
         void EndSeekSecondRelative(IntPtr aAsyncHandle);
-        void SyncChannel(out String aaUri, out String aaMetadata);
+        void SyncChannel(out String aUri, out String aMetadata);
         void BeginChannel(CpProxy.CallbackAsyncComplete aCallback);
-        void EndChannel(IntPtr aAsyncHandle, out String aaUri, out String aaMetadata);
-        void SyncSetChannel(String aaUri, String aaMetadata);
-        void BeginSetChannel(String aaUri, String aaMetadata, CpProxy.CallbackAsyncComplete aCallback);
+        void EndChannel(IntPtr aAsyncHandle, out String aUri, out String aMetadata);
+        void SyncSetChannel(String aUri, String aMetadata);
+        void BeginSetChannel(String aUri, String aMetadata, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetChannel(IntPtr aAsyncHandle);
-        void SyncProtocolInfo(out String aaInfo);
+        void SyncProtocolInfo(out String aInfo);
         void BeginProtocolInfo(CpProxy.CallbackAsyncComplete aCallback);
-        void EndProtocolInfo(IntPtr aAsyncHandle, out String aaInfo);
-        void SyncTransportState(out String aaState);
+        void EndProtocolInfo(IntPtr aAsyncHandle, out String aInfo);
+        void SyncTransportState(out String aState);
         void BeginTransportState(CpProxy.CallbackAsyncComplete aCallback);
-        void EndTransportState(IntPtr aAsyncHandle, out String aaState);
-        void SyncId(out uint aaId);
+        void EndTransportState(IntPtr aAsyncHandle, out String aState);
+        void SyncId(out uint aId);
         void BeginId(CpProxy.CallbackAsyncComplete aCallback);
-        void EndId(IntPtr aAsyncHandle, out uint aaId);
-        void SyncSetId(uint aaId, String aaUri);
-        void BeginSetId(uint aaId, String aaUri, CpProxy.CallbackAsyncComplete aCallback);
+        void EndId(IntPtr aAsyncHandle, out uint aId);
+        void SyncSetId(uint aId, String aUri);
+        void BeginSetId(uint aId, String aUri, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetId(IntPtr aAsyncHandle);
-        void SyncRead(uint aaId, out String aaMetadata);
-        void BeginRead(uint aaId, CpProxy.CallbackAsyncComplete aCallback);
-        void EndRead(IntPtr aAsyncHandle, out String aaMetadata);
-        void SyncReadList(String aaIdList, out String aaMetadataList);
-        void BeginReadList(String aaIdList, CpProxy.CallbackAsyncComplete aCallback);
-        void EndReadList(IntPtr aAsyncHandle, out String aaMetadataList);
-        void SyncIdArray(out uint aaIdArrayToken, out String aaIdArray);
+        void SyncRead(uint aId, out String aMetadata);
+        void BeginRead(uint aId, CpProxy.CallbackAsyncComplete aCallback);
+        void EndRead(IntPtr aAsyncHandle, out String aMetadata);
+        void SyncReadList(String aIdList, out String aMetadataList);
+        void BeginReadList(String aIdList, CpProxy.CallbackAsyncComplete aCallback);
+        void EndReadList(IntPtr aAsyncHandle, out String aMetadataList);
+        void SyncIdArray(out uint aIdArrayToken, out String aIdArray);
         void BeginIdArray(CpProxy.CallbackAsyncComplete aCallback);
-        void EndIdArray(IntPtr aAsyncHandle, out uint aaIdArrayToken, out String aaIdArray);
-        void SyncIdArrayChanged(uint aaIdArrayToken, out bool aaIdArrayChanged);
-        void BeginIdArrayChanged(uint aaIdArrayToken, CpProxy.CallbackAsyncComplete aCallback);
-        void EndIdArrayChanged(IntPtr aAsyncHandle, out bool aaIdArrayChanged);
-        void SyncIdsMax(out uint aaIdsMax);
+        void EndIdArray(IntPtr aAsyncHandle, out uint aIdArrayToken, out String aIdArray);
+        void SyncIdArrayChanged(uint aIdArrayToken, out bool aIdArrayChanged);
+        void BeginIdArrayChanged(uint aIdArrayToken, CpProxy.CallbackAsyncComplete aCallback);
+        void EndIdArrayChanged(IntPtr aAsyncHandle, out bool aIdArrayChanged);
+        void SyncIdsMax(out uint aIdsMax);
         void BeginIdsMax(CpProxy.CallbackAsyncComplete aCallback);
-        void EndIdsMax(IntPtr aAsyncHandle, out uint aaIdsMax);
+        void EndIdsMax(IntPtr aAsyncHandle, out uint aIdsMax);
         void SetPropertyChannelUriChanged(CpProxy.CallbackPropertyChanged aChannelUriChanged);
         String PropertyChannelUri();
         void SetPropertyChannelMetadataChanged(CpProxy.CallbackPropertyChanged aChannelMetadataChanged);
@@ -606,7 +606,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaSecond"></param>
-        public void SyncSeekSecondAbsolute(uint aaSecond)
+        public void SyncSeekSecondAbsolute(uint aSecond)
         {
             SyncSeekSecondAbsoluteLinnCoUkRadio1 sync = new SyncSeekSecondAbsoluteLinnCoUkRadio1(this);
             BeginSeekSecondAbsolute(aSecond, sync.AsyncComplete());
@@ -623,7 +623,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSecond"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSeekSecondAbsolute(uint aaSecond, CallbackAsyncComplete aCallback)
+        public void BeginSeekSecondAbsolute(uint aSecond, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSeekSecondAbsolute, aCallback);
             int inIndex = 0;
@@ -646,7 +646,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaSecond"></param>
-        public void SyncSeekSecondRelative(int aaSecond)
+        public void SyncSeekSecondRelative(int aSecond)
         {
             SyncSeekSecondRelativeLinnCoUkRadio1 sync = new SyncSeekSecondRelativeLinnCoUkRadio1(this);
             BeginSeekSecondRelative(aSecond, sync.AsyncComplete());
@@ -663,7 +663,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaSecond"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSeekSecondRelative(int aaSecond, CallbackAsyncComplete aCallback)
+        public void BeginSeekSecondRelative(int aSecond, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSeekSecondRelative, aCallback);
             int inIndex = 0;
@@ -687,7 +687,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaUri"></param>
         /// <param name="aaMetadata"></param>
-        public void SyncChannel(out String aaUri, out String aaMetadata)
+        public void SyncChannel(out String aUri, out String aMetadata)
         {
             SyncChannelLinnCoUkRadio1 sync = new SyncChannelLinnCoUkRadio1(this);
             BeginChannel(sync.AsyncComplete());
@@ -721,7 +721,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaUri"></param>
         /// <param name="aaMetadata"></param>
-        public void EndChannel(IntPtr aAsyncHandle, out String aaUri, out String aaMetadata)
+        public void EndChannel(IntPtr aAsyncHandle, out String aUri, out String aMetadata)
         {
             uint index = 0;
             aUri = Invocation.OutputString(aAsyncHandle, index++);
@@ -735,7 +735,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaUri"></param>
         /// <param name="aaMetadata"></param>
-        public void SyncSetChannel(String aaUri, String aaMetadata)
+        public void SyncSetChannel(String aUri, String aMetadata)
         {
             SyncSetChannelLinnCoUkRadio1 sync = new SyncSetChannelLinnCoUkRadio1(this);
             BeginSetChannel(aUri, aMetadata, sync.AsyncComplete());
@@ -753,7 +753,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaMetadata"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetChannel(String aaUri, String aaMetadata, CallbackAsyncComplete aCallback)
+        public void BeginSetChannel(String aUri, String aMetadata, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetChannel, aCallback);
             int inIndex = 0;
@@ -777,7 +777,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaInfo"></param>
-        public void SyncProtocolInfo(out String aaInfo)
+        public void SyncProtocolInfo(out String aInfo)
         {
             SyncProtocolInfoLinnCoUkRadio1 sync = new SyncProtocolInfoLinnCoUkRadio1(this);
             BeginProtocolInfo(sync.AsyncComplete());
@@ -808,7 +808,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaInfo"></param>
-        public void EndProtocolInfo(IntPtr aAsyncHandle, out String aaInfo)
+        public void EndProtocolInfo(IntPtr aAsyncHandle, out String aInfo)
         {
             uint index = 0;
             aInfo = Invocation.OutputString(aAsyncHandle, index++);
@@ -820,7 +820,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaState"></param>
-        public void SyncTransportState(out String aaState)
+        public void SyncTransportState(out String aState)
         {
             SyncTransportStateLinnCoUkRadio1 sync = new SyncTransportStateLinnCoUkRadio1(this);
             BeginTransportState(sync.AsyncComplete());
@@ -851,7 +851,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaState"></param>
-        public void EndTransportState(IntPtr aAsyncHandle, out String aaState)
+        public void EndTransportState(IntPtr aAsyncHandle, out String aState)
         {
             uint index = 0;
             aState = Invocation.OutputString(aAsyncHandle, index++);
@@ -863,7 +863,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaId"></param>
-        public void SyncId(out uint aaId)
+        public void SyncId(out uint aId)
         {
             SyncIdLinnCoUkRadio1 sync = new SyncIdLinnCoUkRadio1(this);
             BeginId(sync.AsyncComplete());
@@ -894,7 +894,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaId"></param>
-        public void EndId(IntPtr aAsyncHandle, out uint aaId)
+        public void EndId(IntPtr aAsyncHandle, out uint aId)
         {
             uint index = 0;
             aId = Invocation.OutputUint(aAsyncHandle, index++);
@@ -907,7 +907,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaId"></param>
         /// <param name="aaUri"></param>
-        public void SyncSetId(uint aaId, String aaUri)
+        public void SyncSetId(uint aId, String aUri)
         {
             SyncSetIdLinnCoUkRadio1 sync = new SyncSetIdLinnCoUkRadio1(this);
             BeginSetId(aId, aUri, sync.AsyncComplete());
@@ -925,7 +925,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaUri"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetId(uint aaId, String aaUri, CallbackAsyncComplete aCallback)
+        public void BeginSetId(uint aId, String aUri, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetId, aCallback);
             int inIndex = 0;
@@ -950,7 +950,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaId"></param>
         /// <param name="aaMetadata"></param>
-        public void SyncRead(uint aaId, out String aaMetadata)
+        public void SyncRead(uint aId, out String aMetadata)
         {
             SyncReadLinnCoUkRadio1 sync = new SyncReadLinnCoUkRadio1(this);
             BeginRead(aId, sync.AsyncComplete());
@@ -968,7 +968,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaId"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginRead(uint aaId, CallbackAsyncComplete aCallback)
+        public void BeginRead(uint aId, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionRead, aCallback);
             int inIndex = 0;
@@ -984,7 +984,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaMetadata"></param>
-        public void EndRead(IntPtr aAsyncHandle, out String aaMetadata)
+        public void EndRead(IntPtr aAsyncHandle, out String aMetadata)
         {
             uint index = 0;
             aMetadata = Invocation.OutputString(aAsyncHandle, index++);
@@ -997,7 +997,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIdList"></param>
         /// <param name="aaMetadataList"></param>
-        public void SyncReadList(String aaIdList, out String aaMetadataList)
+        public void SyncReadList(String aIdList, out String aMetadataList)
         {
             SyncReadListLinnCoUkRadio1 sync = new SyncReadListLinnCoUkRadio1(this);
             BeginReadList(aIdList, sync.AsyncComplete());
@@ -1015,7 +1015,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaIdList"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginReadList(String aaIdList, CallbackAsyncComplete aCallback)
+        public void BeginReadList(String aIdList, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionReadList, aCallback);
             int inIndex = 0;
@@ -1031,7 +1031,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaMetadataList"></param>
-        public void EndReadList(IntPtr aAsyncHandle, out String aaMetadataList)
+        public void EndReadList(IntPtr aAsyncHandle, out String aMetadataList)
         {
             uint index = 0;
             aMetadataList = Invocation.OutputString(aAsyncHandle, index++);
@@ -1044,7 +1044,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIdArrayToken"></param>
         /// <param name="aaIdArray"></param>
-        public void SyncIdArray(out uint aaIdArrayToken, out String aaIdArray)
+        public void SyncIdArray(out uint aIdArrayToken, out String aIdArray)
         {
             SyncIdArrayLinnCoUkRadio1 sync = new SyncIdArrayLinnCoUkRadio1(this);
             BeginIdArray(sync.AsyncComplete());
@@ -1078,7 +1078,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaIdArrayToken"></param>
         /// <param name="aaIdArray"></param>
-        public void EndIdArray(IntPtr aAsyncHandle, out uint aaIdArrayToken, out String aaIdArray)
+        public void EndIdArray(IntPtr aAsyncHandle, out uint aIdArrayToken, out String aIdArray)
         {
             uint index = 0;
             aIdArrayToken = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1092,7 +1092,7 @@ namespace Zapp.ControlPoint.Proxies
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIdArrayToken"></param>
         /// <param name="aaIdArrayChanged"></param>
-        public void SyncIdArrayChanged(uint aaIdArrayToken, out bool aaIdArrayChanged)
+        public void SyncIdArrayChanged(uint aIdArrayToken, out bool aIdArrayChanged)
         {
             SyncIdArrayChangedLinnCoUkRadio1 sync = new SyncIdArrayChangedLinnCoUkRadio1(this);
             BeginIdArrayChanged(aIdArrayToken, sync.AsyncComplete());
@@ -1110,7 +1110,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaIdArrayToken"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginIdArrayChanged(uint aaIdArrayToken, CallbackAsyncComplete aCallback)
+        public void BeginIdArrayChanged(uint aIdArrayToken, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionIdArrayChanged, aCallback);
             int inIndex = 0;
@@ -1126,7 +1126,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaIdArrayChanged"></param>
-        public void EndIdArrayChanged(IntPtr aAsyncHandle, out bool aaIdArrayChanged)
+        public void EndIdArrayChanged(IntPtr aAsyncHandle, out bool aIdArrayChanged)
         {
             uint index = 0;
             aIdArrayChanged = Invocation.OutputBool(aAsyncHandle, index++);
@@ -1138,7 +1138,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaIdsMax"></param>
-        public void SyncIdsMax(out uint aaIdsMax)
+        public void SyncIdsMax(out uint aIdsMax)
         {
             SyncIdsMaxLinnCoUkRadio1 sync = new SyncIdsMaxLinnCoUkRadio1(this);
             BeginIdsMax(sync.AsyncComplete());
@@ -1169,7 +1169,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaIdsMax"></param>
-        public void EndIdsMax(IntPtr aAsyncHandle, out uint aaIdsMax)
+        public void EndIdsMax(IntPtr aAsyncHandle, out uint aIdsMax)
         {
             uint index = 0;
             aIdsMax = Invocation.OutputUint(aAsyncHandle, index++);

@@ -23,7 +23,7 @@ def runBuilds():
         else:
             cleanCmd = 'make clean'
         os.system(cleanCmd)
-    targets = ['Tests', 'Zapp', 'CpProxyDlls', 'DvDeviceDlls']
+    targets = ['Tests', 'Zapp', 'CpProxyDlls', 'DvDeviceDlls', 'CpProxyDotNetAssemblies', 'DvDeviceDotNetAssemblies']
     for target in targets:
         build(target)
     print '\nBuilds complete'

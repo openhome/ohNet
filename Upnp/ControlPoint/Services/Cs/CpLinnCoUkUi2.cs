@@ -9,8 +9,8 @@ namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyLinnCoUkUi2 : ICpProxy, IDisposable
     {
-        void SyncDisplayTestPattern(int aaTestPattern);
-        void BeginDisplayTestPattern(int aaTestPattern, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncDisplayTestPattern(int aTestPattern);
+        void BeginDisplayTestPattern(int aTestPattern, CpProxy.CallbackAsyncComplete aCallback);
         void EndDisplayTestPattern(IntPtr aAsyncHandle);
         void SyncDisplayFill();
         void BeginDisplayFill(CpProxy.CallbackAsyncComplete aCallback);
@@ -18,69 +18,69 @@ namespace Zapp.ControlPoint.Proxies
         void SyncDisplayClear();
         void BeginDisplayClear(CpProxy.CallbackAsyncComplete aCallback);
         void EndDisplayClear(IntPtr aAsyncHandle);
-        void SyncSetTestModeEnabled(bool aaEnabled);
-        void BeginSetTestModeEnabled(bool aaEnabled, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSetTestModeEnabled(bool aEnabled);
+        void BeginSetTestModeEnabled(bool aEnabled, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetTestModeEnabled(IntPtr aAsyncHandle);
-        void SyncSimulateInfraredInput(uint aaCode);
-        void BeginSimulateInfraredInput(uint aaCode, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSimulateInfraredInput(uint aCode);
+        void BeginSimulateInfraredInput(uint aCode, CpProxy.CallbackAsyncComplete aCallback);
         void EndSimulateInfraredInput(IntPtr aAsyncHandle);
-        void SyncSimulateButtonInput(uint aaCode);
-        void BeginSimulateButtonInput(uint aaCode, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSimulateButtonInput(uint aCode);
+        void BeginSimulateButtonInput(uint aCode, CpProxy.CallbackAsyncComplete aCallback);
         void EndSimulateButtonInput(IntPtr aAsyncHandle);
-        void SyncSimulateLightSensor(uint aaLightLevel);
-        void BeginSimulateLightSensor(uint aaLightLevel, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSimulateLightSensor(uint aLightLevel);
+        void BeginSimulateLightSensor(uint aLightLevel, CpProxy.CallbackAsyncComplete aCallback);
         void EndSimulateLightSensor(IntPtr aAsyncHandle);
-        void SyncGetLightSensorData(out uint aaLightLevel);
+        void SyncGetLightSensorData(out uint aLightLevel);
         void BeginGetLightSensorData(CpProxy.CallbackAsyncComplete aCallback);
-        void EndGetLightSensorData(IntPtr aAsyncHandle, out uint aaLightLevel);
-        void SyncSetDisplayBrightness(uint aaBrightness);
-        void BeginSetDisplayBrightness(uint aaBrightness, CpProxy.CallbackAsyncComplete aCallback);
+        void EndGetLightSensorData(IntPtr aAsyncHandle, out uint aLightLevel);
+        void SyncSetDisplayBrightness(uint aBrightness);
+        void BeginSetDisplayBrightness(uint aBrightness, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetDisplayBrightness(IntPtr aAsyncHandle);
-        void SyncSetDisplayBrightnessAuto(bool aaBrightnessAuto);
-        void BeginSetDisplayBrightnessAuto(bool aaBrightnessAuto, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSetDisplayBrightnessAuto(bool aBrightnessAuto);
+        void BeginSetDisplayBrightnessAuto(bool aBrightnessAuto, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetDisplayBrightnessAuto(IntPtr aAsyncHandle);
-        void SyncSetInfraredCommands(String aaCommands);
-        void BeginSetInfraredCommands(String aaCommands, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSetInfraredCommands(String aCommands);
+        void BeginSetInfraredCommands(String aCommands, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetInfraredCommands(IntPtr aAsyncHandle);
-        void SyncInfraredCommands(out String aaCommands);
+        void SyncInfraredCommands(out String aCommands);
         void BeginInfraredCommands(CpProxy.CallbackAsyncComplete aCallback);
-        void EndInfraredCommands(IntPtr aAsyncHandle, out String aaCommands);
-        void SyncSetInfraredTerminalCommands(String aaCommands);
-        void BeginSetInfraredTerminalCommands(String aaCommands, CpProxy.CallbackAsyncComplete aCallback);
+        void EndInfraredCommands(IntPtr aAsyncHandle, out String aCommands);
+        void SyncSetInfraredTerminalCommands(String aCommands);
+        void BeginSetInfraredTerminalCommands(String aCommands, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetInfraredTerminalCommands(IntPtr aAsyncHandle);
-        void SyncInfraredTerminalCommands(out String aaCommands);
+        void SyncInfraredTerminalCommands(out String aCommands);
         void BeginInfraredTerminalCommands(CpProxy.CallbackAsyncComplete aCallback);
-        void EndInfraredTerminalCommands(IntPtr aAsyncHandle, out String aaCommands);
-        void SyncDisplayBrightness(out uint aaBrightness);
+        void EndInfraredTerminalCommands(IntPtr aAsyncHandle, out String aCommands);
+        void SyncDisplayBrightness(out uint aBrightness);
         void BeginDisplayBrightness(CpProxy.CallbackAsyncComplete aCallback);
-        void EndDisplayBrightness(IntPtr aAsyncHandle, out uint aaBrightness);
-        void SyncDisplayBrightnessAuto(out bool aaBrightnessAuto);
+        void EndDisplayBrightness(IntPtr aAsyncHandle, out uint aBrightness);
+        void SyncDisplayBrightnessAuto(out bool aBrightnessAuto);
         void BeginDisplayBrightnessAuto(CpProxy.CallbackAsyncComplete aCallback);
-        void EndDisplayBrightnessAuto(IntPtr aAsyncHandle, out bool aaBrightnessAuto);
-        void SyncDisplayUpsideDown(out bool aaUpsideDown);
+        void EndDisplayBrightnessAuto(IntPtr aAsyncHandle, out bool aBrightnessAuto);
+        void SyncDisplayUpsideDown(out bool aUpsideDown);
         void BeginDisplayUpsideDown(CpProxy.CallbackAsyncComplete aCallback);
-        void EndDisplayUpsideDown(IntPtr aAsyncHandle, out bool aaUpsideDown);
-        void SyncSetDisplayUpsideDown(bool aaUpsideDown);
-        void BeginSetDisplayUpsideDown(bool aaUpsideDown, CpProxy.CallbackAsyncComplete aCallback);
+        void EndDisplayUpsideDown(IntPtr aAsyncHandle, out bool aUpsideDown);
+        void SyncSetDisplayUpsideDown(bool aUpsideDown);
+        void BeginSetDisplayUpsideDown(bool aUpsideDown, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetDisplayUpsideDown(IntPtr aAsyncHandle);
-        void SyncSetDisplayScrollText(bool aaDisplayScrollText);
-        void BeginSetDisplayScrollText(bool aaDisplayScrollText, CpProxy.CallbackAsyncComplete aCallback);
+        void SyncSetDisplayScrollText(bool aDisplayScrollText);
+        void BeginSetDisplayScrollText(bool aDisplayScrollText, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetDisplayScrollText(IntPtr aAsyncHandle);
-        void SyncDisplayScrollText(out bool aaDisplayScrollTextEnabled);
+        void SyncDisplayScrollText(out bool aDisplayScrollTextEnabled);
         void BeginDisplayScrollText(CpProxy.CallbackAsyncComplete aCallback);
-        void EndDisplayScrollText(IntPtr aAsyncHandle, out bool aaDisplayScrollTextEnabled);
-        void SyncSetDisplaySleep(bool aaEnabled);
-        void BeginSetDisplaySleep(bool aaEnabled, CpProxy.CallbackAsyncComplete aCallback);
+        void EndDisplayScrollText(IntPtr aAsyncHandle, out bool aDisplayScrollTextEnabled);
+        void SyncSetDisplaySleep(bool aEnabled);
+        void BeginSetDisplaySleep(bool aEnabled, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetDisplaySleep(IntPtr aAsyncHandle);
-        void SyncDisplaySleep(out bool aaEnabled);
+        void SyncDisplaySleep(out bool aEnabled);
         void BeginDisplaySleep(CpProxy.CallbackAsyncComplete aCallback);
-        void EndDisplaySleep(IntPtr aAsyncHandle, out bool aaEnabled);
-        void SyncSetDisplayLedOff(bool aaOff);
-        void BeginSetDisplayLedOff(bool aaOff, CpProxy.CallbackAsyncComplete aCallback);
+        void EndDisplaySleep(IntPtr aAsyncHandle, out bool aEnabled);
+        void SyncSetDisplayLedOff(bool aOff);
+        void BeginSetDisplayLedOff(bool aOff, CpProxy.CallbackAsyncComplete aCallback);
         void EndSetDisplayLedOff(IntPtr aAsyncHandle);
-        void SyncDisplayLedOff(out bool aaOff);
+        void SyncDisplayLedOff(out bool aOff);
         void BeginDisplayLedOff(CpProxy.CallbackAsyncComplete aCallback);
-        void EndDisplayLedOff(IntPtr aAsyncHandle, out bool aaOff);
+        void EndDisplayLedOff(IntPtr aAsyncHandle, out bool aOff);
         void SetPropertyDisplayBrightnessChanged(CpProxy.CallbackPropertyChanged aDisplayBrightnessChanged);
         uint PropertyDisplayBrightness();
         void SetPropertyDisplayBrightnessAutoChanged(CpProxy.CallbackPropertyChanged aDisplayBrightnessAutoChanged);
@@ -691,7 +691,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaTestPattern"></param>
-        public void SyncDisplayTestPattern(int aaTestPattern)
+        public void SyncDisplayTestPattern(int aTestPattern)
         {
             SyncDisplayTestPatternLinnCoUkUi2 sync = new SyncDisplayTestPatternLinnCoUkUi2(this);
             BeginDisplayTestPattern(aTestPattern, sync.AsyncComplete());
@@ -708,7 +708,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTestPattern"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginDisplayTestPattern(int aaTestPattern, CallbackAsyncComplete aCallback)
+        public void BeginDisplayTestPattern(int aTestPattern, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionDisplayTestPattern, aCallback);
             int inIndex = 0;
@@ -803,7 +803,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaEnabled"></param>
-        public void SyncSetTestModeEnabled(bool aaEnabled)
+        public void SyncSetTestModeEnabled(bool aEnabled)
         {
             SyncSetTestModeEnabledLinnCoUkUi2 sync = new SyncSetTestModeEnabledLinnCoUkUi2(this);
             BeginSetTestModeEnabled(aEnabled, sync.AsyncComplete());
@@ -820,7 +820,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaEnabled"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetTestModeEnabled(bool aaEnabled, CallbackAsyncComplete aCallback)
+        public void BeginSetTestModeEnabled(bool aEnabled, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetTestModeEnabled, aCallback);
             int inIndex = 0;
@@ -843,7 +843,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaCode"></param>
-        public void SyncSimulateInfraredInput(uint aaCode)
+        public void SyncSimulateInfraredInput(uint aCode)
         {
             SyncSimulateInfraredInputLinnCoUkUi2 sync = new SyncSimulateInfraredInputLinnCoUkUi2(this);
             BeginSimulateInfraredInput(aCode, sync.AsyncComplete());
@@ -860,7 +860,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaCode"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSimulateInfraredInput(uint aaCode, CallbackAsyncComplete aCallback)
+        public void BeginSimulateInfraredInput(uint aCode, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSimulateInfraredInput, aCallback);
             int inIndex = 0;
@@ -883,7 +883,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaCode"></param>
-        public void SyncSimulateButtonInput(uint aaCode)
+        public void SyncSimulateButtonInput(uint aCode)
         {
             SyncSimulateButtonInputLinnCoUkUi2 sync = new SyncSimulateButtonInputLinnCoUkUi2(this);
             BeginSimulateButtonInput(aCode, sync.AsyncComplete());
@@ -900,7 +900,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaCode"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSimulateButtonInput(uint aaCode, CallbackAsyncComplete aCallback)
+        public void BeginSimulateButtonInput(uint aCode, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSimulateButtonInput, aCallback);
             int inIndex = 0;
@@ -923,7 +923,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaLightLevel"></param>
-        public void SyncSimulateLightSensor(uint aaLightLevel)
+        public void SyncSimulateLightSensor(uint aLightLevel)
         {
             SyncSimulateLightSensorLinnCoUkUi2 sync = new SyncSimulateLightSensorLinnCoUkUi2(this);
             BeginSimulateLightSensor(aLightLevel, sync.AsyncComplete());
@@ -940,7 +940,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaLightLevel"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSimulateLightSensor(uint aaLightLevel, CallbackAsyncComplete aCallback)
+        public void BeginSimulateLightSensor(uint aLightLevel, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSimulateLightSensor, aCallback);
             int inIndex = 0;
@@ -963,7 +963,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaLightLevel"></param>
-        public void SyncGetLightSensorData(out uint aaLightLevel)
+        public void SyncGetLightSensorData(out uint aLightLevel)
         {
             SyncGetLightSensorDataLinnCoUkUi2 sync = new SyncGetLightSensorDataLinnCoUkUi2(this);
             BeginGetLightSensorData(sync.AsyncComplete());
@@ -994,7 +994,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaLightLevel"></param>
-        public void EndGetLightSensorData(IntPtr aAsyncHandle, out uint aaLightLevel)
+        public void EndGetLightSensorData(IntPtr aAsyncHandle, out uint aLightLevel)
         {
             uint index = 0;
             aLightLevel = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1006,7 +1006,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaBrightness"></param>
-        public void SyncSetDisplayBrightness(uint aaBrightness)
+        public void SyncSetDisplayBrightness(uint aBrightness)
         {
             SyncSetDisplayBrightnessLinnCoUkUi2 sync = new SyncSetDisplayBrightnessLinnCoUkUi2(this);
             BeginSetDisplayBrightness(aBrightness, sync.AsyncComplete());
@@ -1023,7 +1023,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaBrightness"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetDisplayBrightness(uint aaBrightness, CallbackAsyncComplete aCallback)
+        public void BeginSetDisplayBrightness(uint aBrightness, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetDisplayBrightness, aCallback);
             int inIndex = 0;
@@ -1046,7 +1046,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaBrightnessAuto"></param>
-        public void SyncSetDisplayBrightnessAuto(bool aaBrightnessAuto)
+        public void SyncSetDisplayBrightnessAuto(bool aBrightnessAuto)
         {
             SyncSetDisplayBrightnessAutoLinnCoUkUi2 sync = new SyncSetDisplayBrightnessAutoLinnCoUkUi2(this);
             BeginSetDisplayBrightnessAuto(aBrightnessAuto, sync.AsyncComplete());
@@ -1063,7 +1063,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaBrightnessAuto"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetDisplayBrightnessAuto(bool aaBrightnessAuto, CallbackAsyncComplete aCallback)
+        public void BeginSetDisplayBrightnessAuto(bool aBrightnessAuto, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetDisplayBrightnessAuto, aCallback);
             int inIndex = 0;
@@ -1086,7 +1086,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaCommands"></param>
-        public void SyncSetInfraredCommands(String aaCommands)
+        public void SyncSetInfraredCommands(String aCommands)
         {
             SyncSetInfraredCommandsLinnCoUkUi2 sync = new SyncSetInfraredCommandsLinnCoUkUi2(this);
             BeginSetInfraredCommands(aCommands, sync.AsyncComplete());
@@ -1103,7 +1103,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaCommands"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetInfraredCommands(String aaCommands, CallbackAsyncComplete aCallback)
+        public void BeginSetInfraredCommands(String aCommands, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetInfraredCommands, aCallback);
             int inIndex = 0;
@@ -1126,7 +1126,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaCommands"></param>
-        public void SyncInfraredCommands(out String aaCommands)
+        public void SyncInfraredCommands(out String aCommands)
         {
             SyncInfraredCommandsLinnCoUkUi2 sync = new SyncInfraredCommandsLinnCoUkUi2(this);
             BeginInfraredCommands(sync.AsyncComplete());
@@ -1157,7 +1157,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaCommands"></param>
-        public void EndInfraredCommands(IntPtr aAsyncHandle, out String aaCommands)
+        public void EndInfraredCommands(IntPtr aAsyncHandle, out String aCommands)
         {
             uint index = 0;
             aCommands = Invocation.OutputString(aAsyncHandle, index++);
@@ -1169,7 +1169,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaCommands"></param>
-        public void SyncSetInfraredTerminalCommands(String aaCommands)
+        public void SyncSetInfraredTerminalCommands(String aCommands)
         {
             SyncSetInfraredTerminalCommandsLinnCoUkUi2 sync = new SyncSetInfraredTerminalCommandsLinnCoUkUi2(this);
             BeginSetInfraredTerminalCommands(aCommands, sync.AsyncComplete());
@@ -1186,7 +1186,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaCommands"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetInfraredTerminalCommands(String aaCommands, CallbackAsyncComplete aCallback)
+        public void BeginSetInfraredTerminalCommands(String aCommands, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetInfraredTerminalCommands, aCallback);
             int inIndex = 0;
@@ -1209,7 +1209,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaCommands"></param>
-        public void SyncInfraredTerminalCommands(out String aaCommands)
+        public void SyncInfraredTerminalCommands(out String aCommands)
         {
             SyncInfraredTerminalCommandsLinnCoUkUi2 sync = new SyncInfraredTerminalCommandsLinnCoUkUi2(this);
             BeginInfraredTerminalCommands(sync.AsyncComplete());
@@ -1240,7 +1240,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaCommands"></param>
-        public void EndInfraredTerminalCommands(IntPtr aAsyncHandle, out String aaCommands)
+        public void EndInfraredTerminalCommands(IntPtr aAsyncHandle, out String aCommands)
         {
             uint index = 0;
             aCommands = Invocation.OutputString(aAsyncHandle, index++);
@@ -1252,7 +1252,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaBrightness"></param>
-        public void SyncDisplayBrightness(out uint aaBrightness)
+        public void SyncDisplayBrightness(out uint aBrightness)
         {
             SyncDisplayBrightnessLinnCoUkUi2 sync = new SyncDisplayBrightnessLinnCoUkUi2(this);
             BeginDisplayBrightness(sync.AsyncComplete());
@@ -1283,7 +1283,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaBrightness"></param>
-        public void EndDisplayBrightness(IntPtr aAsyncHandle, out uint aaBrightness)
+        public void EndDisplayBrightness(IntPtr aAsyncHandle, out uint aBrightness)
         {
             uint index = 0;
             aBrightness = Invocation.OutputUint(aAsyncHandle, index++);
@@ -1295,7 +1295,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaBrightnessAuto"></param>
-        public void SyncDisplayBrightnessAuto(out bool aaBrightnessAuto)
+        public void SyncDisplayBrightnessAuto(out bool aBrightnessAuto)
         {
             SyncDisplayBrightnessAutoLinnCoUkUi2 sync = new SyncDisplayBrightnessAutoLinnCoUkUi2(this);
             BeginDisplayBrightnessAuto(sync.AsyncComplete());
@@ -1326,7 +1326,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaBrightnessAuto"></param>
-        public void EndDisplayBrightnessAuto(IntPtr aAsyncHandle, out bool aaBrightnessAuto)
+        public void EndDisplayBrightnessAuto(IntPtr aAsyncHandle, out bool aBrightnessAuto)
         {
             uint index = 0;
             aBrightnessAuto = Invocation.OutputBool(aAsyncHandle, index++);
@@ -1338,7 +1338,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaUpsideDown"></param>
-        public void SyncDisplayUpsideDown(out bool aaUpsideDown)
+        public void SyncDisplayUpsideDown(out bool aUpsideDown)
         {
             SyncDisplayUpsideDownLinnCoUkUi2 sync = new SyncDisplayUpsideDownLinnCoUkUi2(this);
             BeginDisplayUpsideDown(sync.AsyncComplete());
@@ -1369,7 +1369,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaUpsideDown"></param>
-        public void EndDisplayUpsideDown(IntPtr aAsyncHandle, out bool aaUpsideDown)
+        public void EndDisplayUpsideDown(IntPtr aAsyncHandle, out bool aUpsideDown)
         {
             uint index = 0;
             aUpsideDown = Invocation.OutputBool(aAsyncHandle, index++);
@@ -1381,7 +1381,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaUpsideDown"></param>
-        public void SyncSetDisplayUpsideDown(bool aaUpsideDown)
+        public void SyncSetDisplayUpsideDown(bool aUpsideDown)
         {
             SyncSetDisplayUpsideDownLinnCoUkUi2 sync = new SyncSetDisplayUpsideDownLinnCoUkUi2(this);
             BeginSetDisplayUpsideDown(aUpsideDown, sync.AsyncComplete());
@@ -1398,7 +1398,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaUpsideDown"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetDisplayUpsideDown(bool aaUpsideDown, CallbackAsyncComplete aCallback)
+        public void BeginSetDisplayUpsideDown(bool aUpsideDown, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetDisplayUpsideDown, aCallback);
             int inIndex = 0;
@@ -1421,7 +1421,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaDisplayScrollText"></param>
-        public void SyncSetDisplayScrollText(bool aaDisplayScrollText)
+        public void SyncSetDisplayScrollText(bool aDisplayScrollText)
         {
             SyncSetDisplayScrollTextLinnCoUkUi2 sync = new SyncSetDisplayScrollTextLinnCoUkUi2(this);
             BeginSetDisplayScrollText(aDisplayScrollText, sync.AsyncComplete());
@@ -1438,7 +1438,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaDisplayScrollText"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetDisplayScrollText(bool aaDisplayScrollText, CallbackAsyncComplete aCallback)
+        public void BeginSetDisplayScrollText(bool aDisplayScrollText, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetDisplayScrollText, aCallback);
             int inIndex = 0;
@@ -1461,7 +1461,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaDisplayScrollTextEnabled"></param>
-        public void SyncDisplayScrollText(out bool aaDisplayScrollTextEnabled)
+        public void SyncDisplayScrollText(out bool aDisplayScrollTextEnabled)
         {
             SyncDisplayScrollTextLinnCoUkUi2 sync = new SyncDisplayScrollTextLinnCoUkUi2(this);
             BeginDisplayScrollText(sync.AsyncComplete());
@@ -1492,7 +1492,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaDisplayScrollTextEnabled"></param>
-        public void EndDisplayScrollText(IntPtr aAsyncHandle, out bool aaDisplayScrollTextEnabled)
+        public void EndDisplayScrollText(IntPtr aAsyncHandle, out bool aDisplayScrollTextEnabled)
         {
             uint index = 0;
             aDisplayScrollTextEnabled = Invocation.OutputBool(aAsyncHandle, index++);
@@ -1504,7 +1504,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaEnabled"></param>
-        public void SyncSetDisplaySleep(bool aaEnabled)
+        public void SyncSetDisplaySleep(bool aEnabled)
         {
             SyncSetDisplaySleepLinnCoUkUi2 sync = new SyncSetDisplaySleepLinnCoUkUi2(this);
             BeginSetDisplaySleep(aEnabled, sync.AsyncComplete());
@@ -1521,7 +1521,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaEnabled"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetDisplaySleep(bool aaEnabled, CallbackAsyncComplete aCallback)
+        public void BeginSetDisplaySleep(bool aEnabled, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetDisplaySleep, aCallback);
             int inIndex = 0;
@@ -1544,7 +1544,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaEnabled"></param>
-        public void SyncDisplaySleep(out bool aaEnabled)
+        public void SyncDisplaySleep(out bool aEnabled)
         {
             SyncDisplaySleepLinnCoUkUi2 sync = new SyncDisplaySleepLinnCoUkUi2(this);
             BeginDisplaySleep(sync.AsyncComplete());
@@ -1575,7 +1575,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaEnabled"></param>
-        public void EndDisplaySleep(IntPtr aAsyncHandle, out bool aaEnabled)
+        public void EndDisplaySleep(IntPtr aAsyncHandle, out bool aEnabled)
         {
             uint index = 0;
             aEnabled = Invocation.OutputBool(aAsyncHandle, index++);
@@ -1587,7 +1587,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaOff"></param>
-        public void SyncSetDisplayLedOff(bool aaOff)
+        public void SyncSetDisplayLedOff(bool aOff)
         {
             SyncSetDisplayLedOffLinnCoUkUi2 sync = new SyncSetDisplayLedOffLinnCoUkUi2(this);
             BeginSetDisplayLedOff(aOff, sync.AsyncComplete());
@@ -1604,7 +1604,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaOff"></param>
         /// <param name="aCallback">Delegate to run when the action completes.
         /// This is guaranteed to be run but may indicate an error</param>
-        public void BeginSetDisplayLedOff(bool aaOff, CallbackAsyncComplete aCallback)
+        public void BeginSetDisplayLedOff(bool aOff, CallbackAsyncComplete aCallback)
         {
             Invocation invocation = iService.Invocation(iActionSetDisplayLedOff, aCallback);
             int inIndex = 0;
@@ -1627,7 +1627,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>Blocks until the action has been processed
         /// on the device and sets any output arguments</remarks>
         /// <param name="aaOff"></param>
-        public void SyncDisplayLedOff(out bool aaOff)
+        public void SyncDisplayLedOff(out bool aOff)
         {
             SyncDisplayLedOffLinnCoUkUi2 sync = new SyncDisplayLedOffLinnCoUkUi2(this);
             BeginDisplayLedOff(sync.AsyncComplete());
@@ -1658,7 +1658,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <remarks>This may only be called from the callback set in the above Begin function.</remarks>
         /// <param name="aAsyncHandle">Argument passed to the delegate set in the above Begin function</param>
         /// <param name="aaOff"></param>
-        public void EndDisplayLedOff(IntPtr aAsyncHandle, out bool aaOff)
+        public void EndDisplayLedOff(IntPtr aAsyncHandle, out bool aOff)
         {
             uint index = 0;
             aOff = Invocation.OutputBool(aAsyncHandle, index++);

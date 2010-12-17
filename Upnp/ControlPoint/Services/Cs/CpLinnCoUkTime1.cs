@@ -9,9 +9,9 @@ namespace Zapp.ControlPoint.Proxies
 {
     public interface ICpProxyLinnCoUkTime1 : ICpProxy, IDisposable
     {
-        void SyncTime(out uint aaTrackCount, out uint aaDuration, out uint aaSeconds);
+        void SyncTime(out uint aTrackCount, out uint aDuration, out uint aSeconds);
         void BeginTime(CpProxy.CallbackAsyncComplete aCallback);
-        void EndTime(IntPtr aAsyncHandle, out uint aaTrackCount, out uint aaDuration, out uint aaSeconds);
+        void EndTime(IntPtr aAsyncHandle, out uint aTrackCount, out uint aDuration, out uint aSeconds);
         void SetPropertyTrackCountChanged(CpProxy.CallbackPropertyChanged aTrackCountChanged);
         uint PropertyTrackCount();
         void SetPropertyDurationChanged(CpProxy.CallbackPropertyChanged aDurationChanged);
@@ -96,7 +96,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrackCount"></param>
         /// <param name="aaDuration"></param>
         /// <param name="aaSeconds"></param>
-        public void SyncTime(out uint aaTrackCount, out uint aaDuration, out uint aaSeconds)
+        public void SyncTime(out uint aTrackCount, out uint aDuration, out uint aSeconds)
         {
             SyncTimeLinnCoUkTime1 sync = new SyncTimeLinnCoUkTime1(this);
             BeginTime(sync.AsyncComplete());
@@ -133,7 +133,7 @@ namespace Zapp.ControlPoint.Proxies
         /// <param name="aaTrackCount"></param>
         /// <param name="aaDuration"></param>
         /// <param name="aaSeconds"></param>
-        public void EndTime(IntPtr aAsyncHandle, out uint aaTrackCount, out uint aaDuration, out uint aaSeconds)
+        public void EndTime(IntPtr aAsyncHandle, out uint aTrackCount, out uint aDuration, out uint aSeconds)
         {
             uint index = 0;
             aTrackCount = Invocation.OutputUint(aAsyncHandle, index++);
