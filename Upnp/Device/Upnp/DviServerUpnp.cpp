@@ -319,6 +319,7 @@ DviSessionUpnp::~DviSessionUpnp()
 
 void DviSessionUpnp::Run()
 {
+    Log::Print("> DviSessionUpnp::Run()\n");
     iShutdownSem.Wait();
     iErrorStatus = &HttpStatus::kOk;
     iReaderRequest->Flush();
@@ -382,6 +383,7 @@ void DviSessionUpnp::Run()
     }
     catch (WriterError&) {}
     iShutdownSem.Signal();
+    Log::Print("< DviSessionUpnp::Run()\n");
 }
 
 void DviSessionUpnp::Error(const HttpStatus& aStatus)
