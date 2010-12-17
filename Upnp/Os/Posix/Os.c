@@ -476,13 +476,9 @@ int32_t OsNetworkSend(THandle aHandle, const uint8_t* aBuffer, uint32_t aBytes)
 {
     OsNetworkHandle* handle = (OsNetworkHandle*)aHandle;
     if (SocketInterrupted(handle)) {
-        fprintf(stderr, "OsNetworkSend failing - socket interrupted\n");
         return -1;
     }
     int32_t sent = send(handle->iSocket, aBuffer, aBytes, 0);
-    if (sent != aBytes) {
-        fprintf(stderr, "OsNetworkSend failing - sent %d bytes, errno=%d\n", sent, errno);
-    }
     return sent;
 }
 
