@@ -544,7 +544,13 @@ $(objdir)TestCpDeviceDvC.$(exeext) :  upnp_core $(objdir)TestCpDeviceDvC.$(objex
 $(objdir)TestCpDeviceDvC.$(objext) : Public/C/TestCpDeviceDvC.cpp $(headers)
 	$(compiler)TestCpDeviceDvC.$(objext) -c $(cflags) $(includes) Public/C/TestCpDeviceDvC.cpp
 
-Tests: TestBuffer TestThread TestFifo TestQueue TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDeviceFinder TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestProxyCs TestDvDeviceCs TestDvLightsCs TestCpDeviceDvCs
+TestDvColorLight: $(objdir)TestDvColorLight.$(exeext) 
+$(objdir)TestDvColorLight.$(exeext) :  upnp_core $(objdir)TestDvColorLight.$(objext) $(objdir)DvOpenhomeOrgTestColorLight1.$(objext) TestFramework.$(libext)
+	$(link) $(linkoutput)$(objdir)TestDvColorLight.$(exeext) $(objdir)TestDvColorLight.$(objext) $(objdir)DvOpenhomeOrgTestColorLight1.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
+$(objdir)TestDvColorLight.$(objext) : Public/Cpp/Core/TestDvColorLight.cpp $(headers)
+	$(compiler)TestDvColorLight.$(objext) -c $(cflags) $(includes) Public/Cpp/Core/TestDvColorLight.cpp
+
+Tests: TestBuffer TestThread TestFifo TestQueue TestNetwork TestEcho TestTimer TestSsdpMListen TestSsdpUListen TestDeviceList TestDeviceListStd TestDeviceListC TestInvocation TestInvocationStd TestSubscription TestProxyC TestTopology1 TestTopology2 TestTopology3 TestDviDiscovery TestDviDeviceList TestDvInvocation TestDvSubscription TestDvLights TestDvTestBasic TestDeviceFinder TestDvColorLight TestDvDeviceStd TestDvDeviceC TestCpDeviceDv TestCpDeviceDvStd TestCpDeviceDvC TestProxyCs TestDvDeviceCs TestDvLightsCs TestCpDeviceDvCs
 
 Zapp.net.dll : $(objdir)Zapp.net.dll
 

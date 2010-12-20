@@ -118,6 +118,9 @@ objects_proxies = \
                   $(objdir)CpZappOrgTestDimmableLight1.$(objext) \
                   $(objdir)CpZappOrgTestDimmableLight1C.$(objext) \
                   $(objdir)CpZappOrgTestDimmableLight1Std.$(objext) \
+                  $(objdir)CpOpenhomeOrgTestColorLight1.$(objext) \
+                  $(objdir)CpOpenhomeOrgTestColorLight1C.$(objext) \
+                  $(objdir)CpOpenhomeOrgTestColorLight1Std.$(objext) \
 
 # Service proxies have well controlled dependencies so we can document a more limited set of headers
 headers_proxy = $(inc_build)/Cpp/Buffer.h \
@@ -171,6 +174,7 @@ proxy_dotnet_assemblies = \
 		CpZappOrgTestWidgetController1.net.dll \
 		CpZappOrgTestLights1.net.dll \
 		CpZappOrgTestDimmableLight1.net.dll \
+		CpOpenhomeOrgTestColorLight1.net.dll \
 
 proxy_dotnet_assemblies_with_path = \
 		$(objdir)CpUpnpOrgAVTransport1.net.dll \
@@ -211,6 +215,7 @@ proxy_dotnet_assemblies_with_path = \
 		$(objdir)CpZappOrgTestWidgetController1.net.dll \
 		$(objdir)CpZappOrgTestLights1.net.dll \
 		$(objdir)CpZappOrgTestDimmableLight1.net.dll \
+		$(objdir)CpOpenhomeOrgTestColorLight1.net.dll \
 
 
 proxies : upnp_core $(objects_proxies)
@@ -443,6 +448,12 @@ $(objdir)CpZappOrgTestDimmableLight1C.$(objext) : $(proxySrcC)CpZappOrgTestDimma
 	$(compiler)CpZappOrgTestDimmableLight1C.$(objext) -c $(cflags) $(includes) $(proxySrcC)CpZappOrgTestDimmableLight1C.cpp
 $(objdir)CpZappOrgTestDimmableLight1Std.$(objext) : $(proxySrcCppStd)CpZappOrgTestDimmableLight1Std.cpp $(headers_proxy) $(inc_build)/Cpp/Std/CpZappOrgTestDimmableLight1.h
 	$(compiler)CpZappOrgTestDimmableLight1Std.$(objext) -c $(cflags) $(includes) $(proxySrcCppStd)CpZappOrgTestDimmableLight1Std.cpp
+$(objdir)CpOpenhomeOrgTestColorLight1.$(objext) : $(proxySrcCppCore)CpOpenhomeOrgTestColorLight1.cpp $(headers_proxy) $(inc_build)/Cpp/Core/CpOpenhomeOrgTestColorLight1.h
+	$(compiler)CpOpenhomeOrgTestColorLight1.$(objext) -c $(cflags) $(includes) $(proxySrcCppCore)CpOpenhomeOrgTestColorLight1.cpp
+$(objdir)CpOpenhomeOrgTestColorLight1C.$(objext) : $(proxySrcC)CpOpenhomeOrgTestColorLight1C.cpp $(headers_proxy) $(inc_build)/C/CpOpenhomeOrgTestColorLight1.h
+	$(compiler)CpOpenhomeOrgTestColorLight1C.$(objext) -c $(cflags) $(includes) $(proxySrcC)CpOpenhomeOrgTestColorLight1C.cpp
+$(objdir)CpOpenhomeOrgTestColorLight1Std.$(objext) : $(proxySrcCppStd)CpOpenhomeOrgTestColorLight1Std.cpp $(headers_proxy) $(inc_build)/Cpp/Std/CpOpenhomeOrgTestColorLight1.h
+	$(compiler)CpOpenhomeOrgTestColorLight1Std.$(objext) -c $(cflags) $(includes) $(proxySrcCppStd)CpOpenhomeOrgTestColorLight1Std.cpp
 
 proxy_dlls = \
              CpUpnpOrgAVTransport1Dll \
@@ -483,6 +494,7 @@ proxy_dlls = \
              CpZappOrgTestWidgetController1Dll \
              CpZappOrgTestLights1Dll \
              CpZappOrgTestDimmableLight1Dll \
+             CpOpenhomeOrgTestColorLight1Dll \
 
 CpProxyDlls: $(proxy_dlls)
 
@@ -600,6 +612,9 @@ $(objdir)$(dllprefix)CpZappOrgTestLights1.$(dllext) : ZappUpnpDll $(objdir)CpZap
 CpZappOrgTestDimmableLight1Dll: $(objdir)$(dllprefix)CpZappOrgTestDimmableLight1.$(dllext)
 $(objdir)$(dllprefix)CpZappOrgTestDimmableLight1.$(dllext) : ZappUpnpDll $(objdir)CpZappOrgTestDimmableLight1C.$(objext) $(objdir)CpZappOrgTestDimmableLight1.$(objext)
 	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpZappOrgTestDimmableLight1.$(dllext) $(objdir)CpZappOrgTestDimmableLight1C.$(objext) $(objdir)CpZappOrgTestDimmableLight1.$(objext)
+CpOpenhomeOrgTestColorLight1Dll: $(objdir)$(dllprefix)CpOpenhomeOrgTestColorLight1.$(dllext)
+$(objdir)$(dllprefix)CpOpenhomeOrgTestColorLight1.$(dllext) : ZappUpnpDll $(objdir)CpOpenhomeOrgTestColorLight1C.$(objext) $(objdir)CpOpenhomeOrgTestColorLight1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpOpenhomeOrgTestColorLight1.$(dllext) $(objdir)CpOpenhomeOrgTestColorLight1C.$(objext) $(objdir)CpOpenhomeOrgTestColorLight1.$(objext)
 
 # Proxy assemblies for .NET:
 
@@ -795,4 +810,9 @@ $(objdir)CpZappOrgTestDimmableLight1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)Cp
 		/out:$(objdir)CpZappOrgTestDimmableLight1.net.dll \
 		/reference:$(objdir)Zapp.net.dll \
 		$(proxyCs)CpZappOrgTestDimmableLight1.cs
+$(objdir)CpOpenhomeOrgTestColorLight1.net.dll: $(objdir)Zapp.net.dll $(proxyCs)CpOpenhomeOrgTestColorLight1.cs
+	$(csharp) /unsafe /t:library \
+		/out:$(objdir)CpOpenhomeOrgTestColorLight1.net.dll \
+		/reference:$(objdir)Zapp.net.dll \
+		$(proxyCs)CpOpenhomeOrgTestColorLight1.cs
 
