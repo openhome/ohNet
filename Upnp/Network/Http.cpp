@@ -860,7 +860,11 @@ void ReaderHttpChunked::Read()
             break;
         }
         iEntity.Grow(iEntity.Bytes() + chunkSize);
-        iEntity.Append(iReader.Read(chunkSize));
+        while (chunkSize > 0) {
+            TUint bytes = (chunkSize<4096? chunkSize : 4096);
+            iEntity.Append(iReader.Read(bytes));
+            chunkSize -= bytes;
+        }
     }
 }
 

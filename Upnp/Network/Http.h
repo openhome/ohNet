@@ -416,7 +416,7 @@ public:
 class ReaderHttpChunked
 {
 public:
-    ReaderHttpChunked(IReader& aReader);
+    ReaderHttpChunked(IReader& aReader); // IReader must allow reads at least 4k
     void Read();
     void TransferTo(Bwh& aBuf);
 private:
