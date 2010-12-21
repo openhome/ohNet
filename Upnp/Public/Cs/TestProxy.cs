@@ -73,6 +73,13 @@ namespace Zapp
             Console.Write("\n" + iSubscriptionCount + " subscriptions on " + count + " devices (avg " + avgSubscriptions + ") in " + secs + " seconds\n\n");
 
             list.Dispose();
+            lock (this)
+            {
+                for (int i = 0; i < iDeviceList.Count; i++)
+                {
+                    iDeviceList[i].RemoveRef();
+                }
+            }
             Console.Write("Tests completed\n");
         }
 

@@ -44,6 +44,7 @@ DviService::DviService(const TChar* aDomain, const TChar* aName, TUint aVersion)
     , iRefCount(1)
     , iPropertiesLock("SPRM")
 {
+    Stack::AddObject(this, "DviService");
 }
 
 DviService::~DviService()
@@ -62,6 +63,7 @@ DviService::~DviService()
         delete iProperties[i];
     }
     iLock.Signal();
+    Stack::RemoveObject(this, "DviService");
 }
 
 void DviService::AddRef()

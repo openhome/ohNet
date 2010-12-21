@@ -38,6 +38,7 @@ Stack::Stack(InitialisationParams* aInitParams)
     , iSequenceNumber(0)
     , iCpStack(NULL)
     , iDvStack(NULL)
+    , iMapLock("SOML")
 {
     SetAssertHandler(AssertHandlerDefault);
     ASSERT(gStackInitCount == 0);
@@ -67,6 +68,12 @@ Stack::~Stack()
     delete iCpStack;
     delete iDvStack;
     delete iNetworkInterfaceList;
+    if (iObjectMap.size() != 0) {
+        Log::Print("ERROR: destroying stack before some owned objects\n");
+        Log::Print("...leaked objects are\n");
+        DoListObjects();
+        ASSERTS();
+    }
     delete iInitParams;
     gStack = NULL;
 }
@@ -147,6 +154,86 @@ InitialisationParams& Stack::InitParams()
     return *(gStack->iInitParams);
 }
 
+void Stack::AddObject(void* aPtr, const char* aClassName)
+{
+    if (gStack != NULL)  {
+        gStack->DoAddObject(aPtr, aClassName);
+    }
+}
+
+void Stack::RemoveObject(void* aPtr, const char* aClassName)
+{
+    if (gStack != NULL)  {
+        gStack->DoRemoveObject(aPtr, aClassName);
+    }
+}
+
+void Stack::ListObjects()
+{
+    if (gStack != NULL)  {
+        gStack->DoListObjects();
+    }
+}
+
+void Stack::DoAddObject(void* aPtr, const char* aClassName)
+{
+    iMapLock.Wait();
+    Brn key(aClassName);
+    ObjectType* map = NULL;
+    ObjectTypeMap::iterator it = iObjectMap.find(key);
+    if (it != iObjectMap.end()) {
+        map = it->second;
+        key.Set(map->Name());
+    }
+    else {
+        ObjectType* o = new ObjectType(aClassName);
+        map = o;
+        key.Set(o->Name());
+        iObjectMap.insert(std::pair<Brn,ObjectType*>(key, o));
+    }
+    map->Map().insert(std::pair<void*,void*>(aPtr, aPtr));
+    iMapLock.Signal();
+}
+
+void Stack::DoRemoveObject(void* aPtr, const char* aClassName)
+{
+    iMapLock.Wait();
+    Brn key(aClassName);
+    ObjectTypeMap::iterator it = iObjectMap.find(key);
+    if (it != iObjectMap.end()) {
+        ObjectMap& map = it->second->Map();
+        ObjectMap::iterator it2 = map.find(aPtr);
+        if (it2 != map.end()) {
+            map.erase(it2);
+            if (map.size() == 0) {
+                delete it->second;
+                iObjectMap.erase(it);
+            }
+        }
+    }
+    iMapLock.Signal();
+}
+
+void Stack::DoListObjects()
+{
+    iMapLock.Wait();
+    ObjectTypeMap::iterator it = iObjectMap.begin();
+    while (it != iObjectMap.end()) {
+        Log::Print("  ");
+        ObjectType* o = it->second;
+        Log::Print(o->Name());
+        Log::Print("\n");
+        ObjectMap& objects = o->Map();
+        ObjectMap::iterator it2 = objects.begin();
+        while (it2 != objects.end()) {
+            Log::Print("    %8x\n", it2->second);
+            it2++;
+        }
+        it++;
+    }
+    iMapLock.Signal();
+}
+
 void Stack::SetCpiStack(IStack* aStack)
 {
     gStack->iCpStack = aStack;
@@ -195,4 +282,17 @@ TBool Stack::MListener::RemoveRef()
 {
     iRefCount--;
     return (iRefCount == 0);
+}
+
+
+// Stack::ObjectType
+
+Stack::ObjectType::ObjectType(const TChar* aName)
+    : iClassName(aName)
+{
+}
+
+Stack::ObjectType::~ObjectType()
+{
+    ASSERT(iMap.size() == 0);
 }
