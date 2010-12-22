@@ -337,11 +337,13 @@ class HttpHeaderHost : public HttpHeader
 {
 public:
     Zapp::Endpoint& Endpoint();
+    const Brx& Host() const;
 private:
     virtual TBool Recognise(const Brx& aHeader);
     virtual void Process(const Brx& aValue);
 private:
     Zapp::Endpoint iEndpoint;
+    Brh iHost;
 };
 
 class HttpHeaderContentLength : public HttpHeader

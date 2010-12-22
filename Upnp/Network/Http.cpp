@@ -658,6 +658,11 @@ Zapp::Endpoint& HttpHeaderHost::Endpoint()
     return iEndpoint;
 }
 
+const Brx& HttpHeaderHost::Host() const
+{
+    return iHost;
+}
+
 TBool HttpHeaderHost::Recognise(const Brx& aHeader)
 {
     return (Ascii::CaseInsensitiveEquals(aHeader, Http::kHeaderHost));
@@ -667,6 +672,7 @@ void HttpHeaderHost::Process(const Brx& aValue)
 {
     Zapp::Endpoint defaultEndpoint;
     iEndpoint = defaultEndpoint;
+    iHost.Set(aValue);
     SetReceived();
     try {
         TUint index = Ascii::IndexOf(aValue, ':');
