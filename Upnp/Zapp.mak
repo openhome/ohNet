@@ -8,14 +8,6 @@ objdirbare = Build\Obj\Windows
 objdir = $(objdirbare)^\
 inc_build = Build\Include
 includes = -IBuild\Include -IBuild\Include\Cpp
-proxySrcCppCore = ControlPoint\Services\Cpp\Core^\
-proxySrcC = ControlPoint\Services\C^\
-proxySrcCppStd = ControlPoint\Services\Cpp\Std^\
-proxySrcCs = ControlPoint\Services\Cs^\
-deviceSrcCppCore = Device\Services\Cpp\Core^\
-deviceSrcCppStd = Device\Services\Cpp\Std^\
-deviceSrcC = Device\Services\C^\
-deviceSrcCs = Device\Services\Cs^\
 osdir = Windows
 objext = obj
 libprefix = 
@@ -87,9 +79,15 @@ copy_build_includes:
 	copy Arch\*.h $(inc_build) > nul
 	copy Arch\I386\ArchSpecific.h $(inc_build) > nul
 	copy ControlPoint\*.h $(inc_build) > nul
+	copy ControlPoint\Services\Cpp\Core\*.h $(inc_build)\Cpp\Core > nul
+	copy ControlPoint\Services\Cpp\Std\*.h $(inc_build)\Cpp\Std > nul
+	copy ControlPoint\Services\Cpp\Core\*C.h $(inc_build)\C > nul
 	copy ControlPoint\Dv\*.h $(inc_build) > nul
 	copy ControlPoint\Upnp\*.h $(inc_build) > nul
 	copy Device\*.h $(inc_build) > nul
+	copy Device\Services\Cpp\Core\*.h $(inc_build)\Cpp\Core > nul
+	copy Device\Services\Cpp\Std\*.h $(inc_build)\Cpp\Std > nul
+	copy Device\Services\Cpp\Core\*C.h $(inc_build)\C > nul
 	copy Device\Upnp\*.h $(inc_build) > nul
 	copy Network\*.h $(inc_build) > nul
 	copy Service\*.h $(inc_build) > nul

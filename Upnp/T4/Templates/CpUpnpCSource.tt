@@ -48,8 +48,8 @@
 
     Document u = new Document(TemplateArgument("xml"));
 #>
-#include <C/Cp<#=fileName#>.h>
-#include <Core/Cp<#=fileName#>.h>
+#include "Cp<#=fileName#>C.h"
+#include "Cp<#=fileName#>.h"
 #include <Core/CpDevice.h>
 #include <C/CpProxyCPrivate.h>
 #include <FunctorAsync.h>

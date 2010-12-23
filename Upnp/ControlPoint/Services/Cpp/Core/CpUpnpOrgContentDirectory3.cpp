@@ -1,4 +1,4 @@
-#include <Core/CpUpnpOrgContentDirectory3.h>
+#include "CpUpnpOrgContentDirectory3.h"
 #include <CpProxy.h>
 #include <CpiService.h>
 #include <Thread.h>

@@ -1,4 +1,4 @@
-#include <Core/CpZappOrgTestLights1.h>
+#include "CpZappOrgTestLights1.h"
 #include <CpProxy.h>
 #include <CpiService.h>
 #include <Thread.h>

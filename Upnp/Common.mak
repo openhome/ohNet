@@ -1,5 +1,15 @@
 
-
+proxyCppCore = ControlPoint$(dirsep)Services$(dirsep)Cpp$(dirsep)Core$(dirsep)
+#proxyC = ControlPoint$(dirsep)Services$(dirsep)C$(dirsep)
+proxyC = $(proxyCppCore)
+proxyCppStd = ControlPoint$(dirsep)Services$(dirsep)Cpp$(dirsep)Std$(dirsep)
+proxyCs = ControlPoint$(dirsep)Services$(dirsep)Cs$(dirsep)
+proxyJs = ControlPoint$(dirsep)Services$(dirsep)Js$(dirsep)
+deviceCppCore = Device$(dirsep)Services$(dirsep)Cpp$(dirsep)Core$(dirsep)
+deviceCppStd = Device$(dirsep)Services$(dirsep)Cpp$(dirsep)Std$(dirsep)
+#deviceC = Device$(dirsep)Services$(dirsep)C$(dirsep)
+deviceC = $(deviceCppCore)
+deviceCs = Device$(dirsep)Services$(dirsep)Cs$(dirsep)
 
 objects_core = $(objdir)Ascii.$(objext) \
                $(objdir)AsyncC.$(objext) \

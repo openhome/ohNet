@@ -49,7 +49,7 @@
 
     Document u = new Document(TemplateArgument("xml"));
 #>
-#include <Core/Cp<#=fileName#>.h>
+#include "Cp<#=fileName#>.h"
 #include <CpProxy.h>
 #include <CpiService.h>
 #include <Thread.h>

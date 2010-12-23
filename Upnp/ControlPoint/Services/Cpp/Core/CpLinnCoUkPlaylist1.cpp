@@ -1,4 +1,4 @@
-#include <Core/CpLinnCoUkPlaylist1.h>
+#include "CpLinnCoUkPlaylist1.h"
 #include <CpProxy.h>
 #include <CpiService.h>
 #include <Thread.h>

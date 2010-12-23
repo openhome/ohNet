@@ -1,4 +1,4 @@
-#include <Core/DvOpenhomeOrgTestColorLight1.h>
+#include "DvOpenhomeOrgTestColorLight1.h"
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>

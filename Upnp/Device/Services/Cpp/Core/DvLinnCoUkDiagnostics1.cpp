@@ -1,4 +1,4 @@
-#include <Core/DvLinnCoUkDiagnostics1.h>
+#include "DvLinnCoUkDiagnostics1.h"
 #include <ZappTypes.h>
 #include <Core/DvInvocationResponse.h>
 #include <Service.h>

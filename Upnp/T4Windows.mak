@@ -4,25 +4,11 @@
 
 toolsDir = Build\Windows\Tools^\
 t4 = $(toolsDir)TextTransform.exe
+zappgen = $(toolsDir)ZappGen.exe
 upnpServiceXml = $(toolsDir)UpnpServiceXml.dll
 upnpServiceMake = $(toolsDir)UpnpServiceMake.dll
 argumentProcessor = $(toolsDir)ArgumentProcessor.dll
-proxySrcCppCore = ControlPoint\\Services\\Cpp\\Core\\
-proxyApiCppCore = Api\\Cpp\\Core\\
-proxyApiC = Api\\C\\
-proxySrcC = ControlPoint\\Services\\C\\
-proxyApiCppStd = Api\\Cpp\\Std\\
-proxySrcCppStd = ControlPoint\\Services\\Cpp\\Std\\
-proxyCs = ControlPoint\\Services\\Cs\\
-proxyJs = ControlPoint\\Services\\Js\\
-deviceSrcCppCore = Device\\Services\\Cpp\\Core\\
-deviceApiCppCore = $(proxyApiCppCore)
-deviceSrcCppStd = Device\\Services\\Cpp\\Std\\
-deviceApiCppStd = $(proxyApiCppStd)
-deviceSrcC = Device\\Services\\C\\
-deviceApiC = $(proxyApiC)
-deviceCs = Device\\Services\\Cs\\
-tt = $(toolsDir)UpnpServiceXml.dll $(toolsDir)UpnpServiceMake.dll $(toolsDir)Mono.TextTemplating.dll $(toolsDir)TextTransform.exe
+tt = $(toolsDir)UpnpServiceXml.dll $(toolsDir)UpnpServiceMake.dll $(toolsDir)Mono.TextTemplating.dll $(toolsDir)TextTransform.exe $(toolsDir)ZappGen.exe
 
 tt : $(tt)
 
@@ -50,6 +36,10 @@ $(toolsDir)Mono.TextTemplating.dll : $(dllsources)
 exesources =	T4\\TextTemplating\\TextTransform\\AssemblyInfo.cs \
                 T4\\TextTemplating\\TextTransform\\Options.cs \
                 T4\\TextTemplating\\TextTransform\\TextTransform.cs
+
+$(toolsDir)ZappGen.exe : $(toolsDir)TextTransform.exe T4\\ZappGen.cs
+	@if not exist $(toolsDir) mkdir $(toolsDir)
+	csc /t:exe /out:$(toolsDir)ZappGen.exe T4\\ZappGen.cs T4\\AssemblyInfo.cs
 
 $(toolsDir)TextTransform.exe : $(toolsDir)Mono.TextTemplating.dll $(exesources)
 	@if not exist $(toolsDir) mkdir $(toolsDir)

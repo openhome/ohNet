@@ -1,4 +1,4 @@
-#include <Core/CpOpenhomeOrgTestColorLight1.h>
+#include "CpOpenhomeOrgTestColorLight1.h"
 #include <CpProxy.h>
 #include <CpiService.h>
 #include <Thread.h>

@@ -3,7 +3,7 @@
 #include <ZappTypes.h>
 #include <TestFramework.h>
 #include <C/CpProxy.h>
-#include <C/CpZappOrgTestBasic1.h>
+#include <C/CpZappOrgTestBasic1C.h>
 #include <C/CpDevice.h>
 
 #include <stdlib.h>

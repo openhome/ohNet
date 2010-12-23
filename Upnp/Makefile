@@ -7,14 +7,6 @@ cflags = -fexceptions -Wall -Werror -pipe -D_GNU_SOURCE -D_REENTRANT -DDEFINE_LI
 objdir = Build/Obj/Posix/
 inc_build = Build/Include
 includes = -IBuild/Include/ -IBuild/Include/Cpp/
-proxySrcCppCore = ControlPoint/Services/Cpp/Core/
-proxySrcC = ControlPoint/Services/C/
-proxySrcCppStd = ControlPoint/Services/Cpp/Std/
-proxySrcCs = ControlPoint/Services/Cs/
-deviceSrcCppCore = Device/Services/Cpp/Core/
-deviceSrcCppStd = Device/Services/Cpp/Std/
-deviceSrcC = Device/Services/C/
-deviceSrcCs = Device/Services/Cs/
 osdir = Posix
 objext = o
 libprefix = lib
@@ -79,9 +71,15 @@ copy_build_includes:
 	cp -u Arch/*.h $(inc_build)
 	cp -u Arch/I386/ArchSpecific.h $(inc_build)
 	cp -u ControlPoint/*.h $(inc_build)
+	cp -u ControlPoint/Service/Cpp/Core/*.h $(inc_build)/Cpp/Core
+	cp -u ControlPoint/Services/Cpp/Std/*.h $(inc_build)/Cpp/Std
+	cp -u ControlPoint/Services/Cpp/Core/*C.h $(inc_build)/C
 	cp -u ControlPoint/Dv/*.h $(inc_build)
 	cp -u ControlPoint/Upnp/*.h $(inc_build)
 	cp -u Device/*.h $(inc_build)
+	cp -u Device/Services/Cpp/Core/*.h $(inc_build)/Cpp/Core
+	cp -u Device/Services/Cpp/Std/*.h $(inc_build)/Cpp/Std
+	cp -u Device/Services/Cpp/Core/*C.h $(inc_build)/C
 	cp -u Device/Upnp/*.h $(inc_build)
 	cp -u Network/*.h $(inc_build)
 	cp -u Service/*.h $(inc_build)

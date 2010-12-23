@@ -42,8 +42,8 @@
 
     Document u = new Document(TemplateArgument("xml"));
 #>
-#include <C/Dv<#=fileName#>.h>
-#include <Core/Dv<#=fileName#>.h>
+#include "Dv<#=fileName#>C.h"
+#include "Dv<#=fileName#>.h"
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>

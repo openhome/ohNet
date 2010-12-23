@@ -6,7 +6,7 @@
 #include <C/Zapp.h>
 #include <C/CpDevice.h>
 #include <C/CpDeviceUpnp.h>
-#include <C/CpUpnpOrgConnectionManager1.h>
+#include <C/CpUpnpOrgConnectionManager1C.h>
 #include <C/CpProxy.h>
 #include <C/Async.h>
 #include <ZappTypes.h>

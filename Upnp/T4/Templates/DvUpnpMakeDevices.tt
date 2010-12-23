@@ -7,7 +7,7 @@
 	Document u = new Document(TemplateArgument("xml"));
 #>
 # Auto-generated file.  DO NOT EDIT DIRECTLY
-# Update CpUpnpMakeProxies.tt and run
+# Update DvUpnpMakeDevices.tt and run
 #    make generate-makefiles
 # to apply any updates
 
@@ -42,12 +42,12 @@ devices : upnp_core $(objects_devices)
 	$(ar)ZappDevices.$(libext) $(objects_devices)
 <#  foreach (Service s in u.iServices) #>
 <#  { #>
-$(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) : $(deviceSrcCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp $(headers_device)
-	$(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) -c $(cflags) $(includes) $(deviceSrcCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp
-$(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) : $(deviceSrcCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp $(headers_device)
-	$(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) -c $(cflags) $(includes) $(deviceSrcCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp
-$(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) : $(deviceSrcC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp $(headers_device) $(inc_build)/C/Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.h
-	$(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) -c $(cflags) $(includes) $(deviceSrcC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp
+$(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) : $(deviceCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp $(headers_device)
+	$(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.$(objext) -c $(cflags) $(includes) $(deviceCppCore)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>.cpp
+$(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) : $(deviceCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp $(headers_device)
+	$(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.$(objext) -c $(cflags) $(includes) $(deviceCppStd)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>Std.cpp
+$(objdir)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) : $(deviceC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp $(headers_device) $(inc_build)/C/Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.h
+	$(compiler)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.$(objext) -c $(cflags) $(includes) $(deviceC)Dv<#=FilePrefix(s)#><#=s.iType#><#=s.iVersion#>C.cpp
 <#  } #>
 
 device_dlls = \
