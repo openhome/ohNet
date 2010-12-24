@@ -10,7 +10,7 @@
 #include <C/DvProvider.h>
 #include <C/DvZappOrgTestBasic1C.h>
 #include <C/CpProxy.h>
-#include <C/CpZappOrgTestBasic1C.h>
+#include <C/CpZappOrgTestBasic1.h>
 #include <C/CpDevice.h>
 #include <C/CpDeviceUpnp.h>
 #include <Ascii.h>

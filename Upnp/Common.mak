@@ -1,7 +1,7 @@
 
 proxyCppCore = ControlPoint$(dirsep)Services$(dirsep)Cpp$(dirsep)Core$(dirsep)
-#proxyC = ControlPoint$(dirsep)Services$(dirsep)C$(dirsep)
-proxyC = $(proxyCppCore)
+proxyC = ControlPoint$(dirsep)Services$(dirsep)C$(dirsep)
+#proxyC = $(proxyCppCore)
 proxyCppStd = ControlPoint$(dirsep)Services$(dirsep)Cpp$(dirsep)Std$(dirsep)
 proxyCs = ControlPoint$(dirsep)Services$(dirsep)Cs$(dirsep)
 proxyJs = ControlPoint$(dirsep)Services$(dirsep)Js$(dirsep)
@@ -526,8 +526,8 @@ $(objdir)TestBasicDvStd.$(objext) : Public/Cpp/Std/TestBasicDv.cpp $(headers)
 	$(compiler)TestBasicDvStd.$(objext) -c $(cflags) $(includes) Public/Cpp/Std/TestBasicDv.cpp
 
 TestDvDeviceC: $(objdir)TestDvDeviceC.$(exeext) 
-$(objdir)TestDvDeviceC.$(exeext) :  upnp_core $(objdir)TestDvDeviceC.$(objext) $(objdir)TestBasicCpC.$(objext) $(objdir)TestBasicDvC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext)
-	$(link) $(linkoutput)$(objdir)TestDvDeviceC.$(exeext) $(objdir)TestDvDeviceC.$(objext) $(objdir)TestBasicCpC.$(objext) $(objdir)TestBasicDvC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext) $(objdir)$(libprefix)upnp_core.$(libext)
+$(objdir)TestDvDeviceC.$(exeext) :  upnp_core $(objdir)TestDvDeviceC.$(objext) $(objdir)TestBasicCpC.$(objext) $(objdir)TestBasicDvC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext)
+	$(link) $(linkoutput)$(objdir)TestDvDeviceC.$(exeext) $(objdir)TestDvDeviceC.$(objext) $(objdir)TestBasicCpC.$(objext) $(objdir)TestBasicDvC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestDvDeviceC.$(objext) : Public/C/TestDvDeviceC.cpp $(headers)
 	$(compiler)TestDvDeviceC.$(objext) -c $(cflags) $(includes) Public/C/TestDvDeviceC.cpp
 $(objdir)TestBasicCpC.$(objext) : Public/C/TestBasicCpC.cpp $(headers)
@@ -591,7 +591,6 @@ TestProxyCs: $(objdir)TestProxyCs.exe
 
 $(objdir)TestProxyCs.exe: \
 	ZappUpnpDll \
-	CpUpnpOrgConnectionManager1Dll \
 	$(objdir)Zapp.net.dll \
 	$(publiccsdir)TestProxy.cs \
 	$(objdir)CpUpnpOrgConnectionManager1.net.dll \
@@ -606,7 +605,6 @@ TestDvDeviceCs: $(objdir)TestDvDeviceCs.exe
 
 $(objdir)TestDvDeviceCs.exe: \
 	ZappUpnpDll \
-	CpUpnpOrgConnectionManager1Dll \
 	$(objdir)Zapp.net.dll \
 	$(objdir)DvZappOrgTestBasic1.net.dll \
 	$(objdir)CpZappOrgTestBasic1.net.dll \
@@ -627,7 +625,6 @@ TestDvLightsCs: $(objdir)TestDvLightsCs.exe
 
 $(objdir)TestDvLightsCs.exe: \
 	ZappUpnpDll \
-	CpUpnpOrgConnectionManager1Dll \
 	$(objdir)Zapp.net.dll \
 	$(objdir)DvZappOrgTestLights1.net.dll \
 	$(objdir)CpZappOrgTestLights1.net.dll \
@@ -644,7 +641,6 @@ TestCpDeviceDvCs: $(objdir)TestCpDeviceDvCs.exe
 
 $(objdir)TestCpDeviceDvCs.exe: \
 	ZappUpnpDll \
-	CpUpnpOrgConnectionManager1Dll \
 	$(objdir)Zapp.net.dll \
 	$(objdir)DvZappOrgTestBasic1.net.dll \
 	$(objdir)CpZappOrgTestBasic1.net.dll \

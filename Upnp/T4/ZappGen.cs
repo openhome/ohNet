@@ -191,10 +191,10 @@ namespace Zapp
                 case ETargetLanguage.eC:
                     if (stack == ETargetStack.eCp)
                     {
-                        templates.Add(new TemplateFile("CpUpnpCHeader.tt", ".h", "C"));
+                        templates.Add(new TemplateFile("CpUpnpCHeader.tt", ".h"));
                         templates.Add(new TemplateFile("CpUpnpCSource.tt", ".cpp", "C"));
-                        templates.Add(new TemplateFile("CpUpnpCppHeader.tt", ".h", "", "-a buffer:1"));
-                        templates.Add(new TemplateFile("CpUpnpCppBufferSource.tt", ".cpp"));
+                        //templates.Add(new TemplateFile("CpUpnpCppHeader.tt", ".h", "", "-a buffer:1"));
+                        //templates.Add(new TemplateFile("CpUpnpCppBufferSource.tt", ".cpp"));
                     }
                     else
                     {

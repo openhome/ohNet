@@ -71,7 +71,7 @@ copy_build_includes:
 	cp -u ControlPoint/*.h $(inc_build)
 	cp -u ControlPoint/Services/Cpp/Core/*.h $(inc_build)/Cpp/Core
 	cp -u ControlPoint/Services/Cpp/Std/*.h $(inc_build)/Cpp/Std
-	cp -u ControlPoint/Services/Cpp/Core/*C.h $(inc_build)/C
+	cp -u ControlPoint/Services/C/*.h $(inc_build)/C
 	cp -u ControlPoint/Dv/*.h $(inc_build)
 	cp -u ControlPoint/Upnp/*.h $(inc_build)
 	cp -u Device/*.h $(inc_build)

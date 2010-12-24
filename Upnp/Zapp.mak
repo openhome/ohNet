@@ -79,7 +79,7 @@ copy_build_includes:
 	copy ControlPoint\*.h $(inc_build) > nul
 	copy ControlPoint\Services\Cpp\Core\*.h $(inc_build)\Cpp\Core > nul
 	copy ControlPoint\Services\Cpp\Std\*.h $(inc_build)\Cpp\Std > nul
-	copy ControlPoint\Services\Cpp\Core\*C.h $(inc_build)\C > nul
+	copy ControlPoint\Services\C\*.h $(inc_build)\C > nul
 	copy ControlPoint\Dv\*.h $(inc_build) > nul
 	copy ControlPoint\Upnp\*.h $(inc_build) > nul
 	copy Device\*.h $(inc_build) > nul
