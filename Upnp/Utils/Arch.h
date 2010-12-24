@@ -2,7 +2,6 @@
 #define HEADER_LINN_ARCH
 
 #include <ZappTypes.h>
-#include <ArchSpecific.h>
 #include <OsWrapper.h>
 
 namespace Zapp

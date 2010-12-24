@@ -68,8 +68,6 @@ copy_build_includes:
 	cp -u Api/Cpp/Core/*.h $(inc_build)/Cpp/Core
 	cp -u Api/Cpp/Std/*.h $(inc_build)/Cpp/Std
 	cp -u *.h $(inc_build)
-	cp -u Arch/*.h $(inc_build)
-	cp -u Arch/I386/ArchSpecific.h $(inc_build)
 	cp -u ControlPoint/*.h $(inc_build)
 	cp -u ControlPoint/Services/Cpp/Core/*.h $(inc_build)/Cpp/Core
 	cp -u ControlPoint/Services/Cpp/Std/*.h $(inc_build)/Cpp/Std
@@ -89,7 +87,6 @@ copy_build_includes:
 	cp -u Public/C/*.h $(inc_build)/C
 	cp -u Public/Cpp/Std/*.h $(inc_build)/Cpp/Std
 	cp -u Thread/Thread.h $(inc_build)
-	cp -u Timer/Timer.h $(inc_build)
 	cp -u Utils/*.h $(inc_build)
 	cp -u TestFramework/*.h $(inc_build)
 

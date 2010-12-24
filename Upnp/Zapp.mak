@@ -76,8 +76,6 @@ copy_build_includes:
 	copy Api\Cpp\Core\*.h $(inc_build)\Cpp\Core > nul
 	copy Api\Cpp\Std\*.h $(inc_build)\Cpp\Std > nul
 	copy *.h $(inc_build) > nul
-	copy Arch\*.h $(inc_build) > nul
-	copy Arch\I386\ArchSpecific.h $(inc_build) > nul
 	copy ControlPoint\*.h $(inc_build) > nul
 	copy ControlPoint\Services\Cpp\Core\*.h $(inc_build)\Cpp\Core > nul
 	copy ControlPoint\Services\Cpp\Std\*.h $(inc_build)\Cpp\Std > nul
@@ -97,7 +95,6 @@ copy_build_includes:
 	copy Public\C\*.h $(inc_build)\C > nul
 	copy Public\Cpp\Std\*.h $(inc_build)\Cpp\Std > nul
 	copy Thread\Thread.h $(inc_build) > nul
-	copy Timer\Timer.h $(inc_build) > nul
 	copy Utils\*.h $(inc_build) > nul
 	copy TestFramework\*.h $(inc_build) > nul
 

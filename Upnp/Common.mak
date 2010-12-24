@@ -89,7 +89,6 @@ objects_core = $(objdir)Ascii.$(objext) \
 # For simplicity, we make a list of all headers in the project and have all (core) source files depend on them
 headers = $(inc_build)/Ascii.h \
           $(inc_build)/Arch.h \
-          $(inc_build)/ArchSpecific.h \
           $(inc_build)/C/Async.h \
           $(inc_build)/AsyncPrivate.h \
           $(inc_build)/Cpp/Buffer.h \
@@ -177,8 +176,8 @@ $(objdir)AsyncC.$(objext) : Public/C/AsyncC.cpp $(headers)
 	$(compiler)AsyncC.$(objext) -c $(cflags) $(includes) Public/C/AsyncC.cpp
 $(objdir)AsyncPrivate.$(objext) : ControlPoint/AsyncPrivate.cpp $(headers)
 	$(compiler)AsyncPrivate.$(objext) -c $(cflags) $(includes) ControlPoint/AsyncPrivate.cpp
-$(objdir)Buffer.$(objext) : Buffer/Buffer.cpp $(headers)
-	$(compiler)Buffer.$(objext) -c $(cflags) $(includes) Buffer/Buffer.cpp
+$(objdir)Buffer.$(objext) : Public/Cpp/Core/Buffer.cpp $(headers)
+	$(compiler)Buffer.$(objext) -c $(cflags) $(includes) Public/Cpp/Core/Buffer.cpp
 $(objdir)Converter.$(objext) : Utils/Converter.cpp $(headers)
 	$(compiler)Converter.$(objext) -c $(cflags) $(includes) Utils/Converter.cpp
 $(objdir)Discovery.$(objext) : Ssdp/Discovery.cpp $(headers)
@@ -253,8 +252,8 @@ $(objdir)Error.$(objext) : Utils/Error.cpp $(headers)
 	$(compiler)Error.$(objext) -c $(cflags) $(includes) Utils/Error.cpp
 $(objdir)EventUpnp.$(objext) : ControlPoint/Upnp/EventUpnp.cpp $(headers)
 	$(compiler)EventUpnp.$(objext) -c $(cflags) $(includes) ControlPoint/Upnp/EventUpnp.cpp
-$(objdir)Exception.$(objext) : Exception/Exception.cpp $(headers)
-	$(compiler)Exception.$(objext) -c $(cflags) $(includes) Exception/Exception.cpp
+$(objdir)Exception.$(objext) : Public/Cpp/Exception.cpp $(headers)
+	$(compiler)Exception.$(objext) -c $(cflags) $(includes) Public/Cpp/Exception.cpp
 $(objdir)Fifo.$(objext) : Utils/Fifo.cpp $(headers)
 	$(compiler)Fifo.$(objext) -c $(cflags) $(includes) Utils/Fifo.cpp
 $(objdir)Http.$(objext) : Network/Http.cpp $(headers)
@@ -291,8 +290,8 @@ $(objdir)Subscription.$(objext) : Network/Subscription.cpp $(headers)
 	$(compiler)Subscription.$(objext) -c $(cflags) $(includes) Network/Subscription.cpp
 $(objdir)Thread.$(objext) : Thread/Thread.cpp $(headers)
 	$(compiler)Thread.$(objext) -c $(cflags) $(includes) Thread/Thread.cpp
-$(objdir)Timer.$(objext) : Timer/Timer.cpp $(headers)
-	$(compiler)Timer.$(objext) -c $(cflags) $(includes) Timer/Timer.cpp
+$(objdir)Timer.$(objext) : Utils/Timer.cpp $(headers)
+	$(compiler)Timer.$(objext) -c $(cflags) $(includes) Utils/Timer.cpp
 $(objdir)Uri.$(objext) : Utils/Uri.cpp $(headers)
 	$(compiler)Uri.$(objext) -c $(cflags) $(includes) Utils/Uri.cpp
 $(objdir)XmlParser.$(objext) : Utils/XmlParser.cpp $(headers)
@@ -343,8 +342,8 @@ $(objdir)OptionParser.$(objext) : TestFramework/OptionParser.cpp $(headers)
 TestBuffer: $(objdir)TestBuffer.$(exeext) 
 $(objdir)TestBuffer.$(exeext) :  upnp_core $(objdir)TestBuffer.$(objext) TestFramework.$(libext)
 	$(link) $(linkoutput)$(objdir)TestBuffer.$(exeext) $(objdir)TestBuffer.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
-$(objdir)TestBuffer.$(objext) : Buffer/TestBuffer.cpp $(headers)
-	$(compiler)TestBuffer.$(objext) -c $(cflags) $(includes) Buffer/TestBuffer.cpp
+$(objdir)TestBuffer.$(objext) : Public/Cpp/Core/TestBuffer.cpp $(headers)
+	$(compiler)TestBuffer.$(objext) -c $(cflags) $(includes) Public/Cpp/Core/TestBuffer.cpp
 
 TestThread: $(objdir)TestThread.$(exeext) 
 $(objdir)TestThread.$(exeext) :  upnp_core $(objdir)TestThread.$(objext) TestFramework.$(libext)
@@ -379,8 +378,8 @@ $(objdir)TestNetwork.$(objext) : Network/TestNetwork.cpp $(headers)
 TestTimer: $(objdir)TestTimer.$(exeext) 
 $(objdir)TestTimer.$(exeext) :  upnp_core $(objdir)TestTimer.$(objext) TestFramework.$(libext)
 	$(link) $(linkoutput)$(objdir)TestTimer.$(exeext) $(objdir)TestTimer.$(objext) $(objdir)TestFramework.$(libext) $(objdir)$(libprefix)upnp_core.$(libext)
-$(objdir)TestTimer.$(objext) : Timer/TestTimer.cpp $(headers)
-	$(compiler)TestTimer.$(objext) -c $(cflags) $(includes) Timer/TestTimer.cpp
+$(objdir)TestTimer.$(objext) : Utils/TestTimer.cpp $(headers)
+	$(compiler)TestTimer.$(objext) -c $(cflags) $(includes) Utils/TestTimer.cpp
 
 TestSsdpMListen: $(objdir)TestSsdpMListen.$(exeext) 
 $(objdir)TestSsdpMListen.$(exeext) :  upnp_core $(objdir)TestSsdpMListen.$(objext) TestFramework.$(libext)
