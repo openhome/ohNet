@@ -455,6 +455,167 @@ $(objdir)CpOpenhomeOrgTestColorLight1C.$(objext) : $(proxyC)CpOpenhomeOrgTestCol
 $(objdir)CpOpenhomeOrgTestColorLight1Std.$(objext) : $(proxyCppStd)CpOpenhomeOrgTestColorLight1Std.cpp $(headers_proxy) $(inc_build)/Cpp/Std/CpOpenhomeOrgTestColorLight1.h
 	$(compiler)CpOpenhomeOrgTestColorLight1Std.$(objext) -c $(cflags) $(includes) $(proxyCppStd)CpOpenhomeOrgTestColorLight1Std.cpp
 
+proxy_dlls = \
+             CpUpnpOrgAVTransport1Dll \
+             CpUpnpOrgAVTransport2Dll \
+             CpUpnpOrgConnectionManager1Dll \
+             CpUpnpOrgConnectionManager2Dll \
+             CpUpnpOrgContentDirectory1Dll \
+             CpUpnpOrgContentDirectory2Dll \
+             CpUpnpOrgContentDirectory3Dll \
+             CpUpnpOrgRenderingControl1Dll \
+             CpUpnpOrgRenderingControl2Dll \
+             CpUpnpOrgScheduledRecording1Dll \
+             CpUpnpOrgScheduledRecording2Dll \
+             CpUpnpOrgSwitchPower1Dll \
+             CpUpnpOrgDimming1Dll \
+             CpLinnCoUkComponent1Dll \
+             CpLinnCoUkConfiguration1Dll \
+             CpLinnCoUkDebug2Dll \
+             CpLinnCoUkDelay1Dll \
+             CpLinnCoUkDiagnostics1Dll \
+             CpLinnCoUkDs1Dll \
+             CpLinnCoUkInfo1Dll \
+             CpLinnCoUkJukebox1Dll \
+             CpLinnCoUkMediaTime1Dll \
+             CpLinnCoUkPlaylist1Dll \
+             CpLinnCoUkPreamp4Dll \
+             CpLinnCoUkProduct1Dll \
+             CpLinnCoUkProduct2Dll \
+             CpLinnCoUkProduct3Dll \
+             CpLinnCoUkProxyManager1Dll \
+             CpLinnCoUkPtest1Dll \
+             CpLinnCoUkRadio1Dll \
+             CpLinnCoUkTime1Dll \
+             CpLinnCoUkUi2Dll \
+             CpLinnCoUkVolkano1Dll \
+             CpZappOrgTestBasic1Dll \
+             CpZappOrgTestWidget1Dll \
+             CpZappOrgTestWidgetController1Dll \
+             CpZappOrgTestLights1Dll \
+             CpZappOrgTestDimmableLight1Dll \
+             CpOpenhomeOrgTestColorLight1Dll \
+
+CpProxyDlls: $(proxy_dlls)
+
+CpUpnpOrgAVTransport1Dll: $(objdir)$(dllprefix)CpUpnpOrgAVTransport1.$(dllext)
+$(objdir)$(dllprefix)CpUpnpOrgAVTransport1.$(dllext) : ZappUpnpDll $(objdir)CpUpnpOrgAVTransport1C.$(objext) $(objdir)CpUpnpOrgAVTransport1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpUpnpOrgAVTransport1.$(dllext) $(objdir)CpUpnpOrgAVTransport1C.$(objext) $(objdir)CpUpnpOrgAVTransport1.$(objext)
+CpUpnpOrgAVTransport2Dll: $(objdir)$(dllprefix)CpUpnpOrgAVTransport2.$(dllext)
+$(objdir)$(dllprefix)CpUpnpOrgAVTransport2.$(dllext) : ZappUpnpDll $(objdir)CpUpnpOrgAVTransport2C.$(objext) $(objdir)CpUpnpOrgAVTransport2.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpUpnpOrgAVTransport2.$(dllext) $(objdir)CpUpnpOrgAVTransport2C.$(objext) $(objdir)CpUpnpOrgAVTransport2.$(objext)
+CpUpnpOrgConnectionManager1Dll: $(objdir)$(dllprefix)CpUpnpOrgConnectionManager1.$(dllext)
+$(objdir)$(dllprefix)CpUpnpOrgConnectionManager1.$(dllext) : ZappUpnpDll $(objdir)CpUpnpOrgConnectionManager1C.$(objext) $(objdir)CpUpnpOrgConnectionManager1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpUpnpOrgConnectionManager1.$(dllext) $(objdir)CpUpnpOrgConnectionManager1C.$(objext) $(objdir)CpUpnpOrgConnectionManager1.$(objext)
+CpUpnpOrgConnectionManager2Dll: $(objdir)$(dllprefix)CpUpnpOrgConnectionManager2.$(dllext)
+$(objdir)$(dllprefix)CpUpnpOrgConnectionManager2.$(dllext) : ZappUpnpDll $(objdir)CpUpnpOrgConnectionManager2C.$(objext) $(objdir)CpUpnpOrgConnectionManager2.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpUpnpOrgConnectionManager2.$(dllext) $(objdir)CpUpnpOrgConnectionManager2C.$(objext) $(objdir)CpUpnpOrgConnectionManager2.$(objext)
+CpUpnpOrgContentDirectory1Dll: $(objdir)$(dllprefix)CpUpnpOrgContentDirectory1.$(dllext)
+$(objdir)$(dllprefix)CpUpnpOrgContentDirectory1.$(dllext) : ZappUpnpDll $(objdir)CpUpnpOrgContentDirectory1C.$(objext) $(objdir)CpUpnpOrgContentDirectory1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpUpnpOrgContentDirectory1.$(dllext) $(objdir)CpUpnpOrgContentDirectory1C.$(objext) $(objdir)CpUpnpOrgContentDirectory1.$(objext)
+CpUpnpOrgContentDirectory2Dll: $(objdir)$(dllprefix)CpUpnpOrgContentDirectory2.$(dllext)
+$(objdir)$(dllprefix)CpUpnpOrgContentDirectory2.$(dllext) : ZappUpnpDll $(objdir)CpUpnpOrgContentDirectory2C.$(objext) $(objdir)CpUpnpOrgContentDirectory2.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpUpnpOrgContentDirectory2.$(dllext) $(objdir)CpUpnpOrgContentDirectory2C.$(objext) $(objdir)CpUpnpOrgContentDirectory2.$(objext)
+CpUpnpOrgContentDirectory3Dll: $(objdir)$(dllprefix)CpUpnpOrgContentDirectory3.$(dllext)
+$(objdir)$(dllprefix)CpUpnpOrgContentDirectory3.$(dllext) : ZappUpnpDll $(objdir)CpUpnpOrgContentDirectory3C.$(objext) $(objdir)CpUpnpOrgContentDirectory3.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpUpnpOrgContentDirectory3.$(dllext) $(objdir)CpUpnpOrgContentDirectory3C.$(objext) $(objdir)CpUpnpOrgContentDirectory3.$(objext)
+CpUpnpOrgRenderingControl1Dll: $(objdir)$(dllprefix)CpUpnpOrgRenderingControl1.$(dllext)
+$(objdir)$(dllprefix)CpUpnpOrgRenderingControl1.$(dllext) : ZappUpnpDll $(objdir)CpUpnpOrgRenderingControl1C.$(objext) $(objdir)CpUpnpOrgRenderingControl1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpUpnpOrgRenderingControl1.$(dllext) $(objdir)CpUpnpOrgRenderingControl1C.$(objext) $(objdir)CpUpnpOrgRenderingControl1.$(objext)
+CpUpnpOrgRenderingControl2Dll: $(objdir)$(dllprefix)CpUpnpOrgRenderingControl2.$(dllext)
+$(objdir)$(dllprefix)CpUpnpOrgRenderingControl2.$(dllext) : ZappUpnpDll $(objdir)CpUpnpOrgRenderingControl2C.$(objext) $(objdir)CpUpnpOrgRenderingControl2.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpUpnpOrgRenderingControl2.$(dllext) $(objdir)CpUpnpOrgRenderingControl2C.$(objext) $(objdir)CpUpnpOrgRenderingControl2.$(objext)
+CpUpnpOrgScheduledRecording1Dll: $(objdir)$(dllprefix)CpUpnpOrgScheduledRecording1.$(dllext)
+$(objdir)$(dllprefix)CpUpnpOrgScheduledRecording1.$(dllext) : ZappUpnpDll $(objdir)CpUpnpOrgScheduledRecording1C.$(objext) $(objdir)CpUpnpOrgScheduledRecording1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpUpnpOrgScheduledRecording1.$(dllext) $(objdir)CpUpnpOrgScheduledRecording1C.$(objext) $(objdir)CpUpnpOrgScheduledRecording1.$(objext)
+CpUpnpOrgScheduledRecording2Dll: $(objdir)$(dllprefix)CpUpnpOrgScheduledRecording2.$(dllext)
+$(objdir)$(dllprefix)CpUpnpOrgScheduledRecording2.$(dllext) : ZappUpnpDll $(objdir)CpUpnpOrgScheduledRecording2C.$(objext) $(objdir)CpUpnpOrgScheduledRecording2.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpUpnpOrgScheduledRecording2.$(dllext) $(objdir)CpUpnpOrgScheduledRecording2C.$(objext) $(objdir)CpUpnpOrgScheduledRecording2.$(objext)
+CpUpnpOrgSwitchPower1Dll: $(objdir)$(dllprefix)CpUpnpOrgSwitchPower1.$(dllext)
+$(objdir)$(dllprefix)CpUpnpOrgSwitchPower1.$(dllext) : ZappUpnpDll $(objdir)CpUpnpOrgSwitchPower1C.$(objext) $(objdir)CpUpnpOrgSwitchPower1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpUpnpOrgSwitchPower1.$(dllext) $(objdir)CpUpnpOrgSwitchPower1C.$(objext) $(objdir)CpUpnpOrgSwitchPower1.$(objext)
+CpUpnpOrgDimming1Dll: $(objdir)$(dllprefix)CpUpnpOrgDimming1.$(dllext)
+$(objdir)$(dllprefix)CpUpnpOrgDimming1.$(dllext) : ZappUpnpDll $(objdir)CpUpnpOrgDimming1C.$(objext) $(objdir)CpUpnpOrgDimming1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpUpnpOrgDimming1.$(dllext) $(objdir)CpUpnpOrgDimming1C.$(objext) $(objdir)CpUpnpOrgDimming1.$(objext)
+CpLinnCoUkComponent1Dll: $(objdir)$(dllprefix)CpLinnCoUkComponent1.$(dllext)
+$(objdir)$(dllprefix)CpLinnCoUkComponent1.$(dllext) : ZappUpnpDll $(objdir)CpLinnCoUkComponent1C.$(objext) $(objdir)CpLinnCoUkComponent1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpLinnCoUkComponent1.$(dllext) $(objdir)CpLinnCoUkComponent1C.$(objext) $(objdir)CpLinnCoUkComponent1.$(objext)
+CpLinnCoUkConfiguration1Dll: $(objdir)$(dllprefix)CpLinnCoUkConfiguration1.$(dllext)
+$(objdir)$(dllprefix)CpLinnCoUkConfiguration1.$(dllext) : ZappUpnpDll $(objdir)CpLinnCoUkConfiguration1C.$(objext) $(objdir)CpLinnCoUkConfiguration1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpLinnCoUkConfiguration1.$(dllext) $(objdir)CpLinnCoUkConfiguration1C.$(objext) $(objdir)CpLinnCoUkConfiguration1.$(objext)
+CpLinnCoUkDebug2Dll: $(objdir)$(dllprefix)CpLinnCoUkDebug2.$(dllext)
+$(objdir)$(dllprefix)CpLinnCoUkDebug2.$(dllext) : ZappUpnpDll $(objdir)CpLinnCoUkDebug2C.$(objext) $(objdir)CpLinnCoUkDebug2.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpLinnCoUkDebug2.$(dllext) $(objdir)CpLinnCoUkDebug2C.$(objext) $(objdir)CpLinnCoUkDebug2.$(objext)
+CpLinnCoUkDelay1Dll: $(objdir)$(dllprefix)CpLinnCoUkDelay1.$(dllext)
+$(objdir)$(dllprefix)CpLinnCoUkDelay1.$(dllext) : ZappUpnpDll $(objdir)CpLinnCoUkDelay1C.$(objext) $(objdir)CpLinnCoUkDelay1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpLinnCoUkDelay1.$(dllext) $(objdir)CpLinnCoUkDelay1C.$(objext) $(objdir)CpLinnCoUkDelay1.$(objext)
+CpLinnCoUkDiagnostics1Dll: $(objdir)$(dllprefix)CpLinnCoUkDiagnostics1.$(dllext)
+$(objdir)$(dllprefix)CpLinnCoUkDiagnostics1.$(dllext) : ZappUpnpDll $(objdir)CpLinnCoUkDiagnostics1C.$(objext) $(objdir)CpLinnCoUkDiagnostics1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpLinnCoUkDiagnostics1.$(dllext) $(objdir)CpLinnCoUkDiagnostics1C.$(objext) $(objdir)CpLinnCoUkDiagnostics1.$(objext)
+CpLinnCoUkDs1Dll: $(objdir)$(dllprefix)CpLinnCoUkDs1.$(dllext)
+$(objdir)$(dllprefix)CpLinnCoUkDs1.$(dllext) : ZappUpnpDll $(objdir)CpLinnCoUkDs1C.$(objext) $(objdir)CpLinnCoUkDs1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpLinnCoUkDs1.$(dllext) $(objdir)CpLinnCoUkDs1C.$(objext) $(objdir)CpLinnCoUkDs1.$(objext)
+CpLinnCoUkInfo1Dll: $(objdir)$(dllprefix)CpLinnCoUkInfo1.$(dllext)
+$(objdir)$(dllprefix)CpLinnCoUkInfo1.$(dllext) : ZappUpnpDll $(objdir)CpLinnCoUkInfo1C.$(objext) $(objdir)CpLinnCoUkInfo1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpLinnCoUkInfo1.$(dllext) $(objdir)CpLinnCoUkInfo1C.$(objext) $(objdir)CpLinnCoUkInfo1.$(objext)
+CpLinnCoUkJukebox1Dll: $(objdir)$(dllprefix)CpLinnCoUkJukebox1.$(dllext)
+$(objdir)$(dllprefix)CpLinnCoUkJukebox1.$(dllext) : ZappUpnpDll $(objdir)CpLinnCoUkJukebox1C.$(objext) $(objdir)CpLinnCoUkJukebox1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpLinnCoUkJukebox1.$(dllext) $(objdir)CpLinnCoUkJukebox1C.$(objext) $(objdir)CpLinnCoUkJukebox1.$(objext)
+CpLinnCoUkMediaTime1Dll: $(objdir)$(dllprefix)CpLinnCoUkMediaTime1.$(dllext)
+$(objdir)$(dllprefix)CpLinnCoUkMediaTime1.$(dllext) : ZappUpnpDll $(objdir)CpLinnCoUkMediaTime1C.$(objext) $(objdir)CpLinnCoUkMediaTime1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpLinnCoUkMediaTime1.$(dllext) $(objdir)CpLinnCoUkMediaTime1C.$(objext) $(objdir)CpLinnCoUkMediaTime1.$(objext)
+CpLinnCoUkPlaylist1Dll: $(objdir)$(dllprefix)CpLinnCoUkPlaylist1.$(dllext)
+$(objdir)$(dllprefix)CpLinnCoUkPlaylist1.$(dllext) : ZappUpnpDll $(objdir)CpLinnCoUkPlaylist1C.$(objext) $(objdir)CpLinnCoUkPlaylist1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpLinnCoUkPlaylist1.$(dllext) $(objdir)CpLinnCoUkPlaylist1C.$(objext) $(objdir)CpLinnCoUkPlaylist1.$(objext)
+CpLinnCoUkPreamp4Dll: $(objdir)$(dllprefix)CpLinnCoUkPreamp4.$(dllext)
+$(objdir)$(dllprefix)CpLinnCoUkPreamp4.$(dllext) : ZappUpnpDll $(objdir)CpLinnCoUkPreamp4C.$(objext) $(objdir)CpLinnCoUkPreamp4.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpLinnCoUkPreamp4.$(dllext) $(objdir)CpLinnCoUkPreamp4C.$(objext) $(objdir)CpLinnCoUkPreamp4.$(objext)
+CpLinnCoUkProduct1Dll: $(objdir)$(dllprefix)CpLinnCoUkProduct1.$(dllext)
+$(objdir)$(dllprefix)CpLinnCoUkProduct1.$(dllext) : ZappUpnpDll $(objdir)CpLinnCoUkProduct1C.$(objext) $(objdir)CpLinnCoUkProduct1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpLinnCoUkProduct1.$(dllext) $(objdir)CpLinnCoUkProduct1C.$(objext) $(objdir)CpLinnCoUkProduct1.$(objext)
+CpLinnCoUkProduct2Dll: $(objdir)$(dllprefix)CpLinnCoUkProduct2.$(dllext)
+$(objdir)$(dllprefix)CpLinnCoUkProduct2.$(dllext) : ZappUpnpDll $(objdir)CpLinnCoUkProduct2C.$(objext) $(objdir)CpLinnCoUkProduct2.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpLinnCoUkProduct2.$(dllext) $(objdir)CpLinnCoUkProduct2C.$(objext) $(objdir)CpLinnCoUkProduct2.$(objext)
+CpLinnCoUkProduct3Dll: $(objdir)$(dllprefix)CpLinnCoUkProduct3.$(dllext)
+$(objdir)$(dllprefix)CpLinnCoUkProduct3.$(dllext) : ZappUpnpDll $(objdir)CpLinnCoUkProduct3C.$(objext) $(objdir)CpLinnCoUkProduct3.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpLinnCoUkProduct3.$(dllext) $(objdir)CpLinnCoUkProduct3C.$(objext) $(objdir)CpLinnCoUkProduct3.$(objext)
+CpLinnCoUkProxyManager1Dll: $(objdir)$(dllprefix)CpLinnCoUkProxyManager1.$(dllext)
+$(objdir)$(dllprefix)CpLinnCoUkProxyManager1.$(dllext) : ZappUpnpDll $(objdir)CpLinnCoUkProxyManager1C.$(objext) $(objdir)CpLinnCoUkProxyManager1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpLinnCoUkProxyManager1.$(dllext) $(objdir)CpLinnCoUkProxyManager1C.$(objext) $(objdir)CpLinnCoUkProxyManager1.$(objext)
+CpLinnCoUkPtest1Dll: $(objdir)$(dllprefix)CpLinnCoUkPtest1.$(dllext)
+$(objdir)$(dllprefix)CpLinnCoUkPtest1.$(dllext) : ZappUpnpDll $(objdir)CpLinnCoUkPtest1C.$(objext) $(objdir)CpLinnCoUkPtest1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpLinnCoUkPtest1.$(dllext) $(objdir)CpLinnCoUkPtest1C.$(objext) $(objdir)CpLinnCoUkPtest1.$(objext)
+CpLinnCoUkRadio1Dll: $(objdir)$(dllprefix)CpLinnCoUkRadio1.$(dllext)
+$(objdir)$(dllprefix)CpLinnCoUkRadio1.$(dllext) : ZappUpnpDll $(objdir)CpLinnCoUkRadio1C.$(objext) $(objdir)CpLinnCoUkRadio1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpLinnCoUkRadio1.$(dllext) $(objdir)CpLinnCoUkRadio1C.$(objext) $(objdir)CpLinnCoUkRadio1.$(objext)
+CpLinnCoUkTime1Dll: $(objdir)$(dllprefix)CpLinnCoUkTime1.$(dllext)
+$(objdir)$(dllprefix)CpLinnCoUkTime1.$(dllext) : ZappUpnpDll $(objdir)CpLinnCoUkTime1C.$(objext) $(objdir)CpLinnCoUkTime1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpLinnCoUkTime1.$(dllext) $(objdir)CpLinnCoUkTime1C.$(objext) $(objdir)CpLinnCoUkTime1.$(objext)
+CpLinnCoUkUi2Dll: $(objdir)$(dllprefix)CpLinnCoUkUi2.$(dllext)
+$(objdir)$(dllprefix)CpLinnCoUkUi2.$(dllext) : ZappUpnpDll $(objdir)CpLinnCoUkUi2C.$(objext) $(objdir)CpLinnCoUkUi2.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpLinnCoUkUi2.$(dllext) $(objdir)CpLinnCoUkUi2C.$(objext) $(objdir)CpLinnCoUkUi2.$(objext)
+CpLinnCoUkVolkano1Dll: $(objdir)$(dllprefix)CpLinnCoUkVolkano1.$(dllext)
+$(objdir)$(dllprefix)CpLinnCoUkVolkano1.$(dllext) : ZappUpnpDll $(objdir)CpLinnCoUkVolkano1C.$(objext) $(objdir)CpLinnCoUkVolkano1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpLinnCoUkVolkano1.$(dllext) $(objdir)CpLinnCoUkVolkano1C.$(objext) $(objdir)CpLinnCoUkVolkano1.$(objext)
+CpZappOrgTestBasic1Dll: $(objdir)$(dllprefix)CpZappOrgTestBasic1.$(dllext)
+$(objdir)$(dllprefix)CpZappOrgTestBasic1.$(dllext) : ZappUpnpDll $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpZappOrgTestBasic1.$(dllext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1.$(objext)
+CpZappOrgTestWidget1Dll: $(objdir)$(dllprefix)CpZappOrgTestWidget1.$(dllext)
+$(objdir)$(dllprefix)CpZappOrgTestWidget1.$(dllext) : ZappUpnpDll $(objdir)CpZappOrgTestWidget1C.$(objext) $(objdir)CpZappOrgTestWidget1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpZappOrgTestWidget1.$(dllext) $(objdir)CpZappOrgTestWidget1C.$(objext) $(objdir)CpZappOrgTestWidget1.$(objext)
+CpZappOrgTestWidgetController1Dll: $(objdir)$(dllprefix)CpZappOrgTestWidgetController1.$(dllext)
+$(objdir)$(dllprefix)CpZappOrgTestWidgetController1.$(dllext) : ZappUpnpDll $(objdir)CpZappOrgTestWidgetController1C.$(objext) $(objdir)CpZappOrgTestWidgetController1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpZappOrgTestWidgetController1.$(dllext) $(objdir)CpZappOrgTestWidgetController1C.$(objext) $(objdir)CpZappOrgTestWidgetController1.$(objext)
+CpZappOrgTestLights1Dll: $(objdir)$(dllprefix)CpZappOrgTestLights1.$(dllext)
+$(objdir)$(dllprefix)CpZappOrgTestLights1.$(dllext) : ZappUpnpDll $(objdir)CpZappOrgTestLights1C.$(objext) $(objdir)CpZappOrgTestLights1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpZappOrgTestLights1.$(dllext) $(objdir)CpZappOrgTestLights1C.$(objext) $(objdir)CpZappOrgTestLights1.$(objext)
+CpZappOrgTestDimmableLight1Dll: $(objdir)$(dllprefix)CpZappOrgTestDimmableLight1.$(dllext)
+$(objdir)$(dllprefix)CpZappOrgTestDimmableLight1.$(dllext) : ZappUpnpDll $(objdir)CpZappOrgTestDimmableLight1C.$(objext) $(objdir)CpZappOrgTestDimmableLight1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpZappOrgTestDimmableLight1.$(dllext) $(objdir)CpZappOrgTestDimmableLight1C.$(objext) $(objdir)CpZappOrgTestDimmableLight1.$(objext)
+CpOpenhomeOrgTestColorLight1Dll: $(objdir)$(dllprefix)CpOpenhomeOrgTestColorLight1.$(dllext)
+$(objdir)$(dllprefix)CpOpenhomeOrgTestColorLight1.$(dllext) : ZappUpnpDll $(objdir)CpOpenhomeOrgTestColorLight1C.$(objext) $(objdir)CpOpenhomeOrgTestColorLight1.$(objext)
+	$(link_dll_service) $(linkoutput)$(objdir)$(dllprefix)CpOpenhomeOrgTestColorLight1.$(dllext) $(objdir)CpOpenhomeOrgTestColorLight1C.$(objext) $(objdir)CpOpenhomeOrgTestColorLight1.$(objext)
+
 # Proxy assemblies for .NET:
 
 CpProxyDotNetAssemblies: $(proxy_dotnet_assemblies_with_path)
