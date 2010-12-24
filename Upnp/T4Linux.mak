@@ -40,7 +40,7 @@ exesources =	T4/TextTemplating/TextTransform/AssemblyInfo.cs \
                	T4/TextTemplating/TextTransform/TextTransform.cs
 
 $(toolsDir)ZappGen.exe : $(toolsDir)TextTransform.exe T4/ZappGen.cs
-	@if not exist $(toolsDir) mkdir $(toolsDir)
+	@mkdir -p $(toolsDir)
 	gmcs /t:exe /out:$(toolsDir)ZappGen.exe T4/ZappGen.cs T4/AssemblyInfo.cs
 
 $(toolsDir)TextTransform.exe : $(toolsDir)Mono.TextTemplating.dll $(exesources)
