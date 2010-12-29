@@ -42,19 +42,28 @@
 
     Document u = new Document(TemplateArgument("xml"));
 #>
-#include "Dv<#=fileName#>C.h"
 #include "Dv<#=fileName#>.h"
 #include <ZappTypes.h>
 #include <Buffer.h>
 #include <C/DviDeviceC.h>
+#include <DvProvider.h>
 #include <C/Zapp.h>
+#include <ZappTypes.h>
+#include <Core/DvInvocationResponse.h>
+#include <Service.h>
+#include <FunctorDviInvocation.h>
 
 using namespace Zapp;
 
-class <#=className#>C : public <#=className#>
+class <#=className#>C : public DvProvider
 {
 public:
-    <#=className#>C(DvDevice& aDevice);
+    <#=className#>C(DvDeviceC aDevice);
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+    TBool SetProperty<#=s.name#>(<#=inArgParamType[s.type]#> aValue);
+    void GetProperty<#=s.name#>(<#=outArgTypeProperty[s.type]#> aValue);
+<#  } #>
 <#  foreach (Method a in u.methods) #>
 <#  { #>
     void EnableAction<#=a.name#>(<#=callbackPrefix#><#=a.name#> aCallback, void* aPtr);
@@ -62,7 +71,7 @@ public:
 private:
 <#  foreach (Method a in u.methods) #>
 <#  { #>
-    void <#=a.name#>(IInvocationResponse& aResponse, TUint aVersion<#=ActionArgs(a)#>);
+    void Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion);
 <#  } #>
 private:
 <#  foreach (Method a in u.methods) #>
@@ -70,12 +79,55 @@ private:
     <#=callbackPrefix#><#=a.name#> iCallback<#=a.name#>;
     void* iPtr<#=a.name#>;
 <#  } #>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+    <#=propertyType[s.type]#>* iProperty<#=s.name#>;
+<#  } #>
 };
 
-<#=className#>C::<#=className#>C(DvDevice& aDevice)
-    : <#=className#>(aDevice)
+<#=className#>C::<#=className#>C(DvDeviceC aDevice)
+    : DvProvider(DviDeviceC::DeviceFromHandle(aDevice)->Device(), "<#=domain#>", "<#=type#>", <#=version#>)
 {
+    <#=DeclareAllowedValuesForProperties(u)#>
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+<#      if (s.values.Count > 0) #>
+<#      { #>
+    index = 0;
+    allowedValues = new TChar*[<#=s.values.Count#>];
+<#          foreach (string val in s.values) #>
+<#          { #>
+    allowedValues[index++] = (TChar*)"<#=val#>";
+<#          } #>
+<#      } #>
+    iProperty<#=s.name#> = new <#=propertyType[s.type]#>(new <#=paramType[s.type]#>("<#=s.name#>"<#=ParameterAllowedValues(s)#>));
+<#      if (s.values.Count > 0) #>
+<#      { #>
+    delete[] allowedValues;
+<#      } #>
+    iService->AddProperty(iProperty<#=s.name#>); // passes ownership
+<#  } #>
 }
+<#  foreach (Variable s in u.evented) #>
+<#  { #>
+
+TBool <#=className#>C::SetProperty<#=s.name#>(<#=inArgParamType[s.type]#> aValue)
+{
+    return <#=propertySetter[s.type]#>(*iProperty<#=s.name#>, aValue);
+}
+
+void <#=className#>C::GetProperty<#=s.name#>(<#=outArgTypeProperty[s.type]#> aValue)
+{
+<#      if (s.type == "string" || s.type == "bin.base64" || s.type == "uri") #>
+<#      { #>
+    aValue.Set(iProperty<#=s.name#>->Value());
+<#      } #>
+<#      else #>
+<#      { #>
+    aValue = iProperty<#=s.name#>->Value();
+<#      } #>
+}
+<#  } #>
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
@@ -83,14 +135,79 @@ void <#=className#>C::EnableAction<#=a.name#>(<#=callbackPrefix#><#=a.name#> aCa
 {
     iCallback<#=a.name#> = aCallback;
     iPtr<#=a.name#> = aPtr;
-    <#=className#>::EnableAction<#=a.name#>();
+    Zapp::Action* action = new Zapp::Action("<#=a.name#>");<#=DeclareAllowedValuesForMethod(a)#>
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+<#          if (RelatedVariableIsEvented(i, u)) #>
+<#          { #>
+    action->AddInputParameter(new ParameterRelated("<#=i.name#>", *iProperty<#=i.variable.name#>));
+<#          } #>
+<#          else #>
+<#          { #>
+<#              if (i.variable.values.Count > 0) #>
+<#              { #>
+    index = 0;
+    allowedValues = new TChar*[<#=i.variable.values.Count#>];
+<#                  foreach (string val in i.variable.values) #>
+<#                  { #>
+    allowedValues[index++] = (TChar*)"<#=val#>";
+<#                  } #>
+<#              } #>
+    action->AddInputParameter(new <#=paramType[i.variable.type]#>("<#=i.name#>"<#=ParameterAllowedValues(i.variable)#>));
+<#              if (i.variable.values.Count > 0) #>
+<#              { #>
+    delete[] allowedValues;
+<#              } #>
+<#          } #>
+<#      } #>
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+<#          if (RelatedVariableIsEvented(o, u)) #>
+<#          { #>
+    action->AddOutputParameter(new ParameterRelated("<#=o.name#>", *iProperty<#=o.variable.name#>));
+<#          } #>
+<#          else #>
+<#          { #>
+<#              if (o.variable.values.Count > 0) #>
+<#              { #>
+    index = 0;
+    allowedValues = new TChar*[<#=o.variable.values.Count#>];
+<#                  foreach (string val in o.variable.values) #>
+<#                  { #>
+    allowedValues[index++] = (TChar*)"<#=val#>";
+<#                  } #>
+<#              } #>
+    action->AddOutputParameter(new <#=paramType[o.variable.type]#>("<#=o.name#>"<#=ParameterAllowedValues(o.variable)#>));
+<#              if (o.variable.values.Count > 0) #>
+<#              { #>
+    delete[] allowedValues;
+<#              } #>
+<#          } #>
+<#      } #>
+    FunctorDviInvocation functor = MakeFunctorDviInvocation(*this, &<#=className#>C::Do<#=a.name#>);
+    iService->AddAction(action, functor);
 }
 <#  } #>
 <#  foreach (Method a in u.methods) #>
 <#  { #>
 
-void <#=className#>C::<#=a.name#>(IInvocationResponse& aResponse, TUint aVersion<#=ActionArgs(a)#>)
+void <#=className#>C::Do<#=a.name#>(IDviInvocation& aInvocation, TUint aVersion)
 {
+    aInvocation.InvocationReadStart();
+<#      foreach (Argument i in a.inargs) #>
+<#      { #>
+<#          if (i.variable.type=="string" || i.variable.type=="bin.base64" || i.variable.type=="uri") #>
+<#          { #>
+    <#=inArgType[i.variable.type]#> <#=i.name#>;
+    aInvocation.<#=invReadType[i.variable.type]#>("<#=i.name#>", <#=i.name#>);
+<#          } #>
+<#          else #>
+<#          { #>
+    <#=inArgType[i.variable.type]#> <#=i.name#> = aInvocation.<#=invReadType[i.variable.type]#>("<#=i.name#>");
+<#          } #>
+<#      } #>
+    aInvocation.InvocationReadEnd();
+    InvocationResponse resp(aInvocation);
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
 <#          if (o.variable.type=="bin.base64") #>
@@ -113,10 +230,14 @@ void <#=className#>C::<#=a.name#>(IInvocationResponse& aResponse, TUint aVersion
 <#      } #>
     ASSERT(iCallback<#=a.name#> != NULL);
     if (0 != iCallback<#=a.name#>(iPtr<#=a.name#>, aVersion<#=CallbackArgs(a)#>)) {
-        aResponse.Error(502, Brn("Action failed"));
+        resp.Error(502, Brn("Action failed"));
         return;
     }
-    aResponse.Start();
+<#      foreach (Argument o in a.outargs) #>
+<#      { #>
+    <#=invRespType[o.variable.type]#> resp<#=o.name#>(aInvocation, "<#=o.name#>");
+<#      } #>
+    resp.Start();
 <#      foreach (Argument o in a.outargs) #>
 <#      { #>
 <#          if (o.variable.type=="bin.base64") #>
@@ -124,26 +245,26 @@ void <#=className#>C::<#=a.name#>(IInvocationResponse& aResponse, TUint aVersion
     Brh buf<#=o.name#>;
     buf<#=o.name#>.Set((const TByte*)<#=o.name#>, <#=o.name#>Len);
     ZappFreeExternal(<#=o.name#>);
-    a<#=o.name#>.Write(buf<#=o.name#>);
-    a<#=o.name#>.WriteFlush();
+    resp<#=o.name#>.Write(buf<#=o.name#>);
+    resp<#=o.name#>.WriteFlush();
 <#          } #>
 <#          else if (o.variable.type=="string" || o.variable.type=="uri") #>
 <#          { #>
     Brhz buf<#=o.name#>((const TChar*)<#=o.name#>);
     ZappFreeExternal(<#=o.name#>);
-    a<#=o.name#>.Write(buf<#=o.name#>);
-    a<#=o.name#>.WriteFlush();
+    resp<#=o.name#>.Write(buf<#=o.name#>);
+    resp<#=o.name#>.WriteFlush();
 <#          } #>
 <#          else if (o.variable.type=="boolean") #>
 <#          { #>
-    a<#=o.name#>.Write((<#=o.name#>!=0));
+    resp<#=o.name#>.Write((<#=o.name#>!=0));
 <#          } #>
 <#          else #>
 <#          { #>
-    a<#=o.name#>.Write(<#=o.name#>);
+    resp<#=o.name#>.Write(<#=o.name#>);
 <#          } #>
 <#      } #>
-    aResponse.End();
+    resp.End();
 }
 <#  } #>
 
@@ -151,7 +272,7 @@ void <#=className#>C::<#=a.name#>(IInvocationResponse& aResponse, TUint aVersion
 
 THandle <#=className#>Create(DvDeviceC aDevice)
 {
-	return new <#=className#>C(*(DviDeviceC::DeviceFromHandle(aDevice)));
+	return new <#=className#>C(aDevice);
 }
 
 void <#=className#>Destroy(THandle aProvider)
@@ -231,13 +352,20 @@ void <#=className#>GetProperty<#=s.name#>(THandle aProvider, <#=PropertyOutArgs(
 
 <#+
 Dictionary<string,string> inArgType = new Dictionary<string,string>();
+Dictionary<string,string> inArgParamType = new Dictionary<string,string>();
 Dictionary<string,string> outArgType = new Dictionary<string,string>();
 Dictionary<string,string> propInArgType = new Dictionary<string,string>();
+Dictionary<string,string> invReadType = new Dictionary<string,string>();
+Dictionary<string,string> invRespType = new Dictionary<string,string>();
 Dictionary<string,string> invRespParamType = new Dictionary<string,string>();
+Dictionary<string,string> outArgTypeProperty = new Dictionary<string,string>();
+Dictionary<string,string> paramType = new Dictionary<string,string>();
+Dictionary<string,string> propertyType = new Dictionary<string,string>();
+Dictionary<string,string> propertySetter = new Dictionary<string,string>();
 
 void Initialise()
 {
-    inArgType.Add("string", "const Brx&");
+    inArgType.Add("string", "Brhz");
     inArgType.Add("ui1", "TUint");
     inArgType.Add("ui2", "TUint");
     inArgType.Add("ui4", "TUint");
@@ -245,8 +373,19 @@ void Initialise()
     inArgType.Add("i1", "TInt");
     inArgType.Add("i2", "TInt");
     inArgType.Add("i4", "TInt");
-    inArgType.Add("bin.base64", "const Brx&");
-    inArgType.Add("uri", "const Brx&");
+    inArgType.Add("bin.base64", "Brh");
+    inArgType.Add("uri", "Brhz");
+
+    inArgParamType.Add("string", "const Brx&");
+    inArgParamType.Add("ui1", "TUint");
+    inArgParamType.Add("ui2", "TUint");
+    inArgParamType.Add("ui4", "TUint");
+    inArgParamType.Add("boolean", "TBool");
+    inArgParamType.Add("i1", "TInt");
+    inArgParamType.Add("i2", "TInt");
+    inArgParamType.Add("i4", "TInt");
+    inArgParamType.Add("bin.base64", "const Brx&");
+    inArgParamType.Add("uri", "const Brx&");
 
     outArgType.Add("string", "char*");
     outArgType.Add("ui1", "uint32_t");
@@ -270,6 +409,28 @@ void Initialise()
     propInArgType.Add("bin.base64", "const char*");
     propInArgType.Add("uri", "const char*");
 
+    invReadType.Add("string", "InvocationReadString");
+    invReadType.Add("ui1", "InvocationReadUint");
+    invReadType.Add("ui2", "InvocationReadUint");
+    invReadType.Add("ui4", "InvocationReadUint");
+    invReadType.Add("boolean", "InvocationReadBool");
+    invReadType.Add("i1", "InvocationReadInt");
+    invReadType.Add("i2", "InvocationReadInt");
+    invReadType.Add("i4", "InvocationReadInt");
+    invReadType.Add("bin.base64", "InvocationReadBinary");
+    invReadType.Add("uri", "InvocationReadString");
+
+    invRespType.Add("string", "InvocationResponseString");
+    invRespType.Add("ui1", "InvocationResponseUint");
+    invRespType.Add("ui2", "InvocationResponseUint");
+    invRespType.Add("ui4", "InvocationResponseUint");
+    invRespType.Add("boolean", "InvocationResponseBool");
+    invRespType.Add("i1", "InvocationResponseInt");
+    invRespType.Add("i2", "InvocationResponseInt");
+    invRespType.Add("i4", "InvocationResponseInt");
+    invRespType.Add("bin.base64", "InvocationResponseBinary");
+    invRespType.Add("uri", "InvocationResponseString");
+
     invRespParamType.Add("string", "IInvocationResponseString");
     invRespParamType.Add("ui1", "IInvocationResponseUint");
     invRespParamType.Add("ui2", "IInvocationResponseUint");
@@ -280,6 +441,50 @@ void Initialise()
     invRespParamType.Add("i4", "IInvocationResponseInt");
     invRespParamType.Add("bin.base64", "IInvocationResponseBinary");
     invRespParamType.Add("uri", "IInvocationResponseString");
+
+    outArgTypeProperty.Add("ui1", "TUint&");
+    outArgTypeProperty.Add("ui2", "TUint&");
+    outArgTypeProperty.Add("ui4", "TUint&");
+    outArgTypeProperty.Add("boolean", "TBool&");
+    outArgTypeProperty.Add("i1", "TInt&");
+    outArgTypeProperty.Add("i2", "TInt&");
+    outArgTypeProperty.Add("i4", "TInt&");
+    outArgTypeProperty.Add("string", "Brhz&");
+    outArgTypeProperty.Add("bin.base64", "Brh&");
+    outArgTypeProperty.Add("uri", "Brhz&");
+
+    paramType.Add("string", "ParameterString");
+    paramType.Add("ui1", "ParameterUint");
+    paramType.Add("ui2", "ParameterUint");
+    paramType.Add("ui4", "ParameterUint");
+    paramType.Add("boolean", "ParameterBool");
+    paramType.Add("i1", "ParameterInt");
+    paramType.Add("i2", "ParameterInt");
+    paramType.Add("i4", "ParameterInt");
+    paramType.Add("bin.base64", "ParameterBinary");
+    paramType.Add("uri", "ParameterString");
+
+    propertyType.Add("ui1", "PropertyUint");
+    propertyType.Add("ui2", "PropertyUint");
+    propertyType.Add("ui4", "PropertyUint");
+    propertyType.Add("boolean", "PropertyBool");
+    propertyType.Add("i1", "PropertyInt");
+    propertyType.Add("i2", "PropertyInt");
+    propertyType.Add("i4", "PropertyInt");
+    propertyType.Add("string", "PropertyString");
+    propertyType.Add("bin.base64", "PropertyBinary");
+    propertyType.Add("uri", "PropertyString");
+
+    propertySetter.Add("string", "SetPropertyString");
+    propertySetter.Add("ui1", "SetPropertyUint");
+    propertySetter.Add("ui2", "SetPropertyUint");
+    propertySetter.Add("ui4", "SetPropertyUint");
+    propertySetter.Add("boolean", "SetPropertyBool");
+    propertySetter.Add("i1", "SetPropertyInt");
+    propertySetter.Add("i2", "SetPropertyInt");
+    propertySetter.Add("i4", "SetPropertyInt");
+    propertySetter.Add("bin.base64", "SetPropertyBinary");
+    propertySetter.Add("uri", "SetPropertyString");
 }
 
 string ActionArgs(Method a)
@@ -323,15 +528,15 @@ string CallbackArgs(Method a)
         }
         if (i.variable.type=="bin.base64")
         {
-            result += "(const char*)a" + i.name + ".Ptr(), a" + i.name + ".Bytes()";
+            result += "(const char*)" + i.name + ".Ptr(), " + i.name + ".Bytes()";
         }
         else if (i.variable.type=="string" || i.variable.type=="uri")
         {
-            result += "(const char*)a" + i.name + ".Ptr()";
+            result += "(const char*)" + i.name + ".Ptr()";
         }
         else
         {
-            result += "a" + i.name;
+            result += i.name;
         }
 
     }
@@ -372,6 +577,77 @@ string PropertyOutArgs(Variable s)
         result += ", uint32_t* aValueLen";
     }
     return result;
+}
+
+string DeclareAllowedValues()
+{
+    return "\n    TChar** allowedValues;\n    TUint index;";
+}
+
+string DeclareAllowedValuesForProperties(Document u)
+{
+    foreach (Variable s in u.evented)
+    {
+        if (s.values.Count > 0)
+        {
+            return DeclareAllowedValues();
+        }
+    }
+    return "";
+}
+
+string DeclareAllowedValuesForMethod(Method a)
+{
+    foreach (Argument i in a.inargs)
+    {
+        if (i.variable.values.Count > 0 && !i.variable.evented)
+        {
+            return DeclareAllowedValues();
+        }
+    }
+    foreach (Argument o in a.outargs)
+    {
+        if (o.variable.values.Count > 0 && !o.variable.evented)
+        {
+            return DeclareAllowedValues();
+        }
+    }
+    return "";
+}
+
+string ParameterAllowedValues(Variable v)
+{
+    string result = "";
+    if (v.values.Count > 0)
+    {
+        result += ", allowedValues, ";
+        result += v.values.Count;
+    }
+    else if (v.minspecified)
+    {
+        result += ", ";
+        result += v.min;
+        result += ", ";
+        result += v.max;
+        if (v.stepspecified)
+        {
+            result += ", ";
+            result += v.step;
+        }
+    }
+    return(result);
+}
+
+bool RelatedVariableIsEvented(Argument arg, Document u)
+{
+    foreach (Variable v in u.evented)
+    {
+        if (v.name == arg.related)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 string TemplateArgument(string aName)

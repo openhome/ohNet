@@ -193,15 +193,11 @@ namespace Zapp
                     {
                         templates.Add(new TemplateFile("CpUpnpCHeader.tt", ".h"));
                         templates.Add(new TemplateFile("CpUpnpCSource.tt", ".cpp", "C"));
-                        //templates.Add(new TemplateFile("CpUpnpCppHeader.tt", ".h", "", "-a buffer:1"));
-                        //templates.Add(new TemplateFile("CpUpnpCppBufferSource.tt", ".cpp"));
                     }
                     else
                     {
-                        templates.Add(new TemplateFile("DvUpnpCHeader.tt", ".h", "C"));
+                        templates.Add(new TemplateFile("DvUpnpCHeader.tt", ".h"));
                         templates.Add(new TemplateFile("DvUpnpCSource.tt", ".cpp", "C"));
-                        templates.Add(new TemplateFile("DvUpnpCppCoreHeader.tt", ".h"));
-                        templates.Add(new TemplateFile("DvUpnpCppCoreSource.tt", ".cpp"));
                     }
                     break;
                 case ETargetLanguage.eCs:

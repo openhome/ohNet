@@ -1,14 +1,12 @@
 
 proxyCppCore = ControlPoint$(dirsep)Services$(dirsep)Cpp$(dirsep)Core$(dirsep)
 proxyC = ControlPoint$(dirsep)Services$(dirsep)C$(dirsep)
-#proxyC = $(proxyCppCore)
 proxyCppStd = ControlPoint$(dirsep)Services$(dirsep)Cpp$(dirsep)Std$(dirsep)
 proxyCs = ControlPoint$(dirsep)Services$(dirsep)Cs$(dirsep)
 proxyJs = ControlPoint$(dirsep)Services$(dirsep)Js$(dirsep)
 deviceCppCore = Device$(dirsep)Services$(dirsep)Cpp$(dirsep)Core$(dirsep)
 deviceCppStd = Device$(dirsep)Services$(dirsep)Cpp$(dirsep)Std$(dirsep)
-#deviceC = Device$(dirsep)Services$(dirsep)C$(dirsep)
-deviceC = $(deviceCppCore)
+deviceC = Device$(dirsep)Services$(dirsep)C$(dirsep)
 deviceCs = Device$(dirsep)Services$(dirsep)Cs$(dirsep)
 
 objects_core = $(objdir)Ascii.$(objext) \
@@ -526,8 +524,8 @@ $(objdir)TestBasicDvStd.$(objext) : Public/Cpp/Std/TestBasicDv.cpp $(headers)
 	$(compiler)TestBasicDvStd.$(objext) -c $(cflags) $(includes) Public/Cpp/Std/TestBasicDv.cpp
 
 TestDvDeviceC: $(objdir)TestDvDeviceC.$(exeext) 
-$(objdir)TestDvDeviceC.$(exeext) :  upnp_core $(objdir)TestDvDeviceC.$(objext) $(objdir)TestBasicCpC.$(objext) $(objdir)TestBasicDvC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext)
-	$(link) $(linkoutput)$(objdir)TestDvDeviceC.$(exeext) $(objdir)TestDvDeviceC.$(objext) $(objdir)TestBasicCpC.$(objext) $(objdir)TestBasicDvC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)DvZappOrgTestBasic1.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext) $(objdir)$(libprefix)upnp_core.$(libext)
+$(objdir)TestDvDeviceC.$(exeext) :  upnp_core $(objdir)TestDvDeviceC.$(objext) $(objdir)TestBasicCpC.$(objext) $(objdir)TestBasicDvC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext)
+	$(link) $(linkoutput)$(objdir)TestDvDeviceC.$(exeext) $(objdir)TestDvDeviceC.$(objext) $(objdir)TestBasicCpC.$(objext) $(objdir)TestBasicDvC.$(objext) $(objdir)DvZappOrgTestBasic1C.$(objext) $(objdir)CpZappOrgTestBasic1C.$(objext) $(objdir)TestFramework.$(objext) $(objdir)MainC.$(objext) $(objdir)$(libprefix)upnp_core.$(libext)
 $(objdir)TestDvDeviceC.$(objext) : Public/C/TestDvDeviceC.cpp $(headers)
 	$(compiler)TestDvDeviceC.$(objext) -c $(cflags) $(includes) Public/C/TestDvDeviceC.cpp
 $(objdir)TestBasicCpC.$(objext) : Public/C/TestBasicCpC.cpp $(headers)
@@ -672,5 +670,3 @@ Generated$(dirsep)Devices.mak : $(tt) Service$(dirsep)Services.xml T4/Templates/
 	$(mkdir) Generated
 	$(t4) -o Generated$(dirsep)Devices.mak T4/Templates/DvUpnpMakeDevices.tt -a xml:Service/Services.xml
 	@echo Warning: a makefile has been re-generated.
-
-

@@ -85,7 +85,7 @@ copy_build_includes:
 	copy Device\*.h $(inc_build) > nul
 	copy Device\Services\Cpp\Core\*.h $(inc_build)\Cpp\Core > nul
 	copy Device\Services\Cpp\Std\*.h $(inc_build)\Cpp\Std > nul
-	copy Device\Services\Cpp\Core\*C.h $(inc_build)\C > nul
+	copy Device\Services\C\*.h $(inc_build)\C > nul
 	copy Device\Upnp\*.h $(inc_build) > nul
 	copy Network\*.h $(inc_build) > nul
 	copy Service\*.h $(inc_build) > nul

@@ -8,7 +8,7 @@
 #include <TestFramework.h>
 #include <DviDevice.h>
 #include <C/DvProvider.h>
-#include <C/DvZappOrgTestBasic1C.h>
+#include <C/DvZappOrgTestBasic1.h>
 #include <C/CpProxy.h>
 #include <C/CpZappOrgTestBasic1.h>
 #include <C/CpDevice.h>

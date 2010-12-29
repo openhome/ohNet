@@ -4,7 +4,7 @@
 #include <TestFramework.h>
 #include <DviDevice.h>
 #include <C/DvProvider.h>
-#include <C/DvZappOrgTestBasic1C.h>
+#include <C/DvZappOrgTestBasic1.h>
 #include <Ascii.h>
 #include <Maths.h>
 #include <Stack.h>

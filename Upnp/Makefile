@@ -77,7 +77,7 @@ copy_build_includes:
 	cp -u Device/*.h $(inc_build)
 	cp -u Device/Services/Cpp/Core/*.h $(inc_build)/Cpp/Core
 	cp -u Device/Services/Cpp/Std/*.h $(inc_build)/Cpp/Std
-	cp -u Device/Services/Cpp/Core/*C.h $(inc_build)/C
+	cp -u Device/Services/C/*.h $(inc_build)/C
 	cp -u Device/Upnp/*.h $(inc_build)
 	cp -u Network/*.h $(inc_build)
 	cp -u Service/*.h $(inc_build)
