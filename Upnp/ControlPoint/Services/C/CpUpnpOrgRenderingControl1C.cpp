@@ -1233,6 +1233,7 @@ CpProxyUpnpOrgRenderingControl1C::CpProxyUpnpOrgRenderingControl1C(CpDeviceC aDe
 
 CpProxyUpnpOrgRenderingControl1C::~CpProxyUpnpOrgRenderingControl1C()
 {
+    DestroyService();
     delete iActionListPresets;
     delete iActionSelectPreset;
     delete iActionGetBrightness;

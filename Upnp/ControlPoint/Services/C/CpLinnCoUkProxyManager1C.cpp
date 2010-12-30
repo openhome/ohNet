@@ -428,6 +428,7 @@ CpProxyLinnCoUkProxyManager1C::CpProxyLinnCoUkProxyManager1C(CpDeviceC aDevice)
 
 CpProxyLinnCoUkProxyManager1C::~CpProxyLinnCoUkProxyManager1C()
 {
+    DestroyService();
     delete iActionKontrolProductConnected;
     delete iActionSetKontrolProductConnected;
     delete iActionKontrolProductComPort;

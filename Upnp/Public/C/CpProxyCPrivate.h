@@ -22,6 +22,7 @@ public:
     DllExport void AddProperty(Property* aProperty) { iProxy->AddProperty(aProperty); }
 protected:
     DllExport CpProxyC(CpiDevice& aDevice);
+    DllExport void DestroyService() { iProxy->DestroyService(); }
     DllExport IInvocable& Invocable() { return iProxy->iInvocable; }
     DllExport void ReportEvent(Functor aFunctor) { iProxy->ReportEvent(aFunctor); }
     DllExport TBool IsSubscribed() const { return iProxy->iCpSubscriptionStatus == CpProxy::eSubscribed; }

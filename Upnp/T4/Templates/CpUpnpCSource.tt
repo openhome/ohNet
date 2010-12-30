@@ -203,6 +203,7 @@ void Sync<#=a.name#><#=syncClassSuffix#>::CompleteRequest(IAsync& aAsync)
 
 <#=className#>C::~<#=className#>C()
 {
+    DestroyService();
 <#  foreach (Method a in u.methods) #>
 <#  { #>
     delete iAction<#=a.name#>;

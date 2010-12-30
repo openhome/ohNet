@@ -599,6 +599,7 @@ CpProxyLinnCoUkRadio1C::CpProxyLinnCoUkRadio1C(CpDeviceC aDevice)
 
 CpProxyLinnCoUkRadio1C::~CpProxyLinnCoUkRadio1C()
 {
+    DestroyService();
     delete iActionPlay;
     delete iActionPause;
     delete iActionStop;

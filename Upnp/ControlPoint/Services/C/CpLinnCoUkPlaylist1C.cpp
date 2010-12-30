@@ -454,6 +454,7 @@ CpProxyLinnCoUkPlaylist1C::CpProxyLinnCoUkPlaylist1C(CpDeviceC aDevice)
 
 CpProxyLinnCoUkPlaylist1C::~CpProxyLinnCoUkPlaylist1C()
 {
+    DestroyService();
     delete iActionRead;
     delete iActionReadList;
     delete iActionInsert;

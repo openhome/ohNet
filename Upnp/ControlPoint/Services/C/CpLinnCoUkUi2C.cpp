@@ -868,6 +868,7 @@ CpProxyLinnCoUkUi2C::CpProxyLinnCoUkUi2C(CpDeviceC aDevice)
 
 CpProxyLinnCoUkUi2C::~CpProxyLinnCoUkUi2C()
 {
+    DestroyService();
     delete iActionDisplayTestPattern;
     delete iActionDisplayFill;
     delete iActionDisplayClear;

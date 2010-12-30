@@ -108,6 +108,7 @@ CpProxyZappOrgTestDimmableLight1C::CpProxyZappOrgTestDimmableLight1C(CpDeviceC a
 
 CpProxyZappOrgTestDimmableLight1C::~CpProxyZappOrgTestDimmableLight1C()
 {
+    DestroyService();
     delete iActionGetLevel;
     delete iActionSetLevel;
 }

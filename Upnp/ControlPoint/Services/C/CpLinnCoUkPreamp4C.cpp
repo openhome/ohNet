@@ -502,6 +502,7 @@ CpProxyLinnCoUkPreamp4C::CpProxyLinnCoUkPreamp4C(CpDeviceC aDevice)
 
 CpProxyLinnCoUkPreamp4C::~CpProxyLinnCoUkPreamp4C()
 {
+    DestroyService();
     delete iActionVolumeInc;
     delete iActionVolumeDec;
     delete iActionSetVolume;

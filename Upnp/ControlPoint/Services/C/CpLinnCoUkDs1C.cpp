@@ -437,6 +437,7 @@ CpProxyLinnCoUkDs1C::CpProxyLinnCoUkDs1C(CpDeviceC aDevice)
 
 CpProxyLinnCoUkDs1C::~CpProxyLinnCoUkDs1C()
 {
+    DestroyService();
     delete iActionPlay;
     delete iActionPause;
     delete iActionStop;

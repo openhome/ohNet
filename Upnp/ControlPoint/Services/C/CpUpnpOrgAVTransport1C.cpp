@@ -695,6 +695,7 @@ CpProxyUpnpOrgAVTransport1C::CpProxyUpnpOrgAVTransport1C(CpDeviceC aDevice)
 
 CpProxyUpnpOrgAVTransport1C::~CpProxyUpnpOrgAVTransport1C()
 {
+    DestroyService();
     delete iActionSetAVTransportURI;
     delete iActionSetNextAVTransportURI;
     delete iActionGetMediaInfo;

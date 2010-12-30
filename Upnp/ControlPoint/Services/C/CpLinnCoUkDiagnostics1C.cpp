@@ -445,6 +445,7 @@ CpProxyLinnCoUkDiagnostics1C::CpProxyLinnCoUkDiagnostics1C(CpDeviceC aDevice)
 
 CpProxyLinnCoUkDiagnostics1C::~CpProxyLinnCoUkDiagnostics1C()
 {
+    DestroyService();
     delete iActionEcho;
     delete iActionElfFile;
     delete iActionElfFingerprint;

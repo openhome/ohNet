@@ -438,6 +438,7 @@ CpProxyLinnCoUkProduct2C::CpProxyLinnCoUkProduct2C(CpDeviceC aDevice)
 
 CpProxyLinnCoUkProduct2C::~CpProxyLinnCoUkProduct2C()
 {
+    DestroyService();
     delete iActionType;
     delete iActionModel;
     delete iActionName;

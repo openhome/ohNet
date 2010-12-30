@@ -180,6 +180,7 @@ CpProxyOpenhomeOrgTestColorLight1C::CpProxyOpenhomeOrgTestColorLight1C(CpDeviceC
 
 CpProxyOpenhomeOrgTestColorLight1C::~CpProxyOpenhomeOrgTestColorLight1C()
 {
+    DestroyService();
     delete iActionGetName;
     delete iActionSetColor;
     delete iActionGetColor;

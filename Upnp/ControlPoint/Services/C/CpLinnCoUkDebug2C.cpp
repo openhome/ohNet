@@ -129,6 +129,7 @@ CpProxyLinnCoUkDebug2C::CpProxyLinnCoUkDebug2C(CpDeviceC aDevice)
 
 CpProxyLinnCoUkDebug2C::~CpProxyLinnCoUkDebug2C()
 {
+    DestroyService();
     delete iActionSetDebugLevel;
     delete iActionDebugLevel;
     delete iActionMemWrite;

@@ -139,6 +139,7 @@ CpProxyUpnpOrgSwitchPower1C::CpProxyUpnpOrgSwitchPower1C(CpDeviceC aDevice)
 
 CpProxyUpnpOrgSwitchPower1C::~CpProxyUpnpOrgSwitchPower1C()
 {
+    DestroyService();
     delete iActionSetTarget;
     delete iActionGetTarget;
     delete iActionGetStatus;

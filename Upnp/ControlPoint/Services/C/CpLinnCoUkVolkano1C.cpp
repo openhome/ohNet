@@ -390,6 +390,7 @@ CpProxyLinnCoUkVolkano1C::CpProxyLinnCoUkVolkano1C(CpDeviceC aDevice)
 
 CpProxyLinnCoUkVolkano1C::~CpProxyLinnCoUkVolkano1C()
 {
+    DestroyService();
     delete iActionReboot;
     delete iActionBootMode;
     delete iActionSetBootMode;

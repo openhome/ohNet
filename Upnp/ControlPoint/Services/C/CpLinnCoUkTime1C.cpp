@@ -103,6 +103,7 @@ CpProxyLinnCoUkTime1C::CpProxyLinnCoUkTime1C(CpDeviceC aDevice)
 
 CpProxyLinnCoUkTime1C::~CpProxyLinnCoUkTime1C()
 {
+    DestroyService();
     delete iActionTime;
 }
 

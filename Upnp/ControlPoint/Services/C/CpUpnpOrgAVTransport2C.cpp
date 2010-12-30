@@ -891,6 +891,7 @@ CpProxyUpnpOrgAVTransport2C::CpProxyUpnpOrgAVTransport2C(CpDeviceC aDevice)
 
 CpProxyUpnpOrgAVTransport2C::~CpProxyUpnpOrgAVTransport2C()
 {
+    DestroyService();
     delete iActionSetAVTransportURI;
     delete iActionSetNextAVTransportURI;
     delete iActionGetMediaInfo;

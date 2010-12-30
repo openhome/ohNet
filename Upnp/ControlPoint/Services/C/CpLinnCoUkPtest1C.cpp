@@ -125,6 +125,7 @@ CpProxyLinnCoUkPtest1C::CpProxyLinnCoUkPtest1C(CpDeviceC aDevice)
 
 CpProxyLinnCoUkPtest1C::~CpProxyLinnCoUkPtest1C()
 {
+    DestroyService();
     delete iActionTestComPort;
     delete iActionLedsOn;
     delete iActionLedsOff;

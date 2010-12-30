@@ -308,6 +308,7 @@ CpProxyLinnCoUkJukebox1C::CpProxyLinnCoUkJukebox1C(CpDeviceC aDevice)
 
 CpProxyLinnCoUkJukebox1C::~CpProxyLinnCoUkJukebox1C()
 {
+    DestroyService();
     delete iActionSetPresetPrefix;
     delete iActionPresetPrefix;
     delete iActionSetAlbumArtFileName;

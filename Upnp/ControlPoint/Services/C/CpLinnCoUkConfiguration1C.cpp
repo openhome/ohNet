@@ -151,6 +151,7 @@ CpProxyLinnCoUkConfiguration1C::CpProxyLinnCoUkConfiguration1C(CpDeviceC aDevice
 
 CpProxyLinnCoUkConfiguration1C::~CpProxyLinnCoUkConfiguration1C()
 {
+    DestroyService();
     delete iActionConfigurationXml;
     delete iActionParameterXml;
     delete iActionSetParameter;

@@ -683,6 +683,7 @@ CpProxyUpnpOrgContentDirectory2C::CpProxyUpnpOrgContentDirectory2C(CpDeviceC aDe
 
 CpProxyUpnpOrgContentDirectory2C::~CpProxyUpnpOrgContentDirectory2C()
 {
+    DestroyService();
     delete iActionGetSearchCapabilities;
     delete iActionGetSortCapabilities;
     delete iActionGetSortExtensionCapabilities;

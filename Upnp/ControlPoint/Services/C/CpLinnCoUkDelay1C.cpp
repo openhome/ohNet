@@ -333,6 +333,7 @@ CpProxyLinnCoUkDelay1C::CpProxyLinnCoUkDelay1C(CpDeviceC aDevice)
 
 CpProxyLinnCoUkDelay1C::~CpProxyLinnCoUkDelay1C()
 {
+    DestroyService();
     delete iActionPresetXml;
     delete iActionPresetIndex;
     delete iActionSetPresetIndex;

@@ -283,6 +283,7 @@ CpProxyUpnpOrgConnectionManager1C::CpProxyUpnpOrgConnectionManager1C(CpDeviceC a
 
 CpProxyUpnpOrgConnectionManager1C::~CpProxyUpnpOrgConnectionManager1C()
 {
+    DestroyService();
     delete iActionGetProtocolInfo;
     delete iActionPrepareForConnection;
     delete iActionConnectionComplete;

@@ -663,6 +663,7 @@ CpProxyZappOrgTestBasic1C::CpProxyZappOrgTestBasic1C(CpDeviceC aDevice)
 
 CpProxyZappOrgTestBasic1C::~CpProxyZappOrgTestBasic1C()
 {
+    DestroyService();
     delete iActionIncrement;
     delete iActionDecrement;
     delete iActionToggle;

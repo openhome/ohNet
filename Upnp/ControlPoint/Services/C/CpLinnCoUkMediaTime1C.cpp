@@ -79,6 +79,7 @@ CpProxyLinnCoUkMediaTime1C::CpProxyLinnCoUkMediaTime1C(CpDeviceC aDevice)
 
 CpProxyLinnCoUkMediaTime1C::~CpProxyLinnCoUkMediaTime1C()
 {
+    DestroyService();
     delete iActionSeconds;
 }
 

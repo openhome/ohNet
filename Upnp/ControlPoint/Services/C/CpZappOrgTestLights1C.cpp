@@ -285,6 +285,7 @@ CpProxyZappOrgTestLights1C::CpProxyZappOrgTestLights1C(CpDeviceC aDevice)
 
 CpProxyZappOrgTestLights1C::~CpProxyZappOrgTestLights1C()
 {
+    DestroyService();
     delete iActionGetCount;
     delete iActionGetRoom;
     delete iActionGetName;

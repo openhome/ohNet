@@ -292,6 +292,7 @@ CpProxyLinnCoUkInfo1C::CpProxyLinnCoUkInfo1C(CpDeviceC aDevice)
 
 CpProxyLinnCoUkInfo1C::~CpProxyLinnCoUkInfo1C()
 {
+    DestroyService();
     delete iActionCounters;
     delete iActionTrack;
     delete iActionDetails;

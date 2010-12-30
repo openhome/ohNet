@@ -417,6 +417,7 @@ CpProxyLinnCoUkComponent1C::CpProxyLinnCoUkComponent1C(CpDeviceC aDevice)
 
 CpProxyLinnCoUkComponent1C::~CpProxyLinnCoUkComponent1C()
 {
+    DestroyService();
     delete iActionAmplifierEnabled;
     delete iActionSetAmplifierEnabled;
     delete iActionAmplifierAttenuation;

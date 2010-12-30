@@ -711,6 +711,7 @@ CpProxyUpnpOrgDimming1C::CpProxyUpnpOrgDimming1C(CpDeviceC aDevice)
 
 CpProxyUpnpOrgDimming1C::~CpProxyUpnpOrgDimming1C()
 {
+    DestroyService();
     delete iActionSetLoadLevelTarget;
     delete iActionGetLoadLevelTarget;
     delete iActionGetLoadLevelStatus;

@@ -166,6 +166,7 @@ CpProxyZappOrgTestWidget1C::CpProxyZappOrgTestWidget1C(CpDeviceC aDevice)
 
 CpProxyZappOrgTestWidget1C::~CpProxyZappOrgTestWidget1C()
 {
+    DestroyService();
     delete iActionSetReadWriteRegister;
     delete iActionGetWidgetClass;
 }

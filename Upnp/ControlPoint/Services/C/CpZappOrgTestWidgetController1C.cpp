@@ -166,6 +166,7 @@ CpProxyZappOrgTestWidgetController1C::CpProxyZappOrgTestWidgetController1C(CpDev
 
 CpProxyZappOrgTestWidgetController1C::~CpProxyZappOrgTestWidgetController1C()
 {
+    DestroyService();
     delete iActionCreateWidget;
     delete iActionRemoveWidget;
     delete iActionSetWidgetRegister;

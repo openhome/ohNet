@@ -696,6 +696,7 @@ CpProxyUpnpOrgScheduledRecording2C::CpProxyUpnpOrgScheduledRecording2C(CpDeviceC
 
 CpProxyUpnpOrgScheduledRecording2C::~CpProxyUpnpOrgScheduledRecording2C()
 {
+    DestroyService();
     delete iActionGetSortCapabilities;
     delete iActionGetPropertyList;
     delete iActionGetAllowedValues;

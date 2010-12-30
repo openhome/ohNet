@@ -586,6 +586,7 @@ CpProxyUpnpOrgContentDirectory1C::CpProxyUpnpOrgContentDirectory1C(CpDeviceC aDe
 
 CpProxyUpnpOrgContentDirectory1C::~CpProxyUpnpOrgContentDirectory1C()
 {
+    DestroyService();
     delete iActionGetSearchCapabilities;
     delete iActionGetSortCapabilities;
     delete iActionGetSystemUpdateID;

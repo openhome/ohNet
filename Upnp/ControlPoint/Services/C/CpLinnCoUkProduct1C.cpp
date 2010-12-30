@@ -176,6 +176,7 @@ CpProxyLinnCoUkProduct1C::CpProxyLinnCoUkProduct1C(CpDeviceC aDevice)
 
 CpProxyLinnCoUkProduct1C::~CpProxyLinnCoUkProduct1C()
 {
+    DestroyService();
     delete iActionRoom;
     delete iActionSetRoom;
     delete iActionStandby;
