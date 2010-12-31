@@ -316,8 +316,6 @@ Dictionary<string,string> propertyType = new Dictionary<string,string>();
 Dictionary<string,string> propertySetter = new Dictionary<string,string>();
 Dictionary<string,string> invocationReader = new Dictionary<string,string>();
 Dictionary<string,string> invocationWriter = new Dictionary<string,string>();
-Dictionary<string,string> inargctype = new Dictionary<string,string>();
-Dictionary<string,string> outargctype = new Dictionary<string,string>();
 
 void Initialise()
 {
@@ -386,28 +384,6 @@ void Initialise()
     invocationWriter.Add("string", "WriteString");
     invocationWriter.Add("bin.base64", "WriteBinary");
     invocationWriter.Add("uri", "WriteString");
-
-    inargctype.Add("ui1", "uint");
-    inargctype.Add("ui2", "uint");
-    inargctype.Add("ui4", "uint");
-    inargctype.Add("boolean", "int");
-    inargctype.Add("i1", "int");
-    inargctype.Add("i2", "int");
-    inargctype.Add("i4", "int");
-    inargctype.Add("string", "char*");
-    inargctype.Add("bin.base64", "char*");
-    inargctype.Add("uri", "char*");
-
-    outargctype.Add("ui1", "uint*");
-    outargctype.Add("ui2", "uint*");
-    outargctype.Add("ui4", "uint*");
-    outargctype.Add("boolean", "int*");
-    outargctype.Add("i1", "int*");
-    outargctype.Add("i2", "int*");
-    outargctype.Add("i4", "int*");
-    outargctype.Add("string", "char**");
-    outargctype.Add("bin.base64", "char**");
-    outargctype.Add("uri", "char**");
 }
 
 string DeclareAllowedValues()
